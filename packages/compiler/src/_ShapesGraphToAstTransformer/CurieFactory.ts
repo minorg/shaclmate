@@ -46,7 +46,7 @@ export class CurieFactory {
           },
           prefix: split[0],
           reference: split[1],
-          value,
+          value: namedNode.value,
         });
       },
     );

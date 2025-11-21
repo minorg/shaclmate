@@ -6,7 +6,7 @@ import { testData } from "./testData.js";
 
 describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   let ast: ast.Ast;
-  const astObjectTypesByIri: Record<string, ast.ObjectType> = {};
+  const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> = {};
 
   beforeAll(() => {
     ast = new ShapesGraphToAstTransformer(testData.kitchenSink)
@@ -16,8 +16,11 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
       if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
         continue;
       }
-      invariant(!astObjectTypesByIri[astObjectType.shapeIdentifier.value]);
-      astObjectTypesByIri[astObjectType.shapeIdentifier.value] = astObjectType;
+      invariant(
+        !astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value],
+      );
+      astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value] =
+        astObjectType;
     }
   });
 
@@ -54,7 +57,7 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
     it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
       expect,
     }) => {
-      const astObjectType = astObjectTypesByIri[classIri];
+      const astObjectType = astObjectTypesByShapeIdentifier[classIri];
       expect(astObjectType).toBeDefined();
       const recursiveProperty = astObjectType.properties.find(
         (property) => property.path.value === recursivePropertyIri,
