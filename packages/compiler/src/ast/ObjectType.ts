@@ -222,7 +222,7 @@ export class ObjectType {
   addProperties(...properties: readonly ObjectType.Property[]): void {
     this.#properties.push(...properties);
     for (const property of properties) {
-      property.objectType = this;
+      invariant(Object.is(property.objectType, this));
     }
   }
 
@@ -294,7 +294,7 @@ export namespace ObjectType {
     /**
      * Object type this property belongs to.
      */
-    #objectType: ObjectType | null = null;
+    readonly objectType: ObjectType;
 
     /**
      * Name of this property, derived from sh:name or shaclmate:name.
@@ -344,6 +344,7 @@ export namespace ObjectType {
       label,
       mutable,
       name,
+      objectType,
       order,
       partialType,
       path,
@@ -356,6 +357,7 @@ export namespace ObjectType {
       label: Maybe<string>;
       mutable: boolean;
       name: Maybe<string>;
+      objectType: ObjectType;
       order: number;
       partialType: Maybe<
         | ObjectType
@@ -373,6 +375,7 @@ export namespace ObjectType {
       this.label = label;
       this.mutable = mutable;
       this.name = name;
+      this.objectType = objectType;
       this.order = order;
       this.partialType = partialType;
       this.path = path;
@@ -383,16 +386,6 @@ export namespace ObjectType {
 
     equals(other: Property): boolean {
       return this.shapeIdentifier.equals(other.shapeIdentifier);
-    }
-
-    get objectType(): ObjectType {
-      invariant(this.#objectType !== null);
-      return this.#objectType;
-    }
-
-    set objectType(objectType: ObjectType) {
-      invariant(this.#objectType === null);
-      this.#objectType = objectType;
     }
 
     /**

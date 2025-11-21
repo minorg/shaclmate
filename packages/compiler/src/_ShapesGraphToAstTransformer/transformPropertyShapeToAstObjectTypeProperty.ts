@@ -118,17 +118,14 @@ function transformPropertyShapeToAstType(
 
 export function transformPropertyShapeToAstObjectTypeProperty(
   this: ShapesGraphToAstTransformer,
-  propertyShape: input.PropertyShape,
-): Either<Error, ast.ObjectType.Property> {
   {
-    const property = this.astObjectTypePropertiesByIdentifier.get(
-      propertyShape.identifier,
-    );
-    if (property) {
-      return Either.of(property);
-    }
-  }
-
+    objectType,
+    propertyShape,
+  }: {
+    objectType: ast.ObjectType;
+    propertyShape: input.PropertyShape;
+  },
+): Either<Error, ast.ObjectType.Property> {
   const typeEither = transformPropertyShapeToAstType.bind(this)(propertyShape);
   if (typeEither.isLeft()) {
     return typeEither;
@@ -232,31 +229,29 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     );
   }
 
-  const property = new ast.ObjectType.Property({
-    comment: pickLiteral(propertyShape.comments).map(
-      (literal) => literal.value,
-    ),
-    description: pickLiteral(propertyShape.descriptions).map(
-      (literal) => literal.value,
-    ),
-    label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
-    mutable: propertyShape.mutable.orDefault(false),
-    name: propertyShape.shaclmateName.alt(
-      pickLiteral(propertyShape.names).map((literal) => literal.value),
-    ),
-    order: propertyShape.order.orDefault(0),
-    path: this.curieFactory.create(path.iri).extract() ?? path.iri,
-    partialType,
-    shapeIdentifier:
-      (propertyShape.identifier.termType === "NamedNode"
-        ? this.curieFactory.create(propertyShape.identifier).extract()
-        : undefined) ?? propertyShape.identifier,
-    type: type,
-    visibility: propertyShape.visibility,
-  });
-  this.astObjectTypePropertiesByIdentifier.set(
-    propertyShape.identifier,
-    property,
+  return Either.of(
+    new ast.ObjectType.Property({
+      comment: pickLiteral(propertyShape.comments).map(
+        (literal) => literal.value,
+      ),
+      description: pickLiteral(propertyShape.descriptions).map(
+        (literal) => literal.value,
+      ),
+      label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
+      mutable: propertyShape.mutable.orDefault(false),
+      name: propertyShape.shaclmateName.alt(
+        pickLiteral(propertyShape.names).map((literal) => literal.value),
+      ),
+      objectType,
+      order: propertyShape.order.orDefault(0),
+      path: this.curieFactory.create(path.iri).extract() ?? path.iri,
+      partialType,
+      shapeIdentifier:
+        (propertyShape.identifier.termType === "NamedNode"
+          ? this.curieFactory.create(propertyShape.identifier).extract()
+          : undefined) ?? propertyShape.identifier,
+      type: type,
+      visibility: propertyShape.visibility,
+    }),
   );
-  return Either.of(property);
 }

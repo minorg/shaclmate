@@ -1,7 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
-import { pickLiteral } from "_ShapesGraphToAstTransformer/pickLiteral.js";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -9,6 +8,7 @@ import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { pickLiteral } from "./pickLiteral.js";
 
 /**
  * Try to convert a shape to a composite type (intersection or union) using some heuristics.

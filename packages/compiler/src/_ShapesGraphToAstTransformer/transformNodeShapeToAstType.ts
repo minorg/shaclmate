@@ -1,4 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+import type { TsFeature } from "enums/TsFeature.js";
+import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -8,6 +10,29 @@ import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { pickLiteral } from "./pickLiteral.js";
+
+const listPropertiesObjectType = new ast.ObjectType({
+  abstract: false,
+  export_: false,
+  extern: false,
+  comment: Maybe.empty(),
+  label: Maybe.empty(),
+  identifierMintingStrategy: Maybe.empty(),
+  identifierType: new ast.IdentifierType({
+    defaultValue: Maybe.empty(),
+    hasValues: [],
+    in_: [],
+    nodeKinds: new Set(["BlankNode", "NamedNode"]),
+  }),
+  fromRdfType: Maybe.empty(),
+  name: Maybe.empty(),
+  toRdfTypes: [],
+  tsFeatures: new Set<TsFeature>([]),
+  tsObjectDeclarationType: "class",
+  shapeIdentifier: DataFactory.blankNode(),
+  synthetic: true,
+  tsImports: [],
+});
 
 /**
  * Is an ast.ObjectType actually the shape of an RDF list?
@@ -34,12 +59,16 @@ function transformNodeShapeToAstListType(
     toRdfTypes: nodeShape.toRdfTypes,
   });
 
+  // Will be overwritten if the transformation fails.
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, listType);
 
   const properties: ast.ObjectType.Property[] = [];
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither =
-      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
+    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
+      // Just need a dummy ast.ObjectType here to get the properties transformed.
+      objectType: listPropertiesObjectType,
+      propertyShape,
+    });
     if (propertyEither.isLeft()) {
       logger.warn(
         "error transforming %s %s: %s",
@@ -295,7 +324,10 @@ export function transformNodeShapeToAstType(
 
   // Populate properties
   for (const propertyShape of nodeShape.constraints.properties) {
-    this.transformPropertyShapeToAstObjectTypeProperty(propertyShape)
+    this.transformPropertyShapeToAstObjectTypeProperty({
+      objectType,
+      propertyShape,
+    })
       .ifLeft((error) => {
         logger.warn(
           "error transforming %s %s: %s",

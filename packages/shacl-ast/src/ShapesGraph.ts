@@ -44,20 +44,24 @@ export class ShapesGraph<
     PropertyGroupT,
     PropertyShapeT extends ShapeT,
     ShapeT,
-  >(
-    dataset: DatasetCore,
+  >(parameters: {
+    dataset: DatasetCore;
     factory: Factory<
       NodeShapeT,
       OntologyT,
       PropertyGroupT,
       PropertyShapeT,
       ShapeT
-    >,
-    options?: { ignoreUndefinedShapes?: boolean },
-  ): Either<
+    >;
+    prefixMap?: PrefixMap;
+    ignoreUndefinedShapes?: boolean;
+  }): Either<
     Error,
     ShapesGraph<NodeShapeT, OntologyT, PropertyGroupT, PropertyShapeT, ShapeT>
   > {
+    const { dataset, factory } = parameters;
+    const ignoreUndefinedShapes = !!parameters?.ignoreUndefinedShapes;
+
     function datasetHasMatch(
       subject?: Term | null,
       predicate?: Term | null,
@@ -70,7 +74,6 @@ export class ShapesGraph<
       return false;
     }
 
-    const ignoreUndefinedShapes = !!options?.ignoreUndefinedShapes;
     const resourceSet = new ResourceSet({ dataset });
     const shapesGraph = new ShapesGraph<
       NodeShapeT,

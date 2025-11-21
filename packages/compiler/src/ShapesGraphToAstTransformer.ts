@@ -11,10 +11,6 @@ import { logger } from "./logger.js";
 
 export class ShapesGraphToAstTransformer {
   // Members are protected so they're accessible to the bound functions
-  protected readonly astObjectTypePropertiesByIdentifier: TermMap<
-    rdfjs.BlankNode | rdfjs.NamedNode,
-    ast.ObjectType.Property
-  > = new TermMap();
   protected readonly curieFactory: CurieFactory;
   protected readonly nodeShapeAstTypesByIdentifier: TermMap<
     rdfjs.BlankNode | rdfjs.NamedNode,
