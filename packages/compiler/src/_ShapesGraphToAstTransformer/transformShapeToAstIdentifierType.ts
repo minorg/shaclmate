@@ -2,7 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left } from "purify-ts";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
@@ -35,13 +35,14 @@ export function transformShapeToAstIdentifierType(
       identifierIn.length > 0 ||
       (nodeKinds.size > 0 && nodeKinds.size <= 2 && !nodeKinds.has("Literal"))
     ) {
-      return Either.of({
-        defaultValue: identifierDefaultValue,
-        hasValues: identifierHasValues,
-        in_: identifierIn,
-        kind: "IdentifierType",
-        nodeKinds: nodeKinds as Set<IdentifierNodeKind>,
-      });
+      return Either.of(
+        new ast.IdentifierType({
+          defaultValue: identifierDefaultValue,
+          hasValues: identifierHasValues,
+          in_: identifierIn,
+          nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
+        }),
+      );
     }
 
     return Left(new Error(`unable to transform ${shape} into an AST type`));

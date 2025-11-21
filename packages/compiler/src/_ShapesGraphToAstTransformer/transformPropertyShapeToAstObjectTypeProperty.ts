@@ -1,40 +1,24 @@
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import N3 from "n3";
+import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
 import { ShapeStack } from "./ShapeStack.js";
 import { pickLiteral } from "./pickLiteral.js";
 
-function identifierNodeKinds(
-  type: ast.ObjectType | ast.ObjectUnionType,
-): Set<IdentifierNodeKind> {
-  switch (type.kind) {
-    case "ObjectType":
-      return type.identifierNodeKinds;
-    case "ObjectUnionType":
-      return new Set(
-        type.memberTypes.flatMap((memberType) => [
-          ...memberType.identifierNodeKinds,
-        ]),
-      );
-  }
-}
-
 function synthesizePartialAstObjectType({
-  identifierNodeKinds,
+  identifierType,
   tsFeatures,
 }: {
-  identifierNodeKinds: Set<IdentifierNodeKind>;
-  tsFeatures: Set<TsFeature>;
+  identifierType: ast.IdentifierType;
+  tsFeatures: ReadonlySet<TsFeature>;
 }): ast.ObjectType {
   let syntheticName: string;
-  switch (identifierNodeKinds.size) {
+  switch (identifierType.nodeKinds.size) {
     case 1:
-      invariant(identifierNodeKinds.has("NamedNode"));
+      invariant(identifierType.nodeKinds.has("NamedNode"));
       syntheticName = "NamedDefaultPartial";
       break;
     case 2:
@@ -44,36 +28,25 @@ function synthesizePartialAstObjectType({
       throw new Error("should never happen");
   }
 
-  return {
+  return new ast.ObjectType({
     abstract: false,
-    ancestorObjectTypes: [],
-    childObjectTypes: [],
     comment: Maybe.empty(),
-    descendantObjectTypes: [],
-    export: true,
+    export_: true,
     extern: false,
     fromRdfType: Maybe.empty(),
-    identifierIn: [],
-    identifierNodeKinds,
+    identifierType,
     identifierMintingStrategy: Maybe.empty(),
-    kind: "ObjectType",
     label: Maybe.empty(),
-    name: {
-      identifier: N3.DataFactory.blankNode(),
-      label: Maybe.empty(),
-      propertyPath: Maybe.empty(),
-      shName: Maybe.empty(),
-      shaclmateName: Maybe.empty(),
-      syntheticName: Maybe.of(syntheticName),
-    },
-    parentObjectTypes: [],
-    properties: [],
+    name: Maybe.of(syntheticName),
+    shapeIdentifier: DataFactory.namedNode(
+      `urn:shaclmate:synthetic:${syntheticName}`,
+    ),
     synthetic: true,
     toRdfTypes: [],
     tsFeatures,
     tsImports: [],
     tsObjectDeclarationType: "class",
-  };
+  });
 }
 
 function transformPropertyShapeToAstType(
@@ -97,12 +70,13 @@ function transformPropertyShapeToAstType(
     propertyShape.constraints.maxCount.isNothing() &&
     propertyShape.constraints.minCount.isNothing()
   ) {
-    return Either.of({
-      itemType,
-      kind: "SetType",
-      mutable: propertyShape.mutable,
-      minCount: 0,
-    });
+    return Either.of(
+      new ast.SetType({
+        itemType,
+        mutable: propertyShape.mutable.orDefault(false),
+        minCount: 0,
+      }),
+    );
   }
 
   let maxCount = propertyShape.constraints.maxCount.orDefault(
@@ -120,10 +94,11 @@ function transformPropertyShapeToAstType(
   }
 
   if (minCount === 0 && maxCount === 1) {
-    return Either.of({
-      itemType,
-      kind: "OptionType",
-    });
+    return Either.of(
+      new ast.OptionType({
+        itemType,
+      }),
+    );
   }
 
   if (minCount === 1 && maxCount === 1) {
@@ -134,27 +109,25 @@ function transformPropertyShapeToAstType(
     propertyShape.constraints.minCount.isJust() ||
       propertyShape.constraints.maxCount.isJust(),
   );
-  return Either.of({
-    itemType,
-    kind: "SetType",
-    minCount,
-    mutable: propertyShape.mutable,
-  });
+  return Either.of(
+    new ast.SetType({
+      itemType,
+      minCount,
+      mutable: propertyShape.mutable.orDefault(false),
+    }),
+  );
 }
 
 export function transformPropertyShapeToAstObjectTypeProperty(
   this: ShapesGraphToAstTransformer,
-  propertyShape: input.PropertyShape,
-): Either<Error, ast.ObjectType.Property> {
   {
-    const property = this.astObjectTypePropertiesByIdentifier.get(
-      propertyShape.identifier,
-    );
-    if (property) {
-      return Either.of(property);
-    }
-  }
-
+    objectType,
+    propertyShape,
+  }: {
+    objectType: ast.ObjectType;
+    propertyShape: input.PropertyShape;
+  },
+): Either<Error, ast.ObjectType.Property> {
   const typeEither = transformPropertyShapeToAstType.bind(this)(propertyShape);
   if (typeEither.isLeft()) {
     return typeEither;
@@ -199,7 +172,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         partialType = Maybe.of(
           propertyShapePartialItemType ??
             synthesizePartialAstObjectType({
-              identifierNodeKinds: identifierNodeKinds(type),
+              identifierType: type.identifierType,
               tsFeatures: type.tsFeatures,
             }),
         );
@@ -221,23 +194,25 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         const partialItemType =
           propertyShapePartialItemType ??
           synthesizePartialAstObjectType({
-            identifierNodeKinds: identifierNodeKinds(type.itemType),
+            identifierType: type.itemType.identifierType,
             tsFeatures: type.itemType.tsFeatures,
           });
         switch (type.kind) {
           case "OptionType":
-            partialType = Maybe.of({
-              kind: "OptionType",
-              itemType: partialItemType,
-            });
+            partialType = Maybe.of(
+              new ast.OptionType({
+                itemType: partialItemType,
+              }),
+            );
             break;
           case "SetType":
-            partialType = Maybe.of({
-              kind: "SetType",
-              itemType: partialItemType,
-              minCount: 0,
-              mutable: Maybe.empty(),
-            });
+            partialType = Maybe.of(
+              new ast.SetType({
+                itemType: partialItemType,
+                minCount: 0,
+                mutable: false,
+              }),
+            );
             break;
         }
         break;
@@ -256,25 +231,29 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     );
   }
 
-  const property: ast.ObjectType.Property = {
-    comment: pickLiteral(propertyShape.comments).map(
-      (literal) => literal.value,
-    ),
-    description: pickLiteral(propertyShape.descriptions).map(
-      (literal) => literal.value,
-    ),
-    label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
-    mutable: propertyShape.mutable,
-    name: this.shapeAstName(propertyShape),
-    order: propertyShape.order.orDefault(0),
-    path,
-    partialType,
-    type: type,
-    visibility: propertyShape.visibility,
-  };
-  this.astObjectTypePropertiesByIdentifier.set(
-    propertyShape.identifier,
-    property,
+  return Either.of(
+    new ast.ObjectType.Property({
+      comment: pickLiteral(propertyShape.comments).map(
+        (literal) => literal.value,
+      ),
+      description: pickLiteral(propertyShape.descriptions).map(
+        (literal) => literal.value,
+      ),
+      label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
+      mutable: propertyShape.mutable.orDefault(false),
+      name: propertyShape.shaclmateName.alt(
+        pickLiteral(propertyShape.names).map((literal) => literal.value),
+      ),
+      objectType,
+      order: propertyShape.order.orDefault(0),
+      path: this.curieFactory.create(path.iri).extract() ?? path.iri,
+      partialType,
+      shapeIdentifier:
+        (propertyShape.identifier.termType === "NamedNode"
+          ? this.curieFactory.create(propertyShape.identifier).extract()
+          : undefined) ?? propertyShape.identifier,
+      type: type,
+      visibility: propertyShape.visibility,
+    }),
   );
-  return Either.of(property);
 }

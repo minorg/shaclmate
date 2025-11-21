@@ -1,15 +1,38 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
+import type { TsFeature } from "enums/TsFeature.js";
+import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
-import type { TsFeature } from "../enums/TsFeature.js";
+import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
-import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
 import { pickLiteral } from "./pickLiteral.js";
+
+const listPropertiesObjectType = new ast.ObjectType({
+  abstract: false,
+  export_: false,
+  extern: false,
+  comment: Maybe.empty(),
+  label: Maybe.empty(),
+  identifierMintingStrategy: Maybe.empty(),
+  identifierType: new ast.IdentifierType({
+    defaultValue: Maybe.empty(),
+    hasValues: [],
+    in_: [],
+    nodeKinds: new Set(["BlankNode", "NamedNode"]),
+  }),
+  fromRdfType: Maybe.empty(),
+  name: Maybe.empty(),
+  toRdfTypes: [],
+  tsFeatures: new Set<TsFeature>([]),
+  tsObjectDeclarationType: "class",
+  shapeIdentifier: DataFactory.blankNode(),
+  synthetic: true,
+  tsImports: [],
+});
 
 /**
  * Is an ast.ObjectType actually the shape of an RDF list?
@@ -22,28 +45,30 @@ function transformNodeShapeToAstListType(
   invariant(nodeShape.isList);
 
   // Put a placeholder in the cache to deal with cyclic references
-  const listType: ast.ListType = {
+  const listType = new ast.ListType<ast.Type>({
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
     identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
       ? "BlankNode"
       : "NamedNode",
-    itemType: {
-      kind: "PlaceholderType" as const,
-    },
-    kind: "ListType" as const,
+    itemType: ast.PlaceholderType.instance,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
-    mutable: nodeShape.mutable,
-    name: this.shapeAstName(nodeShape),
+    mutable: nodeShape.mutable.orDefault(false),
+    name: nodeShape.shaclmateName,
     identifierMintingStrategy: nodeShape.identifierMintingStrategy,
+    shapeIdentifier: this.shapeIdentifier(nodeShape),
     toRdfTypes: nodeShape.toRdfTypes,
-  };
+  });
 
+  // Will be overwritten if the transformation fails.
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, listType);
 
   const properties: ast.ObjectType.Property[] = [];
   for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither =
-      this.transformPropertyShapeToAstObjectTypeProperty(propertyShape);
+    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
+      // Just need a dummy ast.ObjectType here to get the properties transformed.
+      objectType: listPropertiesObjectType,
+      propertyShape,
+    });
     if (propertyEither.isLeft()) {
       logger.warn(
         "error transforming %s %s: %s",
@@ -64,14 +89,14 @@ function transformNodeShapeToAstListType(
   // rdf:first can have any type
   // The type of the rdf:first property is the list item type.
   const firstProperty = properties.find((property) =>
-    property.path.iri.equals(rdf.first),
+    property.path.equals(rdf.first),
   );
   if (!firstProperty) {
     return Left(new Error(`${nodeShape} does not have an rdf:first property`));
   }
 
   const restProperty = properties.find((property) =>
-    property.path.iri.equals(rdf.rest),
+    property.path.equals(rdf.rest),
   );
   if (!restProperty) {
     return Left(new Error(`${nodeShape} does not have an rdf:rest property`));
@@ -91,7 +116,7 @@ function transformNodeShapeToAstListType(
     !restProperty.type.memberTypes.find(
       (type) =>
         type.kind === "ListType" &&
-        type.name.identifier.equals(nodeShape.identifier),
+        type.shapeIdentifier.equals(nodeShape.identifier),
     )
   ) {
     return Left(
@@ -157,58 +182,35 @@ export function transformNodeShapeToAstObjectCompositeType(
   }
 
   // Put a placeholder in the cache to deal with cyclic references
-  const compositeType = {
+  const compositeType: ast.ObjectIntersectionType | ast.ObjectUnionType = new (
+    compositeTypeKind === "ObjectIntersectionType"
+      ? ast.ObjectIntersectionType
+      : ast.ObjectUnionType
+  )({
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
-    export: export_,
-    kind: compositeTypeKind,
+    export_,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
-    memberTypes: [] as ast.ObjectType[],
-    name: this.shapeAstName(nodeShape),
-    tsFeatures: new Set<TsFeature>(),
-  };
+    name: nodeShape.shaclmateName,
+    shapeIdentifier: this.shapeIdentifier(nodeShape),
+    tsFeatures: nodeShape.tsFeatures,
+  });
 
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
 
-  const memberTypes: (
-    | ast.ObjectType
-    | ast.ObjectIntersectionType
-    | ast.ObjectUnionType
-  )[] = [];
   for (const memberNodeShape of compositeTypeNodeShapes) {
     const memberTypeEither = this.transformNodeShapeToAstType(memberNodeShape);
     if (memberTypeEither.isLeft()) {
       return memberTypeEither;
     }
-    const memberType = memberTypeEither.unsafeCoerce();
-    switch (memberType.kind) {
-      case "ObjectType":
-      case "ObjectIntersectionType":
-      case "ObjectUnionType":
-        memberTypes.push(memberType);
-        break;
-      default:
-        return Left(
-          new Error(
-            `${nodeShape} has one or more non-ObjectType node shapes in its logical constraint`,
-          ),
-        );
+    const addMemberTypeResult = compositeType.addMemberType(
+      memberTypeEither.unsafeCoerce(),
+    );
+    if (addMemberTypeResult.isLeft()) {
+      return addMemberTypeResult;
     }
   }
 
-  return flattenAstObjectCompositeTypeMemberTypes({
-    objectCompositeTypeKind: compositeTypeKind,
-    memberTypes,
-    shape: nodeShape,
-  }).map(({ memberTypes, tsFeatures }) => {
-    // Add to the placeholder composite type and return it.
-    for (const memberType of memberTypes) {
-      compositeType.memberTypes.push(memberType);
-    }
-    for (const tsFeature of tsFeatures) {
-      compositeType.tsFeatures.add(tsFeature);
-    }
-    return compositeType;
-  });
+  return Either.of(compositeType);
 }
 
 export function transformNodeShapeToAstType(
@@ -268,31 +270,32 @@ export function transformNodeShapeToAstType(
   // Put a placeholder in the cache to deal with cyclic references
   // If this node shape's properties (directly or indirectly) refer to the node shape itself,
   // we'll return this placeholder.
-  const objectType: ast.ObjectType = {
+  const objectType = new ast.ObjectType({
     abstract,
-    ancestorObjectTypes: [],
-    childObjectTypes: [],
     comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
-    descendantObjectTypes: [],
-    export: export_,
+    export_: export_,
     extern: nodeShape.extern.orDefault(false),
     fromRdfType,
     label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
-    kind: "ObjectType",
-    identifierIn,
+    identifierType: new ast.IdentifierType({
+      defaultValue: Maybe.empty(),
+      hasValues: [],
+      in_: identifierIn,
+      nodeKinds:
+        identifierIn.length === 0
+          ? nodeShape.nodeKinds
+          : new Set(["NamedNode"]),
+    }),
     identifierMintingStrategy,
-    identifierNodeKinds:
-      identifierIn.length === 0 ? nodeShape.nodeKinds : new Set(["NamedNode"]),
-    name: this.shapeAstName(nodeShape),
-    properties: [], // This is mutable, we'll populate it below.
-    parentObjectTypes: [], // This is mutable, we'll populate it below
+    name: nodeShape.shaclmateName,
+    shapeIdentifier: this.shapeIdentifier(nodeShape),
     synthetic: false,
     toRdfTypes,
     tsFeatures: nodeShape.tsFeatures.orDefault(new Set(tsFeaturesDefault)),
     tsImports: nodeShape.tsImports,
     tsObjectDeclarationType:
       nodeShape.tsObjectDeclarationType.orDefault("class"),
-  };
+  });
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, objectType);
 
   // Populate ancestor and descendant object types
@@ -306,22 +309,25 @@ export function transformNodeShapeToAstType(
         .toList(),
     );
   };
-  objectType.ancestorObjectTypes.push(
+  objectType.addAncestorObjectTypes(
     ...relatedObjectTypes(nodeShape.ancestorNodeShapes),
   );
-  objectType.childObjectTypes.push(
+  objectType.addChildObjectTypes(
     ...relatedObjectTypes(nodeShape.childNodeShapes),
   );
-  objectType.descendantObjectTypes.push(
+  objectType.addDescendantObjectTypes(
     ...relatedObjectTypes(nodeShape.descendantNodeShapes),
   );
-  objectType.parentObjectTypes.push(
+  objectType.addParentObjectTypes(
     ...relatedObjectTypes(nodeShape.parentNodeShapes),
   );
 
   // Populate properties
   for (const propertyShape of nodeShape.constraints.properties) {
-    this.transformPropertyShapeToAstObjectTypeProperty(propertyShape)
+    this.transformPropertyShapeToAstObjectTypeProperty({
+      objectType,
+      propertyShape,
+    })
       .ifLeft((error) => {
         logger.warn(
           "error transforming %s %s: %s",
@@ -331,19 +337,11 @@ export function transformNodeShapeToAstType(
         );
       })
       .ifRight((property) => {
-        objectType.properties.push(property);
+        objectType.addProperties(property);
       });
   }
 
-  objectType.properties.sort((left, right) => {
-    if (left.order < right.order) {
-      return -1;
-    }
-    if (left.order > right.order) {
-      return 1;
-    }
-    return 0;
-  });
+  objectType.sortProperties();
 
   return Either.of(objectType);
 }

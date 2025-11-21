@@ -4,11 +4,11 @@ import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import * as input from "../input/index.js";
 import { logger } from "../logger.js";
 import type { ShapeStack } from "./ShapeStack.js";
-import { flattenAstObjectCompositeTypeMemberTypes } from "./flattenAstObjectCompositeTypeMemberTypes.js";
+import { pickLiteral } from "./pickLiteral.js";
 
 /**
  * Try to convert a shape to a composite type (intersection or union) using some heuristics.
@@ -78,48 +78,50 @@ export function transformShapeToAstCompositeType(
     }
     invariant(memberTypeEithers.length > 0);
 
-    const memberObjectTypes: (
-      | ast.ObjectType
-      | ast.ObjectIntersectionType
-      | ast.ObjectUnionType
-    )[] = [];
-    let memberTypes: ast.Type[] = [];
+    const memberTypes: ast.Type[] = [];
     for (const memberTypeEither of memberTypeEithers) {
       if (memberTypeEither.isLeft()) {
         return memberTypeEither;
       }
       const memberType = memberTypeEither.unsafeCoerce();
       memberTypes.push(memberType);
-      switch (memberType.kind) {
-        case "ObjectType":
-        case "ObjectIntersectionType":
-        case "ObjectUnionType":
-          memberObjectTypes.push(memberType);
-          break;
-      }
     }
 
     if (memberTypes.length === 1) {
       return Either.of(memberTypes[0]);
     }
 
-    if (memberTypes.length === memberObjectTypes.length) {
-      // If all the member types are ast.ObjectType, flatten them.
-      const flattenedMemberObjectTypesEither =
-        flattenAstObjectCompositeTypeMemberTypes({
-          objectCompositeTypeKind:
-            compositeTypeKind === "IntersectionType"
-              ? "ObjectIntersectionType"
-              : "ObjectUnionType",
-          memberTypes: memberObjectTypes,
-          shape,
-        });
-      if (flattenedMemberObjectTypesEither.isLeft()) {
-        return flattenedMemberObjectTypesEither;
+    if (
+      memberTypes.every((memberType) => {
+        switch (memberType.kind) {
+          case "ObjectType":
+          case "ObjectIntersectionType":
+          case "ObjectUnionType":
+            return true;
+          default:
+            return false;
+        }
+      })
+    ) {
+      const compositeType = new (
+        compositeTypeKind === "IntersectionType"
+          ? ast.ObjectIntersectionType
+          : ast.ObjectUnionType
+      )({
+        comment: pickLiteral(shape.comments).map((literal) => literal.value),
+        export_: true,
+        label: pickLiteral(shape.labels).map((literal) => literal.value),
+        name: shape.shaclmateName,
+        shapeIdentifier: this.shapeIdentifier(shape),
+        tsFeatures: Maybe.empty(),
+      });
+
+      for (const memberType of memberTypes) {
+        const addMemberTypeResult = compositeType.addMemberType(memberType);
+        if (addMemberTypeResult.isLeft()) {
+          return addMemberTypeResult;
+        }
       }
-      const { memberTypes: flattenedMemberTypes } =
-        flattenedMemberObjectTypesEither.unsafeCoerce();
-      memberTypes = flattenedMemberTypes.concat();
     }
 
     return widenAstCompositeTypeToSingleType({
@@ -128,10 +130,15 @@ export function transformShapeToAstCompositeType(
       shapeStack,
     }).altLazy(() =>
       // True composite type
-      Either.of({
-        kind: compositeTypeKind,
-        memberTypes,
-      }),
+      Either.of(
+        compositeTypeKind === "IntersectionType"
+          ? new ast.IntersectionType({
+              memberTypes,
+            })
+          : new ast.UnionType({
+              memberTypes,
+            }),
+      ),
     );
   } finally {
     shapeStack.pop(shape);
@@ -204,15 +211,16 @@ function widenAstCompositeTypeToSingleType({
         ]),
     );
     invariant(nodeKinds.size > 0, "empty nodeKinds");
-    return Either.of({
-      defaultValue: defaultValue.filter(
-        (term) => term.termType === "NamedNode",
-      ) as Maybe<NamedNode>,
-      hasValues: [],
-      in_: [],
-      kind: "IdentifierType",
-      nodeKinds,
-    });
+    return Either.of(
+      new ast.IdentifierType({
+        defaultValue: defaultValue.filter(
+          (term) => term.termType === "NamedNode",
+        ) as Maybe<NamedNode>,
+        hasValues: [],
+        in_: [],
+        nodeKinds,
+      }),
+    );
   }
 
   if (
@@ -223,19 +231,21 @@ function widenAstCompositeTypeToSingleType({
     // Special case: all the member types are Literals without further constraints,
     // like dash:StringOrLangString
     // Don't try to widen range constraints.
-    return Either.of({
-      datatype: Maybe.empty(),
-      defaultValue: defaultValue.filter((term) => term.termType === "Literal"),
-      hasValues: [],
-      in_: [],
-      kind: "LiteralType",
-      languageIn: [],
-      maxExclusive: Maybe.empty(),
-      maxInclusive: Maybe.empty(),
-      minExclusive: Maybe.empty(),
-      minInclusive: Maybe.empty(),
-      nodeKinds: new Set<"Literal">(["Literal"]),
-    });
+    return Either.of(
+      new ast.LiteralType({
+        datatype: Maybe.empty(),
+        defaultValue: defaultValue.filter(
+          (term) => term.termType === "Literal",
+        ),
+        hasValues: [],
+        in_: [],
+        languageIn: [],
+        maxExclusive: Maybe.empty(),
+        maxInclusive: Maybe.empty(),
+        minExclusive: Maybe.empty(),
+        minInclusive: Maybe.empty(),
+      }),
+    );
   }
 
   if (
@@ -257,13 +267,14 @@ function widenAstCompositeTypeToSingleType({
       nodeKinds.has("Literal") &&
         (nodeKinds.has("BlankNode") || nodeKinds.has("NamedNode")),
     ); // The identifier-identifier and literal-literal cases should have been caught above
-    return Either.of({
-      defaultValue,
-      hasValues: [],
-      in_: [],
-      kind: "TermType",
-      nodeKinds,
-    });
+    return Either.of(
+      new ast.TermType({
+        defaultValue,
+        hasValues: [],
+        in_: [],
+        nodeKinds,
+      }),
+    );
   }
 
   return Left(

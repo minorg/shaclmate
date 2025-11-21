@@ -283,6 +283,7 @@ export class UnionMember2 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -568,6 +569,7 @@ export class UnionMember1 {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 
@@ -828,6 +830,7 @@ export class Nested {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
+
     return this._$identifier;
   }
 

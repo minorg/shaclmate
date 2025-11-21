@@ -202,7 +202,7 @@ export namespace LazyShaclProperty {
     }
 
     override useImports(parameters: {
-      features: Set<TsFeature>;
+      features: ReadonlySet<TsFeature>;
     }): readonly Import[] {
       return this.resolvedType.useImports(parameters).concat(Import.PURIFY);
     }

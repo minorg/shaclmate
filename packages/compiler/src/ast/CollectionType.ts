@@ -1,11 +1,10 @@
-import type { Maybe } from "purify-ts";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 
 /**
  * A collection of items of a single type. This is the parent of ListType and SetType.
  */
-export interface CollectionType<ItemTypeT extends Type = Type> {
-  readonly kind: "ListType" | "SetType";
+export abstract class CollectionType<ItemTypeT extends Type = Type> {
+  abstract readonly kind: "ListType" | "OptionType" | "SetType";
 
   /**
    * Collection item type.
@@ -17,5 +16,32 @@ export interface CollectionType<ItemTypeT extends Type = Type> {
   /**
    * The collection should be mutable in generated code.
    */
-  readonly mutable: Maybe<boolean>;
+  readonly mutable: boolean;
+
+  constructor({
+    itemType,
+    mutable,
+  }: {
+    itemType: ItemTypeT;
+    mutable: boolean;
+  }) {
+    this.itemType = itemType;
+    this.mutable = mutable;
+  }
+
+  equals(other: CollectionType<ItemTypeT>): boolean {
+    if (!Type.equals(this.itemType, other.itemType)) {
+      return false;
+    }
+
+    if (this.mutable !== other.mutable) {
+      return false;
+    }
+
+    return true;
+  }
+
+  toString(): string {
+    return `${this.kind}(itemType=${this.itemType})`;
+  }
 }

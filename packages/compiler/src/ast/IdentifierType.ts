@@ -1,12 +1,12 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import type { TermType } from "./TermType.js";
+import { AbstractTermType } from "./AbstractTermType.js";
 
 /**
  * A type corresponding to sh:nodeKind of a blank node or IRI, and not corresponding to a node shape.
  */
-export interface IdentifierType
-  extends TermType<NamedNode, BlankNode | NamedNode> {
-  readonly kind: "IdentifierType";
-  readonly nodeKinds: Set<IdentifierNodeKind>;
+export class IdentifierType extends AbstractTermType<
+  NamedNode,
+  BlankNode | NamedNode
+> {
+  override readonly kind = "IdentifierType";
 }

@@ -1,41 +1,31 @@
-import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import {
-  type ShapesGraph,
-  ShapesGraphToAstTransformer,
-  type ast,
-} from "@shaclmate/compiler";
-import N3 from "n3";
-import type { Either } from "purify-ts";
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import { ShapesGraphToAstTransformer, type ast } from "@shaclmate/compiler";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";
 
-function transform(shapesGraph: ShapesGraph): Either<Error, ast.Ast> {
-  return new ShapesGraphToAstTransformer({
-    iriPrefixMap: new PrefixMap(undefined, { factory: N3.DataFactory }),
-    shapesGraph,
-  }).transform();
-}
-
 describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   let ast: ast.Ast;
-  const shapesGraph = testData.kitchenSink.shapesGraph;
-  const astObjectTypesByIri: Record<string, ast.ObjectType> = {};
+  const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> = {};
 
   beforeAll(() => {
-    ast = transform(shapesGraph).unsafeCoerce();
+    ast = new ShapesGraphToAstTransformer(testData.kitchenSink)
+      .transform()
+      .unsafeCoerce();
     for (const astObjectType of ast.objectTypes) {
-      if (astObjectType.name.identifier.termType !== "NamedNode") {
+      if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
         continue;
       }
-      invariant(!astObjectTypesByIri[astObjectType.name.identifier.value]);
-      astObjectTypesByIri[astObjectType.name.identifier.value] = astObjectType;
+      invariant(
+        !astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value],
+      );
+      astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value] =
+        astObjectType;
     }
   });
 
   it("should transform kitchen object types", ({ expect }) => {
-    expect(shapesGraph.nodeShapes).toHaveLength(94);
-    expect(ast.objectTypes).toHaveLength(68);
+    expect(ast.objectTypes).toHaveLength(69);
   });
 
   it("should transform object intersection types", ({ expect }) => {
@@ -43,7 +33,7 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   });
 
   it("should transform object union types", ({ expect }) => {
-    expect(ast.objectUnionTypes).toHaveLength(8);
+    expect(ast.objectUnionTypes).toHaveLength(9);
   });
 
   for (const [classIri, recursivePropertyIri] of [
@@ -67,10 +57,10 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
     it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
       expect,
     }) => {
-      const astObjectType = astObjectTypesByIri[classIri];
+      const astObjectType = astObjectTypesByShapeIdentifier[classIri];
       expect(astObjectType).toBeDefined();
       const recursiveProperty = astObjectType.properties.find(
-        (property) => property.path.iri.value === recursivePropertyIri,
+        (property) => property.path.value === recursivePropertyIri,
       );
       expect(recursiveProperty).toBeDefined();
       expect(recursiveProperty!.recursive).toStrictEqual(true);

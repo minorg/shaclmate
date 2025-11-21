@@ -1,25 +1,13 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import type { NodeKind } from "@shaclmate/shacl-ast";
-import type { Maybe } from "purify-ts";
+import type { Literal, NamedNode } from "@rdfjs/types";
+import type { BlankNode } from "n3";
+import { AbstractTermType } from "./AbstractTermType.js";
 
 /**
- * Parent interface of term types in the ASTs (e.g., identifiers, identifiers).
- *
- * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
- * RuntimeTermT is the type of values at runtime.
- *
- * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:defaultValue et al.
+ * Term type that is neither an IdentifierType nor a LiteralType. For example, a term type with nodeKinds = Literal | NamedNode.
  */
-export interface TermType<
-  ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
-  _RuntimeTermT extends BlankNode | Literal | NamedNode =
-    | BlankNode
-    | Literal
-    | NamedNode,
+export class TermType extends AbstractTermType<
+  Literal | NamedNode,
+  BlankNode | Literal | NamedNode
 > {
-  readonly defaultValue: Maybe<ConstantTermT>;
-  readonly hasValues: readonly ConstantTermT[];
-  readonly in_: readonly ConstantTermT[];
-  readonly kind: "IdentifierType" | "LiteralType" | "TermType";
-  readonly nodeKinds: Set<NodeKind>;
+  readonly kind = "TermType";
 }

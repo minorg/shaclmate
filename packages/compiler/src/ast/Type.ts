@@ -1,11 +1,8 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { Resource } from "rdfjs-resource";
-import { invariant } from "ts-invariant";
+import type {} from "@rdfjs/types";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
-import { Name } from "./Name.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -14,13 +11,6 @@ import type { PlaceholderType } from "./PlaceholderType.js";
 import type { SetType } from "./SetType.js";
 import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
-import {
-  arrayEquals,
-  maybeEquals,
-  setEquals,
-  strictEquals,
-  termEquals,
-} from "./equals.js";
 
 export type Type =
   | IdentifierType
@@ -33,12 +23,7 @@ export type Type =
   | OptionType
   | PlaceholderType
   | SetType
-  | (Omit<
-      TermType<Literal | NamedNode, BlankNode | Literal | NamedNode>,
-      "kind"
-    > & {
-      readonly kind: "TermType";
-    })
+  | TermType
   | UnionType;
 
 export namespace Type {
@@ -49,140 +34,29 @@ export namespace Type {
 
     switch (left.kind) {
       case "IdentifierType":
-      case "LiteralType":
-      case "TermType": {
-        invariant(
-          right.kind === "IdentifierType" ||
-            right.kind === "LiteralType" ||
-            right.kind === "TermType",
-        );
-
-        if (!maybeEquals(left.defaultValue, right.defaultValue, termEquals)) {
-          return false;
-        }
-
-        if (!arrayEquals(left.hasValues, right.hasValues, termEquals)) {
-          return false;
-        }
-
-        if (!arrayEquals(left.in_, right.in_, termEquals)) {
-          return false;
-        }
-
-        if (!setEquals(left.nodeKinds, right.nodeKinds, strictEquals)) {
-          return false;
-        }
-
-        return true;
-      }
+        return left.equals(right as IdentifierType);
       case "IntersectionType":
-      case "UnionType": {
-        invariant(
-          right.kind === "IntersectionType" || right.kind === "UnionType",
-        );
-        return arrayEquals(left.memberTypes, right.memberTypes, Type.equals);
-      }
-      case "ListType": {
-        invariant(right.kind === "ListType");
-
-        if (!maybeEquals(left.comment, right.comment, strictEquals)) {
-          return false;
-        }
-
-        if (
-          !maybeEquals(
-            left.identifierMintingStrategy,
-            right.identifierMintingStrategy,
-            strictEquals,
-          )
-        ) {
-          return false;
-        }
-
-        if (left.identifierNodeKind !== right.identifierNodeKind) {
-          return false;
-        }
-
-        if (!equals(left.itemType, right.itemType)) {
-          return false;
-        }
-
-        if (!maybeEquals(left.label, right.label, strictEquals)) {
-          return false;
-        }
-
-        if (!maybeEquals(left.mutable, right.mutable, strictEquals)) {
-          return false;
-        }
-
-        if (!Name.equals(left.name, right.name)) {
-          return false;
-        }
-
-        return true;
-      }
-
-      case "ObjectIntersectionType":
-      case "ObjectType":
-      case "ObjectUnionType": {
-        invariant(
-          right.kind === "ObjectIntersectionType" ||
-            right.kind === "ObjectType" ||
-            right.kind === "ObjectUnionType",
-        );
-
-        // Don't recurse
-        return Name.equals(left.name, right.name);
-      }
-
-      case "OptionType": {
-        invariant(right.kind === "OptionType");
-        return Type.equals(left.itemType, right.itemType);
-      }
-
-      case "PlaceholderType":
-        return true;
-
-      case "SetType": {
-        invariant(right.kind === "SetType");
-
-        if (!Type.equals(left.itemType, right.itemType)) {
-          return false;
-        }
-
-        if (left.minCount !== right.minCount) {
-          return false;
-        }
-
-        if (!maybeEquals(left.mutable, right.mutable, strictEquals)) {
-          return false;
-        }
-
-        return true;
-      }
-    }
-  }
-
-  // biome-ignore lint/suspicious/noShadowRestrictedNames: <explanation>
-  export function toString(type: Type): string {
-    switch (type.kind) {
+        return left.equals(right as IntersectionType);
       case "LiteralType":
-      case "PlaceholderType":
-        return `${type.kind}()`;
-      case "IntersectionType":
-      case "UnionType":
-        return `${type.kind}(memberTypes=[${type.memberTypes.map(Type.toString).join(", ")}])`;
-      case "IdentifierType":
-      case "TermType":
-        return `${type.kind}(nodeKinds=${[...type.nodeKinds].join(" | ")})`;
-      case "ObjectIntersectionType":
-      case "ObjectType":
-      case "ObjectUnionType":
-        return `${type.kind}(identifier=${Resource.Identifier.toString(type.name.identifier)})`;
+        return left.equals(right as LiteralType);
       case "ListType":
+        return left.equals(right as ListType);
+      case "ObjectIntersectionType":
+        return left.equals(right as ObjectIntersectionType);
+      case "ObjectType":
+        return left.equals(right as ObjectType);
+      case "ObjectUnionType":
+        return left.equals(right as ObjectUnionType);
       case "OptionType":
+        return left.equals(right as OptionType);
+      case "PlaceholderType":
+        return left.equals(right as PlaceholderType);
+      case "TermType":
+        return left.equals(right as TermType);
+      case "UnionType":
+        return left.equals(right as UnionType);
       case "SetType":
-        return `${type.kind}(itemType=${toString(type.itemType)})`;
+        return left.equals(right as SetType);
     }
   }
 }

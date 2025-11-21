@@ -137,7 +137,7 @@ export abstract class Type {
    * The generator deduplicates snippet declarations across all types before adding them to the source.
    */
   abstract snippetDeclarations(parameters: {
-    features: Set<TsFeature>;
+    features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
   }): readonly string[];
 
@@ -297,7 +297,7 @@ export abstract class Type {
    * Imports necessary to use this type.
    */
   abstract useImports(parameters: {
-    features: Set<TsFeature>;
+    features: ReadonlySet<TsFeature>;
   }): readonly Import[];
 }
 

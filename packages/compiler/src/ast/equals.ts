@@ -39,8 +39,8 @@ export function maybeEquals<T>(
 }
 
 export function setEquals<T>(
-  left: Set<T>,
-  right: Set<T>,
+  left: ReadonlySet<T>,
+  right: ReadonlySet<T>,
   equalator: (left: T, right: T) => boolean,
 ): boolean {
   if (left.size !== right.size) {
