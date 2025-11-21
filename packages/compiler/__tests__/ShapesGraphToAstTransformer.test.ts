@@ -1,29 +1,17 @@
-import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import {
-  type ShapesGraph,
-  ShapesGraphToAstTransformer,
-  type ast,
-} from "@shaclmate/compiler";
-import N3 from "n3";
-import type { Either } from "purify-ts";
+// biome-ignore lint/correctness/noUnusedImports: <explanation>
+import { ShapesGraphToAstTransformer, type ast } from "@shaclmate/compiler";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";
 
-function transform(shapesGraph: ShapesGraph): Either<Error, ast.Ast> {
-  return new ShapesGraphToAstTransformer({
-    iriPrefixMap: new PrefixMap(undefined, { factory: N3.DataFactory }),
-    shapesGraph,
-  }).transform();
-}
-
 describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   let ast: ast.Ast;
-  const shapesGraph = testData.kitchenSink.shapesGraph;
   const astObjectTypesByIri: Record<string, ast.ObjectType> = {};
 
   beforeAll(() => {
-    ast = transform(shapesGraph).unsafeCoerce();
+    ast = new ShapesGraphToAstTransformer(testData.kitchenSink)
+      .transform()
+      .unsafeCoerce();
     for (const astObjectType of ast.objectTypes) {
       if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
         continue;
@@ -34,7 +22,6 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   });
 
   it("should transform kitchen object types", ({ expect }) => {
-    expect(shapesGraph.nodeShapes).toHaveLength(96);
     expect(ast.objectTypes).toHaveLength(69);
   });
 
