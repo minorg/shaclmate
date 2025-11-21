@@ -38,7 +38,9 @@ function synthesizePartialAstObjectType({
     identifierMintingStrategy: Maybe.empty(),
     label: Maybe.empty(),
     name: Maybe.of(syntheticName),
-    shapeIdentifier: DataFactory.blankNode(),
+    shapeIdentifier: DataFactory.namedNode(
+      `urn:shaclmate:synthetic:${syntheticName}`,
+    ),
     synthetic: true,
     toRdfTypes: [],
     tsFeatures,
