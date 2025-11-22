@@ -72,6 +72,7 @@ const testData = {
           $identifier: N3.DataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
+          interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
           interfaceUnionMember1Property: `string ${i}`,
           $type: "InterfaceUnionMember1",
         } satisfies kitchenSink.InterfaceUnion;
@@ -80,6 +81,7 @@ const testData = {
           $identifier: N3.DataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
+          interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
           interfaceUnionMember2aProperty: `string ${i}`,
           $type: "InterfaceUnionMember2a",
         } satisfies kitchenSink.InterfaceUnion;
@@ -88,6 +90,7 @@ const testData = {
           $identifier: N3.DataFactory.namedNode(
             `http://example.com/interfaceUnion${i}`,
           ),
+          interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
           interfaceUnionMember2bProperty: `string ${i}`,
           $type: "InterfaceUnionMember2b",
         } satisfies kitchenSink.InterfaceUnion;

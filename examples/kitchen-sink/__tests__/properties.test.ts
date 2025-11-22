@@ -54,4 +54,15 @@ describe("properties", () => {
         .identifier.value,
     ).toStrictEqual("http://example.com/classUnionMemberCommonParentProperty");
   });
+
+  it("interface union properties should have a common parent property", ({
+    expect,
+  }) => {
+    expect(
+      kitchenSink.InterfaceUnion.$properties
+        .interfaceUnionMemberCommonParentProperty.identifier.value,
+    ).toStrictEqual(
+      "http://example.com/interfaceUnionMemberCommonParentProperty",
+    );
+  });
 });

@@ -447,7 +447,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InterfaceUnionMember1
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -465,7 +466,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InterfaceUnionMember2a
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -475,12 +477,24 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InterfaceUnionMember2b
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :interfaceUnionMember2bProperty
+    ] .
+
+:InterfaceUnionMemberCommonParent
+    shaclmate:abstract true ;
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :interfaceUnionMemberCommonParentProperty
     ] .
 
 :IriIdentifierClass
@@ -642,6 +656,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassToResolvedClassUnionProperty
+    ], [
         shaclmate:partial :PartialClassUnion ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
@@ -682,17 +707,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:partial :PartialClass ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassToResolvedClassUnionProperty
     ] .
 
 :LazyPropertiesInterface

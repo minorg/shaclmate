@@ -241,6 +241,7 @@ export const harnesses = {
   interfaceUnionMember1: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
       $identifier,
+      interfaceUnionMemberCommonParentProperty: "common parent",
       interfaceUnionMember1Property: "Test1",
       $type: "InterfaceUnionMember1",
     },
@@ -249,6 +250,7 @@ export const harnesses = {
   interfaceUnionMember2a: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
       $identifier,
+      interfaceUnionMemberCommonParentProperty: "common parent",
       interfaceUnionMember2aProperty: "Test2",
       $type: "InterfaceUnionMember2a",
     },
