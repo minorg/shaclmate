@@ -97,6 +97,10 @@ export class MemberType {
     return this.delegate.name;
   }
 
+  get rootAncestorObjectType() {
+    return this.delegate.rootAncestorObjectType;
+  }
+
   get staticModuleName() {
     return this.delegate.staticModuleName;
   }
@@ -119,6 +123,10 @@ export class MemberType {
     parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
   ): readonly string[] {
     return this.delegate.snippetDeclarations(parameters);
+  }
+
+  toObjectType(): ObjectType {
+    return this.delegate;
   }
 
   useImports() {

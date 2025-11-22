@@ -2,6 +2,7 @@ export * from "./equalsFunctionDeclaration.js";
 export * from "./graphqlTypeVariableStatement.js";
 export * from "./hashFunctionDeclaration.js";
 export * from "./identifierTypeDeclarations.js";
+export * from "./isTypeFunctionDeclaration.js";
 export * from "./jsonDeclarations.js";
 export * from "./MemberType.js";
 export * from "./propertiesVariableStatement.js";

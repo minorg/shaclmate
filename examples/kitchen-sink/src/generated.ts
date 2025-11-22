@@ -49893,6 +49893,18 @@ export namespace ClassUnion {
         throw new Error("unrecognized type");
     }
   }
+
+  export function isClassUnion(
+    object: ClassUnionMemberCommonParent,
+  ): object is ClassUnion {
+    switch (object.$type) {
+      case "ClassUnionMember1":
+      case "ClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape that unions a node shape and another union of node shapes. Generated code will usually flatten these.
@@ -50452,6 +50464,18 @@ export namespace InterfaceUnion {
       default:
         _interfaceUnion satisfies never;
         throw new Error("unrecognized type");
+    }
+  }
+
+  export function isInterfaceUnion(
+    object: InterfaceUnionMemberCommonParent,
+  ): object is InterfaceUnion {
+    switch (object.$type) {
+      case "InterfaceUnionMember1":
+      case "InterfaceUnionMember2":
+        return true;
+      default:
+        return false;
     }
   }
 }
