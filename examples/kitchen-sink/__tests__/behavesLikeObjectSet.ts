@@ -23,14 +23,16 @@ const testData = {
           $identifier: N3.DataFactory.namedNode(
             `http://example.com/classClassUnion${i}`,
           ),
-          classUnionMember1Property: `string ${i}`,
+          classUnionMemberCommonParentProperty: `common parent ${i}`,
+          classUnionMember1Property: `member ${i}`,
         });
       case 1:
         return new kitchenSink.ClassUnionMember2({
           $identifier: N3.DataFactory.namedNode(
             `http://example.com/classClassUnion${i}`,
           ),
-          classUnionMember2Property: `string ${i}`,
+          classUnionMemberCommonParentProperty: `common parent ${i}`,
+          classUnionMember2Property: `member ${i}`,
         });
       default:
         throw new RangeError(i.toString());

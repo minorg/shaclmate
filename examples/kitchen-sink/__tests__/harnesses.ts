@@ -36,6 +36,7 @@ export const harnesses = {
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,
+      classUnionMemberCommonParentProperty: "test common parent",
       classUnionMember1Property: "test",
     }),
     kitchenSink.ClassUnion,
@@ -43,6 +44,7 @@ export const harnesses = {
   classUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
       $identifier,
+      classUnionMemberCommonParentProperty: "test common parent",
       classUnionMember2Property: "test",
     }),
     kitchenSink.ClassUnion,
@@ -164,14 +166,16 @@ export const harnesses = {
   flattenClassUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,
-      classUnionMember1Property: "test",
+      classUnionMemberCommonParentProperty: "test common parent",
+      classUnionMember1Property: "test member 1",
     }),
     kitchenSink.FlattenClassUnion,
   ),
   flattenCassUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
       $identifier,
-      classUnionMember2Property: "test",
+      classUnionMemberCommonParentProperty: "test common parent",
+      classUnionMember2Property: "test member 2",
     }),
     kitchenSink.FlattenClassUnion,
   ),

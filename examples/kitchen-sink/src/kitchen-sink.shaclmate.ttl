@@ -84,6 +84,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :ClassUnionMember1
     a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -93,11 +94,22 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :ClassUnionMember2
     a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :classUnionMember2Property
+    ] .
+
+:ClassUnionMemberCommonParent
+    shaclmate:abstract true ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classUnionMemberCommonParentProperty
     ] .
 
 :ConcreteChildClass
@@ -630,32 +642,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalLazyToResolvedClassUnionProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :optionalPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :setPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassToResolvedClassUnionProperty
-    ], [
         shaclmate:partial :PartialClassUnion ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
@@ -681,6 +667,32 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedIriIdentifierClass ;
         sh:path :optionalLazyToResolvedIriIdentifierClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalLazyToResolvedClassUnionProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :optionalPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :setPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassToResolvedClassUnionProperty
     ] .
 
 :LazyPropertiesInterface
