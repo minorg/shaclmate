@@ -4,21 +4,26 @@ import { harnesses } from "./harnesses.js";
 
 describe("isType", () => {
   it("should work on a class hierarchy", ({ expect }) => {
+    // Cast the concrete child class to the root class to ensure the isType function accepts the root of the hierarchy.
+
     expect(
       kitchenSink.ConcreteChildClass.isConcreteChildClass(
-        harnesses.concreteChildClass.instance,
+        harnesses.concreteChildClass
+          .instance as kitchenSink.AbstractBaseClassWithProperties,
       ),
     ).toStrictEqual(true);
 
     expect(
       kitchenSink.ConcreteParentClassStatic.isConcreteParentClass(
-        harnesses.concreteChildClass.instance,
+        harnesses.concreteChildClass
+          .instance as kitchenSink.AbstractBaseClassWithProperties,
       ),
     ).toStrictEqual(true);
 
     expect(
       kitchenSink.AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-        harnesses.concreteChildClass.instance,
+        harnesses.concreteChildClass
+          .instance as kitchenSink.AbstractBaseClassWithProperties,
       ),
     ).toStrictEqual(true);
 
@@ -31,21 +36,26 @@ describe("isType", () => {
   });
 
   it("should work on an interface hierarchy", ({ expect }) => {
+    // Cast the concrete child interface to the root interface to ensure the isType function accepts the root of the hierarchy.
+
     expect(
       kitchenSink.ConcreteChildInterface.isConcreteChildInterface(
-        harnesses.concreteChildInterface.instance,
+        harnesses.concreteChildInterface
+          .instance as kitchenSink.BaseInterfaceWithProperties,
       ),
     ).toStrictEqual(true);
 
     expect(
       kitchenSink.ConcreteParentInterfaceStatic.isConcreteParentInterface(
-        harnesses.concreteChildInterface.instance,
+        harnesses.concreteChildInterface
+          .instance as kitchenSink.BaseInterfaceWithProperties,
       ),
     ).toStrictEqual(true);
 
     expect(
       kitchenSink.BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        harnesses.concreteChildInterface.instance,
+        harnesses.concreteChildInterface
+          .instance as kitchenSink.BaseInterfaceWithProperties,
       ),
     ).toStrictEqual(true);
 
