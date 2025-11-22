@@ -1,3 +1,4 @@
+import type {} from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import {
   StructureKind,
@@ -17,35 +18,41 @@ export function propertiesVariableStatement(
   const commonPropertiesByName: Record<
     string,
     {
-      count: number;
+      memberTypesWithProperty: boolean[];
       path: ObjectType.ShaclProperty<Type>["path"];
     }
   > = {};
 
-  for (const memberType of this.memberTypes) {
-    for (const memberTypeProperty of memberType.properties) {
+  this.memberTypes.forEach((memberType, memberTypeI) => {
+    for (const memberTypeProperty of memberType.ownProperties.concat(
+      memberType.ancestorObjectTypes.flatMap(
+        (ancestorObjectType) => ancestorObjectType.ownProperties,
+      ),
+    )) {
       if (!(memberTypeProperty instanceof ObjectType.ShaclProperty)) {
         continue;
       }
       let commonProperty = commonPropertiesByName[memberTypeProperty.name];
       if (commonProperty) {
         if (commonProperty.path.equals(memberTypeProperty.path)) {
-          commonProperty.count++;
+          commonProperty.memberTypesWithProperty[memberTypeI] = true;
         }
       } else {
         commonPropertiesByName[memberTypeProperty.name] = commonProperty = {
-          count: 1,
+          memberTypesWithProperty: new Array<boolean>(
+            this.memberTypes.length,
+          ).fill(false),
           path: memberTypeProperty.path,
         };
+        commonProperty.memberTypesWithProperty[memberTypeI] = true;
       }
     }
-  }
+  });
 
   const propertiesObject: string[] = [];
-  for (const [name, { count, path }] of Object.entries(
-    commonPropertiesByName,
-  )) {
-    if (count !== this.memberTypes.length) {
+  for (const name of Object.keys(commonPropertiesByName).toSorted()) {
+    const { memberTypesWithProperty, path } = commonPropertiesByName[name];
+    if (!memberTypesWithProperty.every((value) => value)) {
       continue;
     }
     const propertyObject: Record<string, string> = {};

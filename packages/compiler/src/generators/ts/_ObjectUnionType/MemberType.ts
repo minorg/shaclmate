@@ -14,6 +14,10 @@ export class MemberType {
     this.universe = universe;
   }
 
+  get ancestorObjectTypes() {
+    return this.delegate.ancestorObjectTypes;
+  }
+
   get declarationType() {
     return this.delegate.declarationType;
   }
@@ -75,6 +79,10 @@ export class MemberType {
 
   get jsonName() {
     return this.delegate.jsonName;
+  }
+
+  get ownProperties() {
+    return this.delegate.ownProperties;
   }
 
   get mutable() {
