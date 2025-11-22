@@ -39,10 +39,19 @@ describe("properties", () => {
     ).toStrictEqual("http://example.com/concreteParentInterfaceProperty");
   });
 
-  it("class properties should have an ancestor property", ({ expect }) => {
+  it("interface properties should have an ancestor property", ({ expect }) => {
     expect(
       kitchenSink.ConcreteChildInterface.$properties
         .baseInterfaceWithPropertiesProperty.identifier.value,
     ).toStrictEqual("http://example.com/baseInterfaceWithPropertiesProperty");
+  });
+
+  it("class union properties should have a common parent property", ({
+    expect,
+  }) => {
+    expect(
+      kitchenSink.ClassUnion.$properties.classUnionMemberCommonParentProperty
+        .identifier.value,
+    ).toStrictEqual("http://example.com/classUnionMemberCommonParentProperty");
   });
 });
