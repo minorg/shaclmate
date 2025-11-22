@@ -28452,10 +28452,7 @@ export namespace IriIdentifierClass {
 }
 export interface InterfaceUnionMemberCommonParent {
   readonly $identifier: InterfaceUnionMemberCommonParentStatic.$Identifier;
-  readonly $type:
-    | "InterfaceUnionMember1"
-    | "InterfaceUnionMember2a"
-    | "InterfaceUnionMember2b";
+  readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
   readonly interfaceUnionMemberCommonParentProperty: string;
 }
 
@@ -28568,10 +28565,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type:
-      | "InterfaceUnionMember1"
-      | "InterfaceUnionMember2a"
-      | "InterfaceUnionMember2b";
+    readonly $type: "InterfaceUnionMember1" | "InterfaceUnionMember2";
     readonly interfaceUnionMemberCommonParentProperty: string;
   };
 
@@ -28612,11 +28606,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.enum([
-        "InterfaceUnionMember1",
-        "InterfaceUnionMember2a",
-        "InterfaceUnionMember2b",
-      ]),
+      $type: zod.enum(["InterfaceUnionMember1", "InterfaceUnionMember2"]),
       interfaceUnionMemberCommonParentProperty: zod.string(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -28948,21 +28938,21 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     return resource;
   }
 }
-export interface InterfaceUnionMember2b
+export interface InterfaceUnionMember2
   extends InterfaceUnionMemberCommonParent {
-  readonly $identifier: InterfaceUnionMember2b.$Identifier;
-  readonly $type: "InterfaceUnionMember2b";
-  readonly interfaceUnionMember2bProperty: string;
+  readonly $identifier: InterfaceUnionMember2.$Identifier;
+  readonly $type: "InterfaceUnionMember2";
+  readonly interfaceUnionMember2Property: string;
 }
 
-export namespace InterfaceUnionMember2b {
+export namespace InterfaceUnionMember2 {
   export function $create(
     parameters: {
       readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly interfaceUnionMember2bProperty: string;
+      readonly interfaceUnionMember2Property: string;
     } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
-  ): InterfaceUnionMember2b {
-    let $identifier: InterfaceUnionMember2b.$Identifier;
+  ): InterfaceUnionMember2 {
+    let $identifier: InterfaceUnionMember2.$Identifier;
     if (typeof parameters.$identifier === "object") {
       $identifier = parameters.$identifier;
     } else if (typeof parameters.$identifier === "string") {
@@ -28973,30 +28963,30 @@ export namespace InterfaceUnionMember2b {
       $identifier = parameters.$identifier satisfies never;
     }
 
-    const $type = "InterfaceUnionMember2b" as const;
-    const interfaceUnionMember2bProperty =
-      parameters.interfaceUnionMember2bProperty;
+    const $type = "InterfaceUnionMember2" as const;
+    const interfaceUnionMember2Property =
+      parameters.interfaceUnionMember2Property;
     return {
       ...InterfaceUnionMemberCommonParentStatic.$create(parameters),
       $identifier,
       $type,
-      interfaceUnionMember2bProperty,
+      interfaceUnionMember2Property,
     };
   }
 
   export function $equals(
-    left: InterfaceUnionMember2b,
-    right: InterfaceUnionMember2b,
+    left: InterfaceUnionMember2,
+    right: InterfaceUnionMember2,
   ): $EqualsResult {
     return InterfaceUnionMemberCommonParentStatic.$equals(left, right).chain(
       () =>
         $strictEquals(
-          left.interfaceUnionMember2bProperty,
-          right.interfaceUnionMember2bProperty,
+          left.interfaceUnionMember2Property,
+          right.interfaceUnionMember2Property,
         ).mapLeft((propertyValuesUnequal) => ({
           left: left,
           right: right,
-          propertyName: "interfaceUnionMember2bProperty",
+          propertyName: "interfaceUnionMember2Property",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -29005,7 +28995,7 @@ export namespace InterfaceUnionMember2b {
 
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionMember2b> {
+  ): purify.Either<zod.ZodError, InterfaceUnionMember2> {
     return $propertiesFromJson(json);
   }
 
@@ -29017,7 +29007,7 @@ export namespace InterfaceUnionMember2b {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, InterfaceUnionMember2b> {
+  ): purify.Either<Error, InterfaceUnionMember2> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -29028,7 +29018,7 @@ export namespace InterfaceUnionMember2b {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return InterfaceUnionMember2b.$propertiesFromRdf({
+    return InterfaceUnionMember2.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
@@ -29038,21 +29028,15 @@ export namespace InterfaceUnionMember2b {
   }
 
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember2b",
+    "http://example.com/InterfaceUnionMember2",
   );
 
   export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(
-    _interfaceUnionMember2b: InterfaceUnionMember2b,
-    _hasher: HasherT,
-  ): HasherT {
-    InterfaceUnionMember2b.$hashShaclProperties(
-      _interfaceUnionMember2b,
-      _hasher,
-    );
+  >(_interfaceUnionMember2: InterfaceUnionMember2, _hasher: HasherT): HasherT {
+    InterfaceUnionMember2.$hashShaclProperties(_interfaceUnionMember2, _hasher);
     return _hasher;
   }
 
@@ -29060,22 +29044,19 @@ export namespace InterfaceUnionMember2b {
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
-  >(
-    _interfaceUnionMember2b: InterfaceUnionMember2b,
-    _hasher: HasherT,
-  ): HasherT {
+  >(_interfaceUnionMember2: InterfaceUnionMember2, _hasher: HasherT): HasherT {
     InterfaceUnionMemberCommonParentStatic.$hashShaclProperties(
-      _interfaceUnionMember2b,
+      _interfaceUnionMember2,
       _hasher,
     );
-    _hasher.update(_interfaceUnionMember2b.interfaceUnionMember2bProperty);
+    _hasher.update(_interfaceUnionMember2.interfaceUnionMember2Property);
     return _hasher;
   }
 
   export type $Identifier = InterfaceUnionMemberCommonParentStatic.$Identifier;
   export const $Identifier = InterfaceUnionMemberCommonParentStatic.$Identifier;
   export type $Json = {
-    readonly interfaceUnionMember2bProperty: string;
+    readonly interfaceUnionMember2Property: string;
   } & InterfaceUnionMemberCommonParentStatic.$Json;
 
   export function $jsonSchema() {
@@ -29088,11 +29069,11 @@ export namespace InterfaceUnionMember2b {
       elements: [
         InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
         {
-          scope: `${scopePrefix}/properties/interfaceUnionMember2bProperty`,
+          scope: `${scopePrefix}/properties/interfaceUnionMember2Property`,
           type: "Control",
         },
       ],
-      label: "InterfaceUnionMember2b",
+      label: "InterfaceUnionMember2",
       type: "Group",
     };
   }
@@ -29101,17 +29082,17 @@ export namespace InterfaceUnionMember2b {
     return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
       zod.object({
         "@id": zod.string().min(1),
-        $type: zod.literal("InterfaceUnionMember2b"),
-        interfaceUnionMember2bProperty: zod.string(),
+        $type: zod.literal("InterfaceUnionMember2"),
+        interfaceUnionMember2Property: zod.string(),
       }),
     ) satisfies zod.ZodType<$Json>;
   }
 
   export const $properties = {
     ...InterfaceUnionMemberCommonParentStatic.$properties,
-    interfaceUnionMember2bProperty: {
+    interfaceUnionMember2Property: {
       identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMember2bProperty",
+        "http://example.com/interfaceUnionMember2Property",
       ),
     },
   };
@@ -29120,8 +29101,8 @@ export namespace InterfaceUnionMember2b {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "InterfaceUnionMember2b";
-      interfaceUnionMember2bProperty: string;
+      $type: "InterfaceUnionMember2";
+      interfaceUnionMember2Property: string;
     } & $UnwrapR<
       ReturnType<
         typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
@@ -29144,14 +29125,14 @@ export namespace InterfaceUnionMember2b {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const $type = "InterfaceUnionMember2b" as const;
-    const interfaceUnionMember2bProperty =
-      $jsonObject["interfaceUnionMember2bProperty"];
+    const $type = "InterfaceUnionMember2" as const;
+    const interfaceUnionMember2Property =
+      $jsonObject["interfaceUnionMember2Property"];
     return purify.Either.of({
       ...$super0,
       $identifier,
       $type,
-      interfaceUnionMember2bProperty,
+      interfaceUnionMember2Property,
     });
   }
 
@@ -29172,8 +29153,8 @@ export namespace InterfaceUnionMember2b {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "InterfaceUnionMember2b";
-      interfaceUnionMember2bProperty: string;
+      $type: "InterfaceUnionMember2";
+      interfaceUnionMember2Property: string;
     } & $UnwrapR<
       ReturnType<
         typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromRdf
@@ -29200,18 +29181,18 @@ export namespace InterfaceUnionMember2b {
         .chain((actualRdfType) => {
           // Check the expected type and its known subtypes
           switch (actualRdfType.value) {
-            case "http://example.com/InterfaceUnionMember2b":
+            case "http://example.com/InterfaceUnionMember2":
               return purify.Either.of(true);
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(InterfaceUnionMember2b.$fromRdfType)) {
+          if ($resource.isInstanceOf(InterfaceUnionMember2.$fromRdfType)) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2b)`,
+              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
             ),
           );
         });
@@ -29220,16 +29201,15 @@ export namespace InterfaceUnionMember2b {
       }
     }
 
-    const $identifier: InterfaceUnionMember2b.$Identifier =
-      $resource.identifier;
-    const $type = "InterfaceUnionMember2b" as const;
-    const _interfaceUnionMember2bPropertyEither: purify.Either<Error, string> =
+    const $identifier: InterfaceUnionMember2.$Identifier = $resource.identifier;
+    const $type = "InterfaceUnionMember2" as const;
+    const _interfaceUnionMember2PropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
       >(
         $resource.values(
-          $properties.interfaceUnionMember2bProperty["identifier"],
+          $properties.interfaceUnionMember2Property["identifier"],
           { unique: true },
         ),
       )
@@ -29277,8 +29257,8 @@ export namespace InterfaceUnionMember2b {
                 new rdfjsResource.Resource.Value({
                   object: literalValue,
                   predicate:
-                    InterfaceUnionMember2b.$properties
-                      .interfaceUnionMember2bProperty["identifier"],
+                    InterfaceUnionMember2.$properties
+                      .interfaceUnionMember2Property["identifier"],
                   subject: $resource,
                 }),
             ),
@@ -29286,17 +29266,17 @@ export namespace InterfaceUnionMember2b {
         })
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
-    if (_interfaceUnionMember2bPropertyEither.isLeft()) {
-      return _interfaceUnionMember2bPropertyEither;
+    if (_interfaceUnionMember2PropertyEither.isLeft()) {
+      return _interfaceUnionMember2PropertyEither;
     }
 
-    const interfaceUnionMember2bProperty =
-      _interfaceUnionMember2bPropertyEither.unsafeCoerce();
+    const interfaceUnionMember2Property =
+      _interfaceUnionMember2PropertyEither.unsafeCoerce();
     return purify.Either.of({
       ...$super0,
       $identifier,
       $type,
-      interfaceUnionMember2bProperty,
+      interfaceUnionMember2Property,
     });
   }
 
@@ -29316,14 +29296,14 @@ export namespace InterfaceUnionMember2b {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionMember2b.$sparqlConstructTemplateTriples({
+        InterfaceUnionMember2.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2b.$sparqlWherePatterns({
+        InterfaceUnionMember2.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -29342,7 +29322,7 @@ export namespace InterfaceUnionMember2b {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionMember2b.$sparqlConstructQuery(parameters),
+      InterfaceUnionMember2.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -29352,13 +29332,13 @@ export namespace InterfaceUnionMember2b {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2b");
+      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "interfaceUnionMember2b");
+        : "interfaceUnionMember2");
     triples.push(
       ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples(
         { ignoreRdfType: true, subject, variablePrefix },
@@ -29381,10 +29361,10 @@ export namespace InterfaceUnionMember2b {
 
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}InterfaceUnionMember2bProperty`,
+        `${variablePrefix}InterfaceUnionMember2Property`,
       ),
       predicate:
-        InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
+        InterfaceUnionMember2.$properties.interfaceUnionMember2Property[
           "identifier"
         ],
       subject,
@@ -29401,12 +29381,12 @@ export namespace InterfaceUnionMember2b {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2b");
+      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "interfaceUnionMember2b");
+        : "interfaceUnionMember2");
     for (const pattern of InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns(
       { ignoreRdfType: true, subject, variablePrefix },
     )) {
@@ -29421,7 +29401,7 @@ export namespace InterfaceUnionMember2b {
     if (!parameters?.ignoreRdfType) {
       requiredPatterns.push(
         $sparqlInstancesOfPattern({
-          rdfType: InterfaceUnionMember2b.$fromRdfType,
+          rdfType: InterfaceUnionMember2.$fromRdfType,
           subject,
         }),
         {
@@ -29461,10 +29441,10 @@ export namespace InterfaceUnionMember2b {
         triples: [
           {
             object: dataFactory.variable!(
-              `${variablePrefix}InterfaceUnionMember2bProperty`,
+              `${variablePrefix}InterfaceUnionMember2Property`,
             ),
             predicate:
-              InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
+              InterfaceUnionMember2.$properties.interfaceUnionMember2Property[
                 "identifier"
               ],
             subject,
@@ -29484,7 +29464,7 @@ export namespace InterfaceUnionMember2b {
                 operator: "lang",
                 args: [
                   dataFactory.variable!(
-                    `${variablePrefix}InterfaceUnionMember2bProperty`,
+                    `${variablePrefix}InterfaceUnionMember2Property`,
                   ),
                 ],
               },
@@ -29521,21 +29501,21 @@ export namespace InterfaceUnionMember2b {
   }
 
   export function $toJson(
-    _interfaceUnionMember2b: InterfaceUnionMember2b,
-  ): InterfaceUnionMember2b.$Json {
+    _interfaceUnionMember2: InterfaceUnionMember2,
+  ): InterfaceUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
         ...InterfaceUnionMemberCommonParentStatic.$toJson(
-          _interfaceUnionMember2b,
+          _interfaceUnionMember2,
         ),
-        interfaceUnionMember2bProperty:
-          _interfaceUnionMember2b.interfaceUnionMember2bProperty,
-      } satisfies InterfaceUnionMember2b.$Json),
+        interfaceUnionMember2Property:
+          _interfaceUnionMember2.interfaceUnionMember2Property,
+      } satisfies InterfaceUnionMember2.$Json),
     );
   }
 
   export function $toRdf(
-    _interfaceUnionMember2b: InterfaceUnionMember2b,
+    _interfaceUnionMember2: InterfaceUnionMember2,
     options?: {
       ignoreRdfType?: boolean;
       mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
@@ -29551,667 +29531,32 @@ export namespace InterfaceUnionMember2b {
         dataset: datasetFactory.dataset(),
       });
     const resource = InterfaceUnionMemberCommonParentStatic.$toRdf(
-      _interfaceUnionMember2b,
+      _interfaceUnionMember2,
       { ignoreRdfType: true, mutateGraph, resourceSet },
     );
     if (!ignoreRdfType) {
       resource.add(
         $RdfVocabularies.rdf.type,
         resource.dataFactory.namedNode(
-          "http://example.com/InterfaceUnionMember2b",
+          "http://example.com/InterfaceUnionMember2",
         ),
       );
     }
 
     resource.add(
-      InterfaceUnionMember2b.$properties.interfaceUnionMember2bProperty[
+      InterfaceUnionMember2.$properties.interfaceUnionMember2Property[
         "identifier"
       ],
-      ...[_interfaceUnionMember2b.interfaceUnionMember2bProperty],
+      ...[_interfaceUnionMember2.interfaceUnionMember2Property],
     );
     return resource;
   }
 
-  export function isInterfaceUnionMember2b(
+  export function isInterfaceUnionMember2(
     object: InterfaceUnionMemberCommonParent,
-  ): object is InterfaceUnionMember2b {
+  ): object is InterfaceUnionMember2 {
     switch (object.$type) {
-      case "InterfaceUnionMember2b":
-        return true;
-      default:
-        return false;
-    }
-  }
-}
-export interface InterfaceUnionMember2a
-  extends InterfaceUnionMemberCommonParent {
-  readonly $identifier: InterfaceUnionMember2a.$Identifier;
-  readonly $type: "InterfaceUnionMember2a";
-  readonly interfaceUnionMember2aProperty: string;
-}
-
-export namespace InterfaceUnionMember2a {
-  export function $create(
-    parameters: {
-      readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-      readonly interfaceUnionMember2aProperty: string;
-    } & Parameters<typeof InterfaceUnionMemberCommonParentStatic.$create>[0],
-  ): InterfaceUnionMember2a {
-    let $identifier: InterfaceUnionMember2a.$Identifier;
-    if (typeof parameters.$identifier === "object") {
-      $identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-      $identifier = dataFactory.blankNode();
-    } else {
-      $identifier = parameters.$identifier satisfies never;
-    }
-
-    const $type = "InterfaceUnionMember2a" as const;
-    const interfaceUnionMember2aProperty =
-      parameters.interfaceUnionMember2aProperty;
-    return {
-      ...InterfaceUnionMemberCommonParentStatic.$create(parameters),
-      $identifier,
-      $type,
-      interfaceUnionMember2aProperty,
-    };
-  }
-
-  export function $equals(
-    left: InterfaceUnionMember2a,
-    right: InterfaceUnionMember2a,
-  ): $EqualsResult {
-    return InterfaceUnionMemberCommonParentStatic.$equals(left, right).chain(
-      () =>
-        $strictEquals(
-          left.interfaceUnionMember2aProperty,
-          right.interfaceUnionMember2aProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: left,
-          right: right,
-          propertyName: "interfaceUnionMember2aProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-    );
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionMember2a> {
-    return $propertiesFromJson(json);
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, InterfaceUnionMember2a> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return InterfaceUnionMember2a.$propertiesFromRdf({
-      ...context,
-      ignoreRdfType,
-      objectSet,
-      preferredLanguages,
-      resource,
-    });
-  }
-
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://example.com/InterfaceUnionMember2a",
-  );
-
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _interfaceUnionMember2a: InterfaceUnionMember2a,
-    _hasher: HasherT,
-  ): HasherT {
-    InterfaceUnionMember2a.$hashShaclProperties(
-      _interfaceUnionMember2a,
-      _hasher,
-    );
-    return _hasher;
-  }
-
-  export function $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(
-    _interfaceUnionMember2a: InterfaceUnionMember2a,
-    _hasher: HasherT,
-  ): HasherT {
-    InterfaceUnionMemberCommonParentStatic.$hashShaclProperties(
-      _interfaceUnionMember2a,
-      _hasher,
-    );
-    _hasher.update(_interfaceUnionMember2a.interfaceUnionMember2aProperty);
-    return _hasher;
-  }
-
-  export type $Identifier = InterfaceUnionMemberCommonParentStatic.$Identifier;
-  export const $Identifier = InterfaceUnionMemberCommonParentStatic.$Identifier;
-  export type $Json = {
-    readonly interfaceUnionMember2aProperty: string;
-  } & InterfaceUnionMemberCommonParentStatic.$Json;
-
-  export function $jsonSchema() {
-    return zod.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        InterfaceUnionMemberCommonParentStatic.$jsonUiSchema({ scopePrefix }),
-        {
-          scope: `${scopePrefix}/properties/interfaceUnionMember2aProperty`,
-          type: "Control",
-        },
-      ],
-      label: "InterfaceUnionMember2a",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return InterfaceUnionMemberCommonParentStatic.$jsonZodSchema().merge(
-      zod.object({
-        "@id": zod.string().min(1),
-        $type: zod.literal("InterfaceUnionMember2a"),
-        interfaceUnionMember2aProperty: zod.string(),
-      }),
-    ) satisfies zod.ZodType<$Json>;
-  }
-
-  export const $properties = {
-    ...InterfaceUnionMemberCommonParentStatic.$properties,
-    interfaceUnionMember2aProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMember2aProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromJson(_json: unknown): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "InterfaceUnionMember2a";
-      interfaceUnionMember2aProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromJson
-      >
-    >
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const $type = "InterfaceUnionMember2a" as const;
-    const interfaceUnionMember2aProperty =
-      $jsonObject["interfaceUnionMember2aProperty"];
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      $type,
-      interfaceUnionMember2aProperty,
-    });
-  }
-
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-ignore
-    ...$context
-  }: {
-    [_index: string]: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "InterfaceUnionMember2a";
-      interfaceUnionMember2aProperty: string;
-    } & $UnwrapR<
-      ReturnType<
-        typeof InterfaceUnionMemberCommonParentStatic.$propertiesFromRdf
-      >
-    >
-  > {
-    const $super0Either =
-      InterfaceUnionMemberCommonParentStatic.$propertiesFromRdf({
-        ...$context,
-        ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
-      });
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
-        .value($RdfVocabularies.rdf.type)
-        .chain((actualRdfType) => actualRdfType.toIri())
-        .chain((actualRdfType) => {
-          // Check the expected type and its known subtypes
-          switch (actualRdfType.value) {
-            case "http://example.com/InterfaceUnionMember2a":
-              return purify.Either.of(true);
-          }
-
-          // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(InterfaceUnionMember2a.$fromRdfType)) {
-            return purify.Either.of(true);
-          }
-
-          return purify.Left(
-            new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2a)`,
-            ),
-          );
-        });
-      if ($rdfTypeCheck.isLeft()) {
-        return $rdfTypeCheck;
-      }
-    }
-
-    const $identifier: InterfaceUnionMember2a.$Identifier =
-      $resource.identifier;
-    const $type = "InterfaceUnionMember2a" as const;
-    const _interfaceUnionMember2aPropertyEither: purify.Either<Error, string> =
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-      >(
-        $resource.values(
-          $properties.interfaceUnionMember2aProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
-                  predicate:
-                    InterfaceUnionMember2a.$properties
-                      .interfaceUnionMember2aProperty["identifier"],
-                  subject: $resource,
-                }),
-            ),
-          );
-        })
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head());
-    if (_interfaceUnionMember2aPropertyEither.isLeft()) {
-      return _interfaceUnionMember2aPropertyEither;
-    }
-
-    const interfaceUnionMember2aProperty =
-      _interfaceUnionMember2aPropertyEither.unsafeCoerce();
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      $type,
-      interfaceUnionMember2aProperty,
-    });
-  }
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
-      parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        InterfaceUnionMember2a.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2a.$sparqlWherePatterns({
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionMember2a.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2a");
-    const triples: sparqljs.Triple[] = [];
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "interfaceUnionMember2a");
-    triples.push(
-      ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples(
-        { ignoreRdfType: true, subject, variablePrefix },
-      ),
-    );
-    if (!parameters?.ignoreRdfType) {
-      triples.push(
-        {
-          subject,
-          predicate: $RdfVocabularies.rdf.type,
-          object: dataFactory.variable!(`${variablePrefix}RdfType`),
-        },
-        {
-          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
-          predicate: $RdfVocabularies.rdfs.subClassOf,
-          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-        },
-      );
-    }
-
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}InterfaceUnionMember2aProperty`,
-      ),
-      predicate:
-        InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2a");
-    const variablePrefix =
-      parameters?.variablePrefix ??
-      (subject.termType === "Variable"
-        ? subject.value
-        : "interfaceUnionMember2a");
-    for (const pattern of InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      { ignoreRdfType: true, subject, variablePrefix },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
-    if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
-        $sparqlInstancesOfPattern({
-          rdfType: InterfaceUnionMember2a.$fromRdfType,
-          subject,
-        }),
-        {
-          triples: [
-            {
-              subject,
-              predicate: $RdfVocabularies.rdf.type,
-              object: rdfTypeVariable,
-            },
-          ],
-          type: "bgp" as const,
-        },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
-                },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
-    }
-
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${variablePrefix}InterfaceUnionMember2aProperty`,
-            ),
-            predicate:
-              InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
-                "identifier"
-              ],
-            subject,
-          },
-        ],
-        type: "bgp",
-      },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(
-                    `${variablePrefix}InterfaceUnionMember2aProperty`,
-                  ),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
-  }
-
-  export function $toJson(
-    _interfaceUnionMember2a: InterfaceUnionMember2a,
-  ): InterfaceUnionMember2a.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        ...InterfaceUnionMemberCommonParentStatic.$toJson(
-          _interfaceUnionMember2a,
-        ),
-        interfaceUnionMember2aProperty:
-          _interfaceUnionMember2a.interfaceUnionMember2aProperty,
-      } satisfies InterfaceUnionMember2a.$Json),
-    );
-  }
-
-  export function $toRdf(
-    _interfaceUnionMember2a: InterfaceUnionMember2a,
-    options?: {
-      ignoreRdfType?: boolean;
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    const ignoreRdfType = !!options?.ignoreRdfType;
-    const mutateGraph = options?.mutateGraph;
-    const resourceSet =
-      options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
-        dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = InterfaceUnionMemberCommonParentStatic.$toRdf(
-      _interfaceUnionMember2a,
-      { ignoreRdfType: true, mutateGraph, resourceSet },
-    );
-    if (!ignoreRdfType) {
-      resource.add(
-        $RdfVocabularies.rdf.type,
-        resource.dataFactory.namedNode(
-          "http://example.com/InterfaceUnionMember2a",
-        ),
-      );
-    }
-
-    resource.add(
-      InterfaceUnionMember2a.$properties.interfaceUnionMember2aProperty[
-        "identifier"
-      ],
-      ...[_interfaceUnionMember2a.interfaceUnionMember2aProperty],
-    );
-    return resource;
-  }
-
-  export function isInterfaceUnionMember2a(
-    object: InterfaceUnionMemberCommonParent,
-  ): object is InterfaceUnionMember2a {
-    switch (object.$type) {
-      case "InterfaceUnionMember2a":
+      case "InterfaceUnionMember2":
         return true;
       default:
         return false;
@@ -50853,10 +50198,7 @@ export namespace FlattenClassUnion {
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
-export type InterfaceUnion =
-  | InterfaceUnionMember1
-  | InterfaceUnionMember2a
-  | InterfaceUnionMember2b;
+export type InterfaceUnion = InterfaceUnionMember1 | InterfaceUnionMember2;
 
 export namespace InterfaceUnion {
   export function $equals(
@@ -50870,15 +50212,10 @@ export namespace InterfaceUnion {
             left,
             right as unknown as InterfaceUnionMember1,
           );
-        case "InterfaceUnionMember2a":
-          return InterfaceUnionMember2a.$equals(
+        case "InterfaceUnionMember2":
+          return InterfaceUnionMember2.$equals(
             left,
-            right as unknown as InterfaceUnionMember2a,
-          );
-        case "InterfaceUnionMember2b":
-          return InterfaceUnionMember2b.$equals(
-            left,
-            right as unknown as InterfaceUnionMember2b,
+            right as unknown as InterfaceUnionMember2,
           );
         default:
           left satisfies never;
@@ -50895,21 +50232,13 @@ export namespace InterfaceUnion {
         zod.ZodError,
         InterfaceUnion
       >
-    )
-      .altLazy(
-        () =>
-          InterfaceUnionMember2a.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            InterfaceUnion
-          >,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionMember2b.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            InterfaceUnion
-          >,
-      );
+    ).altLazy(
+      () =>
+        InterfaceUnionMember2.$fromJson(json) as purify.Either<
+          zod.ZodError,
+          InterfaceUnion
+        >,
+    );
   }
 
   export function $fromRdf(
@@ -50926,21 +50255,13 @@ export namespace InterfaceUnion {
         ...options,
         ignoreRdfType: false,
       }) as purify.Either<Error, InterfaceUnion>
-    )
-      .altLazy(
-        () =>
-          InterfaceUnionMember2a.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, InterfaceUnion>,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionMember2b.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, InterfaceUnion>,
-      );
+    ).altLazy(
+      () =>
+        InterfaceUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as purify.Either<Error, InterfaceUnion>,
+    );
   }
 
   export function $hash<
@@ -50951,10 +50272,8 @@ export namespace InterfaceUnion {
     switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
         return InterfaceUnionMember1.$hash(_interfaceUnion, _hasher);
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$hash(_interfaceUnion, _hasher);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$hash(_interfaceUnion, _hasher);
+      case "InterfaceUnionMember2":
+        return InterfaceUnionMember2.$hash(_interfaceUnion, _hasher);
       default:
         _interfaceUnion satisfies never;
         throw new Error("unrecognized type");
@@ -50979,16 +50298,12 @@ export namespace InterfaceUnion {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export type $Json =
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2a.$Json
-    | InterfaceUnionMember2b.$Json;
+  export type $Json = InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json;
 
   export function $jsonZodSchema() {
     return zod.discriminatedUnion("$type", [
       InterfaceUnionMember1.$jsonZodSchema(),
-      InterfaceUnionMember2a.$jsonZodSchema(),
-      InterfaceUnionMember2b.$jsonZodSchema(),
+      InterfaceUnionMember2.$jsonZodSchema(),
     ]);
   }
 
@@ -51060,21 +50375,13 @@ export namespace InterfaceUnion {
           ? `${parameters.variablePrefix}InterfaceUnionMember1`
           : "interfaceUnionInterfaceUnionMember1",
       }).concat(),
-      ...InterfaceUnionMember2a.$sparqlConstructTemplateTriples({
+      ...InterfaceUnionMember2.$sparqlConstructTemplateTriples({
         subject:
           parameters?.subject ??
-          dataFactory.variable!("interfaceUnionInterfaceUnionMember2a"),
+          dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
         variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}InterfaceUnionMember2a`
-          : "interfaceUnionInterfaceUnionMember2a",
-      }).concat(),
-      ...InterfaceUnionMember2b.$sparqlConstructTemplateTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("interfaceUnionInterfaceUnionMember2b"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}InterfaceUnionMember2b`
-          : "interfaceUnionInterfaceUnionMember2b",
+          ? `${parameters.variablePrefix}InterfaceUnionMember2`
+          : "interfaceUnionInterfaceUnionMember2",
       }).concat(),
     ];
   }
@@ -51100,24 +50407,13 @@ export namespace InterfaceUnion {
             type: "group",
           },
           {
-            patterns: InterfaceUnionMember2a.$sparqlWherePatterns({
+            patterns: InterfaceUnionMember2.$sparqlWherePatterns({
               subject:
                 parameters?.subject ??
-                dataFactory.variable!("interfaceUnionInterfaceUnionMember2a"),
+                dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
               variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember2a`
-                : "interfaceUnionInterfaceUnionMember2a",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InterfaceUnionMember2b.$sparqlWherePatterns({
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("interfaceUnionInterfaceUnionMember2b"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember2b`
-                : "interfaceUnionInterfaceUnionMember2b",
+                ? `${parameters.variablePrefix}InterfaceUnionMember2`
+                : "interfaceUnionInterfaceUnionMember2",
             }).concat(),
             type: "group",
           },
@@ -51129,17 +50425,12 @@ export namespace InterfaceUnion {
 
   export function $toJson(
     _interfaceUnion: InterfaceUnion,
-  ):
-    | InterfaceUnionMember1.$Json
-    | InterfaceUnionMember2a.$Json
-    | InterfaceUnionMember2b.$Json {
+  ): InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json {
     switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
         return InterfaceUnionMember1.$toJson(_interfaceUnion);
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toJson(_interfaceUnion);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toJson(_interfaceUnion);
+      case "InterfaceUnionMember2":
+        return InterfaceUnionMember2.$toJson(_interfaceUnion);
       default:
         _interfaceUnion satisfies never;
         throw new Error("unrecognized type");
@@ -51156,286 +50447,10 @@ export namespace InterfaceUnion {
     switch (_interfaceUnion.$type) {
       case "InterfaceUnionMember1":
         return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toRdf(_interfaceUnion, _parameters);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toRdf(_interfaceUnion, _parameters);
+      case "InterfaceUnionMember2":
+        return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
       default:
         _interfaceUnion satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-}
-/**
- * A union node shape that is part of another union shape, to test composition of unions.
- */
-export type InterfaceUnionMember2 =
-  | InterfaceUnionMember2a
-  | InterfaceUnionMember2b;
-
-export namespace InterfaceUnionMember2 {
-  export function $equals(
-    left: InterfaceUnionMember2,
-    right: InterfaceUnionMember2,
-  ): $EqualsResult {
-    return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "InterfaceUnionMember2a":
-          return InterfaceUnionMember2a.$equals(
-            left,
-            right as unknown as InterfaceUnionMember2a,
-          );
-        case "InterfaceUnionMember2b":
-          return InterfaceUnionMember2b.$equals(
-            left,
-            right as unknown as InterfaceUnionMember2b,
-          );
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
-      }
-    });
-  }
-
-  export function $fromJson(
-    json: unknown,
-  ): purify.Either<zod.ZodError, InterfaceUnionMember2> {
-    return (
-      InterfaceUnionMember2a.$fromJson(json) as purify.Either<
-        zod.ZodError,
-        InterfaceUnionMember2
-      >
-    ).altLazy(
-      () =>
-        InterfaceUnionMember2b.$fromJson(json) as purify.Either<
-          zod.ZodError,
-          InterfaceUnionMember2
-        >,
-    );
-  }
-
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
-    },
-  ): purify.Either<Error, InterfaceUnionMember2> {
-    return (
-      InterfaceUnionMember2a.$fromRdf(resource, {
-        ...options,
-        ignoreRdfType: false,
-      }) as purify.Either<Error, InterfaceUnionMember2>
-    ).altLazy(
-      () =>
-        InterfaceUnionMember2b.$fromRdf(resource, {
-          ...options,
-          ignoreRdfType: false,
-        }) as purify.Either<Error, InterfaceUnionMember2>,
-    );
-  }
-
-  export function $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_interfaceUnionMember2: InterfaceUnionMember2, _hasher: HasherT): HasherT {
-    switch (_interfaceUnionMember2.$type) {
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$hash(_interfaceUnionMember2, _hasher);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$hash(_interfaceUnionMember2, _hasher);
-      default:
-        _interfaceUnionMember2 satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json =
-    | InterfaceUnionMember2a.$Json
-    | InterfaceUnionMember2b.$Json;
-
-  export function $jsonZodSchema() {
-    return zod.discriminatedUnion("$type", [
-      InterfaceUnionMember2a.$jsonZodSchema(),
-      InterfaceUnionMember2b.$jsonZodSchema(),
-    ]);
-  }
-
-  export const $properties = {
-    interfaceUnionMemberCommonParentProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMemberCommonParentProperty",
-      ),
-    },
-  };
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
-      parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        InterfaceUnionMember2.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2.$sparqlWherePatterns({
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      InterfaceUnionMember2.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTemplateTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    return [
-      ...InterfaceUnionMember2a.$sparqlConstructTemplateTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("interfaceUnionMember2InterfaceUnionMember2a"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}InterfaceUnionMember2a`
-          : "interfaceUnionMember2InterfaceUnionMember2a",
-      }).concat(),
-      ...InterfaceUnionMember2b.$sparqlConstructTemplateTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("interfaceUnionMember2InterfaceUnionMember2b"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}InterfaceUnionMember2b`
-          : "interfaceUnionMember2InterfaceUnionMember2b",
-      }).concat(),
-    ];
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: InterfaceUnionMember2a.$sparqlWherePatterns({
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "interfaceUnionMember2InterfaceUnionMember2a",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember2a`
-                : "interfaceUnionMember2InterfaceUnionMember2a",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InterfaceUnionMember2b.$sparqlWherePatterns({
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "interfaceUnionMember2InterfaceUnionMember2b",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember2b`
-                : "interfaceUnionMember2InterfaceUnionMember2b",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
-  }
-
-  export function $toJson(
-    _interfaceUnionMember2: InterfaceUnionMember2,
-  ): InterfaceUnionMember2a.$Json | InterfaceUnionMember2b.$Json {
-    switch (_interfaceUnionMember2.$type) {
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toJson(_interfaceUnionMember2);
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toJson(_interfaceUnionMember2);
-      default:
-        _interfaceUnionMember2 satisfies never;
-        throw new Error("unrecognized type");
-    }
-  }
-
-  export function $toRdf(
-    _interfaceUnionMember2: InterfaceUnionMember2,
-    _parameters?: {
-      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-      resourceSet?: rdfjsResource.MutableResourceSet;
-    },
-  ): rdfjsResource.MutableResource {
-    switch (_interfaceUnionMember2.$type) {
-      case "InterfaceUnionMember2a":
-        return InterfaceUnionMember2a.$toRdf(
-          _interfaceUnionMember2,
-          _parameters,
-        );
-      case "InterfaceUnionMember2b":
-        return InterfaceUnionMember2b.$toRdf(
-          _interfaceUnionMember2,
-          _parameters,
-        );
-      default:
-        _interfaceUnionMember2 satisfies never;
         throw new Error("unrecognized type");
     }
   }
@@ -53487,33 +52502,19 @@ export interface $ObjectSet {
   interfaceUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  interfaceUnionMember2a(
-    identifier: InterfaceUnionMember2a.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2a>>;
-  interfaceUnionMember2aIdentifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+  interfaceUnionMember2(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2>>;
+  interfaceUnionMember2Identifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2a.$Identifier[]>
+    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
   >;
-  interfaceUnionMember2as(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2a[]>>;
-  interfaceUnionMember2asCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2a.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  interfaceUnionMember2b(
-    identifier: InterfaceUnionMember2b.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2b>>;
-  interfaceUnionMember2bIdentifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2b.$Identifier[]>
-  >;
-  interfaceUnionMember2bs(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2b[]>>;
-  interfaceUnionMember2bsCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2b.$Identifier>, "where">,
+  interfaceUnionMember2s(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>>;
+  interfaceUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
@@ -54112,20 +53113,6 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly InterfaceUnion[]>>;
   interfaceUnionsCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>>;
-  interfaceUnionMember2(
-    identifier: InterfaceUnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2>>;
-  interfaceUnionMember2Identifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
-  >;
-  interfaceUnionMember2s(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>>;
-  interfaceUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
@@ -54990,56 +53977,30 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.interfaceUnionMember1sCount(query);
   }
 
-  interfaceUnionMember2a(
-    identifier: InterfaceUnionMember2a.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2a>> {
-    return this.$delegate.interfaceUnionMember2a(identifier);
+  interfaceUnionMember2(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
+    return this.$delegate.interfaceUnionMember2(identifier);
   }
 
-  interfaceUnionMember2aIdentifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+  interfaceUnionMember2Identifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2a.$Identifier[]>
+    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
   > {
-    return this.$delegate.interfaceUnionMember2aIdentifiers(query);
+    return this.$delegate.interfaceUnionMember2Identifiers(query);
   }
 
-  interfaceUnionMember2as(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2a[]>> {
-    return this.$delegate.interfaceUnionMember2as(query);
+  interfaceUnionMember2s(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
+    return this.$delegate.interfaceUnionMember2s(query);
   }
 
-  interfaceUnionMember2asCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2a.$Identifier>, "where">,
+  interfaceUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.interfaceUnionMember2asCount(query);
-  }
-
-  interfaceUnionMember2b(
-    identifier: InterfaceUnionMember2b.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2b>> {
-    return this.$delegate.interfaceUnionMember2b(identifier);
-  }
-
-  interfaceUnionMember2bIdentifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2b.$Identifier[]>
-  > {
-    return this.$delegate.interfaceUnionMember2bIdentifiers(query);
-  }
-
-  interfaceUnionMember2bs(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2b[]>> {
-    return this.$delegate.interfaceUnionMember2bs(query);
-  }
-
-  interfaceUnionMember2bsCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2b.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.interfaceUnionMember2bsCount(query);
+    return this.$delegate.interfaceUnionMember2sCount(query);
   }
 
   iriIdentifierClass(
@@ -56104,32 +55065,6 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.interfaceUnionsCount(query);
-  }
-
-  interfaceUnionMember2(
-    identifier: InterfaceUnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
-    return this.$delegate.interfaceUnionMember2(identifier);
-  }
-
-  interfaceUnionMember2Identifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
-  > {
-    return this.$delegate.interfaceUnionMember2Identifiers(query);
-  }
-
-  interfaceUnionMember2s(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
-    return this.$delegate.interfaceUnionMember2s(query);
-  }
-
-  interfaceUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.interfaceUnionMember2sCount(query);
   }
 
   lazilyResolvedClassUnion(
@@ -58573,170 +57508,85 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
-  async interfaceUnionMember2a(
-    identifier: InterfaceUnionMember2a.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2a>> {
-    return this.interfaceUnionMember2aSync(identifier);
+  async interfaceUnionMember2(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
+    return this.interfaceUnionMember2Sync(identifier);
   }
 
-  interfaceUnionMember2aSync(
-    identifier: InterfaceUnionMember2a.$Identifier,
-  ): purify.Either<Error, InterfaceUnionMember2a> {
-    return this.interfaceUnionMember2asSync({
+  interfaceUnionMember2Sync(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): purify.Either<Error, InterfaceUnionMember2> {
+    return this.interfaceUnionMember2sSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async interfaceUnionMember2aIdentifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+  async interfaceUnionMember2Identifiers(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2a.$Identifier[]>
+    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
   > {
-    return this.interfaceUnionMember2aIdentifiersSync(query);
+    return this.interfaceUnionMember2IdentifiersSync(query);
   }
 
-  interfaceUnionMember2aIdentifiersSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2a.$Identifier[]> {
+  interfaceUnionMember2IdentifiersSync(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]> {
     return this.$objectIdentifiersSync<
-      InterfaceUnionMember2a,
-      InterfaceUnionMember2a.$Identifier
+      InterfaceUnionMember2,
+      InterfaceUnionMember2.$Identifier
     >(
       [
         {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
         },
       ],
       query,
     );
   }
 
-  async interfaceUnionMember2as(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2a[]>> {
-    return this.interfaceUnionMember2asSync(query);
+  async interfaceUnionMember2s(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
+    return this.interfaceUnionMember2sSync(query);
   }
 
-  interfaceUnionMember2asSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2a[]> {
+  interfaceUnionMember2sSync(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly InterfaceUnionMember2[]> {
     return this.$objectsSync<
-      InterfaceUnionMember2a,
-      InterfaceUnionMember2a.$Identifier
+      InterfaceUnionMember2,
+      InterfaceUnionMember2.$Identifier
     >(
       [
         {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
         },
       ],
       query,
     );
   }
 
-  async interfaceUnionMember2asCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2a.$Identifier>, "where">,
+  async interfaceUnionMember2sCount(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
-    return this.interfaceUnionMember2asCountSync(query);
+    return this.interfaceUnionMember2sCountSync(query);
   }
 
-  interfaceUnionMember2asCountSync(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2a.$Identifier>, "where">,
+  interfaceUnionMember2sCountSync(
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      InterfaceUnionMember2a,
-      InterfaceUnionMember2a.$Identifier
+      InterfaceUnionMember2,
+      InterfaceUnionMember2.$Identifier
     >(
       [
         {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async interfaceUnionMember2b(
-    identifier: InterfaceUnionMember2b.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2b>> {
-    return this.interfaceUnionMember2bSync(identifier);
-  }
-
-  interfaceUnionMember2bSync(
-    identifier: InterfaceUnionMember2b.$Identifier,
-  ): purify.Either<Error, InterfaceUnionMember2b> {
-    return this.interfaceUnionMember2bsSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async interfaceUnionMember2bIdentifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2b.$Identifier[]>
-  > {
-    return this.interfaceUnionMember2bIdentifiersSync(query);
-  }
-
-  interfaceUnionMember2bIdentifiersSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2b.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InterfaceUnionMember2b,
-      InterfaceUnionMember2b.$Identifier
-    >(
-      [
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async interfaceUnionMember2bs(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2b[]>> {
-    return this.interfaceUnionMember2bsSync(query);
-  }
-
-  interfaceUnionMember2bsSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2b[]> {
-    return this.$objectsSync<
-      InterfaceUnionMember2b,
-      InterfaceUnionMember2b.$Identifier
-    >(
-      [
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async interfaceUnionMember2bsCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2b.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.interfaceUnionMember2bsCountSync(query);
-  }
-
-  interfaceUnionMember2bsCountSync(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2b.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      InterfaceUnionMember2b,
-      InterfaceUnionMember2b.$Identifier
-    >(
-      [
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
         },
       ],
       query,
@@ -61663,12 +60513,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
         },
         {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
         },
       ],
       query,
@@ -61691,12 +60537,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
         },
         {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
         },
       ],
       query,
@@ -61719,109 +60561,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
         },
         {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async interfaceUnionMember2(
-    identifier: InterfaceUnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
-    return this.interfaceUnionMember2Sync(identifier);
-  }
-
-  interfaceUnionMember2Sync(
-    identifier: InterfaceUnionMember2.$Identifier,
-  ): purify.Either<Error, InterfaceUnionMember2> {
-    return this.interfaceUnionMember2sSync({
-      where: { identifiers: [identifier], type: "identifiers" },
-    }).map((objects) => objects[0]);
-  }
-
-  async interfaceUnionMember2Identifiers(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
-  > {
-    return this.interfaceUnionMember2IdentifiersSync(query);
-  }
-
-  interfaceUnionMember2IdentifiersSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InterfaceUnionMember2,
-      InterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async interfaceUnionMember2s(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
-    return this.interfaceUnionMember2sSync(query);
-  }
-
-  interfaceUnionMember2sSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2[]> {
-    return this.$objectsSync<
-      InterfaceUnionMember2,
-      InterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
-        },
-      ],
-      query,
-    );
-  }
-
-  async interfaceUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
-  ): Promise<purify.Either<Error, number>> {
-    return this.interfaceUnionMember2sCountSync(query);
-  }
-
-  interfaceUnionMember2sCountSync(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
-  ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      InterfaceUnionMember2,
-      InterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $fromRdf: InterfaceUnionMember2a.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2a.$fromRdfType],
-        },
-        {
-          $fromRdf: InterfaceUnionMember2b.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2b.$fromRdfType],
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
         },
       ],
       query,
@@ -63740,86 +62481,44 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async interfaceUnionMember2a(
-    identifier: InterfaceUnionMember2a.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2a>> {
+  async interfaceUnionMember2(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
     return (
-      await this.interfaceUnionMember2as({
+      await this.interfaceUnionMember2s({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async interfaceUnionMember2aIdentifiers(
-    query?: $SparqlObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+  async interfaceUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2a.$Identifier[]>
+    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<InterfaceUnionMember2a.$Identifier>(
-      InterfaceUnionMember2a,
+    return this.$objectIdentifiers<InterfaceUnionMember2.$Identifier>(
+      InterfaceUnionMember2,
       query,
     );
   }
 
-  async interfaceUnionMember2as(
-    query?: $SparqlObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2a[]>> {
+  async interfaceUnionMember2s(
+    query?: $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
     return this.$objects<
-      InterfaceUnionMember2a,
-      InterfaceUnionMember2a.$Identifier
-    >(InterfaceUnionMember2a, query);
+      InterfaceUnionMember2,
+      InterfaceUnionMember2.$Identifier
+    >(InterfaceUnionMember2, query);
   }
 
-  async interfaceUnionMember2asCount(
+  async interfaceUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<InterfaceUnionMember2a.$Identifier>,
+      $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InterfaceUnionMember2a.$Identifier>(
-      InterfaceUnionMember2a,
-      query,
-    );
-  }
-
-  async interfaceUnionMember2b(
-    identifier: InterfaceUnionMember2b.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2b>> {
-    return (
-      await this.interfaceUnionMember2bs({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async interfaceUnionMember2bIdentifiers(
-    query?: $SparqlObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2b.$Identifier[]>
-  > {
-    return this.$objectIdentifiers<InterfaceUnionMember2b.$Identifier>(
-      InterfaceUnionMember2b,
-      query,
-    );
-  }
-
-  async interfaceUnionMember2bs(
-    query?: $SparqlObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2b[]>> {
-    return this.$objects<
-      InterfaceUnionMember2b,
-      InterfaceUnionMember2b.$Identifier
-    >(InterfaceUnionMember2b, query);
-  }
-
-  async interfaceUnionMember2bsCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<InterfaceUnionMember2b.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InterfaceUnionMember2b.$Identifier>(
-      InterfaceUnionMember2b,
+    return this.$objectsCount<InterfaceUnionMember2.$Identifier>(
+      InterfaceUnionMember2,
       query,
     );
   }
@@ -65355,48 +64054,6 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<InterfaceUnion.$Identifier>(
       InterfaceUnion,
-      query,
-    );
-  }
-
-  async interfaceUnionMember2(
-    identifier: InterfaceUnionMember2.$Identifier,
-  ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
-    return (
-      await this.interfaceUnionMember2s({
-        where: { identifiers: [identifier], type: "identifiers" },
-      })
-    ).map((objects) => objects[0]);
-  }
-
-  async interfaceUnionMember2Identifiers(
-    query?: $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<
-    purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
-  > {
-    return this.$objectIdentifiers<InterfaceUnionMember2.$Identifier>(
-      InterfaceUnionMember2,
-      query,
-    );
-  }
-
-  async interfaceUnionMember2s(
-    query?: $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-  ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
-    return this.$objects<
-      InterfaceUnionMember2,
-      InterfaceUnionMember2.$Identifier
-    >(InterfaceUnionMember2, query);
-  }
-
-  async interfaceUnionMember2sCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-      "where"
-    >,
-  ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InterfaceUnionMember2.$Identifier>(
-      InterfaceUnionMember2,
       query,
     );
   }

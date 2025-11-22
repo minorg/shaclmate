@@ -66,7 +66,7 @@ const testData = {
   ) satisfies readonly kitchenSink.DirectRecursiveClass[],
 
   interfaceUnions: [...new Array(4)].map((_, i) => {
-    switch (i % 3) {
+    switch (i % 2) {
       case 0:
         return {
           $identifier: N3.DataFactory.namedNode(
@@ -82,17 +82,8 @@ const testData = {
             `http://example.com/interfaceUnion${i}`,
           ),
           interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
-          interfaceUnionMember2aProperty: `string ${i}`,
-          $type: "InterfaceUnionMember2a",
-        } satisfies kitchenSink.InterfaceUnion;
-      case 2:
-        return {
-          $identifier: N3.DataFactory.namedNode(
-            `http://example.com/interfaceUnion${i}`,
-          ),
-          interfaceUnionMemberCommonParentProperty: `common parent ${i}`,
-          interfaceUnionMember2bProperty: `string ${i}`,
-          $type: "InterfaceUnionMember2b",
+          interfaceUnionMember2Property: `string ${i}`,
+          $type: "InterfaceUnionMember2",
         } satisfies kitchenSink.InterfaceUnion;
       default:
         throw new RangeError(i.toString());

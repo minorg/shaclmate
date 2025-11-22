@@ -458,32 +458,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InterfaceUnionMember2
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
-    rdfs:comment "A union node shape that is part of another union shape, to test composition of unions." ;
-    sh:xone (:InterfaceUnionMember2a
-        :InterfaceUnionMember2b
-    ) .
-
-:InterfaceUnionMember2a
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :interfaceUnionMember2aProperty
-    ] .
-
-:InterfaceUnionMember2b
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a owl:Class, sh:NodeShape ;
-    rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
-    sh:property [
-        sh:datatype xsd:string ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :interfaceUnionMember2bProperty
+        sh:path :interfaceUnionMember2Property
     ] .
 
 :InterfaceUnionMemberCommonParent
