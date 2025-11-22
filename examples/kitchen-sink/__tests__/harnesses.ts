@@ -171,7 +171,7 @@ export const harnesses = {
     }),
     kitchenSink.FlattenClassUnion,
   ),
-  flattenCassUnionMember2: new ClassUnionHarness(
+  flattenClassUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
       $identifier,
       classUnionMemberCommonParentProperty: "test common parent",
@@ -179,7 +179,7 @@ export const harnesses = {
     }),
     kitchenSink.FlattenClassUnion,
   ),
-  flattenCassUnionMember3: new ClassUnionHarness(
+  flattenClassUnionMember3: new ClassUnionHarness(
     new kitchenSink.FlattenClassUnionMember3({
       $identifier,
       flattenClassUnionMember3Property: "test",
@@ -442,6 +442,20 @@ export const harnesses = {
       mutableSetProperty: ["test1", "test2"],
     }),
     kitchenSink.MutablePropertiesClass,
+  ),
+  noRdfTypeClassUnionMember1: new ClassUnionHarness(
+    new kitchenSink.NoRdfTypeClassUnionMember1({
+      $identifier,
+      noRdfTypeClassUnionMember1Property: "test",
+    }),
+    kitchenSink.NoRdfTypeClassUnion,
+  ),
+  noRdfTypeClassUnionMember2: new ClassUnionHarness(
+    new kitchenSink.NoRdfTypeClassUnionMember2({
+      $identifier,
+      noRdfTypeClassUnionMember2Property: "test",
+    }),
+    kitchenSink.NoRdfTypeClassUnion,
   ),
   objectListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({

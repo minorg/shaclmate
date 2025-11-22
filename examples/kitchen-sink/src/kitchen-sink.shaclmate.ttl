@@ -656,22 +656,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassToResolvedClassUnionProperty
-    ], [
-        shaclmate:partial :PartialClassUnion ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
-    ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
@@ -707,6 +691,22 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:partial :PartialClass ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassToResolvedClassUnionProperty
+    ], [
+        shaclmate:partial :PartialClassUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
     ] .
 
 :LazyPropertiesInterface
@@ -832,6 +832,31 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             sh:hasValue ( )
         ]
     ) .
+
+:NoRdfTypeClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's" ;
+    sh:xone (:NoRdfTypeClassUnionMember1
+        :NoRdfTypeClassUnionMember2
+    ) .
+
+:NoRdfTypeClassUnionMember1
+    a sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :noRdfTypeClassUnionMember1Property
+    ] .
+
+:NoRdfTypeClassUnionMember2
+    a sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :noRdfTypeClassUnionMember2Property
+    ] .
 
 :NonClass
     a sh:NodeShape ;

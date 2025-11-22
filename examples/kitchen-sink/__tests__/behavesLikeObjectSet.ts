@@ -16,12 +16,12 @@ const testData = {
       }),
   ) satisfies readonly kitchenSink.BlankNodeIdentifierClass[],
 
-  classClassUnions: [...new Array(4)].map((_, i) => {
+  classUnions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
       case 0:
         return new kitchenSink.ClassUnionMember1({
           $identifier: N3.DataFactory.namedNode(
-            `http://example.com/classClassUnion${i}`,
+            `http://example.com/classUnion${i}`,
           ),
           classUnionMemberCommonParentProperty: `common parent ${i}`,
           classUnionMember1Property: `member ${i}`,
@@ -29,7 +29,7 @@ const testData = {
       case 1:
         return new kitchenSink.ClassUnionMember2({
           $identifier: N3.DataFactory.namedNode(
-            `http://example.com/classClassUnion${i}`,
+            `http://example.com/classUnion${i}`,
           ),
           classUnionMemberCommonParentProperty: `common parent ${i}`,
           classUnionMember2Property: `member ${i}`,
@@ -98,6 +98,27 @@ const testData = {
         throw new RangeError(i.toString());
     }
   }) as kitchenSink.InterfaceUnion[],
+
+  noRdfTypeClassUnions: [...new Array(4)].map((_, i) => {
+    switch (i % 2) {
+      case 0:
+        return new kitchenSink.NoRdfTypeClassUnionMember1({
+          $identifier: N3.DataFactory.namedNode(
+            `http://example.com/noRdfTypeClassUnion${i}`,
+          ),
+          noRdfTypeClassUnionMember1Property: `member ${i}`,
+        });
+      case 1:
+        return new kitchenSink.NoRdfTypeClassUnionMember2({
+          $identifier: N3.DataFactory.namedNode(
+            `http://example.com/noRdfTypeClassUnion${i}`,
+          ),
+          noRdfTypeClassUnionMember2Property: `member ${i}`,
+        });
+      default:
+        throw new RangeError(i.toString());
+    }
+  }) as readonly kitchenSink.NoRdfTypeClassUnion[],
 };
 
 export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
@@ -114,7 +135,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     for (const object of testData.blankNodeIdentifierClasses) {
       object.$toRdf({ resourceSet, mutateGraph });
     }
-    for (const object of testData.classClassUnions) {
+    for (const object of testData.classUnions) {
       object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.concreteChildClasses) {
@@ -128,6 +149,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
         resourceSet,
         mutateGraph,
       });
+    }
+    for (const object of testData.noRdfTypeClassUnions) {
+      object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const quad of dataset) {
       addQuad(quad);
@@ -359,24 +383,24 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   });
 
   it("objectUnion (class with fromRdfType)", async ({ expect }) => {
-    for (const expectedClassClassUnion of testData.classClassUnions) {
+    for (const expectedClassUnion of testData.classUnions) {
       expect(
-        (await objectSet.classUnion(expectedClassClassUnion.$identifier))
+        (await objectSet.classUnion(expectedClassUnion.$identifier))
           .unsafeCoerce()
-          .$equals(expectedClassClassUnion as any)
+          .$equals(expectedClassUnion as any)
           .unsafeCoerce(),
       ).toBe(true);
     }
   });
 
-  it("objectUnion (interface without fromRdfType)", async ({ expect }) => {
-    for (const expectedInterfaceUnion of testData.interfaceUnions) {
-      const actualInterfaceUnion = (
-        await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier)
+  it("objectUnion (class without fromRdfType)", async ({ expect }) => {
+    for (const expectedClassUnion of testData.noRdfTypeClassUnions) {
+      const actualClassUnion = (
+        await objectSet.noRdfTypeClassUnion(expectedClassUnion.$identifier)
       ).unsafeCoerce();
-      const equalsResult = kitchenSink.InterfaceUnion.$equals(
-        expectedInterfaceUnion,
-        actualInterfaceUnion,
+      const equalsResult = kitchenSink.NoRdfTypeClassUnion.$equals(
+        expectedClassUnion,
+        actualClassUnion,
       );
       expect(equalsResult.unsafeCoerce()).toBe(true);
     }
@@ -390,9 +414,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
           .map((identifier) => identifier.value),
       ),
     ).toStrictEqual(
-      new Set(
-        testData.classClassUnions.map((object) => object.$identifier.value),
-      ),
+      new Set(testData.classUnions.map((object) => object.$identifier.value)),
     );
   });
 
@@ -401,7 +423,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       (await objectSet.classUnionIdentifiers({ limit: 1 }))
         .unsafeCoerce()
         .map((identifier) => identifier.value),
-    ).toStrictEqual([testData.classClassUnions[0].$identifier.value]);
+    ).toStrictEqual([testData.classUnions[0].$identifier.value]);
   });
 
   it("objectUnions (all identifiers)", async ({ expect }) => {
@@ -433,7 +455,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     const actualObjects = (
       await objectSet.classUnions({
         where: {
-          identifiers: testData.classClassUnions
+          identifiers: testData.classUnions
             .slice(sliceStart)
             .map((object) => object.$identifier),
           type: "identifiers",
@@ -441,9 +463,9 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       })
     ).unsafeCoerce();
     expect(actualObjects).toHaveLength(
-      testData.classClassUnions.slice(sliceStart).length,
+      testData.classUnions.slice(sliceStart).length,
     );
-    for (const expectedObject of testData.classClassUnions.slice(sliceStart)) {
+    for (const expectedObject of testData.classUnions.slice(sliceStart)) {
       expect(
         actualObjects.some((actualObject) =>
           kitchenSink.ClassUnion.$equals(
@@ -455,19 +477,19 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
     }
   });
 
-  it("objectUnionsCount (no fromRdfTypes)", async ({ expect }) => {
+  it("objectUnionsCount (with fromRdfTypes)", async ({ expect }) => {
+    expect((await objectSet.classUnionsCount()).unsafeCoerce()).toStrictEqual(
+      testData.classUnions.length,
+    );
+  });
+
+  it("objectUnionsCount (without fromRdfTypes)", async ({ expect }) => {
     expect(
-      (await objectSet.interfaceUnionsCount()).unsafeCoerce(),
+      (await objectSet.noRdfTypeClassUnionsCount()).unsafeCoerce(),
     ).toStrictEqual(
       !(objectSet instanceof kitchenSink.$SparqlObjectSet)
         ? 0
         : testData.interfaceUnions.length,
-    );
-  });
-
-  it("objectUnionsCount (with fromRdfTypes)", async ({ expect }) => {
-    expect((await objectSet.classUnionsCount()).unsafeCoerce()).toStrictEqual(
-      testData.classClassUnions.length,
     );
   });
 }

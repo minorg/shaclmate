@@ -11975,6 +11975,1030 @@ export namespace NonClass {
     return requiredPatterns.concat(optionalPatterns);
   }
 }
+export class NoRdfTypeClassUnionMember2 {
+  private _$identifier?: NoRdfTypeClassUnionMember2.$Identifier;
+  readonly $type = "NoRdfTypeClassUnionMember2";
+  readonly noRdfTypeClassUnionMember2Property: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly noRdfTypeClassUnionMember2Property: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.noRdfTypeClassUnionMember2Property =
+      parameters.noRdfTypeClassUnionMember2Property;
+  }
+
+  get $identifier(): NoRdfTypeClassUnionMember2.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: NoRdfTypeClassUnionMember2): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.noRdfTypeClassUnionMember2Property,
+          other.noRdfTypeClassUnionMember2Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "noRdfTypeClassUnionMember2Property",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.noRdfTypeClassUnionMember2Property);
+    return _hasher;
+  }
+
+  $toJson(): NoRdfTypeClassUnionMember2.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        noRdfTypeClassUnionMember2Property:
+          this.noRdfTypeClassUnionMember2Property,
+      } satisfies NoRdfTypeClassUnionMember2.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      NoRdfTypeClassUnionMember2.$properties.noRdfTypeClassUnionMember2Property[
+        "identifier"
+      ],
+      ...[this.noRdfTypeClassUnionMember2Property],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NoRdfTypeClassUnionMember2 {
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, NoRdfTypeClassUnionMember2> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NoRdfTypeClassUnionMember2(properties),
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, NoRdfTypeClassUnionMember2> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return NoRdfTypeClassUnionMember2.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NoRdfTypeClassUnionMember2(properties));
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NoRdfTypeClassUnionMember2";
+    readonly noRdfTypeClassUnionMember2Property: string;
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NoRdfTypeClassUnionMember2" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/noRdfTypeClassUnionMember2Property`,
+          type: "Control",
+        },
+      ],
+      label: "NoRdfTypeClassUnionMember2",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("NoRdfTypeClassUnionMember2"),
+      noRdfTypeClassUnionMember2Property: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {
+    noRdfTypeClassUnionMember2Property: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/noRdfTypeClassUnionMember2Property",
+      ),
+    },
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      noRdfTypeClassUnionMember2Property: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const noRdfTypeClassUnionMember2Property =
+      $jsonObject["noRdfTypeClassUnionMember2Property"];
+    return purify.Either.of({
+      $identifier,
+      noRdfTypeClassUnionMember2Property,
+    });
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      noRdfTypeClassUnionMember2Property: string;
+    }
+  > {
+    const $identifier: NoRdfTypeClassUnionMember2.$Identifier =
+      $resource.identifier;
+    const _noRdfTypeClassUnionMember2PropertyEither: purify.Either<
+      Error,
+      string
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.noRdfTypeClassUnionMember2Property["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  NoRdfTypeClassUnionMember2.$properties
+                    .noRdfTypeClassUnionMember2Property["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => values.head());
+    if (_noRdfTypeClassUnionMember2PropertyEither.isLeft()) {
+      return _noRdfTypeClassUnionMember2PropertyEither;
+    }
+
+    const noRdfTypeClassUnionMember2Property =
+      _noRdfTypeClassUnionMember2PropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      noRdfTypeClassUnionMember2Property,
+    });
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeClassUnionMember2.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeClassUnionMember2.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("noRdfTypeClassUnionMember2");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "noRdfTypeClassUnionMember2");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}NoRdfTypeClassUnionMember2Property`,
+      ),
+      predicate:
+        NoRdfTypeClassUnionMember2.$properties
+          .noRdfTypeClassUnionMember2Property["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("noRdfTypeClassUnionMember2");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "noRdfTypeClassUnionMember2");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}NoRdfTypeClassUnionMember2Property`,
+            ),
+            predicate:
+              NoRdfTypeClassUnionMember2.$properties
+                .noRdfTypeClassUnionMember2Property["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}NoRdfTypeClassUnionMember2Property`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+export class NoRdfTypeClassUnionMember1 {
+  private _$identifier?: NoRdfTypeClassUnionMember1.$Identifier;
+  readonly $type = "NoRdfTypeClassUnionMember1";
+  readonly noRdfTypeClassUnionMember1Property: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly noRdfTypeClassUnionMember1Property: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.noRdfTypeClassUnionMember1Property =
+      parameters.noRdfTypeClassUnionMember1Property;
+  }
+
+  get $identifier(): NoRdfTypeClassUnionMember1.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: NoRdfTypeClassUnionMember1): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.noRdfTypeClassUnionMember1Property,
+          other.noRdfTypeClassUnionMember1Property,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "noRdfTypeClassUnionMember1Property",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.noRdfTypeClassUnionMember1Property);
+    return _hasher;
+  }
+
+  $toJson(): NoRdfTypeClassUnionMember1.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        noRdfTypeClassUnionMember1Property:
+          this.noRdfTypeClassUnionMember1Property,
+      } satisfies NoRdfTypeClassUnionMember1.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      NoRdfTypeClassUnionMember1.$properties.noRdfTypeClassUnionMember1Property[
+        "identifier"
+      ],
+      ...[this.noRdfTypeClassUnionMember1Property],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace NoRdfTypeClassUnionMember1 {
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, NoRdfTypeClassUnionMember1> {
+    return $propertiesFromJson(json).map(
+      (properties) => new NoRdfTypeClassUnionMember1(properties),
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, NoRdfTypeClassUnionMember1> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return NoRdfTypeClassUnionMember1.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new NoRdfTypeClassUnionMember1(properties));
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "NoRdfTypeClassUnionMember1";
+    readonly noRdfTypeClassUnionMember1Property: string;
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "NoRdfTypeClassUnionMember1" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/noRdfTypeClassUnionMember1Property`,
+          type: "Control",
+        },
+      ],
+      label: "NoRdfTypeClassUnionMember1",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("NoRdfTypeClassUnionMember1"),
+      noRdfTypeClassUnionMember1Property: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {
+    noRdfTypeClassUnionMember1Property: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/noRdfTypeClassUnionMember1Property",
+      ),
+    },
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      noRdfTypeClassUnionMember1Property: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const noRdfTypeClassUnionMember1Property =
+      $jsonObject["noRdfTypeClassUnionMember1Property"];
+    return purify.Either.of({
+      $identifier,
+      noRdfTypeClassUnionMember1Property,
+    });
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      noRdfTypeClassUnionMember1Property: string;
+    }
+  > {
+    const $identifier: NoRdfTypeClassUnionMember1.$Identifier =
+      $resource.identifier;
+    const _noRdfTypeClassUnionMember1PropertyEither: purify.Either<
+      Error,
+      string
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+    >(
+      $resource.values(
+        $properties.noRdfTypeClassUnionMember1Property["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.Value({
+                object: literalValue,
+                predicate:
+                  NoRdfTypeClassUnionMember1.$properties
+                    .noRdfTypeClassUnionMember1Property["identifier"],
+                subject: $resource,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .chain((values) => values.head());
+    if (_noRdfTypeClassUnionMember1PropertyEither.isLeft()) {
+      return _noRdfTypeClassUnionMember1PropertyEither;
+    }
+
+    const noRdfTypeClassUnionMember1Property =
+      _noRdfTypeClassUnionMember1PropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      noRdfTypeClassUnionMember1Property,
+    });
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeClassUnionMember1.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeClassUnionMember1.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("noRdfTypeClassUnionMember1");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "noRdfTypeClassUnionMember1");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}NoRdfTypeClassUnionMember1Property`,
+      ),
+      predicate:
+        NoRdfTypeClassUnionMember1.$properties
+          .noRdfTypeClassUnionMember1Property["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("noRdfTypeClassUnionMember1");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "noRdfTypeClassUnionMember1");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${variablePrefix}NoRdfTypeClassUnionMember1Property`,
+            ),
+            predicate:
+              NoRdfTypeClassUnionMember1.$properties
+                .noRdfTypeClassUnionMember1Property["identifier"],
+            subject,
+          },
+        ],
+        type: "bgp",
+      },
+      ...[parameters?.preferredLanguages ?? []]
+        .filter((languages) => languages.length > 0)
+        .map((languages) =>
+          languages.map((language) => ({
+            type: "operation" as const,
+            operator: "=",
+            args: [
+              {
+                type: "operation" as const,
+                operator: "lang",
+                args: [
+                  dataFactory.variable!(
+                    `${variablePrefix}NoRdfTypeClassUnionMember1Property`,
+                  ),
+                ],
+              },
+              dataFactory.literal(language),
+            ],
+          })),
+        )
+        .map((langEqualsExpressions) => ({
+          type: "filter" as const,
+          expression: langEqualsExpressions.reduce(
+            (reducedExpression, langEqualsExpression) => {
+              if (reducedExpression === null) {
+                return langEqualsExpression;
+              }
+              return {
+                type: "operation" as const,
+                operator: "||",
+                args: [reducedExpression, langEqualsExpression],
+              };
+            },
+            null as sparqljs.Expression | null,
+          ) as sparqljs.Expression,
+        })),
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
 /**
  * Shape with shaclmate:mutable properties.
  */
@@ -51531,6 +52555,264 @@ export namespace PartialInterfaceUnion {
   }
 }
 /**
+ * Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's
+ */
+export type NoRdfTypeClassUnion =
+  | NoRdfTypeClassUnionMember1
+  | NoRdfTypeClassUnionMember2;
+
+export namespace NoRdfTypeClassUnion {
+  export function $equals(
+    left: NoRdfTypeClassUnion,
+    right: NoRdfTypeClassUnion,
+  ): $EqualsResult {
+    return $strictEquals(left.$type, right.$type).chain(() => {
+      switch (left.$type) {
+        case "NoRdfTypeClassUnionMember1":
+          return left.$equals(right as unknown as NoRdfTypeClassUnionMember1);
+        case "NoRdfTypeClassUnionMember2":
+          return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
+        default:
+          left satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, NoRdfTypeClassUnion> {
+    return (
+      NoRdfTypeClassUnionMember1.$fromJson(json) as purify.Either<
+        zod.ZodError,
+        NoRdfTypeClassUnion
+      >
+    ).altLazy(
+      () =>
+        NoRdfTypeClassUnionMember2.$fromJson(json) as purify.Either<
+          zod.ZodError,
+          NoRdfTypeClassUnion
+        >,
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, NoRdfTypeClassUnion> {
+    return (
+      NoRdfTypeClassUnionMember1.$fromRdf(resource, {
+        ...options,
+        ignoreRdfType: false,
+      }) as purify.Either<Error, NoRdfTypeClassUnion>
+    ).altLazy(
+      () =>
+        NoRdfTypeClassUnionMember2.$fromRdf(resource, {
+          ...options,
+          ignoreRdfType: false,
+        }) as purify.Either<Error, NoRdfTypeClassUnion>,
+    );
+  }
+
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_noRdfTypeClassUnion: NoRdfTypeClassUnion, _hasher: HasherT): HasherT {
+    switch (_noRdfTypeClassUnion.$type) {
+      case "NoRdfTypeClassUnionMember1":
+        return _noRdfTypeClassUnion.$hash(_hasher);
+      case "NoRdfTypeClassUnionMember2":
+        return _noRdfTypeClassUnion.$hash(_hasher);
+      default:
+        _noRdfTypeClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json =
+    | NoRdfTypeClassUnionMember1.$Json
+    | NoRdfTypeClassUnionMember2.$Json;
+
+  export function $jsonZodSchema() {
+    return zod.discriminatedUnion("$type", [
+      NoRdfTypeClassUnionMember1.$jsonZodSchema(),
+      NoRdfTypeClassUnionMember2.$jsonZodSchema(),
+    ]);
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        NoRdfTypeClassUnion.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        NoRdfTypeClassUnion.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      NoRdfTypeClassUnion.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [
+      ...NoRdfTypeClassUnionMember1.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!(
+            "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
+          ),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
+          : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
+      }).concat(),
+      ...NoRdfTypeClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject:
+          parameters?.subject ??
+          dataFactory.variable!(
+            "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
+          ),
+        variablePrefix: parameters?.variablePrefix
+          ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
+          : "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
+      }).concat(),
+    ];
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [
+      {
+        patterns: [
+          {
+            patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!(
+                  "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
+                ),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
+                : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
+            }).concat(),
+            type: "group",
+          },
+          {
+            patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
+              subject:
+                parameters?.subject ??
+                dataFactory.variable!(
+                  "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
+                ),
+              variablePrefix: parameters?.variablePrefix
+                ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
+                : "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
+            }).concat(),
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+    ];
+  }
+
+  export function $toJson(
+    _noRdfTypeClassUnion: NoRdfTypeClassUnion,
+  ): NoRdfTypeClassUnionMember1.$Json | NoRdfTypeClassUnionMember2.$Json {
+    switch (_noRdfTypeClassUnion.$type) {
+      case "NoRdfTypeClassUnionMember1":
+        return _noRdfTypeClassUnion.$toJson();
+      case "NoRdfTypeClassUnionMember2":
+        return _noRdfTypeClassUnion.$toJson();
+      default:
+        _noRdfTypeClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+
+  export function $toRdf(
+    _noRdfTypeClassUnion: NoRdfTypeClassUnion,
+    _parameters?: {
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    switch (_noRdfTypeClassUnion.$type) {
+      case "NoRdfTypeClassUnionMember1":
+        return _noRdfTypeClassUnion.$toRdf(_parameters);
+      case "NoRdfTypeClassUnionMember2":
+        return _noRdfTypeClassUnion.$toRdf(_parameters);
+      default:
+        _noRdfTypeClassUnion satisfies never;
+        throw new Error("unrecognized type");
+    }
+  }
+}
+/**
  * Node shape sh:xone's node shapes that have properties with the union's type
  */
 export type RecursiveClassUnion =
@@ -52512,6 +53794,40 @@ export interface $ObjectSet {
   nonClassesCount(
     query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  noRdfTypeClassUnionMember1(
+    identifier: NoRdfTypeClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember1>>;
+  noRdfTypeClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>
+  >;
+  noRdfTypeClassUnionMember1s(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>>;
+  noRdfTypeClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  noRdfTypeClassUnionMember2(
+    identifier: NoRdfTypeClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember2>>;
+  noRdfTypeClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>
+  >;
+  noRdfTypeClassUnionMember2s(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>>;
+  noRdfTypeClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, OrderedPropertiesClass>>;
@@ -52844,6 +54160,18 @@ export interface $ObjectSet {
       $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
       "where"
     >,
+  ): Promise<purify.Either<Error, number>>;
+  noRdfTypeClassUnion(
+    identifier: NoRdfTypeClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnion>>;
+  noRdfTypeClassUnionIdentifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>>;
+  noRdfTypeClassUnions(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>>;
+  noRdfTypeClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
   partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
@@ -54205,6 +55533,64 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.nonClassesCount(query);
   }
 
+  noRdfTypeClassUnionMember1(
+    identifier: NoRdfTypeClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember1>> {
+    return this.$delegate.noRdfTypeClassUnionMember1(identifier);
+  }
+
+  noRdfTypeClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>
+  > {
+    return this.$delegate.noRdfTypeClassUnionMember1Identifiers(query);
+  }
+
+  noRdfTypeClassUnionMember1s(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
+    return this.$delegate.noRdfTypeClassUnionMember1s(query);
+  }
+
+  noRdfTypeClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.noRdfTypeClassUnionMember1sCount(query);
+  }
+
+  noRdfTypeClassUnionMember2(
+    identifier: NoRdfTypeClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember2>> {
+    return this.$delegate.noRdfTypeClassUnionMember2(identifier);
+  }
+
+  noRdfTypeClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>
+  > {
+    return this.$delegate.noRdfTypeClassUnionMember2Identifiers(query);
+  }
+
+  noRdfTypeClassUnionMember2s(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
+    return this.$delegate.noRdfTypeClassUnionMember2s(query);
+  }
+
+  noRdfTypeClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.noRdfTypeClassUnionMember2sCount(query);
+  }
+
   orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, OrderedPropertiesClass>> {
@@ -54802,6 +56188,30 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedInterfaceUnionsCount(query);
+  }
+
+  noRdfTypeClassUnion(
+    identifier: NoRdfTypeClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnion>> {
+    return this.$delegate.noRdfTypeClassUnion(identifier);
+  }
+
+  noRdfTypeClassUnionIdentifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>> {
+    return this.$delegate.noRdfTypeClassUnionIdentifiers(query);
+  }
+
+  noRdfTypeClassUnions(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>> {
+    return this.$delegate.noRdfTypeClassUnions(query);
+  }
+
+  noRdfTypeClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.noRdfTypeClassUnionsCount(query);
   }
 
   partialClassUnion(
@@ -58674,6 +60084,158 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     );
   }
 
+  async noRdfTypeClassUnionMember1(
+    identifier: NoRdfTypeClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember1>> {
+    return this.noRdfTypeClassUnionMember1Sync(identifier);
+  }
+
+  noRdfTypeClassUnionMember1Sync(
+    identifier: NoRdfTypeClassUnionMember1.$Identifier,
+  ): purify.Either<Error, NoRdfTypeClassUnionMember1> {
+    return this.noRdfTypeClassUnionMember1sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeClassUnionMember1Identifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>
+  > {
+    return this.noRdfTypeClassUnionMember1IdentifiersSync(query);
+  }
+
+  noRdfTypeClassUnionMember1IdentifiersSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      NoRdfTypeClassUnionMember1,
+      NoRdfTypeClassUnionMember1.$Identifier
+    >(
+      [{ $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember1s(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
+    return this.noRdfTypeClassUnionMember1sSync(query);
+  }
+
+  noRdfTypeClassUnionMember1sSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]> {
+    return this.$objectsSync<
+      NoRdfTypeClassUnionMember1,
+      NoRdfTypeClassUnionMember1.$Identifier
+    >(
+      [{ $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember1sCount(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.noRdfTypeClassUnionMember1sCountSync(query);
+  }
+
+  noRdfTypeClassUnionMember1sCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      NoRdfTypeClassUnionMember1,
+      NoRdfTypeClassUnionMember1.$Identifier
+    >(
+      [{ $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember2(
+    identifier: NoRdfTypeClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember2>> {
+    return this.noRdfTypeClassUnionMember2Sync(identifier);
+  }
+
+  noRdfTypeClassUnionMember2Sync(
+    identifier: NoRdfTypeClassUnionMember2.$Identifier,
+  ): purify.Either<Error, NoRdfTypeClassUnionMember2> {
+    return this.noRdfTypeClassUnionMember2sSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeClassUnionMember2Identifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>
+  > {
+    return this.noRdfTypeClassUnionMember2IdentifiersSync(query);
+  }
+
+  noRdfTypeClassUnionMember2IdentifiersSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      NoRdfTypeClassUnionMember2,
+      NoRdfTypeClassUnionMember2.$Identifier
+    >(
+      [{ $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember2s(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
+    return this.noRdfTypeClassUnionMember2sSync(query);
+  }
+
+  noRdfTypeClassUnionMember2sSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]> {
+    return this.$objectsSync<
+      NoRdfTypeClassUnionMember2,
+      NoRdfTypeClassUnionMember2.$Identifier
+    >(
+      [{ $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember2sCount(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.noRdfTypeClassUnionMember2sCountSync(query);
+  }
+
+  noRdfTypeClassUnionMember2sCountSync(
+    query?: Pick<
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      NoRdfTypeClassUnionMember2,
+      NoRdfTypeClassUnionMember2.$Identifier
+    >(
+      [{ $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, OrderedPropertiesClass>> {
@@ -60467,6 +62029,83 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
           $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
         },
+      ],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnion(
+    identifier: NoRdfTypeClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnion>> {
+    return this.noRdfTypeClassUnionSync(identifier);
+  }
+
+  noRdfTypeClassUnionSync(
+    identifier: NoRdfTypeClassUnion.$Identifier,
+  ): purify.Either<Error, NoRdfTypeClassUnion> {
+    return this.noRdfTypeClassUnionsSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeClassUnionIdentifiers(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>> {
+    return this.noRdfTypeClassUnionIdentifiersSync(query);
+  }
+
+  noRdfTypeClassUnionIdentifiersSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      NoRdfTypeClassUnion,
+      NoRdfTypeClassUnion.$Identifier
+    >(
+      [
+        { $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf, $fromRdfTypes: [] },
+      ],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnions(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>> {
+    return this.noRdfTypeClassUnionsSync(query);
+  }
+
+  noRdfTypeClassUnionsSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnion[]> {
+    return this.$objectsSync<
+      NoRdfTypeClassUnion,
+      NoRdfTypeClassUnion.$Identifier
+    >(
+      [
+        { $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf, $fromRdfTypes: [] },
+      ],
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionsCount(
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+  ): Promise<purify.Either<Error, number>> {
+    return this.noRdfTypeClassUnionsCountSync(query);
+  }
+
+  noRdfTypeClassUnionsCountSync(
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      NoRdfTypeClassUnion,
+      NoRdfTypeClassUnion.$Identifier
+    >(
+      [
+        { $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf, $fromRdfTypes: [] },
+        { $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf, $fromRdfTypes: [] },
       ],
       query,
     );
@@ -62874,6 +64513,90 @@ export class $SparqlObjectSet implements $ObjectSet {
     return this.$objectsCount<NonClass.$Identifier>(NonClass, query);
   }
 
+  async noRdfTypeClassUnionMember1(
+    identifier: NoRdfTypeClassUnionMember1.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember1>> {
+    return (
+      await this.noRdfTypeClassUnionMember1s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeClassUnionMember1Identifiers(
+    query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<NoRdfTypeClassUnionMember1.$Identifier>(
+      NoRdfTypeClassUnionMember1,
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember1s(
+    query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
+    return this.$objects<
+      NoRdfTypeClassUnionMember1,
+      NoRdfTypeClassUnionMember1.$Identifier
+    >(NoRdfTypeClassUnionMember1, query);
+  }
+
+  async noRdfTypeClassUnionMember1sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<NoRdfTypeClassUnionMember1.$Identifier>(
+      NoRdfTypeClassUnionMember1,
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember2(
+    identifier: NoRdfTypeClassUnionMember2.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember2>> {
+    return (
+      await this.noRdfTypeClassUnionMember2s({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeClassUnionMember2Identifiers(
+    query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<NoRdfTypeClassUnionMember2.$Identifier>(
+      NoRdfTypeClassUnionMember2,
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionMember2s(
+    query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
+    return this.$objects<
+      NoRdfTypeClassUnionMember2,
+      NoRdfTypeClassUnionMember2.$Identifier
+    >(NoRdfTypeClassUnionMember2, query);
+  }
+
+  async noRdfTypeClassUnionMember2sCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<NoRdfTypeClassUnionMember2.$Identifier>(
+      NoRdfTypeClassUnionMember2,
+      query,
+    );
+  }
+
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, OrderedPropertiesClass>> {
@@ -63758,6 +65481,46 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedInterfaceUnion.$Identifier>(
       LazilyResolvedInterfaceUnion,
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnion(
+    identifier: NoRdfTypeClassUnion.$Identifier,
+  ): Promise<purify.Either<Error, NoRdfTypeClassUnion>> {
+    return (
+      await this.noRdfTypeClassUnions({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async noRdfTypeClassUnionIdentifiers(
+    query?: $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>> {
+    return this.$objectIdentifiers<NoRdfTypeClassUnion.$Identifier>(
+      NoRdfTypeClassUnion,
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnions(
+    query?: $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+  ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>> {
+    return this.$objects<NoRdfTypeClassUnion, NoRdfTypeClassUnion.$Identifier>(
+      NoRdfTypeClassUnion,
+      query,
+    );
+  }
+
+  async noRdfTypeClassUnionsCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<NoRdfTypeClassUnion.$Identifier>(
+      NoRdfTypeClassUnion,
       query,
     );
   }
