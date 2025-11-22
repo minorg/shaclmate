@@ -66,4 +66,34 @@ describe("isType", () => {
     //   ),
     // ).toStrictEqual(true);
   });
+
+  it("should work on a class union", ({ expect }) => {
+    expect(
+      kitchenSink.ClassUnion.isClassUnion(
+        harnesses.classUnionMember1
+          .instance as kitchenSink.ClassUnionMemberCommonParent,
+      ),
+    ).toStrictEqual(true);
+    expect(
+      kitchenSink.ClassUnion.isClassUnion(
+        harnesses.classUnionMember2
+          .instance as kitchenSink.ClassUnionMemberCommonParent,
+      ),
+    ).toStrictEqual(true);
+  });
+
+  it("should work on an interface union", ({ expect }) => {
+    expect(
+      kitchenSink.InterfaceUnion.isInterfaceUnion(
+        harnesses.interfaceUnionMember1
+          .instance as kitchenSink.InterfaceUnionMemberCommonParent,
+      ),
+    ).toStrictEqual(true);
+    expect(
+      kitchenSink.InterfaceUnion.isInterfaceUnion(
+        harnesses.interfaceUnionMember2
+          .instance as kitchenSink.InterfaceUnionMemberCommonParent,
+      ),
+    ).toStrictEqual(true);
+  });
 });
