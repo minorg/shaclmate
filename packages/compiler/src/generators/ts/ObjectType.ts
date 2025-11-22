@@ -7,7 +7,6 @@ import {
   type ClassDeclarationStructure,
   type InterfaceDeclarationStructure,
   type ModuleDeclarationStructure,
-  type StatementStructures,
   StructureKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
@@ -22,6 +21,7 @@ import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -169,7 +169,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
     ];
 
-    const staticModuleStatements: (StatementStructures | string)[] = [
+    const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
@@ -178,6 +178,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
       ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
+      ..._ObjectType.isTypeFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
       ..._ObjectType.propertiesVariableStatement.bind(this)().toList(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
@@ -188,7 +189,9 @@ export class ObjectType extends DeclaredType {
         isExported: this.export,
         kind: StructureKind.Module,
         name: this.staticModuleName,
-        statements: staticModuleStatements,
+        statements: staticModuleStatements.sort(
+          StaticModuleStatementStructure.compare,
+        ),
       });
     }
 
@@ -302,7 +305,7 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get ownShaclProperties(): readonly ObjectType.Property[] {
+  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<Type>[] {
     return this.properties.filter(
       (property) => property instanceof _ObjectType.ShaclProperty,
     );
@@ -323,6 +326,28 @@ export class ObjectType extends DeclaredType {
       }
     }
     return properties;
+  }
+
+  /**
+   * If there's no multiple inheritance in this object type's ancestor graph, return the root of the graph.
+   */
+  @Memoize()
+  get rootAncestorObjectType(): Maybe<ObjectType> {
+    function helper(objectType: ObjectType, depth: number): Maybe<ObjectType> {
+      switch (objectType.parentObjectTypes.length) {
+        case 0:
+          // depth === 0 is this ObjectType. If it has no parents then it has no root.
+          // depth > 0 means objectType is the root.
+          return depth > 0 ? Maybe.of(objectType) : Maybe.empty();
+        case 1:
+          // Recurse into the parent
+          return helper(objectType.parentObjectTypes[0], depth + 1);
+        default:
+          return Maybe.empty(); // Multiple inheritance
+      }
+    }
+
+    return helper(this, 0);
   }
 
   @Memoize()

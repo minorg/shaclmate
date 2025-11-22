@@ -84,6 +84,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :ClassUnionMember1
     a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -93,11 +94,22 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :ClassUnionMember2
     a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :ClassUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :classUnionMember2Property
+    ] .
+
+:ClassUnionMemberCommonParent
+    shaclmate:abstract true ;
+    a owl:Class, sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :classUnionMemberCommonParentProperty
     ] .
 
 :ConcreteChildClass
@@ -435,7 +447,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InterfaceUnionMember1
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
@@ -445,30 +458,24 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :InterfaceUnionMember2
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
-    rdfs:comment "A union node shape that is part of another union shape, to test composition of unions." ;
-    sh:xone (:InterfaceUnionMember2a
-        :InterfaceUnionMember2b
-    ) .
-
-:InterfaceUnionMember2a
-    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
+    rdfs:subClassOf :InterfaceUnionMemberCommonParent ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :interfaceUnionMember2aProperty
+        sh:path :interfaceUnionMember2Property
     ] .
 
-:InterfaceUnionMember2b
+:InterfaceUnionMemberCommonParent
+    shaclmate:abstract true ;
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:datatype xsd:string ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :interfaceUnionMember2bProperty
+        sh:path :interfaceUnionMemberCommonParentProperty
     ] .
 
 :IriIdentifierClass
@@ -631,6 +638,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
         shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setLazyToResolvedClassProperty
     ], [
@@ -675,12 +688,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedClassProperty
     ] .
 
 :LazyPropertiesInterface
@@ -806,6 +813,31 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             sh:hasValue ( )
         ]
     ) .
+
+:NoRdfTypeClassUnion
+    a sh:NodeShape ;
+    rdfs:comment "Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's" ;
+    sh:xone (:NoRdfTypeClassUnionMember1
+        :NoRdfTypeClassUnionMember2
+    ) .
+
+:NoRdfTypeClassUnionMember1
+    a sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :noRdfTypeClassUnionMember1Property
+    ] .
+
+:NoRdfTypeClassUnionMember2
+    a sh:NodeShape ;
+    sh:property [
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :noRdfTypeClassUnionMember2Property
+    ] .
 
 :NonClass
     a sh:NodeShape ;

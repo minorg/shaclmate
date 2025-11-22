@@ -36,6 +36,7 @@ export const harnesses = {
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,
+      classUnionMemberCommonParentProperty: "test common parent",
       classUnionMember1Property: "test",
     }),
     kitchenSink.ClassUnion,
@@ -43,6 +44,7 @@ export const harnesses = {
   classUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
       $identifier,
+      classUnionMemberCommonParentProperty: "test common parent",
       classUnionMember2Property: "test",
     }),
     kitchenSink.ClassUnion,
@@ -164,18 +166,20 @@ export const harnesses = {
   flattenClassUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,
-      classUnionMember1Property: "test",
+      classUnionMemberCommonParentProperty: "test common parent",
+      classUnionMember1Property: "test member 1",
     }),
     kitchenSink.FlattenClassUnion,
   ),
-  flattenCassUnionMember2: new ClassUnionHarness(
+  flattenClassUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
       $identifier,
-      classUnionMember2Property: "test",
+      classUnionMemberCommonParentProperty: "test common parent",
+      classUnionMember2Property: "test member 2",
     }),
     kitchenSink.FlattenClassUnion,
   ),
-  flattenCassUnionMember3: new ClassUnionHarness(
+  flattenClassUnionMember3: new ClassUnionHarness(
     new kitchenSink.FlattenClassUnionMember3({
       $identifier,
       flattenClassUnionMember3Property: "test",
@@ -237,16 +241,18 @@ export const harnesses = {
   interfaceUnionMember1: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
       $identifier,
+      interfaceUnionMemberCommonParentProperty: "common parent",
       interfaceUnionMember1Property: "Test1",
       $type: "InterfaceUnionMember1",
     },
     kitchenSink.InterfaceUnion,
   ),
-  interfaceUnionMember2a: new InterfaceHarness<kitchenSink.InterfaceUnion>(
+  interfaceUnionMember2: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
       $identifier,
-      interfaceUnionMember2aProperty: "Test2",
-      $type: "InterfaceUnionMember2a",
+      interfaceUnionMemberCommonParentProperty: "common parent",
+      interfaceUnionMember2Property: "Test2",
+      $type: "InterfaceUnionMember2",
     },
     kitchenSink.InterfaceUnion,
   ),
@@ -436,6 +442,20 @@ export const harnesses = {
       mutableSetProperty: ["test1", "test2"],
     }),
     kitchenSink.MutablePropertiesClass,
+  ),
+  noRdfTypeClassUnionMember1: new ClassUnionHarness(
+    new kitchenSink.NoRdfTypeClassUnionMember1({
+      $identifier,
+      noRdfTypeClassUnionMember1Property: "test",
+    }),
+    kitchenSink.NoRdfTypeClassUnion,
+  ),
+  noRdfTypeClassUnionMember2: new ClassUnionHarness(
+    new kitchenSink.NoRdfTypeClassUnionMember2({
+      $identifier,
+      noRdfTypeClassUnionMember2Property: "test",
+    }),
+    kitchenSink.NoRdfTypeClassUnion,
   ),
   objectListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({

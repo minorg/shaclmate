@@ -18,6 +18,8 @@ export * from "./IdentifierPrefixProperty.js";
 
 export * from "./IdentifierProperty.js";
 
+export * from "./isTypeFunctionDeclaration.js";
+
 export * from "./interfaceDeclaration.js";
 
 export * from "./jsonFunctionDeclarations.js";
