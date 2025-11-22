@@ -5,10 +5,12 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
   type ClassDeclarationStructure,
+  type FunctionDeclarationStructure,
   type InterfaceDeclarationStructure,
   type ModuleDeclarationStructure,
-  type StatementStructures,
   StructureKind,
+  type TypeAliasDeclarationStructure,
+  type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
@@ -169,7 +171,12 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
     ];
 
-    const staticModuleStatements: (StatementStructures | string)[] = [
+    const staticModuleStatements: (
+      | FunctionDeclarationStructure
+      | ModuleDeclarationStructure
+      | TypeAliasDeclarationStructure
+      | VariableStatementStructure
+    )[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
@@ -189,7 +196,19 @@ export class ObjectType extends DeclaredType {
         isExported: this.export,
         kind: StructureKind.Module,
         name: this.staticModuleName,
-        statements: staticModuleStatements,
+        statements: staticModuleStatements.sort((left, right) => {
+          const leftName =
+            left.kind === StructureKind.VariableStatement
+              ? left.declarations[0].name
+              : left.name;
+          const rightName =
+            right.kind === StructureKind.VariableStatement
+              ? right.declarations[0].name
+              : right.name;
+          invariant(leftName);
+          invariant(rightName);
+          return leftName.localeCompare(rightName);
+        }),
       });
     }
 
