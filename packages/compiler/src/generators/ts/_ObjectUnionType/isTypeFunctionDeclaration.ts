@@ -55,8 +55,13 @@ export function isTypeFunctionDeclaration(
     ],
     returnType: `object is ${this.name}`,
     statements: [
-      `switch (object.${this._discriminatorProperty.name}) { ${this._discriminatorProperty.descendantValues
-        .concat(this._discriminatorProperty.ownValues)
+      `switch (object.${this._discriminatorProperty.name}) { ${[
+        ...new Set([
+          ...this._discriminatorProperty.descendantValues,
+          ...this._discriminatorProperty.ownValues,
+        ]),
+      ]
+        .toSorted()
         .map((value) => `case "${value}":`)
         .join("\n")} return true; default: return false; }`,
     ],
