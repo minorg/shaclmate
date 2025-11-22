@@ -1104,138 +1104,10 @@
               },
               "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>"
             },
-            "kind": "SetType"
-          },
-          "path": "http://example.com/setLazyToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-228",
-          "type": {
-            "itemType": {
-              "fromRdfType": {
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-              },
-              "kind": "ObjectType",
-              "identifierMintingStrategy": "blankNode",
-              "identifierType": {
-                "hasValue": [],
-                "kind": "IdentifierType",
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
-              },
-              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                }
-              ]
-            },
-            "kind": "SetType"
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "partialType": {
-            "kind": "ObjectType",
-            "name": "DefaultPartial",
-            "identifierType": {
-              "hasValue": [],
-              "kind": "IdentifierType",
-              "nodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
-            },
-            "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>"
-          },
-          "path": "http://example.com/requiredLazyToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-229",
-          "type": {
-            "fromRdfType": {
-              "termType": "NamedNode",
-              "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-            },
-            "kind": "ObjectType",
-            "identifierMintingStrategy": "blankNode",
-            "identifierType": {
-              "hasValue": [],
-              "kind": "IdentifierType",
-              "nodeKinds": [
-                "BlankNode",
-                "NamedNode"
-              ]
-            },
-            "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-            "toRdfTypes": [
-              {
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-              }
-            ]
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "partialType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": "NamedDefaultPartial",
-              "identifierType": {
-                "hasValue": [],
-                "kind": "IdentifierType",
-                "nodeKinds": [
-                  "NamedNode"
-                ]
-              },
-              "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>"
-            },
-            "kind": "OptionType"
-          },
-          "path": "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
-          "shapeIdentifier": "_:n3-230",
-          "type": {
-            "itemType": {
-              "kind": "ObjectType",
-              "identifierType": {
-                "hasValue": [],
-                "kind": "IdentifierType",
-                "nodeKinds": [
-                  "NamedNode"
-                ]
-              },
-              "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>"
-            },
-            "kind": "OptionType"
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "partialType": {
-            "itemType": {
-              "kind": "ObjectType",
-              "name": "DefaultPartial",
-              "identifierType": {
-                "hasValue": [],
-                "kind": "IdentifierType",
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
-              },
-              "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>"
-            },
             "kind": "OptionType"
           },
           "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
-          "shapeIdentifier": "_:n3-231",
+          "shapeIdentifier": "_:n3-228",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -1313,7 +1185,7 @@
             "kind": "OptionType"
           },
           "path": "http://example.com/optionalPartialClassToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-232",
+          "shapeIdentifier": "_:n3-229",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1362,7 +1234,7 @@
             "kind": "SetType"
           },
           "path": "http://example.com/setPartialClassToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-233",
+          "shapeIdentifier": "_:n3-230",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1408,7 +1280,7 @@
             "shapeIdentifier": "<http://example.com/PartialClass>"
           },
           "path": "http://example.com/requiredPartialClassToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-234",
+          "shapeIdentifier": "_:n3-231",
           "type": {
             "fromRdfType": {
               "termType": "NamedNode",
@@ -1454,7 +1326,7 @@
             "kind": "OptionType"
           },
           "path": "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
-          "shapeIdentifier": "_:n3-235",
+          "shapeIdentifier": "_:n3-232",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -1571,7 +1443,7 @@
             "kind": "OptionType"
           },
           "path": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
-          "shapeIdentifier": "_:n3-236",
+          "shapeIdentifier": "_:n3-233",
           "type": {
             "itemType": {
               "kind": "ObjectUnionType",
@@ -1649,7 +1521,7 @@
             "kind": "OptionType"
           },
           "path": "http://example.com/optionalLazyToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-237",
+          "shapeIdentifier": "_:n3-234",
           "type": {
             "itemType": {
               "fromRdfType": {
@@ -1673,6 +1545,134 @@
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
                 }
               ]
+            },
+            "kind": "OptionType"
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "partialType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": "DefaultPartial",
+              "identifierType": {
+                "hasValue": [],
+                "kind": "IdentifierType",
+                "nodeKinds": [
+                  "BlankNode",
+                  "NamedNode"
+                ]
+              },
+              "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>"
+            },
+            "kind": "SetType"
+          },
+          "path": "http://example.com/setLazyToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-235",
+          "type": {
+            "itemType": {
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+              },
+              "kind": "ObjectType",
+              "identifierMintingStrategy": "blankNode",
+              "identifierType": {
+                "hasValue": [],
+                "kind": "IdentifierType",
+                "nodeKinds": [
+                  "BlankNode",
+                  "NamedNode"
+                ]
+              },
+              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                }
+              ]
+            },
+            "kind": "SetType"
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "partialType": {
+            "kind": "ObjectType",
+            "name": "DefaultPartial",
+            "identifierType": {
+              "hasValue": [],
+              "kind": "IdentifierType",
+              "nodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>"
+          },
+          "path": "http://example.com/requiredLazyToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-236",
+          "type": {
+            "fromRdfType": {
+              "termType": "NamedNode",
+              "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+            },
+            "kind": "ObjectType",
+            "identifierMintingStrategy": "blankNode",
+            "identifierType": {
+              "hasValue": [],
+              "kind": "IdentifierType",
+              "nodeKinds": [
+                "BlankNode",
+                "NamedNode"
+              ]
+            },
+            "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+            "toRdfTypes": [
+              {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+              }
+            ]
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "partialType": {
+            "itemType": {
+              "kind": "ObjectType",
+              "name": "NamedDefaultPartial",
+              "identifierType": {
+                "hasValue": [],
+                "kind": "IdentifierType",
+                "nodeKinds": [
+                  "NamedNode"
+                ]
+              },
+              "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>"
+            },
+            "kind": "OptionType"
+          },
+          "path": "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
+          "shapeIdentifier": "_:n3-237",
+          "type": {
+            "itemType": {
+              "kind": "ObjectType",
+              "identifierType": {
+                "hasValue": [],
+                "kind": "IdentifierType",
+                "nodeKinds": [
+                  "NamedNode"
+                ]
+              },
+              "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>"
             },
             "kind": "OptionType"
           },

@@ -631,21 +631,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
         shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :setLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
-    ], [
-        shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalLazyToResolvedClassUnionProperty
@@ -681,6 +666,21 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 0 ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :optionalLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :setLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
     ] .
 
 :LazyPropertiesInterface

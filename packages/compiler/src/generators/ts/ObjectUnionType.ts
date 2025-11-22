@@ -3,7 +3,6 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
   type ModuleDeclarationStructure,
-  type StatementStructures,
   StructureKind,
   type TypeAliasDeclarationStructure,
 } from "ts-morph";
@@ -13,6 +12,7 @@ import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
+import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { Type } from "./Type.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
@@ -88,7 +88,7 @@ export class ObjectUnionType extends DeclaredType {
       | TypeAliasDeclarationStructure
     )[] = [this.typeAliasDeclaration];
 
-    const staticModuleStatements: StatementStructures[] = [
+    const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
@@ -104,7 +104,9 @@ export class ObjectUnionType extends DeclaredType {
         isExported: this.export,
         kind: StructureKind.Module,
         name: this.staticModuleName,
-        statements: staticModuleStatements,
+        statements: staticModuleStatements.sort(
+          StaticModuleStatementStructure.compare,
+        ),
       });
     }
 

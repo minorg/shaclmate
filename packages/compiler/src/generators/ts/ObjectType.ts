@@ -5,12 +5,9 @@ import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
   type ClassDeclarationStructure,
-  type FunctionDeclarationStructure,
   type InterfaceDeclarationStructure,
   type ModuleDeclarationStructure,
   StructureKind,
-  type TypeAliasDeclarationStructure,
-  type VariableStatementStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
@@ -24,6 +21,7 @@ import { DeclaredType } from "./DeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -171,12 +169,7 @@ export class ObjectType extends DeclaredType {
       ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
     ];
 
-    const staticModuleStatements: (
-      | FunctionDeclarationStructure
-      | ModuleDeclarationStructure
-      | TypeAliasDeclarationStructure
-      | VariableStatementStructure
-    )[] = [
+    const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
@@ -196,19 +189,9 @@ export class ObjectType extends DeclaredType {
         isExported: this.export,
         kind: StructureKind.Module,
         name: this.staticModuleName,
-        statements: staticModuleStatements.sort((left, right) => {
-          const leftName =
-            left.kind === StructureKind.VariableStatement
-              ? left.declarations[0].name
-              : left.name;
-          const rightName =
-            right.kind === StructureKind.VariableStatement
-              ? right.declarations[0].name
-              : right.name;
-          invariant(leftName);
-          invariant(rightName);
-          return leftName.localeCompare(rightName);
-        }),
+        statements: staticModuleStatements.sort(
+          StaticModuleStatementStructure.compare,
+        ),
       });
     }
 
