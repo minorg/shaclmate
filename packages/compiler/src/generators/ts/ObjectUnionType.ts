@@ -94,6 +94,7 @@ export class ObjectUnionType extends DeclaredType {
       ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectUnionType.jsonDeclarations.bind(this)(),
+      ..._ObjectUnionType.propertiesVariableStatement.bind(this)().toList(),
       ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
       ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
     ];

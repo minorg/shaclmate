@@ -9,7 +9,6 @@ import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { ShaclProperty } from "./ShaclProperty.js";
 
 export function propertiesVariableStatement(
   this: ObjectType,
@@ -24,10 +23,7 @@ export function propertiesVariableStatement(
       `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}properties`,
     );
   }
-  for (const property of this.properties) {
-    if (!(property instanceof ShaclProperty)) {
-      continue;
-    }
+  for (const property of this.ownShaclProperties) {
     const propertyObject: Record<string, string> = {};
     if (this.features.has("rdf")) {
       propertyObject["identifier"] = rdfjsTermExpression(property.path);

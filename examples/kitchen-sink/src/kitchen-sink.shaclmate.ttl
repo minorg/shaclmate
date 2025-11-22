@@ -630,6 +630,26 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalLazyToResolvedClassUnionProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :optionalPartialClassToResolvedClassProperty
+    ], [
+        shaclmate:partial :PartialClass ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :setPartialClassToResolvedClassProperty
+    ], [
         shaclmate:partial :PartialClass ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
@@ -661,26 +681,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalLazyToResolvedClassUnionProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :optionalPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :setPartialClassToResolvedClassProperty
     ] .
 
 :LazyPropertiesInterface
