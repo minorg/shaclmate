@@ -295,6 +295,7 @@ for (const package_ of packages) {
           ...internalDevDependencies,
           ...package_.devDependencies?.external,
           ...externalDependencyVersions["@biomejs/biome"],
+          ...(packageDirectoryPath === "")
           ...externalDependencyVersions["@tsconfig/node18"],
           ...externalDependencyVersions["@tsconfig/strictest"],
           ...externalDependencyVersions["@types/node"],
