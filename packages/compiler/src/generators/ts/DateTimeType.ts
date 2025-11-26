@@ -80,7 +80,7 @@ export class DateTimeType extends PrimitiveType<Date> {
     let fromRdfResourceValueExpression = "value.toDate()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { ${this.primitiveIn.map((value) => `if (value.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(value); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: `rdfLiteral.toRdf(value, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`, expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { ${this.primitiveIn.map((value) => `if (value.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(value); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: `rdfLiteral.toRdf(value, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`, expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
     }
 
     return {
