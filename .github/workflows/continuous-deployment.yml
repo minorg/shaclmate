@@ -30,7 +30,7 @@ jobs:
       - name: Test
         run: npm test
       - name: Run CLI
-        run: packages/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
+        run: apps/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
       - name: Publish
         run: npm publish --access public --workspaces
       - name: Run CLI via npx

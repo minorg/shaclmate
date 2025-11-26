@@ -523,7 +523,7 @@ fs.writeFileSync(
           },
           {
             name: "Run CLI",
-            run: "packages/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null",
+            run: "apps/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null",
           },
           ...packages
             .filter((package_) =>
