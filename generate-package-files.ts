@@ -20,7 +20,7 @@ interface Package {
   peerDependencies?: {
     external?: Record<string, string>;
   };
-  directory: "examples" | "packages";
+  directory: "apps" | "examples" | "packages";
   linkableDependencies?: readonly string[];
   name: "cli" | "compiler" | "kitchen-sink" | "graphql" | "forms" | "shacl-ast";
   scripts?: Record<string, string>;
@@ -170,7 +170,7 @@ const packages: readonly Package[] = [
       },
       internal: ["compiler"],
     },
-    directory: "packages",
+    directory: "apps",
     name: "cli",
   },
   {
@@ -295,7 +295,6 @@ for (const package_ of packages) {
           ...internalDevDependencies,
           ...package_.devDependencies?.external,
           ...externalDependencyVersions["@biomejs/biome"],
-          ...(packageDirectoryPath === "")
           ...externalDependencyVersions["@tsconfig/node18"],
           ...externalDependencyVersions["@tsconfig/strictest"],
           ...externalDependencyVersions["@types/node"],
@@ -325,7 +324,7 @@ for (const package_ of packages) {
         name: `@shaclmate/${package_.name}${package_.directory === "examples" ? "-example" : ""}`,
         packageManager: "npm@10.9.0",
         peerDependencies: package_.peerDependencies?.external,
-        private: package_.directory !== "packages" ? true : undefined,
+        private: package_.directory === "examples" ? true : undefined,
         repository: {
           type: "git",
           url: "git+https://github.com/minorg/shaclmate",
