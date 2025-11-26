@@ -228,7 +228,7 @@ export class TermType<
       defaultValue: this.defaultValue
         .map(
           (defaultValue) =>
-            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.Value(${objectInitializer({ subject: variables.resource, predicate: variables.predicate, object: rdfjsTermExpression(defaultValue) })}).toValues())`,
+            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
         )
         .extract(),
       hasValues:
@@ -240,7 +240,7 @@ export class TermType<
       return findResult;
     }
   }
-  return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(values);
+  return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(values);
 })`
           : undefined,
       valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,

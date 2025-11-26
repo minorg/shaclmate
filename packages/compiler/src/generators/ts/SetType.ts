@@ -30,7 +30,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
       );
     }
     chain.push(
-      `map(valuesArray => rdfjsResource.Resource.Values.fromValue({ object: valuesArray , predicate: ${variables.predicate}, subject: ${variables.resource} }))`,
+      `map(valuesArray => rdfjsResource.Resource.Values.fromValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: valuesArray }))`,
     );
     return chain.join(".");
   }

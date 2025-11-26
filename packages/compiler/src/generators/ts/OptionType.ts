@@ -94,7 +94,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
-    return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<${this.itemType.name}>>({ object: purify.Maybe.empty(), predicate: ${variables.predicate}, subject: ${variables.resource} }))`;
+    return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<${this.itemType.name}>>({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: purify.Maybe.empty() }))`;
   }
 
   override graphqlResolveExpression(
