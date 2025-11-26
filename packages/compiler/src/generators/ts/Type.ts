@@ -65,7 +65,7 @@ export abstract class Type {
   }): string;
 
   /**
-   * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>> to a
+   * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to a
    * purify.Either<Error, rdfjsResource.Resource.Values<this type>>.
    *
    * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values

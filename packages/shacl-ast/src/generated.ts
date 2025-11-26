@@ -104,40 +104,97 @@ export namespace BaseShaclCoreShapeStatic {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
-  export function $fromRdf(
-    resource: rdfjsResource.Resource,
-    options?: {
-      [_index: string]: any;
-      ignoreRdfType?: boolean;
-      objectSet?: $ObjectSet;
-      preferredLanguages?: readonly string[];
+  export const $properties = {
+    and: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
     },
-  ): purify.Either<Error, BaseShaclCoreShape> {
-    let {
-      ignoreRdfType = false,
-      objectSet,
-      preferredLanguages,
-      ...context
-    } = options ?? {};
-    if (!objectSet) {
-      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
-    }
-
-    return (
-      ShaclCoreNodeShape.$fromRdf(resource, {
-        ...context,
-        ignoreRdfType: false,
-        objectSet,
-      }) as purify.Either<Error, BaseShaclCoreShape>
-    ).altLazy(
-      () =>
-        ShaclCorePropertyShape.$fromRdf(resource, {
-          ...context,
-          ignoreRdfType: false,
-          objectSet,
-        }) as purify.Either<Error, BaseShaclCoreShape>,
-    );
-  }
+    classes: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+    },
+    comments: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+      ),
+    },
+    datatype: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
+    },
+    deactivated: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#deactivated",
+      ),
+    },
+    flags: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+    },
+    hasValues: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
+    },
+    in_: { identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in") },
+    isDefinedBy: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+      ),
+    },
+    labels: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#label",
+      ),
+    },
+    languageIn: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#languageIn",
+      ),
+    },
+    maxCount: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
+    },
+    maxExclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#maxExclusive",
+      ),
+    },
+    maxInclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#maxInclusive",
+      ),
+    },
+    maxLength: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
+    },
+    minCount: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
+    },
+    minExclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#minExclusive",
+      ),
+    },
+    minInclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#minInclusive",
+      ),
+    },
+    minLength: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
+    },
+    nodeKind: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
+    },
+    nodes: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+    },
+    not: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+    },
+    or: { identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#or") },
+    patterns: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+    },
+    xone: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+    },
+  };
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
@@ -199,19 +256,19 @@ export namespace BaseShaclCoreShapeStatic {
       readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.and["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
         valueLists.chainMap((valueList) =>
           purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              objects: valueList,
+              focusResource: $resource,
               predicate: BaseShaclCoreShapeStatic.$properties.and["identifier"],
-              subject: $resource,
+              values: valueList,
             }),
           ).chain((values) => values.chainMap((value) => value.toIdentifier())),
         ),
@@ -220,9 +277,9 @@ export namespace BaseShaclCoreShapeStatic {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: BaseShaclCoreShapeStatic.$properties.and["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -234,16 +291,16 @@ export namespace BaseShaclCoreShapeStatic {
     const _classesEither: purify.Either<Error, readonly rdfjs.NamedNode[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.classes["identifier"], { unique: true }))
         .chain((values) => values.chainMap((value) => value.toIri()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate:
               BaseShaclCoreShapeStatic.$properties.classes["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -255,13 +312,13 @@ export namespace BaseShaclCoreShapeStatic {
     const _commentsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.comments["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -294,15 +351,15 @@ export namespace BaseShaclCoreShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     BaseShaclCoreShapeStatic.$properties.comments["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -311,10 +368,10 @@ export namespace BaseShaclCoreShapeStatic {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate:
               BaseShaclCoreShapeStatic.$properties.comments["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -328,7 +385,7 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<rdfjs.NamedNode>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.datatype["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIri()))
       .map((values) =>
@@ -337,10 +394,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.NamedNode>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.datatype["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -354,17 +411,17 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<boolean>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.deactivated["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.deactivated["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -376,13 +433,13 @@ export namespace BaseShaclCoreShapeStatic {
     const _flagsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.flags["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -415,15 +472,15 @@ export namespace BaseShaclCoreShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     BaseShaclCoreShapeStatic.$properties.flags["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -432,9 +489,9 @@ export namespace BaseShaclCoreShapeStatic {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate: BaseShaclCoreShapeStatic.$properties.flags["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -448,7 +505,7 @@ export namespace BaseShaclCoreShapeStatic {
       readonly (rdfjs.Literal | rdfjs.NamedNode)[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.hasValues["identifier"], { unique: true }))
       .chain((values) =>
         values.chainMap((value) =>
@@ -464,7 +521,7 @@ export namespace BaseShaclCoreShapeStatic {
                 );
               default:
                 return purify.Left<Error, rdfjs.Literal | rdfjs.NamedNode>(
-                  new rdfjsResource.Resource.MistypedValueError({
+                  new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: term,
                     expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
                     focusResource: $resource,
@@ -481,10 +538,10 @@ export namespace BaseShaclCoreShapeStatic {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate:
             BaseShaclCoreShapeStatic.$properties.hasValues["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -498,19 +555,19 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<readonly (rdfjs.Literal | rdfjs.NamedNode)[]>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.in_["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
         valueLists.chainMap((valueList) =>
           purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              objects: valueList,
+              focusResource: $resource,
               predicate: BaseShaclCoreShapeStatic.$properties.in_["identifier"],
-              subject: $resource,
+              values: valueList,
             }),
           ).chain((values) =>
             values.chainMap((value) =>
@@ -527,7 +584,7 @@ export namespace BaseShaclCoreShapeStatic {
                     >(term);
                   default:
                     return purify.Left<Error, rdfjs.Literal | rdfjs.NamedNode>(
-                      new rdfjsResource.Resource.MistypedValueError({
+                      new rdfjsResource.Resource.MistypedTermValueError({
                         actualValue: term,
                         expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
                         focusResource: $resource,
@@ -550,9 +607,9 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<readonly (rdfjs.Literal | rdfjs.NamedNode)[]>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate: BaseShaclCoreShapeStatic.$properties.in_["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -566,7 +623,7 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.isDefinedBy["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .map((values) =>
@@ -575,10 +632,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.isDefinedBy["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -590,13 +647,13 @@ export namespace BaseShaclCoreShapeStatic {
     const _labelsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.labels["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -629,15 +686,15 @@ export namespace BaseShaclCoreShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     BaseShaclCoreShapeStatic.$properties.labels["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -646,10 +703,10 @@ export namespace BaseShaclCoreShapeStatic {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate:
               BaseShaclCoreShapeStatic.$properties.labels["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -663,27 +720,27 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<readonly string[]>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.languageIn["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
         valueLists.chainMap((valueList) =>
           purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              objects: valueList,
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.languageIn["identifier"],
-              subject: $resource,
+              values: valueList,
             }),
           )
             .chain((values) => {
               if (!$preferredLanguages || $preferredLanguages.length === 0) {
                 return purify.Either.of<
                   Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(values);
               }
 
@@ -716,17 +773,17 @@ export namespace BaseShaclCoreShapeStatic {
 
               return purify.Either.of<
                 Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 filteredLiteralValues!.map(
                   (literalValue) =>
-                    new rdfjsResource.Resource.Value({
-                      object: literalValue,
+                    new rdfjsResource.Resource.TermValue({
+                      focusResource: $resource,
                       predicate:
                         BaseShaclCoreShapeStatic.$properties.languageIn[
                           "identifier"
                         ],
-                      subject: $resource,
+                      term: literalValue,
                     }),
                 ),
               );
@@ -741,10 +798,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<readonly string[]>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.languageIn["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -758,17 +815,17 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<number>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.maxCount["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.maxCount["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -782,7 +839,7 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $resource.values($properties.maxExclusive["identifier"], {
         unique: true,
@@ -792,7 +849,7 @@ export namespace BaseShaclCoreShapeStatic {
         if (!$preferredLanguages || $preferredLanguages.length === 0) {
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(values);
         }
 
@@ -825,17 +882,17 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           filteredLiteralValues!.map(
             (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
+              new rdfjsResource.Resource.TermValue({
+                focusResource: $resource,
                 predicate:
                   BaseShaclCoreShapeStatic.$properties.maxExclusive[
                     "identifier"
                   ],
-                subject: $resource,
+                term: literalValue,
               }),
           ),
         );
@@ -847,10 +904,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.maxExclusive["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -864,7 +921,7 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $resource.values($properties.maxInclusive["identifier"], {
         unique: true,
@@ -874,7 +931,7 @@ export namespace BaseShaclCoreShapeStatic {
         if (!$preferredLanguages || $preferredLanguages.length === 0) {
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(values);
         }
 
@@ -907,17 +964,17 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           filteredLiteralValues!.map(
             (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
+              new rdfjsResource.Resource.TermValue({
+                focusResource: $resource,
                 predicate:
                   BaseShaclCoreShapeStatic.$properties.maxInclusive[
                     "identifier"
                   ],
-                subject: $resource,
+                term: literalValue,
               }),
           ),
         );
@@ -929,10 +986,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.maxInclusive["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -946,17 +1003,17 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<number>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.maxLength["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.maxLength["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -970,17 +1027,17 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<number>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.minCount["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.minCount["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -994,7 +1051,7 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $resource.values($properties.minExclusive["identifier"], {
         unique: true,
@@ -1004,7 +1061,7 @@ export namespace BaseShaclCoreShapeStatic {
         if (!$preferredLanguages || $preferredLanguages.length === 0) {
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(values);
         }
 
@@ -1037,17 +1094,17 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           filteredLiteralValues!.map(
             (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
+              new rdfjsResource.Resource.TermValue({
+                focusResource: $resource,
                 predicate:
                   BaseShaclCoreShapeStatic.$properties.minExclusive[
                     "identifier"
                   ],
-                subject: $resource,
+                term: literalValue,
               }),
           ),
         );
@@ -1059,10 +1116,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.minExclusive["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -1076,7 +1133,7 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<rdfjs.Literal>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $resource.values($properties.minInclusive["identifier"], {
         unique: true,
@@ -1086,7 +1143,7 @@ export namespace BaseShaclCoreShapeStatic {
         if (!$preferredLanguages || $preferredLanguages.length === 0) {
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(values);
         }
 
@@ -1119,17 +1176,17 @@ export namespace BaseShaclCoreShapeStatic {
 
         return purify.Either.of<
           Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           filteredLiteralValues!.map(
             (literalValue) =>
-              new rdfjsResource.Resource.Value({
-                object: literalValue,
+              new rdfjsResource.Resource.TermValue({
+                focusResource: $resource,
                 predicate:
                   BaseShaclCoreShapeStatic.$properties.minInclusive[
                     "identifier"
                   ],
-                subject: $resource,
+                term: literalValue,
               }),
           ),
         );
@@ -1141,10 +1198,10 @@ export namespace BaseShaclCoreShapeStatic {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.minInclusive["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -1158,17 +1215,17 @@ export namespace BaseShaclCoreShapeStatic {
       purify.Maybe<number>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.minLength["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.minLength["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -1191,7 +1248,7 @@ export namespace BaseShaclCoreShapeStatic {
       >
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.nodeKind["identifier"], { unique: true }))
       .chain((values) =>
         values.chainMap((value) =>
@@ -1289,7 +1346,7 @@ export namespace BaseShaclCoreShapeStatic {
                     | "http://www.w3.org/ns/shacl#Literal"
                   >
                 >(
-                  new rdfjsResource.Resource.MistypedValueError({
+                  new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: iri,
                     expectedValueType:
                       'rdfjs.NamedNode<"http://www.w3.org/ns/shacl#BlankNode" | "http://www.w3.org/ns/shacl#BlankNodeOrIRI" | "http://www.w3.org/ns/shacl#BlankNodeOrLiteral" | "http://www.w3.org/ns/shacl#IRI" | "http://www.w3.org/ns/shacl#IRIOrLiteral" | "http://www.w3.org/ns/shacl#Literal">',
@@ -1319,10 +1376,10 @@ export namespace BaseShaclCoreShapeStatic {
                 >
               >
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.nodeKind["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -1336,15 +1393,15 @@ export namespace BaseShaclCoreShapeStatic {
       readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.nodes["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: BaseShaclCoreShapeStatic.$properties.nodes["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -1358,15 +1415,15 @@ export namespace BaseShaclCoreShapeStatic {
       readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.not["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: BaseShaclCoreShapeStatic.$properties.not["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -1380,19 +1437,19 @@ export namespace BaseShaclCoreShapeStatic {
       readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.or["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
         valueLists.chainMap((valueList) =>
           purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              objects: valueList,
+              focusResource: $resource,
               predicate: BaseShaclCoreShapeStatic.$properties.or["identifier"],
-              subject: $resource,
+              values: valueList,
             }),
           ).chain((values) => values.chainMap((value) => value.toIdentifier())),
         ),
@@ -1401,9 +1458,9 @@ export namespace BaseShaclCoreShapeStatic {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: BaseShaclCoreShapeStatic.$properties.or["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -1415,13 +1472,13 @@ export namespace BaseShaclCoreShapeStatic {
     const _patternsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.patterns["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -1454,15 +1511,15 @@ export namespace BaseShaclCoreShapeStatic {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     BaseShaclCoreShapeStatic.$properties.patterns["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -1471,10 +1528,10 @@ export namespace BaseShaclCoreShapeStatic {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate:
               BaseShaclCoreShapeStatic.$properties.patterns["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -1488,20 +1545,20 @@ export namespace BaseShaclCoreShapeStatic {
       readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.xone["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
         valueLists.chainMap((valueList) =>
           purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              objects: valueList,
+              focusResource: $resource,
               predicate:
                 BaseShaclCoreShapeStatic.$properties.xone["identifier"],
-              subject: $resource,
+              values: valueList,
             }),
           ).chain((values) => values.chainMap((value) => value.toIdentifier())),
         ),
@@ -1510,9 +1567,9 @@ export namespace BaseShaclCoreShapeStatic {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: BaseShaclCoreShapeStatic.$properties.xone["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -1917,98 +1974,6 @@ export namespace BaseShaclCoreShapeStatic {
     );
     return resource;
   }
-
-  export const $properties = {
-    and: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
-    },
-    classes: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
-    },
-    comments: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/2000/01/rdf-schema#comment",
-      ),
-    },
-    datatype: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
-    },
-    deactivated: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#deactivated",
-      ),
-    },
-    flags: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
-    },
-    hasValues: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
-    },
-    in_: { identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in") },
-    isDefinedBy: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
-      ),
-    },
-    labels: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/2000/01/rdf-schema#label",
-      ),
-    },
-    languageIn: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#languageIn",
-      ),
-    },
-    maxCount: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
-    },
-    maxExclusive: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#maxExclusive",
-      ),
-    },
-    maxInclusive: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#maxInclusive",
-      ),
-    },
-    maxLength: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
-    },
-    minCount: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
-    },
-    minExclusive: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#minExclusive",
-      ),
-    },
-    minInclusive: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#minInclusive",
-      ),
-    },
-    minLength: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
-    },
-    nodeKind: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
-    },
-    nodes: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
-    },
-    not: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
-    },
-    or: { identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#or") },
-    patterns: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
-    },
-    xone: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
-    },
-  };
 }
 export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
   readonly $identifier: ShaclCorePropertyShape.$Identifier;
@@ -2023,12 +1988,6 @@ export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
 }
 
 export namespace ShaclCorePropertyShape {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyShape",
-  );
-  export type $Identifier = BaseShaclCoreShapeStatic.$Identifier;
-  export const $Identifier = BaseShaclCoreShapeStatic.$Identifier;
-
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
@@ -2056,6 +2015,42 @@ export namespace ShaclCorePropertyShape {
       resource,
     });
   }
+
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#PropertyShape",
+  );
+  export type $Identifier = BaseShaclCoreShapeStatic.$Identifier;
+  export const $Identifier = BaseShaclCoreShapeStatic.$Identifier;
+  export const $properties = {
+    ...BaseShaclCoreShapeStatic.$properties,
+    defaultValue: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#defaultValue",
+      ),
+    },
+    descriptions: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#description",
+      ),
+    },
+    groups: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
+    },
+    names: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
+    },
+    order: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
+    },
+    path: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
+    },
+    uniqueLang: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#uniqueLang",
+      ),
+    },
+  };
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
@@ -2131,7 +2126,7 @@ export namespace ShaclCorePropertyShape {
       purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $resource.values($properties.defaultValue["identifier"], {
         unique: true,
@@ -2151,7 +2146,7 @@ export namespace ShaclCorePropertyShape {
                 );
               default:
                 return purify.Left<Error, rdfjs.Literal | rdfjs.NamedNode>(
-                  new rdfjsResource.Resource.MistypedValueError({
+                  new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: term,
                     expectedValueType: "(rdfjs.Literal | rdfjs.NamedNode)",
                     focusResource: $resource,
@@ -2171,10 +2166,10 @@ export namespace ShaclCorePropertyShape {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 ShaclCorePropertyShape.$properties.defaultValue["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -2186,7 +2181,7 @@ export namespace ShaclCorePropertyShape {
     const _descriptionsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $resource.values($properties.descriptions["identifier"], {
           unique: true,
@@ -2196,7 +2191,7 @@ export namespace ShaclCorePropertyShape {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -2229,17 +2224,17 @@ export namespace ShaclCorePropertyShape {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     ShaclCorePropertyShape.$properties.descriptions[
                       "identifier"
                     ],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -2248,10 +2243,10 @@ export namespace ShaclCorePropertyShape {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate:
               ShaclCorePropertyShape.$properties.descriptions["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -2265,15 +2260,15 @@ export namespace ShaclCorePropertyShape {
       readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.groups["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: ShaclCorePropertyShape.$properties.groups["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -2285,13 +2280,13 @@ export namespace ShaclCorePropertyShape {
     const _namesEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.names["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -2324,15 +2319,15 @@ export namespace ShaclCorePropertyShape {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     ShaclCorePropertyShape.$properties.names["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -2341,9 +2336,9 @@ export namespace ShaclCorePropertyShape {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate: ShaclCorePropertyShape.$properties.names["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -2357,16 +2352,16 @@ export namespace ShaclCorePropertyShape {
       purify.Maybe<number>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.order["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toNumber()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate: ShaclCorePropertyShape.$properties.order["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -2377,7 +2372,7 @@ export namespace ShaclCorePropertyShape {
     const order = _orderEither.unsafeCoerce();
     const _pathEither: purify.Either<Error, PropertyPath> = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.path["identifier"], { unique: true }))
       .chain((values) =>
         values.chainMap((value) =>
@@ -2402,17 +2397,17 @@ export namespace ShaclCorePropertyShape {
       purify.Maybe<boolean>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.uniqueLang["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 ShaclCorePropertyShape.$properties.uniqueLang["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -2507,36 +2502,16 @@ export namespace ShaclCorePropertyShape {
     return resource;
   }
 
-  export const $properties = {
-    ...BaseShaclCoreShapeStatic.$properties,
-    defaultValue: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#defaultValue",
-      ),
-    },
-    descriptions: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#description",
-      ),
-    },
-    groups: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#group"),
-    },
-    names: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#name"),
-    },
-    order: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#order"),
-    },
-    path: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#path"),
-    },
-    uniqueLang: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#uniqueLang",
-      ),
-    },
-  };
+  export function isShaclCorePropertyShape(
+    object: BaseShaclCoreShape,
+  ): object is ShaclCorePropertyShape {
+    switch (object.$type) {
+      case "ShaclCorePropertyShape":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
@@ -2546,27 +2521,6 @@ export interface ShaclCorePropertyGroup {
 }
 
 export namespace ShaclCorePropertyGroup {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#PropertyGroup",
-  );
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
@@ -2594,6 +2548,40 @@ export namespace ShaclCorePropertyGroup {
       resource,
     });
   }
+
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#PropertyGroup",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export const $properties = {
+    comments: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+      ),
+    },
+    labels: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#label",
+      ),
+    },
+  };
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
@@ -2650,13 +2638,13 @@ export namespace ShaclCorePropertyGroup {
     const _commentsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.comments["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -2689,15 +2677,15 @@ export namespace ShaclCorePropertyGroup {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     ShaclCorePropertyGroup.$properties.comments["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -2706,10 +2694,10 @@ export namespace ShaclCorePropertyGroup {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate:
               ShaclCorePropertyGroup.$properties.comments["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -2721,13 +2709,13 @@ export namespace ShaclCorePropertyGroup {
     const _labelsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.labels["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -2760,15 +2748,15 @@ export namespace ShaclCorePropertyGroup {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate:
                     ShaclCorePropertyGroup.$properties.labels["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -2777,9 +2765,9 @@ export namespace ShaclCorePropertyGroup {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate: ShaclCorePropertyGroup.$properties.labels["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -2830,19 +2818,6 @@ export namespace ShaclCorePropertyGroup {
     );
     return resource;
   }
-
-  export const $properties = {
-    comments: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/2000/01/rdf-schema#comment",
-      ),
-    },
-    labels: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/2000/01/rdf-schema#label",
-      ),
-    },
-  };
 }
 export interface ShaclCoreNodeShape extends BaseShaclCoreShape {
   readonly $identifier: ShaclCoreNodeShape.$Identifier;
@@ -2853,12 +2828,6 @@ export interface ShaclCoreNodeShape extends BaseShaclCoreShape {
 }
 
 export namespace ShaclCoreNodeShape {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/ns/shacl#NodeShape",
-  );
-  export type $Identifier = BaseShaclCoreShapeStatic.$Identifier;
-  export const $Identifier = BaseShaclCoreShapeStatic.$Identifier;
-
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
@@ -2886,6 +2855,26 @@ export namespace ShaclCoreNodeShape {
       resource,
     });
   }
+
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/ns/shacl#NodeShape",
+  );
+  export type $Identifier = BaseShaclCoreShapeStatic.$Identifier;
+  export const $Identifier = BaseShaclCoreShapeStatic.$Identifier;
+  export const $properties = {
+    ...BaseShaclCoreShapeStatic.$properties,
+    closed: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
+    },
+    ignoredProperties: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#ignoredProperties",
+      ),
+    },
+    properties: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
+    },
+  };
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
@@ -2956,16 +2945,16 @@ export namespace ShaclCoreNodeShape {
       purify.Maybe<boolean>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.closed["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toBoolean()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate: ShaclCoreNodeShape.$properties.closed["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -2979,7 +2968,7 @@ export namespace ShaclCoreNodeShape {
       purify.Maybe<readonly rdfjs.NamedNode[]>
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $resource.values($properties.ignoredProperties["identifier"], {
         unique: true,
@@ -2990,13 +2979,13 @@ export namespace ShaclCoreNodeShape {
         valueLists.chainMap((valueList) =>
           purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              objects: valueList,
+              focusResource: $resource,
               predicate:
                 ShaclCoreNodeShape.$properties.ignoredProperties["identifier"],
-              subject: $resource,
+              values: valueList,
             }),
           ).chain((values) => values.chainMap((value) => value.toIri())),
         ),
@@ -3008,10 +2997,10 @@ export namespace ShaclCoreNodeShape {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<readonly rdfjs.NamedNode[]>
             >({
-              object: purify.Maybe.empty(),
+              focusResource: $resource,
               predicate:
                 ShaclCoreNodeShape.$properties.ignoredProperties["identifier"],
-              subject: $resource,
+              value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
@@ -3025,15 +3014,15 @@ export namespace ShaclCoreNodeShape {
       readonly (rdfjs.BlankNode | rdfjs.NamedNode)[]
     > = purify.Either.of<
       Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >($resource.values($properties.properties["identifier"], { unique: true }))
       .chain((values) => values.chainMap((value) => value.toIdentifier()))
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          object: valuesArray,
+          focusResource: $resource,
           predicate: ShaclCoreNodeShape.$properties.properties["identifier"],
-          subject: $resource,
+          value: valuesArray,
         }),
       )
       .chain((values) => values.head());
@@ -3150,20 +3139,16 @@ export namespace ShaclCoreNodeShape {
     return resource;
   }
 
-  export const $properties = {
-    ...BaseShaclCoreShapeStatic.$properties,
-    closed: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#closed"),
-    },
-    ignoredProperties: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/ns/shacl#ignoredProperties",
-      ),
-    },
-    properties: {
-      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#property"),
-    },
-  };
+  export function isShaclCoreNodeShape(
+    object: BaseShaclCoreShape,
+  ): object is ShaclCoreNodeShape {
+    switch (object.$type) {
+      case "ShaclCoreNodeShape":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export interface OwlOntology {
   readonly $identifier: OwlOntology.$Identifier;
@@ -3172,27 +3157,6 @@ export interface OwlOntology {
 }
 
 export namespace OwlOntology {
-  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
-    "http://www.w3.org/2002/07/owl#Ontology",
-  );
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
@@ -3220,6 +3184,35 @@ export namespace OwlOntology {
       resource,
     });
   }
+
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://www.w3.org/2002/07/owl#Ontology",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export const $properties = {
+    labels: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#label",
+      ),
+    },
+  };
 
   export function $propertiesFromRdf({
     ignoreRdfType: $ignoreRdfType,
@@ -3274,13 +3267,13 @@ export namespace OwlOntology {
     const _labelsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
       purify.Either.of<
         Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >($resource.values($properties.labels["identifier"], { unique: true }))
         .chain((values) => {
           if (!$preferredLanguages || $preferredLanguages.length === 0) {
             return purify.Either.of<
               Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(values);
           }
 
@@ -3313,14 +3306,14 @@ export namespace OwlOntology {
 
           return purify.Either.of<
             Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             filteredLiteralValues!.map(
               (literalValue) =>
-                new rdfjsResource.Resource.Value({
-                  object: literalValue,
+                new rdfjsResource.Resource.TermValue({
+                  focusResource: $resource,
                   predicate: OwlOntology.$properties.labels["identifier"],
-                  subject: $resource,
+                  term: literalValue,
                 }),
             ),
           );
@@ -3329,9 +3322,9 @@ export namespace OwlOntology {
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            object: valuesArray,
+            focusResource: $resource,
             predicate: OwlOntology.$properties.labels["identifier"],
-            subject: $resource,
+            value: valuesArray,
           }),
         )
         .chain((values) => values.head());
@@ -3383,14 +3376,6 @@ export namespace OwlOntology {
     );
     return resource;
   }
-
-  export const $properties = {
-    labels: {
-      identifier: dataFactory.namedNode(
-        "http://www.w3.org/2000/01/rdf-schema#label",
-      ),
-    },
-  };
 }
 export type ShaclCoreShape = ShaclCoreNodeShape | ShaclCorePropertyShape;
 
@@ -3436,6 +3421,98 @@ export namespace ShaclCoreShape {
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
+  export const $properties = {
+    and: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#and"),
+    },
+    classes: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#class"),
+    },
+    comments: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#comment",
+      ),
+    },
+    datatype: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#datatype"),
+    },
+    deactivated: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#deactivated",
+      ),
+    },
+    flags: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#flags"),
+    },
+    hasValues: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#hasValue"),
+    },
+    in_: { identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#in") },
+    isDefinedBy: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#isDefinedBy",
+      ),
+    },
+    labels: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/2000/01/rdf-schema#label",
+      ),
+    },
+    languageIn: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#languageIn",
+      ),
+    },
+    maxCount: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxCount"),
+    },
+    maxExclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#maxExclusive",
+      ),
+    },
+    maxInclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#maxInclusive",
+      ),
+    },
+    maxLength: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#maxLength"),
+    },
+    minCount: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#minCount"),
+    },
+    minExclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#minExclusive",
+      ),
+    },
+    minInclusive: {
+      identifier: dataFactory.namedNode(
+        "http://www.w3.org/ns/shacl#minInclusive",
+      ),
+    },
+    minLength: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#minLength"),
+    },
+    nodeKind: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#nodeKind"),
+    },
+    nodes: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#node"),
+    },
+    not: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#not"),
+    },
+    or: { identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#or") },
+    patterns: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#pattern"),
+    },
+    xone: {
+      identifier: dataFactory.namedNode("http://www.w3.org/ns/shacl#xone"),
+    },
+  };
+
   export function $toRdf(
     _shaclCoreShape: ShaclCoreShape,
     _parameters?: {
@@ -3451,6 +3528,18 @@ export namespace ShaclCoreShape {
       default:
         _shaclCoreShape satisfies never;
         throw new Error("unrecognized type");
+    }
+  }
+
+  export function isShaclCoreShape(
+    object: BaseShaclCoreShape,
+  ): object is ShaclCoreShape {
+    switch (object.$type) {
+      case "ShaclCoreNodeShape":
+      case "ShaclCorePropertyShape":
+        return true;
+      default:
+        return false;
     }
   }
 }
@@ -3537,10 +3626,18 @@ export namespace $ObjectSet {
         readonly type: "identifiers";
       }
     | {
+        readonly objectTermType?: "NamedNode";
         readonly predicate: rdfjs.NamedNode;
-        readonly subject: rdfjs.BlankNode | rdfjs.NamedNode;
+        readonly subject?: rdfjs.BlankNode | rdfjs.NamedNode;
         readonly type: "triple-objects";
-      };
+      }
+    | {
+        readonly object?: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode;
+        readonly predicate: rdfjs.NamedNode;
+        readonly subjectTermType?: "NamedNode";
+        readonly type: "triple-subjects";
+      }
+    | { readonly identifierType?: "NamedNode"; readonly type: "type" };
 }
 
 export abstract class $ForwardingObjectSet implements $ObjectSet {
@@ -3702,10 +3799,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OwlOntology.$Identifier>,
   ): purify.Either<Error, readonly OwlOntology.$Identifier[]> {
     return this.$objectIdentifiersSync<OwlOntology, OwlOntology.$Identifier>(
-      {
-        $fromRdf: OwlOntology.$fromRdf,
-        $fromRdfTypes: [OwlOntology.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: OwlOntology.$fromRdf,
+          $fromRdfTypes: [OwlOntology.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3720,10 +3819,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OwlOntology.$Identifier>,
   ): purify.Either<Error, readonly OwlOntology[]> {
     return this.$objectsSync<OwlOntology, OwlOntology.$Identifier>(
-      {
-        $fromRdf: OwlOntology.$fromRdf,
-        $fromRdfTypes: [OwlOntology.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: OwlOntology.$fromRdf,
+          $fromRdfTypes: [OwlOntology.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3738,10 +3839,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<OwlOntology.$Identifier>, "where">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<OwlOntology, OwlOntology.$Identifier>(
-      {
-        $fromRdf: OwlOntology.$fromRdf,
-        $fromRdfTypes: [OwlOntology.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: OwlOntology.$fromRdf,
+          $fromRdfTypes: [OwlOntology.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3773,10 +3876,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCoreNodeShape,
       ShaclCoreNodeShape.$Identifier
     >(
-      {
-        $fromRdf: ShaclCoreNodeShape.$fromRdf,
-        $fromRdfTypes: [ShaclCoreNodeShape.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCoreNodeShape.$fromRdf,
+          $fromRdfTypes: [ShaclCoreNodeShape.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3794,10 +3899,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCoreNodeShape,
       ShaclCoreNodeShape.$Identifier
     >(
-      {
-        $fromRdf: ShaclCoreNodeShape.$fromRdf,
-        $fromRdfTypes: [ShaclCoreNodeShape.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCoreNodeShape.$fromRdf,
+          $fromRdfTypes: [ShaclCoreNodeShape.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3815,10 +3922,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCoreNodeShape,
       ShaclCoreNodeShape.$Identifier
     >(
-      {
-        $fromRdf: ShaclCoreNodeShape.$fromRdf,
-        $fromRdfTypes: [ShaclCoreNodeShape.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCoreNodeShape.$fromRdf,
+          $fromRdfTypes: [ShaclCoreNodeShape.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3852,10 +3961,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCorePropertyGroup,
       ShaclCorePropertyGroup.$Identifier
     >(
-      {
-        $fromRdf: ShaclCorePropertyGroup.$fromRdf,
-        $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCorePropertyGroup.$fromRdf,
+          $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3873,10 +3984,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCorePropertyGroup,
       ShaclCorePropertyGroup.$Identifier
     >(
-      {
-        $fromRdf: ShaclCorePropertyGroup.$fromRdf,
-        $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCorePropertyGroup.$fromRdf,
+          $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3894,10 +4007,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCorePropertyGroup,
       ShaclCorePropertyGroup.$Identifier
     >(
-      {
-        $fromRdf: ShaclCorePropertyGroup.$fromRdf,
-        $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCorePropertyGroup.$fromRdf,
+          $fromRdfTypes: [ShaclCorePropertyGroup.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3931,10 +4046,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCorePropertyShape,
       ShaclCorePropertyShape.$Identifier
     >(
-      {
-        $fromRdf: ShaclCorePropertyShape.$fromRdf,
-        $fromRdfTypes: [ShaclCorePropertyShape.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCorePropertyShape.$fromRdf,
+          $fromRdfTypes: [ShaclCorePropertyShape.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3952,10 +4069,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCorePropertyShape,
       ShaclCorePropertyShape.$Identifier
     >(
-      {
-        $fromRdf: ShaclCorePropertyShape.$fromRdf,
-        $fromRdfTypes: [ShaclCorePropertyShape.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCorePropertyShape.$fromRdf,
+          $fromRdfTypes: [ShaclCorePropertyShape.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -3973,10 +4092,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ShaclCorePropertyShape,
       ShaclCorePropertyShape.$Identifier
     >(
-      {
-        $fromRdf: ShaclCorePropertyShape.$fromRdf,
-        $fromRdfTypes: [ShaclCorePropertyShape.$fromRdfType],
-      },
+      [
+        {
+          $fromRdf: ShaclCorePropertyShape.$fromRdf,
+          $fromRdfTypes: [ShaclCorePropertyShape.$fromRdfType],
+        },
+      ],
       query,
     );
   }
@@ -4004,7 +4125,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCoreShapeIdentifiersSync(
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclCoreShape.$Identifier[]> {
-    return this.$objectUnionIdentifiersSync<
+    return this.$objectIdentifiersSync<
       ShaclCoreShape,
       ShaclCoreShape.$Identifier
     >(
@@ -4031,7 +4152,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCoreShapesSync(
     query?: $ObjectSet.Query<ShaclCoreShape.$Identifier>,
   ): purify.Either<Error, readonly ShaclCoreShape[]> {
-    return this.$objectUnionsSync<ShaclCoreShape, ShaclCoreShape.$Identifier>(
+    return this.$objectsSync<ShaclCoreShape, ShaclCoreShape.$Identifier>(
       [
         {
           $fromRdf: ShaclCoreNodeShape.$fromRdf,
@@ -4055,10 +4176,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   shaclCoreShapesCountSync(
     query?: Pick<$ObjectSet.Query<ShaclCoreShape.$Identifier>, "where">,
   ): purify.Either<Error, number> {
-    return this.$objectUnionsCountSync<
-      ShaclCoreShape,
-      ShaclCoreShape.$Identifier
-    >(
+    return this.$objectsCountSync<ShaclCoreShape, ShaclCoreShape.$Identifier>(
       [
         {
           $fromRdf: ShaclCoreNodeShape.$fromRdf,
@@ -4077,174 +4195,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectType: {
+    objectTypes: readonly {
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
       $fromRdfTypes: readonly rdfjs.NamedNode[];
-    },
+    }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, readonly ObjectIdentifierT[]> {
-    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
-      (objects) => objects.map((object) => object.$identifier),
-    );
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(
+      objectTypes,
+      query,
+    ).map((objects) => objects.map((object) => object.$identifier));
   }
 
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectType: {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, readonly ObjectT[]> {
-    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (limit <= 0) {
-      return purify.Either.of([]);
-    }
-
-    let offset = query?.offset ?? 0;
-    if (offset < 0) {
-      offset = 0;
-    }
-
-    if (query?.where) {
-      // Assign identifiers in each case block so the compiler will catch missing cases.
-      let identifiers: rdfjsResource.Resource.Identifier[];
-      switch (query.where.type) {
-        case "identifiers": {
-          identifiers = query.where.identifiers.slice(offset, offset + limit);
-          break;
-        }
-        case "triple-objects": {
-          let identifierI = 0;
-          identifiers = [];
-          for (const quad of this.resourceSet.dataset.match(
-            query.where.subject,
-            query.where.predicate,
-            null,
-          )) {
-            if (
-              quad.object.termType === "BlankNode" ||
-              quad.object.termType === "NamedNode"
-            ) {
-              if (++identifierI >= offset) {
-                identifiers.push(quad.object);
-                if (identifiers.length === limit) {
-                  break;
-                }
-              }
-            } else {
-              return purify.Left(
-                new Error(
-                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
-                ),
-              );
-            }
-          }
-          break;
-        }
-      }
-
-      const objects: ObjectT[] = [];
-      for (const identifier of identifiers) {
-        const either = objectType.$fromRdf(
-          this.resourceSet.resource(identifier),
-          { objectSet: this },
-        );
-        if (either.isLeft()) {
-          return either;
-        }
-        objects.push(either.unsafeCoerce());
-      }
-      return purify.Either.of(objects);
-    }
-
-    if (objectType.$fromRdfTypes.length === 0) {
-      return purify.Either.of([]);
-    }
-
-    const resources: rdfjsResource.Resource[] = [];
-    for (const fromRdfType of objectType.$fromRdfTypes) {
-      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
-        if (
-          !resources.some((existingResource) =>
-            existingResource.identifier.equals(resource.identifier),
-          )
-        ) {
-          resources.push(resource);
-        }
-      }
-    }
-    // Sort resources by identifier so limit and offset are deterministic
-    resources.sort((left, right) =>
-      left.identifier.value.localeCompare(right.identifier.value),
-    );
-
-    const objects: ObjectT[] = [];
-    let objectI = 0;
-    for (const resource of resources) {
-      const either = objectType.$fromRdf(resource, { objectSet: this });
-      if (either.isLeft()) {
-        return either;
-      }
-      if (objectI++ >= offset) {
-        objects.push(either.unsafeCoerce());
-        if (objects.length === limit) {
-          return purify.Either.of(objects);
-        }
-      }
-    }
-    return purify.Either.of(objects);
-  }
-
-  protected $objectsCountSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectType: {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    },
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, number> {
-    return this.$objectsSync<ObjectT, ObjectIdentifierT>(objectType, query).map(
-      (objects) => objects.length,
-    );
-  }
-
-  protected $objectUnionIdentifiersSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectTypes: readonly {
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectIdentifierT>,
-  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
-    return this.$objectUnionsSync<ObjectT, ObjectIdentifierT>(
-      objectTypes,
-      query,
-    ).map((objects) => objects.map((object) => object.$identifier));
-  }
-
-  protected $objectUnionsSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
     objectTypes: readonly {
       $fromRdf: (
         resource: rdfjsResource.Resource,
@@ -4264,69 +4233,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    if (query?.where) {
-      // Assign identifiers in each case block so the compiler will catch missing cases.
-      let identifiers: rdfjsResource.Resource.Identifier[];
-      switch (query.where.type) {
-        case "identifiers": {
-          identifiers = query.where.identifiers.slice(offset, offset + limit);
-          break;
-        }
-        case "triple-objects": {
-          let identifierI = 0;
-          identifiers = [];
-          for (const quad of this.resourceSet.dataset.match(
-            query.where.subject,
-            query.where.predicate,
-            null,
-          )) {
-            if (
-              quad.object.termType === "BlankNode" ||
-              quad.object.termType === "NamedNode"
-            ) {
-              if (++identifierI >= offset) {
-                identifiers.push(quad.object);
-                if (identifiers.length === limit) {
-                  break;
-                }
-              }
-            } else {
-              return purify.Left(
-                new Error(
-                  `subject=${query.where.subject.value} predicate=${query.where.predicate.value} pattern matches non-identifier (${quad.object.termType}) triple`,
-                ),
-              );
-            }
-          }
-          break;
-        }
-      }
-
-      const objects: ObjectT[] = [];
-      for (const identifier of identifiers) {
-        const resource = this.resourceSet.resource(identifier);
-        const lefts: purify.Either<Error, ObjectT>[] = [];
-        for (const objectType of objectTypes) {
-          const either = objectType.$fromRdf(resource, { objectSet: this });
-          if (either.isRight()) {
-            objects.push(either.unsafeCoerce());
-            break;
-          }
-          lefts.push(either);
-        }
-        // Doesn't appear to belong to any of the known object types, just assume the first
-        if (lefts.length === objectTypes.length) {
-          return lefts[0] as unknown as purify.Either<
-            Error,
-            readonly ObjectT[]
-          >;
-        }
-      }
-      return purify.Either.of(objects);
-    }
-
+    // First pass: gather all resources that meet the where filters.
+    // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
     const resources: {
-      objectType: {
+      objectType?: {
         $fromRdf: (
           resource: rdfjsResource.Resource,
           options: { objectSet: $ObjectSet },
@@ -4335,23 +4245,115 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       };
       resource: rdfjsResource.Resource;
     }[] = [];
-    for (const objectType of objectTypes) {
-      if (objectType.$fromRdfTypes.length === 0) {
-        continue;
+    const where = query?.where ?? { type: "type" };
+    switch (where.type) {
+      case "identifiers": {
+        for (const identifier of where.identifiers) {
+          // Don't deduplicate
+          resources.push({ resource: this.resourceSet.resource(identifier) });
+        }
+        break;
       }
 
-      for (const fromRdfType of objectType.$fromRdfTypes) {
-        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+      case "triple-objects": {
+        for (const quad of this.resourceSet.dataset.match(
+          where.subject,
+          where.predicate,
+          null,
+        )) {
+          if (
+            where.objectTermType &&
+            quad.object.termType !== where.objectTermType
+          ) {
+            continue;
+          }
+
+          switch (quad.object.termType) {
+            case "BlankNode":
+            case "NamedNode":
+              break;
+            default:
+              return purify.Left(
+                new Error(
+                  `subject=${where.subject?.value} predicate=${where.predicate.value} pattern matches non-identifier (${quad.object.termType}) object`,
+                ),
+              );
+          }
+
+          const resource = this.resourceSet.resource(quad.object);
           if (
             !resources.some(({ resource: existingResource }) =>
               existingResource.identifier.equals(resource.identifier),
             )
           ) {
-            resources.push({ objectType, resource });
+            resources.push({ resource });
           }
         }
+        break;
+      }
+
+      case "triple-subjects": {
+        for (const quad of this.resourceSet.dataset.match(
+          null,
+          where.predicate,
+          where.object,
+        )) {
+          if (
+            where.subjectTermType &&
+            quad.subject.termType !== where.subjectTermType
+          ) {
+            continue;
+          }
+
+          switch (quad.subject.termType) {
+            case "BlankNode":
+            case "NamedNode":
+              break;
+            default:
+              return purify.Left(
+                new Error(
+                  `predicate=${where.predicate.value} object=${where.object?.value} pattern matches non-identifier (${quad.subject.termType}) subject`,
+                ),
+              );
+          }
+
+          const resource = this.resourceSet.resource(quad.subject);
+          if (
+            !resources.some(({ resource: existingResource }) =>
+              existingResource.identifier.equals(resource.identifier),
+            )
+          ) {
+            resources.push({ resource });
+          }
+        }
+        break;
+      }
+
+      case "type": {
+        for (const objectType of objectTypes) {
+          if (objectType.$fromRdfTypes.length === 0) {
+            continue;
+          }
+
+          for (const fromRdfType of objectType.$fromRdfTypes) {
+            for (const resource of where.identifierType === "NamedNode"
+              ? this.resourceSet.namedInstancesOf(fromRdfType)
+              : this.resourceSet.instancesOf(fromRdfType)) {
+              if (
+                !resources.some(({ resource: existingResource }) =>
+                  existingResource.identifier.equals(resource.identifier),
+                )
+              ) {
+                resources.push({ objectType, resource });
+              }
+            }
+          }
+        }
+
+        break;
       }
     }
+
     // Sort resources by identifier so limit and offset are deterministic
     resources.sort((left, right) =>
       left.resource.identifier.value.localeCompare(
@@ -4361,22 +4363,40 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (const { objectType, resource } of resources) {
-      const either = objectType.$fromRdf(resource, { objectSet: this });
-      if (either.isLeft()) {
-        return either;
+    for (let { objectType, resource } of resources) {
+      let objectEither: purify.Either<Error, ObjectT>;
+      if (objectType) {
+        objectEither = objectType.$fromRdf(resource, { objectSet: this });
+      } else {
+        for (const tryObjectType of objectTypes) {
+          objectEither = tryObjectType.$fromRdf(resource, { objectSet: this });
+          if (objectEither.isRight()) {
+            objectType = tryObjectType;
+            break;
+          }
+        }
       }
+
+      if (objectEither!.isLeft()) {
+        // Doesn't appear to belong to any of the known object types, just assume the first
+        return objectEither as unknown as purify.Either<
+          Error,
+          readonly ObjectT[]
+        >;
+      }
+      const object = objectEither!.unsafeCoerce();
       if (objectI++ >= offset) {
-        objects.push(either.unsafeCoerce());
+        objects.push(object);
         if (objects.length === limit) {
           return purify.Either.of(objects);
         }
       }
     }
+
     return purify.Either.of(objects);
   }
 
-  protected $objectUnionsCountSync<
+  protected $objectsCountSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
@@ -4389,7 +4409,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }[],
     query?: $ObjectSet.Query<ObjectIdentifierT>,
   ): purify.Either<Error, number> {
-    return this.$objectUnionIdentifiersSync<ObjectT, ObjectIdentifierT>(
+    return this.$objectsSync<ObjectT, ObjectIdentifierT>(
       objectTypes,
       query,
     ).map((objects) => objects.length);

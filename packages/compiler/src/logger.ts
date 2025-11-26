@@ -8,5 +8,5 @@ export const logger = pino(
         ? "debug"
         : "info",
   },
-  pino["destination"] ? pino.destination(2) : undefined,
+  (pino as any)["destination"] ? (pino as any).destination(2) : undefined,
 );

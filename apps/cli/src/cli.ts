@@ -39,7 +39,7 @@ const logger = pino(
         ? "debug"
         : "info",
   },
-  pino["destination"] ? pino.destination(2) : undefined,
+  (pino as any)["destination"] ? (pino as any).destination(2) : undefined,
 );
 
 const outputFilePath = option({
@@ -103,7 +103,7 @@ function generate({
 
   const iriPrefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
 
-  const validationReport = new SHACLValidator(shaclShaclDataset).validate(
+  const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
     dataset,
   );
   if (!validationReport.conforms) {

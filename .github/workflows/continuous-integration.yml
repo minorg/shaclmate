@@ -23,7 +23,7 @@ jobs:
       - name: Test
         run: npm run test:coverage
       - name: Run CLI
-        run: packages/cli/dist/cli.js generate
+        run: apps/cli/dist/cli.js generate
           examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null
       - if: always()
         uses: davelosert/vitest-coverage-report-action@v2

@@ -49,16 +49,16 @@ export class ListType<
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
     return [
       variables.resourceValues,
-      "chain(values => values.chainMap(value => value.toList()))", // Resource.Values<Resource.Value> to Resource.Values<Resource.Value[]>
+      "chain(values => values.chainMap(value => value.toList()))", // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
       `chain(valueLists =>
         valueLists.chainMap(
           valueList => ${this.itemType.fromRdfExpression({
             variables: {
               ...variables,
-              resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(rdfjsResource.Resource.Values.fromArray({ objects: valueList, predicate: ${variables.predicate}, subject: ${variables.resource} }))`,
+              resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(rdfjsResource.Resource.Values.fromArray({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, values: valueList }))`,
             },
           })}
-      ))`, // Resource.Values<Resource.Value[]> to Resource.Values<item type arrays>
+      ))`, // Resource.Values<Resource.TermValue[]> to Resource.Values<item type arrays>
       `map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
     ].join(".");
   }

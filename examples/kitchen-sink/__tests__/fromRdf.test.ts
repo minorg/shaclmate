@@ -194,7 +194,7 @@ describe("fromRdf", () => {
       }).resource(identifier),
     );
     expect(result.isLeft()).toBe(true);
-    // expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
+    // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
   it("reject invalid literal property values (sh:in)", ({ expect }) => {
@@ -215,7 +215,7 @@ describe("fromRdf", () => {
       }).resource(identifier),
     );
     expect(result.isLeft()).toBe(true);
-    expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
+    expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
   it("languageIn: valid", ({ expect }) => {
@@ -431,7 +431,7 @@ describe("fromRdf", () => {
     listResource.add(rdf.rest, rdf.nil);
     const result = kitchenSink.ListPropertiesClass.$fromRdf(instanceResource);
     expect(result.isLeft()).toBe(true);
-    // expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
+    // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
   it("reject mistyped set", ({ expect }) => {
@@ -450,7 +450,7 @@ describe("fromRdf", () => {
     const result =
       kitchenSink.PropertyCardinalitiesClass.$fromRdf(instanceResource);
     expect(result.isLeft()).toBe(true);
-    // expect(result.extract()).toBeInstanceOf(Resource.MistypedValueError);
+    // expect(result.extract()).toBeInstanceOf(Resource.MistypedTermValueError);
   });
 
   it("accept known child type", ({ expect }) => {

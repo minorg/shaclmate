@@ -20,7 +20,7 @@ interface Package {
   peerDependencies?: {
     external?: Record<string, string>;
   };
-  directory: "examples" | "packages";
+  directory: "apps" | "examples" | "packages";
   linkableDependencies?: readonly string[];
   name: "cli" | "compiler" | "kitchen-sink" | "graphql" | "forms" | "shacl-ast";
   scripts?: Record<string, string>;
@@ -50,7 +50,7 @@ const externalDependencyVersions = {
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },
-  "rdfjs-resource": { "rdfjs-resource": "1.0.24" },
+  "rdfjs-resource": { "rdfjs-resource": "1.0.25" },
   rimraf: { rimraf: "^6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
   uuid: { uuid: "^9.0.1" },
@@ -170,7 +170,7 @@ const packages: readonly Package[] = [
       },
       internal: ["compiler"],
     },
-    directory: "packages",
+    directory: "apps",
     name: "cli",
   },
   {
@@ -324,7 +324,7 @@ for (const package_ of packages) {
         name: `@shaclmate/${package_.name}${package_.directory === "examples" ? "-example" : ""}`,
         packageManager: "npm@10.9.0",
         peerDependencies: package_.peerDependencies?.external,
-        private: package_.directory !== "packages" ? true : undefined,
+        private: package_.directory === "examples" ? true : undefined,
         repository: {
           type: "git",
           url: "git+https://github.com/minorg/shaclmate",
@@ -523,7 +523,7 @@ fs.writeFileSync(
           },
           {
             name: "Run CLI",
-            run: "packages/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null",
+            run: "apps/cli/dist/cli.js generate examples/kitchen-sink/src/kitchen-sink.shaclmate.ttl >/dev/null",
           },
           ...packages
             .filter((package_) =>

@@ -220,7 +220,7 @@ export abstract class ShaclProperty<
         ...variables,
         ignoreRdfType: true,
         predicate: this.predicate,
-        resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true }))`,
+        resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true }))`,
       },
     });
 

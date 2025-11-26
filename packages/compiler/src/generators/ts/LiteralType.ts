@@ -46,11 +46,11 @@ export class LiteralType extends TermType<Literal, Literal> {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
-          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
           : undefined,
       preferredLanguages: `chain(values => {
         if (!${variables.preferredLanguages} || ${variables.preferredLanguages}.length === 0) {
-          return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(values);
+          return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(values);
         }
 
         const literalValuesEither = values.chainMap(value => value.toLiteral());
@@ -70,7 +70,7 @@ export class LiteralType extends TermType<Literal, Literal> {
           }
         }
 
-        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.Value>>(filteredLiteralValues!.map(literalValue => new rdfjsResource.Resource.Value({ object: literalValue, predicate: ${variables.predicate}, subject: ${variables.resource} })));
+        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(filteredLiteralValues!.map(literalValue => new rdfjsResource.Resource.TermValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, term: literalValue })));
       })`,
       valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
     };

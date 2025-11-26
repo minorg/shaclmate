@@ -32,7 +32,7 @@
     "examples/kitchen-sink",
     "packages/shacl-ast",
     "packages/compiler",
-    "packages/cli",
+    "apps/cli",
     "examples/forms",
     "examples/graphql"
   ]
