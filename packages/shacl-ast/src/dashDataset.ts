@@ -2,7 +2,7 @@ import type { DatasetCore } from "@rdfjs/types";
 import { Parser, Store } from "n3";
 
 /**
- * A subset of DASH (https://datashapes.org/dash.html) that's added to command line inputs for convenience.
+ * A subset of DASH (https://datashapes.org/dash.html) that's added to inputs for convenience.
  *
  * Parts that don't validate with SHACL-SHACL have been excised.
  */

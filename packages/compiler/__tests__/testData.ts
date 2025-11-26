@@ -65,4 +65,20 @@ export const testData = {
       "kitchen-sink.shaclmate.ttl",
     ),
   ),
+  skos: Maybe.of(
+    path.join(
+      thisDirectoryPath,
+      "..",
+      "..",
+      "..",
+      "..",
+      "kos-kit",
+      "lib",
+      "packages",
+      "models",
+      "models.shaclmate.ttl",
+    ),
+  )
+    .filter((filePath) => fs.existsSync(filePath))
+    .map(parseShapesGraph),
 };

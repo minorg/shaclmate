@@ -22,7 +22,6 @@ import * as N3 from "n3";
 import { DataFactory, Parser, Store } from "n3";
 import { pino } from "pino";
 import SHACLValidator from "rdf-validate-shacl";
-import { dashDataset } from "./dashDataset.js";
 import { shaclShaclDataset } from "./shaclShaclDataset.js";
 
 const inputFilePaths = restPositionals({
@@ -66,9 +65,6 @@ function generate({
 
   const inputParser = new Parser();
   const dataset = new Store();
-  for (const quad of dashDataset) {
-    dataset.add(quad);
-  }
   const iriPrefixes: PrefixMapInit = [];
   for (const inputFilePath of inputFilePaths) {
     dataset.addQuads(

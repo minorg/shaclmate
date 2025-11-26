@@ -7,18 +7,44 @@ describe("ShapesGraph: kitchen sink", () => {
   it("should parse the shapes correctly", ({ expect }) => {
     expect(testData.kitchenSink.shapesGraph.nodeShapes).toHaveLength(99);
     expect(testData.kitchenSink.shapesGraph.propertyShapes).toHaveLength(128);
+  });
+
+  it("should parse ontologies correctly", ({ expect }) => {
+    expect(testData.kitchenSink.shapesGraph.ontologies).toHaveLength(1);
+  });
+
+  it("should parse property shapes correctly", ({ expect }) => {
+    expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
+  });
+});
+
+describe("ShapesGraph: schema", () => {
+  it("should parse the shapes correctly", ({ expect }) => {
     expect(testData.schema.shapesGraph.nodeShapes).toHaveLength(84);
     expect(testData.schema.shapesGraph.propertyShapes).toHaveLength(70);
   });
 
   it("should parse ontologies correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.ontologies).toHaveLength(1);
     expect(testData.schema.shapesGraph.ontologies).toHaveLength(2);
   });
 
   it("should parse property shapes correctly", ({ expect }) => {
-    expect(testData.kitchenSink.shapesGraph.propertyGroups).toHaveLength(0);
     expect(testData.schema.shapesGraph.propertyGroups).toHaveLength(1);
+  });
+});
+
+testData.skos.ifJust((shapesGraph) => {
+  it("should parse the shapes correctly", ({ expect }) => {
+    expect(shapesGraph.nodeShapes).toHaveLength(84);
+    expect(shapesGraph.propertyShapes).toHaveLength(70);
+  });
+
+  it("should parse ontologies correctly", ({ expect }) => {
+    expect(shapesGraph.ontologies).toHaveLength(2);
+  });
+
+  it("should parse property shapes correctly", ({ expect }) => {
+    expect(shapesGraph.propertyGroups).toHaveLength(1);
   });
 });
 

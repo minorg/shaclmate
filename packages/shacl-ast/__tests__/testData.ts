@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DatasetCore } from "@rdfjs/types";
 import { Parser, Store } from "n3";
+import { Maybe } from "purify-ts";
 import { ShapesGraph, defaultFactory } from "../src/index.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
@@ -46,6 +47,22 @@ export const testData = {
       { ignoreUndefinedShapes: true },
     ),
   },
+  skos: Maybe.of(
+    path.join(
+      thisDirectoryPath,
+      "..",
+      "..",
+      "..",
+      "..",
+      "kos-kit",
+      "lib",
+      "packages",
+      "models",
+      "models.shaclmate.ttl",
+    ),
+  )
+    .filter((filePath) => fs.existsSync(filePath))
+    .map(parseShapesGraph),
   undefinedShape: {
     dataset: parseDataset(
       path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),

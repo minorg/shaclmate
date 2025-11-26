@@ -22,8 +22,17 @@ describe("TsGenerator", () => {
     expect(ts).not.toHaveLength(0);
   }, 60000);
 
-  it("should generate from an external project shapes graph", ({ expect }) => {
-    testData.externalProject.ifJust((parameters) => {
+  testData.skos.ifJust((parameters) => {
+    it("should generate from a SKOS shapes graph", ({ expect }) => {
+      const ts = generate(parameters);
+      expect(ts).not.toHaveLength(0);
+    });
+  });
+
+  testData.externalProject.ifJust((parameters) => {
+    it("should generate from an external project shapes graph", ({
+      expect,
+    }) => {
       const ts = generate(parameters);
       expect(ts).not.toHaveLength(0);
     });
