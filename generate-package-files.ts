@@ -50,7 +50,7 @@ const externalDependencyVersions = {
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },
-  "rdfjs-resource": { "rdfjs-resource": "1.0.25" },
+  "rdfjs-resource": { "rdfjs-resource": "1.0.24" },
   rimraf: { rimraf: "^6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
   uuid: { uuid: "^9.0.1" },
