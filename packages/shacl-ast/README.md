@@ -11,7 +11,7 @@ Build an Abstract Syntax Tree (AST) of [Shapes Constraint Language (SHACL)](http
 ```ts
 import { ShapesGraph } from "@shaclmate/shacl-ast";
 
-const shapesGraph = ShapesGraph.fromDataset(testShapesGraph);
+const shapesGraph = ShapesGraph.Factory.default_.createShapesGraph(testShapesGraphDataset);
 for (const nodeShape of shapesGraph.nodeShapes) {
   console.info("Node shape: ", nodeShape.node.value);
   for (const propertyShape of shapesGraph.propertyShapes) {

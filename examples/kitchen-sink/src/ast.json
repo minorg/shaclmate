@@ -102,8 +102,8 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/classUnionMember2Property",
-          "shapeIdentifier": "_:n3-146",
+          "path": "http://example.com/classUnionMemberCommonParentProperty",
+          "shapeIdentifier": "_:n3-147",
           "type": {
             "datatype": {
               "termType": "NamedNode",
@@ -122,8 +122,8 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/classUnionMemberCommonParentProperty",
-          "shapeIdentifier": "_:n3-147",
+          "path": "http://example.com/classUnionMember2Property",
+          "shapeIdentifier": "_:n3-146",
           "type": {
             "datatype": {
               "termType": "NamedNode",
@@ -863,8 +863,8 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/interfaceUnionMember2Property",
-          "shapeIdentifier": "_:n3-202",
+          "path": "http://example.com/interfaceUnionMemberCommonParentProperty",
+          "shapeIdentifier": "_:n3-203",
           "type": {
             "datatype": {
               "termType": "NamedNode",
@@ -883,8 +883,8 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/interfaceUnionMemberCommonParentProperty",
-          "shapeIdentifier": "_:n3-203",
+          "path": "http://example.com/interfaceUnionMember2Property",
+          "shapeIdentifier": "_:n3-202",
           "type": {
             "datatype": {
               "termType": "NamedNode",

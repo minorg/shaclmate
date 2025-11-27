@@ -2,8 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DatasetCore } from "@rdfjs/types";
+import { ShapesGraph } from "@shaclmate/shacl-ast";
 import { Parser, Store } from "n3";
-import { ShapesGraph, defaultFactory } from "../src/index.js";
+import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
@@ -16,39 +18,71 @@ function parseDataset(filePath: string): DatasetCore {
 
 function parseShapesGraph(
   filePath: string,
-  options?: { ignoreUndefinedShapes?: boolean },
+  options?: { excludeDash?: boolean; ignoreUndefinedShapes?: boolean },
 ) {
-  return ShapesGraph.fromDataset(
-    parseDataset(filePath),
-    defaultFactory,
-    options,
-  ).unsafeCoerce();
+  return ShapesGraph.create({
+    dataset: parseDataset(filePath),
+    ...options,
+  }).unsafeCoerce();
 }
 
-export const testData = {
-  kitchenSink: {
-    shapesGraph: parseShapesGraph(
+class TestData {
+  @Memoize()
+  get kitchenSink() {
+    return {
+      shapesGraph: parseShapesGraph(
+        path.join(
+          thisDirectoryPath,
+          "..",
+          "..",
+          "..",
+          "examples",
+          "kitchen-sink",
+          "src",
+          "kitchen-sink.shaclmate.ttl",
+        ),
+      ),
+    };
+  }
+
+  @Memoize()
+  get schema() {
+    return {
+      shapesGraph: parseShapesGraph(
+        path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
+        { excludeDash: true, ignoreUndefinedShapes: true },
+      ),
+    };
+  }
+
+  @Memoize()
+  get skos() {
+    return Maybe.of(
       path.join(
         thisDirectoryPath,
         "..",
         "..",
         "..",
-        "examples",
-        "kitchen-sink",
-        "src",
-        "kitchen-sink.shaclmate.ttl",
+        "..",
+        "kos-kit",
+        "lib",
+        "packages",
+        "models",
+        "models.shaclmate.ttl",
       ),
-    ),
-  },
-  schema: {
-    shapesGraph: parseShapesGraph(
-      path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
-      { ignoreUndefinedShapes: true },
-    ),
-  },
-  undefinedShape: {
-    dataset: parseDataset(
-      path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
-    ),
-  },
-};
+    )
+      .filter((filePath) => fs.existsSync(filePath))
+      .map(parseShapesGraph);
+  }
+
+  @Memoize()
+  get undefinedShape() {
+    return {
+      dataset: parseDataset(
+        path.join(thisDirectoryPath, "data", "undefined-shape.shaclmate.ttl"),
+      ),
+    };
+  }
+}
+
+export const testData = new TestData();

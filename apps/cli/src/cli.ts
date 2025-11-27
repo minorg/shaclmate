@@ -9,6 +9,7 @@ import {
   TsGenerator,
 } from "@shaclmate/compiler";
 import type { Generator } from "@shaclmate/compiler";
+import { dashDataset } from "@shaclmate/shacl-ast";
 import {
   command,
   option,
@@ -22,7 +23,6 @@ import * as N3 from "n3";
 import { DataFactory, Parser, Store } from "n3";
 import { pino } from "pino";
 import SHACLValidator from "rdf-validate-shacl";
-import { dashDataset } from "./dashDataset.js";
 import { shaclShaclDataset } from "./shaclShaclDataset.js";
 
 const inputFilePaths = restPositionals({
@@ -66,9 +66,6 @@ function generate({
 
   const inputParser = new Parser();
   const dataset = new Store();
-  for (const quad of dashDataset) {
-    dataset.add(quad);
-  }
   const iriPrefixes: PrefixMapInit = [];
   for (const inputFilePath of inputFilePaths) {
     dataset.addQuads(
@@ -103,27 +100,37 @@ function generate({
 
   const iriPrefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
 
-  const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
-    dataset,
-  );
-  if (!validationReport.conforms) {
-    process.stderr.write("input is not valid SHACL:\n");
-    const n3WriterPrefixes: Record<string, string> = {};
-    for (const prefixEntry of iriPrefixMap.entries()) {
-      n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
+  {
+    const datasetWithDash = new Store();
+    for (const quad of dataset) {
+      datasetWithDash.add(quad);
     }
-    const n3Writer = new N3.Writer({
-      format: "text/turtle",
-      prefixes: n3WriterPrefixes,
-    });
-    for (const quad of validationReport.dataset) {
-      n3Writer.addQuad(quad);
+    for (const quad of dashDataset) {
+      datasetWithDash.add(quad);
     }
-    n3Writer.end((_error, result) => process.stderr.write(result));
-    return;
+
+    const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
+      datasetWithDash,
+    );
+    if (!validationReport.conforms) {
+      process.stderr.write("input is not valid SHACL:\n");
+      const n3WriterPrefixes: Record<string, string> = {};
+      for (const prefixEntry of iriPrefixMap.entries()) {
+        n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
+      }
+      const n3Writer = new N3.Writer({
+        format: "text/turtle",
+        prefixes: n3WriterPrefixes,
+      });
+      for (const quad of validationReport.dataset) {
+        n3Writer.addQuad(quad);
+      }
+      n3Writer.end((_error, result) => process.stderr.write(result));
+      return;
+    }
   }
 
-  ShapesGraph.fromDataset(dataset)
+  ShapesGraph.create({ dataset })
     .chain((shapesGraph) =>
       new Compiler({ generator, iriPrefixMap }).compile(shapesGraph),
     )

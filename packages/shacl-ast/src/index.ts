@@ -1,5 +1,4 @@
-export * from "./defaultFactory.js";
-export * from "./Factory.js";
+export * from "./dashDataset.js";
 export * from "./IdentifierNodeKind.js";
 export * from "./NodeKind.js";
 export * from "./NodeShape.js";
@@ -8,6 +7,5 @@ export * from "./OntologyLike.js";
 export * from "./PropertyGroup.js";
 export * from "./PropertyPath.js";
 export * from "./PropertyShape.js";
-export * from "./ShapesGraph.js";
 export * from "./Shape.js";
 export * from "./ShapesGraph.js";
