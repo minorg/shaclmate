@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
-import { type ShapesGraph, ShapesGraphFactory } from "@shaclmate/compiler";
+import { ShapesGraph } from "@shaclmate/compiler";
 import { DataFactory, Parser, Store } from "n3";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -44,9 +44,7 @@ function parseShapesGraph(filePath: string): {
 
   return {
     iriPrefixMap: new PrefixMap(iriPrefixes, { factory: DataFactory }),
-    shapesGraph: new ShapesGraphFactory()
-      .createShapesGraph({ dataset })
-      .unsafeCoerce(),
+    shapesGraph: ShapesGraph.create({ dataset }).unsafeCoerce(),
   };
 }
 

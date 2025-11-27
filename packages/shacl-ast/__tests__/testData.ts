@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DatasetCore } from "@rdfjs/types";
+import { ShapesGraph } from "@shaclmate/shacl-ast";
 import { Parser, Store } from "n3";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { ShapesGraph } from "../src/index.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,9 +20,10 @@ function parseShapesGraph(
   filePath: string,
   options?: { excludeDash?: boolean; ignoreUndefinedShapes?: boolean },
 ) {
-  return ShapesGraph.Factory.default_
-    .createShapesGraph({ dataset: parseDataset(filePath), ...options })
-    .unsafeCoerce();
+  return ShapesGraph.create({
+    dataset: parseDataset(filePath),
+    ...options,
+  }).unsafeCoerce();
 }
 
 class TestData {

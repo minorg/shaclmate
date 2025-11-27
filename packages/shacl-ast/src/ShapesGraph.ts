@@ -474,95 +474,99 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyShapeT>;
   }
 
-  export namespace Factory {
-    type DefaultNodeShape = NodeShape<
-      any,
-      Ontology,
-      PropertyGroup,
-      DefaultPropertyShape,
-      DefaultShape
-    >;
+  type DefaultNodeShape = NodeShape<
+    any,
+    Ontology,
+    PropertyGroup,
+    DefaultPropertyShape,
+    DefaultShape
+  >;
 
-    type DefaultPropertyShape = PropertyShape<
-      DefaultNodeShape,
-      Ontology,
-      PropertyGroup,
-      any,
-      DefaultShape
-    >;
+  type DefaultPropertyShape = PropertyShape<
+    DefaultNodeShape,
+    Ontology,
+    PropertyGroup,
+    any,
+    DefaultShape
+  >;
 
-    type DefaultShape = Shape<
-      DefaultNodeShape,
-      Ontology,
-      PropertyGroup,
-      DefaultPropertyShape,
-      any
-    >;
+  type DefaultShape = Shape<
+    DefaultNodeShape,
+    Ontology,
+    PropertyGroup,
+    DefaultPropertyShape,
+    any
+  >;
 
-    type DefaultShapesGraph = ShapesGraph<
-      DefaultNodeShape,
-      Ontology,
-      PropertyGroup,
-      DefaultPropertyShape,
-      DefaultShape
-    >;
+  type DefaultShapesGraph = ShapesGraph<
+    DefaultNodeShape,
+    Ontology,
+    PropertyGroup,
+    DefaultPropertyShape,
+    DefaultShape
+  >;
 
-    class DefaultFactory extends Factory<
-      DefaultNodeShape,
-      Ontology,
-      PropertyGroup,
-      DefaultPropertyShape,
-      DefaultShape
-    > {
-      protected override createNodeShape({
-        resource,
-        shapesGraph,
-      }: {
-        resource: Resource;
-        shapesGraph: DefaultShapesGraph;
-      }) {
-        return generated.ShaclCoreNodeShape.$fromRdf(resource, {
-          ignoreRdfType: true,
-        }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
-      }
-
-      protected override createOntology({
-        resource,
-      }: {
-        resource: Resource;
-        shapesGraph: DefaultShapesGraph;
-      }): Either<Error, Ontology> {
-        return generated.OwlOntology.$fromRdf(resource, {
-          ignoreRdfType: true,
-        }).map((generatedOntology) => new Ontology(generatedOntology));
-      }
-
-      protected override createPropertyGroup({
-        resource,
-      }: {
-        resource: Resource;
-        shapesGraph: DefaultShapesGraph;
-      }): Either<Error, PropertyGroup> {
-        return generated.ShaclCorePropertyGroup.$fromRdf(resource, {
-          ignoreRdfType: true,
-        }).map((propertyGroup) => new PropertyGroup(propertyGroup));
-      }
-
-      protected override createPropertyShape({
-        resource,
-        shapesGraph,
-      }: { resource: Resource; shapesGraph: DefaultShapesGraph }): Either<
-        Error,
-        DefaultPropertyShape
-      > {
-        return generated.ShaclCorePropertyShape.$fromRdf(resource, {
-          ignoreRdfType: true,
-        }).map(
-          (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
-        );
-      }
+  class DefaultFactory extends Factory<
+    DefaultNodeShape,
+    Ontology,
+    PropertyGroup,
+    DefaultPropertyShape,
+    DefaultShape
+  > {
+    protected override createNodeShape({
+      resource,
+      shapesGraph,
+    }: {
+      resource: Resource;
+      shapesGraph: DefaultShapesGraph;
+    }) {
+      return generated.ShaclCoreNodeShape.$fromRdf(resource, {
+        ignoreRdfType: true,
+      }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
     }
 
-    export const default_ = new DefaultFactory();
+    protected override createOntology({
+      resource,
+    }: {
+      resource: Resource;
+      shapesGraph: DefaultShapesGraph;
+    }): Either<Error, Ontology> {
+      return generated.OwlOntology.$fromRdf(resource, {
+        ignoreRdfType: true,
+      }).map((generatedOntology) => new Ontology(generatedOntology));
+    }
+
+    protected override createPropertyGroup({
+      resource,
+    }: {
+      resource: Resource;
+      shapesGraph: DefaultShapesGraph;
+    }): Either<Error, PropertyGroup> {
+      return generated.ShaclCorePropertyGroup.$fromRdf(resource, {
+        ignoreRdfType: true,
+      }).map((propertyGroup) => new PropertyGroup(propertyGroup));
+    }
+
+    protected override createPropertyShape({
+      resource,
+      shapesGraph,
+    }: { resource: Resource; shapesGraph: DefaultShapesGraph }): Either<
+      Error,
+      DefaultPropertyShape
+    > {
+      return generated.ShaclCorePropertyShape.$fromRdf(resource, {
+        ignoreRdfType: true,
+      }).map(
+        (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
+      );
+    }
+  }
+
+  const defaultFactory = new DefaultFactory();
+
+  export function create(
+    parameters: Parameters<DefaultFactory["createShapesGraph"]>[0],
+  ): Either<Error, DefaultShapesGraph> {
+    return defaultFactory.createShapesGraph(parameters);
   }
 }
