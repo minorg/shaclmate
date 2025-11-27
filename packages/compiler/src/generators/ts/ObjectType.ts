@@ -37,11 +37,12 @@ export class ObjectType extends DeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
-  readonly typeof = "object";
+  override readonly typeof = "object";
 
   constructor({
     abstract,

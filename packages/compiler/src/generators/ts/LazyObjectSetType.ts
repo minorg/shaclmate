@@ -12,6 +12,15 @@ export class LazyObjectSetType<
   PartialTypeT extends SetType<ObjectType | ObjectUnionType>,
   ResolvedTypeT extends SetType<ObjectType | ObjectUnionType>,
 > extends AbstractLazyObjectType<PartialTypeT, ResolvedTypeT> {
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.of({
+    limit: {
+      type: "graphql.GraphQLInt",
+    },
+    offset: {
+      type: "graphql.GraphQLInt",
+    },
+  });
+
   constructor({
     partialType,
     resolvedType,
@@ -79,18 +88,6 @@ export class LazyObjectSetType<
   ): string {
     const { variables } = parameters;
     return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" } }) })))`;
-  }
-
-  @Memoize()
-  override get graphqlArgs() {
-    return Maybe.of({
-      limit: {
-        type: "graphql.GraphQLInt",
-      },
-      offset: {
-        type: "graphql.GraphQLInt",
-      },
-    });
   }
 
   override graphqlResolveExpression({

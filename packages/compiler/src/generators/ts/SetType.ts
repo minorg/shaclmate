@@ -1,9 +1,11 @@
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { CollectionType } from "./CollectionType.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";
 
 export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly kind = "SetType";
 
   @Memoize()

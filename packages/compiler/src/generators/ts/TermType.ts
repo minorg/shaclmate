@@ -29,11 +29,13 @@ export class TermType<
 > extends Type {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
-  readonly mutable: boolean = false;
+  override readonly mutable: boolean = false;
   readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
-  readonly typeof: "boolean" | "number" | "object" | "string" = "object";
+  override readonly typeof: "boolean" | "number" | "object" | "string" =
+    "object";
 
   constructor({
     defaultValue,

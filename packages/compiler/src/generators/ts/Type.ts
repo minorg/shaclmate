@@ -86,6 +86,15 @@ export abstract class Type {
     };
   }): string;
 
+  abstract readonly graphqlArgs: Maybe<
+    Record<
+      string,
+      {
+        type: string;
+      }
+    >
+  >;
+
   /**
    * An expression that resolves a value of this type in the GraphQL server.
    */

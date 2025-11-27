@@ -20,6 +20,7 @@ function isTypeofString(x: string): x is Type["typeof"] {
 export abstract class CollectionType<ItemTypeT extends Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   protected readonly minCount: number;
   protected readonly _mutable: boolean;

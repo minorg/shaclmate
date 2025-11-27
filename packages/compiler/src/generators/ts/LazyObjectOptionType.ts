@@ -12,6 +12,8 @@ export class LazyObjectOptionType<
   PartialTypeT extends OptionType<ObjectType | ObjectUnionType>,
   ResolvedTypeT extends OptionType<ObjectType | ObjectUnionType>,
 > extends AbstractLazyObjectType<PartialTypeT, ResolvedTypeT> {
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+
   constructor({
     partialType,
     resolvedType,
@@ -103,10 +105,6 @@ export class LazyObjectOptionType<
   ): string {
     const { variables } = parameters;
     return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.object}(identifier) })))`;
-  }
-
-  override get graphqlArgs() {
-    return Maybe.empty();
   }
 
   override graphqlResolveExpression({

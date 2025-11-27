@@ -149,6 +149,7 @@ export class UnionType extends Type {
 
   private _name?: string;
 
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly kind = "UnionType";
   readonly typeof = "object";
 

@@ -133,11 +133,13 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   @Memoize()
   override get graphqlField(): Property<TypeT>["graphqlField"] {
+    const args = this.type.graphqlArgs;
+    const argsVariable = args.isJust() ? "args" : "_args";
     return Maybe.of({
-      args: Maybe.empty(),
+      args,
       description: this.comment.map(JSON.stringify),
       name: this.name,
-      resolve: `(source, _args) => ${this.type.graphqlResolveExpression({ variables: { args: "_args", value: `source.${this.name}` } })}`,
+      resolve: `(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
       type: this.type.graphqlName.toString(),
     });
   }
