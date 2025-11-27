@@ -1,0 +1,98 @@
+import { AbstractLazyObjectType } from "generators/ts/AbstractLazyObjectType.js";
+import type { SetType } from "generators/ts/SetType.js";
+import { SnippetDeclarations } from "generators/ts/SnippetDeclarations.js";
+import { syntheticNamePrefix } from "generators/ts/syntheticNamePrefix.js";
+import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { Type } from "./Type.js";
+
+export class LazyObjectSetType<
+  PartialTypeT extends SetType<ObjectType | ObjectUnionType>,
+  ResolvedTypeT extends SetType<ObjectType | ObjectUnionType>,
+> extends AbstractLazyObjectType<PartialTypeT, ResolvedTypeT> {
+  constructor({
+    partialType,
+    resolvedType,
+  }: ConstructorParameters<
+    typeof AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>
+  >[0]) {
+    super({
+      partialType,
+      resolvedType,
+      runtimeClass: {
+        name: `${syntheticNamePrefix}LazyObjectSet<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+        partialPropertyName: "partials",
+        rawName: `${syntheticNamePrefix}LazyObjectSet`,
+        snippetDeclaration: SnippetDeclarations.LazyObjectSet,
+      },
+    });
+  }
+
+  @Memoize()
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions = super.conversions.concat();
+
+    if (this.partialType.itemType.kind === "ObjectType") {
+      conversions.push({
+        conversionExpression: (value) =>
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: "object" })}), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+        sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
+      });
+    } else if (
+      this.resolvedType.itemType.kind === "ObjectUnionType" &&
+      this.partialType.itemType.kind === "ObjectUnionType" &&
+      this.resolvedType.itemType.memberTypes.length ===
+        this.partialType.itemType.memberTypes.length
+    ) {
+      conversions.push({
+        conversionExpression: (value) =>
+          `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${partialObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { value: "object" } })} }), resolver: async () => purify.Either.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+        sourceTypeName: `readonly ${this.resolvedType.itemType.name}[]`,
+      });
+    }
+
+    conversions.push({
+      conversionExpression: () =>
+        `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: [], resolver: async () => { throw new Error("should never be called"); } })`,
+      sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
+      sourceTypeName: "undefined",
+    });
+
+    return conversions;
+  }
+
+  override fromJsonExpression(
+    parameters: Parameters<Type["fromJsonExpression"]>[0],
+  ): string {
+    return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(purify.Left(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
+  }
+
+  override fromRdfExpression(
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
+  ): string {
+    const { variables } = parameters;
+    return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" } }) })))`;
+  }
+
+  @Memoize()
+  override get graphqlArgs() {
+    return Maybe.of({
+      limit: {
+        type: "graphql.GraphQLInt",
+      },
+      offset: {
+        type: "graphql.GraphQLInt",
+      },
+    });
+  }
+
+  override graphqlResolveExpression({
+    variables,
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+    return `(await ${variables.value}.resolve({ limit: ${variables.args}.limit, offset: ${variables.args}.offset })).unsafeCoerce()`;
+  }
+}

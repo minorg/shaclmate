@@ -1,0 +1,150 @@
+import type { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
+import type { TsFeature } from "../../enums/TsFeature.js";
+import { Import } from "./Import.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { OptionType } from "./OptionType.js";
+import type { SetType } from "./SetType.js";
+import { Type } from "./Type.js";
+
+export abstract class AbstractLazyObjectType<
+  PartialTypeT extends
+    | ObjectType
+    | ObjectUnionType
+    | OptionType<ObjectType | ObjectUnionType>
+    | SetType<ObjectType | ObjectUnionType>,
+  ResolvedTypeT extends
+    | ObjectType
+    | ObjectUnionType
+    | OptionType<ObjectType | ObjectUnionType>
+    | SetType<ObjectType | ObjectUnionType>,
+> extends Type {
+  protected readonly partialType: PartialTypeT;
+  protected readonly resolvedType: ResolvedTypeT;
+  protected readonly runtimeClass: {
+    readonly name: string;
+    readonly partialPropertyName: string;
+    readonly rawName: string;
+    readonly snippetDeclaration: string;
+  };
+
+  constructor({
+    partialType,
+    resolvedType,
+    runtimeClass,
+  }: {
+    partialType: PartialTypeT;
+    resolvedType: ResolvedTypeT;
+    runtimeClass: AbstractLazyObjectType<
+      ResolvedTypeT,
+      PartialTypeT
+    >["runtimeClass"];
+  }) {
+    super();
+    this.partialType = partialType;
+    this.resolvedType = resolvedType;
+    this.runtimeClass = runtimeClass;
+  }
+
+  override get conversions(): readonly Type.Conversion[] {
+    return [
+      {
+        conversionExpression: (value) => value,
+        sourceTypeCheckExpression: (value) =>
+          `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
+        sourceTypeName: this.name,
+      } satisfies Type.Conversion,
+    ];
+  }
+
+  @Memoize()
+  override get equalsFunction(): string {
+    return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
+  }
+
+  override get graphqlName(): Type.GraphqlName {
+    return this.resolvedType.graphqlName;
+  }
+
+  override hashStatements({
+    depth,
+    variables,
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+    return this.partialType.hashStatements({
+      depth: depth + 1,
+      variables: {
+        ...variables,
+        value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
+      },
+    });
+  }
+
+  override get jsonName(): Type.JsonName {
+    return this.partialType.jsonName;
+  }
+
+  override jsonUiSchemaElement(
+    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
+  ): Maybe<string> {
+    return this.partialType.jsonUiSchemaElement(parameters);
+  }
+
+  override jsonZodSchema(
+    parameters: Parameters<Type["jsonZodSchema"]>[0],
+  ): string {
+    return this.partialType.jsonZodSchema(parameters);
+  }
+
+  override get name(): string {
+    return this.runtimeClass.name;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): readonly string[] {
+    return this.partialType
+      .snippetDeclarations(parameters)
+      .concat(this.resolvedType.snippetDeclarations(parameters))
+      .concat(this.runtimeClass.snippetDeclaration);
+  }
+
+  override sparqlConstructTemplateTriples(
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  ): readonly string[] {
+    return this.partialType.sparqlConstructTemplateTriples(parameters);
+  }
+
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return this.partialType.sparqlWherePatterns(parameters);
+  }
+
+  override toJsonExpression({
+    variables,
+  }: Parameters<Type["toJsonExpression"]>[0]): string {
+    return this.partialType.toJsonExpression({
+      variables: {
+        value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
+      },
+    });
+  }
+
+  override toRdfExpression({
+    variables,
+  }: Parameters<Type["toRdfExpression"]>[0]): string {
+    return this.partialType.toRdfExpression({
+      variables: {
+        ...variables,
+        value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
+      },
+    });
+  }
+
+  override useImports(parameters: {
+    features: ReadonlySet<TsFeature>;
+  }): readonly Import[] {
+    return this.resolvedType.useImports(parameters).concat(Import.PURIFY);
+  }
+}
