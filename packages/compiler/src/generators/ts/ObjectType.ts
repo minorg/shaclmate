@@ -553,39 +553,10 @@ export class ObjectType extends DeclaredType {
 }
 
 export namespace ObjectType {
-  export const EagerShaclProperty = _ObjectType.EagerShaclProperty;
-  export type EagerShaclProperty<TypeT extends Type = Type> =
-    _ObjectType.EagerShaclProperty<TypeT>;
   export const IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
   export const IdentifierProperty = _ObjectType.IdentifierProperty;
   export type IdentifierProperty = _ObjectType.IdentifierProperty;
-  export const LazyShaclProperty = _ObjectType.LazyShaclProperty;
-  export type LazyShaclProperty<
-    LazyTypeT extends _ObjectType.LazyShaclProperty.Type<
-      ResolvedTypeT,
-      PartialTypeT
-    >,
-    ResolvedTypeT extends
-      _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
-    PartialTypeT extends
-      _ObjectType.LazyShaclProperty.Type.PartialTypeConstraint,
-  > = _ObjectType.LazyShaclProperty<LazyTypeT, ResolvedTypeT, PartialTypeT>;
-  export namespace LazyShaclProperty {
-    export type Type<
-      ResolvedTypeT extends
-        _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
-      PartialTypeT extends
-        _ObjectType.LazyShaclProperty.Type.PartialTypeConstraint,
-    > = _ObjectType.LazyShaclProperty.Type<ResolvedTypeT, PartialTypeT>;
-
-    export namespace Type {
-      export type ResolvedTypeConstraint =
-        _ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint;
-      export type PartialTypeConstraint =
-        _ObjectType.LazyShaclProperty.Type.PartialTypeConstraint;
-    }
-  }
   export type ObjectSetMethodNames = {
     readonly object: string;
     readonly objectsCount: string;

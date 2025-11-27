@@ -15,6 +15,9 @@ import { DateType } from "./DateType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IntType } from "./IntType.js";
+import { LazyObjectOptionType } from "./LazyObjectOptionType.js";
+import { LazyObjectSetType } from "./LazyObjectSetType.js";
+import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
 import { ObjectType } from "./ObjectType.js";
@@ -470,19 +473,15 @@ export class TypeFactory {
       }
     }
 
-    let property: ObjectType.Property;
-
     const name = tsName(astObjectTypeProperty);
 
+    let type = this.createType(astObjectTypeProperty.type);
+
     if (astObjectTypeProperty.partialType.isJust()) {
-      const resolvedType = this.createType(astObjectTypeProperty.type);
-      let lazyType: ObjectType.LazyShaclProperty.Type<
-        ObjectType.LazyShaclProperty.Type.ResolvedTypeConstraint,
-        ObjectType.LazyShaclProperty.Type.PartialTypeConstraint
-      >;
       const partialType = this.createType(
         astObjectTypeProperty.partialType.unsafeCoerce(),
       );
+      const resolvedType = this.createType(astObjectTypeProperty.type);
 
       if (resolvedType instanceof OptionType) {
         invariant(
@@ -495,9 +494,9 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} has ${(partialType as any).kind} partials`,
         );
 
-        lazyType = new ObjectType.LazyShaclProperty.OptionalObjectType({
-          resolvedType,
+        type = new LazyObjectOptionType({
           partialType,
+          resolvedType,
         });
       } else if (
         resolvedType instanceof ObjectType ||
@@ -509,9 +508,9 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} has ${(partialType as any).kind} partials`,
         );
 
-        lazyType = new ObjectType.LazyShaclProperty.RequiredObjectType({
-          resolvedType: resolvedType,
-          partialType: partialType,
+        type = new LazyObjectType({
+          partialType,
+          resolvedType,
         });
       } else if (resolvedType instanceof SetType) {
         invariant(
@@ -524,44 +523,35 @@ export class TypeFactory {
           `lazy property ${name} on ${objectType.name} has ${(partialType as any).kind} partials`,
         );
 
-        lazyType = new ObjectType.LazyShaclProperty.ObjectSetType({
-          resolvedType,
+        type = new LazyObjectSetType({
           partialType,
+          resolvedType,
         });
       } else {
         throw new Error(
           `lazy property ${name} on ${objectType.name} has ${(resolvedType as any).kind}`,
         );
       }
-
-      property = new ObjectType.LazyShaclProperty({
-        comment: astObjectTypeProperty.comment,
-        description: astObjectTypeProperty.description,
-        label: astObjectTypeProperty.label,
-        objectType,
-        name,
-        path: astObjectTypeProperty.path,
-        type: lazyType,
-        visibility: astObjectTypeProperty.visibility,
-      });
-    } else {
-      property = new ObjectType.EagerShaclProperty({
-        comment: astObjectTypeProperty.comment,
-        description: astObjectTypeProperty.description,
-        label: astObjectTypeProperty.label,
-        mutable: astObjectTypeProperty.mutable,
-        objectType,
-        name,
-        path: astObjectTypeProperty.path,
-        recursive: !!astObjectTypeProperty.recursive,
-        type: this.createType(astObjectTypeProperty.type),
-        visibility: astObjectTypeProperty.visibility,
-      });
     }
+
+    const property = new ObjectType.ShaclProperty({
+      comment: astObjectTypeProperty.comment,
+      description: astObjectTypeProperty.description,
+      label: astObjectTypeProperty.label,
+      mutable: astObjectTypeProperty.mutable,
+      objectType,
+      name,
+      path: astObjectTypeProperty.path,
+      recursive: !!astObjectTypeProperty.recursive,
+      type,
+      visibility: astObjectTypeProperty.visibility,
+    });
+
     this.cachedObjectTypePropertiesByShapeIdentifier.set(
       astObjectTypeProperty.shapeIdentifier,
       property,
     );
+
     return property;
   }
 

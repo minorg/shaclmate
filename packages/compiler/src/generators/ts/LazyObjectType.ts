@@ -13,9 +13,12 @@ export class LazyObjectType<
   constructor({
     partialType,
     resolvedType,
-  }: ConstructorParameters<
-    typeof AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>
-  >[0]) {
+  }: Omit<
+    ConstructorParameters<
+      typeof AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>
+    >[0],
+    "runtimeClass"
+  >) {
     super({
       partialType,
       resolvedType,

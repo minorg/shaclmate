@@ -14,32 +14,38 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
-export abstract class ShaclProperty<
-  TypeT extends Type,
-> extends Property<TypeT> {
-  protected readonly comment: Maybe<string>;
-  protected readonly description: Maybe<string>;
-  protected readonly label: Maybe<string>;
+export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
+  private readonly comment: Maybe<string>;
+  private readonly description: Maybe<string>;
+  private readonly label: Maybe<string>;
 
+  readonly mutable: boolean;
   readonly path: rdfjs.NamedNode;
+  readonly recursive: boolean;
 
   constructor({
     comment,
     description,
     label,
+    mutable,
     path,
+    recursive,
     ...superParameters
   }: {
     comment: Maybe<string>;
     description: Maybe<string>;
     label: Maybe<string>;
+    mutable: boolean;
     path: rdfjs.NamedNode;
+    recursive: boolean;
   } & ConstructorParameters<typeof Property<TypeT>>[0]) {
     super(superParameters);
     this.comment = comment;
     this.description = description;
     this.label = label;
+    this.mutable = mutable;
     this.path = path;
+    this.recursive = recursive;
   }
 
   @Memoize()
@@ -123,6 +129,17 @@ export abstract class ShaclProperty<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
     return Maybe.empty();
+  }
+
+  @Memoize()
+  override get graphqlField(): Property<TypeT>["graphqlField"] {
+    return Maybe.of({
+      args: Maybe.empty(),
+      description: this.comment.map(JSON.stringify),
+      name: this.name,
+      resolve: `(source, _args) => ${this.type.graphqlResolveExpression({ variables: { args: "_args", value: `source.${this.name}` } })}`,
+      type: this.type.graphqlName.toString(),
+    });
   }
 
   override hashStatements(
