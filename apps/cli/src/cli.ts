@@ -5,7 +5,7 @@ import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import {
   AstJsonGenerator,
   Compiler,
-  ShapesGraph,
+  ShapesGraphFactory,
   TsGenerator,
 } from "@shaclmate/compiler";
 import type { Generator } from "@shaclmate/compiler";
@@ -130,7 +130,8 @@ function generate({
     }
   }
 
-  ShapesGraph.fromDataset(dataset)
+  new ShapesGraphFactory()
+    .createShapesGraph({ dataset })
     .chain((shapesGraph) =>
       new Compiler({ generator, iriPrefixMap }).compile(shapesGraph),
     )

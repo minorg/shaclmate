@@ -4,3 +4,4 @@ export { PropertyGroup } from "@shaclmate/shacl-ast";
 export * from "./PropertyShape.js";
 export * from "./Shape.js";
 export * from "./ShapesGraph.js";
+export * from "./ShapesGraphFactory.js";
