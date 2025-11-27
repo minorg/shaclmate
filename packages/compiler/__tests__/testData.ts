@@ -6,6 +6,7 @@ import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import { ShapesGraph } from "@shaclmate/compiler";
 import { DataFactory, Parser, Store } from "n3";
 import { Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
@@ -47,38 +48,51 @@ function parseShapesGraph(filePath: string): {
   };
 }
 
-export const testData = {
-  externalProject: Maybe.of(
-    path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
-  )
-    .filter((filePath) => fs.existsSync(filePath))
-    .map(parseShapesGraph),
-  kitchenSink: parseShapesGraph(
-    path.join(
-      thisDirectoryPath,
-      "..",
-      "..",
-      "..",
-      "examples",
-      "kitchen-sink",
-      "src",
-      "kitchen-sink.shaclmate.ttl",
-    ),
-  ),
-  skos: Maybe.of(
-    path.join(
-      thisDirectoryPath,
-      "..",
-      "..",
-      "..",
-      "..",
-      "kos-kit",
-      "lib",
-      "packages",
-      "models",
-      "models.shaclmate.ttl",
-    ),
-  )
-    .filter((filePath) => fs.existsSync(filePath))
-    .map(parseShapesGraph),
-};
+class TestData {
+  @Memoize()
+  get externalProject() {
+    return Maybe.of(
+      path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
+    )
+      .filter((filePath) => fs.existsSync(filePath))
+      .map(parseShapesGraph);
+  }
+
+  @Memoize()
+  get kitchenSink() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "..",
+        "..",
+        "..",
+        "examples",
+        "kitchen-sink",
+        "src",
+        "kitchen-sink.shaclmate.ttl",
+      ),
+    );
+  }
+
+  @Memoize()
+  get skos() {
+    return Maybe.of(
+      path.join(
+        thisDirectoryPath,
+        "..",
+        "..",
+        "..",
+        "..",
+        "kos-kit",
+        "lib",
+        "packages",
+        "models",
+        "models.shaclmate.ttl",
+      ),
+    )
+      .filter((filePath) => fs.existsSync(filePath))
+      .map(parseShapesGraph);
+  }
+}
+
+export const testData = new TestData();
