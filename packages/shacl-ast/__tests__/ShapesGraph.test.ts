@@ -33,13 +33,15 @@ describe("ShapesGraph: schema", () => {
 });
 
 testData.skos.ifJust((shapesGraph) => {
-  it("should parse the shapes correctly", ({ expect }) => {
-    expect(shapesGraph.nodeShapes).toHaveLength(12);
-    expect(shapesGraph.propertyShapes).toHaveLength(37);
-  });
+  describe("ShapesGraph: skos", () => {
+    it("should parse the shapes correctly", ({ expect }) => {
+      expect(shapesGraph.nodeShapes).toHaveLength(12);
+      expect(shapesGraph.propertyShapes).toHaveLength(37);
+    });
 
-  it("should parse ontologies correctly", ({ expect }) => {
-    expect(shapesGraph.ontologies).toHaveLength(4);
+    it("should parse ontologies correctly", ({ expect }) => {
+      expect(shapesGraph.ontologies).toHaveLength(4);
+    });
   });
 });
 
