@@ -5,7 +5,7 @@ import type { DatasetCore } from "@rdfjs/types";
 import { Parser, Store } from "n3";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { ShapesGraphFactory } from "../src/index.js";
+import { ShapesGraph } from "../src/index.js";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
@@ -20,7 +20,7 @@ function parseShapesGraph(
   filePath: string,
   options?: { excludeDash?: boolean; ignoreUndefinedShapes?: boolean },
 ) {
-  return ShapesGraphFactory.default_
+  return ShapesGraph.Factory.default_
     .createShapesGraph({ dataset: parseDataset(filePath), ...options })
     .unsafeCoerce();
 }

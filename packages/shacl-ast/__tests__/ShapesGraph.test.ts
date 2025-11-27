@@ -1,5 +1,5 @@
+import { ShapesGraph } from "@shaclmate/shacl-ast";
 import { describe, it } from "vitest";
-import { ShapesGraphFactory } from "../src/ShapesGraphFactory.js";
 import { testData } from "./testData.js";
 
 describe("ShapesGraph: kitchen sink", () => {
@@ -45,7 +45,7 @@ testData.skos.ifJust((shapesGraph) => {
 
 describe("RdfsjsShapesGraph: error cases", () => {
   it("should produce an error on an undefined shape", ({ expect }) => {
-    const error = ShapesGraphFactory.default_
+    const error = ShapesGraph.Factory.default_
       .createShapesGraph({ dataset: testData.undefinedShape.dataset })
       .extract();
     expect(error).toBeInstanceOf(Error);
