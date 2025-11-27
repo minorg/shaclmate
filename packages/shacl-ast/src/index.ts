@@ -1,6 +1,4 @@
 export * from "./dashDataset.js";
-export * from "./defaultFactory.js";
-export * from "./Factory.js";
 export * from "./IdentifierNodeKind.js";
 export * from "./NodeKind.js";
 export * from "./NodeShape.js";
@@ -12,3 +10,4 @@ export * from "./PropertyShape.js";
 export * from "./ShapesGraph.js";
 export * from "./Shape.js";
 export * from "./ShapesGraph.js";
+export * from "./ShapesGraphFactory.js";

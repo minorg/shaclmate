@@ -1,20 +1,8 @@
-import TermMap from "@rdfjs/term-map";
-import TermSet from "@rdfjs/term-set";
-import type {
-  BlankNode,
-  DatasetCore,
-  DefaultGraph,
-  NamedNode,
-  Term,
-} from "@rdfjs/types";
-import { owl, sh } from "@tpluscode/rdf-ns-builders";
-import { Store } from "n3";
-import { Either, Maybe } from "purify-ts";
-import { Resource, ResourceSet } from "rdfjs-resource";
+import type TermMap from "@rdfjs/term-map";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
+import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import type { Factory } from "./Factory.js";
 import type { OntologyLike } from "./OntologyLike.js";
-import { dashDataset } from "./dashDataset.js";
 
 export class ShapesGraph<
   NodeShapeT extends ShapeT,
@@ -23,335 +11,33 @@ export class ShapesGraph<
   PropertyShapeT extends ShapeT,
   ShapeT,
 > {
-  private readonly nodeShapesByIdentifier = new TermMap<
+  private readonly nodeShapesByIdentifier: TermMap<
     BlankNode | NamedNode,
     NodeShapeT
-  >();
-  private readonly ontologiesByIdentifier = new TermMap<
+  >;
+  private readonly ontologiesByIdentifier: TermMap<
     BlankNode | NamedNode,
     OntologyT
-  >();
-  private readonly propertyGroupsByIdentifier = new TermMap<
+  >;
+  private readonly propertyGroupsByIdentifier: TermMap<
     BlankNode | NamedNode,
     PropertyGroupT
-  >();
-  private readonly propertyShapesByIdentifier = new TermMap<
+  >;
+  private readonly propertyShapesByIdentifier: TermMap<
     BlankNode | NamedNode,
     PropertyShapeT
-  >();
+  >;
 
-  static fromDataset<
-    NodeShapeT extends ShapeT,
-    OntologyT extends OntologyLike,
-    PropertyGroupT,
-    PropertyShapeT extends ShapeT,
-    ShapeT,
-  >(
-    dataset: DatasetCore,
-    factory: Factory<
-      NodeShapeT,
-      OntologyT,
-      PropertyGroupT,
-      PropertyShapeT,
-      ShapeT
-    >,
-    options?: { excludeDash?: boolean; ignoreUndefinedShapes?: boolean },
-  ): Either<
-    Error,
-    ShapesGraph<NodeShapeT, OntologyT, PropertyGroupT, PropertyShapeT, ShapeT>
-  > {
-    let datasetWithDash: DatasetCore;
-    if (!options?.excludeDash) {
-      datasetWithDash = new Store();
-      for (const quad of dataset) {
-        datasetWithDash.add(quad);
-      }
-      for (const quad of dashDataset) {
-        datasetWithDash.add(quad);
-      }
-    } else {
-      datasetWithDash = dataset;
-    }
-
-    function datasetHasMatch(
-      subject?: Term | null,
-      predicate?: Term | null,
-      object?: Term | null,
-      graph?: Term | null,
-    ): boolean {
-      for (const _ of datasetWithDash.match(
-        subject,
-        predicate,
-        object,
-        graph,
-      )) {
-        return true;
-      }
-      return false;
-    }
-
-    const ignoreUndefinedShapes = !!options?.ignoreUndefinedShapes;
-    const resourceSet = new ResourceSet({ dataset: datasetWithDash });
-    const shapesGraph = new ShapesGraph<
-      NodeShapeT,
-      OntologyT,
-      PropertyGroupT,
-      PropertyShapeT,
-      ShapeT
-    >();
-
-    return Either.encase(() => {
-      function readGraph(): BlankNode | DefaultGraph | NamedNode | null {
-        const graphs = new TermSet();
-        for (const quad of datasetWithDash) {
-          graphs.add(quad.graph);
-        }
-        if (graphs.size !== 1) {
-          return null;
-        }
-        const graph = [...graphs.values()][0];
-        switch (graph.termType) {
-          case "BlankNode":
-          case "DefaultGraph":
-          case "NamedNode":
-            return graph;
-          default:
-            throw new RangeError(
-              `expected NamedNode or default graph, actual ${graph.termType}`,
-            );
-        }
-      }
-
-      const graph = readGraph();
-
-      // Read ontologies
-      for (const ontologyResource of resourceSet.instancesOf(owl.Ontology, {
-        graph,
-      })) {
-        if (
-          shapesGraph.ontologiesByIdentifier.has(ontologyResource.identifier)
-        ) {
-          continue;
-        }
-        factory
-          .ontologyFromRdf({
-            resource: ontologyResource,
-            shapesGraph,
-          })
-          .ifRight((ontology) =>
-            shapesGraph.ontologiesByIdentifier.set(
-              ontologyResource.identifier,
-              ontology,
-            ),
-          );
-      }
-
-      // Read property groups
-      for (const propertyGroupResource of resourceSet.instancesOf(
-        sh.PropertyGroup,
-        { graph },
-      )) {
-        if (propertyGroupResource.identifier.termType !== "NamedNode") {
-          continue;
-        }
-        if (
-          shapesGraph.propertyGroupsByIdentifier.has(
-            propertyGroupResource.identifier,
-          )
-        ) {
-          continue;
-        }
-        factory
-          .propertyGroupFromRdf({
-            resource: propertyGroupResource,
-            shapesGraph,
-          })
-          .ifRight((propertyGroup) =>
-            shapesGraph.propertyGroupsByIdentifier.set(
-              propertyGroupResource.identifier,
-              propertyGroup,
-            ),
-          );
-      }
-
-      // Read shapes
-      // Collect the shape identifiers in sets
-      const shapeNodeSet = new TermSet<BlankNode | NamedNode>();
-
-      // Utility function for adding to the shapeNodeSet
-      function addShapeNode(
-        shapeNode: Term,
-      ): shapeNode is BlankNode | NamedNode {
-        switch (shapeNode.termType) {
-          case "BlankNode":
-          case "NamedNode":
-            shapeNodeSet.add(shapeNode);
-            return true;
-          default:
-            throw new RangeError(
-              `unexpected shape node identifier term type: ${shapeNode.termType}`,
-            );
-        }
-      }
-
-      // Test each shape condition
-      // https://www.w3.org/TR/shacl/#shapes
-
-      // Subject is a SHACL instance of sh:NodeShape or sh:PropertyShape
-      for (const rdfType of [sh.NodeShape, sh.PropertyShape]) {
-        for (const resource of resourceSet.instancesOf(rdfType, {
-          graph,
-        })) {
-          addShapeNode(resource.identifier);
-        }
-      }
-
-      // Subject of a triple with sh:targetClass, sh:targetNode, sh:targetObjectsOf, or sh:targetSubjectsOf predicate
-      for (const predicate of [
-        sh.targetClass,
-        sh.targetNode,
-        sh.targetObjectsOf,
-        sh.targetSubjectsOf,
-      ]) {
-        for (const quad of datasetWithDash.match(
-          null,
-          predicate,
-          null,
-          graph,
-        )) {
-          addShapeNode(quad.subject);
-        }
-      }
-
-      // Subject of a triple that has a parameter as predicate
-      // https://www.w3.org/TR/shacl/#constraints
-      // https://www.w3.org/TR/shacl/#core-components
-      for (const predicate of [
-        sh.class,
-        sh.datatype,
-        sh.nodeKind,
-        sh.minCount,
-        sh.maxCount,
-        sh.minExclusive,
-        sh.minInclusive,
-        sh.maxExclusive,
-        sh.maxInclusive,
-        sh.minLength,
-        sh.maxLength,
-        sh.pattern,
-        sh.languageIn,
-        sh.uniqueLang,
-        sh.equals,
-        sh.disjoint,
-        sh.lessThan,
-        sh.lessThanOrEquals,
-        sh.not,
-        sh.and,
-        sh.or,
-        sh.xone,
-        sh.node,
-        sh.property,
-        sh.qualifiedValueShape,
-        sh.qualifiedMinCount,
-        sh.qualifiedMaxCount,
-        sh.closed,
-        sh.ignoredProperties,
-        sh.hasValue,
-        sh.in,
-      ]) {
-        for (const quad of datasetWithDash.match(
-          null,
-          predicate,
-          null,
-          graph,
-        )) {
-          addShapeNode(quad.subject);
-        }
-      }
-
-      // Object of a shape-expecting, non-list-taking parameter such as sh:node
-      for (const predicate of [sh.node, sh.property]) {
-        for (const quad of datasetWithDash.match(
-          null,
-          predicate,
-          null,
-          graph,
-        )) {
-          addShapeNode(quad.object);
-
-          if (!ignoreUndefinedShapes && !datasetHasMatch(quad.object)) {
-            throw new Error(
-              `undefined shape: ${Resource.Identifier.toString(quad.object as Resource.Identifier)}`,
-            );
-          }
-        }
-      }
-
-      // Member of a SHACL list that is a value of a shape-expecting and list-taking parameter such as sh:or
-      for (const predicate of [sh.and, sh.or, sh.xone]) {
-        for (const quad of datasetWithDash.match(
-          null,
-          predicate,
-          null,
-          graph,
-        )) {
-          switch (quad.object.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              break;
-            default:
-              throw new RangeError(
-                `expected list term to be a blank or named node, not ${quad.object.termType}`,
-              );
-          }
-
-          for (const value of resourceSet
-            .resource(quad.object)
-            .toList()
-            .unsafeCoerce()) {
-            const identifier = value.toIdentifier().unsafeCoerce();
-
-            addShapeNode(identifier);
-
-            if (!ignoreUndefinedShapes && !datasetHasMatch(identifier)) {
-              throw new Error(
-                `undefined shape: ${Resource.Identifier.toString(identifier as Resource.Identifier)}`,
-              );
-            }
-          }
-        }
-      }
-
-      // Separate shapes into node and property shapes.
-      for (const shapeNode of shapeNodeSet) {
-        if (datasetWithDash.match(shapeNode, sh.path, null, graph).size > 0) {
-          // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
-          factory
-            .propertyShapeFromRdf({
-              resource: resourceSet.resource(shapeNode),
-              shapesGraph,
-            })
-            .ifRight((propertyShape) =>
-              shapesGraph.propertyShapesByIdentifier.set(
-                shapeNode,
-                propertyShape,
-              ),
-            );
-        } else {
-          // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
-          factory
-            .nodeShapeFromRdf({
-              resource: resourceSet.resource(shapeNode),
-              shapesGraph,
-            })
-            .ifRight((nodeShape) =>
-              shapesGraph.nodeShapesByIdentifier.set(shapeNode, nodeShape),
-            );
-        }
-      }
-
-      return shapesGraph;
-    });
+  constructor(parameters: {
+    nodeShapesByIdentifier: TermMap<BlankNode | NamedNode, NodeShapeT>;
+    ontologiesByIdentifier: TermMap<BlankNode | NamedNode, OntologyT>;
+    propertyGroupsByIdentifier: TermMap<BlankNode | NamedNode, PropertyGroupT>;
+    propertyShapesByIdentifier: TermMap<BlankNode | NamedNode, PropertyShapeT>;
+  }) {
+    this.nodeShapesByIdentifier = parameters.nodeShapesByIdentifier;
+    this.ontologiesByIdentifier = parameters.ontologiesByIdentifier;
+    this.propertyGroupsByIdentifier = parameters.propertyGroupsByIdentifier;
+    this.propertyShapesByIdentifier = parameters.propertyShapesByIdentifier;
   }
 
   @Memoize()
