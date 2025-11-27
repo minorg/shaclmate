@@ -1,3 +1,4 @@
+export * from "./dashDataset.js";
 export * from "./defaultFactory.js";
 export * from "./Factory.js";
 export * from "./IdentifierNodeKind.js";

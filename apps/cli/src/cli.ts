@@ -9,6 +9,7 @@ import {
   TsGenerator,
 } from "@shaclmate/compiler";
 import type { Generator } from "@shaclmate/compiler";
+import { dashDataset } from "@shaclmate/shacl-ast";
 import {
   command,
   option,
@@ -99,24 +100,34 @@ function generate({
 
   const iriPrefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
 
-  const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
-    dataset,
-  );
-  if (!validationReport.conforms) {
-    process.stderr.write("input is not valid SHACL:\n");
-    const n3WriterPrefixes: Record<string, string> = {};
-    for (const prefixEntry of iriPrefixMap.entries()) {
-      n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
+  {
+    const datasetWithDash = new Store();
+    for (const quad of dataset) {
+      datasetWithDash.add(quad);
     }
-    const n3Writer = new N3.Writer({
-      format: "text/turtle",
-      prefixes: n3WriterPrefixes,
-    });
-    for (const quad of validationReport.dataset) {
-      n3Writer.addQuad(quad);
+    for (const quad of dashDataset) {
+      datasetWithDash.add(quad);
     }
-    n3Writer.end((_error, result) => process.stderr.write(result));
-    return;
+
+    const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
+      datasetWithDash,
+    );
+    if (!validationReport.conforms) {
+      process.stderr.write("input is not valid SHACL:\n");
+      const n3WriterPrefixes: Record<string, string> = {};
+      for (const prefixEntry of iriPrefixMap.entries()) {
+        n3WriterPrefixes[prefixEntry[0]] = prefixEntry[1].value;
+      }
+      const n3Writer = new N3.Writer({
+        format: "text/turtle",
+        prefixes: n3WriterPrefixes,
+      });
+      for (const quad of validationReport.dataset) {
+        n3Writer.addQuad(quad);
+      }
+      n3Writer.end((_error, result) => process.stderr.write(result));
+      return;
+    }
   }
 
   ShapesGraph.fromDataset(dataset)
