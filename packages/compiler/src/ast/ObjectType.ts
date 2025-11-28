@@ -12,9 +12,6 @@ import type {
 } from "../enums/index.js";
 import type { Curie } from "./Curie.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import type { ObjectUnionType } from "./ObjectUnionType.js";
-import type { OptionType } from "./OptionType.js";
-import type { SetType } from "./SetType.js";
 import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
 
@@ -307,18 +304,6 @@ export namespace ObjectType {
     readonly order: number;
 
     /**
-     * The property will be resolved lazily, with this type serving as a partial before resolution of the actual type (type).
-     *
-     * This type will mirror type: if type is an OptionType<ObjectType>, this will also be an OptionType<ObjectType>.
-     */
-    readonly partialType: Maybe<
-      | ObjectType
-      | ObjectUnionType
-      | OptionType<ObjectType | ObjectUnionType>
-      | SetType<ObjectType | ObjectUnionType>
-    >;
-
-    /**
      * SHACL property path (https://www.w3.org/TR/shacl/#property-paths)
      */
     readonly path: Curie | NamedNode;
@@ -346,7 +331,6 @@ export namespace ObjectType {
       name,
       objectType,
       order,
-      partialType,
       path,
       shapeIdentifier,
       type,
@@ -359,12 +343,6 @@ export namespace ObjectType {
       name: Maybe<string>;
       objectType: ObjectType;
       order: number;
-      partialType: Maybe<
-        | ObjectType
-        | ObjectUnionType
-        | OptionType<ObjectType | ObjectUnionType>
-        | SetType<ObjectType | ObjectUnionType>
-      >;
       path: Curie | NamedNode;
       shapeIdentifier: BlankNode | NamedNode;
       type: Type;
@@ -377,7 +355,6 @@ export namespace ObjectType {
       this.name = name;
       this.objectType = objectType;
       this.order = order;
-      this.partialType = partialType;
       this.path = path;
       this.shapeIdentifier = shapeIdentifier;
       this.type = type;
@@ -453,21 +430,6 @@ export namespace ObjectType {
         }
 
         if (!propertyType) {
-          const partialType = property.partialType.extract();
-          if (partialType) {
-            if (
-              helper(
-                stack.concat({
-                  objectType,
-                  property,
-                  propertyType: [partialType],
-                }),
-              )
-            ) {
-              return true;
-            }
-          }
-
           return helper(
             stack.concat({
               objectType,
@@ -486,6 +448,40 @@ export namespace ObjectType {
           case "PlaceholderType":
           case "TermType":
             return false;
+          case "LazyObjectOptionType":
+          case "LazyObjectSetType":
+          case "LazyObjectType": {
+            if (
+              helper(
+                stack.concat({
+                  objectType,
+                  property,
+                  propertyType: propertyType.concat(
+                    currentPropertyType.partialType,
+                  ),
+                }),
+              )
+            ) {
+              return true;
+            }
+
+            if (
+              helper(
+                stack.concat({
+                  objectType,
+                  property,
+                  propertyType: propertyType.concat(
+                    currentPropertyType.resolvedType,
+                  ),
+                }),
+              )
+            ) {
+              return true;
+            }
+
+            return false;
+          }
+
           case "ObjectType": {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);

@@ -10,9 +10,10 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class OptionType<ItemTypeT extends Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
-  readonly typeof = "object";
+  override readonly typeof = "object";
 
   constructor({ itemType }: { itemType: ItemTypeT }) {
     super();

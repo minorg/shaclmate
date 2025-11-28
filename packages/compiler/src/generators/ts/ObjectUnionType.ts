@@ -34,10 +34,11 @@ export class ObjectUnionType extends DeclaredType {
   protected readonly comment: Maybe<string>;
   protected readonly label: Maybe<string>;
 
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
-  readonly typeof = "object";
+  override readonly typeof = "object";
 
   constructor({
     comment,
