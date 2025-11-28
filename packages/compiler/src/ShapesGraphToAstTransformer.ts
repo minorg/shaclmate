@@ -77,24 +77,29 @@ export class ShapesGraphToAstTransformer {
         case "ObjectType": {
           nodeShapeAstObjectTypes.push(nodeShapeAstType);
           for (const property of nodeShapeAstType.properties) {
-            property.partialType
-              .map((partialType) =>
-                partialType.kind === "ObjectType" ||
-                partialType.kind === "ObjectUnionType"
-                  ? partialType
-                  : partialType.itemType,
-              )
-              .filter(
-                (partialItemType) => partialItemType.kind === "ObjectType",
-              )
-              .filter((partialItemType) => partialItemType.synthetic)
-              .ifJust((partialItemType) => {
-                const partialItemTypeName = partialItemType.name.unsafeCoerce();
-                if (!syntheticAstObjectTypesByName[partialItemTypeName]) {
-                  syntheticAstObjectTypesByName[partialItemTypeName] =
-                    partialItemType as ast.ObjectType;
+            switch (property.type.kind) {
+              case "LazyObjectOptionType":
+              case "LazyObjectSetType":
+              case "LazyObjectType": {
+                const partialItemType =
+                  property.type.partialType.kind === "ObjectType" ||
+                  property.type.partialType.kind === "ObjectUnionType"
+                    ? property.type.partialType
+                    : property.type.partialType.itemType;
+
+                if (
+                  partialItemType.kind === "ObjectType" &&
+                  partialItemType.synthetic
+                ) {
+                  const partialItemTypeName =
+                    partialItemType.name.unsafeCoerce();
+                  if (!syntheticAstObjectTypesByName[partialItemTypeName]) {
+                    syntheticAstObjectTypesByName[partialItemTypeName] =
+                      partialItemType as ast.ObjectType;
+                  }
                 }
-              });
+              }
+            }
           }
 
           break;

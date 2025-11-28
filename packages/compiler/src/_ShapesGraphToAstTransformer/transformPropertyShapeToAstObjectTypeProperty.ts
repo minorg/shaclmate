@@ -132,9 +132,8 @@ export function transformPropertyShapeToAstObjectTypeProperty(
   if (typeEither.isLeft()) {
     return typeEither;
   }
-  const type = typeEither.unsafeCoerce();
+  let type = typeEither.unsafeCoerce();
 
-  let partialType: ast.ObjectType.Property["partialType"] = Maybe.empty();
   let propertyShapePartialItemType:
     | ast.ObjectType
     | ast.ObjectUnionType
@@ -169,13 +168,15 @@ export function transformPropertyShapeToAstObjectTypeProperty(
     switch (type.kind) {
       case "ObjectType":
       case "ObjectUnionType":
-        partialType = Maybe.of(
-          propertyShapePartialItemType ??
+        type = new ast.LazyObjectType({
+          partialType:
+            propertyShapePartialItemType ??
             synthesizePartialAstObjectType({
               identifierType: type.identifierType,
               tsFeatures: type.tsFeatures,
             }),
-        );
+          resolvedType: type,
+        });
         break;
       case "OptionType":
       case "SetType": {
@@ -199,20 +200,26 @@ export function transformPropertyShapeToAstObjectTypeProperty(
           });
         switch (type.kind) {
           case "OptionType":
-            partialType = Maybe.of(
-              new ast.OptionType({
+            type = new ast.LazyObjectOptionType({
+              partialType: new ast.OptionType({
                 itemType: partialItemType,
               }),
-            );
+              resolvedType: type as ast.OptionType<
+                ast.ObjectType | ast.ObjectUnionType
+              >,
+            });
             break;
           case "SetType":
-            partialType = Maybe.of(
-              new ast.SetType({
+            type = new ast.LazyObjectSetType({
+              partialType: new ast.SetType({
                 itemType: partialItemType,
                 minCount: 0,
                 mutable: false,
               }),
-            );
+              resolvedType: type as ast.SetType<
+                ast.ObjectType | ast.ObjectUnionType
+              >,
+            });
             break;
         }
         break;
@@ -247,12 +254,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       objectType,
       order: propertyShape.order.orDefault(0),
       path: this.curieFactory.create(path.iri).extract() ?? path.iri,
-      partialType,
       shapeIdentifier:
         (propertyShape.identifier.termType === "NamedNode"
           ? this.curieFactory.create(propertyShape.identifier).extract()
           : undefined) ?? propertyShape.identifier,
-      type: type,
+      type,
       visibility: propertyShape.visibility,
     }),
   );
