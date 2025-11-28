@@ -8,10 +8,10 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class LazyObjectOptionType<
-  PartialTypeT extends OptionType<ObjectType | ObjectUnionType>,
-  ResolvedTypeT extends OptionType<ObjectType | ObjectUnionType>,
-> extends AbstractLazyObjectType<PartialTypeT, ResolvedTypeT> {
+export class LazyObjectOptionType extends AbstractLazyObjectType<
+  OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
+  OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
+> {
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
 
   constructor({
@@ -19,7 +19,10 @@ export class LazyObjectOptionType<
     resolvedType,
   }: Omit<
     ConstructorParameters<
-      typeof AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>
+      typeof AbstractLazyObjectType<
+        OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
+        OptionType<AbstractLazyObjectType.ObjectTypeConstraint>
+      >
     >[0],
     "runtimeClass"
   >) {

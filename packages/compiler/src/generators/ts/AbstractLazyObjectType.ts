@@ -10,16 +10,8 @@ import type { SetType } from "./SetType.js";
 import { Type } from "./Type.js";
 
 export abstract class AbstractLazyObjectType<
-  PartialTypeT extends
-    | ObjectType
-    | ObjectUnionType
-    | OptionType<ObjectType | ObjectUnionType>
-    | SetType<ObjectType | ObjectUnionType>,
-  ResolvedTypeT extends
-    | ObjectType
-    | ObjectUnionType
-    | OptionType<ObjectType | ObjectUnionType>
-    | SetType<ObjectType | ObjectUnionType>,
+  PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
+  ResolvedTypeT extends AbstractLazyObjectType.ResolvedTypeConstraint,
 > extends Type {
   protected readonly partialType: PartialTypeT;
   protected readonly resolvedType: ResolvedTypeT;
@@ -177,4 +169,13 @@ export abstract class AbstractLazyObjectType<
   }): readonly Import[] {
     return this.resolvedType.useImports(parameters).concat(Import.PURIFY);
   }
+}
+
+export namespace AbstractLazyObjectType {
+  export type ObjectTypeConstraint = ObjectType | ObjectUnionType;
+  export type PartialTypeConstraint =
+    | ObjectTypeConstraint
+    | OptionType<ObjectTypeConstraint>
+    | SetType<ObjectTypeConstraint>;
+  export type ResolvedTypeConstraint = PartialTypeConstraint;
 }

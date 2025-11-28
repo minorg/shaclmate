@@ -8,10 +8,10 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class LazyObjectSetType<
-  PartialTypeT extends SetType<ObjectType | ObjectUnionType>,
-  ResolvedTypeT extends SetType<ObjectType | ObjectUnionType>,
-> extends AbstractLazyObjectType<PartialTypeT, ResolvedTypeT> {
+export class LazyObjectSetType extends AbstractLazyObjectType<
+  SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
+  SetType<AbstractLazyObjectType.ObjectTypeConstraint>
+> {
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.of({
     limit: {
       type: "graphql.GraphQLInt",
@@ -26,7 +26,10 @@ export class LazyObjectSetType<
     resolvedType,
   }: Omit<
     ConstructorParameters<
-      typeof AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>
+      typeof AbstractLazyObjectType<
+        SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
+        SetType<AbstractLazyObjectType.ObjectTypeConstraint>
+      >
     >[0],
     "runtimeClass"
   >) {
