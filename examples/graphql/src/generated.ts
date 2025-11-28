@@ -103,7 +103,7 @@ export class $LazyObjectSet<
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class $LazyOptionalObject<
+export class $LazyObjectOption<
   ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   PartialObjectT extends { $identifier: ObjectIdentifierT },
   ResolvedObjectT extends { $identifier: ObjectIdentifierT },
@@ -1515,7 +1515,7 @@ export class Child extends Parent {
   /**
    * Optional lazy object property
    */
-  readonly optionalLazyObjectProperty: $LazyOptionalObject<
+  readonly optionalLazyObjectProperty: $LazyObjectOption<
     Nested.$Identifier,
     $DefaultPartial,
     Nested
@@ -1541,7 +1541,7 @@ export class Child extends Parent {
         | $LazyObjectSet<Nested.$Identifier, $DefaultPartial, Nested>
         | readonly Nested[];
       readonly optionalLazyObjectProperty?:
-        | $LazyOptionalObject<Nested.$Identifier, $DefaultPartial, Nested>
+        | $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>
         | Nested
         | purify.Maybe<Nested>;
       readonly optionalObjectProperty?: Nested | purify.Maybe<Nested>;
@@ -1599,11 +1599,11 @@ export class Child extends Parent {
 
     if (
       typeof parameters.optionalLazyObjectProperty === "object" &&
-      parameters.optionalLazyObjectProperty instanceof $LazyOptionalObject
+      parameters.optionalLazyObjectProperty instanceof $LazyObjectOption
     ) {
       this.optionalLazyObjectProperty = parameters.optionalLazyObjectProperty;
     } else if (purify.Maybe.isMaybe(parameters.optionalLazyObjectProperty)) {
-      this.optionalLazyObjectProperty = new $LazyOptionalObject<
+      this.optionalLazyObjectProperty = new $LazyObjectOption<
         Nested.$Identifier,
         $DefaultPartial,
         Nested
@@ -1619,7 +1619,7 @@ export class Child extends Parent {
           ),
       });
     } else if (typeof parameters.optionalLazyObjectProperty === "object") {
-      this.optionalLazyObjectProperty = new $LazyOptionalObject<
+      this.optionalLazyObjectProperty = new $LazyObjectOption<
         Nested.$Identifier,
         $DefaultPartial,
         Nested
@@ -1631,7 +1631,7 @@ export class Child extends Parent {
           purify.Either.of(parameters.optionalLazyObjectProperty as Nested),
       });
     } else if (typeof parameters.optionalLazyObjectProperty === "undefined") {
-      this.optionalLazyObjectProperty = new $LazyOptionalObject<
+      this.optionalLazyObjectProperty = new $LazyObjectOption<
         Nested.$Identifier,
         $DefaultPartial,
         Nested
@@ -1801,13 +1801,10 @@ export namespace Child {
         },
         description: '"Lazy object set property"',
         name: "lazyObjectSetProperty",
-        resolve: async (source, args) =>
-          (
-            await source.lazyObjectSetProperty.resolve({
-              limit: args.limit,
-              offset: args.offset,
-            })
-          ).unsafeCoerce(),
+        resolve: (source, args) =>
+          source.lazyObjectSetProperty
+            .resolve({ limit: args.limit, offset: args.offset })
+            .then((either) => either.unsafeCoerce()),
         type: new graphql.GraphQLNonNull(
           new graphql.GraphQLList(new graphql.GraphQLNonNull(Nested.$GraphQL)),
         ),
@@ -1815,10 +1812,10 @@ export namespace Child {
       optionalLazyObjectProperty: {
         description: '"Optional lazy object property"',
         name: "optionalLazyObjectProperty",
-        resolve: async (source, _args) =>
-          (await source.optionalLazyObjectProperty.resolve())
-            .unsafeCoerce()
-            .extractNullable(),
+        resolve: (source, _args) =>
+          source.optionalLazyObjectProperty
+            .resolve()
+            .then((either) => either.unsafeCoerce().extractNullable()),
         type: new graphql.GraphQLNonNull(Nested.$GraphQL),
       },
       optionalObjectProperty: {
@@ -1903,7 +1900,7 @@ export namespace Child {
         $DefaultPartial,
         Nested
       >;
-      optionalLazyObjectProperty: $LazyOptionalObject<
+      optionalLazyObjectProperty: $LazyObjectOption<
         Nested.$Identifier,
         $DefaultPartial,
         Nested
@@ -2091,7 +2088,7 @@ export namespace Child {
     const lazyObjectSetProperty = _lazyObjectSetPropertyEither.unsafeCoerce();
     const _optionalLazyObjectPropertyEither: purify.Either<
       Error,
-      $LazyOptionalObject<Nested.$Identifier, $DefaultPartial, Nested>
+      $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -2127,11 +2124,7 @@ export namespace Child {
       .map((values) =>
         values.map(
           (partial) =>
-            new $LazyOptionalObject<
-              Nested.$Identifier,
-              $DefaultPartial,
-              Nested
-            >({
+            new $LazyObjectOption<Nested.$Identifier, $DefaultPartial, Nested>({
               partial,
               resolver: (identifier) => $objectSet.nested(identifier),
             }),

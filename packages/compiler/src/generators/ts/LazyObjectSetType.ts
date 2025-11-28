@@ -93,6 +93,6 @@ export class LazyObjectSetType<
   override graphqlResolveExpression({
     variables,
   }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
-    return `(await ${variables.value}.resolve({ limit: ${variables.args}.limit, offset: ${variables.args}.offset })).unsafeCoerce()`;
+    return `(${variables.value}.resolve({ limit: ${variables.args}.limit, offset: ${variables.args}.offset })).then(either => either.unsafeCoerce())`;
   }
 }
