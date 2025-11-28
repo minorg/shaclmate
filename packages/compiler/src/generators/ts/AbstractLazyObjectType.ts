@@ -1,4 +1,5 @@
 import { Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { Import } from "./Import.js";
@@ -123,6 +124,31 @@ export abstract class AbstractLazyObjectType<
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     return this.partialType.sparqlWherePatterns(parameters);
+  }
+
+  protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
+    resolvedObjectUnionType,
+    partialObjectUnionType,
+    variables,
+  }: {
+    resolvedObjectUnionType: ObjectUnionType;
+    partialObjectUnionType: ObjectUnionType;
+    variables: { resolvedObjectUnion: string };
+  }) {
+    invariant(
+      resolvedObjectUnionType.memberTypes.length ===
+        partialObjectUnionType.memberTypes.length,
+    );
+
+    const caseBlocks = resolvedObjectUnionType.memberTypes.map(
+      (resolvedObjectType, objectTypeI) => {
+        return `${resolvedObjectType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+      },
+    );
+    caseBlocks.push(
+      `default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
+    );
+    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminatorProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
   }
 
   override toJsonExpression({

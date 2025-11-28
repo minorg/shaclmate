@@ -63,7 +63,7 @@ export class LazyObjectOptionType<
       this.resolvedType.itemType.memberTypes.length ===
         this.partialType.itemType.memberTypes.length
     ) {
-      const maybeMap = `.map(object => { ${partialObjectUnionTypeToResolvedObjectUnionTypeSwitchStatement({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { value: "object" } })} })`;
+      const maybeMap = `.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: "object" } })} })`;
 
       conversions.push(
         {
