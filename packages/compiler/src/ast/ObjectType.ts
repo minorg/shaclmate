@@ -430,21 +430,6 @@ export namespace ObjectType {
         }
 
         if (!propertyType) {
-          const partialType = property.partialType.extract();
-          if (partialType) {
-            if (
-              helper(
-                stack.concat({
-                  objectType,
-                  property,
-                  propertyType: [partialType],
-                }),
-              )
-            ) {
-              return true;
-            }
-          }
-
           return helper(
             stack.concat({
               objectType,
@@ -463,6 +448,40 @@ export namespace ObjectType {
           case "PlaceholderType":
           case "TermType":
             return false;
+          case "LazyObjectOptionType":
+          case "LazyObjectSetType":
+          case "LazyObjectType": {
+            if (
+              helper(
+                stack.concat({
+                  objectType,
+                  property,
+                  propertyType: propertyType.concat(
+                    currentPropertyType.partialType,
+                  ),
+                }),
+              )
+            ) {
+              return true;
+            }
+
+            if (
+              helper(
+                stack.concat({
+                  objectType,
+                  property,
+                  propertyType: propertyType.concat(
+                    currentPropertyType.resolvedType,
+                  ),
+                }),
+              )
+            ) {
+              return true;
+            }
+
+            return false;
+          }
+
           case "ObjectType": {
             if (DEBUG) {
               process.stderr.write(`recurse into ${currentPropertyType}`);

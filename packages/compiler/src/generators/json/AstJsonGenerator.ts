@@ -61,6 +61,14 @@ function typeToJson(type: ast.Type): AstJson.Type {
         kind: type.kind,
         types: type.memberTypes.map((type) => typeToJson(type)),
       };
+    case "LazyObjectOptionType":
+    case "LazyObjectSetType":
+    case "LazyObjectType":
+      return {
+        kind: type.kind,
+        partialType: typeToJson(type.partialType),
+        resolvedType: typeToJson(type.resolvedType),
+      };
     case "ListType": {
       return {
         itemType: typeToJson(type.itemType),
@@ -139,7 +147,6 @@ export class AstJsonGenerator implements Generator {
             mutable: property.mutable,
             name: property.name.extract(),
             order: property.order,
-            partialType: property.partialType.map(typeToJson).extract(),
             path: property.path.value,
             recursive: property.recursive ? true : undefined,
             shapeIdentifier: Resource.Identifier.toString(
