@@ -109,6 +109,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
         identifierMintingStrategy: type.identifierMintingStrategy.extract(),
         identifierType: typeToJson(type.identifierType),
         shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
+        synthetic: type.synthetic ? true : undefined,
         toRdfTypes:
           type.toRdfTypes.length > 0
             ? type.toRdfTypes.map(termToJson)
