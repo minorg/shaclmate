@@ -1,12 +1,12 @@
-import { AbstractLazyObjectType } from "generators/ts/AbstractLazyObjectType.js";
-import type { SetType } from "generators/ts/SetType.js";
-import { SnippetDeclarations } from "generators/ts/SnippetDeclarations.js";
-import { syntheticNamePrefix } from "generators/ts/syntheticNamePrefix.js";
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { SetType } from "./SetType.js";
+import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { Type } from "./Type.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LazyObjectSetType<
   PartialTypeT extends SetType<ObjectType | ObjectUnionType>,
