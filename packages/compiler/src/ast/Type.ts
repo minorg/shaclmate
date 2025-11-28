@@ -45,6 +45,12 @@ export namespace Type {
         return left.equals(right as IntersectionType);
       case "LiteralType":
         return left.equals(right as LiteralType);
+      case "LazyObjectOptionType":
+        return left.equals(right as LazyObjectOptionType);
+      case "LazyObjectSetType":
+        return left.equals(right as LazyObjectSetType);
+      case "LazyObjectType":
+        return left.equals(right as LazyObjectType);
       case "ListType":
         return left.equals(right as ListType);
       case "ObjectIntersectionType":
