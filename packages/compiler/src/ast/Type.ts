@@ -1,6 +1,9 @@
 import type {} from "@rdfjs/types";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
+import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";
+import type { LazyObjectSetType } from "./LazyObjectSetType.js";
+import type { LazyObjectType } from "./LazyObjectType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
@@ -15,6 +18,9 @@ import type { UnionType } from "./UnionType.js";
 export type Type =
   | IdentifierType
   | IntersectionType
+  | LazyObjectOptionType
+  | LazyObjectSetType
+  | LazyObjectType
   | ListType
   | LiteralType
   | ObjectIntersectionType
