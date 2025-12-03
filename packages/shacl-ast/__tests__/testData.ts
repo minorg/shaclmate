@@ -18,7 +18,7 @@ function parseDataset(filePath: string): DatasetCore {
 
 function parseShapesGraph(
   filePath: string,
-  options?: { excludeDash?: boolean; ignoreUndefinedShapes?: boolean },
+  options?: { ignoreUndefinedShapes?: boolean },
 ) {
   return ShapesGraph.create({
     dataset: parseDataset(filePath),
@@ -50,7 +50,7 @@ class TestData {
     return {
       shapesGraph: parseShapesGraph(
         path.join(thisDirectoryPath, "data", "schemashacl.ttl"),
-        { excludeDash: true, ignoreUndefinedShapes: true },
+        { ignoreUndefinedShapes: true },
       ),
     };
   }
