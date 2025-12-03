@@ -51,14 +51,14 @@ export interface BaseShaclCoreShape {
   readonly $type: "ShaclCoreNodeShape" | "ShaclCorePropertyShape";
   readonly and: readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[];
   readonly classes: readonly rdfjs.NamedNode[];
-  readonly comments: readonly rdfjs.Literal[];
+  readonly comments: readonly string[];
   readonly datatype: purify.Maybe<rdfjs.NamedNode>;
   readonly deactivated: purify.Maybe<boolean>;
   readonly flags: readonly string[];
   readonly hasValues: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
   readonly in_: purify.Maybe<readonly (rdfjs.Literal | rdfjs.NamedNode)[]>;
   readonly isDefinedBy: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-  readonly labels: readonly rdfjs.Literal[];
+  readonly labels: readonly string[];
   readonly languageIn: purify.Maybe<readonly string[]>;
   readonly maxCount: purify.Maybe<number>;
   readonly maxExclusive: purify.Maybe<rdfjs.Literal>;
@@ -215,14 +215,14 @@ export namespace BaseShaclCoreShapeStatic {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       and: readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[];
       classes: readonly rdfjs.NamedNode[];
-      comments: readonly rdfjs.Literal[];
+      comments: readonly string[];
       datatype: purify.Maybe<rdfjs.NamedNode>;
       deactivated: purify.Maybe<boolean>;
       flags: readonly string[];
       hasValues: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
       in_: purify.Maybe<readonly (rdfjs.Literal | rdfjs.NamedNode)[]>;
       isDefinedBy: purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode>;
-      labels: readonly rdfjs.Literal[];
+      labels: readonly string[];
       languageIn: purify.Maybe<readonly string[]>;
       maxCount: purify.Maybe<number>;
       maxExclusive: purify.Maybe<rdfjs.Literal>;
@@ -309,7 +309,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
 
     const classes = _classesEither.unsafeCoerce();
-    const _commentsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _commentsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -364,7 +364,7 @@ export namespace BaseShaclCoreShapeStatic {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -644,7 +644,7 @@ export namespace BaseShaclCoreShapeStatic {
     }
 
     const isDefinedBy = _isDefinedByEither.unsafeCoerce();
-    const _labelsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _labelsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -699,7 +699,7 @@ export namespace BaseShaclCoreShapeStatic {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -1979,9 +1979,9 @@ export interface ShaclCorePropertyShape extends BaseShaclCoreShape {
   readonly $identifier: ShaclCorePropertyShape.$Identifier;
   readonly $type: "ShaclCorePropertyShape";
   readonly defaultValue: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-  readonly descriptions: readonly rdfjs.Literal[];
+  readonly descriptions: readonly string[];
   readonly groups: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-  readonly names: readonly rdfjs.Literal[];
+  readonly names: readonly string[];
   readonly order: purify.Maybe<number>;
   readonly path: PropertyPath;
   readonly uniqueLang: purify.Maybe<boolean>;
@@ -2071,9 +2071,9 @@ export namespace ShaclCorePropertyShape {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "ShaclCorePropertyShape";
       defaultValue: purify.Maybe<rdfjs.Literal | rdfjs.NamedNode>;
-      descriptions: readonly rdfjs.Literal[];
+      descriptions: readonly string[];
       groups: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-      names: readonly rdfjs.Literal[];
+      names: readonly string[];
       order: purify.Maybe<number>;
       path: PropertyPath;
       uniqueLang: purify.Maybe<boolean>;
@@ -2178,7 +2178,7 @@ export namespace ShaclCorePropertyShape {
     }
 
     const defaultValue = _defaultValueEither.unsafeCoerce();
-    const _descriptionsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _descriptionsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -2239,7 +2239,7 @@ export namespace ShaclCorePropertyShape {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -2277,7 +2277,7 @@ export namespace ShaclCorePropertyShape {
     }
 
     const groups = _groupsEither.unsafeCoerce();
-    const _namesEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _namesEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -2332,7 +2332,7 @@ export namespace ShaclCorePropertyShape {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -2516,8 +2516,8 @@ export namespace ShaclCorePropertyShape {
 export interface ShaclCorePropertyGroup {
   readonly $identifier: ShaclCorePropertyGroup.$Identifier;
   readonly $type: "ShaclCorePropertyGroup";
-  readonly comments: readonly rdfjs.Literal[];
-  readonly labels: readonly rdfjs.Literal[];
+  readonly comments: readonly string[];
+  readonly labels: readonly string[];
 }
 
 export namespace ShaclCorePropertyGroup {
@@ -2601,8 +2601,8 @@ export namespace ShaclCorePropertyGroup {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "ShaclCorePropertyGroup";
-      comments: readonly rdfjs.Literal[];
-      labels: readonly rdfjs.Literal[];
+      comments: readonly string[];
+      labels: readonly string[];
     }
   > {
     if (!$ignoreRdfType) {
@@ -2635,7 +2635,7 @@ export namespace ShaclCorePropertyGroup {
     const $identifier: ShaclCorePropertyGroup.$Identifier =
       $resource.identifier;
     const $type = "ShaclCorePropertyGroup" as const;
-    const _commentsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _commentsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -2690,7 +2690,7 @@ export namespace ShaclCorePropertyGroup {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -2706,7 +2706,7 @@ export namespace ShaclCorePropertyGroup {
     }
 
     const comments = _commentsEither.unsafeCoerce();
-    const _labelsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _labelsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -2761,7 +2761,7 @@ export namespace ShaclCorePropertyGroup {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
@@ -3153,7 +3153,7 @@ export namespace ShaclCoreNodeShape {
 export interface OwlOntology {
   readonly $identifier: OwlOntology.$Identifier;
   readonly $type: "OwlOntology";
-  readonly labels: readonly rdfjs.Literal[];
+  readonly labels: readonly string[];
 }
 
 export namespace OwlOntology {
@@ -3232,7 +3232,7 @@ export namespace OwlOntology {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "OwlOntology";
-      labels: readonly rdfjs.Literal[];
+      labels: readonly string[];
     }
   > {
     if (!$ignoreRdfType) {
@@ -3264,7 +3264,7 @@ export namespace OwlOntology {
 
     const $identifier: OwlOntology.$Identifier = $resource.identifier;
     const $type = "OwlOntology" as const;
-    const _labelsEither: purify.Either<Error, readonly rdfjs.Literal[]> =
+    const _labelsEither: purify.Either<Error, readonly string[]> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -3318,7 +3318,7 @@ export namespace OwlOntology {
             ),
           );
         })
-        .chain((values) => values.chainMap((value) => value.toLiteral()))
+        .chain((values) => values.chainMap((value) => value.toString()))
         .map((values) => values.toArray())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({

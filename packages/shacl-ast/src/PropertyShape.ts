@@ -45,7 +45,7 @@ export class PropertyShape<
     return this.generatedShaclCorePropertyShape.defaultValue;
   }
 
-  get descriptions(): readonly Literal[] {
+  get descriptions(): readonly string[] {
     return this.generatedShaclCorePropertyShape.descriptions;
   }
 
@@ -55,7 +55,7 @@ export class PropertyShape<
     );
   }
 
-  get names(): readonly Literal[] {
+  get names(): readonly string[] {
     return this.generatedShaclCorePropertyShape.names;
   }
 

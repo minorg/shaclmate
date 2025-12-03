@@ -1,10 +1,10 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type * as generated from "./generated.js";
 
 export class PropertyGroup {
   constructor(private readonly delegate: generated.ShaclCorePropertyGroup) {}
 
-  get comments(): readonly Literal[] {
+  get comments(): readonly string[] {
     return this.delegate.comments;
   }
 
@@ -12,7 +12,7 @@ export class PropertyGroup {
     return this.delegate.$identifier;
   }
 
-  get labels(): readonly Literal[] {
+  get labels(): readonly string[] {
     return this.delegate.labels;
   }
 }
