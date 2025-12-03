@@ -3,17 +3,26 @@ import { harnesses } from "./harnesses.js";
 
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
-    const jsonObject = harnesses.unionProperties1.instance.$toJson();
-    expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-    expect(jsonObject.$type).toStrictEqual("UnionPropertiesClass");
-    expect(jsonObject.widenedLiteralsProperty).toStrictEqual({
-      "@type": "http://www.w3.org/2001/XMLSchema#integer",
-      "@value": "1",
-    });
-    expect(jsonObject.widenedTermsProperty).toStrictEqual({
-      termType: "Literal",
-      "@value": "test",
-    });
+    {
+      const jsonObject = harnesses.unionProperties1.instance.$toJson();
+      expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
+      expect(jsonObject.$type).toStrictEqual("UnionPropertiesClass");
+      expect(jsonObject.integerOrClassProperty).toStrictEqual(5);
+      expect(jsonObject.integerOrStringProperty).toStrictEqual(5);
+      expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
+        "@id": "http://example.com",
+      });
+    }
+
+    {
+      const jsonObject = harnesses.unionProperties2Class.instance.$toJson();
+      expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
+      expect(jsonObject.integerOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
+        termType: "Literal",
+        "@value": "test",
+      });
+    }
   });
 
   it("child-parent", ({ expect }) => {

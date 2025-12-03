@@ -45,18 +45,6 @@ export namespace $RdfVocabularies {
     );
   }
 }
-function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "object");
-}
-function $isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "string");
-}
-function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
-}
-function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "number");
-}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export interface BaseShaclCoreShape {
   readonly $identifier: BaseShaclCoreShapeStatic.$Identifier;

@@ -39,12 +39,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
+        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            widenedTermsProperty: dataFactory.namedNode(
+            iriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
           }),
@@ -55,12 +55,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
+        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            widenedTermsProperty: dataFactory.literal("test"),
+            iriOrLiteralProperty: dataFactory.literal("test"),
           }),
         )
         .extract(),
