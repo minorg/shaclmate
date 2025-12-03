@@ -9,7 +9,6 @@ import type {
   Term,
 } from "@rdfjs/types";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
-import { Store } from "n3";
 import { Maybe } from "purify-ts";
 import { Either } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
@@ -20,7 +19,6 @@ import type { OntologyLike } from "./OntologyLike.js";
 import { PropertyGroup } from "./PropertyGroup.js";
 import { PropertyShape } from "./PropertyShape.js";
 import type { Shape } from "./Shape.js";
-import { dashDataset } from "./dashDataset.js";
 import * as generated from "./generated.js";
 
 export class ShapesGraph<
@@ -120,47 +118,27 @@ export namespace ShapesGraph {
   > {
     createShapesGraph({
       dataset,
-      excludeDash,
       ignoreUndefinedShapes,
     }: {
       dataset: DatasetCore;
-      excludeDash?: boolean;
       ignoreUndefinedShapes?: boolean;
     }): Either<
       Error,
       ShapesGraph<NodeShapeT, OntologyT, PropertyGroupT, PropertyShapeT, ShapeT>
     > {
-      let datasetWithDash: DatasetCore;
-      if (!excludeDash) {
-        datasetWithDash = new Store();
-        for (const quad of dataset) {
-          datasetWithDash.add(quad);
-        }
-        for (const quad of dashDataset) {
-          datasetWithDash.add(quad);
-        }
-      } else {
-        datasetWithDash = dataset;
-      }
-
       function datasetHasMatch(
         subject?: Term | null,
         predicate?: Term | null,
         object?: Term | null,
         graph?: Term | null,
       ): boolean {
-        for (const _ of datasetWithDash.match(
-          subject,
-          predicate,
-          object,
-          graph,
-        )) {
+        for (const _ of dataset.match(subject, predicate, object, graph)) {
           return true;
         }
         return false;
       }
 
-      const resourceSet = new ResourceSet({ dataset: datasetWithDash });
+      const resourceSet = new ResourceSet({ dataset });
 
       const nodeShapesByIdentifier = new TermMap<
         BlankNode | NamedNode,
@@ -196,7 +174,7 @@ export namespace ShapesGraph {
       return Either.encase(() => {
         function readGraph(): BlankNode | DefaultGraph | NamedNode | null {
           const graphs = new TermSet();
-          for (const quad of datasetWithDash) {
+          for (const quad of dataset) {
             graphs.add(quad.graph);
           }
           if (graphs.size !== 1) {
@@ -295,12 +273,7 @@ export namespace ShapesGraph {
           sh.targetObjectsOf,
           sh.targetSubjectsOf,
         ]) {
-          for (const quad of datasetWithDash.match(
-            null,
-            predicate,
-            null,
-            graph,
-          )) {
+          for (const quad of dataset.match(null, predicate, null, graph)) {
             addShapeNode(quad.subject);
           }
         }
@@ -341,24 +314,14 @@ export namespace ShapesGraph {
           sh.hasValue,
           sh.in,
         ]) {
-          for (const quad of datasetWithDash.match(
-            null,
-            predicate,
-            null,
-            graph,
-          )) {
+          for (const quad of dataset.match(null, predicate, null, graph)) {
             addShapeNode(quad.subject);
           }
         }
 
         // Object of a shape-expecting, non-list-taking parameter such as sh:node
         for (const predicate of [sh.node, sh.property]) {
-          for (const quad of datasetWithDash.match(
-            null,
-            predicate,
-            null,
-            graph,
-          )) {
+          for (const quad of dataset.match(null, predicate, null, graph)) {
             addShapeNode(quad.object);
 
             if (!ignoreUndefinedShapes && !datasetHasMatch(quad.object)) {
@@ -371,12 +334,7 @@ export namespace ShapesGraph {
 
         // Member of a SHACL list that is a value of a shape-expecting and list-taking parameter such as sh:or
         for (const predicate of [sh.and, sh.or, sh.xone]) {
-          for (const quad of datasetWithDash.match(
-            null,
-            predicate,
-            null,
-            graph,
-          )) {
+          for (const quad of dataset.match(null, predicate, null, graph)) {
             switch (quad.object.termType) {
               case "BlankNode":
               case "NamedNode":
@@ -406,7 +364,7 @@ export namespace ShapesGraph {
 
         // Separate shapes into node and property shapes.
         for (const shapeNode of shapeNodeSet) {
-          if (datasetWithDash.match(shapeNode, sh.path, null, graph).size > 0) {
+          if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
             // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
             this.createPropertyShape({
               resource: resourceSet.resource(shapeNode),
