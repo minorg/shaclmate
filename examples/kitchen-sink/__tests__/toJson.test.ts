@@ -11,6 +11,7 @@ describe("toJson", () => {
       expect(jsonObject.integerOrStringProperty).toStrictEqual(5);
       expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
         "@id": "http://example.com",
+        termType: "NamedNode",
       });
     }
 
