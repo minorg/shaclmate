@@ -539,22 +539,21 @@ export const harnesses = {
   unionProperties1: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
       $identifier,
-      narrowLiteralsProperty: 1,
-      unrelatedTypesProperty: 1,
-      widenedLiteralsProperty: 1,
-      widenedTermsProperty: dataFactory.literal("test"),
+      integerOrClassProperty: 5,
+      integerOrStringProperty: 5,
+      iriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
     }),
     kitchenSink.UnionPropertiesClass,
   ),
   unionProperties2Class: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
       $identifier,
-      narrowLiteralsProperty: 1,
-      unrelatedTypesProperty: new kitchenSink.NonClass({
+      integerOrClassProperty: new kitchenSink.NonClass({
+        $identifier: dataFactory.namedNode("http://example.com/nonClass"),
         nonClassProperty: "test",
       }),
-      widenedLiteralsProperty: new Date(1756428530982),
-      widenedTermsProperty: dataFactory.literal("test"),
+      integerOrStringProperty: "test",
+      iriOrLiteralProperty: dataFactory.literal("test"),
     }),
     kitchenSink.UnionPropertiesClass,
   ),

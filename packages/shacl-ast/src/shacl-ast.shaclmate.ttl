@@ -1,5 +1,4 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix dash: <http://datashapes.org/dash#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sh: <http://www.w3.org/ns/shacl#> .
@@ -32,9 +31,9 @@ shaclmate:BaseShaclCoreShape-classes
 
 shaclmate:BaseShaclCoreShape-comments
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "comments" ;
-    sh:path rdfs:comment ;
-    sh:xone dash:StringOrLangString .
+    sh:path rdfs:comment .
 
 shaclmate:BaseShaclCoreShape-datatype
     a sh:PropertyShape ;
@@ -74,9 +73,9 @@ shaclmate:BaseShaclCoreShape-isDefinedBy
 
 shaclmate:BaseShaclCoreShape-labels
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "labels" ;
-    sh:path rdfs:label ;
-    sh:xone dash:StringOrLangString .
+    sh:path rdfs:label .
 
 shaclmate:BaseShaclCoreShape-languageIn
     a sh:PropertyShape ;
@@ -256,9 +255,9 @@ shaclmate:OwlOntology
 
 shaclmate:OwlOntology-labels
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "labels" ;
-    sh:path rdfs:label ;
-    sh:xone dash:StringOrLangString .
+    sh:path rdfs:label .
 
 shaclmate:ShaclCoreNodeShape
     shaclmate:fromRdfType sh:NodeShape ;
@@ -291,15 +290,15 @@ shaclmate:ShaclCorePropertyGroup
 
 shaclmate:ShaclCorePropertyGroup-comments
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "comments" ;
-    sh:path rdfs:comment ;
-    sh:xone dash:StringOrLangString .
+    sh:path rdfs:comment .
 
 shaclmate:ShaclCorePropertyGroup-labels
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "labels" ;
-    sh:path rdfs:label ;
-    sh:xone dash:StringOrLangString .
+    sh:path rdfs:label .
 
 shaclmate:ShaclCorePropertyPath
     shaclmate:extern true ;
@@ -322,9 +321,9 @@ shaclmate:ShaclCorePropertyShape-defaultValue
 
 shaclmate:ShaclCorePropertyShape-descriptions
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "descriptions" ;
-    sh:path sh:description ;
-    sh:xone dash:StringOrLangString .
+    sh:path sh:description .
 
 shaclmate:ShaclCorePropertyShape-groups
     a sh:PropertyShape ;
@@ -334,9 +333,9 @@ shaclmate:ShaclCorePropertyShape-groups
 
 shaclmate:ShaclCorePropertyShape-names
     a sh:PropertyShape ;
+    sh:datatype xsd:string ;
     sh:name "names" ;
-    sh:path sh:name ;
-    sh:xone dash:StringOrLangString .
+    sh:path sh:name .
 
 shaclmate:ShaclCorePropertyShape-order
     a sh:PropertyShape ;

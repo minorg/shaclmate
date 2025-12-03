@@ -121,7 +121,7 @@ export class TermType<
   }
 
   @Memoize()
-  get jsonName(): Type.JsonName {
+  override jsonName(): Type.JsonName {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),

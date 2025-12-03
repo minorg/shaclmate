@@ -35,7 +35,7 @@ export abstract class Shape<
     >,
   ) {}
 
-  get comments(): readonly Literal[] {
+  get comments(): readonly string[] {
     return this.generatedShaclCoreShape.comments;
   }
 
@@ -74,7 +74,7 @@ export abstract class Shape<
     return Maybe.empty();
   }
 
-  get labels(): readonly Literal[] {
+  get labels(): readonly string[] {
     return this.generatedShaclCoreShape.labels;
   }
 }

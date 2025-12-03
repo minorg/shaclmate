@@ -35,11 +35,6 @@ export abstract class Type {
   abstract readonly graphqlName: Type.GraphqlName;
 
   /**
-   * JSON-compatible version of the type.
-   */
-  abstract readonly jsonName: Type.JsonName;
-
-  /**
    * Is a value of this type mutable?
    */
   abstract readonly mutable: boolean;
@@ -106,6 +101,13 @@ export abstract class Type {
   }): string;
 
   /**
+   * JSON-compatible version of the type.
+   */
+  abstract jsonName(parameters?: {
+    includeDiscriminatorProperty?: boolean;
+  }): Type.JsonName;
+
+  /**
    * Statements that use hasher.update to hash a property value of this type.
    */
   abstract hashStatements(parameters: {
@@ -133,6 +135,7 @@ export abstract class Type {
    * z.lazy() should only be returned for "property".
    */
   abstract jsonZodSchema(parameters: {
+    includeDiscriminatorProperty?: boolean;
     context: "property" | "type";
     variables: { zod: string };
   }): string;
@@ -283,6 +286,7 @@ export abstract class Type {
    * of the correct JSON-LD context.
    */
   abstract toJsonExpression(parameters: {
+    includeDiscriminatorProperty?: boolean;
     variables: {
       value: string;
     };

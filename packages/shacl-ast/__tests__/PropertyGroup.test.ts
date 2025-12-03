@@ -11,6 +11,6 @@ describe("PropertyGroup", () => {
       .unsafeCoerce();
     const labels = propertyGroup.labels;
     expect(labels).toHaveLength(1);
-    expect(labels[0].value).toStrictEqual("Script API Generation Rules");
+    expect(labels[0]).toStrictEqual("Script API Generation Rules");
   });
 });

@@ -39,12 +39,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
+        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            widenedTermsProperty: dataFactory.namedNode(
+            iriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
           }),
@@ -55,12 +55,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        widenedTermsProperty: dataFactory.namedNode("http://example.com/term"),
+        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            widenedTermsProperty: dataFactory.literal("test"),
+            iriOrLiteralProperty: dataFactory.literal("test"),
           }),
         )
         .extract(),
@@ -72,12 +72,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        unrelatedTypesProperty: 1,
+        integerOrClassProperty: 1,
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            unrelatedTypesProperty: 1,
+            integerOrClassProperty: 1,
           }),
         )
         .extract(),
@@ -86,12 +86,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        unrelatedTypesProperty: 1,
+        integerOrClassProperty: 1,
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            unrelatedTypesProperty: new kitchenSink.NonClass({
+            integerOrClassProperty: new kitchenSink.NonClass({
               $identifier: dataFactory.blankNode(),
               nonClassProperty: "test",
             }),

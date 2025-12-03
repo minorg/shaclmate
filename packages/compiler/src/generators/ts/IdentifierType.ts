@@ -97,16 +97,24 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(
+    parameters?: Parameters<Type["jsonName"]>[0],
+  ): Type.JsonName {
+    const discriminatorProperty = parameters?.includeDiscriminatorProperty
+      ? `, readonly termType: "BlankNode" | "NamedNode"`
+      : "";
+
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return new Type.JsonName(
-        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")} }`,
+        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminatorProperty} }`,
       );
     }
 
-    return new Type.JsonName(`{ readonly "@id": string }`);
+    return new Type.JsonName(
+      `{ readonly "@id": string${discriminatorProperty} }`,
+    );
   }
 
   @Memoize()
@@ -192,6 +200,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   override jsonZodSchema({
+    includeDiscriminatorProperty,
     variables,
   }: Parameters<
     TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
@@ -207,16 +216,24 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       idSchema = `${variables.zod}.string().min(1)`;
     }
 
-    return `${variables.zod}.object({ "@id": ${idSchema} })`;
+    const discriminatorProperty = includeDiscriminatorProperty
+      ? `, termType: ${this.nodeKinds.size === 1 ? `${variables.zod}.literal("${[...this.nodeKinds][0]}")` : `${variables.zod}.enum(${JSON.stringify([...this.nodeKinds])})`}`
+      : "";
+
+    return `${variables.zod}.object({ "@id": ${idSchema}${discriminatorProperty} })`;
   }
 
   override toJsonExpression({
+    includeDiscriminatorProperty,
     variables,
   }: Parameters<
     TermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
-    const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\` }`;
-    const valueToNamedNode = `{ "@id": ${variables.value}.value }`;
+    const discriminatorProperty = includeDiscriminatorProperty
+      ? `, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
+      : "";
+    const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\`${discriminatorProperty} }`;
+    const valueToNamedNode = `{ "@id": ${variables.value}.value${discriminatorProperty} }`;
     if (this.nodeKinds.size === 2) {
       return `(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
     }

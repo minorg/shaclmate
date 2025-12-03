@@ -9,7 +9,6 @@ import {
   TsGenerator,
 } from "@shaclmate/compiler";
 import type { Generator } from "@shaclmate/compiler";
-import { dashDataset } from "@shaclmate/shacl-ast";
 import {
   command,
   option,
@@ -101,16 +100,8 @@ function generate({
   const iriPrefixMap = new PrefixMap(iriPrefixes, { factory: DataFactory });
 
   {
-    const datasetWithDash = new Store();
-    for (const quad of dataset) {
-      datasetWithDash.add(quad);
-    }
-    for (const quad of dashDataset) {
-      datasetWithDash.add(quad);
-    }
-
     const validationReport = new SHACLValidator(shaclShaclDataset, {}).validate(
-      datasetWithDash,
+      dataset,
     );
     if (!validationReport.conforms) {
       process.stderr.write("input is not valid SHACL:\n");

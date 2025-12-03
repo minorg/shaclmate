@@ -4,7 +4,7 @@ import { DataFactory as dataFactory } from "n3";
 import { describe, expect, it } from "vitest";
 import { testData } from "./testData.js";
 
-describe("RdfjsShape", () => {
+describe("Shape", () => {
   const shapesGraph = testData.schema.shapesGraph;
 
   const findPropertyShape = (
@@ -33,7 +33,7 @@ describe("RdfjsShape", () => {
       dash.generateClass,
     ).descriptions;
     expect(descriptions).toHaveLength(1);
-    expect(descriptions[0].value).toMatch(/^The API generator/);
+    expect(descriptions[0]).toMatch(/^The API generator/);
   });
 
   it("should be defined by an ontology", ({ expect }) => {
@@ -61,7 +61,7 @@ describe("RdfjsShape", () => {
   it("should have a name", ({ expect }) => {
     const names = findPropertyShape(schema.Person, schema.givenName).names;
     expect(names).toHaveLength(1);
-    expect(names[0].value).toStrictEqual("given name");
+    expect(names[0]).toStrictEqual("given name");
   });
 
   // No shape in the test data with a clean sh:and

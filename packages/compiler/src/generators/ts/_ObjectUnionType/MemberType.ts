@@ -77,10 +77,6 @@ export class MemberType {
     return this.delegate.identifierTypeAlias;
   }
 
-  get jsonName() {
-    return this.delegate.jsonName;
-  }
-
   get ownProperties() {
     return this.delegate.ownProperties;
   }
@@ -107,6 +103,10 @@ export class MemberType {
 
   get toRdfjsResourceType() {
     return this.delegate.toRdfjsResourceType;
+  }
+
+  jsonName() {
+    return this.delegate.jsonName();
   }
 
   jsonZodSchema(parameters: Parameters<DeclaredType["jsonZodSchema"]>[0]) {

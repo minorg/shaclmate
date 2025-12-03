@@ -1,12 +1,11 @@
 import { DataFactory } from "n3";
-import { Either, Left, Maybe } from "purify-ts";
+import { Either, Left, List, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
 import { ShapeStack } from "./ShapeStack.js";
-import { pickLiteral } from "./pickLiteral.js";
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -240,17 +239,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 
   return Either.of(
     new ast.ObjectType.Property({
-      comment: pickLiteral(propertyShape.comments).map(
-        (literal) => literal.value,
-      ),
-      description: pickLiteral(propertyShape.descriptions).map(
-        (literal) => literal.value,
-      ),
-      label: pickLiteral(propertyShape.labels).map((literal) => literal.value),
+      comment: List.head(propertyShape.comments),
+      description: List.head(propertyShape.descriptions),
+      label: List.head(propertyShape.labels),
       mutable: propertyShape.mutable.orDefault(false),
-      name: propertyShape.shaclmateName.alt(
-        pickLiteral(propertyShape.names).map((literal) => literal.value),
-      ),
+      name: propertyShape.shaclmateName.alt(List.head(propertyShape.names)),
       objectType,
       order: propertyShape.order.orDefault(0),
       path: this.curieFactory.create(path.iri).extract() ?? path.iri,

@@ -269,7 +269,7 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(): Type.JsonName {
     return new Type.JsonName(
       `${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );

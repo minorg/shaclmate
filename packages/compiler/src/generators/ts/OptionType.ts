@@ -63,9 +63,12 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
-    invariant(!this.itemType.jsonName.optional);
-    return new Type.JsonName(this.itemType.jsonName.toString(), {
+  override jsonName(
+    parameters?: Parameters<Type["jsonName"]>[0],
+  ): Type.JsonName {
+    const itemTypeJsonName = this.itemType.jsonName(parameters);
+    invariant(!itemTypeJsonName.optional);
+    return new Type.JsonName(itemTypeJsonName.toString(), {
       optional: true,
     });
   }
