@@ -3938,8 +3938,8 @@ export namespace TermPropertiesClass {
       "@id": zod.string().min(1),
       $type: zod.literal("TermPropertiesClass"),
       booleanTermProperty: zod.boolean().optional(),
-      dateTermProperty: zod.string().date().optional(),
-      dateTimeTermProperty: zod.string().datetime().optional(),
+      dateTermProperty: zod.iso.date().optional(),
+      dateTimeTermProperty: zod.iso.datetime().optional(),
       iriTermProperty: zod.object({ "@id": zod.string().min(1) }).optional(),
       literalTermProperty: zod
         .object({
@@ -31810,7 +31810,7 @@ export namespace InPropertiesClass {
       "@id": zod.string().min(1),
       $type: zod.literal("InPropertiesClass"),
       inBooleansProperty: zod.literal(true).optional(),
-      inDateTimesProperty: zod.string().datetime().optional(),
+      inDateTimesProperty: zod.iso.datetime().optional(),
       inIrisProperty: zod
         .object({
           "@id": zod.enum([
@@ -38894,8 +38894,8 @@ export namespace DefaultValuePropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("DefaultValuePropertiesClass"),
-      dateDefaultValueProperty: zod.string().date(),
-      dateTimeDefaultValueProperty: zod.string().datetime(),
+      dateDefaultValueProperty: zod.iso.date(),
+      dateTimeDefaultValueProperty: zod.iso.datetime(),
       falseBooleanDefaultValueProperty: zod.boolean(),
       numberDefaultValueProperty: zod.number(),
       stringDefaultValueProperty: zod.string(),

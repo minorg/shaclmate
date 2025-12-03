@@ -7,13 +7,18 @@ import { Type } from "./Type.js";
 
 export class DateType extends DateTimeType {
   protected override readonly xsdDatatype: NamedNode = xsd.date;
-  protected override readonly zodDatatype = "date";
 
   override readonly kind = "DateType";
 
   @Memoize()
   override get graphqlName(): Type.GraphqlName {
     return new Type.GraphqlName("graphqlScalars.Date");
+  }
+
+  override jsonZodSchema({
+    variables,
+  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+    return `${variables.zod}.iso.date()`;
   }
 
   override toJsonExpression({

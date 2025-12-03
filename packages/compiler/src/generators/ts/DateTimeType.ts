@@ -11,7 +11,6 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class DateTimeType extends PrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
-  protected readonly zodDatatype: string = "datetime";
 
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
@@ -69,7 +68,7 @@ export class DateTimeType extends PrimitiveType<Date> {
   override jsonZodSchema({
     variables,
   }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
-    return `${variables.zod}.string().${this.zodDatatype}()`;
+    return `${variables.zod}.iso.datetime()`;
   }
 
   protected override fromRdfExpressionChain({
