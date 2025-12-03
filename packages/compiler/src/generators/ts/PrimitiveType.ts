@@ -31,7 +31,7 @@ export abstract class PrimitiveType<
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(): Type.JsonName {
     return new Type.JsonName(this.name);
   }
 

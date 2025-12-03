@@ -165,7 +165,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(): Type.JsonName {
     return new Type.JsonName(
       this.memberTypes.map((memberType) => memberType.jsonName).join(" | "),
     );

@@ -154,11 +154,12 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
+    const typeJsonName = this.type.jsonName();
     return Maybe.of({
-      hasQuestionToken: this.type.jsonName.optional,
+      hasQuestionToken: typeJsonName.optional,
       isReadonly: true,
       name: this.name,
-      type: this.type.jsonName.requiredName,
+      type: typeJsonName.requiredName,
     });
   }
 

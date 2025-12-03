@@ -40,7 +40,7 @@ export class ListType<
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(): Type.JsonName {
     return new Type.JsonName(`readonly (${this.itemType.jsonName})[]`);
   }
 

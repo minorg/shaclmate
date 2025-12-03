@@ -97,16 +97,24 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(
+    parameters?: Parameters<Type["jsonName"]>[0],
+  ): Type.JsonName {
+    const discriminatorProperty = parameters?.includeDiscriminatorProperty
+      ? `, readonly termType: "BlankNode" | "NamedNode"`
+      : "";
+
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return new Type.JsonName(
-        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")} }`,
+        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminatorProperty} }`,
       );
     }
 
-    return new Type.JsonName(`{ readonly "@id": string }`);
+    return new Type.JsonName(
+      `{ readonly "@id": string${discriminatorProperty} }`,
+    );
   }
 
   @Memoize()
@@ -211,12 +219,16 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   override toJsonExpression({
+    includeDiscriminatorProperty,
     variables,
   }: Parameters<
     TermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
-    const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\` }`;
-    const valueToNamedNode = `{ "@id": ${variables.value}.value }`;
+    const discriminatorProperty = includeDiscriminatorProperty
+      ? `, "termType": ${variables.value}.termType as "BlankNode" | "NamedNode" }`
+      : "";
+    const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\`${discriminatorProperty} }`;
+    const valueToNamedNode = `{ "@id": ${variables.value}.value${discriminatorProperty} }`;
     if (this.nodeKinds.size === 2) {
       return `(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
     }
