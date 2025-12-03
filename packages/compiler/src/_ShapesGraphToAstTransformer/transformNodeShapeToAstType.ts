@@ -1,7 +1,7 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
-import { Either, Left, Maybe } from "purify-ts";
+import { Either, Left, List, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
@@ -9,7 +9,6 @@ import * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
-import { pickLiteral } from "./pickLiteral.js";
 
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
@@ -46,12 +45,12 @@ function transformNodeShapeToAstListType(
 
   // Put a placeholder in the cache to deal with cyclic references
   const listType = new ast.ListType<ast.Type>({
-    comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
+    comment: List.head(nodeShape.comments),
     identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
       ? "BlankNode"
       : "NamedNode",
     itemType: ast.PlaceholderType.instance,
-    label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
+    label: List.head(nodeShape.labels),
     mutable: nodeShape.mutable.orDefault(false),
     name: nodeShape.shaclmateName,
     identifierMintingStrategy: nodeShape.identifierMintingStrategy,
@@ -187,9 +186,9 @@ export function transformNodeShapeToAstObjectCompositeType(
       ? ast.ObjectIntersectionType
       : ast.ObjectUnionType
   )({
-    comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
+    comment: List.head(nodeShape.comments),
     export_,
-    label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
+    label: List.head(nodeShape.labels),
     name: nodeShape.shaclmateName,
     shapeIdentifier: this.shapeIdentifier(nodeShape),
     tsFeatures: nodeShape.tsFeatures,
@@ -272,11 +271,11 @@ export function transformNodeShapeToAstType(
   // we'll return this placeholder.
   const objectType = new ast.ObjectType({
     abstract,
-    comment: pickLiteral(nodeShape.comments).map((literal) => literal.value),
+    comment: List.head(nodeShape.comments),
     export_: export_,
     extern: nodeShape.extern.orDefault(false),
     fromRdfType,
-    label: pickLiteral(nodeShape.labels).map((literal) => literal.value),
+    label: List.head(nodeShape.labels),
     identifierType: new ast.IdentifierType({
       defaultValue: Maybe.empty(),
       hasValues: [],

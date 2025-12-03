@@ -116,6 +116,12 @@ export namespace ShapesGraph {
     PropertyShapeT extends ShapeT,
     ShapeT,
   > {
+    protected preferredLanguages: readonly string[];
+
+    constructor(parameters?: { preferredLanguages?: readonly string[] }) {
+      this.preferredLanguages = parameters?.preferredLanguages ?? ["en", ""];
+    }
+
     createShapesGraph({
       dataset,
       ignoreUndefinedShapes,
@@ -480,6 +486,7 @@ export namespace ShapesGraph {
     }) {
       return generated.ShaclCoreNodeShape.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map((generatedShape) => new NodeShape(generatedShape, shapesGraph));
     }
 
@@ -491,6 +498,7 @@ export namespace ShapesGraph {
     }): Either<Error, Ontology> {
       return generated.OwlOntology.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
     }
 
@@ -502,6 +510,7 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyGroup> {
       return generated.ShaclCorePropertyGroup.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map((propertyGroup) => new PropertyGroup(propertyGroup));
     }
 
@@ -514,6 +523,7 @@ export namespace ShapesGraph {
     > {
       return generated.ShaclCorePropertyShape.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map(
         (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
       );

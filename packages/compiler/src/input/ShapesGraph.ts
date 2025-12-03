@@ -39,6 +39,7 @@ export namespace ShapesGraph {
     }): Either<Error, NodeShape> {
       return generated.ShaclmateNodeShape.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map(
         (generatedShape) =>
           new NodeShape({
@@ -69,6 +70,7 @@ export namespace ShapesGraph {
     }): Either<Error, Ontology> {
       return generated.ShaclmateOntology.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map((generatedOntology) => new Ontology(generatedOntology));
     }
 
@@ -79,6 +81,7 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyGroup> {
       return generated.ShaclCorePropertyGroup.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map(
         (generatedPropertyGroup) => new PropertyGroup(generatedPropertyGroup),
       );
@@ -93,6 +96,7 @@ export namespace ShapesGraph {
     }): Either<Error, PropertyShape> {
       return generated.ShaclmatePropertyShape.$fromRdf(resource, {
         ignoreRdfType: true,
+        preferredLanguages: this.preferredLanguages,
       }).map(
         (generatedShape) => new PropertyShape(generatedShape, shapesGraph),
       );
