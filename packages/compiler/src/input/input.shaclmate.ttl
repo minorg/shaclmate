@@ -68,7 +68,7 @@ shaclmate:ShaclmatePropertyShape
     shaclmate:rdfType sh:PropertyShape ;
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf shaclmate:ShaclCorePropertyShape ;
-    sh:property shaclmate:ShaclmatePropertyShape-lazy, shaclmate:ShaclmatePropertyShape-partial, shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmatePropertyShape-widen, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
+    sh:property shaclmate:ShaclmatePropertyShape-lazy, shaclmate:ShaclmatePropertyShape-partial, shaclmate:ShaclmatePropertyShape-visibility, shaclmate:ShaclmateShape-mutable, shaclmate:ShaclmateShape-name .
 
 shaclmate:ShaclmatePropertyShape-lazy
     a sh:PropertyShape ;
@@ -91,12 +91,6 @@ shaclmate:ShaclmatePropertyShape-visibility
     ) ;
     sh:maxCount 1 ;
     sh:path shaclmate:visibility .
-
-shaclmate:ShaclmatePropertyShape-widen
-    a sh:PropertyShape ;
-    sh:datatype xsd:boolean ;
-    sh:maxCount 1 ;
-    sh:path shaclmate:widen .
 
 shaclmate:ShaclmateShape
     a sh:NodeShape ;

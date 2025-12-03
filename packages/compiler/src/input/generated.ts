@@ -45,6 +45,18 @@ export namespace $RdfVocabularies {
     );
   }
 }
+function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "object");
+}
+function $isReadonlyStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "string");
+}
+function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
+}
+function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "number");
+}
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export interface BaseShaclCoreShape {
   readonly $identifier: BaseShaclCoreShapeStatic.$Identifier;
@@ -2545,7 +2557,6 @@ export interface ShaclmatePropertyShape extends ShaclCorePropertyShape {
       | "http://purl.org/shaclmate/ontology#_Visibility_Public"
     >
   >;
-  readonly widen: purify.Maybe<boolean>;
 }
 
 export namespace ShaclmatePropertyShape {
@@ -2609,11 +2620,6 @@ export namespace ShaclmatePropertyShape {
         "http://purl.org/shaclmate/ontology#visibility",
       ),
     },
-    widen: {
-      identifier: dataFactory.namedNode(
-        "http://purl.org/shaclmate/ontology#widen",
-      ),
-    },
   };
 
   export function $propertiesFromRdf({
@@ -2645,7 +2651,6 @@ export namespace ShaclmatePropertyShape {
           | "http://purl.org/shaclmate/ontology#_Visibility_Public"
         >
       >;
-      widen: purify.Maybe<boolean>;
     } & $UnwrapR<
       ReturnType<typeof ShaclCorePropertyShapeStatic.$propertiesFromRdf>
     >
@@ -2936,29 +2941,6 @@ export namespace ShaclmatePropertyShape {
     }
 
     const visibility = _visibilityEither.unsafeCoerce();
-    const _widenEither: purify.Either<
-      Error,
-      purify.Maybe<boolean>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >($resource.values($properties.widen["identifier"], { unique: true }))
-      .chain((values) => values.chainMap((value) => value.toBoolean()))
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
-              focusResource: $resource,
-              predicate: ShaclmatePropertyShape.$properties.widen["identifier"],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_widenEither.isLeft()) {
-      return _widenEither;
-    }
-
-    const widen = _widenEither.unsafeCoerce();
     return purify.Either.of({
       ...$super0,
       $identifier,
@@ -2968,7 +2950,6 @@ export namespace ShaclmatePropertyShape {
       name,
       partial,
       visibility,
-      widen,
     });
   }
 
@@ -3020,10 +3001,6 @@ export namespace ShaclmatePropertyShape {
     resource.add(
       ShaclmatePropertyShape.$properties.visibility["identifier"],
       ..._shaclmatePropertyShape.visibility.toList(),
-    );
-    resource.add(
-      ShaclmatePropertyShape.$properties.widen["identifier"],
-      ..._shaclmatePropertyShape.widen.toList().flat(),
     );
     return resource;
   }
