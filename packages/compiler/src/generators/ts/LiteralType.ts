@@ -25,9 +25,14 @@ export class LiteralType extends TermType<Literal, Literal> {
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(
+    parameters?: Parameters<Type["jsonName"]>[0],
+  ): Type.JsonName {
+    const discriminatorProperty = parameters?.includeDiscriminatorProperty
+      ? `, readonly termType: "Literal"`
+      : "";
     return new Type.JsonName(
-      '{ readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string }',
+      `{ readonly "@language"?: string${discriminatorProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
   }
 
@@ -89,11 +94,16 @@ export class LiteralType extends TermType<Literal, Literal> {
   }
 
   override jsonZodSchema({
+    includeDiscriminatorProperty,
     variables,
   }: Parameters<TermType<Literal, Literal>["jsonZodSchema"]>[0]): ReturnType<
     TermType<Literal, Literal>["jsonZodSchema"]
   > {
-    return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
+    const discriminatorProperty = includeDiscriminatorProperty
+      ? `, termType: ${variables.zod}.literal("Literal")`
+      : "";
+
+    return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional()${discriminatorProperty}, "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
   }
 
   override snippetDeclarations(
@@ -159,8 +169,9 @@ export class LiteralType extends TermType<Literal, Literal> {
   }
 
   override toJsonExpression({
+    includeDiscriminatorProperty,
     variables,
   }: Parameters<TermType<Literal, Literal>["toJsonExpression"]>[0]): string {
-    return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
+    return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminatorProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
 }

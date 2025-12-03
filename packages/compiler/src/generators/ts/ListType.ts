@@ -41,7 +41,7 @@ export class ListType<
 
   @Memoize()
   override jsonName(): Type.JsonName {
-    return new Type.JsonName(`readonly (${this.itemType.jsonName})[]`);
+    return new Type.JsonName(`readonly (${this.itemType.jsonName()})[]`);
   }
 
   override fromRdfExpression({

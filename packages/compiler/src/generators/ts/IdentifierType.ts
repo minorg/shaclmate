@@ -200,6 +200,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   override jsonZodSchema({
+    includeDiscriminatorProperty,
     variables,
   }: Parameters<
     TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
@@ -215,7 +216,11 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       idSchema = `${variables.zod}.string().min(1)`;
     }
 
-    return `${variables.zod}.object({ "@id": ${idSchema} })`;
+    const discriminatorProperty = includeDiscriminatorProperty
+      ? `, termType: ${this.nodeKinds.size === 1 ? `${variables.zod}.literal("${[...this.nodeKinds][0]}")` : `${variables.zod}.enum(${JSON.stringify([...this.nodeKinds])})`}`
+      : "";
+
+    return `${variables.zod}.object({ "@id": ${idSchema}${discriminatorProperty} })`;
   }
 
   override toJsonExpression({
@@ -225,7 +230,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     TermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
     const discriminatorProperty = includeDiscriminatorProperty
-      ? `, "termType": ${variables.value}.termType as "BlankNode" | "NamedNode" }`
+      ? `, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
       : "";
     const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\`${discriminatorProperty} }`;
     const valueToNamedNode = `{ "@id": ${variables.value}.value${discriminatorProperty} }`;

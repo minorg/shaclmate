@@ -10,7 +10,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
 
   @Memoize()
   override jsonName(): Type.JsonName {
-    const name = `readonly (${this.itemType.jsonName})[]`;
+    const name = `readonly (${this.itemType.jsonName()})[]`;
     if (this.minCount === 0) {
       return new Type.JsonName(name, { optional: true });
     }

@@ -2384,6 +2384,7 @@ export class UnionPropertiesClass {
               ? {
                   "@language":
                     item.language.length > 0 ? item.language : undefined,
+                  termType: "Literal" as const,
                   "@type":
                     item.datatype.value !==
                     "http://www.w3.org/2001/XMLSchema#string"
@@ -2391,7 +2392,7 @@ export class UnionPropertiesClass {
                       : undefined,
                   "@value": item.value,
                 }
-              : { "@id": item.value },
+              : { "@id": item.value, termType: item.termType as "NamedNode" },
           )
           .extract(),
       } satisfies UnionPropertiesClass.$Json),
@@ -2519,9 +2520,10 @@ export namespace UnionPropertiesClass {
     readonly integerOrClassProperty?: number | NonClass.$Json;
     readonly integerOrStringProperty?: number | string;
     readonly iriOrLiteralProperty?:
-      | { readonly "@id": string }
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
           readonly "@language"?: string;
+          readonly termType: "Literal";
           readonly "@type"?: string;
           readonly "@value": string;
         };
@@ -2581,9 +2583,13 @@ export namespace UnionPropertiesClass {
         .optional(),
       iriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
-          zod.object({ "@id": zod.string().min(1) }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
           zod.object({
             "@language": zod.string().optional(),
+            termType: zod.literal("Literal"),
             "@type": zod.string().optional(),
             "@value": zod.string(),
           }),

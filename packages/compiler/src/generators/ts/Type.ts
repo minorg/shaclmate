@@ -135,6 +135,7 @@ export abstract class Type {
    * z.lazy() should only be returned for "property".
    */
   abstract jsonZodSchema(parameters: {
+    includeDiscriminatorProperty?: boolean;
     context: "property" | "type";
     variables: { zod: string };
   }): string;

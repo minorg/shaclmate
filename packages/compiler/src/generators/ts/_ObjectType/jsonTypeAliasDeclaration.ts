@@ -27,7 +27,7 @@ export function jsonTypeAliasDeclaration(
     );
   }
   for (const parentObjectType of this.parentObjectTypes) {
-    members.push(parentObjectType.jsonName.toString());
+    members.push(parentObjectType.jsonName().toString());
   }
 
   return Maybe.of({

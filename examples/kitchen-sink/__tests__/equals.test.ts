@@ -72,12 +72,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        unrelatedTypesProperty: 1,
+        integerOrClassProperty: 1,
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            unrelatedTypesProperty: 1,
+            integerOrClassProperty: 1,
           }),
         )
         .extract(),
@@ -86,12 +86,12 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        unrelatedTypesProperty: 1,
+        integerOrClassProperty: 1,
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            unrelatedTypesProperty: new kitchenSink.NonClass({
+            integerOrClassProperty: new kitchenSink.NonClass({
               $identifier: dataFactory.blankNode(),
               nonClassProperty: "test",
             }),

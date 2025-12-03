@@ -78,7 +78,7 @@ export abstract class AbstractLazyObjectType<
   }
 
   override jsonName(
-    parameters: Parameters<Type["jsonName"]>[0],
+    parameters?: Parameters<Type["jsonName"]>[0],
   ): Type.JsonName {
     return this.partialType.jsonName(parameters);
   }

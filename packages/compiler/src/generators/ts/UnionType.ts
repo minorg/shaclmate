@@ -76,10 +76,6 @@ class MemberType {
     return this.delegate.equalsFunction;
   }
 
-  get jsonName() {
-    return this.delegate.jsonName;
-  }
-
   get mutable() {
     return this.delegate.mutable;
   }
@@ -94,6 +90,10 @@ class MemberType {
 
   fromRdfExpression(parameters: Parameters<Type["fromRdfExpression"]>[0]) {
     return this.delegate.fromRdfExpression(parameters);
+  }
+
+  jsonName(parameters?: Parameters<Type["jsonName"]>[0]) {
+    return this.delegate.jsonName(parameters);
   }
 
   hashStatements(parameters: Parameters<Type["hashStatements"]>[0]) {
@@ -267,16 +267,23 @@ ${this.memberTypes
   }
 
   @Memoize()
-  override get jsonName(): Type.JsonName {
+  override jsonName(): Type.JsonName {
     switch (this._discriminator.kind) {
       case "sharedProperty":
       case "typeof":
         return new Type.JsonName(
-          this.memberTypes.map((memberType) => memberType.jsonName).join(" | "),
+          this.memberTypes
+            .map((memberType) =>
+              memberType.jsonName({
+                includeDiscriminatorProperty:
+                  this._discriminator.kind === "sharedProperty",
+              }),
+            )
+            .join(" | "),
         );
       case "syntheticProperty":
         return new Type.JsonName(
-          `(${this.memberTypes.map((memberType) => `{ ${(this._discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.jsonName} }`).join(" | ")})`,
+          `(${this.memberTypes.map((memberType) => `{ ${(this._discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.jsonName()} }`).join(" | ")})`,
         );
       default:
         throw this._discriminator satisfies never;
@@ -389,7 +396,11 @@ ${this.memberTypes
       case "sharedProperty":
         return `${variables.zod}.discriminatedUnion("${this._discriminator.name}", [${this.memberTypes
           .map((memberType) =>
-            memberType.jsonZodSchema({ context: "type", variables }),
+            memberType.jsonZodSchema({
+              includeDiscriminatorProperty: true,
+              context: "type",
+              variables,
+            }),
           )
           .join(", ")}])`;
       case "syntheticProperty":
@@ -478,6 +489,8 @@ ${this.memberTypes
         return this.ternaryExpression({
           memberTypeExpression: (memberType) =>
             memberType.toJsonExpression({
+              includeDiscriminatorProperty:
+                this._discriminator.kind === "sharedProperty",
               variables: {
                 ...variables,
                 value: memberType.payload(variables.value),
