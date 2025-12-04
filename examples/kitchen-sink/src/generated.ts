@@ -172,16 +172,6 @@ export function $maybeEquals<T>(
   return $EqualsResult.Equal;
 }
 /**
- * Compare two Dates and return an $EqualsResult.
- */
-export function $dateEquals(left: Date, right: Date): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(
-    left,
-    right,
-    left.getTime() === right.getTime(),
-  );
-}
-/**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
 export function $arrayEquals<T>(
@@ -246,6 +236,25 @@ export function $arrayEquals<T>(
 
   return $EqualsResult.Equal;
 }
+function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "object");
+}
+function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "number");
+}
+function $isReadonlyStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "string");
+}
+/**
+ * Compare two Dates and return an $EqualsResult.
+ */
+export function $dateEquals(left: Date, right: Date): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.getTime() === right.getTime(),
+  );
+}
 /**
  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
  */
@@ -277,12 +286,6 @@ export function $sparqlInstancesOfPattern({
     ],
     type: "bgp",
   };
-}
-function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "object");
-}
-function $isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "string");
 }
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
@@ -436,9 +439,6 @@ export function $arrayIntersection<T>(
 }
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every((z) => typeof z === "boolean");
-}
-function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "number");
 }
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultPartial {
@@ -2079,78 +2079,166 @@ export namespace UuidV4IriIdentifierClass {
 export class UnionPropertiesClass {
   private _$identifier?: UnionPropertiesClass.$Identifier;
   readonly $type = "UnionPropertiesClass";
-  readonly integerOrClassProperty: purify.Maybe<number | NonClass>;
-  readonly integerOrStringProperty: purify.Maybe<number | string>;
-  readonly iriOrLiteralProperty: purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>;
+  readonly optionalIntegerOrClassProperty: purify.Maybe<number | NonClass>;
+  readonly optionalIntegerOrStringProperty: purify.Maybe<number | string>;
+  readonly optionalIriOrLiteralProperty: purify.Maybe<
+    rdfjs.NamedNode | rdfjs.Literal
+  >;
+  readonly requiredIntegerOrClassProperty: number | NonClass;
+  readonly requiredIntegerOrStringProperty: number | string;
+  readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+  readonly setIntegerOrClassProperty: readonly (number | NonClass)[];
+  readonly setIntegerOrStringProperty: readonly (number | string)[];
+  readonly setIriOrLiteralProperty: readonly (
+    | rdfjs.NamedNode
+    | rdfjs.Literal
+  )[];
 
-  constructor(parameters?: {
+  constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly integerOrClassProperty?:
+    readonly optionalIntegerOrClassProperty?:
       | NonClass
       | number
       | purify.Maybe<number | NonClass>;
-    readonly integerOrStringProperty?:
+    readonly optionalIntegerOrStringProperty?:
       | number
       | purify.Maybe<number | string>
       | string;
-    readonly iriOrLiteralProperty?:
+    readonly optionalIriOrLiteralProperty?:
       | (rdfjs.NamedNode | rdfjs.Literal)
       | purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>;
+    readonly requiredIntegerOrClassProperty: NonClass | number;
+    readonly requiredIntegerOrStringProperty: number | string;
+    readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+    readonly setIntegerOrClassProperty?:
+      | readonly (number | NonClass)[]
+      | readonly number[];
+    readonly setIntegerOrStringProperty?:
+      | readonly (number | string)[]
+      | readonly number[]
+      | readonly string[];
+    readonly setIriOrLiteralProperty?: readonly (
+      | rdfjs.NamedNode
+      | rdfjs.Literal
+    )[];
   }) {
-    if (typeof parameters?.$identifier === "object") {
-      this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
-    } else if (typeof parameters?.$identifier === "undefined") {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
     } else {
-      this._$identifier = parameters?.$identifier satisfies never;
+      this._$identifier = parameters.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.integerOrClassProperty)) {
-      this.integerOrClassProperty = parameters?.integerOrClassProperty;
-    } else if (typeof parameters?.integerOrClassProperty === "number") {
-      this.integerOrClassProperty = purify.Maybe.of(
-        parameters?.integerOrClassProperty,
+    if (purify.Maybe.isMaybe(parameters.optionalIntegerOrClassProperty)) {
+      this.optionalIntegerOrClassProperty =
+        parameters.optionalIntegerOrClassProperty;
+    } else if (typeof parameters.optionalIntegerOrClassProperty === "number") {
+      this.optionalIntegerOrClassProperty = purify.Maybe.of(
+        parameters.optionalIntegerOrClassProperty,
       );
-    } else if (typeof parameters?.integerOrClassProperty === "object") {
-      this.integerOrClassProperty = purify.Maybe.of(
-        parameters?.integerOrClassProperty,
+    } else if (typeof parameters.optionalIntegerOrClassProperty === "object") {
+      this.optionalIntegerOrClassProperty = purify.Maybe.of(
+        parameters.optionalIntegerOrClassProperty,
       );
-    } else if (typeof parameters?.integerOrClassProperty === "undefined") {
-      this.integerOrClassProperty = purify.Maybe.empty();
+    } else if (
+      typeof parameters.optionalIntegerOrClassProperty === "undefined"
+    ) {
+      this.optionalIntegerOrClassProperty = purify.Maybe.empty();
     } else {
-      this.integerOrClassProperty =
-        parameters?.integerOrClassProperty satisfies never;
+      this.optionalIntegerOrClassProperty =
+        parameters.optionalIntegerOrClassProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.integerOrStringProperty)) {
-      this.integerOrStringProperty = parameters?.integerOrStringProperty;
-    } else if (typeof parameters?.integerOrStringProperty === "number") {
-      this.integerOrStringProperty = purify.Maybe.of(
-        parameters?.integerOrStringProperty,
+    if (purify.Maybe.isMaybe(parameters.optionalIntegerOrStringProperty)) {
+      this.optionalIntegerOrStringProperty =
+        parameters.optionalIntegerOrStringProperty;
+    } else if (typeof parameters.optionalIntegerOrStringProperty === "number") {
+      this.optionalIntegerOrStringProperty = purify.Maybe.of(
+        parameters.optionalIntegerOrStringProperty,
       );
-    } else if (typeof parameters?.integerOrStringProperty === "string") {
-      this.integerOrStringProperty = purify.Maybe.of(
-        parameters?.integerOrStringProperty,
+    } else if (typeof parameters.optionalIntegerOrStringProperty === "string") {
+      this.optionalIntegerOrStringProperty = purify.Maybe.of(
+        parameters.optionalIntegerOrStringProperty,
       );
-    } else if (typeof parameters?.integerOrStringProperty === "undefined") {
-      this.integerOrStringProperty = purify.Maybe.empty();
+    } else if (
+      typeof parameters.optionalIntegerOrStringProperty === "undefined"
+    ) {
+      this.optionalIntegerOrStringProperty = purify.Maybe.empty();
     } else {
-      this.integerOrStringProperty =
-        parameters?.integerOrStringProperty satisfies never;
+      this.optionalIntegerOrStringProperty =
+        parameters.optionalIntegerOrStringProperty satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters?.iriOrLiteralProperty)) {
-      this.iriOrLiteralProperty = parameters?.iriOrLiteralProperty;
-    } else if (typeof parameters?.iriOrLiteralProperty === "object") {
-      this.iriOrLiteralProperty = purify.Maybe.of(
-        parameters?.iriOrLiteralProperty,
+    if (purify.Maybe.isMaybe(parameters.optionalIriOrLiteralProperty)) {
+      this.optionalIriOrLiteralProperty =
+        parameters.optionalIriOrLiteralProperty;
+    } else if (typeof parameters.optionalIriOrLiteralProperty === "object") {
+      this.optionalIriOrLiteralProperty = purify.Maybe.of(
+        parameters.optionalIriOrLiteralProperty,
       );
-    } else if (typeof parameters?.iriOrLiteralProperty === "undefined") {
-      this.iriOrLiteralProperty = purify.Maybe.empty();
+    } else if (typeof parameters.optionalIriOrLiteralProperty === "undefined") {
+      this.optionalIriOrLiteralProperty = purify.Maybe.empty();
     } else {
-      this.iriOrLiteralProperty =
-        parameters?.iriOrLiteralProperty satisfies never;
+      this.optionalIriOrLiteralProperty =
+        parameters.optionalIriOrLiteralProperty satisfies never;
+    }
+
+    if (typeof parameters.requiredIntegerOrClassProperty === "number") {
+      this.requiredIntegerOrClassProperty =
+        parameters.requiredIntegerOrClassProperty;
+    } else if (typeof parameters.requiredIntegerOrClassProperty === "object") {
+      this.requiredIntegerOrClassProperty =
+        parameters.requiredIntegerOrClassProperty;
+    } else {
+      this.requiredIntegerOrClassProperty =
+        parameters.requiredIntegerOrClassProperty satisfies never;
+    }
+
+    if (typeof parameters.requiredIntegerOrStringProperty === "number") {
+      this.requiredIntegerOrStringProperty =
+        parameters.requiredIntegerOrStringProperty;
+    } else if (typeof parameters.requiredIntegerOrStringProperty === "string") {
+      this.requiredIntegerOrStringProperty =
+        parameters.requiredIntegerOrStringProperty;
+    } else {
+      this.requiredIntegerOrStringProperty =
+        parameters.requiredIntegerOrStringProperty satisfies never;
+    }
+
+    this.requiredIriOrLiteralProperty = parameters.requiredIriOrLiteralProperty;
+    if (typeof parameters.setIntegerOrClassProperty === "undefined") {
+      this.setIntegerOrClassProperty = [];
+    } else if ($isReadonlyObjectArray(parameters.setIntegerOrClassProperty)) {
+      this.setIntegerOrClassProperty = parameters.setIntegerOrClassProperty;
+    } else if ($isReadonlyNumberArray(parameters.setIntegerOrClassProperty)) {
+      this.setIntegerOrClassProperty = parameters.setIntegerOrClassProperty;
+    } else {
+      this.setIntegerOrClassProperty =
+        parameters.setIntegerOrClassProperty satisfies never;
+    }
+
+    if (typeof parameters.setIntegerOrStringProperty === "undefined") {
+      this.setIntegerOrStringProperty = [];
+    } else if ($isReadonlyObjectArray(parameters.setIntegerOrStringProperty)) {
+      this.setIntegerOrStringProperty = parameters.setIntegerOrStringProperty;
+    } else if ($isReadonlyNumberArray(parameters.setIntegerOrStringProperty)) {
+      this.setIntegerOrStringProperty = parameters.setIntegerOrStringProperty;
+    } else if ($isReadonlyStringArray(parameters.setIntegerOrStringProperty)) {
+      this.setIntegerOrStringProperty = parameters.setIntegerOrStringProperty;
+    } else {
+      this.setIntegerOrStringProperty =
+        parameters.setIntegerOrStringProperty satisfies never;
+    }
+
+    if (typeof parameters.setIriOrLiteralProperty === "undefined") {
+      this.setIriOrLiteralProperty = [];
+    } else if (typeof parameters.setIriOrLiteralProperty === "object") {
+      this.setIriOrLiteralProperty = parameters.setIriOrLiteralProperty;
+    } else {
+      this.setIriOrLiteralProperty =
+        parameters.setIriOrLiteralProperty satisfies never;
     }
   }
 
@@ -2207,15 +2295,16 @@ export class UnionPropertiesClass {
                 type: "Property" as const,
               });
             },
-          ))(this.integerOrClassProperty, other.integerOrClassProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "integerOrClassProperty",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
+          ))(
+          this.optionalIntegerOrClassProperty,
+          other.optionalIntegerOrClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalIntegerOrClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       )
       .chain(() =>
         ((left, right) =>
@@ -2243,12 +2332,12 @@ export class UnionPropertiesClass {
               });
             },
           ))(
-          this.integerOrStringProperty,
-          other.integerOrStringProperty,
+          this.optionalIntegerOrStringProperty,
+          other.optionalIntegerOrStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "integerOrStringProperty",
+          propertyName: "optionalIntegerOrStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2284,15 +2373,226 @@ export class UnionPropertiesClass {
                 type: "Property" as const,
               });
             },
-          ))(this.iriOrLiteralProperty, other.iriOrLiteralProperty).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "iriOrLiteralProperty",
-            propertyValuesUnequal,
+          ))(
+          this.optionalIriOrLiteralProperty,
+          other.optionalIriOrLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalIriOrLiteralProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left: number | NonClass, right: number | NonClass) => {
+          if (typeof left === "number" && typeof right === "number") {
+            return $strictEquals(left, right);
+          }
+          if (typeof left === "object" && typeof right === "object") {
+            return ((left, right) => left.$equals(right))(left, right);
+          }
+
+          return purify.Left({
+            left,
+            right,
+            propertyName: "type",
+            propertyValuesUnequal: {
+              left: typeof left,
+              right: typeof right,
+              type: "BooleanEquals" as const,
+            },
             type: "Property" as const,
-          }),
-        ),
+          });
+        })(
+          this.requiredIntegerOrClassProperty,
+          other.requiredIntegerOrClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "requiredIntegerOrClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left: number | string, right: number | string) => {
+          if (typeof left === "number" && typeof right === "number") {
+            return $strictEquals(left, right);
+          }
+          if (typeof left === "string" && typeof right === "string") {
+            return $strictEquals(left, right);
+          }
+
+          return purify.Left({
+            left,
+            right,
+            propertyName: "type",
+            propertyValuesUnequal: {
+              left: typeof left,
+              right: typeof right,
+              type: "BooleanEquals" as const,
+            },
+            type: "Property" as const,
+          });
+        })(
+          this.requiredIntegerOrStringProperty,
+          other.requiredIntegerOrStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "requiredIntegerOrStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((
+          left: rdfjs.NamedNode | rdfjs.Literal,
+          right: rdfjs.NamedNode | rdfjs.Literal,
+        ) => {
+          if (left.termType === "NamedNode" && right.termType === "NamedNode") {
+            return $booleanEquals(left, right);
+          }
+          if (left.termType === "Literal" && right.termType === "Literal") {
+            return $booleanEquals(left, right);
+          }
+
+          return purify.Left({
+            left,
+            right,
+            propertyName: "type",
+            propertyValuesUnequal: {
+              left: typeof left,
+              right: typeof right,
+              type: "BooleanEquals" as const,
+            },
+            type: "Property" as const,
+          });
+        })(
+          this.requiredIriOrLiteralProperty,
+          other.requiredIriOrLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "requiredIriOrLiteralProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (left: number | NonClass, right: number | NonClass) => {
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "object" && typeof right === "object") {
+                return ((left, right) => left.$equals(right))(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(
+          this.setIntegerOrClassProperty,
+          other.setIntegerOrClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "setIntegerOrClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (left: number | string, right: number | string) => {
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(
+          this.setIntegerOrStringProperty,
+          other.setIntegerOrStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "setIntegerOrStringProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (
+              left: rdfjs.NamedNode | rdfjs.Literal,
+              right: rdfjs.NamedNode | rdfjs.Literal,
+            ) => {
+              if (
+                left.termType === "NamedNode" &&
+                right.termType === "NamedNode"
+              ) {
+                return $booleanEquals(left, right);
+              }
+              if (left.termType === "Literal" && right.termType === "Literal") {
+                return $booleanEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(
+          this.setIriOrLiteralProperty,
+          other.setIriOrLiteralProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "setIriOrLiteralProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
       );
   }
 
@@ -2312,7 +2612,7 @@ export class UnionPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.integerOrClassProperty.ifJust((value0) => {
+    this.optionalIntegerOrClassProperty.ifJust((value0) => {
       switch (typeof value0) {
         case "number": {
           _hasher.update(value0.toString());
@@ -2327,7 +2627,7 @@ export class UnionPropertiesClass {
           throw new Error("unrecognized type");
       }
     });
-    this.integerOrStringProperty.ifJust((value0) => {
+    this.optionalIntegerOrStringProperty.ifJust((value0) => {
       switch (typeof value0) {
         case "number": {
           _hasher.update(value0.toString());
@@ -2342,7 +2642,7 @@ export class UnionPropertiesClass {
           throw new Error("unrecognized type");
       }
     });
-    this.iriOrLiteralProperty.ifJust((value0) => {
+    this.optionalIriOrLiteralProperty.ifJust((value0) => {
       switch (value0.termType) {
         case "NamedNode": {
           _hasher.update(value0.termType);
@@ -2361,6 +2661,104 @@ export class UnionPropertiesClass {
           throw new Error("unrecognized type");
       }
     });
+    switch (typeof this.requiredIntegerOrClassProperty) {
+      case "number": {
+        _hasher.update(this.requiredIntegerOrClassProperty.toString());
+        break;
+      }
+      case "object": {
+        this.requiredIntegerOrClassProperty.$hash(_hasher);
+        break;
+      }
+      default:
+        this.requiredIntegerOrClassProperty satisfies never;
+        throw new Error("unrecognized type");
+    }
+
+    switch (typeof this.requiredIntegerOrStringProperty) {
+      case "number": {
+        _hasher.update(this.requiredIntegerOrStringProperty.toString());
+        break;
+      }
+      case "string": {
+        _hasher.update(this.requiredIntegerOrStringProperty);
+        break;
+      }
+      default:
+        this.requiredIntegerOrStringProperty satisfies never;
+        throw new Error("unrecognized type");
+    }
+
+    switch (this.requiredIriOrLiteralProperty.termType) {
+      case "NamedNode": {
+        _hasher.update(this.requiredIriOrLiteralProperty.termType);
+        _hasher.update(this.requiredIriOrLiteralProperty.value);
+        break;
+      }
+      case "Literal": {
+        _hasher.update(this.requiredIriOrLiteralProperty.datatype.value);
+        _hasher.update(this.requiredIriOrLiteralProperty.language);
+        _hasher.update(this.requiredIriOrLiteralProperty.termType);
+        _hasher.update(this.requiredIriOrLiteralProperty.value);
+        break;
+      }
+      default:
+        this.requiredIriOrLiteralProperty satisfies never;
+        throw new Error("unrecognized type");
+    }
+
+    for (const item0 of this.setIntegerOrClassProperty) {
+      switch (typeof item0) {
+        case "number": {
+          _hasher.update(item0.toString());
+          break;
+        }
+        case "object": {
+          item0.$hash(_hasher);
+          break;
+        }
+        default:
+          item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    }
+
+    for (const item0 of this.setIntegerOrStringProperty) {
+      switch (typeof item0) {
+        case "number": {
+          _hasher.update(item0.toString());
+          break;
+        }
+        case "string": {
+          _hasher.update(item0);
+          break;
+        }
+        default:
+          item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    }
+
+    for (const item0 of this.setIriOrLiteralProperty) {
+      switch (item0.termType) {
+        case "NamedNode": {
+          _hasher.update(item0.termType);
+          _hasher.update(item0.value);
+          break;
+        }
+        case "Literal": {
+          _hasher.update(item0.datatype.value);
+          _hasher.update(item0.language);
+          _hasher.update(item0.termType);
+          _hasher.update(item0.value);
+          break;
+        }
+        default:
+          item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    }
+
     return _hasher;
   }
 
@@ -2372,13 +2770,13 @@ export class UnionPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        integerOrClassProperty: this.integerOrClassProperty
+        optionalIntegerOrClassProperty: this.optionalIntegerOrClassProperty
           .map((item) => (typeof item === "object" ? item.$toJson() : item))
           .extract(),
-        integerOrStringProperty: this.integerOrStringProperty
+        optionalIntegerOrStringProperty: this.optionalIntegerOrStringProperty
           .map((item) => item)
           .extract(),
-        iriOrLiteralProperty: this.iriOrLiteralProperty
+        optionalIriOrLiteralProperty: this.optionalIriOrLiteralProperty
           .map((item) =>
             item.termType === "Literal"
               ? {
@@ -2395,6 +2793,52 @@ export class UnionPropertiesClass {
               : { "@id": item.value, termType: item.termType as "NamedNode" },
           )
           .extract(),
+        requiredIntegerOrClassProperty:
+          typeof this.requiredIntegerOrClassProperty === "object"
+            ? this.requiredIntegerOrClassProperty.$toJson()
+            : this.requiredIntegerOrClassProperty,
+        requiredIntegerOrStringProperty: this.requiredIntegerOrStringProperty,
+        requiredIriOrLiteralProperty:
+          this.requiredIriOrLiteralProperty.termType === "Literal"
+            ? {
+                "@language":
+                  this.requiredIriOrLiteralProperty.language.length > 0
+                    ? this.requiredIriOrLiteralProperty.language
+                    : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  this.requiredIriOrLiteralProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.requiredIriOrLiteralProperty.datatype.value
+                    : undefined,
+                "@value": this.requiredIriOrLiteralProperty.value,
+              }
+            : {
+                "@id": this.requiredIriOrLiteralProperty.value,
+                termType: this.requiredIriOrLiteralProperty
+                  .termType as "NamedNode",
+              },
+        setIntegerOrClassProperty: this.setIntegerOrClassProperty.map((item) =>
+          typeof item === "object" ? item.$toJson() : item,
+        ),
+        setIntegerOrStringProperty: this.setIntegerOrStringProperty.map(
+          (item) => item,
+        ),
+        setIriOrLiteralProperty: this.setIriOrLiteralProperty.map((item) =>
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+              }
+            : { "@id": item.value, termType: item.termType as "NamedNode" },
+        ),
       } satisfies UnionPropertiesClass.$Json),
     );
   }
@@ -2415,8 +2859,10 @@ export class UnionPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      UnionPropertiesClass.$properties.integerOrClassProperty["identifier"],
-      ...this.integerOrClassProperty.toList().flatMap((value) =>
+      UnionPropertiesClass.$properties.optionalIntegerOrClassProperty[
+        "identifier"
+      ],
+      ...this.optionalIntegerOrClassProperty.toList().flatMap((value) =>
         typeof value === "object"
           ? ([
               value.$toRdf({
@@ -2430,8 +2876,10 @@ export class UnionPropertiesClass {
       ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.integerOrStringProperty["identifier"],
-      ...this.integerOrStringProperty
+      UnionPropertiesClass.$properties.optionalIntegerOrStringProperty[
+        "identifier"
+      ],
+      ...this.optionalIntegerOrStringProperty
         .toList()
         .flatMap(
           (value) =>
@@ -2441,8 +2889,10 @@ export class UnionPropertiesClass {
         ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.iriOrLiteralProperty["identifier"],
-      ...this.iriOrLiteralProperty
+      UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
+        "identifier"
+      ],
+      ...this.optionalIriOrLiteralProperty
         .toList()
         .flatMap(
           (value) =>
@@ -2450,6 +2900,70 @@ export class UnionPropertiesClass {
               rdfjsResource.MutableResource["add"]
             >[1][],
         ),
+    );
+    resource.add(
+      UnionPropertiesClass.$properties.requiredIntegerOrClassProperty[
+        "identifier"
+      ],
+      ...(typeof this.requiredIntegerOrClassProperty === "object"
+        ? ([
+            this.requiredIntegerOrClassProperty.$toRdf({
+              mutateGraph: mutateGraph,
+              resourceSet: resourceSet,
+            }).identifier,
+          ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
+        : ([this.requiredIntegerOrClassProperty] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][])),
+    );
+    resource.add(
+      UnionPropertiesClass.$properties.requiredIntegerOrStringProperty[
+        "identifier"
+      ],
+      ...([this.requiredIntegerOrStringProperty] as readonly Parameters<
+        rdfjsResource.MutableResource["add"]
+      >[1][]),
+    );
+    resource.add(
+      UnionPropertiesClass.$properties.requiredIriOrLiteralProperty[
+        "identifier"
+      ],
+      ...([this.requiredIriOrLiteralProperty] as readonly Parameters<
+        rdfjsResource.MutableResource["add"]
+      >[1][]),
+    );
+    resource.add(
+      UnionPropertiesClass.$properties.setIntegerOrClassProperty["identifier"],
+      ...this.setIntegerOrClassProperty.flatMap((item) =>
+        typeof item === "object"
+          ? ([
+              item.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              }).identifier,
+            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
+          : ([item] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][]),
+      ),
+    );
+    resource.add(
+      UnionPropertiesClass.$properties.setIntegerOrStringProperty["identifier"],
+      ...this.setIntegerOrStringProperty.flatMap(
+        (item) =>
+          [item] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][],
+      ),
+    );
+    resource.add(
+      UnionPropertiesClass.$properties.setIriOrLiteralProperty["identifier"],
+      ...this.setIriOrLiteralProperty.flatMap(
+        (item) =>
+          [item] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][],
+      ),
     );
     return resource;
   }
@@ -2517,9 +3031,9 @@ export namespace UnionPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "UnionPropertiesClass";
-    readonly integerOrClassProperty?: number | NonClass.$Json;
-    readonly integerOrStringProperty?: number | string;
-    readonly iriOrLiteralProperty?:
+    readonly optionalIntegerOrClassProperty?: number | NonClass.$Json;
+    readonly optionalIntegerOrStringProperty?: number | string;
+    readonly optionalIriOrLiteralProperty?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
           readonly "@language"?: string;
@@ -2527,6 +3041,27 @@ export namespace UnionPropertiesClass {
           readonly "@type"?: string;
           readonly "@value": string;
         };
+    readonly requiredIntegerOrClassProperty: number | NonClass.$Json;
+    readonly requiredIntegerOrStringProperty: number | string;
+    readonly requiredIriOrLiteralProperty:
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        };
+    readonly setIntegerOrClassProperty?: readonly (number | NonClass.$Json)[];
+    readonly setIntegerOrStringProperty?: readonly (number | string)[];
+    readonly setIriOrLiteralProperty?: readonly (
+      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        }
+    )[];
   };
 
   export function $jsonSchema() {
@@ -2554,15 +3089,39 @@ export namespace UnionPropertiesClass {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/integerOrClassProperty`,
+          scope: `${scopePrefix}/properties/optionalIntegerOrClassProperty`,
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/integerOrStringProperty`,
+          scope: `${scopePrefix}/properties/optionalIntegerOrStringProperty`,
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/iriOrLiteralProperty`,
+          scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredIntegerOrClassProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredIntegerOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/requiredIriOrLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/setIntegerOrClassProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/setIntegerOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/setIriOrLiteralProperty`,
           type: "Control",
         },
       ],
@@ -2575,13 +3134,13 @@ export namespace UnionPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("UnionPropertiesClass"),
-      integerOrClassProperty: zod
+      optionalIntegerOrClassProperty: zod
         .union([zod.number(), NonClass.$jsonZodSchema()])
         .optional(),
-      integerOrStringProperty: zod
+      optionalIntegerOrStringProperty: zod
         .union([zod.number(), zod.string()])
         .optional(),
-      iriOrLiteralProperty: zod
+      optionalIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
           zod.object({
             "@id": zod.string().min(1),
@@ -2595,23 +3154,93 @@ export namespace UnionPropertiesClass {
           }),
         ])
         .optional(),
+      requiredIntegerOrClassProperty: zod.union([
+        zod.number(),
+        NonClass.$jsonZodSchema(),
+      ]),
+      requiredIntegerOrStringProperty: zod.union([zod.number(), zod.string()]),
+      requiredIriOrLiteralProperty: zod.discriminatedUnion("termType", [
+        zod.object({
+          "@id": zod.string().min(1),
+          termType: zod.literal("NamedNode"),
+        }),
+        zod.object({
+          "@language": zod.string().optional(),
+          termType: zod.literal("Literal"),
+          "@type": zod.string().optional(),
+          "@value": zod.string(),
+        }),
+      ]),
+      setIntegerOrClassProperty: zod
+        .union([zod.number(), NonClass.$jsonZodSchema()])
+        .array()
+        .default(() => []),
+      setIntegerOrStringProperty: zod
+        .union([zod.number(), zod.string()])
+        .array()
+        .default(() => []),
+      setIriOrLiteralProperty: zod
+        .discriminatedUnion("termType", [
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
+          }),
+          zod.object({
+            "@language": zod.string().optional(),
+            termType: zod.literal("Literal"),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
+          }),
+        ])
+        .array()
+        .default(() => []),
     }) satisfies zod.ZodType<$Json>;
   }
 
   export const $properties = {
-    integerOrClassProperty: {
+    optionalIntegerOrClassProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/integerOrClassProperty",
+        "http://example.com/optionalIntegerOrClassProperty",
       ),
     },
-    integerOrStringProperty: {
+    optionalIntegerOrStringProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/integerOrStringProperty",
+        "http://example.com/optionalIntegerOrStringProperty",
       ),
     },
-    iriOrLiteralProperty: {
+    optionalIriOrLiteralProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/iriOrLiteralProperty",
+        "http://example.com/optionalIriOrLiteralProperty",
+      ),
+    },
+    requiredIntegerOrClassProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredIntegerOrClassProperty",
+      ),
+    },
+    requiredIntegerOrStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredIntegerOrStringProperty",
+      ),
+    },
+    requiredIriOrLiteralProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/requiredIriOrLiteralProperty",
+      ),
+    },
+    setIntegerOrClassProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/setIntegerOrClassProperty",
+      ),
+    },
+    setIntegerOrStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/setIntegerOrStringProperty",
+      ),
+    },
+    setIriOrLiteralProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/setIriOrLiteralProperty",
       ),
     },
   };
@@ -2620,9 +3249,17 @@ export namespace UnionPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      integerOrClassProperty: purify.Maybe<number | NonClass>;
-      integerOrStringProperty: purify.Maybe<number | string>;
-      iriOrLiteralProperty: purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>;
+      optionalIntegerOrClassProperty: purify.Maybe<number | NonClass>;
+      optionalIntegerOrStringProperty: purify.Maybe<number | string>;
+      optionalIriOrLiteralProperty: purify.Maybe<
+        rdfjs.NamedNode | rdfjs.Literal
+      >;
+      requiredIntegerOrClassProperty: number | NonClass;
+      requiredIntegerOrStringProperty: number | string;
+      requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+      setIntegerOrClassProperty: readonly (number | NonClass)[];
+      setIntegerOrStringProperty: readonly (number | string)[];
+      setIriOrLiteralProperty: readonly (rdfjs.NamedNode | rdfjs.Literal)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -2634,16 +3271,16 @@ export namespace UnionPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const integerOrClassProperty = purify.Maybe.fromNullable(
-      $jsonObject["integerOrClassProperty"],
+    const optionalIntegerOrClassProperty = purify.Maybe.fromNullable(
+      $jsonObject["optionalIntegerOrClassProperty"],
     ).map((item) =>
       typeof item === "object" ? NonClass.$fromJson(item).unsafeCoerce() : item,
     );
-    const integerOrStringProperty = purify.Maybe.fromNullable(
-      $jsonObject["integerOrStringProperty"],
+    const optionalIntegerOrStringProperty = purify.Maybe.fromNullable(
+      $jsonObject["optionalIntegerOrStringProperty"],
     );
-    const iriOrLiteralProperty = purify.Maybe.fromNullable(
-      $jsonObject["iriOrLiteralProperty"],
+    const optionalIriOrLiteralProperty = purify.Maybe.fromNullable(
+      $jsonObject["optionalIriOrLiteralProperty"],
     ).map((item) =>
       item.termType === "Literal"
         ? dataFactory.literal(
@@ -2656,11 +3293,62 @@ export namespace UnionPropertiesClass {
           )
         : dataFactory.namedNode(item["@id"]),
     );
+    const requiredIntegerOrClassProperty =
+      typeof $jsonObject["requiredIntegerOrClassProperty"] === "object"
+        ? NonClass.$fromJson(
+            $jsonObject["requiredIntegerOrClassProperty"],
+          ).unsafeCoerce()
+        : $jsonObject["requiredIntegerOrClassProperty"];
+    const requiredIntegerOrStringProperty =
+      $jsonObject["requiredIntegerOrStringProperty"];
+    const requiredIriOrLiteralProperty =
+      $jsonObject["requiredIriOrLiteralProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["requiredIriOrLiteralProperty"]["@value"],
+            typeof $jsonObject["requiredIriOrLiteralProperty"]["@language"] !==
+              "undefined"
+              ? $jsonObject["requiredIriOrLiteralProperty"]["@language"]
+              : typeof $jsonObject["requiredIriOrLiteralProperty"]["@type"] !==
+                  "undefined"
+                ? dataFactory.namedNode(
+                    $jsonObject["requiredIriOrLiteralProperty"]["@type"],
+                  )
+                : undefined,
+          )
+        : dataFactory.namedNode(
+            $jsonObject["requiredIriOrLiteralProperty"]["@id"],
+          );
+    const setIntegerOrClassProperty = $jsonObject[
+      "setIntegerOrClassProperty"
+    ].map((item) =>
+      typeof item === "object" ? NonClass.$fromJson(item).unsafeCoerce() : item,
+    );
+    const setIntegerOrStringProperty =
+      $jsonObject["setIntegerOrStringProperty"];
+    const setIriOrLiteralProperty = $jsonObject["setIriOrLiteralProperty"].map(
+      (item) =>
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
+          : dataFactory.namedNode(item["@id"]),
+    );
     return purify.Either.of({
       $identifier,
-      integerOrClassProperty,
-      integerOrStringProperty,
-      iriOrLiteralProperty,
+      optionalIntegerOrClassProperty,
+      optionalIntegerOrStringProperty,
+      optionalIriOrLiteralProperty,
+      requiredIntegerOrClassProperty,
+      requiredIntegerOrStringProperty,
+      requiredIriOrLiteralProperty,
+      setIntegerOrClassProperty,
+      setIntegerOrStringProperty,
+      setIriOrLiteralProperty,
     });
   }
 
@@ -2681,13 +3369,21 @@ export namespace UnionPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      integerOrClassProperty: purify.Maybe<number | NonClass>;
-      integerOrStringProperty: purify.Maybe<number | string>;
-      iriOrLiteralProperty: purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>;
+      optionalIntegerOrClassProperty: purify.Maybe<number | NonClass>;
+      optionalIntegerOrStringProperty: purify.Maybe<number | string>;
+      optionalIriOrLiteralProperty: purify.Maybe<
+        rdfjs.NamedNode | rdfjs.Literal
+      >;
+      requiredIntegerOrClassProperty: number | NonClass;
+      requiredIntegerOrStringProperty: number | string;
+      requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+      setIntegerOrClassProperty: readonly (number | NonClass)[];
+      setIntegerOrStringProperty: readonly (number | string)[];
+      setIriOrLiteralProperty: readonly (rdfjs.NamedNode | rdfjs.Literal)[];
     }
   > {
     const $identifier: UnionPropertiesClass.$Identifier = $resource.identifier;
-    const _integerOrClassPropertyEither: purify.Either<
+    const _optionalIntegerOrClassPropertyEither: purify.Either<
       Error,
       purify.Maybe<number | NonClass>
     > = (
@@ -2695,9 +3391,10 @@ export namespace UnionPropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.integerOrClassProperty["identifier"], {
-          unique: true,
-        }),
+        $resource.values(
+          $properties.optionalIntegerOrClassProperty["identifier"],
+          { unique: true },
+        ),
       ).chain((values) =>
         values.chainMap((value) => value.toNumber()),
       ) as purify.Either<
@@ -2711,9 +3408,10 @@ export namespace UnionPropertiesClass {
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
-            $resource.values($properties.integerOrClassProperty["identifier"], {
-              unique: true,
-            }),
+            $resource.values(
+              $properties.optionalIntegerOrClassProperty["identifier"],
+              { unique: true },
+            ),
           ).chain((values) =>
             values.chainMap((value) =>
               value.toResource().chain((resource) =>
@@ -2737,19 +3435,20 @@ export namespace UnionPropertiesClass {
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties.integerOrClassProperty[
+                UnionPropertiesClass.$properties.optionalIntegerOrClassProperty[
                   "identifier"
                 ],
               value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
-    if (_integerOrClassPropertyEither.isLeft()) {
-      return _integerOrClassPropertyEither;
+    if (_optionalIntegerOrClassPropertyEither.isLeft()) {
+      return _optionalIntegerOrClassPropertyEither;
     }
 
-    const integerOrClassProperty = _integerOrClassPropertyEither.unsafeCoerce();
-    const _integerOrStringPropertyEither: purify.Either<
+    const optionalIntegerOrClassProperty =
+      _optionalIntegerOrClassPropertyEither.unsafeCoerce();
+    const _optionalIntegerOrStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<number | string>
     > = (
@@ -2757,9 +3456,10 @@ export namespace UnionPropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.integerOrStringProperty["identifier"], {
-          unique: true,
-        }),
+        $resource.values(
+          $properties.optionalIntegerOrStringProperty["identifier"],
+          { unique: true },
+        ),
       ).chain((values) =>
         values.chainMap((value) => value.toNumber()),
       ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
@@ -2771,7 +3471,7 @@ export namespace UnionPropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $resource.values(
-              $properties.integerOrStringProperty["identifier"],
+              $properties.optionalIntegerOrStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -2820,7 +3520,7 @@ export namespace UnionPropertiesClass {
                       focusResource: $resource,
                       predicate:
                         UnionPropertiesClass.$properties
-                          .integerOrStringProperty["identifier"],
+                          .optionalIntegerOrStringProperty["identifier"],
                       term: literalValue,
                     }),
                 ),
@@ -2841,20 +3541,19 @@ export namespace UnionPropertiesClass {
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties.integerOrStringProperty[
-                  "identifier"
-                ],
+                UnionPropertiesClass.$properties
+                  .optionalIntegerOrStringProperty["identifier"],
               value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
-    if (_integerOrStringPropertyEither.isLeft()) {
-      return _integerOrStringPropertyEither;
+    if (_optionalIntegerOrStringPropertyEither.isLeft()) {
+      return _optionalIntegerOrStringPropertyEither;
     }
 
-    const integerOrStringProperty =
-      _integerOrStringPropertyEither.unsafeCoerce();
-    const _iriOrLiteralPropertyEither: purify.Either<
+    const optionalIntegerOrStringProperty =
+      _optionalIntegerOrStringPropertyEither.unsafeCoerce();
+    const _optionalIriOrLiteralPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
     > = (
@@ -2862,9 +3561,10 @@ export namespace UnionPropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.iriOrLiteralProperty["identifier"], {
-          unique: true,
-        }),
+        $resource.values(
+          $properties.optionalIriOrLiteralProperty["identifier"],
+          { unique: true },
+        ),
       ).chain((values) =>
         values.chainMap((value) => value.toIri()),
       ) as purify.Either<
@@ -2878,9 +3578,10 @@ export namespace UnionPropertiesClass {
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
-            $resource.values($properties.iriOrLiteralProperty["identifier"], {
-              unique: true,
-            }),
+            $resource.values(
+              $properties.optionalIriOrLiteralProperty["identifier"],
+              { unique: true },
+            ),
           )
             .chain((values) => {
               if (!$preferredLanguages || $preferredLanguages.length === 0) {
@@ -2926,9 +3627,8 @@ export namespace UnionPropertiesClass {
                     new rdfjsResource.Resource.TermValue({
                       focusResource: $resource,
                       predicate:
-                        UnionPropertiesClass.$properties.iriOrLiteralProperty[
-                          "identifier"
-                        ],
+                        UnionPropertiesClass.$properties
+                          .optionalIriOrLiteralProperty["identifier"],
                       term: literalValue,
                     }),
                 ),
@@ -2949,23 +3649,536 @@ export namespace UnionPropertiesClass {
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties.iriOrLiteralProperty[
+                UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
                   "identifier"
                 ],
               value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
-    if (_iriOrLiteralPropertyEither.isLeft()) {
-      return _iriOrLiteralPropertyEither;
+    if (_optionalIriOrLiteralPropertyEither.isLeft()) {
+      return _optionalIriOrLiteralPropertyEither;
     }
 
-    const iriOrLiteralProperty = _iriOrLiteralPropertyEither.unsafeCoerce();
+    const optionalIriOrLiteralProperty =
+      _optionalIriOrLiteralPropertyEither.unsafeCoerce();
+    const _requiredIntegerOrClassPropertyEither: purify.Either<
+      Error,
+      number | NonClass
+    > = (
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $resource.values(
+          $properties.requiredIntegerOrClassProperty["identifier"],
+          { unique: true },
+        ),
+      ).chain((values) =>
+        values.chainMap((value) => value.toNumber()),
+      ) as purify.Either<
+        Error,
+        rdfjsResource.Resource.Values<number | NonClass>
+      >
+    )
+      .altLazy(
+        () =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(
+            $resource.values(
+              $properties.requiredIntegerOrClassProperty["identifier"],
+              { unique: true },
+            ),
+          ).chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                NonClass.$fromRdf(resource, {
+                  ...$context,
+                  objectSet: $objectSet,
+                  preferredLanguages: $preferredLanguages,
+                }),
+              ),
+            ),
+          ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<number | NonClass>
+          >,
+      )
+      .chain((values) => values.head());
+    if (_requiredIntegerOrClassPropertyEither.isLeft()) {
+      return _requiredIntegerOrClassPropertyEither;
+    }
+
+    const requiredIntegerOrClassProperty =
+      _requiredIntegerOrClassPropertyEither.unsafeCoerce();
+    const _requiredIntegerOrStringPropertyEither: purify.Either<
+      Error,
+      number | string
+    > = (
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $resource.values(
+          $properties.requiredIntegerOrStringProperty["identifier"],
+          { unique: true },
+        ),
+      ).chain((values) =>
+        values.chainMap((value) => value.toNumber()),
+      ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
+    )
+      .altLazy(
+        () =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(
+            $resource.values(
+              $properties.requiredIntegerOrStringProperty["identifier"],
+              { unique: true },
+            ),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.TermValue({
+                      focusResource: $resource,
+                      predicate:
+                        UnionPropertiesClass.$properties
+                          .requiredIntegerOrStringProperty["identifier"],
+                      term: literalValue,
+                    }),
+                ),
+              );
+            })
+            .chain((values) =>
+              values.chainMap((value) => value.toString()),
+            ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<number | string>
+          >,
+      )
+      .chain((values) => values.head());
+    if (_requiredIntegerOrStringPropertyEither.isLeft()) {
+      return _requiredIntegerOrStringPropertyEither;
+    }
+
+    const requiredIntegerOrStringProperty =
+      _requiredIntegerOrStringPropertyEither.unsafeCoerce();
+    const _requiredIriOrLiteralPropertyEither: purify.Either<
+      Error,
+      rdfjs.NamedNode | rdfjs.Literal
+    > = (
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $resource.values(
+          $properties.requiredIriOrLiteralProperty["identifier"],
+          { unique: true },
+        ),
+      ).chain((values) =>
+        values.chainMap((value) => value.toIri()),
+      ) as purify.Either<
+        Error,
+        rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+      >
+    )
+      .altLazy(
+        () =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(
+            $resource.values(
+              $properties.requiredIriOrLiteralProperty["identifier"],
+              { unique: true },
+            ),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.TermValue({
+                      focusResource: $resource,
+                      predicate:
+                        UnionPropertiesClass.$properties
+                          .requiredIriOrLiteralProperty["identifier"],
+                      term: literalValue,
+                    }),
+                ),
+              );
+            })
+            .chain((values) =>
+              values.chainMap((value) => value.toLiteral()),
+            ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+          >,
+      )
+      .chain((values) => values.head());
+    if (_requiredIriOrLiteralPropertyEither.isLeft()) {
+      return _requiredIriOrLiteralPropertyEither;
+    }
+
+    const requiredIriOrLiteralProperty =
+      _requiredIriOrLiteralPropertyEither.unsafeCoerce();
+    const _setIntegerOrClassPropertyEither: purify.Either<
+      Error,
+      readonly (number | NonClass)[]
+    > = (
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $resource.values($properties.setIntegerOrClassProperty["identifier"], {
+          unique: true,
+        }),
+      ).chain((values) =>
+        values.chainMap((value) => value.toNumber()),
+      ) as purify.Either<
+        Error,
+        rdfjsResource.Resource.Values<number | NonClass>
+      >
+    )
+      .altLazy(
+        () =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(
+            $resource.values(
+              $properties.setIntegerOrClassProperty["identifier"],
+              { unique: true },
+            ),
+          ).chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                NonClass.$fromRdf(resource, {
+                  ...$context,
+                  objectSet: $objectSet,
+                  preferredLanguages: $preferredLanguages,
+                }),
+              ),
+            ),
+          ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<number | NonClass>
+          >,
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          focusResource: $resource,
+          predicate:
+            UnionPropertiesClass.$properties.setIntegerOrClassProperty[
+              "identifier"
+            ],
+          value: valuesArray,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_setIntegerOrClassPropertyEither.isLeft()) {
+      return _setIntegerOrClassPropertyEither;
+    }
+
+    const setIntegerOrClassProperty =
+      _setIntegerOrClassPropertyEither.unsafeCoerce();
+    const _setIntegerOrStringPropertyEither: purify.Either<
+      Error,
+      readonly (number | string)[]
+    > = (
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $resource.values($properties.setIntegerOrStringProperty["identifier"], {
+          unique: true,
+        }),
+      ).chain((values) =>
+        values.chainMap((value) => value.toNumber()),
+      ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
+    )
+      .altLazy(
+        () =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(
+            $resource.values(
+              $properties.setIntegerOrStringProperty["identifier"],
+              { unique: true },
+            ),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.TermValue({
+                      focusResource: $resource,
+                      predicate:
+                        UnionPropertiesClass.$properties
+                          .setIntegerOrStringProperty["identifier"],
+                      term: literalValue,
+                    }),
+                ),
+              );
+            })
+            .chain((values) =>
+              values.chainMap((value) => value.toString()),
+            ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<number | string>
+          >,
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          focusResource: $resource,
+          predicate:
+            UnionPropertiesClass.$properties.setIntegerOrStringProperty[
+              "identifier"
+            ],
+          value: valuesArray,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_setIntegerOrStringPropertyEither.isLeft()) {
+      return _setIntegerOrStringPropertyEither;
+    }
+
+    const setIntegerOrStringProperty =
+      _setIntegerOrStringPropertyEither.unsafeCoerce();
+    const _setIriOrLiteralPropertyEither: purify.Either<
+      Error,
+      readonly (rdfjs.NamedNode | rdfjs.Literal)[]
+    > = (
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $resource.values($properties.setIriOrLiteralProperty["identifier"], {
+          unique: true,
+        }),
+      ).chain((values) =>
+        values.chainMap((value) => value.toIri()),
+      ) as purify.Either<
+        Error,
+        rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+      >
+    )
+      .altLazy(
+        () =>
+          purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(
+            $resource.values(
+              $properties.setIriOrLiteralProperty["identifier"],
+              { unique: true },
+            ),
+          )
+            .chain((values) => {
+              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(values);
+              }
+
+              const literalValuesEither = values.chainMap((value) =>
+                value.toLiteral(),
+              );
+              if (literalValuesEither.isLeft()) {
+                return literalValuesEither;
+              }
+              const literalValues = literalValuesEither.unsafeCoerce();
+
+              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+              // Within a preferredLanguage the literals may be in any order.
+              let filteredLiteralValues:
+                | rdfjsResource.Resource.Values<rdfjs.Literal>
+                | undefined;
+              for (const preferredLanguage of $preferredLanguages) {
+                if (!filteredLiteralValues) {
+                  filteredLiteralValues = literalValues.filter(
+                    (value) => value.language === preferredLanguage,
+                  );
+                } else {
+                  filteredLiteralValues = filteredLiteralValues.concat(
+                    ...literalValues
+                      .filter((value) => value.language === preferredLanguage)
+                      .toArray(),
+                  );
+                }
+              }
+
+              return purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+              >(
+                filteredLiteralValues!.map(
+                  (literalValue) =>
+                    new rdfjsResource.Resource.TermValue({
+                      focusResource: $resource,
+                      predicate:
+                        UnionPropertiesClass.$properties
+                          .setIriOrLiteralProperty["identifier"],
+                      term: literalValue,
+                    }),
+                ),
+              );
+            })
+            .chain((values) =>
+              values.chainMap((value) => value.toLiteral()),
+            ) as purify.Either<
+            Error,
+            rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+          >,
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          focusResource: $resource,
+          predicate:
+            UnionPropertiesClass.$properties.setIriOrLiteralProperty[
+              "identifier"
+            ],
+          value: valuesArray,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_setIriOrLiteralPropertyEither.isLeft()) {
+      return _setIriOrLiteralPropertyEither;
+    }
+
+    const setIriOrLiteralProperty =
+      _setIriOrLiteralPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      integerOrClassProperty,
-      integerOrStringProperty,
-      iriOrLiteralProperty,
+      optionalIntegerOrClassProperty,
+      optionalIntegerOrStringProperty,
+      optionalIriOrLiteralProperty,
+      requiredIntegerOrClassProperty,
+      requiredIntegerOrStringProperty,
+      requiredIriOrLiteralProperty,
+      setIntegerOrClassProperty,
+      setIntegerOrStringProperty,
+      setIriOrLiteralProperty,
     });
   }
 
@@ -3029,29 +4242,143 @@ export namespace UnionPropertiesClass {
         ? subject.value
         : "unionPropertiesClass");
     triples.push({
-      object: dataFactory.variable!(`${variablePrefix}IntegerOrClassProperty`),
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalIntegerOrClassProperty`,
+      ),
       predicate:
-        UnionPropertiesClass.$properties.integerOrClassProperty["identifier"],
+        UnionPropertiesClass.$properties.optionalIntegerOrClassProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push(
       ...NonClass.$sparqlConstructTemplateTriples({
         subject: dataFactory.variable!(
-          `${variablePrefix}IntegerOrClassProperty`,
+          `${variablePrefix}OptionalIntegerOrClassProperty`,
         ),
-        variablePrefix: `${variablePrefix}IntegerOrClassProperty`,
+        variablePrefix: `${variablePrefix}OptionalIntegerOrClassProperty`,
       }),
     );
     triples.push({
-      object: dataFactory.variable!(`${variablePrefix}IntegerOrStringProperty`),
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalIntegerOrStringProperty`,
+      ),
       predicate:
-        UnionPropertiesClass.$properties.integerOrStringProperty["identifier"],
+        UnionPropertiesClass.$properties.optionalIntegerOrStringProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
-      object: dataFactory.variable!(`${variablePrefix}IriOrLiteralProperty`),
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalIriOrLiteralProperty`,
+      ),
       predicate:
-        UnionPropertiesClass.$properties.iriOrLiteralProperty["identifier"],
+        UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredIntegerOrClassProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.requiredIntegerOrClassProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredIntegerOrClassProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.requiredIntegerOrClassProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...NonClass.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(
+          `${variablePrefix}RequiredIntegerOrClassProperty`,
+        ),
+        variablePrefix: `${variablePrefix}RequiredIntegerOrClassProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredIntegerOrStringProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.requiredIntegerOrStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredIntegerOrStringProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.requiredIntegerOrStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredIriOrLiteralProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.requiredIriOrLiteralProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}RequiredIriOrLiteralProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.requiredIriOrLiteralProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}SetIntegerOrClassProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.setIntegerOrClassProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push(
+      ...NonClass.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(
+          `${variablePrefix}SetIntegerOrClassProperty`,
+        ),
+        variablePrefix: `${variablePrefix}SetIntegerOrClassProperty`,
+      }),
+    );
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}SetIntegerOrStringProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.setIntegerOrStringProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}SetIriOrLiteralProperty`),
+      predicate:
+        UnionPropertiesClass.$properties.setIriOrLiteralProperty["identifier"],
       subject,
     });
     return triples;
@@ -3083,11 +4410,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}IntegerOrClassProperty`,
+                          `${variablePrefix}OptionalIntegerOrClassProperty`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .integerOrClassProperty["identifier"],
+                            .optionalIntegerOrClassProperty["identifier"],
                         subject,
                       },
                     ],
@@ -3102,11 +4429,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}IntegerOrClassProperty`,
+                          `${variablePrefix}OptionalIntegerOrClassProperty`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .integerOrClassProperty["identifier"],
+                            .optionalIntegerOrClassProperty["identifier"],
                         subject,
                       },
                     ],
@@ -3115,9 +4442,9 @@ export namespace UnionPropertiesClass {
                   ...NonClass.$sparqlWherePatterns({
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
-                      `${variablePrefix}IntegerOrClassProperty`,
+                      `${variablePrefix}OptionalIntegerOrClassProperty`,
                     ),
-                    variablePrefix: `${variablePrefix}IntegerOrClassProperty`,
+                    variablePrefix: `${variablePrefix}OptionalIntegerOrClassProperty`,
                   }),
                 ],
                 type: "group",
@@ -3138,11 +4465,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}IntegerOrStringProperty`,
+                          `${variablePrefix}OptionalIntegerOrStringProperty`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .integerOrStringProperty["identifier"],
+                            .optionalIntegerOrStringProperty["identifier"],
                         subject,
                       },
                     ],
@@ -3157,11 +4484,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}IntegerOrStringProperty`,
+                          `${variablePrefix}OptionalIntegerOrStringProperty`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .integerOrStringProperty["identifier"],
+                            .optionalIntegerOrStringProperty["identifier"],
                         subject,
                       },
                     ],
@@ -3179,7 +4506,7 @@ export namespace UnionPropertiesClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${variablePrefix}IntegerOrStringProperty`,
+                                `${variablePrefix}OptionalIntegerOrStringProperty`,
                               ),
                             ],
                           },
@@ -3222,12 +4549,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}IriOrLiteralProperty`,
+                          `${variablePrefix}OptionalIriOrLiteralProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties.iriOrLiteralProperty[
-                            "identifier"
-                          ],
+                          UnionPropertiesClass.$properties
+                            .optionalIriOrLiteralProperty["identifier"],
                         subject,
                       },
                     ],
@@ -3242,12 +4568,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}IriOrLiteralProperty`,
+                          `${variablePrefix}OptionalIriOrLiteralProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties.iriOrLiteralProperty[
-                            "identifier"
-                          ],
+                          UnionPropertiesClass.$properties
+                            .optionalIriOrLiteralProperty["identifier"],
                         subject,
                       },
                     ],
@@ -3265,7 +4590,438 @@ export namespace UnionPropertiesClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${variablePrefix}IriOrLiteralProperty`,
+                                `${variablePrefix}OptionalIriOrLiteralProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}RequiredIntegerOrClassProperty`,
+                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties
+                        .requiredIntegerOrClassProperty["identifier"],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
+            ],
+            type: "group",
+          },
+          {
+            patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}RequiredIntegerOrClassProperty`,
+                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties
+                        .requiredIntegerOrClassProperty["identifier"],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
+              ...NonClass.$sparqlWherePatterns({
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${variablePrefix}RequiredIntegerOrClassProperty`,
+                ),
+                variablePrefix: `${variablePrefix}RequiredIntegerOrClassProperty`,
+              }),
+            ],
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}RequiredIntegerOrStringProperty`,
+                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties
+                        .requiredIntegerOrStringProperty["identifier"],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
+            ],
+            type: "group",
+          },
+          {
+            patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}RequiredIntegerOrStringProperty`,
+                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties
+                        .requiredIntegerOrStringProperty["identifier"],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
+              ...[parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${variablePrefix}RequiredIntegerOrStringProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                })),
+            ],
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}RequiredIriOrLiteralProperty`,
+                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties
+                        .requiredIriOrLiteralProperty["identifier"],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
+            ],
+            type: "group",
+          },
+          {
+            patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}RequiredIriOrLiteralProperty`,
+                    ),
+                    predicate:
+                      UnionPropertiesClass.$properties
+                        .requiredIriOrLiteralProperty["identifier"],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
+              ...[parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${variablePrefix}RequiredIriOrLiteralProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                })),
+            ],
+            type: "group",
+          },
+        ],
+        type: "union",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}SetIntegerOrClassProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .setIntegerOrClassProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}SetIntegerOrClassProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .setIntegerOrClassProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...NonClass.$sparqlWherePatterns({
+                    preferredLanguages: parameters?.preferredLanguages,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}SetIntegerOrClassProperty`,
+                    ),
+                    variablePrefix: `${variablePrefix}SetIntegerOrClassProperty`,
+                  }),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}SetIntegerOrStringProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .setIntegerOrStringProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}SetIntegerOrStringProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .setIntegerOrStringProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}SetIntegerOrStringProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}SetIriOrLiteralProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .setIriOrLiteralProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}SetIriOrLiteralProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .setIriOrLiteralProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}SetIriOrLiteralProperty`,
                               ),
                             ],
                           },

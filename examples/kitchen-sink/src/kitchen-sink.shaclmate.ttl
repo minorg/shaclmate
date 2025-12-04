@@ -636,6 +636,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Node shape that has lazy properties." ;
     sh:property [
+        shaclmate:partial :PartialClass ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassToResolvedClassUnionProperty
+    ], [
+        shaclmate:partial :PartialClassUnion ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedClassUnion ;
+        sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
+    ], [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
         sh:minCount 0 ;
@@ -677,16 +687,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredPartialClassToResolvedClassProperty
-    ], [
-        shaclmate:partial :PartialClass ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassToResolvedClassUnionProperty
-    ], [
-        shaclmate:partial :PartialClassUnion ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedClassUnion ;
-        sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
     ] .
 
 :LazyPropertiesInterface
@@ -1123,7 +1123,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:comment "Shape with sh:xone properties." ;
     sh:property [
         sh:maxCount 1 ;
-        sh:path :integerOrClassProperty ;
+        sh:path :optionalIntegerOrClassProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
             ]
@@ -1133,7 +1133,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         sh:maxCount 1 ;
-        sh:path :integerOrStringProperty ;
+        sh:path :optionalIntegerOrStringProperty ;
         sh:xone ([
                 sh:datatype xsd:integer
             ]
@@ -1143,7 +1143,67 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         sh:maxCount 1 ;
-        sh:path :iriOrLiteralProperty ;
+        sh:path :optionalIriOrLiteralProperty ;
+        sh:xone ([
+                sh:nodeKind sh:IRI
+            ]
+            [
+                sh:nodeKind sh:Literal
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :requiredIntegerOrClassProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:node :NonClass
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :requiredIntegerOrStringProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :requiredIriOrLiteralProperty ;
+        sh:xone ([
+                sh:nodeKind sh:IRI
+            ]
+            [
+                sh:nodeKind sh:Literal
+            ]
+        )
+    ], [
+        sh:path :setIntegerOrClassProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:node :NonClass
+            ]
+        )
+    ], [
+        sh:path :setIntegerOrStringProperty ;
+        sh:xone ([
+                sh:datatype xsd:integer
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:path :setIriOrLiteralProperty ;
         sh:xone ([
                 sh:nodeKind sh:IRI
             ]
