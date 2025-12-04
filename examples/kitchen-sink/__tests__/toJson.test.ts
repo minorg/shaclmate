@@ -7,22 +7,47 @@ describe("toJson", () => {
       const jsonObject = harnesses.unionProperties1.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionPropertiesClass");
-      expect(jsonObject.integerOrClassProperty).toStrictEqual(5);
-      expect(jsonObject.integerOrStringProperty).toStrictEqual(5);
-      expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.optionalIntegerOrClassProperty).toStrictEqual(5);
+      expect(jsonObject.optionalIntegerOrStringProperty).toStrictEqual(5);
+      expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
         "@id": "http://example.com",
         termType: "NamedNode",
       });
+      expect(jsonObject.requiredIntegerOrClassProperty).toStrictEqual(5);
+      expect(jsonObject.requiredIntegerOrStringProperty).toStrictEqual(5);
+      expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
+        "@id": "http://example.com",
+        termType: "NamedNode",
+      });
+      expect(jsonObject.setIntegerOrClassProperty).toHaveLength(0);
+      expect(jsonObject.setIntegerOrStringProperty).toHaveLength(0);
+      expect(jsonObject.setIriOrLiteralProperty).toHaveLength(0);
     }
 
     {
       const jsonObject = harnesses.unionProperties2Class.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.integerOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.optionalIntegerOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
         termType: "Literal",
         "@value": "test",
       });
+      expect(jsonObject.requiredIntegerOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
+        termType: "Literal",
+        "@value": "test",
+      });
+      expect(jsonObject.setIntegerOrStringProperty).toStrictEqual([5, "test"]);
+      expect(jsonObject.setIriOrLiteralProperty).toStrictEqual([
+        {
+          "@id": "http://example.com",
+          termType: "NamedNode",
+        },
+        {
+          "@value": "test",
+          termType: "Literal",
+        },
+      ]);
     }
   });
 

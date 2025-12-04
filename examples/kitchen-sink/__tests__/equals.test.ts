@@ -39,12 +39,18 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
+        requiredIntegerOrClassProperty: 1,
+        requiredIntegerOrStringProperty: 1,
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            iriOrLiteralProperty: dataFactory.namedNode(
+            requiredIntegerOrClassProperty: 1,
+            requiredIntegerOrStringProperty: 1,
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
           }),
@@ -55,12 +61,18 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
+        requiredIntegerOrClassProperty: 1,
+        requiredIntegerOrStringProperty: 1,
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            iriOrLiteralProperty: dataFactory.literal("test"),
+            requiredIntegerOrClassProperty: 1,
+            requiredIntegerOrStringProperty: 1,
+            requiredIriOrLiteralProperty: dataFactory.literal("test"),
           }),
         )
         .extract(),
@@ -72,12 +84,16 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        integerOrClassProperty: 1,
+        requiredIntegerOrClassProperty: 1,
+        requiredIntegerOrStringProperty: 1,
+        requiredIriOrLiteralProperty: dataFactory.namedNode("test"),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            integerOrClassProperty: 1,
+            requiredIntegerOrClassProperty: 1,
+            requiredIntegerOrStringProperty: 1,
+            requiredIriOrLiteralProperty: dataFactory.namedNode("test"),
           }),
         )
         .extract(),
@@ -86,15 +102,19 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        integerOrClassProperty: 1,
+        requiredIntegerOrClassProperty: 1,
+        requiredIntegerOrStringProperty: 1,
+        requiredIriOrLiteralProperty: dataFactory.namedNode("test"),
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            integerOrClassProperty: new kitchenSink.NonClass({
+            requiredIntegerOrClassProperty: new kitchenSink.NonClass({
               $identifier: dataFactory.blankNode(),
               nonClassProperty: "test",
             }),
+            requiredIntegerOrStringProperty: 1,
+            requiredIriOrLiteralProperty: dataFactory.namedNode("test"),
           }),
         )
         .extract(),
