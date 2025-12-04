@@ -1,5 +1,5 @@
 import { camelCase } from "change-case";
-import { Maybe } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
   type ModuleDeclarationStructure,
@@ -38,7 +38,7 @@ export class ObjectUnionType extends DeclaredType {
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
-  override readonly typeof = "object";
+  override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
     comment,

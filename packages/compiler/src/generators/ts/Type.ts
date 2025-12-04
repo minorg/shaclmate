@@ -1,6 +1,6 @@
 import type {} from "@rdfjs/types";
 
-import type { Maybe } from "purify-ts";
+import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
@@ -45,9 +45,11 @@ export abstract class Type {
   abstract readonly name: string;
 
   /**
-   * JavaScript typeof the type.
+   * JavaScript typeof(s) the type.
    */
-  abstract readonly typeof: "boolean" | "object" | "number" | "string";
+  abstract readonly typeofs: NonEmptyList<
+    "boolean" | "object" | "number" | "string"
+  >;
 
   /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has

@@ -1,11 +1,13 @@
-import { Maybe } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-function isTypeofString(x: string): x is Type["typeof"] {
+function isTypeofString(
+  x: string,
+): x is "boolean" | "object" | "number" | "string" {
   switch (x) {
     case "boolean":
     case "object":
@@ -17,6 +19,9 @@ function isTypeofString(x: string): x is Type["typeof"] {
   }
 }
 
+/**
+ * Abstract base class for ListType and SetType.
+ */
 export abstract class CollectionType<ItemTypeT extends Type> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
@@ -24,8 +29,7 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
   readonly itemType: ItemTypeT;
   protected readonly minCount: number;
   protected readonly _mutable: boolean;
-
-  readonly typeof = "object";
+  override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
     itemType,
@@ -63,19 +67,20 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
       "boolean" | "object" | "number" | "string",
       Type.Conversion
     >;
+    if (this.itemType.typeofs.length === 1) {
+      itemTypeConversionsByTypeof[this.itemType.typeofs[0]] = {
+        conversionExpression: (value) => value,
+        sourceTypeCheckExpression: (value) =>
+          `typeof ${value} === ${this.itemType.typeofs[0]}`,
+        sourceTypeName: this.itemType.name,
+      };
 
-    itemTypeConversionsByTypeof[this.itemType.typeof] = {
-      conversionExpression: (value) => value,
-      sourceTypeCheckExpression: (value) =>
-        `typeof ${value} === ${this.itemType.typeof}`,
-      sourceTypeName: this.itemType.name,
-    };
-
-    for (const itemTypeConversion of this.itemType.conversions) {
-      if (isTypeofString(itemTypeConversion.sourceTypeName)) {
-        if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
-          itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
-            itemTypeConversion;
+      for (const itemTypeConversion of this.itemType.conversions) {
+        if (isTypeofString(itemTypeConversion.sourceTypeName)) {
+          if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
+            itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
+              itemTypeConversion;
+          }
         }
       }
     }
@@ -87,7 +92,7 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
         sourceTypeName: "undefined",
       });
 
-      if (Object.keys(itemTypeConversionsByTypeof).length === 1) {
+      if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
         // There were no additional conversions with different item typeof's, so we don't need to check .every or do .map
         // Just check that the original value is an array with typeof "object". Array.isArray() doesn't narrow types for some reason.
         conversions.push({
@@ -227,35 +232,29 @@ export abstract class CollectionType<ItemTypeT extends Type> extends Type {
       snippetDeclarations.push(SnippetDeclarations.arrayEquals);
     }
 
-    // Add type guard functions
-    // Using .every to check array item types doesn't satisfy the readonly part of the array signature for some reason
-    const itemTypeofs = new Set<Type["typeof"]>();
-    itemTypeofs.add(this.itemType.typeof);
-    for (const itemTypeConversion of this.itemType.conversions) {
-      if (isTypeofString(itemTypeConversion.sourceTypeName)) {
-        itemTypeofs.add(itemTypeConversion.sourceTypeName);
+    for (const conversion of this.conversions) {
+      let sourceTypeCheckExpression =
+        conversion.sourceTypeCheckExpression("ignore");
+      if (!sourceTypeCheckExpression.startsWith(syntheticNamePrefix)) {
+        continue;
       }
-    }
-    if (itemTypeofs.size > 1) {
-      for (const itemTypeof of itemTypeofs) {
-        switch (itemTypeof) {
-          case "boolean":
-            snippetDeclarations.push(
-              SnippetDeclarations.isReadonlyBooleanArray,
-            );
-            break;
-          case "number":
-            snippetDeclarations.push(SnippetDeclarations.isReadonlyNumberArray);
-            break;
-          case "object":
-            snippetDeclarations.push(SnippetDeclarations.isReadonlyObjectArray);
-            break;
-          case "string":
-            snippetDeclarations.push(SnippetDeclarations.isReadonlyStringArray);
-            break;
-          default:
-            throw new RangeError(itemTypeof);
-        }
+      sourceTypeCheckExpression = sourceTypeCheckExpression.substring(
+        syntheticNamePrefix.length,
+      );
+      if (sourceTypeCheckExpression.startsWith("isReadonlyBooleanArray")) {
+        snippetDeclarations.push(SnippetDeclarations.isReadonlyBooleanArray);
+      } else if (
+        sourceTypeCheckExpression.startsWith("isReadonlyNumberArray")
+      ) {
+        snippetDeclarations.push(SnippetDeclarations.isReadonlyNumberArray);
+      } else if (
+        sourceTypeCheckExpression.startsWith("isReadonlyObjectArray")
+      ) {
+        snippetDeclarations.push(SnippetDeclarations.isReadonlyObjectArray);
+      } else if (
+        sourceTypeCheckExpression.startsWith("isReadonlyStringArray")
+      ) {
+        snippetDeclarations.push(SnippetDeclarations.isReadonlyStringArray);
       }
     }
 

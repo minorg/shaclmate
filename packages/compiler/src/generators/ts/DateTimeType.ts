@@ -1,5 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -15,7 +16,7 @@ export class DateTimeType extends PrimitiveType<Date> {
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
   override readonly mutable = true;
-  override readonly typeof = "object";
+  override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {

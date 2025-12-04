@@ -1,4 +1,4 @@
-import { Maybe } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -66,7 +66,7 @@ class MemberType {
       case "syntheticProperty":
         return [`${this.delegateIndex}-${this.delegate.name}`];
       case "typeof":
-        return [this.delegate.typeof];
+        return this.delegate.typeofs;
       default:
         throw this.discriminatorKind satisfies never;
     }
@@ -82,6 +82,10 @@ class MemberType {
 
   get name() {
     return this.delegate.name;
+  }
+
+  get typeofs() {
+    return this.delegate.typeofs;
   }
 
   fromJsonExpression(parameters: Parameters<Type["fromJsonExpression"]>[0]) {
@@ -151,7 +155,6 @@ export class UnionType extends Type {
 
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly kind = "UnionType";
-  readonly typeof = "object";
 
   constructor({
     memberTypes,
@@ -174,7 +177,9 @@ export class UnionType extends Type {
     } else {
       const memberTypeofs = new Set<string>();
       for (const memberType of memberTypes) {
-        memberTypeofs.add(memberType.typeof);
+        for (const typeof_ of memberType.typeofs) {
+          memberTypeofs.add(typeof_);
+        }
       }
       if (memberTypeofs.size === memberTypes.length) {
         this._discriminator = {
@@ -315,6 +320,13 @@ ${this.memberTypes
       }
     }
     return this._name!;
+  }
+
+  @Memoize()
+  override get typeofs(): Type["typeofs"] {
+    return NonEmptyList.fromArray(
+      this.memberTypes.flatMap((memberType) => memberType.typeofs),
+    ).unsafeCoerce();
   }
 
   override fromJsonExpression({

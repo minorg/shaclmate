@@ -1,12 +1,13 @@
 import { Memoize } from "typescript-memoize";
 
+import { NonEmptyList } from "purify-ts";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class StringType extends PrimitiveType<string> {
   readonly kind = "StringType";
-  override readonly typeof = "string";
+  override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {
@@ -37,7 +38,7 @@ export class StringType extends PrimitiveType<string> {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => `"${value}"`).join(" | ");
     }
-    return this.typeof;
+    return "string";
   }
 
   protected override fromRdfExpressionChain({

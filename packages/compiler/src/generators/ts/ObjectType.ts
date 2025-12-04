@@ -1,7 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { camelCase } from "change-case";
-import { Maybe } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
   type ClassDeclarationStructure,
@@ -42,7 +42,7 @@ export class ObjectType extends DeclaredType {
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
-  override readonly typeof = "object";
+  override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
     abstract,

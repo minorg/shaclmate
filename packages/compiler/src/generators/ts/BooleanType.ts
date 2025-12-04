@@ -1,5 +1,6 @@
 import { Memoize } from "typescript-memoize";
 
+import { NonEmptyList } from "purify-ts";
 import { PrimitiveType } from "./PrimitiveType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -7,7 +8,7 @@ import { objectInitializer } from "./objectInitializer.js";
 
 export class BooleanType extends PrimitiveType<boolean> {
   readonly kind = "BooleanType";
-  override readonly typeof = "boolean";
+  override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {
@@ -37,7 +38,7 @@ export class BooleanType extends PrimitiveType<boolean> {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");
     }
-    return this.typeof;
+    return "boolean";
   }
 
   override jsonZodSchema({
