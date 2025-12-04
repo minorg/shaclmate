@@ -539,21 +539,43 @@ export const harnesses = {
   unionProperties1: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
       $identifier,
-      integerOrClassProperty: 5,
-      integerOrStringProperty: 5,
-      iriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
+      optionalIntegerOrClassProperty: 5,
+      optionalIntegerOrStringProperty: 5,
+      optionalIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
+      requiredIntegerOrClassProperty: 5,
+      requiredIntegerOrStringProperty: 5,
+      requiredIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
+      // Don't specify the set properties to test undefined
     }),
     kitchenSink.UnionPropertiesClass,
   ),
   unionProperties2Class: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
       $identifier,
-      integerOrClassProperty: new kitchenSink.NonClass({
+      optionalIntegerOrClassProperty: new kitchenSink.NonClass({
         $identifier: dataFactory.namedNode("http://example.com/nonClass"),
         nonClassProperty: "test",
       }),
-      integerOrStringProperty: "test",
-      iriOrLiteralProperty: dataFactory.literal("test"),
+      optionalIntegerOrStringProperty: "test",
+      optionalIriOrLiteralProperty: dataFactory.literal("test"),
+      requiredIntegerOrClassProperty: new kitchenSink.NonClass({
+        $identifier: dataFactory.namedNode("http://example.com/nonClass"),
+        nonClassProperty: "test",
+      }),
+      requiredIntegerOrStringProperty: "test",
+      requiredIriOrLiteralProperty: dataFactory.literal("test"),
+      setIntegerOrClassProperty: [
+        5,
+        new kitchenSink.NonClass({
+          $identifier: dataFactory.namedNode("http://example.com/nonClass"),
+          nonClassProperty: "test",
+        }),
+      ],
+      setIntegerOrStringProperty: [5, "test"],
+      setIriOrLiteralProperty: [
+        dataFactory.namedNode("http://example.com"),
+        dataFactory.literal("test"),
+      ],
     }),
     kitchenSink.UnionPropertiesClass,
   ),
