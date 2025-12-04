@@ -236,15 +236,6 @@ export function $arrayEquals<T>(
 
   return $EqualsResult.Equal;
 }
-function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "object");
-}
-function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "number");
-}
-function $isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "string");
-}
 /**
  * Compare two Dates and return an $EqualsResult.
  */
@@ -286,6 +277,12 @@ export function $sparqlInstancesOfPattern({
     ],
     type: "bgp",
   };
+}
+function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "object");
+}
+function $isReadonlyStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "string");
 }
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
@@ -437,10 +434,13 @@ export function $arrayIntersection<T>(
   }
   return [...intersection];
 }
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every((z) => typeof z === "boolean");
 }
-type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
+function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "number");
+}
 export class $NamedDefaultPartial {
   readonly $identifier: $NamedDefaultPartial.$Identifier;
   readonly $type = "$NamedDefaultPartial";
@@ -2110,13 +2110,8 @@ export class UnionPropertiesClass {
     readonly requiredIntegerOrClassProperty: NonClass | number;
     readonly requiredIntegerOrStringProperty: number | string;
     readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
-    readonly setIntegerOrClassProperty?:
-      | readonly (number | NonClass)[]
-      | readonly number[];
-    readonly setIntegerOrStringProperty?:
-      | readonly (number | string)[]
-      | readonly number[]
-      | readonly string[];
+    readonly setIntegerOrClassProperty?: readonly (number | NonClass)[];
+    readonly setIntegerOrStringProperty?: readonly (number | string)[];
     readonly setIriOrLiteralProperty?: readonly (
       | rdfjs.NamedNode
       | rdfjs.Literal
@@ -2210,9 +2205,7 @@ export class UnionPropertiesClass {
     this.requiredIriOrLiteralProperty = parameters.requiredIriOrLiteralProperty;
     if (typeof parameters.setIntegerOrClassProperty === "undefined") {
       this.setIntegerOrClassProperty = [];
-    } else if ($isReadonlyObjectArray(parameters.setIntegerOrClassProperty)) {
-      this.setIntegerOrClassProperty = parameters.setIntegerOrClassProperty;
-    } else if ($isReadonlyNumberArray(parameters.setIntegerOrClassProperty)) {
+    } else if (typeof parameters.setIntegerOrClassProperty === "object") {
       this.setIntegerOrClassProperty = parameters.setIntegerOrClassProperty;
     } else {
       this.setIntegerOrClassProperty =
@@ -2221,11 +2214,7 @@ export class UnionPropertiesClass {
 
     if (typeof parameters.setIntegerOrStringProperty === "undefined") {
       this.setIntegerOrStringProperty = [];
-    } else if ($isReadonlyObjectArray(parameters.setIntegerOrStringProperty)) {
-      this.setIntegerOrStringProperty = parameters.setIntegerOrStringProperty;
-    } else if ($isReadonlyNumberArray(parameters.setIntegerOrStringProperty)) {
-      this.setIntegerOrStringProperty = parameters.setIntegerOrStringProperty;
-    } else if ($isReadonlyStringArray(parameters.setIntegerOrStringProperty)) {
+    } else if (typeof parameters.setIntegerOrStringProperty === "object") {
       this.setIntegerOrStringProperty = parameters.setIntegerOrStringProperty;
     } else {
       this.setIntegerOrStringProperty =
