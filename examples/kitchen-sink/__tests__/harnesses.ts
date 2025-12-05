@@ -539,12 +539,24 @@ export const harnesses = {
   unionProperties1: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
       $identifier,
-      optionalIntegerOrClassProperty: 5,
-      optionalIntegerOrStringProperty: 5,
+      optionalClassOrIriOrStringProperty: {
+        type: "0-NonClass",
+        value: new kitchenSink.NonClass({
+          $identifier: dataFactory.namedNode("http://example.com/nonClass"),
+          nonClassProperty: "test",
+        }),
+      },
       optionalIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
-      requiredIntegerOrClassProperty: 5,
-      requiredIntegerOrStringProperty: 5,
+      optionalIriOrStringProperty: dataFactory.namedNode("http://example.com"),
+      requiredClassOrIriOrStringProperty: {
+        type: "0-NonClass",
+        value: new kitchenSink.NonClass({
+          $identifier: dataFactory.namedNode("http://example.com/nonClass"),
+          nonClassProperty: "test",
+        }),
+      },
       requiredIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
+      requiredIriOrStringProperty: dataFactory.namedNode("http://example.com"),
       // Don't specify the set properties to test undefined
     }),
     kitchenSink.UnionPropertiesClass,
@@ -552,29 +564,43 @@ export const harnesses = {
   unionProperties2Class: new ClassHarness(
     new kitchenSink.UnionPropertiesClass({
       $identifier,
-      optionalIntegerOrClassProperty: new kitchenSink.NonClass({
-        $identifier: dataFactory.namedNode("http://example.com/nonClass"),
-        nonClassProperty: "test",
-      }),
-      optionalIntegerOrStringProperty: "test",
+      optionalClassOrIriOrStringProperty: {
+        type: "1-(rdfjs.NamedNode)",
+        value: dataFactory.namedNode("http://example.com"),
+      },
       optionalIriOrLiteralProperty: dataFactory.literal("test"),
-      requiredIntegerOrClassProperty: new kitchenSink.NonClass({
-        $identifier: dataFactory.namedNode("http://example.com/nonClass"),
-        nonClassProperty: "test",
-      }),
-      requiredIntegerOrStringProperty: "test",
+      optionalIriOrStringProperty: "test",
+      requiredClassOrIriOrStringProperty: {
+        type: "2-string",
+        value: "test",
+      },
       requiredIriOrLiteralProperty: dataFactory.literal("test"),
-      setIntegerOrClassProperty: [
-        5,
-        new kitchenSink.NonClass({
-          $identifier: dataFactory.namedNode("http://example.com/nonClass"),
-          nonClassProperty: "test",
-        }),
+      requiredIriOrStringProperty: "test",
+      setClassOrIriOrStringProperty: [
+        // Opposite order
+        {
+          type: "2-string",
+          value: "test",
+        },
+        {
+          type: "1-(rdfjs.NamedNode)",
+          value: dataFactory.namedNode("http://example.com"),
+        },
+        {
+          type: "0-NonClass",
+          value: new kitchenSink.NonClass({
+            $identifier: dataFactory.namedNode("http://example.com/nonClass"),
+            nonClassProperty: "test",
+          }),
+        },
       ],
-      setIntegerOrStringProperty: [5, "test"],
       setIriOrLiteralProperty: [
-        dataFactory.namedNode("http://example.com"),
         dataFactory.literal("test"),
+        dataFactory.namedNode("http://example.com"),
+      ],
+      setIriOrStringProperty: [
+        "test",
+        dataFactory.namedNode("http://example.com"),
       ],
     }),
     kitchenSink.UnionPropertiesClass,

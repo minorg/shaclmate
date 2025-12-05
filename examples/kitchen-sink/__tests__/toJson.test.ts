@@ -7,45 +7,98 @@ describe("toJson", () => {
       const jsonObject = harnesses.unionProperties1.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionPropertiesClass");
-      expect(jsonObject.optionalIntegerOrClassProperty).toStrictEqual(5);
-      expect(jsonObject.optionalIntegerOrStringProperty).toStrictEqual(5);
+      expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
+        type: "0-NonClass",
+        value: {
+          $type: "NonClass",
+          "@id": "http://example.com/nonClass",
+          nonClassProperty: "test",
+        },
+      });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
         "@id": "http://example.com",
         termType: "NamedNode",
       });
-      expect(jsonObject.requiredIntegerOrClassProperty).toStrictEqual(5);
-      expect(jsonObject.requiredIntegerOrStringProperty).toStrictEqual(5);
+      expect(jsonObject.optionalIriOrStringProperty).toStrictEqual({
+        "@id": "http://example.com",
+      });
+      expect(jsonObject.requiredClassOrIriOrStringProperty).toStrictEqual({
+        type: "0-NonClass",
+        value: {
+          $type: "NonClass",
+          "@id": "http://example.com/nonClass",
+          nonClassProperty: "test",
+        },
+      });
       expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
         "@id": "http://example.com",
         termType: "NamedNode",
       });
-      expect(jsonObject.setIntegerOrClassProperty).toHaveLength(0);
-      expect(jsonObject.setIntegerOrStringProperty).toHaveLength(0);
+      expect(jsonObject.requiredIriOrStringProperty).toStrictEqual({
+        "@id": "http://example.com",
+      });
+      expect(jsonObject.setClassOrIriOrStringProperty).toHaveLength(0);
       expect(jsonObject.setIriOrLiteralProperty).toHaveLength(0);
+      expect(jsonObject.setIriOrStringProperty).toHaveLength(0);
     }
 
     {
       const jsonObject = harnesses.unionProperties2Class.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.optionalIntegerOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
+        type: "1-(rdfjs.NamedNode)",
+        value: {
+          "@id": "http://example.com",
+        },
+      });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
         termType: "Literal",
         "@value": "test",
       });
-      expect(jsonObject.requiredIntegerOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.optionalIriOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.requiredClassOrIriOrStringProperty).toStrictEqual({
+        type: "2-string",
+        value: "test",
+      });
       expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
         termType: "Literal",
         "@value": "test",
       });
-      expect(jsonObject.setIntegerOrStringProperty).toStrictEqual([5, "test"]);
+      expect(jsonObject.requiredIriOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.setClassOrIriOrStringProperty).toStrictEqual([
+        {
+          type: "2-string",
+          value: "test",
+        },
+        {
+          type: "1-(rdfjs.NamedNode)",
+          value: {
+            "@id": "http://example.com",
+          },
+        },
+        {
+          type: "0-NonClass",
+          value: {
+            $type: "NonClass",
+            "@id": "http://example.com/nonClass",
+            nonClassProperty: "test",
+          },
+        },
+      ]);
       expect(jsonObject.setIriOrLiteralProperty).toStrictEqual([
+        {
+          "@value": "test",
+          termType: "Literal",
+        },
         {
           "@id": "http://example.com",
           termType: "NamedNode",
         },
+      ]);
+      expect(jsonObject.setIriOrStringProperty).toStrictEqual([
+        "test",
         {
-          "@value": "test",
-          termType: "Literal",
+          "@id": "http://example.com",
         },
       ]);
     }

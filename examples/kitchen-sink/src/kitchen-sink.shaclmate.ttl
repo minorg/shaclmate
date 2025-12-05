@@ -638,27 +638,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :setLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalLazyToResolvedClassUnionProperty
     ], [
@@ -687,6 +666,27 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :setLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
     ] .
 
 :LazyPropertiesInterface
@@ -1124,22 +1124,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
         sh:maxCount 1 ;
-        sh:path :optionalClassOrIriOrString ;
+        sh:path :optionalClassOrIriOrStringProperty ;
         sh:xone ([
                 sh:node :NonClass
             ]
             [
-                sh:nodeKind sh:IRI
-            ]
-            [
-                sh:datatype xsd:string
-            ]
-        )
-    ], [
-        rdfs:comment "Union that can be discriminated by typeof." ;
-        sh:maxCount 1 ;
-        sh:path :optionalIriOrStringProperty ;
-        sh:xone ([
                 sh:nodeKind sh:IRI
             ]
             [
@@ -1158,14 +1147,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
+        rdfs:comment "Union that can be discriminated by typeof." ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :requiredClassOrIriOrString ;
+        sh:path :optionalIriOrStringProperty ;
         sh:xone ([
-                sh:node :NonClass
-            ]
-            [
                 sh:nodeKind sh:IRI
             ]
             [
@@ -1173,11 +1158,14 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by typeof." ;
+        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredIriOrStringProperty ;
+        sh:path :requiredClassOrIriOrStringProperty ;
         sh:xone ([
+                sh:node :NonClass
+            ]
+            [
                 sh:nodeKind sh:IRI
             ]
             [
@@ -1197,12 +1185,11 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
-        sh:path :setClassOrIriOrString ;
+        rdfs:comment "Union that can be discriminated by typeof." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :requiredIriOrStringProperty ;
         sh:xone ([
-                sh:node :NonClass
-            ]
-            [
                 sh:nodeKind sh:IRI
             ]
             [
@@ -1210,9 +1197,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by typeof." ;
-        sh:path :setIriOrStringProperty ;
+        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
+        sh:path :setClassOrIriOrStringProperty ;
         sh:xone ([
+                sh:node :NonClass
+            ]
+            [
                 sh:nodeKind sh:IRI
             ]
             [
@@ -1227,6 +1217,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
             [
                 sh:nodeKind sh:Literal
+            ]
+        )
+    ], [
+        rdfs:comment "Union that can be discriminated by typeof." ;
+        sh:path :setIriOrStringProperty ;
+        sh:xone ([
+                sh:nodeKind sh:IRI
+            ]
+            [
+                sh:datatype xsd:string
             ]
         )
     ] .
