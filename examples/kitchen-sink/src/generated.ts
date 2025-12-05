@@ -2074,16 +2074,29 @@ export namespace UuidV4IriIdentifierClass {
   }
 }
 /**
- * Shape with sh:xone properties.
+ * Shape with sh:xone (union) properties. Combinations of discriminator type (synthetic, typeof, property) x cardinality.
  */
 export class UnionPropertiesClass {
   private _$identifier?: UnionPropertiesClass.$Identifier;
   readonly $type = "UnionPropertiesClass";
-  readonly optionalIntegerOrClassProperty: purify.Maybe<number | NonClass>;
-  readonly optionalIntegerOrStringProperty: purify.Maybe<number | string>;
+  /**
+   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   */
+  readonly optionalClassOrIriOrString: purify.Maybe<
+    | { type: "0-NonClass"; value: NonClass }
+    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+    | { type: "2-string"; value: string }
+  >;
+  /**
+   * Union that can be discriminated by a shared discriminator property (termType).
+   */
   readonly optionalIriOrLiteralProperty: purify.Maybe<
     rdfjs.NamedNode | rdfjs.Literal
   >;
+  /**
+   * Union that can be discriminated by typeof.
+   */
+  readonly optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
   readonly requiredIntegerOrClassProperty: number | NonClass;
   readonly requiredIntegerOrStringProperty: number | string;
   readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
@@ -2096,17 +2109,24 @@ export class UnionPropertiesClass {
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly optionalIntegerOrClassProperty?:
-      | NonClass
-      | number
-      | purify.Maybe<number | NonClass>;
-    readonly optionalIntegerOrStringProperty?:
-      | number
-      | purify.Maybe<number | string>
-      | string;
+    readonly optionalClassOrIriOrString?:
+      | (
+          | { type: "0-NonClass"; value: NonClass }
+          | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+          | { type: "2-string"; value: string }
+        )
+      | purify.Maybe<
+          | { type: "0-NonClass"; value: NonClass }
+          | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+          | { type: "2-string"; value: string }
+        >;
     readonly optionalIriOrLiteralProperty?:
       | (rdfjs.NamedNode | rdfjs.Literal)
       | purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>;
+    readonly optionalIriOrStringProperty?:
+      | rdfjs.NamedNode
+      | purify.Maybe<rdfjs.NamedNode | string>
+      | string;
     readonly requiredIntegerOrClassProperty: NonClass | number;
     readonly requiredIntegerOrStringProperty: number | string;
     readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
@@ -2126,44 +2146,17 @@ export class UnionPropertiesClass {
       this._$identifier = parameters.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.optionalIntegerOrClassProperty)) {
-      this.optionalIntegerOrClassProperty =
-        parameters.optionalIntegerOrClassProperty;
-    } else if (typeof parameters.optionalIntegerOrClassProperty === "number") {
-      this.optionalIntegerOrClassProperty = purify.Maybe.of(
-        parameters.optionalIntegerOrClassProperty,
+    if (purify.Maybe.isMaybe(parameters.optionalClassOrIriOrString)) {
+      this.optionalClassOrIriOrString = parameters.optionalClassOrIriOrString;
+    } else if (typeof parameters.optionalClassOrIriOrString === "object") {
+      this.optionalClassOrIriOrString = purify.Maybe.of(
+        parameters.optionalClassOrIriOrString,
       );
-    } else if (typeof parameters.optionalIntegerOrClassProperty === "object") {
-      this.optionalIntegerOrClassProperty = purify.Maybe.of(
-        parameters.optionalIntegerOrClassProperty,
-      );
-    } else if (
-      typeof parameters.optionalIntegerOrClassProperty === "undefined"
-    ) {
-      this.optionalIntegerOrClassProperty = purify.Maybe.empty();
+    } else if (typeof parameters.optionalClassOrIriOrString === "undefined") {
+      this.optionalClassOrIriOrString = purify.Maybe.empty();
     } else {
-      this.optionalIntegerOrClassProperty =
-        parameters.optionalIntegerOrClassProperty satisfies never;
-    }
-
-    if (purify.Maybe.isMaybe(parameters.optionalIntegerOrStringProperty)) {
-      this.optionalIntegerOrStringProperty =
-        parameters.optionalIntegerOrStringProperty;
-    } else if (typeof parameters.optionalIntegerOrStringProperty === "number") {
-      this.optionalIntegerOrStringProperty = purify.Maybe.of(
-        parameters.optionalIntegerOrStringProperty,
-      );
-    } else if (typeof parameters.optionalIntegerOrStringProperty === "string") {
-      this.optionalIntegerOrStringProperty = purify.Maybe.of(
-        parameters.optionalIntegerOrStringProperty,
-      );
-    } else if (
-      typeof parameters.optionalIntegerOrStringProperty === "undefined"
-    ) {
-      this.optionalIntegerOrStringProperty = purify.Maybe.empty();
-    } else {
-      this.optionalIntegerOrStringProperty =
-        parameters.optionalIntegerOrStringProperty satisfies never;
+      this.optionalClassOrIriOrString =
+        parameters.optionalClassOrIriOrString satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalIriOrLiteralProperty)) {
@@ -2178,6 +2171,23 @@ export class UnionPropertiesClass {
     } else {
       this.optionalIriOrLiteralProperty =
         parameters.optionalIriOrLiteralProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters.optionalIriOrStringProperty)) {
+      this.optionalIriOrStringProperty = parameters.optionalIriOrStringProperty;
+    } else if (typeof parameters.optionalIriOrStringProperty === "object") {
+      this.optionalIriOrStringProperty = purify.Maybe.of(
+        parameters.optionalIriOrStringProperty,
+      );
+    } else if (typeof parameters.optionalIriOrStringProperty === "string") {
+      this.optionalIriOrStringProperty = purify.Maybe.of(
+        parameters.optionalIriOrStringProperty,
+      );
+    } else if (typeof parameters.optionalIriOrStringProperty === "undefined") {
+      this.optionalIriOrStringProperty = purify.Maybe.empty();
+    } else {
+      this.optionalIriOrStringProperty =
+        parameters.optionalIriOrStringProperty satisfies never;
     }
 
     if (typeof parameters.requiredIntegerOrClassProperty === "number") {
@@ -2264,48 +2274,30 @@ export class UnionPropertiesClass {
           $maybeEquals(
             left,
             right,
-            (left: number | NonClass, right: number | NonClass) => {
-              if (typeof left === "number" && typeof right === "number") {
-                return $strictEquals(left, right);
+            (
+              left:
+                | { type: "0-NonClass"; value: NonClass }
+                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "2-string"; value: string },
+              right:
+                | { type: "0-NonClass"; value: NonClass }
+                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "2-string"; value: string },
+            ) => {
+              if (left.type === "0-NonClass" && right.type === "0-NonClass") {
+                return ((left, right) => left.$equals(right))(
+                  left.value,
+                  right.value,
+                );
               }
-              if (typeof left === "object" && typeof right === "object") {
-                return ((left, right) => left.$equals(right))(left, right);
+              if (
+                left.type === "1-(rdfjs.NamedNode)" &&
+                right.type === "1-(rdfjs.NamedNode)"
+              ) {
+                return $booleanEquals(left.value, right.value);
               }
-
-              return purify.Left({
-                left,
-                right,
-                propertyName: "type",
-                propertyValuesUnequal: {
-                  left: typeof left,
-                  right: typeof right,
-                  type: "BooleanEquals" as const,
-                },
-                type: "Property" as const,
-              });
-            },
-          ))(
-          this.optionalIntegerOrClassProperty,
-          other.optionalIntegerOrClassProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "optionalIntegerOrClassProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      )
-      .chain(() =>
-        ((left, right) =>
-          $maybeEquals(
-            left,
-            right,
-            (left: number | string, right: number | string) => {
-              if (typeof left === "number" && typeof right === "number") {
-                return $strictEquals(left, right);
-              }
-              if (typeof left === "string" && typeof right === "string") {
-                return $strictEquals(left, right);
+              if (left.type === "2-string" && right.type === "2-string") {
+                return $strictEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -2321,12 +2313,12 @@ export class UnionPropertiesClass {
               });
             },
           ))(
-          this.optionalIntegerOrStringProperty,
-          other.optionalIntegerOrStringProperty,
+          this.optionalClassOrIriOrString,
+          other.optionalClassOrIriOrString,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "optionalIntegerOrStringProperty",
+          propertyName: "optionalClassOrIriOrString",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2369,6 +2361,45 @@ export class UnionPropertiesClass {
           left: this,
           right: other,
           propertyName: "optionalIriOrLiteralProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left: rdfjs.NamedNode | string,
+              right: rdfjs.NamedNode | string,
+            ) => {
+              if (typeof left === "object" && typeof right === "object") {
+                return $booleanEquals(left, right);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(
+          this.optionalIriOrStringProperty,
+          other.optionalIriOrStringProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "optionalIriOrStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2601,29 +2632,19 @@ export class UnionPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.optionalIntegerOrClassProperty.ifJust((value0) => {
-      switch (typeof value0) {
-        case "number": {
-          _hasher.update(value0.toString());
+    this.optionalClassOrIriOrString.ifJust((value0) => {
+      switch (value0.type) {
+        case "0-NonClass": {
+          value0.value.$hash(_hasher);
           break;
         }
-        case "object": {
-          value0.$hash(_hasher);
+        case "1-(rdfjs.NamedNode)": {
+          _hasher.update(value0.value.termType);
+          _hasher.update(value0.value.value);
           break;
         }
-        default:
-          value0 satisfies never;
-          throw new Error("unrecognized type");
-      }
-    });
-    this.optionalIntegerOrStringProperty.ifJust((value0) => {
-      switch (typeof value0) {
-        case "number": {
-          _hasher.update(value0.toString());
-          break;
-        }
-        case "string": {
-          _hasher.update(value0);
+        case "2-string": {
+          _hasher.update(value0.value);
           break;
         }
         default:
@@ -2643,6 +2664,22 @@ export class UnionPropertiesClass {
           _hasher.update(value0.language);
           _hasher.update(value0.termType);
           _hasher.update(value0.value);
+          break;
+        }
+        default:
+          value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    this.optionalIriOrStringProperty.ifJust((value0) => {
+      switch (typeof value0) {
+        case "object": {
+          _hasher.update(value0.termType);
+          _hasher.update(value0.value);
+          break;
+        }
+        case "string": {
+          _hasher.update(value0);
           break;
         }
         default:
@@ -2759,11 +2796,17 @@ export class UnionPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        optionalIntegerOrClassProperty: this.optionalIntegerOrClassProperty
-          .map((item) => (typeof item === "object" ? item.$toJson() : item))
-          .extract(),
-        optionalIntegerOrStringProperty: this.optionalIntegerOrStringProperty
-          .map((item) => item)
+        optionalClassOrIriOrString: this.optionalClassOrIriOrString
+          .map((item) =>
+            item.type === "2-string"
+              ? { type: "2-string" as const, value: item.value }
+              : item.type === "1-(rdfjs.NamedNode)"
+                ? {
+                    type: "1-(rdfjs.NamedNode)" as const,
+                    value: { "@id": item.value.value },
+                  }
+                : { type: "0-NonClass" as const, value: item.value.$toJson() },
+          )
           .extract(),
         optionalIriOrLiteralProperty: this.optionalIriOrLiteralProperty
           .map((item) =>
@@ -2780,6 +2823,11 @@ export class UnionPropertiesClass {
                   "@value": item.value,
                 }
               : { "@id": item.value, termType: item.termType as "NamedNode" },
+          )
+          .extract(),
+        optionalIriOrStringProperty: this.optionalIriOrStringProperty
+          .map((item) =>
+            typeof item === "string" ? item : { "@id": item.value },
           )
           .extract(),
         requiredIntegerOrClassProperty:
@@ -2848,27 +2896,31 @@ export class UnionPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      UnionPropertiesClass.$properties.optionalIntegerOrClassProperty[
-        "identifier"
-      ],
-      ...this.optionalIntegerOrClassProperty.toList().flatMap((value) =>
-        typeof value === "object"
-          ? ([
-              value.$toRdf({
-                mutateGraph: mutateGraph,
-                resourceSet: resourceSet,
-              }).identifier,
-            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-          : ([value] as readonly Parameters<
+      UnionPropertiesClass.$properties.optionalClassOrIriOrString["identifier"],
+      ...this.optionalClassOrIriOrString.toList().flatMap((value) =>
+        value.type === "2-string"
+          ? ([value.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
-            >[1][]),
+            >[1][])
+          : value.type === "1-(rdfjs.NamedNode)"
+            ? ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                value.value.$toRdf({
+                  mutateGraph: mutateGraph,
+                  resourceSet: resourceSet,
+                }).identifier,
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
       ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.optionalIntegerOrStringProperty[
+      UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
         "identifier"
       ],
-      ...this.optionalIntegerOrStringProperty
+      ...this.optionalIriOrLiteralProperty
         .toList()
         .flatMap(
           (value) =>
@@ -2878,10 +2930,10 @@ export class UnionPropertiesClass {
         ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
+      UnionPropertiesClass.$properties.optionalIriOrStringProperty[
         "identifier"
       ],
-      ...this.optionalIriOrLiteralProperty
+      ...this.optionalIriOrStringProperty
         .toList()
         .flatMap(
           (value) =>
@@ -3020,8 +3072,10 @@ export namespace UnionPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "UnionPropertiesClass";
-    readonly optionalIntegerOrClassProperty?: number | NonClass.$Json;
-    readonly optionalIntegerOrStringProperty?: number | string;
+    readonly optionalClassOrIriOrString?:
+      | { type: "0-NonClass"; value: NonClass.$Json }
+      | { type: "1-(rdfjs.NamedNode)"; value: { readonly "@id": string } }
+      | { type: "2-string"; value: string };
     readonly optionalIriOrLiteralProperty?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
@@ -3030,6 +3084,7 @@ export namespace UnionPropertiesClass {
           readonly "@type"?: string;
           readonly "@value": string;
         };
+    readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
     readonly requiredIntegerOrClassProperty: number | NonClass.$Json;
     readonly requiredIntegerOrStringProperty: number | string;
     readonly requiredIriOrLiteralProperty:
@@ -3078,15 +3133,15 @@ export namespace UnionPropertiesClass {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/optionalIntegerOrClassProperty`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/optionalIntegerOrStringProperty`,
+          scope: `${scopePrefix}/properties/optionalClassOrIriOrString`,
           type: "Control",
         },
         {
           scope: `${scopePrefix}/properties/optionalIriOrLiteralProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/optionalIriOrStringProperty`,
           type: "Control",
         },
         {
@@ -3123,12 +3178,22 @@ export namespace UnionPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("UnionPropertiesClass"),
-      optionalIntegerOrClassProperty: zod
-        .union([zod.number(), NonClass.$jsonZodSchema()])
-        .optional(),
-      optionalIntegerOrStringProperty: zod
-        .union([zod.number(), zod.string()])
-        .optional(),
+      optionalClassOrIriOrString: zod
+        .discriminatedUnion("type", [
+          zod.object({
+            type: zod.literal("0-NonClass"),
+            value: NonClass.$jsonZodSchema(),
+          }),
+          zod.object({
+            type: zod.literal("1-(rdfjs.NamedNode)"),
+            value: zod.object({ "@id": zod.string().min(1) }),
+          }),
+          zod.object({ type: zod.literal("2-string"), value: zod.string() }),
+        ])
+        .optional()
+        .describe(
+          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+        ),
       optionalIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
           zod.object({
@@ -3142,7 +3207,14 @@ export namespace UnionPropertiesClass {
             "@value": zod.string(),
           }),
         ])
-        .optional(),
+        .optional()
+        .describe(
+          "Union that can be discriminated by a shared discriminator property (termType).",
+        ),
+      optionalIriOrStringProperty: zod
+        .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
+        .optional()
+        .describe("Union that can be discriminated by typeof."),
       requiredIntegerOrClassProperty: zod.union([
         zod.number(),
         NonClass.$jsonZodSchema(),
@@ -3187,19 +3259,19 @@ export namespace UnionPropertiesClass {
   }
 
   export const $properties = {
-    optionalIntegerOrClassProperty: {
+    optionalClassOrIriOrString: {
       identifier: dataFactory.namedNode(
-        "http://example.com/optionalIntegerOrClassProperty",
-      ),
-    },
-    optionalIntegerOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalIntegerOrStringProperty",
+        "http://example.com/optionalClassOrIriOrString",
       ),
     },
     optionalIriOrLiteralProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/optionalIriOrLiteralProperty",
+      ),
+    },
+    optionalIriOrStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/optionalIriOrStringProperty",
       ),
     },
     requiredIntegerOrClassProperty: {
@@ -3238,11 +3310,15 @@ export namespace UnionPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalIntegerOrClassProperty: purify.Maybe<number | NonClass>;
-      optionalIntegerOrStringProperty: purify.Maybe<number | string>;
+      optionalClassOrIriOrString: purify.Maybe<
+        | { type: "0-NonClass"; value: NonClass }
+        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+        | { type: "2-string"; value: string }
+      >;
       optionalIriOrLiteralProperty: purify.Maybe<
         rdfjs.NamedNode | rdfjs.Literal
       >;
+      optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
       requiredIntegerOrClassProperty: number | NonClass;
       requiredIntegerOrStringProperty: number | string;
       requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
@@ -3260,13 +3336,20 @@ export namespace UnionPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const optionalIntegerOrClassProperty = purify.Maybe.fromNullable(
-      $jsonObject["optionalIntegerOrClassProperty"],
+    const optionalClassOrIriOrString = purify.Maybe.fromNullable(
+      $jsonObject["optionalClassOrIriOrString"],
     ).map((item) =>
-      typeof item === "object" ? NonClass.$fromJson(item).unsafeCoerce() : item,
-    );
-    const optionalIntegerOrStringProperty = purify.Maybe.fromNullable(
-      $jsonObject["optionalIntegerOrStringProperty"],
+      item.type === "2-string"
+        ? { type: "2-string" as const, value: item.value }
+        : item.type === "1-(rdfjs.NamedNode)"
+          ? {
+              type: "1-(rdfjs.NamedNode)" as const,
+              value: dataFactory.namedNode(item.value["@id"]),
+            }
+          : {
+              type: "0-NonClass" as const,
+              value: NonClass.$fromJson(item.value).unsafeCoerce(),
+            },
     );
     const optionalIriOrLiteralProperty = purify.Maybe.fromNullable(
       $jsonObject["optionalIriOrLiteralProperty"],
@@ -3281,6 +3364,11 @@ export namespace UnionPropertiesClass {
                 : undefined,
           )
         : dataFactory.namedNode(item["@id"]),
+    );
+    const optionalIriOrStringProperty = purify.Maybe.fromNullable(
+      $jsonObject["optionalIriOrStringProperty"],
+    ).map((item) =>
+      typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
     );
     const requiredIntegerOrClassProperty =
       typeof $jsonObject["requiredIntegerOrClassProperty"] === "object"
@@ -3329,9 +3417,9 @@ export namespace UnionPropertiesClass {
     );
     return purify.Either.of({
       $identifier,
-      optionalIntegerOrClassProperty,
-      optionalIntegerOrStringProperty,
+      optionalClassOrIriOrString,
       optionalIriOrLiteralProperty,
+      optionalIriOrStringProperty,
       requiredIntegerOrClassProperty,
       requiredIntegerOrStringProperty,
       requiredIriOrLiteralProperty,
@@ -3358,11 +3446,15 @@ export namespace UnionPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalIntegerOrClassProperty: purify.Maybe<number | NonClass>;
-      optionalIntegerOrStringProperty: purify.Maybe<number | string>;
+      optionalClassOrIriOrString: purify.Maybe<
+        | { type: "0-NonClass"; value: NonClass }
+        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+        | { type: "2-string"; value: string }
+      >;
       optionalIriOrLiteralProperty: purify.Maybe<
         rdfjs.NamedNode | rdfjs.Literal
       >;
+      optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
       requiredIntegerOrClassProperty: number | NonClass;
       requiredIntegerOrStringProperty: number | string;
       requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
@@ -3372,93 +3464,74 @@ export namespace UnionPropertiesClass {
     }
   > {
     const $identifier: UnionPropertiesClass.$Identifier = $resource.identifier;
-    const _optionalIntegerOrClassPropertyEither: purify.Either<
+    const _optionalClassOrIriOrStringEither: purify.Either<
       Error,
-      purify.Maybe<number | NonClass>
+      purify.Maybe<
+        | { type: "0-NonClass"; value: NonClass }
+        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+        | { type: "2-string"; value: string }
+      >
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
-        $properties.optionalIntegerOrClassProperty["identifier"],
-        { unique: true },
-      ),
+      $resource.values($properties.optionalClassOrIriOrString["identifier"], {
+        unique: true,
+      }),
     )
       .chain((values) =>
         values.chainMap((value) => {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
-            valueAsValues.chain((values) =>
-              values.chainMap((value) => value.toNumber()),
-            ) as purify.Either<
+            valueAsValues
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toResource().chain((resource) =>
+                    NonClass.$fromRdf(resource, {
+                      ...$context,
+                      objectSet: $objectSet,
+                      preferredLanguages: $preferredLanguages,
+                    }),
+                  ),
+                ),
+              )
+              .map(
+                (value) =>
+                  ({ type: "0-NonClass" as const, value }) as
+                    | { type: "0-NonClass"; value: NonClass }
+                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "2-string"; value: string },
+              ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<number | NonClass>
+              rdfjsResource.Resource.Values<
+                | { type: "0-NonClass"; value: NonClass }
+                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "2-string"; value: string }
+              >
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) =>
-                    value.toResource().chain((resource) =>
-                      NonClass.$fromRdf(resource, {
-                        ...$context,
-                        objectSet: $objectSet,
-                        preferredLanguages: $preferredLanguages,
-                      }),
-                    ),
-                  ),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => values.chainMap((value) => value.toIri()))
+                  .map(
+                    (value) =>
+                      ({ type: "1-(rdfjs.NamedNode)" as const, value }) as
+                        | { type: "0-NonClass"; value: NonClass }
+                        | {
+                            type: "1-(rdfjs.NamedNode)";
+                            value: rdfjs.NamedNode;
+                          }
+                        | { type: "2-string"; value: string },
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<number | NonClass>
+                  rdfjsResource.Resource.Values<
+                    | { type: "0-NonClass"; value: NonClass }
+                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "2-string"; value: string }
+                  >
                 >,
             )
-            .chain((values) => values.head());
-        }),
-      )
-      .map((values) =>
-        values.length > 0
-          ? values.map((value) => purify.Maybe.of(value))
-          : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<number | NonClass>
-            >({
-              focusResource: $resource,
-              predicate:
-                UnionPropertiesClass.$properties.optionalIntegerOrClassProperty[
-                  "identifier"
-                ],
-              value: purify.Maybe.empty(),
-            }),
-      )
-      .chain((values) => values.head());
-    if (_optionalIntegerOrClassPropertyEither.isLeft()) {
-      return _optionalIntegerOrClassPropertyEither;
-    }
-
-    const optionalIntegerOrClassProperty =
-      _optionalIntegerOrClassPropertyEither.unsafeCoerce();
-    const _optionalIntegerOrStringPropertyEither: purify.Either<
-      Error,
-      purify.Maybe<number | string>
-    > = purify.Either.of<
-      Error,
-      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-    >(
-      $resource.values(
-        $properties.optionalIntegerOrStringProperty["identifier"],
-        { unique: true },
-      ),
-    )
-      .chain((values) =>
-        values.chainMap((value) => {
-          const valueAsValues = purify.Either.of(value.toValues());
-          return (
-            valueAsValues.chain((values) =>
-              values.chainMap((value) => value.toNumber()),
-            ) as purify.Either<
-              Error,
-              rdfjsResource.Resource.Values<number | string>
-            >
-          )
             .altLazy(
               () =>
                 valueAsValues
@@ -3512,7 +3585,7 @@ export namespace UnionPropertiesClass {
                             focusResource: $resource,
                             predicate:
                               UnionPropertiesClass.$properties
-                                .optionalIntegerOrStringProperty["identifier"],
+                                .optionalClassOrIriOrString["identifier"],
                             term: literalValue,
                           }),
                       ),
@@ -3520,9 +3593,23 @@ export namespace UnionPropertiesClass {
                   })
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
+                  )
+                  .map(
+                    (value) =>
+                      ({ type: "2-string" as const, value }) as
+                        | { type: "0-NonClass"; value: NonClass }
+                        | {
+                            type: "1-(rdfjs.NamedNode)";
+                            value: rdfjs.NamedNode;
+                          }
+                        | { type: "2-string"; value: string },
                   ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<number | string>
+                  rdfjsResource.Resource.Values<
+                    | { type: "0-NonClass"; value: NonClass }
+                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "2-string"; value: string }
+                  >
                 >,
             )
             .chain((values) => values.head());
@@ -3532,22 +3619,27 @@ export namespace UnionPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<number | string>
+              purify.Maybe<
+                | { type: "0-NonClass"; value: NonClass }
+                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "2-string"; value: string }
+              >
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties
-                  .optionalIntegerOrStringProperty["identifier"],
+                UnionPropertiesClass.$properties.optionalClassOrIriOrString[
+                  "identifier"
+                ],
               value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
-    if (_optionalIntegerOrStringPropertyEither.isLeft()) {
-      return _optionalIntegerOrStringPropertyEither;
+    if (_optionalClassOrIriOrStringEither.isLeft()) {
+      return _optionalClassOrIriOrStringEither;
     }
 
-    const optionalIntegerOrStringProperty =
-      _optionalIntegerOrStringPropertyEither.unsafeCoerce();
+    const optionalClassOrIriOrString =
+      _optionalClassOrIriOrStringEither.unsafeCoerce();
     const _optionalIriOrLiteralPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
@@ -3660,6 +3752,118 @@ export namespace UnionPropertiesClass {
 
     const optionalIriOrLiteralProperty =
       _optionalIriOrLiteralPropertyEither.unsafeCoerce();
+    const _optionalIriOrStringPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<rdfjs.NamedNode | string>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.optionalIriOrStringProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toIri()),
+            ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .optionalIriOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.NamedNode | string>
+            >({
+              focusResource: $resource,
+              predicate:
+                UnionPropertiesClass.$properties.optionalIriOrStringProperty[
+                  "identifier"
+                ],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_optionalIriOrStringPropertyEither.isLeft()) {
+      return _optionalIriOrStringPropertyEither;
+    }
+
+    const optionalIriOrStringProperty =
+      _optionalIriOrStringPropertyEither.unsafeCoerce();
     const _requiredIntegerOrClassPropertyEither: purify.Either<
       Error,
       number | NonClass
@@ -4187,9 +4391,9 @@ export namespace UnionPropertiesClass {
       _setIriOrLiteralPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      optionalIntegerOrClassProperty,
-      optionalIntegerOrStringProperty,
+      optionalClassOrIriOrString,
       optionalIriOrLiteralProperty,
+      optionalIriOrStringProperty,
       requiredIntegerOrClassProperty,
       requiredIntegerOrStringProperty,
       requiredIriOrLiteralProperty,
@@ -4260,10 +4464,10 @@ export namespace UnionPropertiesClass {
         : "unionPropertiesClass");
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}OptionalIntegerOrClassProperty`,
+        `${variablePrefix}OptionalClassOrIriOrString`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.optionalIntegerOrClassProperty[
+        UnionPropertiesClass.$properties.optionalClassOrIriOrString[
           "identifier"
         ],
       subject,
@@ -4271,27 +4475,27 @@ export namespace UnionPropertiesClass {
     triples.push(
       ...NonClass.$sparqlConstructTemplateTriples({
         subject: dataFactory.variable!(
-          `${variablePrefix}OptionalIntegerOrClassProperty`,
+          `${variablePrefix}OptionalClassOrIriOrString`,
         ),
-        variablePrefix: `${variablePrefix}OptionalIntegerOrClassProperty`,
+        variablePrefix: `${variablePrefix}OptionalClassOrIriOrString`,
       }),
     );
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}OptionalIntegerOrStringProperty`,
-      ),
-      predicate:
-        UnionPropertiesClass.$properties.optionalIntegerOrStringProperty[
-          "identifier"
-        ],
-      subject,
-    });
     triples.push({
       object: dataFactory.variable!(
         `${variablePrefix}OptionalIriOrLiteralProperty`,
       ),
       predicate:
         UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}OptionalIriOrStringProperty`,
+      ),
+      predicate:
+        UnionPropertiesClass.$properties.optionalIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -4427,30 +4631,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}OptionalIntegerOrClassProperty`,
+                          `${variablePrefix}OptionalClassOrIriOrString`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .optionalIntegerOrClassProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                ],
-                type: "group",
-              },
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}OptionalIntegerOrClassProperty`,
-                        ),
-                        predicate:
-                          UnionPropertiesClass.$properties
-                            .optionalIntegerOrClassProperty["identifier"],
+                            .optionalClassOrIriOrString["identifier"],
                         subject,
                       },
                     ],
@@ -4459,34 +4644,24 @@ export namespace UnionPropertiesClass {
                   ...NonClass.$sparqlWherePatterns({
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
-                      `${variablePrefix}OptionalIntegerOrClassProperty`,
+                      `${variablePrefix}OptionalClassOrIriOrString`,
                     ),
-                    variablePrefix: `${variablePrefix}OptionalIntegerOrClassProperty`,
+                    variablePrefix: `${variablePrefix}OptionalClassOrIriOrString`,
                   }),
                 ],
                 type: "group",
               },
-            ],
-            type: "union",
-          },
-        ],
-        type: "optional",
-      },
-      {
-        patterns: [
-          {
-            patterns: [
               {
                 patterns: [
                   {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}OptionalIntegerOrStringProperty`,
+                          `${variablePrefix}OptionalClassOrIriOrString`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .optionalIntegerOrStringProperty["identifier"],
+                            .optionalClassOrIriOrString["identifier"],
                         subject,
                       },
                     ],
@@ -4501,11 +4676,11 @@ export namespace UnionPropertiesClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}OptionalIntegerOrStringProperty`,
+                          `${variablePrefix}OptionalClassOrIriOrString`,
                         ),
                         predicate:
                           UnionPropertiesClass.$properties
-                            .optionalIntegerOrStringProperty["identifier"],
+                            .optionalClassOrIriOrString["identifier"],
                         subject,
                       },
                     ],
@@ -4523,7 +4698,7 @@ export namespace UnionPropertiesClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${variablePrefix}OptionalIntegerOrStringProperty`,
+                                `${variablePrefix}OptionalClassOrIriOrString`,
                               ),
                             ],
                           },
@@ -4608,6 +4783,90 @@ export namespace UnionPropertiesClass {
                             args: [
                               dataFactory.variable!(
                                 `${variablePrefix}OptionalIriOrLiteralProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}OptionalIriOrStringProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .optionalIriOrStringProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}OptionalIriOrStringProperty`,
+                        ),
+                        predicate:
+                          UnionPropertiesClass.$properties
+                            .optionalIriOrStringProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}OptionalIriOrStringProperty`,
                               ),
                             ],
                           },

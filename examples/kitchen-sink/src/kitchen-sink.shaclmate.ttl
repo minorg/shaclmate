@@ -638,6 +638,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
+        sh:minCount 0 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :setLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :requiredLazyToResolvedClassProperty
@@ -677,16 +687,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalPartialClassUnionToResolvedClassUnionProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 0 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :setLazyToResolvedClassProperty
     ] .
 
 :LazyPropertiesInterface
@@ -1120,28 +1120,34 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :UnionPropertiesClass
     a sh:NodeShape ;
-    rdfs:comment "Shape with sh:xone properties." ;
+    rdfs:comment "Shape with sh:xone (union) properties. Combinations of discriminator type (synthetic, typeof, property) x cardinality." ;
     sh:property [
+        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
         sh:maxCount 1 ;
-        sh:path :optionalIntegerOrClassProperty ;
+        sh:path :optionalClassOrIriOrString ;
         sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
                 sh:node :NonClass
             ]
-        )
-    ], [
-        sh:maxCount 1 ;
-        sh:path :optionalIntegerOrStringProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
+            [
+                sh:nodeKind sh:IRI
             ]
             [
                 sh:datatype xsd:string
             ]
         )
     ], [
+        rdfs:comment "Union that can be discriminated by typeof." ;
+        sh:maxCount 1 ;
+        sh:path :optionalIriOrStringProperty ;
+        sh:xone ([
+                sh:nodeKind sh:IRI
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Union that can be discriminated by a shared discriminator property (termType)." ;
         sh:maxCount 1 ;
         sh:path :optionalIriOrLiteralProperty ;
         sh:xone ([
@@ -1152,28 +1158,34 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
+        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredIntegerOrClassProperty ;
+        sh:path :requiredClassOrIriOrString ;
         sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
                 sh:node :NonClass
             ]
-        )
-    ], [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :requiredIntegerOrStringProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
+            [
+                sh:nodeKind sh:IRI
             ]
             [
                 sh:datatype xsd:string
             ]
         )
     ], [
+        rdfs:comment "Union that can be discriminated by typeof." ;
+        sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:path :requiredIriOrStringProperty ;
+        sh:xone ([
+                sh:nodeKind sh:IRI
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Union that can be discriminated by a shared discriminator property (termType)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredIriOrLiteralProperty ;
@@ -1185,24 +1197,30 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        sh:path :setIntegerOrClassProperty ;
+        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
+        sh:path :setClassOrIriOrString ;
         sh:xone ([
-                sh:datatype xsd:integer
-            ]
-            [
                 sh:node :NonClass
             ]
-        )
-    ], [
-        sh:path :setIntegerOrStringProperty ;
-        sh:xone ([
-                sh:datatype xsd:integer
+            [
+                sh:nodeKind sh:IRI
             ]
             [
                 sh:datatype xsd:string
             ]
         )
     ], [
+        rdfs:comment "Union that can be discriminated by typeof." ;
+        sh:path :setIriOrStringProperty ;
+        sh:xone ([
+                sh:nodeKind sh:IRI
+            ]
+            [
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        rdfs:comment "Union that can be discriminated by a shared discriminator property (termType)." ;
         sh:path :setIriOrLiteralProperty ;
         sh:xone ([
                 sh:nodeKind sh:IRI
