@@ -3375,46 +3375,45 @@ export namespace UnionPropertiesClass {
     const _optionalIntegerOrClassPropertyEither: purify.Either<
       Error,
       purify.Maybe<number | NonClass>
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values(
-          $properties.optionalIntegerOrClassProperty["identifier"],
-          { unique: true },
-        ),
-      ).chain((values) =>
-        values.chainMap((value) => value.toNumber()),
-      ) as purify.Either<
-        Error,
-        rdfjsResource.Resource.Values<number | NonClass>
-      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values(
+        $properties.optionalIntegerOrClassProperty["identifier"],
+        { unique: true },
+      ),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.optionalIntegerOrClassProperty["identifier"],
-              { unique: true },
-            ),
-          ).chain((values) =>
-            values.chainMap((value) =>
-              value.toResource().chain((resource) =>
-                NonClass.$fromRdf(resource, {
-                  ...$context,
-                  objectSet: $objectSet,
-                  preferredLanguages: $preferredLanguages,
-                }),
-              ),
-            ),
-          ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<number | NonClass>
-          >,
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toNumber()),
+            ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<number | NonClass>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues.chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      NonClass.$fromRdf(resource, {
+                        ...$context,
+                        objectSet: $objectSet,
+                        preferredLanguages: $preferredLanguages,
+                      }),
+                    ),
+                  ),
+                ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<number | NonClass>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .map((values) =>
         values.length > 0
@@ -3440,87 +3439,94 @@ export namespace UnionPropertiesClass {
     const _optionalIntegerOrStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<number | string>
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values(
-          $properties.optionalIntegerOrStringProperty["identifier"],
-          { unique: true },
-        ),
-      ).chain((values) =>
-        values.chainMap((value) => value.toNumber()),
-      ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values(
+        $properties.optionalIntegerOrStringProperty["identifier"],
+        { unique: true },
+      ),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.optionalIntegerOrStringProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(values);
-              }
-
-              const literalValuesEither = values.chainMap((value) =>
-                value.toLiteral(),
-              );
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-              // Within a preferredLanguage the literals may be in any order.
-              let filteredLiteralValues:
-                | rdfjsResource.Resource.Values<rdfjs.Literal>
-                | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(
-                    (value) => value.language === preferredLanguage,
-                  );
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(
-                    ...literalValues
-                      .filter((value) => value.language === preferredLanguage)
-                      .toArray(),
-                  );
-                }
-              }
-
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                filteredLiteralValues!.map(
-                  (literalValue) =>
-                    new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
-                      predicate:
-                        UnionPropertiesClass.$properties
-                          .optionalIntegerOrStringProperty["identifier"],
-                      term: literalValue,
-                    }),
-                ),
-              );
-            })
-            .chain((values) =>
-              values.chainMap((value) => value.toString()),
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toNumber()),
             ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<number | string>
-          >,
+              Error,
+              rdfjsResource.Resource.Values<number | string>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .optionalIntegerOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<number | string>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .map((values) =>
         values.length > 0
@@ -3545,90 +3551,93 @@ export namespace UnionPropertiesClass {
     const _optionalIriOrLiteralPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values(
-          $properties.optionalIriOrLiteralProperty["identifier"],
-          { unique: true },
-        ),
-      ).chain((values) =>
-        values.chainMap((value) => value.toIri()),
-      ) as purify.Either<
-        Error,
-        rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
-      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.optionalIriOrLiteralProperty["identifier"], {
+        unique: true,
+      }),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.optionalIriOrLiteralProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(values);
-              }
-
-              const literalValuesEither = values.chainMap((value) =>
-                value.toLiteral(),
-              );
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-              // Within a preferredLanguage the literals may be in any order.
-              let filteredLiteralValues:
-                | rdfjsResource.Resource.Values<rdfjs.Literal>
-                | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(
-                    (value) => value.language === preferredLanguage,
-                  );
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(
-                    ...literalValues
-                      .filter((value) => value.language === preferredLanguage)
-                      .toArray(),
-                  );
-                }
-              }
-
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                filteredLiteralValues!.map(
-                  (literalValue) =>
-                    new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
-                      predicate:
-                        UnionPropertiesClass.$properties
-                          .optionalIriOrLiteralProperty["identifier"],
-                      term: literalValue,
-                    }),
-                ),
-              );
-            })
-            .chain((values) =>
-              values.chainMap((value) => value.toLiteral()),
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toIri()),
             ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
-          >,
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .optionalIriOrLiteralProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .map((values) =>
         values.length > 0
@@ -3654,46 +3663,45 @@ export namespace UnionPropertiesClass {
     const _requiredIntegerOrClassPropertyEither: purify.Either<
       Error,
       number | NonClass
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values(
-          $properties.requiredIntegerOrClassProperty["identifier"],
-          { unique: true },
-        ),
-      ).chain((values) =>
-        values.chainMap((value) => value.toNumber()),
-      ) as purify.Either<
-        Error,
-        rdfjsResource.Resource.Values<number | NonClass>
-      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values(
+        $properties.requiredIntegerOrClassProperty["identifier"],
+        { unique: true },
+      ),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.requiredIntegerOrClassProperty["identifier"],
-              { unique: true },
-            ),
-          ).chain((values) =>
-            values.chainMap((value) =>
-              value.toResource().chain((resource) =>
-                NonClass.$fromRdf(resource, {
-                  ...$context,
-                  objectSet: $objectSet,
-                  preferredLanguages: $preferredLanguages,
-                }),
-              ),
-            ),
-          ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<number | NonClass>
-          >,
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toNumber()),
+            ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<number | NonClass>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues.chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      NonClass.$fromRdf(resource, {
+                        ...$context,
+                        objectSet: $objectSet,
+                        preferredLanguages: $preferredLanguages,
+                      }),
+                    ),
+                  ),
+                ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<number | NonClass>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .chain((values) => values.head());
     if (_requiredIntegerOrClassPropertyEither.isLeft()) {
@@ -3705,87 +3713,94 @@ export namespace UnionPropertiesClass {
     const _requiredIntegerOrStringPropertyEither: purify.Either<
       Error,
       number | string
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values(
-          $properties.requiredIntegerOrStringProperty["identifier"],
-          { unique: true },
-        ),
-      ).chain((values) =>
-        values.chainMap((value) => value.toNumber()),
-      ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values(
+        $properties.requiredIntegerOrStringProperty["identifier"],
+        { unique: true },
+      ),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.requiredIntegerOrStringProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(values);
-              }
-
-              const literalValuesEither = values.chainMap((value) =>
-                value.toLiteral(),
-              );
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-              // Within a preferredLanguage the literals may be in any order.
-              let filteredLiteralValues:
-                | rdfjsResource.Resource.Values<rdfjs.Literal>
-                | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(
-                    (value) => value.language === preferredLanguage,
-                  );
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(
-                    ...literalValues
-                      .filter((value) => value.language === preferredLanguage)
-                      .toArray(),
-                  );
-                }
-              }
-
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                filteredLiteralValues!.map(
-                  (literalValue) =>
-                    new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
-                      predicate:
-                        UnionPropertiesClass.$properties
-                          .requiredIntegerOrStringProperty["identifier"],
-                      term: literalValue,
-                    }),
-                ),
-              );
-            })
-            .chain((values) =>
-              values.chainMap((value) => value.toString()),
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toNumber()),
             ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<number | string>
-          >,
+              Error,
+              rdfjsResource.Resource.Values<number | string>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .requiredIntegerOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<number | string>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .chain((values) => values.head());
     if (_requiredIntegerOrStringPropertyEither.isLeft()) {
@@ -3797,90 +3812,93 @@ export namespace UnionPropertiesClass {
     const _requiredIriOrLiteralPropertyEither: purify.Either<
       Error,
       rdfjs.NamedNode | rdfjs.Literal
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values(
-          $properties.requiredIriOrLiteralProperty["identifier"],
-          { unique: true },
-        ),
-      ).chain((values) =>
-        values.chainMap((value) => value.toIri()),
-      ) as purify.Either<
-        Error,
-        rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
-      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.requiredIriOrLiteralProperty["identifier"], {
+        unique: true,
+      }),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.requiredIriOrLiteralProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(values);
-              }
-
-              const literalValuesEither = values.chainMap((value) =>
-                value.toLiteral(),
-              );
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-              // Within a preferredLanguage the literals may be in any order.
-              let filteredLiteralValues:
-                | rdfjsResource.Resource.Values<rdfjs.Literal>
-                | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(
-                    (value) => value.language === preferredLanguage,
-                  );
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(
-                    ...literalValues
-                      .filter((value) => value.language === preferredLanguage)
-                      .toArray(),
-                  );
-                }
-              }
-
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                filteredLiteralValues!.map(
-                  (literalValue) =>
-                    new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
-                      predicate:
-                        UnionPropertiesClass.$properties
-                          .requiredIriOrLiteralProperty["identifier"],
-                      term: literalValue,
-                    }),
-                ),
-              );
-            })
-            .chain((values) =>
-              values.chainMap((value) => value.toLiteral()),
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toIri()),
             ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
-          >,
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .requiredIriOrLiteralProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .chain((values) => values.head());
     if (_requiredIriOrLiteralPropertyEither.isLeft()) {
@@ -3892,45 +3910,44 @@ export namespace UnionPropertiesClass {
     const _setIntegerOrClassPropertyEither: purify.Either<
       Error,
       readonly (number | NonClass)[]
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values($properties.setIntegerOrClassProperty["identifier"], {
-          unique: true,
-        }),
-      ).chain((values) =>
-        values.chainMap((value) => value.toNumber()),
-      ) as purify.Either<
-        Error,
-        rdfjsResource.Resource.Values<number | NonClass>
-      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.setIntegerOrClassProperty["identifier"], {
+        unique: true,
+      }),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.setIntegerOrClassProperty["identifier"],
-              { unique: true },
-            ),
-          ).chain((values) =>
-            values.chainMap((value) =>
-              value.toResource().chain((resource) =>
-                NonClass.$fromRdf(resource, {
-                  ...$context,
-                  objectSet: $objectSet,
-                  preferredLanguages: $preferredLanguages,
-                }),
-              ),
-            ),
-          ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<number | NonClass>
-          >,
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toNumber()),
+            ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<number | NonClass>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues.chain((values) =>
+                  values.chainMap((value) =>
+                    value.toResource().chain((resource) =>
+                      NonClass.$fromRdf(resource, {
+                        ...$context,
+                        objectSet: $objectSet,
+                        preferredLanguages: $preferredLanguages,
+                      }),
+                    ),
+                  ),
+                ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<number | NonClass>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .map((values) => values.toArray())
       .map((valuesArray) =>
@@ -3953,86 +3970,93 @@ export namespace UnionPropertiesClass {
     const _setIntegerOrStringPropertyEither: purify.Either<
       Error,
       readonly (number | string)[]
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values($properties.setIntegerOrStringProperty["identifier"], {
-          unique: true,
-        }),
-      ).chain((values) =>
-        values.chainMap((value) => value.toNumber()),
-      ) as purify.Either<Error, rdfjsResource.Resource.Values<number | string>>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.setIntegerOrStringProperty["identifier"], {
+        unique: true,
+      }),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.setIntegerOrStringProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(values);
-              }
-
-              const literalValuesEither = values.chainMap((value) =>
-                value.toLiteral(),
-              );
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-              // Within a preferredLanguage the literals may be in any order.
-              let filteredLiteralValues:
-                | rdfjsResource.Resource.Values<rdfjs.Literal>
-                | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(
-                    (value) => value.language === preferredLanguage,
-                  );
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(
-                    ...literalValues
-                      .filter((value) => value.language === preferredLanguage)
-                      .toArray(),
-                  );
-                }
-              }
-
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                filteredLiteralValues!.map(
-                  (literalValue) =>
-                    new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
-                      predicate:
-                        UnionPropertiesClass.$properties
-                          .setIntegerOrStringProperty["identifier"],
-                      term: literalValue,
-                    }),
-                ),
-              );
-            })
-            .chain((values) =>
-              values.chainMap((value) => value.toString()),
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toNumber()),
             ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<number | string>
-          >,
+              Error,
+              rdfjsResource.Resource.Values<number | string>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .setIntegerOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<number | string>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .map((values) => values.toArray())
       .map((valuesArray) =>
@@ -4055,89 +4079,93 @@ export namespace UnionPropertiesClass {
     const _setIriOrLiteralPropertyEither: purify.Either<
       Error,
       readonly (rdfjs.NamedNode | rdfjs.Literal)[]
-    > = (
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $resource.values($properties.setIriOrLiteralProperty["identifier"], {
-          unique: true,
-        }),
-      ).chain((values) =>
-        values.chainMap((value) => value.toIri()),
-      ) as purify.Either<
-        Error,
-        rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
-      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.setIriOrLiteralProperty["identifier"], {
+        unique: true,
+      }),
     )
-      .altLazy(
-        () =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $resource.values(
-              $properties.setIriOrLiteralProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(values);
-              }
-
-              const literalValuesEither = values.chainMap((value) =>
-                value.toLiteral(),
-              );
-              if (literalValuesEither.isLeft()) {
-                return literalValuesEither;
-              }
-              const literalValues = literalValuesEither.unsafeCoerce();
-
-              // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-              // Within a preferredLanguage the literals may be in any order.
-              let filteredLiteralValues:
-                | rdfjsResource.Resource.Values<rdfjs.Literal>
-                | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
-                if (!filteredLiteralValues) {
-                  filteredLiteralValues = literalValues.filter(
-                    (value) => value.language === preferredLanguage,
-                  );
-                } else {
-                  filteredLiteralValues = filteredLiteralValues.concat(
-                    ...literalValues
-                      .filter((value) => value.language === preferredLanguage)
-                      .toArray(),
-                  );
-                }
-              }
-
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                filteredLiteralValues!.map(
-                  (literalValue) =>
-                    new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
-                      predicate:
-                        UnionPropertiesClass.$properties
-                          .setIriOrLiteralProperty["identifier"],
-                      term: literalValue,
-                    }),
-                ),
-              );
-            })
-            .chain((values) =>
-              values.chainMap((value) => value.toLiteral()),
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toIri()),
             ) as purify.Either<
-            Error,
-            rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
-          >,
+              Error,
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              UnionPropertiesClass.$properties
+                                .setIriOrLiteralProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
       )
       .map((values) => values.toArray())
       .map((valuesArray) =>

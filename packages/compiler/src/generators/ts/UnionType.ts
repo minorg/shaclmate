@@ -351,18 +351,25 @@ ${this.memberTypes
   override fromRdfExpression({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): string {
-    return this.memberTypes.reduce((expression, memberType) => {
-      let typeExpression = memberType.fromRdfExpression({
-        variables: { ...variables, ignoreRdfType: false },
-      });
-      if (this._discriminator.kind === "syntheticProperty") {
-        typeExpression = `${typeExpression}.map(value => ({ ${this._discriminator.name}: "${memberType.discriminatorValues[0]}" as const, value }) as (${this.name}))`;
-      }
-      typeExpression = `(${typeExpression} as purify.Either<Error, rdfjsResource.Resource.Values<${this.name}>>)`;
-      return expression.length > 0
-        ? `${expression}.altLazy(() => ${typeExpression})`
-        : typeExpression;
-    }, "");
+    return `${variables.resourceValues}.chain(values => values.chainMap(value => {
+      const valueAsValues = purify.Either.of(value.toValues());
+      return ${this.memberTypes.reduce((expression, memberType) => {
+        let typeExpression = memberType.fromRdfExpression({
+          variables: {
+            ...variables,
+            ignoreRdfType: false,
+            resourceValues: "valueAsValues",
+          },
+        });
+        if (this._discriminator.kind === "syntheticProperty") {
+          typeExpression = `${typeExpression}.map(value => ({ ${this._discriminator.name}: "${memberType.discriminatorValues[0]}" as const, value }) as (${this.name}))`;
+        }
+        typeExpression = `(${typeExpression} as purify.Either<Error, rdfjsResource.Resource.Values<${this.name}>>)`;
+        return expression.length > 0
+          ? `${expression}.altLazy(() => ${typeExpression})`
+          : typeExpression;
+      }, "")}.chain(values => values.head());
+      }))`;
   }
 
   override graphqlResolveExpression(
