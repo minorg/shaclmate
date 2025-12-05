@@ -1,7 +1,7 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
-import { Maybe } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
@@ -34,8 +34,9 @@ export class TermType<
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
-  override readonly typeof: "boolean" | "number" | "object" | "string" =
-    "object";
+  override readonly typeofs: Type["typeofs"] = NonEmptyList([
+    "object" as const,
+  ]);
 
   constructor({
     defaultValue,

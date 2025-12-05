@@ -1,6 +1,6 @@
 import type {} from "@rdfjs/types";
 
-import type { Maybe } from "purify-ts";
+import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
@@ -45,9 +45,11 @@ export abstract class Type {
   abstract readonly name: string;
 
   /**
-   * JavaScript typeof the type.
+   * JavaScript typeof(s) the type.
    */
-  abstract readonly typeof: "boolean" | "object" | "number" | "string";
+  abstract readonly typeofs: NonEmptyList<
+    "boolean" | "object" | "number" | "string"
+  >;
 
   /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
@@ -63,11 +65,23 @@ export abstract class Type {
    * An expression that converts a purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to a
    * purify.Either<Error, rdfjsResource.Resource.Values<this type>>.
    *
+   * These expressions are used to deserialize property values in an ObjectType, either directly (a property with this Type) or indirectly (a property with a Type like OptionType
+   * that has a type parameter of this Type).
+   *
    * Some types need to filter on the set of all objects/values of a (subject, predicate). For example, all sh:hasValue values must be present in the set for any values
    * to be considered valid. Similar
    *
    * Values may also need to be sorted. For example, specifying preferredLanguages should sort the values in the order of the specified languages so that the first value
    * (if it exists) is always of the first preferred language.
+   *
+   * variables are runtime variables, most derived from the parameters of the ObjectType's fromRdf function:
+   *   context: unanticipated properties (...) passed to Object.fromRdf
+   *   ignoreRdfType: whether the RDF type of objects/object unions should be ignored
+   *   objectSet: the ObjectSet passed to Object.fromRdf
+   *   predicate: the predicate of the object's property
+   *   preferredLanguages: the preferred languages array (e.g., ["en"]) passed to Object.fromRdf
+   *   resource: the rdfjsResource.Resource passed to Object.fromRdf
+   *   resourceValues: the purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> to be converted to values of this type.
    */
   abstract fromRdfExpression(parameters: {
     variables: {

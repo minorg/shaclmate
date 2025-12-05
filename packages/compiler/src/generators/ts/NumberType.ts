@@ -1,5 +1,6 @@
 import { Memoize } from "typescript-memoize";
 
+import { NonEmptyList } from "purify-ts";
 import { PrimitiveType } from "./PrimitiveType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -7,7 +8,7 @@ import { objectInitializer } from "./objectInitializer.js";
 
 export abstract class NumberType extends PrimitiveType<number> {
   readonly kind = "NumberType";
-  override readonly typeof = "number";
+  override readonly typeofs = NonEmptyList(["number" as const]);
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {
@@ -33,7 +34,7 @@ export abstract class NumberType extends PrimitiveType<number> {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");
     }
-    return this.typeof;
+    return "number";
   }
 
   override jsonZodSchema({

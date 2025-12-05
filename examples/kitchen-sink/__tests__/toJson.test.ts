@@ -7,22 +7,100 @@ describe("toJson", () => {
       const jsonObject = harnesses.unionProperties1.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionPropertiesClass");
-      expect(jsonObject.integerOrClassProperty).toStrictEqual(5);
-      expect(jsonObject.integerOrStringProperty).toStrictEqual(5);
-      expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
+        type: "0-NonClass",
+        value: {
+          $type: "NonClass",
+          "@id": "http://example.com/nonClass",
+          nonClassProperty: "test",
+        },
+      });
+      expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
         "@id": "http://example.com",
         termType: "NamedNode",
       });
+      expect(jsonObject.optionalIriOrStringProperty).toStrictEqual({
+        "@id": "http://example.com",
+      });
+      expect(jsonObject.requiredClassOrIriOrStringProperty).toStrictEqual({
+        type: "0-NonClass",
+        value: {
+          $type: "NonClass",
+          "@id": "http://example.com/nonClass",
+          nonClassProperty: "test",
+        },
+      });
+      expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
+        "@id": "http://example.com",
+        termType: "NamedNode",
+      });
+      expect(jsonObject.requiredIriOrStringProperty).toStrictEqual({
+        "@id": "http://example.com",
+      });
+      expect(jsonObject.setClassOrIriOrStringProperty).toHaveLength(0);
+      expect(jsonObject.setIriOrLiteralProperty).toHaveLength(0);
+      expect(jsonObject.setIriOrStringProperty).toHaveLength(0);
     }
 
     {
       const jsonObject = harnesses.unionProperties2Class.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.integerOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.iriOrLiteralProperty).toStrictEqual({
+      expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
+        type: "1-(rdfjs.NamedNode)",
+        value: {
+          "@id": "http://example.com",
+        },
+      });
+      expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
         termType: "Literal",
         "@value": "test",
       });
+      expect(jsonObject.optionalIriOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.requiredClassOrIriOrStringProperty).toStrictEqual({
+        type: "2-string",
+        value: "test",
+      });
+      expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
+        termType: "Literal",
+        "@value": "test",
+      });
+      expect(jsonObject.requiredIriOrStringProperty).toStrictEqual("test");
+      expect(jsonObject.setClassOrIriOrStringProperty).toStrictEqual([
+        {
+          type: "2-string",
+          value: "test",
+        },
+        {
+          type: "1-(rdfjs.NamedNode)",
+          value: {
+            "@id": "http://example.com",
+          },
+        },
+        {
+          type: "0-NonClass",
+          value: {
+            $type: "NonClass",
+            "@id": "http://example.com/nonClass",
+            nonClassProperty: "test",
+          },
+        },
+      ]);
+      expect(jsonObject.setIriOrLiteralProperty).toStrictEqual([
+        {
+          "@value": "test",
+          termType: "Literal",
+        },
+        {
+          "@id": "http://example.com",
+          termType: "NamedNode",
+        },
+      ]);
+      expect(jsonObject.setIriOrStringProperty).toStrictEqual([
+        "test",
+        {
+          "@id": "http://example.com",
+        },
+      ]);
     }
   });
 

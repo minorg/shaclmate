@@ -1,6 +1,6 @@
 import { Memoize } from "typescript-memoize";
 
-import { Maybe } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -13,7 +13,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
-  override readonly typeof = "object";
+  override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({ itemType }: { itemType: ItemTypeT }) {
     super();

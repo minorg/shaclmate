@@ -39,14 +39,23 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
+        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
+        requiredIriOrStringProperty: "test",
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            iriOrLiteralProperty: dataFactory.namedNode(
+            requiredClassOrIriOrStringProperty: {
+              type: "2-string",
+              value: "test",
+            },
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
             ),
+            requiredIriOrStringProperty: "test",
           }),
         )
         .extract(),
@@ -55,29 +64,49 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        iriOrLiteralProperty: dataFactory.namedNode("http://example.com/term"),
+        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
+        requiredIriOrStringProperty: "test",
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            iriOrLiteralProperty: dataFactory.literal("test"),
+            requiredClassOrIriOrStringProperty: {
+              type: "2-string",
+              value: "test",
+            },
+            requiredIriOrLiteralProperty: dataFactory.literal("test"),
+            requiredIriOrStringProperty: "test",
           }),
         )
         .extract(),
     ).not.toStrictEqual(true);
   });
 
-  it("unrelated union type", ({ expect }) => {
+  it("synthetic union type", ({ expect }) => {
     const $identifier = dataFactory.blankNode();
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        integerOrClassProperty: 1,
+        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
+        requiredIriOrStringProperty: "test",
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            integerOrClassProperty: 1,
+            requiredClassOrIriOrStringProperty: {
+              type: "2-string",
+              value: "test",
+            },
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
+            requiredIriOrStringProperty: "test",
           }),
         )
         .extract(),
@@ -86,15 +115,77 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionPropertiesClass({
         $identifier,
-        integerOrClassProperty: 1,
+        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
+        requiredIriOrStringProperty: "test",
       })
         .$equals(
           new kitchenSink.UnionPropertiesClass({
             $identifier,
-            integerOrClassProperty: new kitchenSink.NonClass({
-              $identifier: dataFactory.blankNode(),
-              nonClassProperty: "test",
-            }),
+            requiredClassOrIriOrStringProperty: {
+              type: "1-(rdfjs.NamedNode)",
+              value: dataFactory.namedNode("http://example.com"),
+            },
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
+            requiredIriOrStringProperty: "test",
+          }),
+        )
+        .extract(),
+    ).not.toStrictEqual(true);
+  });
+
+  it("typeof union type", ({ expect }) => {
+    const $identifier = dataFactory.blankNode();
+    expect(
+      new kitchenSink.UnionPropertiesClass({
+        $identifier,
+        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
+        requiredIriOrStringProperty: "test",
+      })
+        .$equals(
+          new kitchenSink.UnionPropertiesClass({
+            $identifier,
+            requiredClassOrIriOrStringProperty: {
+              type: "2-string",
+              value: "test",
+            },
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
+            requiredIriOrStringProperty: "test",
+          }),
+        )
+        .extract(),
+    ).toStrictEqual(true);
+
+    expect(
+      new kitchenSink.UnionPropertiesClass({
+        $identifier,
+        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredIriOrLiteralProperty: dataFactory.namedNode(
+          "http://example.com/term",
+        ),
+        requiredIriOrStringProperty:
+          dataFactory.namedNode("http://example.com"),
+      })
+        .$equals(
+          new kitchenSink.UnionPropertiesClass({
+            $identifier,
+            requiredClassOrIriOrStringProperty: {
+              type: "1-(rdfjs.NamedNode)",
+              value: dataFactory.namedNode("http://example.com"),
+            },
+            requiredIriOrLiteralProperty: dataFactory.namedNode(
+              "http://example.com/term",
+            ),
+            requiredIriOrStringProperty: "http://example.com",
           }),
         )
         .extract(),

@@ -4,7 +4,7 @@ import { Type } from "./Type.js";
  * A collection of items of a single type. This is the parent of ListType and SetType.
  */
 export abstract class CollectionType<ItemTypeT extends Type = Type> {
-  abstract readonly kind: "ListType" | "OptionType" | "SetType";
+  abstract readonly kind: "ListType" | "SetType";
 
   /**
    * Collection item type.
