@@ -1,14 +1,14 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export abstract class PrimitiveType<
+export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,
-> extends LiteralType {
+> extends AbstractLiteralType {
   override readonly equalsFunction: string =
     `${syntheticNamePrefix}strictEquals`;
   readonly primitiveDefaultValue: Maybe<ValueT>;
@@ -21,7 +21,7 @@ export abstract class PrimitiveType<
   }: {
     primitiveDefaultValue: Maybe<ValueT>;
     primitiveIn: readonly ValueT[];
-  } & ConstructorParameters<typeof LiteralType>[0]) {
+  } & ConstructorParameters<typeof AbstractLiteralType>[0]) {
     super(superParameters);
     this.primitiveDefaultValue = primitiveDefaultValue;
     this.primitiveIn = primitiveIn;
@@ -65,7 +65,7 @@ export abstract class PrimitiveType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<LiteralType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractLiteralType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     return super.sparqlWherePatterns({
       ...parameters,

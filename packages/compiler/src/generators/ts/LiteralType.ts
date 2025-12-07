@@ -1,30 +1,11 @@
-import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
-import { AbstractTermType } from "./AbstractTermType.js";
+import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
-import { objectInitializer } from "./objectInitializer.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class LiteralType extends AbstractTermType<Literal, Literal> {
-  private readonly languageIn: readonly string[];
-
-  constructor({
-    languageIn,
-    ...superParameters
-  }: { languageIn: readonly string[] } & Omit<
-    ConstructorParameters<typeof AbstractTermType<Literal, Literal>>[0],
-    "nodeKinds"
-  >) {
-    super({
-      ...superParameters,
-      nodeKinds: new Set<"Literal">(["Literal"]),
-    });
-    this.languageIn = languageIn;
-  }
-
+export class LiteralType extends AbstractLiteralType {
   @Memoize()
   override jsonName(
     parameters?: Parameters<AbstractType["jsonName"]>[0],
@@ -39,57 +20,14 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["fromJsonExpression"]
-  >[0]): string {
+  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {
     return `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
-  }
-
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractTermType<Literal>["fromRdfExpressionChain"]
-  >[0]): ReturnType<AbstractTermType<Literal>["fromRdfExpressionChain"]> {
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      languageIn:
-        this.languageIn.length > 0
-          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
-          : undefined,
-      preferredLanguages: `chain(values => {
-        if (!${variables.preferredLanguages} || ${variables.preferredLanguages}.length === 0) {
-          return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(values);
-        }
-
-        const literalValuesEither = values.chainMap(value => value.toLiteral());
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
-        for (const preferredLanguage of ${variables.preferredLanguages}) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === preferredLanguage).toArray());
-          }
-        }
-
-        return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(filteredLiteralValues!.map(literalValue => new rdfjsResource.Resource.TermValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, term: literalValue })));
-      })`,
-      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
-    };
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["hashStatements"]
-  >[0]): readonly string[] {
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly string[] {
     return [
       `${variables.hasher}.update(${variables.value}.datatype.value);`,
       `${variables.hasher}.update(${variables.value}.language);`,
@@ -99,9 +37,9 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
   override jsonZodSchema({
     includeDiscriminatorProperty,
     variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["jsonZodSchema"]
-  >[0]): ReturnType<AbstractTermType<Literal, Literal>["jsonZodSchema"]> {
+  }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractLiteralType["jsonZodSchema"]
+  > {
     const discriminatorProperty = includeDiscriminatorProperty
       ? `, termType: ${variables.zod}.literal("Literal")`
       : "";
@@ -122,61 +60,10 @@ export class LiteralType extends AbstractTermType<Literal, Literal> {
     return snippetDeclarations;
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0] & {
-      ignoreLiteralLanguage?: boolean;
-    },
-  ): readonly string[] {
-    const { context, ignoreLiteralLanguage, variables } = parameters;
-
-    const superPatterns = super.sparqlWherePatterns(parameters);
-    if (ignoreLiteralLanguage || context === "subject") {
-      return superPatterns;
-    }
-
-    return superPatterns.concat(
-      `...[${
-        this.languageIn.length > 0
-          ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
-          : `(${variables.preferredLanguages} ?? [])`
-      }]
-        .filter(languages => languages.length > 0)
-        .map(languages =>
-          languages.map(language => 
-            ({
-              type: "operation" as const,
-              operator: "=",
-              args: [
-                { type: "operation" as const, operator: "lang", args: [${variables.object}] },
-                dataFactory.literal(language)
-              ]
-            })
-          )
-        )
-        .map(langEqualsExpressions => 
-          ({
-            type: "filter" as const,
-            expression: langEqualsExpressions.reduce((reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression]
-              };
-            }, null as sparqljs.Expression | null) as sparqljs.Expression
-          })
-        )`,
-    );
-  }
-
   override toJsonExpression({
     includeDiscriminatorProperty,
     variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["toJsonExpression"]
-  >[0]): string {
+  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): string {
     return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminatorProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
 }

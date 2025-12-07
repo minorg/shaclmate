@@ -1,13 +1,13 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { PrimitiveType } from "./PrimitiveType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export abstract class NumberType extends PrimitiveType<number> {
+export abstract class NumberType extends AbstractPrimitiveType<number> {
   readonly kind = "NumberType";
   override readonly typeofs = NonEmptyList(["number" as const]);
 
@@ -74,7 +74,7 @@ export abstract class NumberType extends PrimitiveType<number> {
 
   override toRdfExpression({
     variables,
-  }: Parameters<PrimitiveType<string>["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>

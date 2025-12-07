@@ -7,6 +7,7 @@ import { fromRdf } from "rdf-literal";
 import { Maybe } from "purify-ts";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
+import type { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -111,7 +112,7 @@ export class TypeFactory {
     });
   }
 
-  private createLiteralType(astType: ast.LiteralType): LiteralType {
+  private createLiteralType(astType: ast.LiteralType): AbstractLiteralType {
     // Look at sh:datatype as well as sh:defaultValue/sh:hasValue/sh:in term datatypes
     // If there's one common datatype than we can refine the type
     // Otherwise default to rdfjs.Literal
