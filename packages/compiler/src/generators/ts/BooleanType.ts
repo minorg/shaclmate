@@ -1,12 +1,12 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
-import { PrimitiveType } from "./PrimitiveType.js";
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export class BooleanType extends PrimitiveType<boolean> {
+export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
@@ -71,7 +71,7 @@ export class BooleanType extends PrimitiveType<boolean> {
 
   override toRdfExpression({
     variables,
-  }: Parameters<PrimitiveType<string>["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
     return this.primitiveDefaultValue
       .map((defaultValue) => {
         if (defaultValue) {

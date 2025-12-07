@@ -1,11 +1,11 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
-import { PrimitiveType } from "./PrimitiveType.js";
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export class StringType extends PrimitiveType<string> {
+export class StringType extends AbstractPrimitiveType<string> {
   readonly kind = "StringType";
   override readonly typeofs = NonEmptyList(["string" as const]);
 
@@ -44,8 +44,8 @@ export class StringType extends PrimitiveType<string> {
   protected override fromRdfExpressionChain({
     variables,
   }: Parameters<
-    PrimitiveType<string>["fromRdfExpressionChain"]
-  >[0]): ReturnType<PrimitiveType<string>["fromRdfExpressionChain"]> {
+    AbstractPrimitiveType<string>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
     const inChain =
       this.primitiveIn.length > 0
         ? `.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`
@@ -77,7 +77,9 @@ export class StringType extends PrimitiveType<string> {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<PrimitiveType<string>["sparqlWherePatterns"]>[0],
+    parameters: Parameters<
+      AbstractPrimitiveType<string>["sparqlWherePatterns"]
+    >[0],
   ): readonly string[] {
     return super.sparqlWherePatterns({
       ...parameters,
@@ -87,7 +89,7 @@ export class StringType extends PrimitiveType<string> {
 
   override toRdfExpression({
     variables,
-  }: Parameters<PrimitiveType<string>["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>
