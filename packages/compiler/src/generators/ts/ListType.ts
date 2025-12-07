@@ -9,6 +9,7 @@ import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 

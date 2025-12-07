@@ -5,6 +5,7 @@ import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
+import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 /**

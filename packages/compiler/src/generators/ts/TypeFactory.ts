@@ -45,9 +45,11 @@ export class TypeFactory {
 
   private createIdentifierType(astType: ast.IdentifierType): IdentifierType {
     return new IdentifierType({
+      comment: astType.comment,
       defaultValue: astType.defaultValue,
       hasValues: astType.hasValues,
       in_: astType.in_.filter((_) => _.termType === "NamedNode"),
+      label: astType.label,
       nodeKinds: astType.nodeKinds,
     });
   }
@@ -56,6 +58,8 @@ export class TypeFactory {
     astType: ast.LazyObjectOptionType,
   ): AbstractType {
     return new LazyObjectOptionType({
+      comment: astType.comment,
+      label: astType.label,
       partialType: this.createOptionType(astType.partialType) as OptionType<
         ObjectType | ObjectUnionType
       >,
@@ -69,6 +73,8 @@ export class TypeFactory {
     astType: ast.LazyObjectSetType,
   ): AbstractType {
     return new LazyObjectSetType({
+      comment: astType.comment,
+      label: astType.label,
       partialType: this.createSetType(astType.partialType) as SetType<
         ObjectType | ObjectUnionType
       >,
@@ -80,6 +86,9 @@ export class TypeFactory {
 
   private createLazyObjectType(astType: ast.LazyObjectType): AbstractType {
     return new LazyObjectType({
+      comment: astType.comment,
+      label: astType.label,
+
       partialType: this.createType(astType.partialType) as
         | ObjectType
         | ObjectUnionType,
@@ -91,8 +100,10 @@ export class TypeFactory {
 
   private createListType(astType: ast.ListType) {
     return new ListType({
+      comment: astType.comment,
       identifierNodeKind: astType.identifierNodeKind,
       itemType: this.createType(astType.itemType),
+      label: astType.label,
       minCount: 0,
       mutable: astType.mutable,
       identifierMintingStrategy: astType.identifierMintingStrategy,
@@ -121,8 +132,10 @@ export class TypeFactory {
 
       if (datatype.equals(xsd.boolean)) {
         return new BooleanType({
+          comment: astType.comment,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
+          label: astType.label,
           languageIn: [],
           in_: astType.in_,
           primitiveDefaultValue: astType.defaultValue
@@ -136,9 +149,11 @@ export class TypeFactory {
 
       if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
         return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
+          comment: astType.comment,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           in_: astType.in_,
+          label: astType.label,
           languageIn: [],
           primitiveDefaultValue: astType.defaultValue
             .map((value) => fromRdf(value, true))
@@ -159,9 +174,11 @@ export class TypeFactory {
         for (const numberDatatype of numberDatatypes_) {
           if (datatype.equals(numberDatatype)) {
             return new (floatOrInt === "float" ? FloatType : IntType)({
+              comment: astType.comment,
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               in_: astType.in_,
+              label: astType.label,
               languageIn: [],
               primitiveDefaultValue: astType.defaultValue
                 .map((value) => fromRdf(value, true))
@@ -176,8 +193,10 @@ export class TypeFactory {
 
       if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
         return new StringType({
+          comment: astType.comment,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
+          label: astType.label,
           languageIn: astType.languageIn,
           in_: astType.in_,
           primitiveDefaultValue: astType.defaultValue.map(
@@ -202,9 +221,11 @@ export class TypeFactory {
     }
 
     return new LiteralType({
+      comment: astType.comment,
       defaultValue: astType.defaultValue,
       hasValues: astType.hasValues,
       in_: astType.in_,
+      label: astType.label,
       languageIn: astType.languageIn,
     });
   }
@@ -317,9 +338,11 @@ export class TypeFactory {
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
               type: new StringType({
+                comment: astType.comment,
                 defaultValue: Maybe.empty(),
                 hasValues: [],
                 in_: [],
+                label: astType.label,
                 languageIn: [],
                 primitiveDefaultValue: Maybe.empty(),
                 primitiveIn: [],
@@ -431,13 +454,17 @@ export class TypeFactory {
 
   private createOptionType(astType: ast.OptionType) {
     return new OptionType({
+      comment: astType.comment,
       itemType: this.createType(astType.itemType),
+      label: astType.label,
     });
   }
 
   private createSetType(astType: ast.SetType) {
     return new SetType({
+      comment: astType.comment,
       itemType: this.createType(astType.itemType),
+      label: astType.label,
       mutable: astType.mutable,
       minCount: astType.minCount,
     });
@@ -445,9 +472,11 @@ export class TypeFactory {
 
   private createTermType(astType: ast.TermType) {
     return new TermType({
+      comment: astType.comment,
       defaultValue: astType["defaultValue"],
       hasValues: astType["hasValues"],
       in_: astType["in_"],
+      label: astType.label,
       nodeKinds: astType["nodeKinds"],
     });
   }
@@ -489,6 +518,8 @@ export class TypeFactory {
 
   private createUnionType(astType: ast.UnionType) {
     return new UnionType({
+      comment: astType.comment,
+      label: astType.label,
       memberTypes: astType.memberTypes.map((astType) =>
         this.createType(astType),
       ),

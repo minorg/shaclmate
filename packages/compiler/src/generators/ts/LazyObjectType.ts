@@ -4,6 +4,7 @@ import type { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import type { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
@@ -15,6 +16,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   constructor({
     partialType,
     resolvedType,
+    ...superParameters
   }: Omit<
     ConstructorParameters<
       typeof AbstractLazyObjectType<
@@ -25,6 +27,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     "runtimeClass"
   >) {
     super({
+      ...superParameters,
       partialType,
       resolvedType,
       runtimeClass: {
