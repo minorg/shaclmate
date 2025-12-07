@@ -1,21 +1,21 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
+import { AbstractTermType } from "./AbstractTermType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class LiteralType extends TermType<Literal, Literal> {
+export class LiteralType extends AbstractTermType<Literal, Literal> {
   private readonly languageIn: readonly string[];
 
   constructor({
     languageIn,
     ...superParameters
   }: { languageIn: readonly string[] } & Omit<
-    ConstructorParameters<typeof TermType<Literal, Literal>>[0],
+    ConstructorParameters<typeof AbstractTermType<Literal, Literal>>[0],
     "nodeKinds"
   >) {
     super({
@@ -39,15 +39,17 @@ export class LiteralType extends TermType<Literal, Literal> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<TermType<Literal, Literal>["fromJsonExpression"]>[0]): string {
+  }: Parameters<
+    AbstractTermType<Literal, Literal>["fromJsonExpression"]
+  >[0]): string {
     return `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
   }
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<TermType<Literal>["fromRdfExpressionChain"]>[0]): ReturnType<
-    TermType<Literal>["fromRdfExpressionChain"]
-  > {
+  }: Parameters<
+    AbstractTermType<Literal>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractTermType<Literal>["fromRdfExpressionChain"]> {
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
@@ -86,7 +88,7 @@ export class LiteralType extends TermType<Literal, Literal> {
     depth,
     variables,
   }: Parameters<
-    TermType<Literal, Literal>["hashStatements"]
+    AbstractTermType<Literal, Literal>["hashStatements"]
   >[0]): readonly string[] {
     return [
       `${variables.hasher}.update(${variables.value}.datatype.value);`,
@@ -97,9 +99,9 @@ export class LiteralType extends TermType<Literal, Literal> {
   override jsonZodSchema({
     includeDiscriminatorProperty,
     variables,
-  }: Parameters<TermType<Literal, Literal>["jsonZodSchema"]>[0]): ReturnType<
-    TermType<Literal, Literal>["jsonZodSchema"]
-  > {
+  }: Parameters<
+    AbstractTermType<Literal, Literal>["jsonZodSchema"]
+  >[0]): ReturnType<AbstractTermType<Literal, Literal>["jsonZodSchema"]> {
     const discriminatorProperty = includeDiscriminatorProperty
       ? `, termType: ${variables.zod}.literal("Literal")`
       : "";
@@ -172,7 +174,9 @@ export class LiteralType extends TermType<Literal, Literal> {
   override toJsonExpression({
     includeDiscriminatorProperty,
     variables,
-  }: Parameters<TermType<Literal, Literal>["toJsonExpression"]>[0]): string {
+  }: Parameters<
+    AbstractTermType<Literal, Literal>["toJsonExpression"]
+  >[0]): string {
     return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminatorProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
 }

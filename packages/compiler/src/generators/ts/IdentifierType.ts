@@ -8,11 +8,14 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
+import { AbstractTermType } from "./AbstractTermType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 
-export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
+export class IdentifierType extends AbstractTermType<
+  NamedNode,
+  BlankNode | NamedNode
+> {
   readonly kind = "IdentifierType";
 
   @Memoize()
@@ -154,7 +157,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   override fromJsonExpression({
     variables,
   }: Parameters<
-    TermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): string {
     const valueToBlankNode = `dataFactory.blankNode(${variables.value}["@id"].substring(2))`;
     const valueToNamedNode = `dataFactory.namedNode(${variables.value}["@id"])`;
@@ -172,8 +175,8 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    TermType["fromRdfExpressionChain"]
+  }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    AbstractTermType["fromRdfExpressionChain"]
   > {
     let valueToExpression: string;
     if (this.nodeKinds.size === 2) {
@@ -204,9 +207,9 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     includeDiscriminatorProperty,
     variables,
   }: Parameters<
-    TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): ReturnType<
-    TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   > {
     let idSchema: string;
     if (this.in_.length > 0 && this.isNamedNodeKind) {
@@ -228,7 +231,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     includeDiscriminatorProperty,
     variables,
   }: Parameters<
-    TermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
     const discriminatorProperty = includeDiscriminatorProperty
       ? `, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
