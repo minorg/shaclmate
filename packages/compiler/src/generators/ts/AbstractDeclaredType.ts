@@ -9,7 +9,7 @@ import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";
 
-export abstract class DeclaredType extends Type {
+export abstract class AbstractDeclaredType extends Type {
   abstract readonly declarationImports: readonly Import[];
   abstract readonly declarations: readonly (
     | ClassDeclarationStructure

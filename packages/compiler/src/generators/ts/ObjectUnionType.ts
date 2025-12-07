@@ -8,7 +8,7 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import { DeclaredType } from "./DeclaredType.js";
+import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -30,7 +30,7 @@ import { tsComment } from "./tsComment.js";
  *
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
-export class ObjectUnionType extends DeclaredType {
+export class ObjectUnionType extends AbstractDeclaredType {
   protected readonly comment: Maybe<string>;
   protected readonly label: Maybe<string>;
 
@@ -46,7 +46,7 @@ export class ObjectUnionType extends DeclaredType {
     label,
     memberTypes,
     ...superParameters
-  }: ConstructorParameters<typeof DeclaredType>[0] & {
+  }: ConstructorParameters<typeof AbstractDeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
     identifierType: IdentifierType;
@@ -242,8 +242,8 @@ export class ObjectUnionType extends DeclaredType {
   override jsonZodSchema({
     context,
     variables,
-  }: Parameters<DeclaredType["jsonZodSchema"]>[0]): ReturnType<
-    DeclaredType["jsonZodSchema"]
+  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractDeclaredType["jsonZodSchema"]
   > {
     const expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     for (const memberType of this.memberTypes) {
@@ -258,7 +258,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
   ): readonly string[] {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {

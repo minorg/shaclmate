@@ -17,7 +17,7 @@ import type {
   IdentifierMintingStrategy,
   TsObjectDeclarationType,
 } from "../../enums/index.js";
-import { DeclaredType } from "./DeclaredType.js";
+import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -26,7 +26,7 @@ import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class ObjectType extends DeclaredType {
+export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
 
   protected readonly comment: Maybe<string>;
@@ -80,7 +80,7 @@ export class ObjectType extends DeclaredType {
     staticModuleName: string;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof DeclaredType>[0]) {
+  } & ConstructorParameters<typeof AbstractDeclaredType>[0]) {
     super(superParameters);
     this.abstract = abstract;
     this.comment = comment;
@@ -374,14 +374,14 @@ export class ObjectType extends DeclaredType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<DeclaredType["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
     return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<DeclaredType["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): string {
     return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
@@ -393,7 +393,7 @@ export class ObjectType extends DeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<DeclaredType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly string[] {
     switch (this.declarationType) {
       case "class":
         return [
@@ -408,7 +408,9 @@ export class ObjectType extends DeclaredType {
 
   override jsonUiSchemaElement({
     variables,
-  }: Parameters<DeclaredType["jsonUiSchemaElement"]>[0]): Maybe<string> {
+  }: Parameters<
+    AbstractDeclaredType["jsonUiSchemaElement"]
+  >[0]): Maybe<string> {
     return Maybe.of(
       `${this.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
@@ -417,8 +419,8 @@ export class ObjectType extends DeclaredType {
   override jsonZodSchema({
     context,
     variables,
-  }: Parameters<DeclaredType["jsonZodSchema"]>[0]): ReturnType<
-    DeclaredType["jsonZodSchema"]
+  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractDeclaredType["jsonZodSchema"]
   > {
     let expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     if (
@@ -432,7 +434,9 @@ export class ObjectType extends DeclaredType {
 
   override snippetDeclarations({
     recursionStack,
-  }: Parameters<DeclaredType["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractDeclaredType["snippetDeclarations"]
+  >[0]): readonly string[] {
     if (recursionStack.some((type) => Object.is(type, this))) {
       return [];
     }
@@ -467,7 +471,9 @@ export class ObjectType extends DeclaredType {
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<DeclaredType["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<
+      AbstractDeclaredType["sparqlConstructTemplateTriples"]
+    >[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -486,7 +492,7 @@ export class ObjectType extends DeclaredType {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<DeclaredType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractDeclaredType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -507,7 +513,7 @@ export class ObjectType extends DeclaredType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<DeclaredType["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): string {
     switch (this.declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -518,7 +524,7 @@ export class ObjectType extends DeclaredType {
 
   override toRdfExpression({
     variables,
-  }: Parameters<DeclaredType["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): string {
     switch (this.declarationType) {
       case "class":
         return `[${variables.value}.${syntheticNamePrefix}toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }).identifier]`;

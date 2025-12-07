@@ -1,5 +1,5 @@
 import { Memoize } from "typescript-memoize";
-import type { DeclaredType } from "../DeclaredType.js";
+import type { AbstractDeclaredType } from "../AbstractDeclaredType.js";
 import type { ObjectType } from "../ObjectType.js";
 
 export class MemberType {
@@ -109,7 +109,9 @@ export class MemberType {
     return this.delegate.jsonName();
   }
 
-  jsonZodSchema(parameters: Parameters<DeclaredType["jsonZodSchema"]>[0]) {
+  jsonZodSchema(
+    parameters: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0],
+  ) {
     return this.delegate.jsonZodSchema(parameters);
   }
 
@@ -120,7 +122,7 @@ export class MemberType {
   }
 
   snippetDeclarations(
-    parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
   ): readonly string[] {
     return this.delegate.snippetDeclarations(parameters);
   }
