@@ -1,5 +1,5 @@
-import { AbstractType } from "ast/AbstractType.js";
 import { invariant } from "ts-invariant";
+import { AbstractType } from "./AbstractType.js";
 import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
 

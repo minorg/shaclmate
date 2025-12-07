@@ -1,4 +1,4 @@
-import { AbstractContainerType } from "ast/AbstractContainerType.js";
+import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { Type } from "./Type.js";
 
 /**

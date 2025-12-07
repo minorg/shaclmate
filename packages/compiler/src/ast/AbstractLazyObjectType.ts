@@ -1,4 +1,4 @@
-import { AbstractType } from "ast/AbstractType.js";
+import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
