@@ -141,7 +141,7 @@ function transformNodeShapeToAstListType(
   return Either.of(listType);
 }
 
-export function transformNodeShapeToAstObjectCompositeType(
+export function transformNodeShapeToAstObjectCompoundType(
   this: ShapesGraphToAstTransformer,
   {
     export_,
@@ -151,38 +151,38 @@ export function transformNodeShapeToAstObjectCompositeType(
     nodeShape: input.NodeShape;
   },
 ): Either<Error, ast.ObjectIntersectionType | ast.ObjectUnionType> {
-  let compositeTypeShapes: readonly input.Shape[];
-  let compositeTypeKind:
+  let compoundTypeShapes: readonly input.Shape[];
+  let compoundTypeKind:
     | ast.ObjectIntersectionType["kind"]
     | ast.ObjectUnionType["kind"];
   if (nodeShape.constraints.and.length > 0) {
-    compositeTypeShapes = nodeShape.constraints.and;
-    compositeTypeKind = "ObjectIntersectionType";
+    compoundTypeShapes = nodeShape.constraints.and;
+    compoundTypeKind = "ObjectIntersectionType";
   } else if (nodeShape.constraints.xone.length > 0) {
-    compositeTypeShapes = nodeShape.constraints.xone;
-    compositeTypeKind = "ObjectUnionType";
+    compoundTypeShapes = nodeShape.constraints.xone;
+    compoundTypeKind = "ObjectUnionType";
   } else {
     throw new Error("should never be reached");
   }
 
-  const compositeTypeNodeShapes: input.NodeShape[] = [];
-  for (const compositeTypeShape of compositeTypeShapes) {
-    if (!(compositeTypeShape instanceof input.NodeShape)) {
+  const compoundTypeNodeShapes: input.NodeShape[] = [];
+  for (const compoundTypeShape of compoundTypeShapes) {
+    if (!(compoundTypeShape instanceof input.NodeShape)) {
       return Left(
         new Error(`${nodeShape} has non-NodeShape in its logical constraint`),
       );
     }
-    compositeTypeNodeShapes.push(compositeTypeShape);
+    compoundTypeNodeShapes.push(compoundTypeShape);
   }
-  if (compositeTypeNodeShapes.length === 0) {
+  if (compoundTypeNodeShapes.length === 0) {
     return Left(
       new Error(`${nodeShape} has no NodeShapes in its logical constraint`),
     );
   }
 
   // Put a placeholder in the cache to deal with cyclic references
-  const compositeType: ast.ObjectIntersectionType | ast.ObjectUnionType = new (
-    compositeTypeKind === "ObjectIntersectionType"
+  const compoundType: ast.ObjectIntersectionType | ast.ObjectUnionType = new (
+    compoundTypeKind === "ObjectIntersectionType"
       ? ast.ObjectIntersectionType
       : ast.ObjectUnionType
   )({
@@ -194,14 +194,14 @@ export function transformNodeShapeToAstObjectCompositeType(
     tsFeatures: nodeShape.tsFeatures,
   });
 
-  this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compositeType);
+  this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compoundType);
 
-  for (const memberNodeShape of compositeTypeNodeShapes) {
+  for (const memberNodeShape of compoundTypeNodeShapes) {
     const memberTypeEither = this.transformNodeShapeToAstType(memberNodeShape);
     if (memberTypeEither.isLeft()) {
       return memberTypeEither;
     }
-    const addMemberTypeResult = compositeType.addMemberType(
+    const addMemberTypeResult = compoundType.addMemberType(
       memberTypeEither.unsafeCoerce(),
     );
     if (addMemberTypeResult.isLeft()) {
@@ -209,7 +209,7 @@ export function transformNodeShapeToAstObjectCompositeType(
     }
   }
 
-  return Either.of(compositeType);
+  return Either.of(compoundType);
 }
 
 export function transformNodeShapeToAstType(
@@ -235,7 +235,7 @@ export function transformNodeShapeToAstType(
     nodeShape.constraints.and.length > 0 ||
     nodeShape.constraints.xone.length > 0
   ) {
-    return transformNodeShapeToAstObjectCompositeType.bind(this)({
+    return transformNodeShapeToAstObjectCompoundType.bind(this)({
       export_,
       nodeShape,
     });

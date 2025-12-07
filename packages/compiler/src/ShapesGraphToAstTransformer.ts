@@ -22,8 +22,8 @@ export class ShapesGraphToAstTransformer {
     _ShapesGraphToAstTransformer.transformNodeShapeToAstType;
   protected transformPropertyShapeToAstObjectTypeProperty =
     _ShapesGraphToAstTransformer.transformPropertyShapeToAstObjectTypeProperty;
-  protected transformShapeToAstCompositeType =
-    _ShapesGraphToAstTransformer.transformShapeToAstCompositeType;
+  protected transformShapeToAstCompoundType =
+    _ShapesGraphToAstTransformer.transformShapeToAstCompoundType;
   protected transformShapeToAstIdentifierType =
     _ShapesGraphToAstTransformer.transformShapeToAstIdentifierType;
   protected transformShapeToAstLiteralType =

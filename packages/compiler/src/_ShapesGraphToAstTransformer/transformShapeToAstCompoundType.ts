@@ -9,9 +9,9 @@ import { logger } from "../logger.js";
 import type { ShapeStack } from "./ShapeStack.js";
 
 /**
- * Try to convert a shape to a composite type (intersection or union) using some heuristics.
+ * Try to convert a shape to a compound type (intersection or union) using some heuristics.
  */
-export function transformShapeToAstCompositeType(
+export function transformShapeToAstCompoundType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
@@ -19,13 +19,13 @@ export function transformShapeToAstCompositeType(
   shapeStack.push(shape);
   try {
     let memberTypeEithers: readonly Either<Error, ast.Type>[];
-    let compositeTypeKind: "IntersectionType" | "UnionType";
+    let compoundTypeKind: "IntersectionType" | "UnionType";
 
     if (shape.constraints.and.length > 0) {
       memberTypeEithers = shape.constraints.and.map((memberShape) =>
         this.transformShapeToAstType(memberShape, shapeStack),
       );
-      compositeTypeKind = "IntersectionType";
+      compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.classes.length > 0) {
       memberTypeEithers = shape.constraints.classes.map((classIri) => {
         if (
@@ -51,7 +51,7 @@ export function transformShapeToAstCompositeType(
 
         return this.transformNodeShapeToAstType(classNodeShape);
       });
-      compositeTypeKind = "IntersectionType";
+      compoundTypeKind = "IntersectionType";
 
       if (Either.rights(memberTypeEithers).length === 0) {
         // This frequently happens with e.g., sh:class skos:Concept
@@ -65,12 +65,12 @@ export function transformShapeToAstCompositeType(
       memberTypeEithers = shape.constraints.nodes.map((nodeShape) =>
         this.transformNodeShapeToAstType(nodeShape),
       );
-      compositeTypeKind = "IntersectionType";
+      compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.xone.length > 0) {
       memberTypeEithers = shape.constraints.xone.map((memberShape) =>
         this.transformShapeToAstType(memberShape, shapeStack),
       );
-      compositeTypeKind = "UnionType";
+      compoundTypeKind = "UnionType";
     } else {
       return Left(new Error(`unable to transform ${shape} into an AST type`));
     }
@@ -101,8 +101,8 @@ export function transformShapeToAstCompositeType(
         }
       })
     ) {
-      const compositeType = new (
-        compositeTypeKind === "IntersectionType"
+      const compoundType = new (
+        compoundTypeKind === "IntersectionType"
           ? ast.ObjectIntersectionType
           : ast.ObjectUnionType
       )({
@@ -115,7 +115,7 @@ export function transformShapeToAstCompositeType(
       });
 
       for (const memberType of memberTypes) {
-        const addMemberTypeResult = compositeType.addMemberType(memberType);
+        const addMemberTypeResult = compoundType.addMemberType(memberType);
         if (addMemberTypeResult.isLeft()) {
           return addMemberTypeResult;
         }
@@ -123,7 +123,7 @@ export function transformShapeToAstCompositeType(
     }
 
     return Either.of(
-      compositeTypeKind === "IntersectionType"
+      compoundTypeKind === "IntersectionType"
         ? new ast.IntersectionType({
             memberTypes,
           })

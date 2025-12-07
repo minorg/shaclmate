@@ -3,9 +3,9 @@ import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
 
 /**
- * A composite of types, such as an intersection or union.
+ * A compound of types, such as an intersection or union.
  */
-export abstract class CompositeType<MemberTypeT extends Type> {
+export abstract class CompoundType<MemberTypeT extends Type> {
   /**
    * Type discriminator
    */
@@ -30,7 +30,7 @@ export abstract class CompositeType<MemberTypeT extends Type> {
     this.#memberTypes.push(memberType);
   }
 
-  equals(other: CompositeType<MemberTypeT>): boolean {
+  equals(other: CompoundType<MemberTypeT>): boolean {
     return arrayEquals(this.memberTypes, other.memberTypes, Type.equals);
   }
 

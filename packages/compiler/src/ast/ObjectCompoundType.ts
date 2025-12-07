@@ -6,7 +6,7 @@ import { Either, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { CompositeType } from "./CompositeType.js";
+import { CompoundType } from "./CompoundType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -14,11 +14,11 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Type } from "./Type.js";
 
 /**
- * A composite of object types, such as an intersection or union.
+ * A compound of object types, such as an intersection or union.
  */
-export abstract class ObjectCompositeType<
-  ObjectCompositeTypeT extends ObjectIntersectionType | ObjectUnionType,
-> extends CompositeType<ObjectCompositeTypeT | ObjectType> {
+export abstract class ObjectCompoundType<
+  ObjectCompoundTypeT extends ObjectIntersectionType | ObjectUnionType,
+> extends CompoundType<ObjectCompoundTypeT | ObjectType> {
   /**
    * Documentation comment from rdfs:comment.
    */
@@ -77,7 +77,7 @@ export abstract class ObjectCompositeType<
     this.#tsFeatures = tsFeatures;
   }
 
-  override equals(other: ObjectCompositeType<ObjectCompositeTypeT>): boolean {
+  override equals(other: ObjectCompoundType<ObjectCompoundTypeT>): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
@@ -153,7 +153,7 @@ export abstract class ObjectCompositeType<
 
   @Memoize()
   get tsFeatures(): ReadonlySet<TsFeature> {
-    // Members of the composite type must have the same tsFeatures.
+    // Members of the compound type must have the same tsFeatures.
     // They must also have distinct RDF types or no RDF types at all.
     const mergedMemberTsFeatures = new Set<TsFeature>();
     for (
@@ -198,7 +198,7 @@ export abstract class ObjectCompositeType<
             super.addMemberType(memberType as any);
           } else {
             throw new Error(
-              `${this}: has incompatible composite type composition (has-a ${memberType})`,
+              `${this}: has incompatible compound type composition (has-a ${memberType})`,
             );
           }
           break;
@@ -207,7 +207,7 @@ export abstract class ObjectCompositeType<
             super.addMemberType(memberType as any);
           } else {
             throw new Error(
-              `${this}: has incompatible composite type composition (has-a ${memberType})`,
+              `${this}: has incompatible compound type composition (has-a ${memberType})`,
             );
           }
           break;

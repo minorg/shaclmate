@@ -1,6 +1,7 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
+import { ScalarType } from "./ScalarType.js";
 import {
   arrayEquals,
   maybeEquals,
@@ -23,7 +24,7 @@ export abstract class AbstractTermType<
     | BlankNode
     | Literal
     | NamedNode,
-> {
+> extends ScalarType {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -35,19 +36,27 @@ export abstract class AbstractTermType<
     hasValues,
     in_,
     nodeKinds,
+    ...superParameters
   }: {
     defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<NodeKind>;
-  }) {
+  } & ConstructorParameters<typeof ScalarType>[0]) {
+    super(superParameters);
     this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
   }
 
-  equals(other: AbstractTermType<ConstantTermT, _RuntimeTermT>): boolean {
+  override equals(
+    other: AbstractTermType<ConstantTermT, _RuntimeTermT>,
+  ): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
     if (this.kind !== other.kind) {
       return false;
     }
@@ -71,7 +80,7 @@ export abstract class AbstractTermType<
     return true;
   }
 
-  toString() {
+  override toString() {
     return `${this.kind}(nodeKinds=${[...this.nodeKinds].join(" | ")})`;
   }
 }
