@@ -1,4 +1,4 @@
-import { AbstractLazyObjectType } from "./AbstractLazyOptionType.js";
+import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
