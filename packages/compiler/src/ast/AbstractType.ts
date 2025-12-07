@@ -20,17 +20,15 @@ export abstract class AbstractType {
    */
   readonly name: Maybe<string> = Maybe.empty();
 
-  // constructor({
-  //   comment,
-  //   label,
-  // }: { comment: Maybe<string>; label: Maybe<string> }) {
-  //   this.comment = comment;
-  //   this.label = label;
-  // }
-
-  // biome-ignore lint/complexity/noUselessConstructor: <explanation>
-  // biome-ignore lint/correctness/noEmptyPattern: <explanation>
-  constructor({}: object) {}
+  constructor({
+    comment,
+    label,
+    name,
+  }: { comment: Maybe<string>; label: Maybe<string>; name: Maybe<string> }) {
+    this.comment = comment;
+    this.label = label;
+    this.name = name;
+  }
 
   equals(other: AbstractType): boolean {
     if (!maybeEquals(this.comment, other.comment, strictEquals)) {

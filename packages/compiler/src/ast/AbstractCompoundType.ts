@@ -1,3 +1,4 @@
+import { AbstractType } from "ast/AbstractType.js";
 import { invariant } from "ts-invariant";
 import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
@@ -8,7 +9,9 @@ import { arrayEquals } from "./equals.js";
  * Compound = combining types at the type level e.g., functions, intersections, unions
  * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
-export abstract class AbstractCompoundType<MemberTypeT extends Type> {
+export abstract class AbstractCompoundType<
+  MemberTypeT extends Type,
+> extends AbstractType {
   /**
    * Type discriminator
    */
@@ -25,8 +28,14 @@ export abstract class AbstractCompoundType<MemberTypeT extends Type> {
    */
   readonly #memberTypes: MemberTypeT[];
 
-  constructor(parameters?: { memberTypes?: readonly MemberTypeT[] }) {
-    this.#memberTypes = parameters?.memberTypes?.concat() ?? [];
+  constructor({
+    memberTypes,
+    ...superParameters
+  }: { memberTypes?: readonly MemberTypeT[] } & ConstructorParameters<
+    typeof AbstractType
+  >[0]) {
+    super(superParameters);
+    this.#memberTypes = memberTypes?.concat() ?? [];
   }
 
   addMemberType(memberType: MemberTypeT): void {

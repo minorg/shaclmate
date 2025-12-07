@@ -8,4 +8,15 @@ export class OptionType<
   ItemTypeT extends Type = Type,
 > extends AbstractContainerType<ItemTypeT> {
   readonly kind = "OptionType";
+
+  constructor({
+    itemType,
+  }: ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0]) {
+    super({
+      comment: itemType.comment,
+      itemType,
+      label: itemType.label,
+      name: itemType.name,
+    });
+  }
 }

@@ -1,3 +1,4 @@
+import { AbstractType } from "ast/AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
@@ -10,22 +11,34 @@ import { Type } from "./Type.js";
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
   ResolvedTypeT extends AbstractLazyObjectType.ResolvedTypeConstraint,
-> {
+> extends AbstractType {
+  abstract readonly kind:
+    | "LazyObjectOptionType"
+    | "LazyObjectSetType"
+    | "LazyObjectType";
   readonly partialType: PartialTypeT;
   readonly resolvedType: ResolvedTypeT;
 
   constructor({
     partialType,
     resolvedType,
+    ...superParameters
   }: {
     partialType: PartialTypeT;
     resolvedType: ResolvedTypeT;
-  }) {
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.partialType = partialType;
     this.resolvedType = resolvedType;
   }
 
-  equals(other: AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>): boolean {
+  override equals(
+    other: AbstractLazyObjectType<PartialTypeT, ResolvedTypeT>,
+  ): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
     if (!Type.equals(this.partialType, other.partialType)) {
       return false;
     }
@@ -35,6 +48,10 @@ export abstract class AbstractLazyObjectType<
     }
 
     return true;
+  }
+
+  override toString() {
+    return `${this.kind}(partialType=${this.partialType}, resolvedType=${this.resolvedType})`;
   }
 }
 

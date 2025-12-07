@@ -20,11 +20,6 @@ export abstract class AbstractObjectCompoundType<
   ObjectCompoundTypeT extends ObjectIntersectionType | ObjectUnionType,
 > extends AbstractCompoundType<ObjectCompoundTypeT | ObjectType> {
   /**
-   * Documentation comment from rdfs:comment.
-   */
-  readonly comment: Maybe<string>;
-
-  /**
    * Should generated code derived from this type be visible outside its module?
    *
    * Defaults to true.
@@ -32,16 +27,6 @@ export abstract class AbstractObjectCompoundType<
   readonly export: boolean;
 
   abstract override readonly kind: "ObjectIntersectionType" | "ObjectUnionType";
-
-  /**
-   * Human-readable label from rdfs:label.
-   */
-  readonly label: Maybe<string>;
-
-  /**
-   * Name of this type, usually derived from sh:name or shaclmate:name.
-   */
-  readonly name: Maybe<string>;
 
   /**
    * Identifier of the shape this ObjectType was derived from.
@@ -54,12 +39,10 @@ export abstract class AbstractObjectCompoundType<
   readonly #tsFeatures: Maybe<ReadonlySet<TsFeature>>;
 
   constructor({
-    comment,
     export_,
-    label,
-    name,
     shapeIdentifier,
     tsFeatures,
+    ...superParameters
   }: {
     comment: Maybe<string>;
     export_: boolean;
@@ -67,12 +50,11 @@ export abstract class AbstractObjectCompoundType<
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
     tsFeatures: Maybe<ReadonlySet<TsFeature>>;
-  }) {
-    super();
-    this.comment = comment;
+  } & ConstructorParameters<
+    typeof AbstractCompoundType<ObjectCompoundTypeT | ObjectType>
+  >[0]) {
+    super(superParameters);
     this.export = export_;
-    this.label = label;
-    this.name = name;
     this.shapeIdentifier = shapeIdentifier;
     this.#tsFeatures = tsFeatures;
   }
