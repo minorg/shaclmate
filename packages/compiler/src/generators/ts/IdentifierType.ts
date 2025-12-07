@@ -8,14 +8,14 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
+import { AbstractType } from "./AbstractType.js";
 import { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 
 export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   readonly kind = "IdentifierType";
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractType.Conversion[] {
     return super.conversions.concat([
       {
         conversionExpression: (value) => `dataFactory.namedNode(${value})`,
@@ -87,8 +87,8 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLString");
+  override get graphqlName(): AbstractType.GraphqlName {
+    return new AbstractType.GraphqlName("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -98,8 +98,8 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   @Memoize()
   override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
+    parameters?: Parameters<AbstractType["jsonName"]>[0],
+  ): AbstractType.JsonName {
     const discriminatorProperty = parameters?.includeDiscriminatorProperty
       ? `, readonly termType: "BlankNode" | "NamedNode"`
       : "";
@@ -107,12 +107,12 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new Type.JsonName(
+      return new AbstractType.JsonName(
         `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminatorProperty} }`,
       );
     }
 
-    return new Type.JsonName(
+    return new AbstractType.JsonName(
       `{ readonly "@id": string${discriminatorProperty} }`,
     );
   }
@@ -195,7 +195,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   override graphqlResolveExpression({
     variables: { value },
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
     return `rdfjsResource.Resource.Identifier.toString(${value})`;
   }
 

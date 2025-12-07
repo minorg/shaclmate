@@ -7,6 +7,7 @@ import { fromRdf } from "rdf-literal";
 import { Maybe } from "purify-ts";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
+import type { AbstractType } from "./AbstractType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
@@ -24,7 +25,6 @@ import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
-import type { Type } from "./Type.js";
 import { UnionType } from "./UnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsName } from "./tsName.js";
@@ -52,7 +52,9 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
+  private createLazyObjectOptionType(
+    astType: ast.LazyObjectOptionType,
+  ): AbstractType {
     return new LazyObjectOptionType({
       partialType: this.createOptionType(astType.partialType) as OptionType<
         ObjectType | ObjectUnionType
@@ -63,7 +65,9 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
+  private createLazyObjectSetType(
+    astType: ast.LazyObjectSetType,
+  ): AbstractType {
     return new LazyObjectSetType({
       partialType: this.createSetType(astType.partialType) as SetType<
         ObjectType | ObjectUnionType
@@ -74,7 +78,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectType(astType: ast.LazyObjectType): Type {
+  private createLazyObjectType(astType: ast.LazyObjectType): AbstractType {
     return new LazyObjectType({
       partialType: this.createType(astType.partialType) as
         | ObjectType
@@ -448,7 +452,7 @@ export class TypeFactory {
     });
   }
 
-  createType(astType: ast.Type): Type {
+  createType(astType: ast.Type): AbstractType {
     switch (astType.kind) {
       case "IdentifierType":
         return this.createIdentifierType(astType);

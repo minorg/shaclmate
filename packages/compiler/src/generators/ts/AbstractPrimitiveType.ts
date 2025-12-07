@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+import { AbstractType } from "./AbstractType.js";
 import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractPrimitiveType<
@@ -26,36 +26,36 @@ export abstract class AbstractPrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
     return Maybe.empty();
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName(this.name);
+  override jsonName(): AbstractType.JsonName {
+    return new AbstractType.JsonName(this.name);
   }
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     return variables.value;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
     return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.strictEquals);
@@ -74,7 +74,7 @@ export abstract class AbstractPrimitiveType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     return variables.value;
   }
 }

@@ -2,8 +2,8 @@ import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { AbstractType } from "./AbstractType.js";
 import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
@@ -11,8 +11,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
@@ -29,8 +29,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return conversions;
   }
 
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLBoolean");
+  override get graphqlName(): AbstractType.GraphqlName {
+    return new AbstractType.GraphqlName("graphql.GraphQLBoolean");
   }
 
   @Memoize()
@@ -43,7 +43,9 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     if (this.primitiveIn.length === 1) {
       return `${variables.zod}.literal(${this.primitiveIn[0]})`;
     }

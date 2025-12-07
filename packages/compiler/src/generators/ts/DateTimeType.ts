@@ -3,9 +3,9 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -19,8 +19,8 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
@@ -41,13 +41,13 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphqlScalars.DateTime");
+  override get graphqlName(): AbstractType.GraphqlName {
+    return new AbstractType.GraphqlName("graphqlScalars.DateTime");
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName("string");
+  override jsonName(): AbstractType.JsonName {
+    return new AbstractType.JsonName("string");
   }
 
   override get name(): string {
@@ -56,19 +56,21 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     return `new Date(${variables.value})`;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toISOString());`];
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     return `${variables.zod}.iso.datetime()`;
   }
 

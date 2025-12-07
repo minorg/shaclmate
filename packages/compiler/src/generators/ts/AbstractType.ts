@@ -8,20 +8,18 @@ import type { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 /**
- * Abstract base class for generating TypeScript expressions and statemenst in the TypeScript generator.
- *
- * Subclasses are used for both property types (c.f., property* methods) and node/object types.
+ * Abstract base class all types.
  */
-export abstract class Type {
+export abstract class AbstractType {
   /**
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */
-  abstract readonly conversions: readonly Type.Conversion[];
+  abstract readonly conversions: readonly AbstractType.Conversion[];
 
   /**
    * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
    */
-  abstract readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty>;
+  abstract readonly discriminatorProperty: Maybe<AbstractType.DiscriminatorProperty>;
 
   /**
    * A function (reference or declaration) that compares two property values of this type, returning a
@@ -32,7 +30,7 @@ export abstract class Type {
   /**
    * GraphQL-compatible version of the type.
    */
-  abstract readonly graphqlName: Type.GraphqlName;
+  abstract readonly graphqlName: AbstractType.GraphqlName;
 
   /**
    * Is a value of this type mutable?
@@ -119,7 +117,7 @@ export abstract class Type {
    */
   abstract jsonName(parameters?: {
     includeDiscriminatorProperty?: boolean;
-  }): Type.JsonName;
+  }): AbstractType.JsonName;
 
   /**
    * Statements that use hasher.update to hash a property value of this type.
@@ -164,7 +162,7 @@ export abstract class Type {
    */
   abstract snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
-    recursionStack: Type[];
+    recursionStack: AbstractType[];
   }): readonly string[];
 
   /**
@@ -328,7 +326,7 @@ export abstract class Type {
   }): readonly Import[];
 }
 
-export namespace Type {
+export namespace AbstractType {
   export interface Conversion {
     readonly conversionExpression: (value: string) => string;
     readonly sourceTypeCheckExpression: (value: string) => string;

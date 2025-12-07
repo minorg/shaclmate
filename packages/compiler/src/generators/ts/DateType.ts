@@ -2,8 +2,8 @@ import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { AbstractType } from "./AbstractType.js";
 import { DateTimeType } from "./DateTimeType.js";
-import { Type } from "./Type.js";
 
 export class DateType extends DateTimeType {
   protected override readonly xsdDatatype: NamedNode = xsd.date;
@@ -11,13 +11,15 @@ export class DateType extends DateTimeType {
   override readonly kind = "DateType";
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphqlScalars.Date");
+  override get graphqlName(): AbstractType.GraphqlName {
+    return new AbstractType.GraphqlName("graphqlScalars.Date");
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     return `${variables.zod}.iso.date()`;
   }
 

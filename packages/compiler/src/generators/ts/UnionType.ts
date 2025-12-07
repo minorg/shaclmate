@@ -2,15 +2,15 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
+import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 class MemberType {
-  private readonly delegate: Type;
+  private readonly delegate: AbstractType;
   private readonly delegateIndex: number;
   private readonly discriminatorKind: DiscriminatorKind;
-  private readonly universe: readonly Type[];
+  private readonly universe: readonly AbstractType[];
 
   constructor({
     delegate,
@@ -18,10 +18,10 @@ class MemberType {
     discriminatorKind,
     universe,
   }: {
-    delegate: Type;
+    delegate: AbstractType;
     delegateIndex: number;
     discriminatorKind: DiscriminatorKind;
-    universe: readonly Type[];
+    universe: readonly AbstractType[];
   }) {
     this.delegate = delegate;
     this.delegateIndex = delegateIndex;
@@ -88,23 +88,27 @@ class MemberType {
     return this.delegate.typeofs;
   }
 
-  fromJsonExpression(parameters: Parameters<Type["fromJsonExpression"]>[0]) {
+  fromJsonExpression(
+    parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
+  ) {
     return this.delegate.fromJsonExpression(parameters);
   }
 
-  fromRdfExpression(parameters: Parameters<Type["fromRdfExpression"]>[0]) {
+  fromRdfExpression(
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
+  ) {
     return this.delegate.fromRdfExpression(parameters);
   }
 
-  jsonName(parameters?: Parameters<Type["jsonName"]>[0]) {
+  jsonName(parameters?: Parameters<AbstractType["jsonName"]>[0]) {
     return this.delegate.jsonName(parameters);
   }
 
-  hashStatements(parameters: Parameters<Type["hashStatements"]>[0]) {
+  hashStatements(parameters: Parameters<AbstractType["hashStatements"]>[0]) {
     return this.delegate.hashStatements(parameters);
   }
 
-  jsonZodSchema(parameters: Parameters<Type["jsonZodSchema"]>[0]) {
+  jsonZodSchema(parameters: Parameters<AbstractType["jsonZodSchema"]>[0]) {
     return this.delegate.jsonZodSchema(parameters);
   }
 
@@ -119,47 +123,51 @@ class MemberType {
   }
 
   snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): readonly string[] {
     return this.delegate.snippetDeclarations(parameters);
   }
 
   sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
   ) {
     return this.delegate.sparqlConstructTemplateTriples(parameters);
   }
 
-  sparqlWherePatterns(parameters: Parameters<Type["sparqlWherePatterns"]>[0]) {
+  sparqlWherePatterns(
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
+  ) {
     return this.delegate.sparqlWherePatterns(parameters);
   }
 
-  toJsonExpression(parameters: Parameters<Type["toJsonExpression"]>[0]) {
+  toJsonExpression(
+    parameters: Parameters<AbstractType["toJsonExpression"]>[0],
+  ) {
     return this.delegate.toJsonExpression(parameters);
   }
 
-  toRdfExpression(parameters: Parameters<Type["toRdfExpression"]>[0]) {
+  toRdfExpression(parameters: Parameters<AbstractType["toRdfExpression"]>[0]) {
     return this.delegate.toRdfExpression(parameters);
   }
 
-  useImports(parameters: Parameters<Type["useImports"]>[0]) {
+  useImports(parameters: Parameters<AbstractType["useImports"]>[0]) {
     return this.delegate.useImports(parameters);
   }
 }
 
-export class UnionType extends Type {
+export class UnionType extends AbstractType {
   private readonly discriminator: Discriminator;
   private readonly memberTypes: readonly MemberType[];
   #name?: string;
 
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly kind = "UnionType";
 
   constructor({
     memberTypes,
     name,
   }: {
-    memberTypes: readonly Type[];
+    memberTypes: readonly AbstractType[];
     name?: string;
   }) {
     super();
@@ -209,7 +217,7 @@ export class UnionType extends Type {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractType.Conversion[] {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "syntheticProperty":
@@ -234,7 +242,7 @@ export class UnionType extends Type {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "syntheticProperty":
@@ -266,16 +274,16 @@ ${this.memberTypes
 }`;
   }
 
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlName(): AbstractType.GraphqlName {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
+  override jsonName(): AbstractType.JsonName {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "typeof":
-        return new Type.JsonName(
+        return new AbstractType.JsonName(
           this.memberTypes
             .map((memberType) =>
               memberType.jsonName({
@@ -286,7 +294,7 @@ ${this.memberTypes
             .join(" | "),
         );
       case "syntheticProperty":
-        return new Type.JsonName(
+        return new AbstractType.JsonName(
           `(${this.memberTypes.map((memberType) => `{ ${(this.discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.jsonName()} }`).join(" | ")})`,
         );
       default:
@@ -322,7 +330,7 @@ ${this.memberTypes
   }
 
   @Memoize()
-  override get typeofs(): Type["typeofs"] {
+  override get typeofs(): AbstractType["typeofs"] {
     return NonEmptyList.fromArray(
       this.memberTypes.flatMap((memberType) => memberType.typeofs),
     ).unsafeCoerce();
@@ -330,7 +338,7 @@ ${this.memberTypes
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     return this.ternaryExpression({
       memberTypeExpression: (memberType) => {
         let typeExpression = memberType.fromJsonExpression({
@@ -349,7 +357,7 @@ ${this.memberTypes
 
   override fromRdfExpression({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): string {
     return `${variables.resourceValues}.chain(values => values.chainMap(value => {
       const valueAsValues = purify.Either.of(value.toValues());
       return ${this.memberTypes.reduce((expression, memberType) => {
@@ -372,7 +380,7 @@ ${this.memberTypes
   }
 
   override graphqlResolveExpression(
-    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
   }
@@ -380,7 +388,7 @@ ${this.memberTypes
   override hashStatements({
     depth,
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     const caseBlocks: string[] = [];
     for (const memberType of this.memberTypes) {
       caseBlocks.push(
@@ -409,7 +417,9 @@ ${this.memberTypes
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     switch (this.discriminator.kind) {
       case "sharedProperty":
         return `${variables.zod}.discriminatedUnion("${this.discriminator.name}", [${this.memberTypes
@@ -440,7 +450,7 @@ ${this.memberTypes
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): readonly string[] {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
@@ -455,7 +465,7 @@ ${this.memberTypes
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     return this.memberTypes.reduce(
       (array, memberType) =>
@@ -470,7 +480,7 @@ ${this.memberTypes
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     let haveEmptyGroup = false; // Only need one empty group
     return [
@@ -500,7 +510,7 @@ ${this.memberTypes
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "typeof":
@@ -534,7 +544,7 @@ ${this.memberTypes
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     return this.ternaryExpression({
       memberTypeExpression: (memberType) =>
         `(${memberType.toRdfExpression({
@@ -548,7 +558,7 @@ ${this.memberTypes
   }
 
   override useImports(
-    parameters: Parameters<Type["useImports"]>[0],
+    parameters: Parameters<AbstractType["useImports"]>[0],
   ): readonly Import[] {
     return this.memberTypes.flatMap((memberType) =>
       memberType.useImports(parameters),
@@ -601,24 +611,30 @@ type DiscriminatorKind = Discriminator["kind"];
 
 type SharedPropertyDiscriminator = {
   kind: "sharedProperty";
-} & Type.DiscriminatorProperty;
+} & AbstractType.DiscriminatorProperty;
 
 type SyntheticPropertyDiscriminator = {
   kind: "syntheticProperty";
-} & Type.DiscriminatorProperty;
+} & AbstractType.DiscriminatorProperty;
 
 type TypeofDiscriminator = {
   kind: "typeof";
 };
 
-function sharedDiscriminatorProperty(memberTypes: readonly Type[]):
-  | (Omit<Type.DiscriminatorProperty, "descendantValues" | "ownValues"> & {
+function sharedDiscriminatorProperty(memberTypes: readonly AbstractType[]):
+  | (Omit<
+      AbstractType.DiscriminatorProperty,
+      "descendantValues" | "ownValues"
+    > & {
       descendantValues: string[];
       ownValues: string[];
     })
   | undefined {
   let sharedDiscriminatorProperty:
-    | (Omit<Type.DiscriminatorProperty, "descendantValues" | "ownValues"> & {
+    | (Omit<
+        AbstractType.DiscriminatorProperty,
+        "descendantValues" | "ownValues"
+      > & {
         descendantValues: string[];
         ownValues: string[];
       })

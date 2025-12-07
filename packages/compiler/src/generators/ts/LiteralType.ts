@@ -1,9 +1,9 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
+import { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -26,12 +26,12 @@ export class LiteralType extends TermType<Literal, Literal> {
 
   @Memoize()
   override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
+    parameters?: Parameters<AbstractType["jsonName"]>[0],
+  ): AbstractType.JsonName {
     const discriminatorProperty = parameters?.includeDiscriminatorProperty
       ? `, readonly termType: "Literal"`
       : "";
-    return new Type.JsonName(
+    return new AbstractType.JsonName(
       `{ readonly "@language"?: string${discriminatorProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
   }
@@ -107,7 +107,7 @@ export class LiteralType extends TermType<Literal, Literal> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): readonly string[] {
     let snippetDeclarations = super.snippetDeclarations(parameters);
     const { features } = parameters;
@@ -120,7 +120,7 @@ export class LiteralType extends TermType<Literal, Literal> {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0] & {
       ignoreLiteralLanguage?: boolean;
     },
   ): readonly string[] {

@@ -2,7 +2,7 @@ import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { Type } from "./Type.js";
+import { AbstractType } from "./AbstractType.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -10,8 +10,8 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
@@ -29,8 +29,8 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLString");
+  override get graphqlName(): AbstractType.GraphqlName {
+    return new AbstractType.GraphqlName("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -59,13 +59,15 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     switch (this.primitiveIn.length) {
       case 0:
         return `${variables.zod}.string()`;

@@ -5,9 +5,9 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
+import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -26,15 +26,15 @@ export class TermType<
     | BlankNode
     | Literal
     | NamedNode,
-> extends Type {
+> extends AbstractType {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
-  override readonly typeofs: Type["typeofs"] = NonEmptyList([
+  override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
     "object" as const,
   ]);
 
@@ -58,8 +58,8 @@ export class TermType<
   }
 
   @Memoize()
-  get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [];
+  get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [];
 
     if (this.nodeKinds.has("Literal")) {
       conversions.push(
@@ -108,7 +108,7 @@ export class TermType<
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
     return Maybe.of({
       name: "termType",
       ownValues: [...this.nodeKinds],
@@ -117,18 +117,18 @@ export class TermType<
     });
   }
 
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlName(): AbstractType.GraphqlName {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
+  override jsonName(): AbstractType.JsonName {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "IdentifierType and LiteralType should override TermType.jsonName",
     );
-    return new Type.JsonName(
+    return new AbstractType.JsonName(
       `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
         .filter((nodeKind) => nodeKind !== "Literal")
         .map((nodeKind) => `"${nodeKind}"`)
@@ -147,7 +147,7 @@ export class TermType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
@@ -175,7 +175,7 @@ export class TermType<
   }
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {
     // invariant(
     //   this.nodeKinds.has("Literal") &&
@@ -209,7 +209,7 @@ export class TermType<
    */
   protected fromRdfExpressionChain({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): {
     defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
@@ -251,14 +251,14 @@ export class TermType<
   }
 
   override graphqlResolveExpression(
-    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [
       `${variables.hasher}.update(${variables.value}.termType);`,
       `${variables.hasher}.update(${variables.value}.value);`,
@@ -271,7 +271,9 @@ export class TermType<
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
@@ -296,7 +298,7 @@ export class TermType<
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.booleanEquals);
@@ -305,7 +307,7 @@ export class TermType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -324,7 +326,7 @@ export class TermType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
@@ -353,7 +355,7 @@ export class TermType<
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     return this.defaultValue
       .map(
         (defaultValue) =>

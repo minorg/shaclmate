@@ -2,15 +2,15 @@ import { Memoize } from "typescript-memoize";
 
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class OptionType<ItemTypeT extends Type> extends Type {
-  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
+export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
+  override readonly discriminatorProperty: Maybe<AbstractType.DiscriminatorProperty> =
     Maybe.empty();
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -21,8 +21,8 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [];
+  override get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [];
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) => `purify.Maybe.isMaybe(${value})`,
@@ -55,20 +55,20 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlName(): AbstractType.GraphqlName {
     invariant(!this.itemType.graphqlName.nullable);
-    return new Type.GraphqlName(this.itemType.graphqlName.toString(), {
+    return new AbstractType.GraphqlName(this.itemType.graphqlName.toString(), {
       nullable: true,
     });
   }
 
   @Memoize()
   override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
+    parameters?: Parameters<AbstractType["jsonName"]>[0],
+  ): AbstractType.JsonName {
     const itemTypeJsonName = this.itemType.jsonName(parameters);
     invariant(!itemTypeJsonName.optional);
-    return new Type.JsonName(itemTypeJsonName.toString(), {
+    return new AbstractType.JsonName(itemTypeJsonName.toString(), {
       optional: true,
     });
   }
@@ -84,7 +84,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     const expression = `purify.Maybe.fromNullable(${variables.value})`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
       variables: { value: "item" },
@@ -95,14 +95,14 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
     return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<${this.itemType.name}>>({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: purify.Maybe.empty() }))`;
   }
 
   override graphqlResolveExpression(
-    parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+    parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
   ): string {
     return `${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
@@ -110,7 +110,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   override hashStatements({
     depth,
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [
       `${variables.value}.ifJust((value${depth}) => { ${this.itemType
         .hashStatements({
@@ -125,19 +125,19 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   override jsonUiSchemaElement(
-    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
-  ): ReturnType<Type["jsonUiSchemaElement"]> {
+    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
+  ): ReturnType<AbstractType["jsonUiSchemaElement"]> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
-    parameters: Parameters<Type["jsonZodSchema"]>[0],
-  ): ReturnType<Type["jsonZodSchema"]> {
+    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
+  ): ReturnType<AbstractType["jsonZodSchema"]> {
     return `${this.itemType.jsonZodSchema(parameters)}.optional()`;
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): readonly string[] {
     const snippetDeclarations: string[] = this.itemType
       .snippetDeclarations(parameters)
@@ -149,7 +149,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -160,7 +160,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object": {
@@ -179,13 +179,13 @@ export class OptionType<ItemTypeT extends Type> extends Type {
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })})).extract()`;
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     const itemTypeToRdfExpression = this.itemType.toRdfExpression({
       variables: { ...variables, value: "value" },
     });
@@ -197,7 +197,7 @@ export class OptionType<ItemTypeT extends Type> extends Type {
   }
 
   override useImports(
-    parameters: Parameters<Type["useImports"]>[0],
+    parameters: Parameters<AbstractType["useImports"]>[0],
   ): readonly Import[] {
     return [...this.itemType.useImports(parameters), Import.PURIFY];
   }

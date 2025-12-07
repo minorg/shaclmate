@@ -18,11 +18,11 @@ import type {
   TsObjectDeclarationType,
 } from "../../enums/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -37,7 +37,7 @@ export class ObjectType extends AbstractDeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
@@ -102,7 +102,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get _discriminatorProperty(): Type.DiscriminatorProperty {
+  get _discriminatorProperty(): AbstractType.DiscriminatorProperty {
     const discriminatorProperty = this.properties.find(
       (property) => property instanceof ObjectType.TypeDiscriminatorProperty,
     );
@@ -125,7 +125,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractType.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
@@ -219,7 +219,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
     return Maybe.of(this._discriminatorProperty);
   }
 
@@ -248,8 +248,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName(
+  get graphqlName(): AbstractType.GraphqlName {
+    return new AbstractType.GraphqlName(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -269,8 +269,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName(
+  override jsonName(): AbstractType.JsonName {
+    return new AbstractType.JsonName(
       `${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );
   }
@@ -306,7 +306,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<Type>[] {
+  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<AbstractType>[] {
     return this.properties.filter(
       (property) => property instanceof _ObjectType.ShaclProperty,
     );
@@ -573,7 +573,7 @@ export namespace ObjectType {
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
   export const ShaclProperty = _ObjectType.ShaclProperty;
-  export type ShaclProperty<TypeT extends Type> =
+  export type ShaclProperty<TypeT extends AbstractType> =
     _ObjectType.ShaclProperty<TypeT>;
   export const TypeDiscriminatorProperty =
     _ObjectType.TypeDiscriminatorProperty;
