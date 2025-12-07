@@ -22,7 +22,9 @@ function isTypeofString(
 /**
  * Abstract base class for ListType and SetType.
  */
-export abstract class CollectionType<ItemTypeT extends Type> extends Type {
+export abstract class AbstractCollectionType<
+  ItemTypeT extends Type,
+> extends Type {
   override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();

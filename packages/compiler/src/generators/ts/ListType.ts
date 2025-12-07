@@ -6,7 +6,7 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
-import { CollectionType } from "./CollectionType.js";
+import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { Import } from "./Import.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -14,7 +14,7 @@ import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 
 export class ListType<
   ItemTypeT extends Type,
-> extends CollectionType<ItemTypeT> {
+> extends AbstractCollectionType<ItemTypeT> {
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
@@ -30,7 +30,7 @@ export class ListType<
     identifierNodeKind: ListType<ItemTypeT>["identifierNodeKind"];
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
+  } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
     super(superParameters);
     this.identifierNodeKind = identifierNodeKind;
     this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
