@@ -150,8 +150,7 @@ class MemberType {
 export class UnionType extends Type {
   private readonly discriminator: Discriminator;
   private readonly memberTypes: readonly MemberType[];
-
-  private _name?: string;
+  #name?: string;
 
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly kind = "UnionType";
@@ -165,7 +164,7 @@ export class UnionType extends Type {
   }) {
     super();
     invariant(memberTypes.length >= 2);
-    this._name = name;
+    this.#name = name;
 
     const sharedDiscriminatorProperty_ =
       sharedDiscriminatorProperty(memberTypes);
@@ -302,24 +301,24 @@ ${this.memberTypes
 
   @Memoize()
   override get name(): string {
-    if (typeof this._name === "undefined") {
+    if (typeof this.#name === "undefined") {
       switch (this.discriminator.kind) {
         case "sharedProperty":
           // If every type shares a discriminator (e.g., RDF/JS "termType" or generated ObjectType "type"),
           // just join their names with "|"
-          this._name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
+          this.#name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
           break;
         case "syntheticProperty":
-          this._name = `(${this.memberTypes.map((memberType) => `{ ${(this.discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.name} }`).join(" | ")})`;
+          this.#name = `(${this.memberTypes.map((memberType) => `{ ${(this.discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.name} }`).join(" | ")})`;
           break;
         case "typeof":
           // The memberType.name may include literal values, but they should still be unambiguous with other member types since the typeofs
           // of the different member types are known to be different.
-          this._name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
+          this.#name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
           break;
       }
     }
-    return this._name!;
+    return this.#name!;
   }
 
   @Memoize()
