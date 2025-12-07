@@ -2,15 +2,15 @@ import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { AbstractType } from "./AbstractType.js";
+import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { TermType } from "./TermType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class DateTimeType extends AbstractPrimitiveType<Date> {
+export class DateTimeType extends PrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
 
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
@@ -96,7 +96,7 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   override snippetDeclarations({
     features,
   }: Parameters<
-    AbstractPrimitiveType<Date>["snippetDeclarations"]
+    PrimitiveType<Date>["snippetDeclarations"]
   >[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
@@ -107,13 +107,13 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): string {
+  }: Parameters<PrimitiveType<Date>["toJsonExpression"]>[0]): string {
     return `${variables.value}.toISOString()`;
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): string {
+  }: Parameters<PrimitiveType<Date>["toRdfExpression"]>[0]): string {
     const valueToRdf = `rdfLiteral.toRdf(${variables.value}, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`;
     return this.primitiveDefaultValue
       .map(

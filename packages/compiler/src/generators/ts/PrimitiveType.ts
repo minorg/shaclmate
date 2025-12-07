@@ -5,7 +5,7 @@ import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export abstract class AbstractPrimitiveType<
+export abstract class PrimitiveType<
   ValueT extends boolean | Date | string | number,
 > extends LiteralType {
   override readonly equalsFunction: string =

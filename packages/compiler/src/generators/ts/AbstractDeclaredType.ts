@@ -25,12 +25,13 @@ export abstract class AbstractDeclaredType extends AbstractType {
     export_,
     features,
     name,
+    ...superParameters
   }: {
     export_: boolean;
     features: ReadonlySet<TsFeature>;
     name: string;
-  }) {
-    super();
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.export = export_;
     this.features = features;
     this.name = name;

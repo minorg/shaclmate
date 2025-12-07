@@ -166,11 +166,12 @@ export class UnionType extends AbstractType {
   constructor({
     memberTypes,
     name,
+    ...superParameters
   }: {
     memberTypes: readonly AbstractType[];
     name?: string;
-  }) {
-    super();
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     invariant(memberTypes.length >= 2);
     this.#name = name;
 

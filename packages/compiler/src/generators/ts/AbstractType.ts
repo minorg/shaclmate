@@ -11,6 +11,17 @@ import { objectInitializer } from "./objectInitializer.js";
  * Abstract base class all types.
  */
 export abstract class AbstractType {
+  readonly comment: Maybe<string>;
+  readonly label: Maybe<string>;
+
+  constructor({
+    comment,
+    label,
+  }: { comment: Maybe<string>; label: Maybe<string> }) {
+    this.comment = comment;
+    this.label = label;
+  }
+
   /**
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */

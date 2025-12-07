@@ -43,13 +43,14 @@ export class TermType<
     hasValues,
     in_,
     nodeKinds,
+    ...superParameters
   }: {
     defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
-  }) {
-    super();
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;

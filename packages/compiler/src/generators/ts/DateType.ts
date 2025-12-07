@@ -1,9 +1,9 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
-import type { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { AbstractType } from "./AbstractType.js";
 import { DateTimeType } from "./DateTimeType.js";
+import type { PrimitiveType } from "./PrimitiveType.js";
 
 export class DateType extends DateTimeType {
   protected override readonly xsdDatatype: NamedNode = xsd.date;
@@ -25,7 +25,7 @@ export class DateType extends DateTimeType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): string {
+  }: Parameters<PrimitiveType<Date>["toJsonExpression"]>[0]): string {
     return `${variables.value}.toISOString().replace(/T.*$/, '')`;
   }
 }
