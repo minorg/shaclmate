@@ -1,20 +1,13 @@
-import { AbstractType } from "ast/AbstractType.js";
-import { Type } from "./Type.js";
+import { AbstractContainerType } from "ast/AbstractContainerType.js";
+import type { Type } from "./Type.js";
 
 /**
  * Abstract base class for a collection of items of a single type. This is the parent of ListType and SetType.
  */
 export abstract class AbstractCollectionType<
   ItemTypeT extends Type = Type,
-> extends AbstractType {
-  abstract readonly kind: "ListType" | "SetType";
-
-  /**
-   * Collection item type.
-   *
-   * Mutable to support cycle-handling logic in the compiler.
-   */
-  itemType: ItemTypeT;
+> extends AbstractContainerType<ItemTypeT> {
+  abstract override readonly kind: "ListType" | "SetType";
 
   /**
    * The collection should be mutable in generated code.
@@ -22,20 +15,17 @@ export abstract class AbstractCollectionType<
   readonly mutable: boolean;
 
   constructor({
-    itemType,
     mutable,
-    ...superParameters,
+    ...superParameters
   }: {
-    itemType: ItemTypeT;
     mutable: boolean;
-  }  & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0]) {
     super(superParameters);
-    this.itemType = itemType;
     this.mutable = mutable;
   }
 
-  equals(other: AbstractCollectionType<ItemTypeT>): boolean {
-    if (!Type.equals(this.itemType, other.itemType)) {
+  override equals(other: AbstractCollectionType<ItemTypeT>): boolean {
+    if (!super.equals(other)) {
       return false;
     }
 
@@ -44,9 +34,5 @@ export abstract class AbstractCollectionType<
     }
 
     return true;
-  }
-
-  toString(): string {
-    return `${this.kind}(itemType=${this.itemType})`;
   }
 }

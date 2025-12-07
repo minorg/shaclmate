@@ -47,4 +47,6 @@ export abstract class AbstractType {
 
     return true;
   }
+
+  abstract toString(): string;
 }

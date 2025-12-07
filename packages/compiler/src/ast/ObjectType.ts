@@ -222,7 +222,7 @@ export class ObjectType extends AbstractType {
     return this.#properties;
   }
 
-  equals(other: ObjectType): boolean {
+  override equals(other: ObjectType): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
@@ -239,7 +239,7 @@ export class ObjectType extends AbstractType {
     });
   }
 
-  toString(): string {
+  override toString(): string {
     return `${this.kind}(shapeIdentifier=${Resource.Identifier.toString(this.shapeIdentifier)})`;
   }
 }
