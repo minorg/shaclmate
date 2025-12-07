@@ -7,7 +7,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -40,10 +40,8 @@ export class ListType<
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
-    return new AbstractType.JsonName(
-      `readonly (${this.itemType.jsonName()})[]`,
-    );
+  override jsonName(): Type.JsonName {
+    return new Type.JsonName(`readonly (${this.itemType.jsonName()})[]`);
   }
 
   override fromRdfExpression({

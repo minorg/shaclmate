@@ -5,24 +5,28 @@ import { invariant } from "ts-invariant";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
-  override readonly discriminatorProperty: Maybe<AbstractType.DiscriminatorProperty> =
+  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
   override readonly typeofs = NonEmptyList(["object" as const]);
 
-  constructor({ itemType }: { itemType: ItemTypeT }) {
-    super();
+  constructor({
+    itemType,
+    ...superParameters
+  }: { itemType: ItemTypeT } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.itemType = itemType;
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [];
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) => `purify.Maybe.isMaybe(${value})`,
@@ -55,9 +59,9 @@ export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
   }
 
   @Memoize()
-  override get graphqlName(): AbstractType.GraphqlName {
+  override get graphqlName(): Type.GraphqlName {
     invariant(!this.itemType.graphqlName.nullable);
-    return new AbstractType.GraphqlName(this.itemType.graphqlName.toString(), {
+    return new Type.GraphqlName(this.itemType.graphqlName.toString(), {
       nullable: true,
     });
   }
@@ -65,10 +69,10 @@ export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
   @Memoize()
   override jsonName(
     parameters?: Parameters<AbstractType["jsonName"]>[0],
-  ): AbstractType.JsonName {
+  ): Type.JsonName {
     const itemTypeJsonName = this.itemType.jsonName(parameters);
     invariant(!itemTypeJsonName.optional);
-    return new AbstractType.JsonName(itemTypeJsonName.toString(), {
+    return new Type.JsonName(itemTypeJsonName.toString(), {
       optional: true,
     });
   }

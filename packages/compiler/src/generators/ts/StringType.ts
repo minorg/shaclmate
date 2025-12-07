@@ -1,8 +1,9 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { PrimitiveType } from "./PrimitiveType.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class StringType extends PrimitiveType<string> {
@@ -10,8 +11,8 @@ export class StringType extends PrimitiveType<string> {
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
@@ -29,8 +30,8 @@ export class StringType extends PrimitiveType<string> {
   }
 
   @Memoize()
-  override get graphqlName(): AbstractType.GraphqlName {
-    return new AbstractType.GraphqlName("graphql.GraphQLString");
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphql.GraphQLString");
   }
 
   @Memoize()

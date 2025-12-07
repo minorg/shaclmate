@@ -2,10 +2,11 @@ import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { PrimitiveType } from "./PrimitiveType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { TermType } from "./TermType.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -19,8 +20,8 @@ export class DateTimeType extends PrimitiveType<Date> {
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
@@ -41,13 +42,13 @@ export class DateTimeType extends PrimitiveType<Date> {
   }
 
   @Memoize()
-  override get graphqlName(): AbstractType.GraphqlName {
-    return new AbstractType.GraphqlName("graphqlScalars.DateTime");
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphqlScalars.DateTime");
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
-    return new AbstractType.JsonName("string");
+  override jsonName(): Type.JsonName {
+    return new Type.JsonName("string");
   }
 
   override get name(): string {

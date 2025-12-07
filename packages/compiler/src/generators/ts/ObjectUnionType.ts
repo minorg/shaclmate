@@ -9,11 +9,12 @@ import {
 import { Memoize } from "typescript-memoize";
 
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
+import { Type } from "./Type.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -31,9 +32,6 @@ import { tsComment } from "./tsComment.js";
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
 export class ObjectUnionType extends AbstractDeclaredType {
-  protected readonly comment: Maybe<string>;
-  protected readonly label: Maybe<string>;
-
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
@@ -41,9 +39,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
-    comment,
     identifierType,
-    label,
     memberTypes,
     ...superParameters
   }: ConstructorParameters<typeof AbstractDeclaredType>[0] & {
@@ -55,9 +51,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     name: string;
   }) {
     super(superParameters);
-    this.comment = comment;
     this.identifierType = identifierType;
-    this.label = label;
     invariant(memberTypes.length > 0);
     this.memberTypes = memberTypes.map(
       (memberType) =>
@@ -69,7 +63,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
+  override get conversions(): readonly Type.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
@@ -116,12 +110,12 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of(this._discriminatorProperty);
   }
 
   @Memoize()
-  protected get _discriminatorProperty(): AbstractType.DiscriminatorProperty {
+  protected get _discriminatorProperty(): Type.DiscriminatorProperty {
     const discriminatorPropertyDescendantValues: string[] = [];
     const discriminatorPropertyName =
       this.memberTypes[0]._discriminatorProperty.name;
@@ -153,8 +147,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get graphqlName(): AbstractType.GraphqlName {
-    return new AbstractType.GraphqlName(
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -165,8 +159,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
-    return new AbstractType.JsonName(
+  override jsonName(): Type.JsonName {
+    return new Type.JsonName(
       this.memberTypes.map((memberType) => memberType.jsonName()).join(" | "),
     );
   }

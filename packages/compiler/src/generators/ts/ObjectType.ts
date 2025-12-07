@@ -18,19 +18,18 @@ import type {
   TsObjectDeclarationType,
 } from "../../enums/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
 
-  protected readonly comment: Maybe<string>;
-  protected readonly label: Maybe<string>;
   protected readonly toRdfTypes: readonly NamedNode[];
 
   readonly abstract: boolean;
@@ -46,13 +45,11 @@ export class ObjectType extends AbstractDeclaredType {
 
   constructor({
     abstract,
-    comment,
     declarationType,
     extern,
     fromRdfType,
     identifierType,
     imports,
-    label,
     lazyAncestorObjectTypes,
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
@@ -83,13 +80,11 @@ export class ObjectType extends AbstractDeclaredType {
   } & ConstructorParameters<typeof AbstractDeclaredType>[0]) {
     super(superParameters);
     this.abstract = abstract;
-    this.comment = comment;
     this.declarationType = declarationType;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     this.imports = imports;
-    this.label = label;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
     this.lazyChildObjectTypes = lazyChildObjectTypes;
@@ -102,7 +97,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get _discriminatorProperty(): AbstractType.DiscriminatorProperty {
+  get _discriminatorProperty(): Type.DiscriminatorProperty {
     const discriminatorProperty = this.properties.find(
       (property) => property instanceof ObjectType.TypeDiscriminatorProperty,
     );
@@ -125,7 +120,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
+  override get conversions(): readonly Type.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
@@ -219,7 +214,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of(this._discriminatorProperty);
   }
 
@@ -248,8 +243,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): AbstractType.GraphqlName {
-    return new AbstractType.GraphqlName(
+  get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -269,8 +264,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
-    return new AbstractType.JsonName(
+  override jsonName(): Type.JsonName {
+    return new Type.JsonName(
       `${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );
   }

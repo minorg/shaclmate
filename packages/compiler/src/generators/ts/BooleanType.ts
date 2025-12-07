@@ -1,9 +1,10 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { PrimitiveType } from "./PrimitiveType.js";
 import type { TermType } from "./TermType.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export class BooleanType extends PrimitiveType<boolean> {
@@ -11,8 +12,8 @@ export class BooleanType extends PrimitiveType<boolean> {
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
@@ -29,8 +30,8 @@ export class BooleanType extends PrimitiveType<boolean> {
     return conversions;
   }
 
-  override get graphqlName(): AbstractType.GraphqlName {
-    return new AbstractType.GraphqlName("graphql.GraphQLBoolean");
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName("graphql.GraphQLBoolean");
   }
 
   @Memoize()

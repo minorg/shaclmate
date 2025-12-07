@@ -25,12 +25,12 @@ export abstract class AbstractType {
   /**
    * Expressions that convert a source type or types to this type. It should include the type itself.
    */
-  abstract readonly conversions: readonly AbstractType.Conversion[];
+  abstract readonly conversions: readonly Type.Conversion[];
 
   /**
    * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
    */
-  abstract readonly discriminatorProperty: Maybe<AbstractType.DiscriminatorProperty>;
+  abstract readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty>;
 
   /**
    * A function (reference or declaration) that compares two property values of this type, returning a
@@ -41,7 +41,7 @@ export abstract class AbstractType {
   /**
    * GraphQL-compatible version of the type.
    */
-  abstract readonly graphqlName: AbstractType.GraphqlName;
+  abstract readonly graphqlName: Type.GraphqlName;
 
   /**
    * Is a value of this type mutable?
@@ -128,7 +128,7 @@ export abstract class AbstractType {
    */
   abstract jsonName(parameters?: {
     includeDiscriminatorProperty?: boolean;
-  }): AbstractType.JsonName;
+  }): Type.JsonName;
 
   /**
    * Statements that use hasher.update to hash a property value of this type.
@@ -335,69 +335,4 @@ export abstract class AbstractType {
   abstract useImports(parameters: {
     features: ReadonlySet<TsFeature>;
   }): readonly Import[];
-}
-
-export namespace AbstractType {
-  export interface Conversion {
-    readonly conversionExpression: (value: string) => string;
-    readonly sourceTypeCheckExpression: (value: string) => string;
-    readonly sourceTypeName: string;
-  }
-
-  export interface DiscriminatorProperty {
-    readonly name: string;
-    readonly ownValues: readonly string[];
-    readonly descendantValues: readonly string[];
-  }
-
-  export class JsonName {
-    /**
-     * Is the type optional in JSON? Equivalent to ? in TypeScript or | undefined.
-     */
-    readonly optional: boolean;
-
-    /**
-     * The name of the type when it's required i.e. -- so it should never include "| undefined".
-     */
-    readonly requiredName: string;
-
-    constructor(
-      requiredName: string,
-      parameters?: {
-        optional: boolean;
-      },
-    ) {
-      this.optional = !!parameters?.optional;
-      this.requiredName = requiredName;
-    }
-
-    toString(): string {
-      return this.optional
-        ? `(${this.requiredName}) | undefined`
-        : this.requiredName;
-    }
-  }
-
-  export class GraphqlName {
-    /**
-     * Is the type nullable in GraphQL?
-     */
-    readonly nullable: boolean;
-
-    /**
-     * The name of the type when it's nullable -- so it should never include "new graphql.GraphQLNonNull(...)" around it.
-     */
-    readonly nullableName: string;
-
-    constructor(nullableName: string, parameters?: { nullable: boolean }) {
-      this.nullable = !!parameters?.nullable;
-      this.nullableName = nullableName;
-    }
-
-    toString(): string {
-      return this.nullable
-        ? this.nullableName
-        : `new graphql.GraphQLNonNull(${this.nullableName})`;
-    }
-  }
 }

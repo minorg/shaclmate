@@ -30,6 +30,7 @@ export abstract class AbstractLazyObjectType<
     partialType,
     resolvedType,
     runtimeClass,
+    ...superParameters
   }: {
     partialType: PartialTypeT;
     resolvedType: ResolvedTypeT;
@@ -37,21 +38,21 @@ export abstract class AbstractLazyObjectType<
       ResolvedTypeT,
       PartialTypeT
     >["runtimeClass"];
-  }) {
-    super();
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.partialType = partialType;
     this.resolvedType = resolvedType;
     this.runtimeClass = runtimeClass;
   }
 
-  override get conversions(): readonly AbstractType.Conversion[] {
+  override get conversions(): readonly Type.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
           `typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
         sourceTypeName: this.name,
-      } satisfies AbstractType.Conversion,
+      } satisfies Type.Conversion,
     ];
   }
 
@@ -60,7 +61,7 @@ export abstract class AbstractLazyObjectType<
     return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
-  override get graphqlName(): AbstractType.GraphqlName {
+  override get graphqlName(): Type.GraphqlName {
     return this.resolvedType.graphqlName;
   }
 
@@ -79,7 +80,7 @@ export abstract class AbstractLazyObjectType<
 
   override jsonName(
     parameters?: Parameters<AbstractType["jsonName"]>[0],
-  ): AbstractType.JsonName {
+  ): Type.JsonName {
     return this.partialType.jsonName(parameters);
   }
 

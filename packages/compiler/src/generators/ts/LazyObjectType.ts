@@ -36,7 +36,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     });
   }
 
-  override get conversions(): readonly AbstractType.Conversion[] {
+  override get conversions(): readonly Type.Conversion[] {
     const conversions = super.conversions.concat();
 
     if (this.partialType.kind === "ObjectType") {

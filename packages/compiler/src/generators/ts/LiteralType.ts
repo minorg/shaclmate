@@ -1,9 +1,10 @@
 import type { Literal } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { TermType } from "./TermType.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -27,11 +28,11 @@ export class LiteralType extends TermType<Literal, Literal> {
   @Memoize()
   override jsonName(
     parameters?: Parameters<AbstractType["jsonName"]>[0],
-  ): AbstractType.JsonName {
+  ): Type.JsonName {
     const discriminatorProperty = parameters?.includeDiscriminatorProperty
       ? `, readonly termType: "Literal"`
       : "";
-    return new AbstractType.JsonName(
+    return new Type.JsonName(
       `{ readonly "@language"?: string${discriminatorProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
   }

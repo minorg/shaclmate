@@ -1,8 +1,9 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
+import { Type } from "./Type.js";
 
 export class SetType<
   ItemTypeT extends AbstractType,
@@ -11,12 +12,12 @@ export class SetType<
   readonly kind = "SetType";
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
+  override jsonName(): Type.JsonName {
     const name = `readonly (${this.itemType.jsonName()})[]`;
     if (this.minCount === 0) {
-      return new AbstractType.JsonName(name, { optional: true });
+      return new Type.JsonName(name, { optional: true });
     }
-    return new AbstractType.JsonName(name);
+    return new Type.JsonName(name);
   }
 
   override fromRdfExpression(

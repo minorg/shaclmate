@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 function isTypeofString(
@@ -25,7 +26,7 @@ function isTypeofString(
 export abstract class AbstractCollectionType<
   ItemTypeT extends AbstractType,
 > extends AbstractType {
-  override readonly discriminatorProperty: Maybe<AbstractType.DiscriminatorProperty> =
+  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
@@ -37,12 +38,13 @@ export abstract class AbstractCollectionType<
     itemType,
     minCount,
     mutable,
+    ...superParameters
   }: {
     itemType: ItemTypeT;
     minCount: number;
     mutable: boolean;
-  }) {
-    super();
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.itemType = itemType;
     this.minCount = minCount;
     invariant(this.minCount >= 0);
@@ -53,8 +55,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [];
 
     // Try to do some conversions from types itemType can be converted to
     // For example, if itemType is a NamedNode, it can be converted from a string, so here we'd accept:
@@ -67,7 +69,7 @@ export abstract class AbstractCollectionType<
 
     const itemTypeConversionsByTypeof = {} as Record<
       "boolean" | "object" | "number" | "string",
-      AbstractType.Conversion
+      Type.Conversion
     >;
     if (this.itemType.typeofs.length === 1) {
       itemTypeConversionsByTypeof[this.itemType.typeofs[0]] = {
@@ -146,8 +148,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get graphqlName(): AbstractType.GraphqlName {
-    return new AbstractType.GraphqlName(
+  override get graphqlName(): Type.GraphqlName {
+    return new Type.GraphqlName(
       `new graphql.GraphQLList(${this.itemType.graphqlName})`,
     );
   }

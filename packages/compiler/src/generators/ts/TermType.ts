@@ -8,6 +8,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -59,8 +60,8 @@ export class TermType<
   }
 
   @Memoize()
-  get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
+  get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [];
 
     if (this.nodeKinds.has("Literal")) {
       conversions.push(
@@ -109,7 +110,7 @@ export class TermType<
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.of({
       name: "termType",
       ownValues: [...this.nodeKinds],
@@ -118,18 +119,18 @@ export class TermType<
     });
   }
 
-  override get graphqlName(): AbstractType.GraphqlName {
+  override get graphqlName(): Type.GraphqlName {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
+  override jsonName(): Type.JsonName {
     invariant(
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "IdentifierType and LiteralType should override TermType.jsonName",
     );
-    return new AbstractType.JsonName(
+    return new Type.JsonName(
       `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
         .filter((nodeKind) => nodeKind !== "Literal")
         .map((nodeKind) => `"${nodeKind}"`)

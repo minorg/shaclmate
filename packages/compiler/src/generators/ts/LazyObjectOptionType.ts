@@ -39,7 +39,7 @@ export class LazyObjectOptionType extends AbstractLazyObjectType<
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
+  override get conversions(): readonly Type.Conversion[] {
     const conversions = super.conversions.concat();
 
     if (this.partialType.itemType.kind === "ObjectType") {

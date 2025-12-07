@@ -4,6 +4,7 @@ import { NonEmptyList } from "purify-ts";
 import type { AbstractType } from "./AbstractType.js";
 import { PrimitiveType } from "./PrimitiveType.js";
 import type { TermType } from "./TermType.js";
+import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 export abstract class NumberType extends PrimitiveType<number> {
@@ -11,8 +12,8 @@ export abstract class NumberType extends PrimitiveType<number> {
   override readonly typeofs = NonEmptyList(["number" as const]);
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [
+  override get conversions(): readonly Type.Conversion[] {
+    const conversions: Type.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,

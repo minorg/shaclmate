@@ -1,8 +1,9 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { AbstractType } from "./AbstractType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { LiteralType } from "./LiteralType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class PrimitiveType<
@@ -26,13 +27,13 @@ export abstract class PrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
-  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     return Maybe.empty();
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
-    return new AbstractType.JsonName(this.name);
+  override jsonName(): Type.JsonName {
+    return new Type.JsonName(this.name);
   }
 
   override fromJsonExpression({

@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
+import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
 class MemberType {
@@ -218,7 +219,7 @@ export class UnionType extends AbstractType {
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
+  override get conversions(): readonly Type.Conversion[] {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "syntheticProperty":
@@ -243,7 +244,7 @@ export class UnionType extends AbstractType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<AbstractType.DiscriminatorProperty> {
+  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "syntheticProperty":
@@ -275,16 +276,16 @@ ${this.memberTypes
 }`;
   }
 
-  override get graphqlName(): AbstractType.GraphqlName {
+  override get graphqlName(): Type.GraphqlName {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override jsonName(): AbstractType.JsonName {
+  override jsonName(): Type.JsonName {
     switch (this.discriminator.kind) {
       case "sharedProperty":
       case "typeof":
-        return new AbstractType.JsonName(
+        return new Type.JsonName(
           this.memberTypes
             .map((memberType) =>
               memberType.jsonName({
@@ -295,7 +296,7 @@ ${this.memberTypes
             .join(" | "),
         );
       case "syntheticProperty":
-        return new AbstractType.JsonName(
+        return new Type.JsonName(
           `(${this.memberTypes.map((memberType) => `{ ${(this.discriminator as SyntheticPropertyDiscriminator).name}: "${memberType.discriminatorValues[0]}", value: ${memberType.jsonName()} }`).join(" | ")})`,
         );
       default:
@@ -612,30 +613,24 @@ type DiscriminatorKind = Discriminator["kind"];
 
 type SharedPropertyDiscriminator = {
   kind: "sharedProperty";
-} & AbstractType.DiscriminatorProperty;
+} & Type.DiscriminatorProperty;
 
 type SyntheticPropertyDiscriminator = {
   kind: "syntheticProperty";
-} & AbstractType.DiscriminatorProperty;
+} & Type.DiscriminatorProperty;
 
 type TypeofDiscriminator = {
   kind: "typeof";
 };
 
 function sharedDiscriminatorProperty(memberTypes: readonly AbstractType[]):
-  | (Omit<
-      AbstractType.DiscriminatorProperty,
-      "descendantValues" | "ownValues"
-    > & {
+  | (Omit<Type.DiscriminatorProperty, "descendantValues" | "ownValues"> & {
       descendantValues: string[];
       ownValues: string[];
     })
   | undefined {
   let sharedDiscriminatorProperty:
-    | (Omit<
-        AbstractType.DiscriminatorProperty,
-        "descendantValues" | "ownValues"
-      > & {
+    | (Omit<Type.DiscriminatorProperty, "descendantValues" | "ownValues"> & {
         descendantValues: string[];
         ownValues: string[];
       })
