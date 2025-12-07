@@ -2,7 +2,9 @@ import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
 
 /**
- * Abstract base class for scalar types.
+ * Abstract base class for scalar types such as ObjectType, ObjectUnionType, and TermType.
+ *
+ * Excludes collection/container types like ListType, OptionType, and SetType.
  */
 export abstract class ScalarType {
   readonly comment: Maybe<string> = Maybe.empty();
