@@ -2,10 +2,9 @@ import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
-
-import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 
+import { Maybe } from "purify-ts";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
 import { BooleanType } from "./BooleanType.js";
@@ -31,58 +30,6 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsName } from "./tsName.js";
 
 export class TypeFactory {
-  private cachedBooleanType = new BooleanType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedDateType = new DateType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedDateTimeType = new DateTimeType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedFloatType = new FloatType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedIdentifierType = new IdentifierType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    nodeKinds: new Set(["BlankNode", "NamedNode"]),
-  });
-  private cachedIntType = new IntType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedNamedIdentifierType = new IdentifierType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    nodeKinds: new Set(["NamedNode"]),
-  });
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
@@ -95,29 +42,8 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectUnionType
   > = new TermMap();
-  private cachedStringType = new StringType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
 
   private createIdentifierType(astType: ast.IdentifierType): IdentifierType {
-    if (
-      astType.defaultValue.isNothing() &&
-      astType.hasValues.length === 0 &&
-      astType.in_.length === 0
-    ) {
-      if (astType.nodeKinds.size === 2) {
-        return this.cachedIdentifierType;
-      }
-      if (astType.nodeKinds.size === 1 && astType.nodeKinds.has("NamedNode")) {
-        return this.cachedNamedIdentifierType;
-      }
-    }
-
     return new IdentifierType({
       defaultValue: astType.defaultValue,
       hasValues: astType.hasValues,
@@ -190,14 +116,6 @@ export class TypeFactory {
       const datatype = [...datatypes][0];
 
       if (datatype.equals(xsd.boolean)) {
-        if (
-          astType.defaultValue.isNothing() &&
-          astType.hasValues.length === 0 &&
-          astType.in_.length === 0
-        ) {
-          return this.cachedBooleanType;
-        }
-
         return new BooleanType({
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
@@ -213,16 +131,6 @@ export class TypeFactory {
       }
 
       if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
-        if (
-          astType.defaultValue.isNothing() &&
-          astType.hasValues.length === 0 &&
-          astType.in_.length === 0
-        ) {
-          return datatype.equals(xsd.date)
-            ? this.cachedDateType
-            : this.cachedDateTimeType;
-        }
-
         return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
@@ -246,16 +154,6 @@ export class TypeFactory {
       )) {
         for (const numberDatatype of numberDatatypes_) {
           if (datatype.equals(numberDatatype)) {
-            if (
-              astType.defaultValue.isNothing() &&
-              astType.hasValues.length === 0 &&
-              astType.in_.length === 0
-            ) {
-              return floatOrInt === "float"
-                ? this.cachedFloatType
-                : this.cachedIntType;
-            }
-
             return new (floatOrInt === "float" ? FloatType : IntType)({
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
@@ -273,15 +171,6 @@ export class TypeFactory {
       }
 
       if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
-        if (
-          astType.defaultValue.isNothing() &&
-          astType.hasValues.length === 0 &&
-          astType.in_.length === 0 &&
-          astType.languageIn.length === 0
-        ) {
-          return this.cachedStringType;
-        }
-
         return new StringType({
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
@@ -423,7 +312,14 @@ export class TypeFactory {
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
-              type: this.cachedStringType,
+              type: new StringType({
+                defaultValue: Maybe.empty(),
+                hasValues: [],
+                in_: [],
+                languageIn: [],
+                primitiveDefaultValue: Maybe.empty(),
+                primitiveIn: [],
+              }),
               visibility: "protected",
             }),
           );
