@@ -1,7 +1,7 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
-import { Either, Left, List, Maybe } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
@@ -18,8 +18,11 @@ const listPropertiesObjectType = new ast.ObjectType({
   label: Maybe.empty(),
   identifierMintingStrategy: Maybe.empty(),
   identifierType: new ast.IdentifierType({
+    comment: Maybe.empty(),
     defaultValue: Maybe.empty(),
     hasValues: [],
+    label: Maybe.empty(),
+    name: Maybe.empty(),
     in_: [],
     nodeKinds: new Set(["BlankNode", "NamedNode"]),
   }),
@@ -45,12 +48,12 @@ function transformNodeShapeToAstListType(
 
   // Put a placeholder in the cache to deal with cyclic references
   const listType = new ast.ListType<ast.Type>({
-    comment: List.head(nodeShape.comments),
+    comment: nodeShape.comment,
     identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
       ? "BlankNode"
       : "NamedNode",
     itemType: ast.PlaceholderType.instance,
-    label: List.head(nodeShape.labels),
+    label: nodeShape.label,
     mutable: nodeShape.mutable.orDefault(false),
     name: nodeShape.shaclmateName,
     identifierMintingStrategy: nodeShape.identifierMintingStrategy,
@@ -186,9 +189,9 @@ export function transformNodeShapeToAstObjectCompoundType(
       ? ast.ObjectIntersectionType
       : ast.ObjectUnionType
   )({
-    comment: List.head(nodeShape.comments),
+    comment: nodeShape.comment,
     export_,
-    label: List.head(nodeShape.labels),
+    label: nodeShape.label,
     name: nodeShape.shaclmateName,
     shapeIdentifier: this.shapeIdentifier(nodeShape),
     tsFeatures: nodeShape.tsFeatures,
@@ -271,15 +274,18 @@ export function transformNodeShapeToAstType(
   // we'll return this placeholder.
   const objectType = new ast.ObjectType({
     abstract,
-    comment: List.head(nodeShape.comments),
+    comment: nodeShape.comment,
     export_: export_,
     extern: nodeShape.extern.orDefault(false),
     fromRdfType,
-    label: List.head(nodeShape.labels),
+    label: nodeShape.label,
     identifierType: new ast.IdentifierType({
+      comment: Maybe.empty(),
       defaultValue: Maybe.empty(),
       hasValues: [],
       in_: identifierIn,
+      label: Maybe.empty(),
+      name: Maybe.empty(),
       nodeKinds:
         identifierIn.length === 0
           ? nodeShape.nodeKinds

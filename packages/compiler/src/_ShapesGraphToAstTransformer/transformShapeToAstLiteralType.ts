@@ -45,15 +45,18 @@ export function transformShapeToAstLiteralType(
     )
       return Either.of(
         new ast.LiteralType({
+          comment: shape.comment,
           datatype: shape.constraints.datatype,
           defaultValue: literalDefaultValue,
           hasValues: literalHasValues,
           in_: literalIn,
+          label: shape.label,
           languageIn: [...new Set(shape.constraints.languageIn)],
           maxExclusive: shape.constraints.maxExclusive,
           maxInclusive: shape.constraints.maxInclusive,
           minExclusive: shape.constraints.minExclusive,
           minInclusive: shape.constraints.minInclusive,
+          name: shape.shaclmateName,
         }),
       );
 

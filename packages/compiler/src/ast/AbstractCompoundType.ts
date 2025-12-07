@@ -42,7 +42,11 @@ export abstract class AbstractCompoundType<
     this.#memberTypes.push(memberType);
   }
 
-  equals(other: AbstractCompoundType<MemberTypeT>): boolean {
+  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
     return arrayEquals(this.memberTypes, other.memberTypes, Type.equals);
   }
 

@@ -17,15 +17,16 @@ export class SetType<
   constructor({
     itemType,
     minCount,
-    mutable,
-  }: { minCount: number } & ConstructorParameters<
-    typeof AbstractCollectionType<ItemTypeT>
-  >[0]) {
+    ...superParameters
+  }: { minCount: number } & Pick<
+    ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0],
+    "itemType" | "mutable"
+  >) {
     super({
+      ...superParameters,
       comment: itemType.comment,
       itemType,
       label: itemType.label,
-      mutable,
       name: itemType.name,
     });
     this.minCount = minCount;

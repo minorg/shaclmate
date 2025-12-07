@@ -11,7 +11,10 @@ export class OptionType<
 
   constructor({
     itemType,
-  }: ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0]) {
+  }: Pick<
+    ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0],
+    "itemType"
+  >) {
     super({
       comment: itemType.comment,
       itemType,

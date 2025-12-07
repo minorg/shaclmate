@@ -1,6 +1,6 @@
 import type {} from "@shaclmate/shacl-ast";
 import { owl, rdfs } from "@tpluscode/rdf-ns-builders";
-import { Either, Left, List, Maybe } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
@@ -106,9 +106,9 @@ export function transformShapeToAstCompoundType(
           ? ast.ObjectIntersectionType
           : ast.ObjectUnionType
       )({
-        comment: List.head(shape.comments),
+        comment: shape.comment,
         export_: true,
-        label: List.head(shape.labels),
+        label: shape.label,
         name: shape.shaclmateName,
         shapeIdentifier: this.shapeIdentifier(shape),
         tsFeatures: Maybe.empty(),
@@ -122,14 +122,16 @@ export function transformShapeToAstCompoundType(
       }
     }
 
+    // Compound type doesn't solely consist of ObjectTypes
     return Either.of(
-      compoundTypeKind === "IntersectionType"
-        ? new ast.IntersectionType({
-            memberTypes,
-          })
-        : new ast.UnionType({
-            memberTypes,
-          }),
+      new (compoundTypeKind === "IntersectionType"
+        ? ast.IntersectionType
+        : ast.UnionType)({
+        comment: shape.comment,
+        label: shape.label,
+        memberTypes,
+        name: shape.shaclmateName,
+      }),
     );
   } finally {
     shapeStack.pop(shape);

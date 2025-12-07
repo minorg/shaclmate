@@ -1,5 +1,5 @@
 import { DataFactory } from "n3";
-import { Either, Left, List, Maybe } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
@@ -168,6 +168,9 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       case "ObjectType":
       case "ObjectUnionType":
         type = new ast.LazyObjectType({
+          comment: propertyShape.comment,
+          label: propertyShape.label,
+          name: propertyShape.shaclmateName.alt(propertyShape.name),
           partialType:
             propertyShapePartialItemType ??
             synthesizePartialAstObjectType({
@@ -200,6 +203,9 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         switch (type.kind) {
           case "OptionType":
             type = new ast.LazyObjectOptionType({
+              comment: propertyShape.comment,
+              label: propertyShape.label,
+              name: propertyShape.shaclmateName.alt(propertyShape.name),
               partialType: new ast.OptionType({
                 itemType: partialItemType,
               }),
@@ -210,6 +216,9 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             break;
           case "SetType":
             type = new ast.LazyObjectSetType({
+              comment: propertyShape.comment,
+              label: propertyShape.label,
+              name: propertyShape.shaclmateName.alt(propertyShape.name),
               partialType: new ast.SetType({
                 itemType: partialItemType,
                 minCount: 0,
@@ -239,11 +248,11 @@ export function transformPropertyShapeToAstObjectTypeProperty(
 
   return Either.of(
     new ast.ObjectType.Property({
-      comment: List.head(propertyShape.comments),
-      description: List.head(propertyShape.descriptions),
-      label: List.head(propertyShape.labels),
+      comment: propertyShape.comment,
+      description: propertyShape.description,
+      label: propertyShape.label,
       mutable: propertyShape.mutable.orDefault(false),
-      name: propertyShape.shaclmateName.alt(List.head(propertyShape.names)),
+      name: propertyShape.shaclmateName.alt(propertyShape.name),
       objectType,
       order: propertyShape.order.orDefault(0),
       path: this.curieFactory.create(path.iri).extract() ?? path.iri,

@@ -4,7 +4,7 @@ import {
   NodeShape as ShaclCoreNodeShape,
 } from "@shaclmate/shacl-ast";
 
-import { Maybe } from "purify-ts";
+import { List, Maybe } from "purify-ts";
 
 import type * as generated from "./generated.js";
 
@@ -99,6 +99,10 @@ export class NodeShape extends ShaclCoreNodeShape<
       : [];
   }
 
+  get comment(): Maybe<string> {
+    return List.head(this.comments);
+  }
+
   get descendantNodeShapes(): readonly NodeShape[] {
     return this.isClass
       ? this.descendantClassIris.flatMap((classIri) =>
@@ -133,6 +137,10 @@ export class NodeShape extends ShaclCoreNodeShape<
     return thisMintingStrategy.altLazy(() =>
       this.nodeKinds.has("BlankNode") ? Maybe.of("blankNode") : Maybe.empty(),
     );
+  }
+
+  get label(): Maybe<string> {
+    return List.head(this.labels);
   }
 
   get mutable(): Maybe<boolean> {

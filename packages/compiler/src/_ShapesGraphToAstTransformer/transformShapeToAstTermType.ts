@@ -21,9 +21,12 @@ export function transformShapeToAstTermType(
 
     return Either.of(
       new ast.TermType({
+        comment: shape.comment,
         defaultValue: shapeStack.defaultValue,
         hasValues: shapeStack.constraints.hasValues,
         in_: shapeStack.constraints.in_,
+        label: shape.label,
+        name: shape.shaclmateName,
         nodeKinds:
           nodeKinds.size > 0
             ? nodeKinds

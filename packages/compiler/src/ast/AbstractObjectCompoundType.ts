@@ -84,9 +84,12 @@ export abstract class AbstractObjectCompoundType<
     );
 
     return new IdentifierType({
+      comment: Maybe.empty(),
       defaultValue: Maybe.empty(),
       hasValues: [],
       in_: [...memberIdentifierTypesIn],
+      label: Maybe.empty(),
+      name: Maybe.empty(),
       nodeKinds: memberIdentifierTypeNodeKinds,
     });
   }

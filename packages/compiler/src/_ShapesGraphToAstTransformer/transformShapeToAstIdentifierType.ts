@@ -37,9 +37,12 @@ export function transformShapeToAstIdentifierType(
     ) {
       return Either.of(
         new ast.IdentifierType({
+          comment: shape.comment,
           defaultValue: identifierDefaultValue,
           hasValues: identifierHasValues,
           in_: identifierIn,
+          label: shape.label,
+          name: shape.shaclmateName,
           nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
         }),
       );
