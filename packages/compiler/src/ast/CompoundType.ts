@@ -4,6 +4,9 @@ import { arrayEquals } from "./equals.js";
 
 /**
  * A compound of types, such as an intersection or union.
+ *
+ * Compound = combining types at the type level e.g., functions, intersections, unions
+ * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
 export abstract class CompoundType<MemberTypeT extends Type> {
   /**
