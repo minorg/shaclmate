@@ -34,6 +34,7 @@ export class NodeShape extends ShaclCoreNodeShape<
   private readonly descendantClassIris: readonly NamedNode[];
   private readonly generatedShaclmateNodeShape: generated.ShaclmateNodeShape;
   private readonly parentClassIris: readonly NamedNode[];
+  readonly #identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
 
   readonly isClass: boolean;
   readonly isList: boolean;
@@ -62,6 +63,17 @@ export class NodeShape extends ShaclCoreNodeShape<
     this.childClassIris = childClassIris;
     this.descendantClassIris = descendantClassIris;
     this.generatedShaclmateNodeShape = generatedShaclmateNodeShape;
+    this.#identifierMintingStrategy =
+      generatedShaclmateNodeShape.identifierMintingStrategy.map((iri) => {
+        switch (iri.value) {
+          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
+            return "blankNode";
+          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
+            return "sha256";
+          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
+            return "uuidv4";
+        }
+      });
     this.isClass = isClass;
     this.isList = isList;
     this.parentClassIris = parentClassIris;
@@ -108,10 +120,11 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   get identifierMintingStrategy(): Maybe<IdentifierMintingStrategy> {
-    const thisMintingStrategy = this._mintingStrategy;
+    const thisMintingStrategy = this.#identifierMintingStrategy;
     if (thisMintingStrategy.isNothing()) {
       for (const ancestorNodeShape of this.ancestorNodeShapes) {
-        const ancestorMintingStrategy = ancestorNodeShape._mintingStrategy;
+        const ancestorMintingStrategy =
+          ancestorNodeShape.#identifierMintingStrategy;
         if (ancestorMintingStrategy.isJust()) {
           return ancestorMintingStrategy;
         }
@@ -227,20 +240,5 @@ export class NodeShape extends ShaclCoreNodeShape<
       .altLazy(() =>
         this.isDefinedBy.chain((ontology) => ontology.tsObjectDeclarationType),
       );
-  }
-
-  private get _mintingStrategy(): Maybe<IdentifierMintingStrategy> {
-    return this.generatedShaclmateNodeShape.identifierMintingStrategy.map(
-      (iri) => {
-        switch (iri.value) {
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
-            return "blankNode";
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
-            return "sha256";
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
-            return "uuidv4";
-        }
-      },
-    );
   }
 }
