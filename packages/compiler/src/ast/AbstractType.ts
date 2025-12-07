@@ -2,13 +2,23 @@ import { Maybe } from "purify-ts";
 import { maybeEquals, strictEquals } from "./equals.js";
 
 /**
- * Abstract base class for scalar types such as ObjectType, ObjectUnionType, and TermType.
- *
- * Excludes collection/container types like ListType, OptionType, and SetType.
+ * Abstract base class for Types.
  */
-export abstract class ScalarType {
+export abstract class AbstractType {
+  /**
+   * Documentation comment from rdfs:comment.
+   */
   readonly comment: Maybe<string> = Maybe.empty();
+
+  /**
+   * Human-readable label from rdfs:label.
+   */
   readonly label: Maybe<string> = Maybe.empty();
+
+  /**
+   * Name of this type, usually derived from sh:name or shaclmate:name.
+   */
+  readonly name: Maybe<string> = Maybe.empty();
 
   // constructor({
   //   comment,
@@ -22,12 +32,16 @@ export abstract class ScalarType {
   // biome-ignore lint/correctness/noEmptyPattern: <explanation>
   constructor({}: object) {}
 
-  equals(other: ScalarType): boolean {
+  equals(other: AbstractType): boolean {
     if (!maybeEquals(this.comment, other.comment, strictEquals)) {
       return false;
     }
 
     if (!maybeEquals(this.label, other.label, strictEquals)) {
+      return false;
+    }
+
+    if (!maybeEquals(this.name, other.name, strictEquals)) {
       return false;
     }
 

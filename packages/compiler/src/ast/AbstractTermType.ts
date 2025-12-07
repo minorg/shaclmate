@@ -1,7 +1,7 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
-import { ScalarType } from "./ScalarType.js";
+import { AbstractType } from "./AbstractType.js";
 import {
   arrayEquals,
   maybeEquals,
@@ -11,7 +11,7 @@ import {
 } from "./equals.js";
 
 /**
- * ABC of term types in the ASTs (e.g., identifiers, literals).
+ * Abstract base class of term types (IdentifierType, LiteralType, TermType).
  *
  * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
  * RuntimeTermT is the type of values at runtime.
@@ -24,7 +24,7 @@ export abstract class AbstractTermType<
     | BlankNode
     | Literal
     | NamedNode,
-> extends ScalarType {
+> extends AbstractType {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -42,7 +42,7 @@ export abstract class AbstractTermType<
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<NodeKind>;
-  } & ConstructorParameters<typeof ScalarType>[0]) {
+  } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.defaultValue = defaultValue;
     this.hasValues = hasValues;

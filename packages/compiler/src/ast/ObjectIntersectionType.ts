@@ -1,8 +1,8 @@
-import { ObjectCompoundType } from "./ObjectCompoundType.js";
+import { AbstractObjectCompoundType } from "./AbstractObjectCompoundType.js";
 
 /**
  * A conjunction/intersection of object types, corresponding to an sh:and on a node shape.
  */
-export class ObjectIntersectionType extends ObjectCompoundType<ObjectIntersectionType> {
+export class ObjectIntersectionType extends AbstractObjectCompoundType<ObjectIntersectionType> {
   readonly kind = "ObjectIntersectionType";
 }

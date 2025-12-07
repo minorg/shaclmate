@@ -6,7 +6,7 @@ import { Either, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { CompoundType } from "./CompoundType.js";
+import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -14,11 +14,11 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Type } from "./Type.js";
 
 /**
- * A compound of object types, such as an intersection or union.
+ * Abstract base class for a compound of object types, such as an intersection or union.
  */
-export abstract class ObjectCompoundType<
+export abstract class AbstractObjectCompoundType<
   ObjectCompoundTypeT extends ObjectIntersectionType | ObjectUnionType,
-> extends CompoundType<ObjectCompoundTypeT | ObjectType> {
+> extends AbstractCompoundType<ObjectCompoundTypeT | ObjectType> {
   /**
    * Documentation comment from rdfs:comment.
    */
@@ -77,7 +77,9 @@ export abstract class ObjectCompoundType<
     this.#tsFeatures = tsFeatures;
   }
 
-  override equals(other: ObjectCompoundType<ObjectCompoundTypeT>): boolean {
+  override equals(
+    other: AbstractObjectCompoundType<ObjectCompoundTypeT>,
+  ): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }

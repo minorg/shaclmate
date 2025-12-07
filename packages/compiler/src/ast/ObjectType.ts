@@ -10,12 +10,13 @@ import type {
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
+import { AbstractType } from "./AbstractType.js";
 import type { Curie } from "./Curie.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
 
-export class ObjectType {
+export class ObjectType extends AbstractType {
   /**
    * Classes generated from this type are abstract / cannot be instantiated themselves.
    *
@@ -36,11 +37,6 @@ export class ObjectType {
    * Mutable to support cycle-handling logic in the compiler.
    */
   readonly #childObjectTypes: ObjectType[] = [];
-
-  /**
-   * Documentation comment from rdfs:comment.
-   */
-  readonly comment: Maybe<string>;
 
   /**
    * Descendant (children, their children, ad nauseum) ObjectTypes of this ObjectType.
@@ -85,16 +81,6 @@ export class ObjectType {
    * Type discriminator.
    */
   readonly kind = "ObjectType";
-
-  /**
-   * Human-readable label from rdfs:label.
-   */
-  readonly label: Maybe<string>;
-
-  /**
-   * Name of this type, usually derived from sh:name or shaclmate:name.
-   */
-  readonly name: Maybe<string>;
 
   /**
    * Immediate parent ObjectTypes of this Object types.
@@ -150,46 +136,39 @@ export class ObjectType {
 
   constructor({
     abstract,
-    comment,
     export_,
     extern,
     fromRdfType,
     identifierMintingStrategy,
     identifierType,
-    label,
-    name,
     shapeIdentifier,
     synthetic,
     toRdfTypes,
     tsFeatures,
     tsImports,
     tsObjectDeclarationType,
+    ...superParameters
   }: {
     abstract: boolean;
-    comment: Maybe<string>;
     export_: boolean;
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: IdentifierType;
-    label: Maybe<string>;
-    name: Maybe<string>;
     shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
     tsFeatures: ReadonlySet<TsFeature>;
     tsImports: readonly string[];
     tsObjectDeclarationType: TsObjectDeclarationType;
-  }) {
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.abstract = abstract;
-    this.comment = comment;
     this.export = export_;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierType = identifierType;
-    this.label = label;
-    this.name = name;
     this.shapeIdentifier = shapeIdentifier;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;

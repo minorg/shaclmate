@@ -8,7 +8,7 @@ import { arrayEquals } from "./equals.js";
  * Compound = combining types at the type level e.g., functions, intersections, unions
  * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
-export abstract class CompoundType<MemberTypeT extends Type> {
+export abstract class AbstractCompoundType<MemberTypeT extends Type> {
   /**
    * Type discriminator
    */
@@ -33,7 +33,7 @@ export abstract class CompoundType<MemberTypeT extends Type> {
     this.#memberTypes.push(memberType);
   }
 
-  equals(other: CompoundType<MemberTypeT>): boolean {
+  equals(other: AbstractCompoundType<MemberTypeT>): boolean {
     return arrayEquals(this.memberTypes, other.memberTypes, Type.equals);
   }
 

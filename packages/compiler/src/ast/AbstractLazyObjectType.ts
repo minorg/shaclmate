@@ -4,6 +4,9 @@ import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
 import { Type } from "./Type.js";
 
+/**
+ * Abstract base class of LazyObjectOptionType, LazyObjectSetType, and LazyObjectType.
+ */
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
   ResolvedTypeT extends AbstractLazyObjectType.ResolvedTypeConstraint,

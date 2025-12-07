@@ -2,7 +2,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
-import { CollectionType } from "./CollectionType.js";
+import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -14,28 +14,13 @@ import type { Type } from "./Type.js";
  */
 export class ListType<
   ItemTypeT extends Type = Type,
-> extends CollectionType<ItemTypeT> {
-  /**
-   * Documentation comment from rdfs:comment.
-   */
-  readonly comment: Maybe<string>;
-
+> extends AbstractCollectionType<ItemTypeT> {
   /**
    * Type of identifier (blank or named node) to use for lists and sub-lists.
    */
   readonly identifierNodeKind: IdentifierNodeKind;
 
   readonly kind = "ListType";
-
-  /**
-   * Human-readable label from rdfs:label.
-   */
-  readonly label: Maybe<string>;
-
-  /**
-   * shaclmate:name from the node shape.
-   */
-  readonly name: Maybe<string>;
 
   /**
    * Strategy for minting new list and sub-list identifiers.
@@ -56,29 +41,20 @@ export class ListType<
   readonly toRdfTypes: readonly NamedNode[];
 
   constructor({
-    comment,
     identifierMintingStrategy,
     identifierNodeKind,
-    label,
-    name,
     shapeIdentifier,
     toRdfTypes,
     ...superParameters
   }: {
-    comment: Maybe<string>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierNodeKind: IdentifierNodeKind;
-    label: Maybe<string>;
-    name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
+  } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
     super(superParameters);
-    this.comment = comment;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierNodeKind = identifierNodeKind;
-    this.label = label;
-    this.name = name;
     this.shapeIdentifier = shapeIdentifier;
     this.toRdfTypes = toRdfTypes;
   }
