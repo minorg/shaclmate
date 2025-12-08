@@ -7,6 +7,7 @@ import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import { logger } from "../logger.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**
  * Try to convert a shape to a compound type (intersection or union) using some heuristics.
@@ -106,10 +107,8 @@ export function transformShapeToAstCompoundType(
           ? ast.ObjectIntersectionType
           : ast.ObjectUnionType
       )({
-        comment: shape.comment,
+        ...transformShapeToAstAbstractTypeProperties(shape),
         export_: true,
-        label: shape.label,
-        name: shape.shaclmateName,
         shapeIdentifier: this.shapeIdentifier(shape),
         tsFeatures: Maybe.empty(),
       });
@@ -127,10 +126,8 @@ export function transformShapeToAstCompoundType(
       new (compoundTypeKind === "IntersectionType"
         ? ast.IntersectionType
         : ast.UnionType)({
-        comment: shape.comment,
-        label: shape.label,
+        ...transformShapeToAstAbstractTypeProperties(shape),
         memberTypes,
-        name: shape.shaclmateName,
       }),
     );
   } finally {

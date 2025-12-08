@@ -6,6 +6,7 @@ import * as ast from "../ast/index.js";
 import type { TsFeature } from "../enums/index.js";
 import type * as input from "../input/index.js";
 import { ShapeStack } from "./ShapeStack.js";
+import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 function synthesizePartialAstObjectType({
   identifierType,
@@ -168,9 +169,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       case "ObjectType":
       case "ObjectUnionType":
         type = new ast.LazyObjectType({
-          comment: propertyShape.comment,
-          label: propertyShape.label,
-          name: propertyShape.shaclmateName.alt(propertyShape.name),
+          ...transformShapeToAstAbstractTypeProperties(propertyShape),
           partialType:
             propertyShapePartialItemType ??
             synthesizePartialAstObjectType({
@@ -203,9 +202,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
         switch (type.kind) {
           case "OptionType":
             type = new ast.LazyObjectOptionType({
-              comment: propertyShape.comment,
-              label: propertyShape.label,
-              name: propertyShape.shaclmateName.alt(propertyShape.name),
+              ...transformShapeToAstAbstractTypeProperties(propertyShape),
               partialType: new ast.OptionType({
                 itemType: partialItemType,
               }),
@@ -216,9 +213,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
             break;
           case "SetType":
             type = new ast.LazyObjectSetType({
-              comment: propertyShape.comment,
-              label: propertyShape.label,
-              name: propertyShape.shaclmateName.alt(propertyShape.name),
+              ...transformShapeToAstAbstractTypeProperties(propertyShape),
               partialType: new ast.SetType({
                 itemType: partialItemType,
                 minCount: 0,

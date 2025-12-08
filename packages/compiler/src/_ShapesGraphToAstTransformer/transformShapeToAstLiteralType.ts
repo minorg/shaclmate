@@ -5,6 +5,7 @@ import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
+import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**
  * Try to convert a property shape to an AST LiteralType using some heuristics.
@@ -45,18 +46,16 @@ export function transformShapeToAstLiteralType(
     )
       return Either.of(
         new ast.LiteralType({
-          comment: shape.comment,
+          ...transformShapeToAstAbstractTypeProperties(shape),
           datatype: shape.constraints.datatype,
           defaultValue: literalDefaultValue,
           hasValues: literalHasValues,
           in_: literalIn,
-          label: shape.label,
           languageIn: [...new Set(shape.constraints.languageIn)],
           maxExclusive: shape.constraints.maxExclusive,
           maxInclusive: shape.constraints.maxInclusive,
           minExclusive: shape.constraints.minExclusive,
           minInclusive: shape.constraints.minInclusive,
-          name: shape.shaclmateName,
         }),
       );
 
