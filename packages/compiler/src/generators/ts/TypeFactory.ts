@@ -293,33 +293,33 @@ export class TypeFactory {
             }),
           );
 
-        // Type discriminator property
-        const typeDiscriminatorOwnValue = !astType.abstract
-          ? objectType.discriminatorValue
+        // Type discriminant property
+        const typeDiscriminantOwnValue = !astType.abstract
+          ? objectType.discriminantValue
           : undefined;
-        const typeDiscriminatorDescendantValues = new Set<string>();
+        const typeDiscriminantDescendantValues = new Set<string>();
         for (const descendantObjectType of objectType.descendantObjectTypes) {
           if (!descendantObjectType.abstract) {
-            typeDiscriminatorDescendantValues.add(
-              descendantObjectType.discriminatorValue,
+            typeDiscriminantDescendantValues.add(
+              descendantObjectType.discriminantValue,
             );
           }
         }
         if (
-          typeDiscriminatorOwnValue ||
-          typeDiscriminatorDescendantValues.size > 0
+          typeDiscriminantOwnValue ||
+          typeDiscriminantDescendantValues.size > 0
         ) {
           properties.splice(
             0,
             0,
-            new ObjectType.TypeDiscriminatorProperty({
+            new ObjectType.TypeDiscriminantProperty({
               name: `${syntheticNamePrefix}type`,
               objectType,
-              type: new ObjectType.TypeDiscriminatorProperty.Type({
-                descendantValues: [...typeDiscriminatorDescendantValues].sort(),
+              type: new ObjectType.TypeDiscriminantProperty.Type({
+                descendantValues: [...typeDiscriminantDescendantValues].sort(),
                 mutable: false,
-                ownValues: typeDiscriminatorOwnValue
-                  ? [typeDiscriminatorOwnValue]
+                ownValues: typeDiscriminantOwnValue
+                  ? [typeDiscriminantOwnValue]
                   : [],
               }),
               visibility: "public",

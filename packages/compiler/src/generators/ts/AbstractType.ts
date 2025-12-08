@@ -31,7 +31,7 @@ export abstract class AbstractType {
   /**
    * A property that discriminates sub-types of this type e.g., termType on RDF/JS terms.
    */
-  abstract readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty>;
+  abstract readonly discriminantProperty: Maybe<Type.DiscriminantProperty>;
 
   /**
    * A function (reference or declaration) that compares two property values of this type, returning a
@@ -128,7 +128,7 @@ export abstract class AbstractType {
    * JSON-compatible version of the type.
    */
   abstract jsonName(parameters?: {
-    includeDiscriminatorProperty?: boolean;
+    includeDiscriminantProperty?: boolean;
   }): Type.JsonName;
 
   /**
@@ -159,7 +159,7 @@ export abstract class AbstractType {
    * z.lazy() should only be returned for "property".
    */
   abstract jsonZodSchema(parameters: {
-    includeDiscriminatorProperty?: boolean;
+    includeDiscriminantProperty?: boolean;
     context: "property" | "type";
     variables: { zod: string };
   }): string;
@@ -310,7 +310,7 @@ export abstract class AbstractType {
    * of the correct JSON-LD context.
    */
   abstract toJsonExpression(parameters: {
-    includeDiscriminatorProperty?: boolean;
+    includeDiscriminantProperty?: boolean;
     variables: {
       value: string;
     };

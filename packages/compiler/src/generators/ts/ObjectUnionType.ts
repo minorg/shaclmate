@@ -26,7 +26,7 @@ import { tsComment } from "./tsComment.js";
  *
  *   type SomeUnion = Member1 | Member2 | ...
  *
- * with associated functions that switch on the type discriminator property and delegate to the appropriate
+ * with associated functions that switch on the type discriminant property and delegate to the appropriate
  * member type code.
  *
  * It also generates SPARQL graph patterns that UNION the member object types.
@@ -110,34 +110,34 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
-    return Maybe.of(this._discriminatorProperty);
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+    return Maybe.of(this._discriminantProperty);
   }
 
   @Memoize()
-  protected get _discriminatorProperty(): Type.DiscriminatorProperty {
-    const discriminatorPropertyDescendantValues: string[] = [];
-    const discriminatorPropertyName =
-      this.memberTypes[0]._discriminatorProperty.name;
-    const discriminatorPropertyOwnValues: string[] = [];
+  protected get _discriminantProperty(): Type.DiscriminantProperty {
+    const discriminantPropertyDescendantValues: string[] = [];
+    const discriminantPropertyName =
+      this.memberTypes[0]._discriminantProperty.name;
+    const discriminantPropertyOwnValues: string[] = [];
     for (const memberType of this.memberTypes) {
       invariant(
         memberType.declarationType === this.memberTypes[0].declarationType,
       );
       invariant(
-        memberType._discriminatorProperty.name === discriminatorPropertyName,
+        memberType._discriminantProperty.name === discriminantPropertyName,
       );
-      discriminatorPropertyDescendantValues.push(
-        ...memberType._discriminatorProperty.descendantValues,
+      discriminantPropertyDescendantValues.push(
+        ...memberType._discriminantProperty.descendantValues,
       );
-      discriminatorPropertyOwnValues.push(
-        ...memberType._discriminatorProperty.ownValues,
+      discriminantPropertyOwnValues.push(
+        ...memberType._discriminantProperty.ownValues,
       );
     }
     return {
-      descendantValues: discriminatorPropertyDescendantValues,
-      name: discriminatorPropertyName,
-      ownValues: discriminatorPropertyOwnValues,
+      descendantValues: discriminantPropertyDescendantValues,
+      name: discriminantPropertyName,
+      ownValues: discriminantPropertyOwnValues,
     };
   }
 

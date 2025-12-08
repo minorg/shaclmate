@@ -22,8 +22,8 @@ export function isTypeFunctionDeclaration(
     ],
     returnType: `object is ${this.name}`,
     statements: [
-      `switch (object.${this._discriminatorProperty.name}) { ${this._discriminatorProperty.descendantValues
-        .concat(this._discriminatorProperty.ownValues)
+      `switch (object.${this._discriminantProperty.name}) { ${this._discriminantProperty.descendantValues
+        .concat(this._discriminantProperty.ownValues)
         .map((value) => `case "${value}":`)
         .join("\n")} return true; default: return false; }`,
     ],

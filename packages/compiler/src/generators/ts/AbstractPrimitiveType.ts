@@ -27,7 +27,7 @@ export abstract class AbstractPrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
     return Maybe.empty();
   }
 

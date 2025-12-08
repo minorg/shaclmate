@@ -26,33 +26,33 @@ export class MemberType {
     return this.delegate.descendantFromRdfTypeVariables;
   }
 
-  get _discriminatorProperty() {
-    return this.delegate._discriminatorProperty;
+  get _discriminantProperty() {
+    return this.delegate._discriminantProperty;
   }
 
   @Memoize()
-  get discriminatorPropertyValues(): readonly string[] {
-    // A member type's combined discriminator property values are its "own" values plus any descendant values that are
+  get discriminantPropertyValues(): readonly string[] {
+    // A member type's combined discriminant property values are its "own" values plus any descendant values that are
     // not the "own" values of some other member type.
     // So if you have type A, type B, and B inherits A, then
     // A has
-    //   own discriminator property values: ["A"]
-    //   descendant discriminator property values: ["B"]
+    //   own discriminant property values: ["A"]
+    //   descendant discriminant property values: ["B"]
     // and B has
-    //  own discriminator property values: ["B"]
-    //  descendant discriminator property values ["B"]
-    // In this case A shouldn't have "B" as a combined discriminator property value since it's "claimed" by B.
-    const memberOwnDiscriminatorPropertyValues = new Set<string>();
+    //  own discriminant property values: ["B"]
+    //  descendant discriminant property values ["B"]
+    // In this case A shouldn't have "B" as a combined discriminant property value since it's "claimed" by B.
+    const memberOwnDiscriminantPropertyValues = new Set<string>();
     for (const memberType of this.universe) {
-      for (const ownDiscriminatorPropertyValue of memberType.discriminatorProperty.unsafeCoerce()
+      for (const ownDiscriminantPropertyValue of memberType.discriminantProperty.unsafeCoerce()
         .ownValues) {
-        memberOwnDiscriminatorPropertyValues.add(ownDiscriminatorPropertyValue);
+        memberOwnDiscriminantPropertyValues.add(ownDiscriminantPropertyValue);
       }
     }
 
-    return this.delegate._discriminatorProperty.ownValues.concat(
-      this.delegate._discriminatorProperty.descendantValues.filter(
-        (value) => !memberOwnDiscriminatorPropertyValues.has(value),
+    return this.delegate._discriminantProperty.ownValues.concat(
+      this.delegate._discriminantProperty.descendantValues.filter(
+        (value) => !memberOwnDiscriminantPropertyValues.has(value),
       ),
     );
   }

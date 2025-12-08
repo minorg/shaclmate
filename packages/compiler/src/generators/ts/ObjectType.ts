@@ -97,15 +97,15 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get _discriminatorProperty(): Type.DiscriminatorProperty {
-    const discriminatorProperty = this.properties.find(
-      (property) => property instanceof ObjectType.TypeDiscriminatorProperty,
+  get _discriminantProperty(): Type.DiscriminantProperty {
+    const discriminantProperty = this.properties.find(
+      (property) => property instanceof ObjectType.TypeDiscriminantProperty,
     );
-    invariant(discriminatorProperty);
+    invariant(discriminantProperty);
     return {
-      name: discriminatorProperty.name,
-      ownValues: discriminatorProperty.type.ownValues,
-      descendantValues: discriminatorProperty.type.descendantValues,
+      name: discriminantProperty.name,
+      ownValues: discriminantProperty.type.ownValues,
+      descendantValues: discriminantProperty.type.descendantValues,
     };
   }
 
@@ -214,12 +214,12 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
-    return Maybe.of(this._discriminatorProperty);
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+    return Maybe.of(this._discriminantProperty);
   }
 
   @Memoize()
-  get discriminatorValue(): string {
+  get discriminantValue(): string {
     return this.name;
   }
 
@@ -292,7 +292,7 @@ export class ObjectType extends AbstractDeclaredType {
   @Memoize()
   get ownProperties(): readonly ObjectType.Property[] {
     if (this.parentObjectTypes.length === 0) {
-      // Consider that a root of the object type hierarchy "owns" the identifier and type discriminator properties
+      // Consider that a root of the object type hierarchy "owns" the identifier and type discriminant properties
       // for all of its subtypes in the hierarchy.
       invariant(this.properties.length >= 2, this.name);
       return this.properties;
@@ -570,7 +570,6 @@ export namespace ObjectType {
   export const ShaclProperty = _ObjectType.ShaclProperty;
   export type ShaclProperty<TypeT extends AbstractType> =
     _ObjectType.ShaclProperty<TypeT>;
-  export const TypeDiscriminatorProperty =
-    _ObjectType.TypeDiscriminatorProperty;
-  export type TypeDiscriminatorProperty = _ObjectType.TypeDiscriminatorProperty;
+  export const TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
+  export type TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
 }

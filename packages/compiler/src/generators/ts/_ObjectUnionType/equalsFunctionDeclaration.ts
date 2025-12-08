@@ -20,7 +20,7 @@ export function equalsFunctionDeclaration(
         returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}equals(left, right as unknown as ${memberType.name})`;
         break;
     }
-    return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
+    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
   });
   caseBlocks.push(
     'default: left satisfies never; throw new Error("unrecognized type");',
@@ -43,7 +43,7 @@ export function equalsFunctionDeclaration(
     returnType: `${syntheticNamePrefix}EqualsResult`,
     statements: `\
     return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
-      switch (left.${this._discriminatorProperty.name}) {
+      switch (left.${this._discriminantProperty.name}) {
        ${caseBlocks.join(" ")}
       }
     })`,

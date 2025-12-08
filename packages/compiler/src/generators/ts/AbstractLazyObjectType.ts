@@ -22,7 +22,7 @@ export abstract class AbstractLazyObjectType<
     readonly rawName: string;
     readonly snippetDeclaration: string;
   };
-  override readonly discriminatorProperty: AbstractType["discriminatorProperty"] =
+  override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -138,13 +138,13 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolvedObjectUnionType.memberTypes.map(
       (resolvedObjectType, objectTypeI) => {
-        return `${resolvedObjectType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+        return `${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(
       `default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminatorProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
+    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
   }
 
   override toJsonExpression({

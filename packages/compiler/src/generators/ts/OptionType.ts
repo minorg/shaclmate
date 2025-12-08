@@ -9,7 +9,7 @@ import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
-  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
+  override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;

@@ -26,7 +26,7 @@ function isTypeofString(
 export abstract class AbstractCollectionType<
   ItemTypeT extends AbstractType,
 > extends AbstractType {
-  override readonly discriminatorProperty: Maybe<Type.DiscriminatorProperty> =
+  override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;

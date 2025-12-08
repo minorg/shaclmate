@@ -78,7 +78,7 @@ export class ObjectType extends AbstractType {
   readonly identifierType: IdentifierType;
 
   /**
-   * Type discriminator.
+   * Type discriminant.
    */
   readonly kind = "ObjectType";
 

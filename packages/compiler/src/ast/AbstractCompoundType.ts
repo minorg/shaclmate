@@ -13,7 +13,7 @@ export abstract class AbstractCompoundType<
   MemberTypeT extends Type,
 > extends AbstractType {
   /**
-   * Type discriminator
+   * Type discriminant
    */
   abstract readonly kind:
     | "IntersectionType"

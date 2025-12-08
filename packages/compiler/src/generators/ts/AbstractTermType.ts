@@ -109,7 +109,7 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
     return Maybe.of({
       name: "termType",
       ownValues: [...this.nodeKinds],

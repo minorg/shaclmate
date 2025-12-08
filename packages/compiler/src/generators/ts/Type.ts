@@ -5,7 +5,7 @@ export namespace Type {
     readonly sourceTypeName: string;
   }
 
-  export interface DiscriminatorProperty {
+  export interface DiscriminantProperty {
     readonly name: string;
     readonly ownValues: readonly string[];
     readonly descendantValues: readonly string[];

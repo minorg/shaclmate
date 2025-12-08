@@ -67,7 +67,7 @@ function jsonZodSchemaFunctionDeclaration(
     isExported: true,
     kind: StructureKind.Function,
     name: `${syntheticNamePrefix}jsonZodSchema`,
-    statements: `return ${variables.zod}.discriminatedUnion("${this._discriminatorProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
+    statements: `return ${variables.zod}.discriminatedUnion("${this._discriminantProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
   };
 }
 
@@ -84,7 +84,7 @@ function toJsonFunctionDeclaration(
         returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
         break;
     }
-    return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
+    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
   });
   caseBlocks.push(
     `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
@@ -101,6 +101,6 @@ function toJsonFunctionDeclaration(
       },
     ],
     returnType: this.jsonName().toString(),
-    statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
+    statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
   };
 }
