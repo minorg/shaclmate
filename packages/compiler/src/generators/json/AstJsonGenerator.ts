@@ -107,6 +107,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "ObjectType":
       return {
         ...common,
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         fromRdfType: type.fromRdfType.map(termToJson).extract(),
         parentObjectTypes:
           type.parentObjectTypes.length > 0
@@ -116,7 +117,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
             : undefined,
         identifierMintingStrategy: type.identifierMintingStrategy.extract(),
         identifierType: typeToJson(type.identifierType),
-        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         synthetic: type.synthetic ? true : undefined,
         toRdfTypes:
           type.toRdfTypes.length > 0
@@ -148,7 +148,12 @@ export class AstJsonGenerator implements Generator {
       {
         objectTypes: ast.objectTypes.map((objectType) => ({
           kind: objectType.kind,
+          comment: objectType.comment.extract(),
+          label: objectType.label.extract(),
           name: objectType.name.extract(),
+          shapeIdentifier: Resource.Identifier.toString(
+            objectType.shapeIdentifier,
+          ),
           properties: objectType.properties.map((property) => ({
             comment: property.comment.extract(),
             description: property.description.extract(),
