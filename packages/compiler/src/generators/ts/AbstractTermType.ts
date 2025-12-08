@@ -4,6 +4,7 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -66,20 +67,20 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: "dataFactory" })})`,
+            `dataFactory.literal(${value}.toString(), ${rdfjsTermExpression(xsd.boolean)})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
           sourceTypeName: "boolean",
         },
         {
           conversionExpression: (value) =>
-            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: "dataFactory" })})`,
+            `dataFactory.literal(${value}.toISOString(), ${rdfjsTermExpression(xsd.dateTime)})`,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: "Date",
         },
         {
           conversionExpression: (value) =>
-            `rdfLiteral.toRdf(${value}, ${objectInitializer({ dataFactory: "dataFactory" })})`,
+            `dataFactory.literal(${value}.toString(), ${rdfjsTermExpression(xsd.decimal)})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
           sourceTypeName: "number",
         },
@@ -264,10 +265,6 @@ export abstract class AbstractTermType<
   }
 
   override useImports(): readonly Import[] {
-    const imports = [Import.RDFJS_TYPES];
-    if (this.nodeKinds.has("Literal")) {
-      imports.push(Import.RDF_LITERAL);
-    }
-    return imports;
+    return [Import.RDFJS_TYPES];
   }
 }

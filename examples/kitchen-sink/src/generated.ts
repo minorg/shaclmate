@@ -4,7 +4,6 @@ import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
-import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
 import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
@@ -119,6 +118,9 @@ export namespace $RdfVocabularies {
     );
     export const dateTime = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
+    );
+    export const decimal = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#decimal",
     );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
@@ -6018,18 +6020,27 @@ export class TermPropertiesClass {
       this.literalTermProperty = parameters?.literalTermProperty;
     } else if (typeof parameters?.literalTermProperty === "boolean") {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.literalTermProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters?.literalTermProperty === "object" &&
       parameters?.literalTermProperty instanceof Date
     ) {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.literalTermProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (typeof parameters?.literalTermProperty === "number") {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.literalTermProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (typeof parameters?.literalTermProperty === "string") {
       this.literalTermProperty = purify.Maybe.of(
@@ -6070,18 +6081,27 @@ export class TermPropertiesClass {
       this.termProperty = parameters?.termProperty;
     } else if (typeof parameters?.termProperty === "boolean") {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.termProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters?.termProperty === "object" &&
       parameters?.termProperty instanceof Date
     ) {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.termProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (typeof parameters?.termProperty === "number") {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.termProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (typeof parameters?.termProperty === "string") {
       this.termProperty = purify.Maybe.of(
@@ -6350,21 +6370,25 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$properties.dateTermProperty["identifier"],
-      ...this.dateTermProperty.toList().flatMap((value) => [
-        rdfLiteral.toRdf(value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.date,
-        }),
-      ]),
+      ...this.dateTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(
+            value.toISOString().replace(/T.*$/, ""),
+            $RdfVocabularies.xsd.date,
+          ),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
-      ...this.dateTimeTermProperty.toList().flatMap((value) => [
-        rdfLiteral.toRdf(value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.dateTime,
-        }),
-      ]),
+      ...this.dateTimeTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(
+            value.toISOString(),
+            $RdfVocabularies.xsd.dateTime,
+          ),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$properties.iriTermProperty["identifier"],
@@ -34258,12 +34282,14 @@ export class InPropertiesClass {
     );
     resource.add(
       InPropertiesClass.$properties.inDateTimesProperty["identifier"],
-      ...this.inDateTimesProperty.toList().flatMap((value) => [
-        rdfLiteral.toRdf(value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.dateTime,
-        }),
-      ]),
+      ...this.inDateTimesProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(
+            value.toISOString(),
+            $RdfVocabularies.xsd.dateTime,
+          ),
+        ]),
     );
     resource.add(
       InPropertiesClass.$properties.inIrisProperty["identifier"],
@@ -34535,12 +34561,12 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of<Error, true>(value)
+          value.toBoolean().chain((primitiveValue) =>
+            primitiveValue === true
+              ? purify.Either.of<Error, true>(primitiveValue)
               : purify.Left<Error, true>(
                   new rdfjsResource.Resource.MistypedTermValueError({
-                    actualValue: rdfLiteral.toRdf(value),
+                    actualValue: value.toTerm(),
                     expectedValueType: "true",
                     focusResource: $resource,
                     predicate:
@@ -34581,16 +34607,13 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toDate().chain((value) => {
-            if (value.getTime() === 1523268000000) {
-              return purify.Either.of<Error, Date>(value);
+          value.toDate().chain((primitiveValue) => {
+            if (primitiveValue.getTime() === 1523268000000) {
+              return purify.Either.of<Error, Date>(primitiveValue);
             }
             return purify.Left<Error, Date>(
               new rdfjsResource.Resource.MistypedTermValueError({
-                actualValue: rdfLiteral.toRdf(value, {
-                  dataFactory,
-                  datatype: $RdfVocabularies.xsd.dateTime,
-                }),
+                actualValue: value.toTerm(),
                 expectedValueType: "Date",
                 focusResource: $resource,
                 predicate:
@@ -34717,15 +34740,15 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toNumber().chain((value) => {
-            switch (value) {
+          value.toNumber().chain((primitiveValue) => {
+            switch (primitiveValue) {
               case 1:
               case 2:
-                return purify.Either.of<Error, 1 | 2>(value);
+                return purify.Either.of<Error, 1 | 2>(primitiveValue);
               default:
                 return purify.Left<Error, 1 | 2>(
                   new rdfjsResource.Resource.MistypedTermValueError({
-                    actualValue: rdfLiteral.toRdf(value),
+                    actualValue: value.toTerm(),
                     expectedValueType: "1 | 2",
                     focusResource: $resource,
                     predicate:
@@ -41310,10 +41333,10 @@ export class DefaultValuePropertiesClass {
       ],
       ...(this.dateDefaultValueProperty.getTime() !== 1523232000000
         ? [
-            rdfLiteral.toRdf(this.dateDefaultValueProperty, {
-              dataFactory,
-              datatype: $RdfVocabularies.xsd.date,
-            }),
+            dataFactory.literal(
+              this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
+              $RdfVocabularies.xsd.date,
+            ),
           ]
         : []),
     );
@@ -41323,10 +41346,10 @@ export class DefaultValuePropertiesClass {
       ],
       ...(this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
         ? [
-            rdfLiteral.toRdf(this.dateTimeDefaultValueProperty, {
-              dataFactory,
-              datatype: $RdfVocabularies.xsd.dateTime,
-            }),
+            dataFactory.literal(
+              this.dateTimeDefaultValueProperty.toISOString(),
+              $RdfVocabularies.xsd.dateTime,
+            ),
           ]
         : []),
     );
@@ -42599,75 +42622,89 @@ export class DateUnionPropertiesClass {
     });
     resource.add(
       DateUnionPropertiesClass.$properties.dateOrDateTimeProperty["identifier"],
-      ...this.dateOrDateTimeProperty.toList().flatMap((value) =>
-        value.type === "dateTime"
-          ? ([
-              rdfLiteral.toRdf(value.value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.dateTime,
-              }),
-            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-          : ([
-              rdfLiteral.toRdf(value.value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.date,
-              }),
-            ] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][]),
-      ),
+      ...this.dateOrDateTimeProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "dateTime"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString(),
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
     );
     resource.add(
       DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
-      ...this.dateOrStringProperty.toList().flatMap((value) =>
-        value.type === "string"
-          ? ([value.value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][])
-          : ([
-              rdfLiteral.toRdf(value.value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.date,
-              }),
-            ] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][]),
-      ),
+      ...this.dateOrStringProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "string"
+            ? ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
     );
     resource.add(
       DateUnionPropertiesClass.$properties.dateTimeOrDateProperty["identifier"],
-      ...this.dateTimeOrDateProperty.toList().flatMap((value) =>
-        value.type === "date"
-          ? ([
-              rdfLiteral.toRdf(value.value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.date,
-              }),
-            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-          : ([
-              rdfLiteral.toRdf(value.value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.dateTime,
-              }),
-            ] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][]),
-      ),
+      ...this.dateTimeOrDateProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "date"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString(),
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
     );
     resource.add(
       DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
-      ...this.stringOrDateProperty.toList().flatMap((value) =>
-        value.type === "date"
-          ? ([
-              rdfLiteral.toRdf(value.value, {
-                dataFactory,
-                datatype: $RdfVocabularies.xsd.date,
-              }),
-            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-          : ([value.value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][]),
-      ),
+      ...this.stringOrDateProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "date"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
     );
     return resource;
   }
@@ -43912,26 +43949,29 @@ export class ConvertibleTypePropertiesClass {
       typeof parameters.convertibleLiteralOptionProperty === "boolean"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleLiteralOptionProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "object" &&
       parameters.convertibleLiteralOptionProperty instanceof Date
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleLiteralOptionProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "number"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleLiteralOptionProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "string"
@@ -43955,22 +43995,22 @@ export class ConvertibleTypePropertiesClass {
     }
 
     if (typeof parameters.convertibleLiteralProperty === "boolean") {
-      this.convertibleLiteralProperty = rdfLiteral.toRdf(
-        parameters.convertibleLiteralProperty,
-        { dataFactory },
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty.toString(),
+        $RdfVocabularies.xsd.boolean,
       );
     } else if (
       typeof parameters.convertibleLiteralProperty === "object" &&
       parameters.convertibleLiteralProperty instanceof Date
     ) {
-      this.convertibleLiteralProperty = rdfLiteral.toRdf(
-        parameters.convertibleLiteralProperty,
-        { dataFactory },
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty.toISOString(),
+        $RdfVocabularies.xsd.dateTime,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "number") {
-      this.convertibleLiteralProperty = rdfLiteral.toRdf(
-        parameters.convertibleLiteralProperty,
-        { dataFactory },
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty.toString(),
+        $RdfVocabularies.xsd.decimal,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "string") {
       this.convertibleLiteralProperty = dataFactory.literal(
@@ -43995,14 +44035,14 @@ export class ConvertibleTypePropertiesClass {
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.boolean),
         );
     } else if (
       $isReadonlyNumberArray(parameters.convertibleLiteralSetProperty)
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.decimal),
         );
     } else if (
       $isReadonlyStringArray(parameters.convertibleLiteralSetProperty)
@@ -44023,24 +44063,27 @@ export class ConvertibleTypePropertiesClass {
         parameters.convertibleTermOptionProperty;
     } else if (typeof parameters.convertibleTermOptionProperty === "boolean") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleTermOptionProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters.convertibleTermOptionProperty === "object" &&
       parameters.convertibleTermOptionProperty instanceof Date
     ) {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleTermOptionProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "number") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleTermOptionProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "string") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
@@ -44060,22 +44103,22 @@ export class ConvertibleTypePropertiesClass {
     }
 
     if (typeof parameters.convertibleTermProperty === "boolean") {
-      this.convertibleTermProperty = rdfLiteral.toRdf(
-        parameters.convertibleTermProperty,
-        { dataFactory },
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty.toString(),
+        $RdfVocabularies.xsd.boolean,
       );
     } else if (
       typeof parameters.convertibleTermProperty === "object" &&
       parameters.convertibleTermProperty instanceof Date
     ) {
-      this.convertibleTermProperty = rdfLiteral.toRdf(
-        parameters.convertibleTermProperty,
-        { dataFactory },
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty.toISOString(),
+        $RdfVocabularies.xsd.dateTime,
       );
     } else if (typeof parameters.convertibleTermProperty === "number") {
-      this.convertibleTermProperty = rdfLiteral.toRdf(
-        parameters.convertibleTermProperty,
-        { dataFactory },
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty.toString(),
+        $RdfVocabularies.xsd.decimal,
       );
     } else if (typeof parameters.convertibleTermProperty === "string") {
       this.convertibleTermProperty = dataFactory.literal(
@@ -44095,12 +44138,12 @@ export class ConvertibleTypePropertiesClass {
     } else if ($isReadonlyBooleanArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.boolean),
         );
     } else if ($isReadonlyNumberArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.decimal),
         );
     } else if ($isReadonlyStringArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =

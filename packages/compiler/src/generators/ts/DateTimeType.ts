@@ -83,7 +83,7 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     let fromRdfResourceValueExpression = "value.toDate()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { ${this.primitiveIn.map((value) => `if (value.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(value); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: `rdfLiteral.toRdf(value, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`, expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
     }
 
     return {
@@ -106,16 +106,20 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     return snippetDeclarations;
   }
 
+  protected toIsoStringExpression(variables: { value: string }) {
+    return `${variables.value}.toISOString()`;
+  }
+
   override toJsonExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): string {
-    return `${variables.value}.toISOString()`;
+    return this.toIsoStringExpression(variables);
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): string {
-    const valueToRdf = `rdfLiteral.toRdf(${variables.value}, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`;
+    const valueToRdf = `dataFactory.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})`;
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>
