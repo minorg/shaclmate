@@ -2,6 +2,8 @@
   "objectTypes": [
     {
       "kind": "ObjectType",
+      "comment": "An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.",
+      "shapeIdentifier": "<http://example.com/AbstractBaseClassForExternClass>",
       "properties": [
         {
           "mutable": false,
@@ -9,12 +11,12 @@
           "path": "http://example.com/abstractBaseClassForExternClassProperty",
           "shapeIdentifier": "_:n3-130",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -22,6 +24,8 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that serves as an abstract base class for child node shapes.\n\nIt's marked abstract in TypeScript and not exported from the module.\n\nCommon pattern: put the minting strategy and nodeKind on an ABC.\n",
+      "shapeIdentifier": "<http://example.com/AbstractBaseClassWithProperties>",
       "properties": [
         {
           "mutable": false,
@@ -29,12 +33,12 @@
           "path": "http://example.com/abstractBaseClassWithPropertiesProperty",
           "shapeIdentifier": "_:n3-131",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -42,10 +46,14 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Abstract base for other node shapes. Put the ABC with properties above the ABC without.",
+      "shapeIdentifier": "<http://example.com/AbstractBaseClassWithoutProperties>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Base interface for other node shapes.",
+      "shapeIdentifier": "<http://example.com/BaseInterfaceWithProperties>",
       "properties": [
         {
           "mutable": false,
@@ -53,12 +61,12 @@
           "path": "http://example.com/baseInterfaceWithPropertiesProperty",
           "shapeIdentifier": "_:n3-132",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -66,18 +74,25 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Base interface for other node shapes. Put the base interface with properties above the base interface without.",
+      "shapeIdentifier": "<http://example.com/BaseInterfaceWithoutProperties>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that can have a blank node or IRI as an identifier",
+      "shapeIdentifier": "<http://example.com/BlankNodeIdentifierClass>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that can have a blank node or IRI as an identifier",
+      "shapeIdentifier": "<http://example.com/BlankNodeIdentifierInterface>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
       "properties": [
         {
           "mutable": false,
@@ -85,12 +100,12 @@
           "path": "http://example.com/classUnionMember1Property",
           "shapeIdentifier": "_:n3-135",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -98,6 +113,7 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
       "properties": [
         {
           "mutable": false,
@@ -105,12 +121,12 @@
           "path": "http://example.com/classUnionMember2Property",
           "shapeIdentifier": "_:n3-136",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -118,6 +134,7 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/ClassUnionMemberCommonParent>",
       "properties": [
         {
           "mutable": false,
@@ -125,12 +142,12 @@
           "path": "http://example.com/classUnionMemberCommonParentProperty",
           "shapeIdentifier": "_:n3-137",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -138,6 +155,8 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Child (class) of ConcreteParentClass. Should inherit properties, node kinds, and minting strategy.",
+      "shapeIdentifier": "<http://example.com/ConcreteChildClass>",
       "properties": [
         {
           "mutable": false,
@@ -145,12 +164,12 @@
           "path": "http://example.com/concreteChildClassProperty",
           "shapeIdentifier": "_:n3-138",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -158,6 +177,8 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Class node shape that inherits the abstract base class and is the parent of the ConcreteChildClass.",
+      "shapeIdentifier": "<http://example.com/ConcreteParentClass>",
       "properties": [
         {
           "mutable": false,
@@ -165,12 +186,12 @@
           "path": "http://example.com/concreteParentClassProperty",
           "shapeIdentifier": "_:n3-140",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -178,6 +199,8 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Child interface of ConcreteParentInterface. Should inherit properties and node kinds.",
+      "shapeIdentifier": "<http://example.com/ConcreteChildInterface>",
       "properties": [
         {
           "mutable": false,
@@ -185,12 +208,12 @@
           "path": "http://example.com/concreteChildInterfaceProperty",
           "shapeIdentifier": "_:n3-139",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -198,6 +221,8 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Interface node shape that inherits the base interface and is the parent of the ConcreteChildInterface.",
+      "shapeIdentifier": "<http://example.com/ConcreteParentInterface>",
       "properties": [
         {
           "mutable": false,
@@ -205,12 +230,12 @@
           "path": "http://example.com/concreteParentInterfaceProperty",
           "shapeIdentifier": "_:n3-141",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -218,6 +243,8 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.",
+      "shapeIdentifier": "<http://example.com/ConvertibleTypePropertiesClass>",
       "properties": [
         {
           "mutable": false,
@@ -225,11 +252,11 @@
           "path": "http://example.com/convertibleLiteralNonEmptySetProperty",
           "shapeIdentifier": "_:n3-142",
           "type": {
+            "kind": "SetType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -249,10 +276,10 @@
           "path": "http://example.com/convertibleTermOptionProperty",
           "shapeIdentifier": "_:n3-144",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "TermType"
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -262,10 +289,10 @@
           "path": "http://example.com/convertibleTermSetProperty",
           "shapeIdentifier": "_:n3-145",
           "type": {
+            "kind": "SetType",
             "itemType": {
               "kind": "TermType"
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         },
@@ -275,10 +302,10 @@
           "path": "http://example.com/convertibleTermNonEmptySetProperty",
           "shapeIdentifier": "_:n3-146",
           "type": {
+            "kind": "SetType",
             "itemType": {
               "kind": "TermType"
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         },
@@ -288,8 +315,8 @@
           "path": "http://example.com/convertibleIriProperty",
           "shapeIdentifier": "_:n3-147",
           "type": {
-            "hasValue": [],
             "kind": "IdentifierType",
+            "hasValue": [],
             "nodeKinds": [
               "NamedNode"
             ]
@@ -302,14 +329,14 @@
           "path": "http://example.com/convertibleIriOptionProperty",
           "shapeIdentifier": "_:n3-148",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
               "kind": "IdentifierType",
+              "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
               ]
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -319,14 +346,14 @@
           "path": "http://example.com/convertibleIriSetProperty",
           "shapeIdentifier": "_:n3-149",
           "type": {
+            "kind": "SetType",
             "itemType": {
-              "hasValue": [],
               "kind": "IdentifierType",
+              "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
               ]
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         },
@@ -336,14 +363,14 @@
           "path": "http://example.com/convertibleIriNonEmptySetProperty",
           "shapeIdentifier": "_:n3-150",
           "type": {
+            "kind": "SetType",
             "itemType": {
-              "hasValue": [],
               "kind": "IdentifierType",
+              "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
               ]
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         },
@@ -353,8 +380,8 @@
           "path": "http://example.com/convertibleLiteralProperty",
           "shapeIdentifier": "_:n3-151",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -364,11 +391,11 @@
           "path": "http://example.com/convertibleLiteralOptionProperty",
           "shapeIdentifier": "_:n3-152",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -378,11 +405,11 @@
           "path": "http://example.com/convertibleLiteralSetProperty",
           "shapeIdentifier": "_:n3-153",
           "type": {
+            "kind": "SetType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }
@@ -390,15 +417,164 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.",
+      "shapeIdentifier": "<http://example.com/DateUnionPropertiesClass>",
+      "properties": [
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/dateOrDateTimeProperty",
+          "shapeIdentifier": "_:n3-154",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "UnionType",
+              "memberDiscriminantValues": [
+                "date",
+                "dateTime"
+              ],
+              "memberTypes": [
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
+                },
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  },
+                  "hasValue": []
+                }
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/dateTimeOrDateProperty",
+          "shapeIdentifier": "_:n3-159",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "UnionType",
+              "memberDiscriminantValues": [
+                "dateTime",
+                "date"
+              ],
+              "memberTypes": [
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  },
+                  "hasValue": []
+                },
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
+                }
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/dateOrStringProperty",
+          "shapeIdentifier": "_:n3-164",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "UnionType",
+              "memberDiscriminantValues": [
+                "date",
+                "string"
+              ],
+              "memberTypes": [
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
+                },
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
+                }
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/stringOrDateProperty",
+          "shapeIdentifier": "_:n3-169",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "UnionType",
+              "memberDiscriminantValues": [
+                "string",
+                "date"
+              ],
+              "memberTypes": [
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
+                },
+                {
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
+                }
+              ]
+            }
+          },
+          "visibility": "public"
+        }
+      ]
+    },
+    {
+      "kind": "ObjectType",
+      "comment": "Shape with sh:defaultValue properties.",
+      "shapeIdentifier": "<http://example.com/DefaultValuePropertiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/stringDefaultValueProperty",
-          "shapeIdentifier": "_:n3-154",
+          "shapeIdentifier": "_:n3-174",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -406,10 +582,10 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/trueBooleanDefaultValueProperty",
-          "shapeIdentifier": "_:n3-155",
+          "shapeIdentifier": "_:n3-175",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -417,10 +593,10 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/falseBooleanDefaultValueProperty",
-          "shapeIdentifier": "_:n3-156",
+          "shapeIdentifier": "_:n3-176",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -428,10 +604,10 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateDefaultValueProperty",
-          "shapeIdentifier": "_:n3-157",
+          "shapeIdentifier": "_:n3-177",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -439,10 +615,10 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTimeDefaultValueProperty",
-          "shapeIdentifier": "_:n3-158",
+          "shapeIdentifier": "_:n3-178",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -450,10 +626,10 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/numberDefaultValueProperty",
-          "shapeIdentifier": "_:n3-159",
+          "shapeIdentifier": "_:n3-179",
           "type": {
-            "hasValue": [],
-            "kind": "LiteralType"
+            "kind": "LiteralType",
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -461,28 +637,29 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/DirectRecursiveClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/directRecursiveProperty",
           "recursive": true,
-          "shapeIdentifier": "_:n3-160",
+          "shapeIdentifier": "_:n3-180",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "ObjectType",
+              "shapeIdentifier": "<http://example.com/DirectRecursiveClass>",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
-              },
-              "shapeIdentifier": "<http://example.com/DirectRecursiveClass>"
-            },
-            "kind": "OptionType"
+              }
+            }
           },
           "visibility": "public"
         }
@@ -490,19 +667,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with custom rdf:type's.\n\nThe shaclmate:fromRdfType is expected on deserialization.\nshaclmate:toRdfType's are added an serialization.",
+      "shapeIdentifier": "<http://example.com/ExplicitFromToRdfTypesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/explicitFromToRdfTypesProperty",
-          "shapeIdentifier": "_:n3-161",
+          "shapeIdentifier": "_:n3-181",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -510,19 +689,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with custom rdf:type's.\n\nThe shaclmate:rdfType is expected on deserialization and added on serialization.",
+      "shapeIdentifier": "<http://example.com/ExplicitRdfTypeClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/explicitRdfTypeProperty",
-          "shapeIdentifier": "_:n3-162",
+          "shapeIdentifier": "_:n3-182",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -530,31 +711,37 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "An extern object type in TypeScript",
+      "shapeIdentifier": "<http://example.com/ExternClass>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that references the ExternClass in a property.",
+      "shapeIdentifier": "<http://example.com/ExternClassPropertyClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/externClassProperty",
-          "shapeIdentifier": "_:n3-163",
+          "shapeIdentifier": "_:n3-183",
           "type": {
+            "kind": "OptionType",
+            "comment": "An extern object type in TypeScript",
             "itemType": {
               "kind": "ObjectType",
+              "comment": "An extern object type in TypeScript",
+              "shapeIdentifier": "<http://example.com/ExternClass>",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
-              },
-              "shapeIdentifier": "<http://example.com/ExternClass>"
-            },
-            "kind": "OptionType"
+              }
+            }
           },
           "visibility": "public"
         }
@@ -562,19 +749,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/FlattenClassUnionMember3>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/flattenClassUnionMember3Property",
-          "shapeIdentifier": "_:n3-166",
+          "shapeIdentifier": "_:n3-186",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -582,20 +770,22 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with sh:hasValue properties.",
+      "shapeIdentifier": "<http://example.com/HasValuePropertiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/hasIriValueProperty",
-          "shapeIdentifier": "_:n3-167",
+          "shapeIdentifier": "_:n3-187",
           "type": {
+            "kind": "IdentifierType",
             "hasValue": [
               {
                 "termType": "NamedNode",
                 "value": "http://example.com/HasValuePropertiesClassIri1"
               }
             ],
-            "kind": "IdentifierType",
             "nodeKinds": [
               "NamedNode"
             ]
@@ -606,8 +796,9 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/hasLiteralValueProperty",
-          "shapeIdentifier": "_:n3-168",
+          "shapeIdentifier": "_:n3-188",
           "type": {
+            "kind": "LiteralType",
             "hasValue": [
               {
                 "datatype": "http://www.w3.org/2001/XMLSchema#string",
@@ -615,8 +806,7 @@
                 "termType": "Literal",
                 "value": "test"
               }
-            ],
-            "kind": "LiteralType"
+            ]
           },
           "visibility": "public"
         }
@@ -624,19 +814,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
+      "shapeIdentifier": "<http://example.com/IdentifierOverride1Class>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/identifierOverrideProperty",
-          "shapeIdentifier": "_:n3-169",
+          "shapeIdentifier": "_:n3-189",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -644,38 +836,48 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
+      "shapeIdentifier": "<http://example.com/IdentifierOverride2Class>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete",
+      "shapeIdentifier": "<http://example.com/IdentifierOverride3Class>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting",
+      "shapeIdentifier": "<http://example.com/IdentifierOverride4Class>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting",
+      "shapeIdentifier": "<http://example.com/IdentifierOverride5Class>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with sh:in constraining its identifier.",
+      "shapeIdentifier": "<http://example.com/InIdentifierClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/inIdentifierProperty",
-          "shapeIdentifier": "_:n3-172",
+          "shapeIdentifier": "_:n3-192",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }
@@ -683,18 +885,20 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with sh:in properties.",
+      "shapeIdentifier": "<http://example.com/InPropertiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/inBooleansProperty",
-          "shapeIdentifier": "_:n3-173",
+          "shapeIdentifier": "_:n3-193",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -702,13 +906,13 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/inDateTimesProperty",
-          "shapeIdentifier": "_:n3-175",
+          "shapeIdentifier": "_:n3-195",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -716,16 +920,16 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/inIrisProperty",
-          "shapeIdentifier": "_:n3-177",
+          "shapeIdentifier": "_:n3-197",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
               "kind": "IdentifierType",
+              "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
               ]
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -733,13 +937,13 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/inNumbersProperty",
-          "shapeIdentifier": "_:n3-180",
+          "shapeIdentifier": "_:n3-200",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -747,13 +951,13 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/inStringsProperty",
-          "shapeIdentifier": "_:n3-183",
+          "shapeIdentifier": "_:n3-203",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }
@@ -761,28 +965,29 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/IndirectRecursiveClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/indirectRecursiveHelperProperty",
           "recursive": true,
-          "shapeIdentifier": "_:n3-186",
+          "shapeIdentifier": "_:n3-206",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "ObjectType",
+              "shapeIdentifier": "<http://example.com/IndirectRecursiveHelperClass>",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
-              },
-              "shapeIdentifier": "<http://example.com/IndirectRecursiveHelperClass>"
-            },
-            "kind": "OptionType"
+              }
+            }
           },
           "visibility": "public"
         }
@@ -790,28 +995,29 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/IndirectRecursiveHelperClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/indirectRecursiveProperty",
           "recursive": true,
-          "shapeIdentifier": "_:n3-187",
+          "shapeIdentifier": "_:n3-207",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "ObjectType",
+              "shapeIdentifier": "<http://example.com/IndirectRecursiveClass>",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
-              },
-              "shapeIdentifier": "<http://example.com/IndirectRecursiveClass>"
-            },
-            "kind": "OptionType"
+              }
+            }
           },
           "visibility": "public"
         }
@@ -819,19 +1025,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "A node shape that's generated as a TypeScript interface instead of a class.",
+      "shapeIdentifier": "<http://example.com/Interface>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/interfaceProperty",
-          "shapeIdentifier": "_:n3-188",
+          "shapeIdentifier": "_:n3-208",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -839,19 +1047,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/InterfaceUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/interfaceUnionMember1Property",
-          "shapeIdentifier": "_:n3-191",
+          "shapeIdentifier": "_:n3-211",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -859,19 +1068,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/InterfaceUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/interfaceUnionMember2Property",
-          "shapeIdentifier": "_:n3-192",
+          "shapeIdentifier": "_:n3-212",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -879,19 +1089,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/InterfaceUnionMemberCommonParent>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/interfaceUnionMemberCommonParentProperty",
-          "shapeIdentifier": "_:n3-193",
+          "shapeIdentifier": "_:n3-213",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -899,27 +1110,33 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "A node shape that only allows IRI identifiers.",
+      "shapeIdentifier": "<http://example.com/IriIdentifierClass>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "A node shape that only allows IRI identifiers.",
+      "shapeIdentifier": "<http://example.com/IriIdentifierInterface>",
       "properties": []
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape that uses the StringList in a property.",
+      "shapeIdentifier": "<http://example.com/LanguageInPropertiesClass>",
       "properties": [
         {
           "comment": "literal property for testing languageIn",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/languageInLiteralProperty",
-          "shapeIdentifier": "_:n3-198",
+          "shapeIdentifier": "_:n3-218",
           "type": {
+            "kind": "SetType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -928,17 +1145,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/languageInStringProperty",
-          "shapeIdentifier": "_:n3-201",
+          "shapeIdentifier": "_:n3-221",
           "type": {
+            "kind": "SetType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }
@@ -946,19 +1163,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape resolved by LazyPropertiesClass",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-205",
+          "shapeIdentifier": "_:n3-225",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -966,19 +1185,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape resolved by LazyPropertiesInterface",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-206",
+          "shapeIdentifier": "_:n3-226",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -986,19 +1207,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-209",
+          "shapeIdentifier": "_:n3-229",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1006,19 +1228,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-210",
+          "shapeIdentifier": "_:n3-230",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1026,19 +1249,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-213",
+          "shapeIdentifier": "_:n3-233",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1046,19 +1270,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-214",
+          "shapeIdentifier": "_:n3-234",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1066,19 +1291,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape resolved by LazyPropertiesClass",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-215",
+          "shapeIdentifier": "_:n3-235",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1086,19 +1313,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape resolved by LazyPropertiesInterface",
+      "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierInterface>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-216",
+          "shapeIdentifier": "_:n3-236",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1106,583 +1335,47 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that has lazy properties.",
+      "shapeIdentifier": "<http://example.com/LazyPropertiesClass>",
       "properties": [
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
-          "shapeIdentifier": "_:n3-217",
-          "type": {
-            "kind": "LazyObjectOptionType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectType",
-                "name": "DefaultPartial",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
-                "synthetic": true
-              },
-              "kind": "OptionType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>",
-                "types": [
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                      }
-                    ]
-                  },
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "kind": "OptionType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/optionalPartialClassToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-218",
-          "type": {
-            "kind": "LazyObjectOptionType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/PartialClass>"
-              },
-              "kind": "OptionType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "fromRdfType": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                },
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-                "toRdfTypes": [
-                  {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                  }
-                ]
-              },
-              "kind": "OptionType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/setPartialClassToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-219",
-          "type": {
-            "kind": "LazyObjectSetType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/PartialClass>"
-              },
-              "kind": "SetType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "fromRdfType": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                },
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-                "toRdfTypes": [
-                  {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                  }
-                ]
-              },
-              "kind": "SetType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/requiredPartialClassToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-220",
-          "type": {
-            "kind": "LazyObjectType",
-            "partialType": {
-              "kind": "ObjectType",
-              "identifierMintingStrategy": "blankNode",
-              "identifierType": {
-                "hasValue": [],
-                "kind": "IdentifierType",
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
-              },
-              "shapeIdentifier": "<http://example.com/PartialClass>"
-            },
-            "resolvedType": {
-              "fromRdfType": {
-                "termType": "NamedNode",
-                "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-              },
-              "kind": "ObjectType",
-              "identifierMintingStrategy": "blankNode",
-              "identifierType": {
-                "hasValue": [],
-                "kind": "IdentifierType",
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
-              },
-              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-              "toRdfTypes": [
-                {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                }
-              ]
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
-          "shapeIdentifier": "_:n3-221",
-          "type": {
-            "kind": "LazyObjectOptionType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/PartialClass>"
-              },
-              "kind": "OptionType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>",
-                "types": [
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                      }
-                    ]
-                  },
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "kind": "OptionType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
-          "shapeIdentifier": "_:n3-222",
-          "type": {
-            "kind": "LazyObjectOptionType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/PartialClassUnion>",
-                "types": [
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/PartialClassUnionMember1"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/PartialClassUnionMember1"
-                      }
-                    ]
-                  },
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/PartialClassUnionMember2"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/PartialClassUnionMember2>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/PartialClassUnionMember2"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "kind": "OptionType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>",
-                "types": [
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/LazilyResolvedClassUnionMember1"
-                      }
-                    ]
-                  },
-                  {
-                    "fromRdfType": {
-                      "termType": "NamedNode",
-                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                    },
-                    "kind": "ObjectType",
-                    "identifierMintingStrategy": "blankNode",
-                    "identifierType": {
-                      "hasValue": [],
-                      "kind": "IdentifierType",
-                      "nodeKinds": [
-                        "BlankNode",
-                        "NamedNode"
-                      ]
-                    },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
-                    "toRdfTypes": [
-                      {
-                        "termType": "NamedNode",
-                        "value": "http://example.com/LazilyResolvedClassUnionMember2"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "kind": "OptionType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/optionalLazyToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-223",
-          "type": {
-            "kind": "LazyObjectOptionType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectType",
-                "name": "DefaultPartial",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
-                "synthetic": true
-              },
-              "kind": "OptionType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "fromRdfType": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                },
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-                "toRdfTypes": [
-                  {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                  }
-                ]
-              },
-              "kind": "OptionType"
-            }
-          },
-          "visibility": "public"
-        },
-        {
-          "mutable": false,
-          "order": 0,
-          "path": "http://example.com/setLazyToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-224",
-          "type": {
-            "kind": "LazyObjectSetType",
-            "partialType": {
-              "itemType": {
-                "kind": "ObjectType",
-                "name": "DefaultPartial",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
-                "synthetic": true
-              },
-              "kind": "SetType"
-            },
-            "resolvedType": {
-              "itemType": {
-                "fromRdfType": {
-                  "termType": "NamedNode",
-                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                },
-                "kind": "ObjectType",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "hasValue": [],
-                  "kind": "IdentifierType",
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
-                "toRdfTypes": [
-                  {
-                    "termType": "NamedNode",
-                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
-                  }
-                ]
-              },
-              "kind": "SetType"
-            }
-          },
-          "visibility": "public"
-        },
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredLazyToResolvedClassProperty",
-          "shapeIdentifier": "_:n3-225",
+          "shapeIdentifier": "_:n3-237",
           "type": {
             "kind": "LazyObjectType",
             "partialType": {
               "kind": "ObjectType",
               "name": "DefaultPartial",
+              "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
               },
-              "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
               "synthetic": true
             },
             "resolvedType": {
+              "kind": "ObjectType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
+              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
               "fromRdfType": {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
               },
-              "kind": "ObjectType",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
               },
-              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
               "toRdfTypes": [
                 {
                   "termType": "NamedNode",
@@ -1697,38 +1390,603 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
-          "shapeIdentifier": "_:n3-226",
+          "shapeIdentifier": "_:n3-238",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "NamedDefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
                 "synthetic": true
-              },
-              "kind": "OptionType"
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
               "itemType": {
                 "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
+                }
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedClassUnionProperty",
+          "shapeIdentifier": "_:n3-239",
+          "type": {
+            "kind": "LazyObjectOptionType",
+            "partialType": {
+              "kind": "OptionType",
+              "itemType": {
+                "kind": "ObjectType",
+                "name": "DefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
                 },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>"
+                "synthetic": true
+              }
+            },
+            "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+              "itemType": {
+                "kind": "ObjectUnionType",
+                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "memberTypes": [
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                      }
+                    ]
+                  }
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>"
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/optionalPartialClassToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-240",
+          "type": {
+            "kind": "LazyObjectOptionType",
+            "partialType": {
+              "kind": "OptionType",
+              "comment": "Node shape used as a partial by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape used as a partial by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/PartialClass>",
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                }
+              }
+            },
+            "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+                "fromRdfType": {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                },
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "toRdfTypes": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                  }
+                ]
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/setPartialClassToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-241",
+          "type": {
+            "kind": "LazyObjectSetType",
+            "partialType": {
+              "kind": "SetType",
+              "comment": "Node shape used as a partial by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape used as a partial by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/PartialClass>",
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                }
+              }
+            },
+            "resolvedType": {
+              "kind": "SetType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+                "fromRdfType": {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                },
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "toRdfTypes": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                  }
+                ]
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/requiredPartialClassToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-242",
+          "type": {
+            "kind": "LazyObjectType",
+            "partialType": {
+              "kind": "ObjectType",
+              "comment": "Node shape used as a partial by LazyPropertiesClass",
+              "shapeIdentifier": "<http://example.com/PartialClass>",
+              "identifierMintingStrategy": "blankNode",
+              "identifierType": {
+                "kind": "IdentifierType",
+                "hasValue": [],
+                "nodeKinds": [
+                  "BlankNode",
+                  "NamedNode"
+                ]
+              }
+            },
+            "resolvedType": {
+              "kind": "ObjectType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
+              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
               },
-              "kind": "OptionType"
+              "identifierMintingStrategy": "blankNode",
+              "identifierType": {
+                "kind": "IdentifierType",
+                "hasValue": [],
+                "nodeKinds": [
+                  "BlankNode",
+                  "NamedNode"
+                ]
+              },
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                }
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
+          "shapeIdentifier": "_:n3-243",
+          "type": {
+            "kind": "LazyObjectOptionType",
+            "partialType": {
+              "kind": "OptionType",
+              "comment": "Node shape used as a partial by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape used as a partial by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/PartialClass>",
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                }
+              }
+            },
+            "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+              "itemType": {
+                "kind": "ObjectUnionType",
+                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "memberTypes": [
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                      }
+                    ]
+                  }
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>"
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
+          "shapeIdentifier": "_:n3-244",
+          "type": {
+            "kind": "LazyObjectOptionType",
+            "partialType": {
+              "kind": "OptionType",
+              "comment": "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
+              "itemType": {
+                "kind": "ObjectUnionType",
+                "comment": "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
+                "memberTypes": [
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/PartialClassUnionMember1"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/PartialClassUnionMember1"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/PartialClassUnionMember2>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/PartialClassUnionMember2"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/PartialClassUnionMember2"
+                      }
+                    ]
+                  }
+                ],
+                "shapeIdentifier": "<http://example.com/PartialClassUnion>"
+              }
+            },
+            "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+              "itemType": {
+                "kind": "ObjectUnionType",
+                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "memberTypes": [
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/LazilyResolvedClassUnionMember1"
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember2>",
+                    "fromRdfType": {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                    },
+                    "identifierMintingStrategy": "blankNode",
+                    "identifierType": {
+                      "kind": "IdentifierType",
+                      "hasValue": [],
+                      "nodeKinds": [
+                        "BlankNode",
+                        "NamedNode"
+                      ]
+                    },
+                    "toRdfTypes": [
+                      {
+                        "termType": "NamedNode",
+                        "value": "http://example.com/LazilyResolvedClassUnionMember2"
+                      }
+                    ]
+                  }
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>"
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/optionalLazyToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-245",
+          "type": {
+            "kind": "LazyObjectOptionType",
+            "partialType": {
+              "kind": "OptionType",
+              "itemType": {
+                "kind": "ObjectType",
+                "name": "DefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "synthetic": true
+              }
+            },
+            "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+                "fromRdfType": {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                },
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "toRdfTypes": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                  }
+                ]
+              }
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/setLazyToResolvedClassProperty",
+          "shapeIdentifier": "_:n3-246",
+          "type": {
+            "kind": "LazyObjectSetType",
+            "partialType": {
+              "kind": "SetType",
+              "itemType": {
+                "kind": "ObjectType",
+                "name": "DefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "synthetic": true
+              }
+            },
+            "resolvedType": {
+              "kind": "SetType",
+              "comment": "Node shape resolved by LazyPropertiesClass",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesClass",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass>",
+                "fromRdfType": {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                },
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "toRdfTypes": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass"
+                  }
+                ]
+              }
             }
           },
           "visibility": "public"
@@ -1737,19 +1995,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape used as a partial by LazyPropertiesClass",
+      "shapeIdentifier": "<http://example.com/PartialClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-259",
+          "shapeIdentifier": "_:n3-279",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -1757,44 +2017,47 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that has lazy properties.",
+      "shapeIdentifier": "<http://example.com/LazyPropertiesInterface>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredLazyToResolvedInterfaceProperty",
-          "shapeIdentifier": "_:n3-227",
+          "shapeIdentifier": "_:n3-247",
           "type": {
             "kind": "LazyObjectType",
             "partialType": {
               "kind": "ObjectType",
               "name": "DefaultPartial",
+              "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
               },
-              "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
               "synthetic": true
             },
             "resolvedType": {
+              "kind": "ObjectType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
+              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
               "fromRdfType": {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
               },
-              "kind": "ObjectType",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
               },
-              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
               "toRdfTypes": [
                 {
                   "termType": "NamedNode",
@@ -1809,38 +2072,40 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
-          "shapeIdentifier": "_:n3-228",
+          "shapeIdentifier": "_:n3-248",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "NamedDefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
                 "synthetic": true
-              },
-              "kind": "OptionType"
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
               "itemType": {
                 "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierInterface>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
-                },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierInterface>"
-              },
-              "kind": "OptionType"
+                }
+              }
             }
           },
           "visibility": "public"
@@ -1849,47 +2114,49 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
-          "shapeIdentifier": "_:n3-229",
+          "shapeIdentifier": "_:n3-249",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
                 "synthetic": true
-              },
-              "kind": "OptionType"
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
               "itemType": {
                 "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>",
-                "types": [
+                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "memberTypes": [
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -1898,21 +2165,21 @@
                     ]
                   },
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -1920,9 +2187,9 @@
                       }
                     ]
                   }
-                ]
-              },
-              "kind": "OptionType"
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>"
+              }
             }
           },
           "visibility": "public"
@@ -1931,50 +2198,54 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
-          "shapeIdentifier": "_:n3-230",
+          "shapeIdentifier": "_:n3-250",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
+              "comment": "Node shape used as a partial by LazyPropertiesInterface",
               "itemType": {
                 "kind": "ObjectType",
+                "comment": "Node shape used as a partial by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/PartialInterface>",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
-                },
-                "shapeIdentifier": "<http://example.com/PartialInterface>"
-              },
-              "kind": "OptionType"
+                }
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
               "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "fromRdfType": {
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "kind": "ObjectType",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "toRdfTypes": [
                   {
                     "termType": "NamedNode",
                     "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                   }
                 ]
-              },
-              "kind": "OptionType"
+              }
             }
           },
           "visibility": "public"
@@ -1983,50 +2254,54 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
-          "shapeIdentifier": "_:n3-231",
+          "shapeIdentifier": "_:n3-251",
           "type": {
             "kind": "LazyObjectSetType",
             "partialType": {
+              "kind": "SetType",
+              "comment": "Node shape used as a partial by LazyPropertiesInterface",
               "itemType": {
                 "kind": "ObjectType",
+                "comment": "Node shape used as a partial by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/PartialInterface>",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
-                },
-                "shapeIdentifier": "<http://example.com/PartialInterface>"
-              },
-              "kind": "SetType"
+                }
+              }
             },
             "resolvedType": {
+              "kind": "SetType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
               "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "fromRdfType": {
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "kind": "ObjectType",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "toRdfTypes": [
                   {
                     "termType": "NamedNode",
                     "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                   }
                 ]
-              },
-              "kind": "SetType"
+              }
             }
           },
           "visibility": "public"
@@ -2035,38 +2310,40 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
-          "shapeIdentifier": "_:n3-232",
+          "shapeIdentifier": "_:n3-252",
           "type": {
             "kind": "LazyObjectType",
             "partialType": {
               "kind": "ObjectType",
+              "comment": "Node shape used as a partial by LazyPropertiesInterface",
+              "shapeIdentifier": "<http://example.com/PartialInterface>",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
-              },
-              "shapeIdentifier": "<http://example.com/PartialInterface>"
+              }
             },
             "resolvedType": {
+              "kind": "ObjectType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
+              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
               "fromRdfType": {
                 "termType": "NamedNode",
                 "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
               },
-              "kind": "ObjectType",
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "BlankNode",
                   "NamedNode"
                 ]
               },
-              "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
               "toRdfTypes": [
                 {
                   "termType": "NamedNode",
@@ -2081,46 +2358,50 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
-          "shapeIdentifier": "_:n3-233",
+          "shapeIdentifier": "_:n3-253",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
+              "comment": "Node shape used as a partial by LazyPropertiesInterface",
               "itemType": {
                 "kind": "ObjectType",
+                "comment": "Node shape used as a partial by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/PartialInterface>",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
-                },
-                "shapeIdentifier": "<http://example.com/PartialInterface>"
-              },
-              "kind": "OptionType"
+                }
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
               "itemType": {
                 "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>",
-                "types": [
+                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "memberTypes": [
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -2129,21 +2410,21 @@
                     ]
                   },
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -2151,9 +2432,9 @@
                       }
                     ]
                   }
-                ]
-              },
-              "kind": "OptionType"
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>"
+              }
             }
           },
           "visibility": "public"
@@ -2162,30 +2443,32 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
-          "shapeIdentifier": "_:n3-234",
+          "shapeIdentifier": "_:n3-254",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
+              "comment": "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
               "itemType": {
                 "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/PartialInterfaceUnion>",
-                "types": [
+                "comment": "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
+                "memberTypes": [
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/PartialInterfaceUnionMember1"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -2194,21 +2477,21 @@
                     ]
                   },
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember2>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/PartialInterfaceUnionMember2"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember2>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -2216,31 +2499,33 @@
                       }
                     ]
                   }
-                ]
-              },
-              "kind": "OptionType"
+                ],
+                "shapeIdentifier": "<http://example.com/PartialInterfaceUnion>"
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
               "itemType": {
                 "kind": "ObjectUnionType",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>",
-                "types": [
+                "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
+                "memberTypes": [
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/LazilyResolvedInterfaceUnionMember1"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -2249,21 +2534,21 @@
                     ]
                   },
                   {
+                    "kind": "ObjectType",
+                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
                     "fromRdfType": {
                       "termType": "NamedNode",
                       "value": "http://example.com/LazilyResolvedInterfaceUnionMember2"
                     },
-                    "kind": "ObjectType",
                     "identifierMintingStrategy": "blankNode",
                     "identifierType": {
-                      "hasValue": [],
                       "kind": "IdentifierType",
+                      "hasValue": [],
                       "nodeKinds": [
                         "BlankNode",
                         "NamedNode"
                       ]
                     },
-                    "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember2>",
                     "toRdfTypes": [
                       {
                         "termType": "NamedNode",
@@ -2271,9 +2556,9 @@
                       }
                     ]
                   }
-                ]
-              },
-              "kind": "OptionType"
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>"
+              }
             }
           },
           "visibility": "public"
@@ -2282,51 +2567,53 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalLazyToResolvedInterfaceProperty",
-          "shapeIdentifier": "_:n3-235",
+          "shapeIdentifier": "_:n3-255",
           "type": {
             "kind": "LazyObjectOptionType",
             "partialType": {
+              "kind": "OptionType",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
                 "synthetic": true
-              },
-              "kind": "OptionType"
+              }
             },
             "resolvedType": {
+              "kind": "OptionType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
               "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "fromRdfType": {
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "kind": "ObjectType",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "toRdfTypes": [
                   {
                     "termType": "NamedNode",
                     "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                   }
                 ]
-              },
-              "kind": "OptionType"
+              }
             }
           },
           "visibility": "public"
@@ -2335,51 +2622,53 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setLazyToResolvedInterfaceProperty",
-          "shapeIdentifier": "_:n3-236",
+          "shapeIdentifier": "_:n3-256",
           "type": {
             "kind": "LazyObjectSetType",
             "partialType": {
+              "kind": "SetType",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
+                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
                 "synthetic": true
-              },
-              "kind": "SetType"
+              }
             },
             "resolvedType": {
+              "kind": "SetType",
+              "comment": "Node shape resolved by LazyPropertiesInterface",
               "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape resolved by LazyPropertiesInterface",
+                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "fromRdfType": {
                   "termType": "NamedNode",
                   "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                 },
-                "kind": "ObjectType",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
                 },
-                "shapeIdentifier": "<http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface>",
                 "toRdfTypes": [
                   {
                     "termType": "NamedNode",
                     "value": "http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface"
                   }
                 ]
-              },
-              "kind": "SetType"
+              }
             }
           },
           "visibility": "public"
@@ -2388,19 +2677,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape used as a partial by LazyPropertiesInterface",
+      "shapeIdentifier": "<http://example.com/PartialInterface>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-264",
+          "shapeIdentifier": "_:n3-284",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2408,31 +2699,36 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape that uses the list shapes in properties.",
+      "shapeIdentifier": "<http://example.com/ListPropertiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/objectListProperty",
-          "shapeIdentifier": "_:n3-237",
+          "shapeIdentifier": "_:n3-257",
           "type": {
+            "kind": "OptionType",
+            "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
             "itemType": {
+              "kind": "ListType",
+              "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
               "itemType": {
                 "kind": "ObjectType",
+                "comment": "Node shape that isn't an rdfs:Class.",
+                "shapeIdentifier": "<http://example.com/NonClass>",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
-                },
-                "shapeIdentifier": "<http://example.com/NonClass>"
+                }
               },
-              "kind": "ListType",
               "mutable": false
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -2440,20 +2736,22 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/iriListProperty",
-          "shapeIdentifier": "_:n3-238",
+          "shapeIdentifier": "_:n3-258",
           "type": {
+            "kind": "OptionType",
+            "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
             "itemType": {
+              "kind": "ListType",
+              "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
               "itemType": {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
                 ]
               },
-              "kind": "ListType",
               "mutable": false
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -2461,21 +2759,23 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/stringListProperty",
-          "shapeIdentifier": "_:n3-239",
+          "shapeIdentifier": "_:n3-259",
           "type": {
+            "kind": "OptionType",
+            "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
             "itemType": {
+              "kind": "ListType",
+              "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
               "itemType": {
+                "kind": "LiteralType",
                 "datatype": {
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
-                "hasValue": [],
-                "kind": "LiteralType"
+                "hasValue": []
               },
-              "kind": "ListType",
               "mutable": false
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         }
@@ -2483,23 +2783,25 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with shaclmate:mutable properties.",
+      "shapeIdentifier": "<http://example.com/MutablePropertiesClass>",
       "properties": [
         {
           "description": "String-valued property that can be re-assigned",
           "mutable": true,
           "order": 0,
           "path": "http://example.com/mutableStringProperty",
-          "shapeIdentifier": "_:n3-240",
+          "shapeIdentifier": "_:n3-260",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -2508,21 +2810,21 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/mutableListProperty",
-          "shapeIdentifier": "_:n3-241",
+          "shapeIdentifier": "_:n3-261",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "ListType",
               "itemType": {
+                "kind": "LiteralType",
                 "datatype": {
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
-                "hasValue": [],
-                "kind": "LiteralType"
+                "hasValue": []
               },
-              "kind": "ListType",
               "mutable": true
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -2531,17 +2833,17 @@
           "mutable": true,
           "order": 0,
           "path": "http://example.com/mutableSetProperty",
-          "shapeIdentifier": "_:n3-242",
+          "shapeIdentifier": "_:n3-262",
           "type": {
+            "kind": "SetType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }
@@ -2549,19 +2851,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/NoRdfTypeClassUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/noRdfTypeClassUnionMember1Property",
-          "shapeIdentifier": "_:n3-249",
+          "shapeIdentifier": "_:n3-269",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2569,19 +2872,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/NoRdfTypeClassUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/noRdfTypeClassUnionMember2Property",
-          "shapeIdentifier": "_:n3-250",
+          "shapeIdentifier": "_:n3-270",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2589,19 +2893,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that isn't an rdfs:Class.",
+      "shapeIdentifier": "<http://example.com/NonClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/nonClassProperty",
-          "shapeIdentifier": "_:n3-251",
+          "shapeIdentifier": "_:n3-271",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2609,19 +2915,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape whose sh:properties have sh:order's. The compiler should order them C, A, B based on sh:order instead of on the declaration or lexicographic orders.",
+      "shapeIdentifier": "<http://example.com/OrderedPropertiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 1,
           "path": "http://example.com/orderedPropertyC",
-          "shapeIdentifier": "_:n3-256",
+          "shapeIdentifier": "_:n3-276",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -2629,14 +2937,14 @@
           "mutable": false,
           "order": 2,
           "path": "http://example.com/orderedPropertyB",
-          "shapeIdentifier": "_:n3-258",
+          "shapeIdentifier": "_:n3-278",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -2644,14 +2952,14 @@
           "mutable": false,
           "order": 3,
           "path": "http://example.com/orderedPropertyA",
-          "shapeIdentifier": "_:n3-257",
+          "shapeIdentifier": "_:n3-277",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2659,19 +2967,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-262",
+          "shapeIdentifier": "_:n3-282",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2679,19 +2988,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/PartialClassUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-263",
+          "shapeIdentifier": "_:n3-283",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2699,19 +3009,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-267",
+          "shapeIdentifier": "_:n3-287",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2719,19 +3030,20 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/lazilyResolvedStringProperty",
-          "shapeIdentifier": "_:n3-268",
+          "shapeIdentifier": "_:n3-288",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2739,20 +3051,22 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape that has properties with different cardinalities",
+      "shapeIdentifier": "<http://example.com/PropertyCardinalitiesClass>",
       "properties": [
         {
           "comment": "Required: maxCount=minCount=1",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredStringProperty",
-          "shapeIdentifier": "_:n3-269",
+          "shapeIdentifier": "_:n3-289",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         },
@@ -2761,17 +3075,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalStringProperty",
-          "shapeIdentifier": "_:n3-270",
+          "shapeIdentifier": "_:n3-290",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -2780,17 +3094,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/emptyStringSetProperty",
-          "shapeIdentifier": "_:n3-271",
+          "shapeIdentifier": "_:n3-291",
           "type": {
+            "kind": "SetType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -2799,17 +3113,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/nonEmptyStringSetProperty",
-          "shapeIdentifier": "_:n3-272",
+          "shapeIdentifier": "_:n3-292",
           "type": {
+            "kind": "SetType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "SetType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }
@@ -2817,19 +3131,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with properties that have visibility modifiers (private, protected, public)",
+      "shapeIdentifier": "<http://example.com/PropertyVisibilitiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/protectedProperty",
-          "shapeIdentifier": "_:n3-273",
+          "shapeIdentifier": "_:n3-293",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "protected"
         },
@@ -2837,14 +3153,14 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/privateProperty",
-          "shapeIdentifier": "_:n3-274",
+          "shapeIdentifier": "_:n3-294",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "private"
         },
@@ -2852,14 +3168,14 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/publicProperty",
-          "shapeIdentifier": "_:n3-275",
+          "shapeIdentifier": "_:n3-295",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2867,47 +3183,50 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/recursiveClassUnionMember1Property",
           "recursive": true,
-          "shapeIdentifier": "_:n3-278",
+          "shapeIdentifier": "_:n3-298",
           "type": {
+            "kind": "OptionType",
+            "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
             "itemType": {
               "kind": "ObjectUnionType",
-              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>",
-              "types": [
+              "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
+                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
-                    "hasValue": [],
                     "kind": "IdentifierType",
+                    "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
                       "NamedNode"
                     ]
-                  },
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>"
+                  }
                 },
                 {
                   "kind": "ObjectType",
+                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
-                    "hasValue": [],
                     "kind": "IdentifierType",
+                    "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
                       "NamedNode"
                     ]
-                  },
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>"
+                  }
                 }
-              ]
-            },
-            "kind": "OptionType"
+              ],
+              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>"
+            }
           },
           "visibility": "public"
         }
@@ -2915,47 +3234,50 @@
     },
     {
       "kind": "ObjectType",
+      "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/recursiveClassUnionMember2Property",
           "recursive": true,
-          "shapeIdentifier": "_:n3-279",
+          "shapeIdentifier": "_:n3-299",
           "type": {
+            "kind": "OptionType",
+            "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
             "itemType": {
               "kind": "ObjectUnionType",
-              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>",
-              "types": [
+              "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
+                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
-                    "hasValue": [],
                     "kind": "IdentifierType",
+                    "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
                       "NamedNode"
                     ]
-                  },
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>"
+                  }
                 },
                 {
                   "kind": "ObjectType",
+                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
-                    "hasValue": [],
                     "kind": "IdentifierType",
+                    "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
                       "NamedNode"
                     ]
-                  },
-                  "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember2>"
+                  }
                 }
-              ]
-            },
-            "kind": "OptionType"
+              ],
+              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>"
+            }
           },
           "visibility": "public"
         }
@@ -2963,19 +3285,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.",
+      "shapeIdentifier": "<http://example.com/Sha256IriIdentifierClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/sha256IriProperty",
-          "shapeIdentifier": "_:n3-280",
+          "shapeIdentifier": "_:n3-300",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -2983,22 +3307,24 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with properties that are not nested objects",
+      "shapeIdentifier": "<http://example.com/TermPropertiesClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/booleanTermProperty",
-          "shapeIdentifier": "_:n3-285",
+          "shapeIdentifier": "_:n3-305",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#boolean"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -3006,17 +3332,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTermProperty",
-          "shapeIdentifier": "_:n3-286",
+          "shapeIdentifier": "_:n3-306",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#date"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -3024,17 +3350,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTimeTermProperty",
-          "shapeIdentifier": "_:n3-287",
+          "shapeIdentifier": "_:n3-307",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#dateTime"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -3042,16 +3368,16 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/iriTermProperty",
-          "shapeIdentifier": "_:n3-288",
+          "shapeIdentifier": "_:n3-308",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
               "kind": "IdentifierType",
+              "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
               ]
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -3059,13 +3385,13 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/literalTermProperty",
-          "shapeIdentifier": "_:n3-289",
+          "shapeIdentifier": "_:n3-309",
           "type": {
+            "kind": "OptionType",
             "itemType": {
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -3073,17 +3399,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/numberTermProperty",
-          "shapeIdentifier": "_:n3-290",
+          "shapeIdentifier": "_:n3-310",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#decimal"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -3091,17 +3417,17 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/stringTermProperty",
-          "shapeIdentifier": "_:n3-291",
+          "shapeIdentifier": "_:n3-311",
           "type": {
+            "kind": "OptionType",
             "itemType": {
+              "kind": "LiteralType",
               "datatype": {
                 "termType": "NamedNode",
                 "value": "http://www.w3.org/2001/XMLSchema#string"
               },
-              "hasValue": [],
-              "kind": "LiteralType"
-            },
-            "kind": "OptionType"
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -3109,12 +3435,12 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/termProperty",
-          "shapeIdentifier": "_:n3-292",
+          "shapeIdentifier": "_:n3-312",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "TermType"
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         }
@@ -3122,48 +3448,52 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Shape with sh:xone (union) properties. Combinations of discriminator type (synthetic, typeof, property) x cardinality.",
+      "shapeIdentifier": "<http://example.com/UnionPropertiesClass>",
       "properties": [
         {
           "comment": "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalClassOrIriOrStringProperty",
-          "shapeIdentifier": "_:n3-293",
+          "shapeIdentifier": "_:n3-313",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
+                  "comment": "Node shape that isn't an rdfs:Class.",
+                  "shapeIdentifier": "<http://example.com/NonClass>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
-                    "hasValue": [],
                     "kind": "IdentifierType",
+                    "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
                       "NamedNode"
                     ]
-                  },
-                  "shapeIdentifier": "<http://example.com/NonClass>"
+                  }
                 },
                 {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
                 {
+                  "kind": "LiteralType",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   },
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                  "hasValue": []
                 }
               ]
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -3172,25 +3502,26 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-300",
+          "shapeIdentifier": "_:n3-320",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
                 {
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                  "kind": "LiteralType",
+                  "hasValue": []
                 }
               ]
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -3199,29 +3530,30 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrStringProperty",
-          "shapeIdentifier": "_:n3-305",
+          "shapeIdentifier": "_:n3-325",
           "type": {
+            "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
                 {
+                  "kind": "LiteralType",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   },
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                  "hasValue": []
                 }
               ]
-            },
-            "kind": "OptionType"
+            }
           },
           "visibility": "public"
         },
@@ -3230,37 +3562,39 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredClassOrIriOrStringProperty",
-          "shapeIdentifier": "_:n3-310",
+          "shapeIdentifier": "_:n3-330",
           "type": {
             "kind": "UnionType",
-            "types": [
+            "memberDiscriminantValues": [],
+            "memberTypes": [
               {
                 "kind": "ObjectType",
+                "comment": "Node shape that isn't an rdfs:Class.",
+                "shapeIdentifier": "<http://example.com/NonClass>",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "BlankNode",
                     "NamedNode"
                   ]
-                },
-                "shapeIdentifier": "<http://example.com/NonClass>"
+                }
               },
               {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
                 ]
               },
               {
+                "kind": "LiteralType",
                 "datatype": {
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
-                "hasValue": [],
-                "kind": "LiteralType"
+                "hasValue": []
               }
             ]
           },
@@ -3271,20 +3605,21 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-317",
+          "shapeIdentifier": "_:n3-337",
           "type": {
             "kind": "UnionType",
-            "types": [
+            "memberDiscriminantValues": [],
+            "memberTypes": [
               {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
                 ]
               },
               {
-                "hasValue": [],
-                "kind": "LiteralType"
+                "kind": "LiteralType",
+                "hasValue": []
               }
             ]
           },
@@ -3295,24 +3630,25 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrStringProperty",
-          "shapeIdentifier": "_:n3-322",
+          "shapeIdentifier": "_:n3-342",
           "type": {
             "kind": "UnionType",
-            "types": [
+            "memberDiscriminantValues": [],
+            "memberTypes": [
               {
-                "hasValue": [],
                 "kind": "IdentifierType",
+                "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
                 ]
               },
               {
+                "kind": "LiteralType",
                 "datatype": {
                   "termType": "NamedNode",
                   "value": "http://www.w3.org/2001/XMLSchema#string"
                 },
-                "hasValue": [],
-                "kind": "LiteralType"
+                "hasValue": []
               }
             ]
           },
@@ -3323,42 +3659,44 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setClassOrIriOrStringProperty",
-          "shapeIdentifier": "_:n3-327",
+          "shapeIdentifier": "_:n3-347",
           "type": {
+            "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
+                  "comment": "Node shape that isn't an rdfs:Class.",
+                  "shapeIdentifier": "<http://example.com/NonClass>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
-                    "hasValue": [],
                     "kind": "IdentifierType",
+                    "hasValue": [],
                     "nodeKinds": [
                       "BlankNode",
                       "NamedNode"
                     ]
-                  },
-                  "shapeIdentifier": "<http://example.com/NonClass>"
+                  }
                 },
                 {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
                 {
+                  "kind": "LiteralType",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   },
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                  "hasValue": []
                 }
               ]
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         },
@@ -3367,25 +3705,26 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-334",
+          "shapeIdentifier": "_:n3-354",
           "type": {
+            "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
                 {
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                  "kind": "LiteralType",
+                  "hasValue": []
                 }
               ]
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         },
@@ -3394,29 +3733,30 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrStringProperty",
-          "shapeIdentifier": "_:n3-339",
+          "shapeIdentifier": "_:n3-359",
           "type": {
+            "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
-                  "hasValue": [],
                   "kind": "IdentifierType",
+                  "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
                   ]
                 },
                 {
+                  "kind": "LiteralType",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
                   },
-                  "hasValue": [],
-                  "kind": "LiteralType"
+                  "hasValue": []
                 }
               ]
-            },
-            "kind": "SetType"
+            }
           },
           "visibility": "public"
         }
@@ -3424,19 +3764,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
+      "shapeIdentifier": "<http://example.com/UuidV4IriIdentifierClass>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
-          "shapeIdentifier": "_:n3-344",
+          "shapeIdentifier": "_:n3-364",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -3444,19 +3786,21 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
+      "shapeIdentifier": "<http://example.com/UuidV4IriIdentifierInterface>",
       "properties": [
         {
           "mutable": false,
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
-          "shapeIdentifier": "_:n3-345",
+          "shapeIdentifier": "_:n3-365",
           "type": {
+            "kind": "LiteralType",
             "datatype": {
               "termType": "NamedNode",
               "value": "http://www.w3.org/2001/XMLSchema#string"
             },
-            "hasValue": [],
-            "kind": "LiteralType"
+            "hasValue": []
           },
           "visibility": "public"
         }
@@ -3465,11 +3809,13 @@
     {
       "kind": "ObjectType",
       "name": "DefaultPartial",
+      "shapeIdentifier": "<urn:shaclmate:synthetic:DefaultPartial>",
       "properties": []
     },
     {
       "kind": "ObjectType",
       "name": "NamedDefaultPartial",
+      "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
       "properties": []
     }
   ]

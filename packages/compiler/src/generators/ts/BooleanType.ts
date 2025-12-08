@@ -1,12 +1,13 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
-import { PrimitiveType } from "./PrimitiveType.js";
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export class BooleanType extends PrimitiveType<boolean> {
+export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
@@ -43,7 +44,9 @@ export class BooleanType extends PrimitiveType<boolean> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     if (this.primitiveIn.length === 1) {
       return `${variables.zod}.literal(${this.primitiveIn[0]})`;
     }
@@ -58,7 +61,7 @@ export class BooleanType extends PrimitiveType<boolean> {
     let fromRdfResourceValueExpression = "value.toBoolean()";
     if (this.primitiveIn.length === 1) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => value === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(value) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(primitiveValue) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
     }
 
     return {
@@ -71,7 +74,7 @@ export class BooleanType extends PrimitiveType<boolean> {
 
   override toRdfExpression({
     variables,
-  }: Parameters<PrimitiveType<string>["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
     return this.primitiveDefaultValue
       .map((defaultValue) => {
         if (defaultValue) {

@@ -17,7 +17,7 @@ export function transformShapeToAstType(
   shapeStack: ShapeStack,
 ): Either<Error, ast.Type> {
   // Try to transform the property shape into an AST type without cardinality constraints
-  return this.transformShapeToAstCompositeType(shape, shapeStack)
+  return this.transformShapeToAstCompoundType(shape, shapeStack)
     .altLazy(() => this.transformShapeToAstIdentifierType(shape, shapeStack))
     .altLazy(() => this.transformShapeToAstLiteralType(shape, shapeStack))
     .altLazy(() => this.transformShapeToAstTermType(shape, shapeStack));

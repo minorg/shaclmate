@@ -1,4 +1,4 @@
-import { AbstractLazyObjectType } from "./AbstractLazyOptionType.js";
+import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { SetType } from "./SetType.js";
 
 export class LazyObjectSetType extends AbstractLazyObjectType<

@@ -6,6 +6,7 @@ import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
+import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**
  * Try to convert a shape to an AST TermType using some heuristics.
@@ -21,6 +22,7 @@ export function transformShapeToAstTermType(
 
     return Either.of(
       new ast.TermType({
+        ...transformShapeToAstAbstractTypeProperties(shape),
         defaultValue: shapeStack.defaultValue,
         hasValues: shapeStack.constraints.hasValues,
         in_: shapeStack.constraints.in_,

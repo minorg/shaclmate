@@ -8,10 +8,14 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import { TermType } from "./TermType.js";
+import { AbstractTermType } from "./AbstractTermType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { Type } from "./Type.js";
 
-export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
+export class IdentifierType extends AbstractTermType<
+  NamedNode,
+  BlankNode | NamedNode
+> {
   readonly kind = "IdentifierType";
 
   @Memoize()
@@ -98,9 +102,9 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   @Memoize()
   override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
+    parameters?: Parameters<AbstractType["jsonName"]>[0],
   ): Type.JsonName {
-    const discriminatorProperty = parameters?.includeDiscriminatorProperty
+    const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "BlankNode" | "NamedNode"`
       : "";
 
@@ -108,12 +112,12 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return new Type.JsonName(
-        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminatorProperty} }`,
+        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
       );
     }
 
     return new Type.JsonName(
-      `{ readonly "@id": string${discriminatorProperty} }`,
+      `{ readonly "@id": string${discriminantProperty} }`,
     );
   }
 
@@ -153,7 +157,7 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
   override fromJsonExpression({
     variables,
   }: Parameters<
-    TermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): string {
     const valueToBlankNode = `dataFactory.blankNode(${variables.value}["@id"].substring(2))`;
     const valueToNamedNode = `dataFactory.namedNode(${variables.value}["@id"])`;
@@ -171,8 +175,8 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    TermType["fromRdfExpressionChain"]
+  }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    AbstractTermType["fromRdfExpressionChain"]
   > {
     let valueToExpression: string;
     if (this.nodeKinds.size === 2) {
@@ -195,17 +199,17 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
 
   override graphqlResolveExpression({
     variables: { value },
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
     return `rdfjsResource.Resource.Identifier.toString(${value})`;
   }
 
   override jsonZodSchema({
-    includeDiscriminatorProperty,
+    includeDiscriminantProperty,
     variables,
   }: Parameters<
-    TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): ReturnType<
-    TermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   > {
     let idSchema: string;
     if (this.in_.length > 0 && this.isNamedNodeKind) {
@@ -216,24 +220,24 @@ export class IdentifierType extends TermType<NamedNode, BlankNode | NamedNode> {
       idSchema = `${variables.zod}.string().min(1)`;
     }
 
-    const discriminatorProperty = includeDiscriminatorProperty
+    const discriminantProperty = includeDiscriminantProperty
       ? `, termType: ${this.nodeKinds.size === 1 ? `${variables.zod}.literal("${[...this.nodeKinds][0]}")` : `${variables.zod}.enum(${JSON.stringify([...this.nodeKinds])})`}`
       : "";
 
-    return `${variables.zod}.object({ "@id": ${idSchema}${discriminatorProperty} })`;
+    return `${variables.zod}.object({ "@id": ${idSchema}${discriminantProperty} })`;
   }
 
   override toJsonExpression({
-    includeDiscriminatorProperty,
+    includeDiscriminantProperty,
     variables,
   }: Parameters<
-    TermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
+    AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
-    const discriminatorProperty = includeDiscriminatorProperty
+    const discriminantProperty = includeDiscriminantProperty
       ? `, termType: ${variables.value}.termType as ${[...this.nodeKinds].map((nodeKind) => `"${nodeKind}"`).join(" | ")}`
       : "";
-    const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\`${discriminatorProperty} }`;
-    const valueToNamedNode = `{ "@id": ${variables.value}.value${discriminatorProperty} }`;
+    const valueToBlankNode = `{ "@id": \`_:\${${variables.value}.value}\`${discriminantProperty} }`;
+    const valueToNamedNode = `{ "@id": ${variables.value}.value${discriminantProperty} }`;
     if (this.nodeKinds.size === 2) {
       return `(${variables.value}.termType === "BlankNode" ? ${valueToBlankNode} : ${valueToNamedNode})`;
     }

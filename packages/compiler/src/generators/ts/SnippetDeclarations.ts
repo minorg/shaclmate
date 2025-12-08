@@ -353,6 +353,7 @@ export namespace ${syntheticNamePrefix}RdfVocabularies {
     export const boolean = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
     export const date = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date");
     export const dateTime = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
+    export const decimal = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
     export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
 }`;

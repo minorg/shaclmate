@@ -311,7 +311,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
               );
               return;
             case "uuidv4":
-              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminatorValue}:"}\${uuid.v4()}\`)`;
+              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
               break;
           }
           conversionBranches.push(

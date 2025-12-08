@@ -4494,6 +4494,7 @@ export interface ShaclmateNodeShape extends ShaclCoreNodeShape {
   readonly $identifier: ShaclmateNodeShape.$Identifier;
   readonly $type: "ShaclmateNodeShape";
   readonly abstract: purify.Maybe<boolean>;
+  readonly discriminantValue: purify.Maybe<string>;
   readonly export_: purify.Maybe<boolean>;
   readonly extern: purify.Maybe<boolean>;
   readonly fromRdfType: purify.Maybe<rdfjs.NamedNode>;
@@ -4582,6 +4583,11 @@ export namespace ShaclmateNodeShape {
         "http://purl.org/shaclmate/ontology#abstract",
       ),
     },
+    discriminantValue: {
+      identifier: dataFactory.namedNode(
+        "http://purl.org/shaclmate/ontology#discriminantValue",
+      ),
+    },
     export_: {
       identifier: dataFactory.namedNode(
         "http://purl.org/shaclmate/ontology#export",
@@ -4663,6 +4669,7 @@ export namespace ShaclmateNodeShape {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       $type: "ShaclmateNodeShape";
       abstract: purify.Maybe<boolean>;
+      discriminantValue: purify.Maybe<string>;
       export_: purify.Maybe<boolean>;
       extern: purify.Maybe<boolean>;
       fromRdfType: purify.Maybe<rdfjs.NamedNode>;
@@ -4774,6 +4781,86 @@ export namespace ShaclmateNodeShape {
     }
 
     const abstract = _abstractEither.unsafeCoerce();
+    const _discriminantValueEither: purify.Either<
+      Error,
+      purify.Maybe<string>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.discriminantValue["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) => {
+        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          return purify.Either.of<
+            Error,
+            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+          >(values);
+        }
+
+        const literalValuesEither = values.chainMap((value) =>
+          value.toLiteral(),
+        );
+        if (literalValuesEither.isLeft()) {
+          return literalValuesEither;
+        }
+        const literalValues = literalValuesEither.unsafeCoerce();
+
+        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+        // Within a preferredLanguage the literals may be in any order.
+        let filteredLiteralValues:
+          | rdfjsResource.Resource.Values<rdfjs.Literal>
+          | undefined;
+        for (const preferredLanguage of $preferredLanguages) {
+          if (!filteredLiteralValues) {
+            filteredLiteralValues = literalValues.filter(
+              (value) => value.language === preferredLanguage,
+            );
+          } else {
+            filteredLiteralValues = filteredLiteralValues.concat(
+              ...literalValues
+                .filter((value) => value.language === preferredLanguage)
+                .toArray(),
+            );
+          }
+        }
+
+        return purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          filteredLiteralValues!.map(
+            (literalValue) =>
+              new rdfjsResource.Resource.TermValue({
+                focusResource: $resource,
+                predicate:
+                  ShaclmateNodeShape.$properties.discriminantValue[
+                    "identifier"
+                  ],
+                term: literalValue,
+              }),
+          ),
+        );
+      })
+      .chain((values) => values.chainMap((value) => value.toString()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+              focusResource: $resource,
+              predicate:
+                ShaclmateNodeShape.$properties.discriminantValue["identifier"],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_discriminantValueEither.isLeft()) {
+      return _discriminantValueEither;
+    }
+
+    const discriminantValue = _discriminantValueEither.unsafeCoerce();
     const _export_Either: purify.Either<
       Error,
       purify.Maybe<boolean>
@@ -5765,6 +5852,7 @@ export namespace ShaclmateNodeShape {
       $identifier,
       $type,
       abstract,
+      discriminantValue,
       export_,
       extern,
       fromRdfType,
@@ -5811,6 +5899,10 @@ export namespace ShaclmateNodeShape {
     resource.add(
       ShaclmateNodeShape.$properties.abstract["identifier"],
       ..._shaclmateNodeShape.abstract.toList().flat(),
+    );
+    resource.add(
+      ShaclmateNodeShape.$properties.discriminantValue["identifier"],
+      ..._shaclmateNodeShape.discriminantValue.toList(),
     );
     resource.add(
       ShaclmateNodeShape.$properties.export_["identifier"],

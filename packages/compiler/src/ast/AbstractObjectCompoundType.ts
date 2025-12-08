@@ -6,7 +6,7 @@ import { Either, Maybe } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import { CompositeType } from "./CompositeType.js";
+import { AbstractCompoundType } from "./AbstractCompoundType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -14,16 +14,11 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { Type } from "./Type.js";
 
 /**
- * A composite of object types, such as an intersection or union.
+ * Abstract base class for a compound of object types, such as an intersection or union.
  */
-export abstract class ObjectCompositeType<
-  ObjectCompositeTypeT extends ObjectIntersectionType | ObjectUnionType,
-> extends CompositeType<ObjectCompositeTypeT | ObjectType> {
-  /**
-   * Documentation comment from rdfs:comment.
-   */
-  readonly comment: Maybe<string>;
-
+export abstract class AbstractObjectCompoundType<
+  ObjectCompoundTypeT extends ObjectIntersectionType | ObjectUnionType,
+> extends AbstractCompoundType<ObjectCompoundTypeT | ObjectType> {
   /**
    * Should generated code derived from this type be visible outside its module?
    *
@@ -34,12 +29,7 @@ export abstract class ObjectCompositeType<
   abstract override readonly kind: "ObjectIntersectionType" | "ObjectUnionType";
 
   /**
-   * Human-readable label from rdfs:label.
-   */
-  readonly label: Maybe<string>;
-
-  /**
-   * Name of this type, usually derived from sh:name or shaclmate:name.
+   * Name of this type, from shaclmate:name.
    */
   readonly name: Maybe<string>;
 
@@ -54,30 +44,29 @@ export abstract class ObjectCompositeType<
   readonly #tsFeatures: Maybe<ReadonlySet<TsFeature>>;
 
   constructor({
-    comment,
     export_,
-    label,
     name,
     shapeIdentifier,
     tsFeatures,
+    ...superParameters
   }: {
-    comment: Maybe<string>;
     export_: boolean;
-    label: Maybe<string>;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
     tsFeatures: Maybe<ReadonlySet<TsFeature>>;
-  }) {
-    super();
-    this.comment = comment;
+  } & ConstructorParameters<
+    typeof AbstractCompoundType<ObjectCompoundTypeT | ObjectType>
+  >[0]) {
+    super(superParameters);
     this.export = export_;
-    this.label = label;
     this.name = name;
     this.shapeIdentifier = shapeIdentifier;
     this.#tsFeatures = tsFeatures;
   }
 
-  override equals(other: ObjectCompositeType<ObjectCompositeTypeT>): boolean {
+  override equals(
+    other: AbstractObjectCompoundType<ObjectCompoundTypeT>,
+  ): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
   }
@@ -100,9 +89,11 @@ export abstract class ObjectCompositeType<
     );
 
     return new IdentifierType({
+      comment: Maybe.empty(),
       defaultValue: Maybe.empty(),
       hasValues: [],
       in_: [...memberIdentifierTypesIn],
+      label: Maybe.empty(),
       nodeKinds: memberIdentifierTypeNodeKinds,
     });
   }
@@ -153,7 +144,7 @@ export abstract class ObjectCompositeType<
 
   @Memoize()
   get tsFeatures(): ReadonlySet<TsFeature> {
-    // Members of the composite type must have the same tsFeatures.
+    // Members of the compound type must have the same tsFeatures.
     // They must also have distinct RDF types or no RDF types at all.
     const mergedMemberTsFeatures = new Set<TsFeature>();
     for (
@@ -198,7 +189,7 @@ export abstract class ObjectCompositeType<
             super.addMemberType(memberType as any);
           } else {
             throw new Error(
-              `${this}: has incompatible composite type composition (has-a ${memberType})`,
+              `${this}: has incompatible compound type composition (has-a ${memberType})`,
             );
           }
           break;
@@ -207,7 +198,7 @@ export abstract class ObjectCompositeType<
             super.addMemberType(memberType as any);
           } else {
             throw new Error(
-              `${this}: has incompatible composite type composition (has-a ${memberType})`,
+              `${this}: has incompatible compound type composition (has-a ${memberType})`,
             );
           }
           break;

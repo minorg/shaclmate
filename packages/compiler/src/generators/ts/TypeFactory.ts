@@ -2,12 +2,13 @@ import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
-
-import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 
+import { Maybe } from "purify-ts";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
+import type { AbstractLiteralType } from "./AbstractLiteralType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
@@ -25,64 +26,11 @@ import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
 import { TermType } from "./TermType.js";
-import type { Type } from "./Type.js";
 import { UnionType } from "./UnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsName } from "./tsName.js";
 
 export class TypeFactory {
-  private cachedBooleanType = new BooleanType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedDateType = new DateType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedDateTimeType = new DateTimeType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedFloatType = new FloatType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedIdentifierType = new IdentifierType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    nodeKinds: new Set(["BlankNode", "NamedNode"]),
-  });
-  private cachedIntType = new IntType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
-  private cachedNamedIdentifierType = new IdentifierType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    nodeKinds: new Set(["NamedNode"]),
-  });
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<
     BlankNode | NamedNode,
     ObjectType.Property
@@ -95,39 +43,24 @@ export class TypeFactory {
     BlankNode | NamedNode,
     ObjectUnionType
   > = new TermMap();
-  private cachedStringType = new StringType({
-    defaultValue: Maybe.empty(),
-    hasValues: [],
-    in_: [],
-    languageIn: [],
-    primitiveDefaultValue: Maybe.empty(),
-    primitiveIn: [],
-  });
 
   private createIdentifierType(astType: ast.IdentifierType): IdentifierType {
-    if (
-      astType.defaultValue.isNothing() &&
-      astType.hasValues.length === 0 &&
-      astType.in_.length === 0
-    ) {
-      if (astType.nodeKinds.size === 2) {
-        return this.cachedIdentifierType;
-      }
-      if (astType.nodeKinds.size === 1 && astType.nodeKinds.has("NamedNode")) {
-        return this.cachedNamedIdentifierType;
-      }
-    }
-
     return new IdentifierType({
+      comment: astType.comment,
       defaultValue: astType.defaultValue,
       hasValues: astType.hasValues,
       in_: astType.in_.filter((_) => _.termType === "NamedNode"),
+      label: astType.label,
       nodeKinds: astType.nodeKinds,
     });
   }
 
-  private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
+  private createLazyObjectOptionType(
+    astType: ast.LazyObjectOptionType,
+  ): AbstractType {
     return new LazyObjectOptionType({
+      comment: astType.comment,
+      label: astType.label,
       partialType: this.createOptionType(astType.partialType) as OptionType<
         ObjectType | ObjectUnionType
       >,
@@ -137,8 +70,12 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
+  private createLazyObjectSetType(
+    astType: ast.LazyObjectSetType,
+  ): AbstractType {
     return new LazyObjectSetType({
+      comment: astType.comment,
+      label: astType.label,
       partialType: this.createSetType(astType.partialType) as SetType<
         ObjectType | ObjectUnionType
       >,
@@ -148,8 +85,11 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectType(astType: ast.LazyObjectType): Type {
+  private createLazyObjectType(astType: ast.LazyObjectType): AbstractType {
     return new LazyObjectType({
+      comment: astType.comment,
+      label: astType.label,
+
       partialType: this.createType(astType.partialType) as
         | ObjectType
         | ObjectUnionType,
@@ -161,8 +101,10 @@ export class TypeFactory {
 
   private createListType(astType: ast.ListType) {
     return new ListType({
+      comment: astType.comment,
       identifierNodeKind: astType.identifierNodeKind,
       itemType: this.createType(astType.itemType),
+      label: astType.label,
       minCount: 0,
       mutable: astType.mutable,
       identifierMintingStrategy: astType.identifierMintingStrategy,
@@ -170,7 +112,7 @@ export class TypeFactory {
     });
   }
 
-  private createLiteralType(astType: ast.LiteralType): LiteralType {
+  private createLiteralType(astType: ast.LiteralType): AbstractLiteralType {
     // Look at sh:datatype as well as sh:defaultValue/sh:hasValue/sh:in term datatypes
     // If there's one common datatype than we can refine the type
     // Otherwise default to rdfjs.Literal
@@ -190,17 +132,11 @@ export class TypeFactory {
       const datatype = [...datatypes][0];
 
       if (datatype.equals(xsd.boolean)) {
-        if (
-          astType.defaultValue.isNothing() &&
-          astType.hasValues.length === 0 &&
-          astType.in_.length === 0
-        ) {
-          return this.cachedBooleanType;
-        }
-
         return new BooleanType({
+          comment: astType.comment,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
+          label: astType.label,
           languageIn: [],
           in_: astType.in_,
           primitiveDefaultValue: astType.defaultValue
@@ -213,20 +149,12 @@ export class TypeFactory {
       }
 
       if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
-        if (
-          astType.defaultValue.isNothing() &&
-          astType.hasValues.length === 0 &&
-          astType.in_.length === 0
-        ) {
-          return datatype.equals(xsd.date)
-            ? this.cachedDateType
-            : this.cachedDateTimeType;
-        }
-
         return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
+          comment: astType.comment,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           in_: astType.in_,
+          label: astType.label,
           languageIn: [],
           primitiveDefaultValue: astType.defaultValue
             .map((value) => fromRdf(value, true))
@@ -246,20 +174,12 @@ export class TypeFactory {
       )) {
         for (const numberDatatype of numberDatatypes_) {
           if (datatype.equals(numberDatatype)) {
-            if (
-              astType.defaultValue.isNothing() &&
-              astType.hasValues.length === 0 &&
-              astType.in_.length === 0
-            ) {
-              return floatOrInt === "float"
-                ? this.cachedFloatType
-                : this.cachedIntType;
-            }
-
             return new (floatOrInt === "float" ? FloatType : IntType)({
+              comment: astType.comment,
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               in_: astType.in_,
+              label: astType.label,
               languageIn: [],
               primitiveDefaultValue: astType.defaultValue
                 .map((value) => fromRdf(value, true))
@@ -273,18 +193,11 @@ export class TypeFactory {
       }
 
       if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
-        if (
-          astType.defaultValue.isNothing() &&
-          astType.hasValues.length === 0 &&
-          astType.in_.length === 0 &&
-          astType.languageIn.length === 0
-        ) {
-          return this.cachedStringType;
-        }
-
         return new StringType({
+          comment: astType.comment,
           defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
+          label: astType.label,
           languageIn: astType.languageIn,
           in_: astType.in_,
           primitiveDefaultValue: astType.defaultValue.map(
@@ -309,9 +222,11 @@ export class TypeFactory {
     }
 
     return new LiteralType({
+      comment: astType.comment,
       defaultValue: astType.defaultValue,
       hasValues: astType.hasValues,
       in_: astType.in_,
+      label: astType.label,
       languageIn: astType.languageIn,
     });
   }
@@ -378,33 +293,33 @@ export class TypeFactory {
             }),
           );
 
-        // Type discriminator property
-        const typeDiscriminatorOwnValue = !astType.abstract
-          ? objectType.discriminatorValue
+        // Type discriminant property
+        const typeDiscriminantOwnValue = !astType.abstract
+          ? objectType.discriminantValue
           : undefined;
-        const typeDiscriminatorDescendantValues = new Set<string>();
+        const typeDiscriminantDescendantValues = new Set<string>();
         for (const descendantObjectType of objectType.descendantObjectTypes) {
           if (!descendantObjectType.abstract) {
-            typeDiscriminatorDescendantValues.add(
-              descendantObjectType.discriminatorValue,
+            typeDiscriminantDescendantValues.add(
+              descendantObjectType.discriminantValue,
             );
           }
         }
         if (
-          typeDiscriminatorOwnValue ||
-          typeDiscriminatorDescendantValues.size > 0
+          typeDiscriminantOwnValue ||
+          typeDiscriminantDescendantValues.size > 0
         ) {
           properties.splice(
             0,
             0,
-            new ObjectType.TypeDiscriminatorProperty({
+            new ObjectType.TypeDiscriminantProperty({
               name: `${syntheticNamePrefix}type`,
               objectType,
-              type: new ObjectType.TypeDiscriminatorProperty.Type({
-                descendantValues: [...typeDiscriminatorDescendantValues].sort(),
+              type: new ObjectType.TypeDiscriminantProperty.Type({
+                descendantValues: [...typeDiscriminantDescendantValues].sort(),
                 mutable: false,
-                ownValues: typeDiscriminatorOwnValue
-                  ? [typeDiscriminatorOwnValue]
+                ownValues: typeDiscriminantOwnValue
+                  ? [typeDiscriminantOwnValue]
                   : [],
               }),
               visibility: "public",
@@ -423,7 +338,16 @@ export class TypeFactory {
               own: !astType.ancestorObjectTypes.some(
                 objectTypeNeedsIdentifierPrefixProperty,
               ),
-              type: this.cachedStringType,
+              type: new StringType({
+                comment: astType.comment,
+                defaultValue: Maybe.empty(),
+                hasValues: [],
+                in_: [],
+                label: astType.label,
+                languageIn: [],
+                primitiveDefaultValue: Maybe.empty(),
+                primitiveIn: [],
+              }),
               visibility: "protected",
             }),
           );
@@ -531,13 +455,17 @@ export class TypeFactory {
 
   private createOptionType(astType: ast.OptionType) {
     return new OptionType({
+      comment: astType.comment,
       itemType: this.createType(astType.itemType),
+      label: astType.label,
     });
   }
 
   private createSetType(astType: ast.SetType) {
     return new SetType({
+      comment: astType.comment,
       itemType: this.createType(astType.itemType),
+      label: astType.label,
       mutable: astType.mutable,
       minCount: astType.minCount,
     });
@@ -545,14 +473,16 @@ export class TypeFactory {
 
   private createTermType(astType: ast.TermType) {
     return new TermType({
+      comment: astType.comment,
       defaultValue: astType["defaultValue"],
       hasValues: astType["hasValues"],
       in_: astType["in_"],
+      label: astType.label,
       nodeKinds: astType["nodeKinds"],
     });
   }
 
-  createType(astType: ast.Type): Type {
+  createType(astType: ast.Type): AbstractType {
     switch (astType.kind) {
       case "IdentifierType":
         return this.createIdentifierType(astType);
@@ -589,6 +519,9 @@ export class TypeFactory {
 
   private createUnionType(astType: ast.UnionType) {
     return new UnionType({
+      comment: astType.comment,
+      label: astType.label,
+      memberDiscriminantValues: astType.memberDiscriminantValues,
       memberTypes: astType.memberTypes.map((astType) =>
         this.createType(astType),
       ),

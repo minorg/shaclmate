@@ -2,7 +2,8 @@ import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { PrimitiveType } from "./PrimitiveType.js";
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -10,7 +11,7 @@ import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class DateTimeType extends PrimitiveType<Date> {
+export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
 
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
@@ -56,19 +57,21 @@ export class DateTimeType extends PrimitiveType<Date> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     return `new Date(${variables.value})`;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toISOString());`];
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     return `${variables.zod}.iso.datetime()`;
   }
 
@@ -80,7 +83,7 @@ export class DateTimeType extends PrimitiveType<Date> {
     let fromRdfResourceValueExpression = "value.toDate()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { ${this.primitiveIn.map((value) => `if (value.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(value); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: `rdfLiteral.toRdf(value, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`, expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
     }
 
     return {
@@ -94,7 +97,7 @@ export class DateTimeType extends PrimitiveType<Date> {
   override snippetDeclarations({
     features,
   }: Parameters<
-    PrimitiveType<Date>["snippetDeclarations"]
+    AbstractPrimitiveType<Date>["snippetDeclarations"]
   >[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
@@ -103,16 +106,20 @@ export class DateTimeType extends PrimitiveType<Date> {
     return snippetDeclarations;
   }
 
+  protected toIsoStringExpression(variables: { value: string }) {
+    return `${variables.value}.toISOString()`;
+  }
+
   override toJsonExpression({
     variables,
-  }: Parameters<PrimitiveType<Date>["toJsonExpression"]>[0]): string {
-    return `${variables.value}.toISOString()`;
+  }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): string {
+    return this.toIsoStringExpression(variables);
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<PrimitiveType<Date>["toRdfExpression"]>[0]): string {
-    const valueToRdf = `rdfLiteral.toRdf(${variables.value}, ${objectInitializer({ dataFactory: "dataFactory", datatype: rdfjsTermExpression(this.xsdDatatype) })})`;
+  }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): string {
+    const valueToRdf = `dataFactory.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})`;
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>

@@ -23,7 +23,7 @@ export function hashFunctionDeclaration(
         returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}hash(${this.thisVariable}, ${hasherVariable})`;
         break;
     }
-    return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
+    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
   });
   caseBlocks.push(
     `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
@@ -44,7 +44,7 @@ export function hashFunctionDeclaration(
       },
     ],
     returnType: "HasherT",
-    statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
+    statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
     typeParameters: [
       {
         name: "HasherT",

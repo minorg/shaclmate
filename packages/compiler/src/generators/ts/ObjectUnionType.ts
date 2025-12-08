@@ -8,7 +8,8 @@ import {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 
-import { DeclaredType } from "./DeclaredType.js";
+import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -25,28 +26,23 @@ import { tsComment } from "./tsComment.js";
  *
  *   type SomeUnion = Member1 | Member2 | ...
  *
- * with associated functions that switch on the type discriminator property and delegate to the appropriate
+ * with associated functions that switch on the type discriminant property and delegate to the appropriate
  * member type code.
  *
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
-export class ObjectUnionType extends DeclaredType {
-  protected readonly comment: Maybe<string>;
-  protected readonly label: Maybe<string>;
-
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+export class ObjectUnionType extends AbstractDeclaredType {
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
-    comment,
     identifierType,
-    label,
     memberTypes,
     ...superParameters
-  }: ConstructorParameters<typeof DeclaredType>[0] & {
+  }: ConstructorParameters<typeof AbstractDeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
     identifierType: IdentifierType;
@@ -55,9 +51,7 @@ export class ObjectUnionType extends DeclaredType {
     name: string;
   }) {
     super(superParameters);
-    this.comment = comment;
     this.identifierType = identifierType;
-    this.label = label;
     invariant(memberTypes.length > 0);
     this.memberTypes = memberTypes.map(
       (memberType) =>
@@ -116,34 +110,34 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
-    return Maybe.of(this._discriminatorProperty);
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+    return Maybe.of(this._discriminantProperty);
   }
 
   @Memoize()
-  protected get _discriminatorProperty(): Type.DiscriminatorProperty {
-    const discriminatorPropertyDescendantValues: string[] = [];
-    const discriminatorPropertyName =
-      this.memberTypes[0]._discriminatorProperty.name;
-    const discriminatorPropertyOwnValues: string[] = [];
+  protected get _discriminantProperty(): Type.DiscriminantProperty {
+    const discriminantPropertyDescendantValues: string[] = [];
+    const discriminantPropertyName =
+      this.memberTypes[0]._discriminantProperty.name;
+    const discriminantPropertyOwnValues: string[] = [];
     for (const memberType of this.memberTypes) {
       invariant(
         memberType.declarationType === this.memberTypes[0].declarationType,
       );
       invariant(
-        memberType._discriminatorProperty.name === discriminatorPropertyName,
+        memberType._discriminantProperty.name === discriminantPropertyName,
       );
-      discriminatorPropertyDescendantValues.push(
-        ...memberType._discriminatorProperty.descendantValues,
+      discriminantPropertyDescendantValues.push(
+        ...memberType._discriminantProperty.descendantValues,
       );
-      discriminatorPropertyOwnValues.push(
-        ...memberType._discriminatorProperty.ownValues,
+      discriminantPropertyOwnValues.push(
+        ...memberType._discriminantProperty.ownValues,
       );
     }
     return {
-      descendantValues: discriminatorPropertyDescendantValues,
-      name: discriminatorPropertyName,
-      ownValues: discriminatorPropertyOwnValues,
+      descendantValues: discriminantPropertyDescendantValues,
+      name: discriminantPropertyName,
+      ownValues: discriminantPropertyOwnValues,
     };
   }
 
@@ -202,14 +196,14 @@ export class ObjectUnionType extends DeclaredType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
     return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
     return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ignoreRdfType: false, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
@@ -222,7 +216,7 @@ export class ObjectUnionType extends DeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     switch (this.memberTypes[0].declarationType) {
       case "class":
         return [
@@ -242,8 +236,8 @@ export class ObjectUnionType extends DeclaredType {
   override jsonZodSchema({
     context,
     variables,
-  }: Parameters<DeclaredType["jsonZodSchema"]>[0]): ReturnType<
-    DeclaredType["jsonZodSchema"]
+  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractDeclaredType["jsonZodSchema"]
   > {
     const expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     for (const memberType of this.memberTypes) {
@@ -258,7 +252,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<DeclaredType["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
   ): readonly string[] {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
@@ -273,7 +267,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -291,7 +285,7 @@ export class ObjectUnionType extends DeclaredType {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -311,7 +305,7 @@ export class ObjectUnionType extends DeclaredType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     switch (this.memberTypes[0].declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -322,7 +316,7 @@ export class ObjectUnionType extends DeclaredType {
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
     switch (this.memberTypes[0].declarationType) {
       case "class":

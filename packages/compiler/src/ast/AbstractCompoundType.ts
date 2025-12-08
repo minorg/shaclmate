@@ -1,13 +1,19 @@
 import { invariant } from "ts-invariant";
+import { AbstractType } from "./AbstractType.js";
 import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
 
 /**
- * A composite of types, such as an intersection or union.
+ * A compound of types, such as an intersection or union.
+ *
+ * Compound = combining types at the type level e.g., functions, intersections, unions
+ * Composite = combining values at runtime (e.g., arrays, structs whose members have the same type)
  */
-export abstract class CompositeType<MemberTypeT extends Type> {
+export abstract class AbstractCompoundType<
+  MemberTypeT extends Type,
+> extends AbstractType {
   /**
-   * Type discriminator
+   * Type discriminant
    */
   abstract readonly kind:
     | "IntersectionType"
@@ -22,15 +28,25 @@ export abstract class CompositeType<MemberTypeT extends Type> {
    */
   readonly #memberTypes: MemberTypeT[];
 
-  constructor(parameters?: { memberTypes?: readonly MemberTypeT[] }) {
-    this.#memberTypes = parameters?.memberTypes?.concat() ?? [];
+  constructor({
+    memberTypes,
+    ...superParameters
+  }: { memberTypes?: readonly MemberTypeT[] } & ConstructorParameters<
+    typeof AbstractType
+  >[0]) {
+    super(superParameters);
+    this.#memberTypes = memberTypes?.concat() ?? [];
   }
 
   addMemberType(memberType: MemberTypeT): void {
     this.#memberTypes.push(memberType);
   }
 
-  equals(other: CompositeType<MemberTypeT>): boolean {
+  override equals(other: AbstractCompoundType<MemberTypeT>): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
     return arrayEquals(this.memberTypes, other.memberTypes, Type.equals);
   }
 

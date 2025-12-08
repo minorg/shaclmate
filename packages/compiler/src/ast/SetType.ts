@@ -1,4 +1,4 @@
-import { CollectionType } from "./CollectionType.js";
+import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -6,7 +6,7 @@ import type { Type } from "./Type.js";
  */
 export class SetType<
   ItemTypeT extends Type = Type,
-> extends CollectionType<ItemTypeT> {
+> extends AbstractCollectionType<ItemTypeT> {
   readonly kind = "SetType";
 
   /**
@@ -15,12 +15,19 @@ export class SetType<
   readonly minCount: number;
 
   constructor({
+    itemType,
     minCount,
     ...superParameters
-  }: { minCount: number } & ConstructorParameters<
-    typeof CollectionType<ItemTypeT>
-  >[0]) {
-    super(superParameters);
+  }: { minCount: number } & Pick<
+    ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0],
+    "itemType" | "mutable"
+  >) {
+    super({
+      ...superParameters,
+      comment: itemType.comment,
+      itemType,
+      label: itemType.label,
+    });
     this.minCount = minCount;
   }
 

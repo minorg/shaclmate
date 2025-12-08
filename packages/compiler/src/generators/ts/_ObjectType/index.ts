@@ -36,4 +36,4 @@ export * from "./ShaclProperty.js";
 
 export * from "./sparqlFunctionDeclarations.js";
 
-export * from "./TypeDiscriminatorProperty.js";
+export * from "./TypeDiscriminantProperty.js";

@@ -33,12 +33,6 @@ export namespace Import {
     namespaceImport: "purify",
   };
 
-  export const RDF_LITERAL: Import = {
-    kind: StructureKind.ImportDeclaration,
-    moduleSpecifier: "rdf-literal",
-    namespaceImport: "rdfLiteral",
-  };
-
   export const RDFJS_RESOURCE: Import = {
     kind: StructureKind.ImportDeclaration,
     moduleSpecifier: "rdfjs-resource",

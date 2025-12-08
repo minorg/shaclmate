@@ -76,7 +76,6 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["js-sha256"],
         ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["purify-ts"],
-        ...externalDependencyVersions["rdf-literal"],
         ...externalDependencyVersions["rdfjs-resource"],
         ...externalDependencyVersions["sparqljs"],
         ...externalDependencyVersions["uuid"],

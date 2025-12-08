@@ -6,6 +6,7 @@ import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
+import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**
  * Try to convert a property shape to an AST IdentifierType using some heuristics.
@@ -37,6 +38,7 @@ export function transformShapeToAstIdentifierType(
     ) {
       return Either.of(
         new ast.IdentifierType({
+          ...transformShapeToAstAbstractTypeProperties(shape),
           defaultValue: identifierDefaultValue,
           hasValues: identifierHasValues,
           in_: identifierIn,

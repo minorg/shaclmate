@@ -1,11 +1,14 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { CollectionType } from "./CollectionType.js";
+import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";
 
-export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+export class SetType<
+  ItemTypeT extends AbstractType,
+> extends AbstractCollectionType<ItemTypeT> {
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly kind = "SetType";
 
   @Memoize()
@@ -18,7 +21,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
   }
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
     const chain = [this.itemType.fromRdfExpression(parameters)];
@@ -38,7 +41,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -49,7 +52,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object": {
@@ -70,7 +73,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     return `${variables.value}.flatMap((item) => ${this.itemType.toRdfExpression(
       {
         variables: { ...variables, value: "item" },
@@ -79,7 +82,7 @@ export class SetType<ItemTypeT extends Type> extends CollectionType<ItemTypeT> {
   }
 
   override useImports(
-    parameters: Parameters<Type["useImports"]>[0],
+    parameters: Parameters<AbstractType["useImports"]>[0],
   ): readonly Import[] {
     return this.itemType.useImports(parameters);
   }

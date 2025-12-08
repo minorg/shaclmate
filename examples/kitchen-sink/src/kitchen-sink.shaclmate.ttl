@@ -206,6 +206,59 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:path :convertibleLiteralSetProperty
     ] .
 
+:DateUnionPropertiesClass
+    a sh:NodeShape ;
+    rdfs:comment "Shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models." ;
+    sh:property [
+        sh:maxCount 1 ;
+        sh:path :dateOrDateTimeProperty ;
+        sh:xone ([
+                shaclmate:discriminantValue "date" ;
+                sh:datatype xsd:date
+            ]
+            [
+                shaclmate:discriminantValue "dateTime" ;
+                sh:datatype xsd:dateTime
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :dateTimeOrDateProperty ;
+        sh:xone ([
+                shaclmate:discriminantValue "dateTime" ;
+                sh:datatype xsd:dateTime
+            ]
+            [
+                shaclmate:discriminantValue "date" ;
+                sh:datatype xsd:date
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :dateOrStringProperty ;
+        sh:xone ([
+                shaclmate:discriminantValue "date" ;
+                sh:datatype xsd:date
+            ]
+            [
+                shaclmate:discriminantValue "string" ;
+                sh:datatype xsd:string
+            ]
+        )
+    ], [
+        sh:maxCount 1 ;
+        sh:path :stringOrDateProperty ;
+        sh:xone ([
+                shaclmate:discriminantValue "string" ;
+                sh:datatype xsd:string
+            ]
+            [
+                shaclmate:discriminantValue "date" ;
+                sh:datatype xsd:date
+            ]
+        )
+    ] .
+
 :DefaultValuePropertiesClass
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
     a sh:NodeShape ;
@@ -638,6 +691,17 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         shaclmate:lazy true ;
         sh:maxCount 1 ;
+        sh:minCount 1 ;
+        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
+        sh:path :requiredLazyToResolvedClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
+        sh:node :LazilyResolvedIriIdentifierClass ;
+        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
+    ], [
+        shaclmate:lazy true ;
+        sh:maxCount 1 ;
         sh:node :LazilyResolvedClassUnion ;
         sh:path :optionalLazyToResolvedClassUnionProperty
     ], [
@@ -676,17 +740,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         shaclmate:lazy true ;
         sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
         sh:path :setLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:node :LazilyResolvedBlankNodeOrIriIdentifierClass ;
-        sh:path :requiredLazyToResolvedClassProperty
-    ], [
-        shaclmate:lazy true ;
-        sh:maxCount 1 ;
-        sh:node :LazilyResolvedIriIdentifierClass ;
-        sh:path :optionalLazyToResolvedIriIdentifierClassProperty
     ] .
 
 :LazyPropertiesInterface

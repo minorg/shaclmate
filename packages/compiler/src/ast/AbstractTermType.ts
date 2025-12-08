@@ -1,6 +1,7 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
+import { AbstractType } from "./AbstractType.js";
 import {
   arrayEquals,
   maybeEquals,
@@ -10,7 +11,7 @@ import {
 } from "./equals.js";
 
 /**
- * ABC of term types in the ASTs (e.g., identifiers, literals).
+ * Abstract base class of term types (IdentifierType, LiteralType, TermType).
  *
  * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
  * RuntimeTermT is the type of values at runtime.
@@ -23,7 +24,7 @@ export abstract class AbstractTermType<
     | BlankNode
     | Literal
     | NamedNode,
-> {
+> extends AbstractType {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -35,19 +36,27 @@ export abstract class AbstractTermType<
     hasValues,
     in_,
     nodeKinds,
+    ...superParameters
   }: {
     defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<NodeKind>;
-  }) {
+  } & ConstructorParameters<typeof AbstractType>[0]) {
+    super(superParameters);
     this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
   }
 
-  equals(other: AbstractTermType<ConstantTermT, _RuntimeTermT>): boolean {
+  override equals(
+    other: AbstractTermType<ConstantTermT, _RuntimeTermT>,
+  ): boolean {
+    if (!super.equals(other)) {
+      return false;
+    }
+
     if (this.kind !== other.kind) {
       return false;
     }
@@ -71,7 +80,7 @@ export abstract class AbstractTermType<
     return true;
   }
 
-  toString() {
+  override toString() {
     return `${this.kind}(nodeKinds=${[...this.nodeKinds].join(" | ")})`;
   }
 }

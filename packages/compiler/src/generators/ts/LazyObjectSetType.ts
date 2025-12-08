@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
@@ -12,7 +13,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>
 > {
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.of({
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.of({
     limit: {
       type: "graphql.GraphQLInt",
     },
@@ -24,6 +25,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   constructor({
     partialType,
     resolvedType,
+    ...superParameters
   }: Omit<
     ConstructorParameters<
       typeof AbstractLazyObjectType<
@@ -34,6 +36,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     "runtimeClass"
   >) {
     super({
+      ...superParameters,
       partialType,
       resolvedType,
       runtimeClass: {
@@ -81,13 +84,13 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   }
 
   override fromJsonExpression(
-    parameters: Parameters<Type["fromJsonExpression"]>[0],
+    parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
   ): string {
     return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(purify.Left(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
   }
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
     return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" } }) })))`;
@@ -95,7 +98,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
     return `(${variables.value}.resolve({ limit: ${variables.args}.limit, offset: ${variables.args}.offset })).then(either => either.unsafeCoerce())`;
   }
 }

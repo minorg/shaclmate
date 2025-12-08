@@ -1,12 +1,13 @@
 import { Memoize } from "typescript-memoize";
 
 import { NonEmptyList } from "purify-ts";
-import { PrimitiveType } from "./PrimitiveType.js";
+import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 
-export abstract class NumberType extends PrimitiveType<number> {
+export abstract class NumberType extends AbstractPrimitiveType<number> {
   readonly kind = "NumberType";
   override readonly typeofs = NonEmptyList(["number" as const]);
 
@@ -39,7 +40,9 @@ export abstract class NumberType extends PrimitiveType<number> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     switch (this.primitiveIn.length) {
       case 0:
         return `${variables.zod}.number()`;
@@ -58,7 +61,7 @@ export abstract class NumberType extends PrimitiveType<number> {
     let fromRdfResourceValueExpression = "value.toNumber()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(value => { switch (value) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return purify.Either.of${eitherTypeParameters}(value); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "rdfLiteral.toRdf(value)", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return purify.Either.of${eitherTypeParameters}(primitiveValue); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
     }
 
     return {
@@ -71,7 +74,7 @@ export abstract class NumberType extends PrimitiveType<number> {
 
   override toRdfExpression({
     variables,
-  }: Parameters<PrimitiveType<string>["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>

@@ -60,7 +60,7 @@ function toRdfFunctionDeclaration(
         returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
         break;
     }
-    return `${memberType.discriminatorPropertyValues.map((discriminatorPropertyValue) => `case "${discriminatorPropertyValue}":`).join("\n")} return ${returnExpression};`;
+    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
   });
   caseBlocks.push(
     `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
@@ -95,6 +95,6 @@ function toRdfFunctionDeclaration(
       // The types agree
       return returnType!;
     })(),
-    statements: `switch (${this.thisVariable}.${this._discriminatorProperty.name}) { ${caseBlocks.join(" ")} }`,
+    statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
   };
 }

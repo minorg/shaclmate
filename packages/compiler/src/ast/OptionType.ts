@@ -1,21 +1,24 @@
-import { Type } from "./Type.js";
+import { AbstractContainerType } from "./AbstractContainerType.js";
+import type { Type } from "./Type.js";
 
 /**
  * A type with zero or one values of an item type.
  */
-export class OptionType<ItemTypeT extends Type = Type> {
-  readonly itemType: ItemTypeT;
+export class OptionType<
+  ItemTypeT extends Type = Type,
+> extends AbstractContainerType<ItemTypeT> {
   readonly kind = "OptionType";
 
-  constructor({ itemType }: { itemType: ItemTypeT }) {
-    this.itemType = itemType;
-  }
-
-  equals(other: OptionType<ItemTypeT>): boolean {
-    if (!Type.equals(this.itemType, other.itemType)) {
-      return false;
-    }
-
-    return true;
+  constructor({
+    itemType,
+  }: Pick<
+    ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0],
+    "itemType"
+  >) {
+    super({
+      comment: itemType.comment,
+      itemType,
+      label: itemType.label,
+    });
   }
 }

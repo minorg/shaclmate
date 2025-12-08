@@ -6,15 +6,16 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
-import { CollectionType } from "./CollectionType.js";
+import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 
 export class ListType<
-  ItemTypeT extends Type,
-> extends CollectionType<ItemTypeT> {
+  ItemTypeT extends AbstractType,
+> extends AbstractCollectionType<ItemTypeT> {
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
   private readonly identifierNodeKind: IdentifierNodeKind;
   private readonly toRdfTypes: readonly NamedNode[];
@@ -30,7 +31,7 @@ export class ListType<
     identifierNodeKind: ListType<ItemTypeT>["identifierNodeKind"];
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof CollectionType<ItemTypeT>>[0]) {
+  } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
     super(superParameters);
     this.identifierNodeKind = identifierNodeKind;
     this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
@@ -46,7 +47,7 @@ export class ListType<
 
   override fromRdfExpression({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): string {
     return [
       variables.resourceValues,
       "chain(values => values.chainMap(value => value.toList()))", // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
@@ -64,7 +65,7 @@ export class ListType<
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -148,7 +149,7 @@ export class ListType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
@@ -254,7 +255,7 @@ export class ListType<
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     let listIdentifier: string;
     let mutableResourceTypeName: string;
     let resourceSetMethodName: string;
@@ -331,7 +332,7 @@ export class ListType<
   }
 
   override useImports(
-    parameters: Parameters<Type["useImports"]>[0],
+    parameters: Parameters<AbstractType["useImports"]>[0],
   ): readonly Import[] {
     const imports: Import[] = this.itemType.useImports(parameters).concat();
     if (

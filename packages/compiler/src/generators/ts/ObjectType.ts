@@ -17,7 +17,8 @@ import type {
   IdentifierMintingStrategy,
   TsObjectDeclarationType,
 } from "../../enums/index.js";
-import { DeclaredType } from "./DeclaredType.js";
+import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -26,18 +27,16 @@ import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export class ObjectType extends DeclaredType {
+export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
 
-  protected readonly comment: Maybe<string>;
-  protected readonly label: Maybe<string>;
   protected readonly toRdfTypes: readonly NamedNode[];
 
   readonly abstract: boolean;
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
@@ -46,13 +45,11 @@ export class ObjectType extends DeclaredType {
 
   constructor({
     abstract,
-    comment,
     declarationType,
     extern,
     fromRdfType,
     identifierType,
     imports,
-    label,
     lazyAncestorObjectTypes,
     lazyChildObjectTypes,
     lazyDescendantObjectTypes,
@@ -80,16 +77,14 @@ export class ObjectType extends DeclaredType {
     staticModuleName: string;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof DeclaredType>[0]) {
+  } & ConstructorParameters<typeof AbstractDeclaredType>[0]) {
     super(superParameters);
     this.abstract = abstract;
-    this.comment = comment;
     this.declarationType = declarationType;
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
     this.imports = imports;
-    this.label = label;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
     this.lazyChildObjectTypes = lazyChildObjectTypes;
@@ -102,15 +97,15 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get _discriminatorProperty(): Type.DiscriminatorProperty {
-    const discriminatorProperty = this.properties.find(
-      (property) => property instanceof ObjectType.TypeDiscriminatorProperty,
+  get _discriminantProperty(): Type.DiscriminantProperty {
+    const discriminantProperty = this.properties.find(
+      (property) => property instanceof ObjectType.TypeDiscriminantProperty,
     );
-    invariant(discriminatorProperty);
+    invariant(discriminantProperty);
     return {
-      name: discriminatorProperty.name,
-      ownValues: discriminatorProperty.type.ownValues,
-      descendantValues: discriminatorProperty.type.descendantValues,
+      name: discriminantProperty.name,
+      ownValues: discriminantProperty.type.ownValues,
+      descendantValues: discriminantProperty.type.descendantValues,
     };
   }
 
@@ -219,12 +214,12 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
-    return Maybe.of(this._discriminatorProperty);
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+    return Maybe.of(this._discriminantProperty);
   }
 
   @Memoize()
-  get discriminatorValue(): string {
+  get discriminantValue(): string {
     return this.name;
   }
 
@@ -297,7 +292,7 @@ export class ObjectType extends DeclaredType {
   @Memoize()
   get ownProperties(): readonly ObjectType.Property[] {
     if (this.parentObjectTypes.length === 0) {
-      // Consider that a root of the object type hierarchy "owns" the identifier and type discriminator properties
+      // Consider that a root of the object type hierarchy "owns" the identifier and type discriminant properties
       // for all of its subtypes in the hierarchy.
       invariant(this.properties.length >= 2, this.name);
       return this.properties;
@@ -306,7 +301,7 @@ export class ObjectType extends DeclaredType {
   }
 
   @Memoize()
-  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<Type>[] {
+  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<AbstractType>[] {
     return this.properties.filter(
       (property) => property instanceof _ObjectType.ShaclProperty,
     );
@@ -374,14 +369,14 @@ export class ObjectType extends DeclaredType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<DeclaredType["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
     return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<DeclaredType["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): string {
     return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
@@ -393,7 +388,7 @@ export class ObjectType extends DeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<DeclaredType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly string[] {
     switch (this.declarationType) {
       case "class":
         return [
@@ -408,7 +403,9 @@ export class ObjectType extends DeclaredType {
 
   override jsonUiSchemaElement({
     variables,
-  }: Parameters<DeclaredType["jsonUiSchemaElement"]>[0]): Maybe<string> {
+  }: Parameters<
+    AbstractDeclaredType["jsonUiSchemaElement"]
+  >[0]): Maybe<string> {
     return Maybe.of(
       `${this.staticModuleName}.${syntheticNamePrefix}jsonUiSchema({ scopePrefix: ${variables.scopePrefix} })`,
     );
@@ -417,8 +414,8 @@ export class ObjectType extends DeclaredType {
   override jsonZodSchema({
     context,
     variables,
-  }: Parameters<DeclaredType["jsonZodSchema"]>[0]): ReturnType<
-    DeclaredType["jsonZodSchema"]
+  }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractDeclaredType["jsonZodSchema"]
   > {
     let expression = `${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     if (
@@ -432,7 +429,9 @@ export class ObjectType extends DeclaredType {
 
   override snippetDeclarations({
     recursionStack,
-  }: Parameters<DeclaredType["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractDeclaredType["snippetDeclarations"]
+  >[0]): readonly string[] {
     if (recursionStack.some((type) => Object.is(type, this))) {
       return [];
     }
@@ -467,7 +466,9 @@ export class ObjectType extends DeclaredType {
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<DeclaredType["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<
+      AbstractDeclaredType["sparqlConstructTemplateTriples"]
+    >[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -486,7 +487,7 @@ export class ObjectType extends DeclaredType {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<DeclaredType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractDeclaredType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -507,7 +508,7 @@ export class ObjectType extends DeclaredType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<DeclaredType["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): string {
     switch (this.declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -518,7 +519,7 @@ export class ObjectType extends DeclaredType {
 
   override toRdfExpression({
     variables,
-  }: Parameters<DeclaredType["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): string {
     switch (this.declarationType) {
       case "class":
         return `[${variables.value}.${syntheticNamePrefix}toRdf({ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }).identifier]`;
@@ -567,9 +568,8 @@ export namespace ObjectType {
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
   export const ShaclProperty = _ObjectType.ShaclProperty;
-  export type ShaclProperty<TypeT extends Type> =
+  export type ShaclProperty<TypeT extends AbstractType> =
     _ObjectType.ShaclProperty<TypeT>;
-  export const TypeDiscriminatorProperty =
-    _ObjectType.TypeDiscriminatorProperty;
-  export type TypeDiscriminatorProperty = _ObjectType.TypeDiscriminatorProperty;
+  export const TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
+  export type TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
 }

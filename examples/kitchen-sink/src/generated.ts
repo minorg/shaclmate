@@ -4,7 +4,6 @@ import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
-import * as rdfLiteral from "rdf-literal";
 import * as rdfjsResource from "rdfjs-resource";
 import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
@@ -119,6 +118,9 @@ export namespace $RdfVocabularies {
     );
     export const dateTime = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
+    );
+    export const decimal = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#decimal",
     );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
@@ -6018,18 +6020,27 @@ export class TermPropertiesClass {
       this.literalTermProperty = parameters?.literalTermProperty;
     } else if (typeof parameters?.literalTermProperty === "boolean") {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.literalTermProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters?.literalTermProperty === "object" &&
       parameters?.literalTermProperty instanceof Date
     ) {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.literalTermProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (typeof parameters?.literalTermProperty === "number") {
       this.literalTermProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.literalTermProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.literalTermProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (typeof parameters?.literalTermProperty === "string") {
       this.literalTermProperty = purify.Maybe.of(
@@ -6070,18 +6081,27 @@ export class TermPropertiesClass {
       this.termProperty = parameters?.termProperty;
     } else if (typeof parameters?.termProperty === "boolean") {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.termProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters?.termProperty === "object" &&
       parameters?.termProperty instanceof Date
     ) {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.termProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (typeof parameters?.termProperty === "number") {
       this.termProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters?.termProperty, { dataFactory }),
+        dataFactory.literal(
+          parameters?.termProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (typeof parameters?.termProperty === "string") {
       this.termProperty = purify.Maybe.of(
@@ -6350,21 +6370,25 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$properties.dateTermProperty["identifier"],
-      ...this.dateTermProperty.toList().flatMap((value) => [
-        rdfLiteral.toRdf(value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.date,
-        }),
-      ]),
+      ...this.dateTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(
+            value.toISOString().replace(/T.*$/, ""),
+            $RdfVocabularies.xsd.date,
+          ),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
-      ...this.dateTimeTermProperty.toList().flatMap((value) => [
-        rdfLiteral.toRdf(value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.dateTime,
-        }),
-      ]),
+      ...this.dateTimeTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(
+            value.toISOString(),
+            $RdfVocabularies.xsd.dateTime,
+          ),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$properties.iriTermProperty["identifier"],
@@ -34258,12 +34282,14 @@ export class InPropertiesClass {
     );
     resource.add(
       InPropertiesClass.$properties.inDateTimesProperty["identifier"],
-      ...this.inDateTimesProperty.toList().flatMap((value) => [
-        rdfLiteral.toRdf(value, {
-          dataFactory,
-          datatype: $RdfVocabularies.xsd.dateTime,
-        }),
-      ]),
+      ...this.inDateTimesProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(
+            value.toISOString(),
+            $RdfVocabularies.xsd.dateTime,
+          ),
+        ]),
     );
     resource.add(
       InPropertiesClass.$properties.inIrisProperty["identifier"],
@@ -34535,12 +34561,12 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toBoolean().chain((value) =>
-            value === true
-              ? purify.Either.of<Error, true>(value)
+          value.toBoolean().chain((primitiveValue) =>
+            primitiveValue === true
+              ? purify.Either.of<Error, true>(primitiveValue)
               : purify.Left<Error, true>(
                   new rdfjsResource.Resource.MistypedTermValueError({
-                    actualValue: rdfLiteral.toRdf(value),
+                    actualValue: value.toTerm(),
                     expectedValueType: "true",
                     focusResource: $resource,
                     predicate:
@@ -34581,16 +34607,13 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toDate().chain((value) => {
-            if (value.getTime() === 1523268000000) {
-              return purify.Either.of<Error, Date>(value);
+          value.toDate().chain((primitiveValue) => {
+            if (primitiveValue.getTime() === 1523268000000) {
+              return purify.Either.of<Error, Date>(primitiveValue);
             }
             return purify.Left<Error, Date>(
               new rdfjsResource.Resource.MistypedTermValueError({
-                actualValue: rdfLiteral.toRdf(value, {
-                  dataFactory,
-                  datatype: $RdfVocabularies.xsd.dateTime,
-                }),
+                actualValue: value.toTerm(),
                 expectedValueType: "Date",
                 focusResource: $resource,
                 predicate:
@@ -34717,15 +34740,15 @@ export namespace InPropertiesClass {
     )
       .chain((values) =>
         values.chainMap((value) =>
-          value.toNumber().chain((value) => {
-            switch (value) {
+          value.toNumber().chain((primitiveValue) => {
+            switch (primitiveValue) {
               case 1:
               case 2:
-                return purify.Either.of<Error, 1 | 2>(value);
+                return purify.Either.of<Error, 1 | 2>(primitiveValue);
               default:
                 return purify.Left<Error, 1 | 2>(
                   new rdfjsResource.Resource.MistypedTermValueError({
-                    actualValue: rdfLiteral.toRdf(value),
+                    actualValue: value.toTerm(),
                     expectedValueType: "1 | 2",
                     focusResource: $resource,
                     predicate:
@@ -41310,10 +41333,10 @@ export class DefaultValuePropertiesClass {
       ],
       ...(this.dateDefaultValueProperty.getTime() !== 1523232000000
         ? [
-            rdfLiteral.toRdf(this.dateDefaultValueProperty, {
-              dataFactory,
-              datatype: $RdfVocabularies.xsd.date,
-            }),
+            dataFactory.literal(
+              this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
+              $RdfVocabularies.xsd.date,
+            ),
           ]
         : []),
     );
@@ -41323,10 +41346,10 @@ export class DefaultValuePropertiesClass {
       ],
       ...(this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
         ? [
-            rdfLiteral.toRdf(this.dateTimeDefaultValueProperty, {
-              dataFactory,
-              datatype: $RdfVocabularies.xsd.dateTime,
-            }),
+            dataFactory.literal(
+              this.dateTimeDefaultValueProperty.toISOString(),
+              $RdfVocabularies.xsd.dateTime,
+            ),
           ]
         : []),
     );
@@ -42150,6 +42173,1639 @@ export namespace DefaultValuePropertiesClass {
   }
 }
 /**
+ * Shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models.
+ */
+export class DateUnionPropertiesClass {
+  private _$identifier?: DateUnionPropertiesClass.$Identifier;
+  readonly $type = "DateUnionPropertiesClass";
+  readonly dateOrDateTimeProperty: purify.Maybe<
+    { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+  >;
+  readonly dateOrStringProperty: purify.Maybe<
+    { type: "date"; value: Date } | { type: "string"; value: string }
+  >;
+  readonly dateTimeOrDateProperty: purify.Maybe<
+    { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+  >;
+  readonly stringOrDateProperty: purify.Maybe<
+    { type: "string"; value: string } | { type: "date"; value: Date }
+  >;
+
+  constructor(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly dateOrDateTimeProperty?:
+      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
+      | purify.Maybe<
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+        >;
+    readonly dateOrStringProperty?:
+      | ({ type: "date"; value: Date } | { type: "string"; value: string })
+      | purify.Maybe<
+          { type: "date"; value: Date } | { type: "string"; value: string }
+        >;
+    readonly dateTimeOrDateProperty?:
+      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
+      | purify.Maybe<
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+        >;
+    readonly stringOrDateProperty?:
+      | ({ type: "string"; value: string } | { type: "date"; value: Date })
+      | purify.Maybe<
+          { type: "string"; value: string } | { type: "date"; value: Date }
+        >;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.dateOrDateTimeProperty)) {
+      this.dateOrDateTimeProperty = parameters?.dateOrDateTimeProperty;
+    } else if (typeof parameters?.dateOrDateTimeProperty === "object") {
+      this.dateOrDateTimeProperty = purify.Maybe.of(
+        parameters?.dateOrDateTimeProperty,
+      );
+    } else if (typeof parameters?.dateOrDateTimeProperty === "undefined") {
+      this.dateOrDateTimeProperty = purify.Maybe.empty();
+    } else {
+      this.dateOrDateTimeProperty =
+        parameters?.dateOrDateTimeProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.dateOrStringProperty)) {
+      this.dateOrStringProperty = parameters?.dateOrStringProperty;
+    } else if (typeof parameters?.dateOrStringProperty === "object") {
+      this.dateOrStringProperty = purify.Maybe.of(
+        parameters?.dateOrStringProperty,
+      );
+    } else if (typeof parameters?.dateOrStringProperty === "undefined") {
+      this.dateOrStringProperty = purify.Maybe.empty();
+    } else {
+      this.dateOrStringProperty =
+        parameters?.dateOrStringProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.dateTimeOrDateProperty)) {
+      this.dateTimeOrDateProperty = parameters?.dateTimeOrDateProperty;
+    } else if (typeof parameters?.dateTimeOrDateProperty === "object") {
+      this.dateTimeOrDateProperty = purify.Maybe.of(
+        parameters?.dateTimeOrDateProperty,
+      );
+    } else if (typeof parameters?.dateTimeOrDateProperty === "undefined") {
+      this.dateTimeOrDateProperty = purify.Maybe.empty();
+    } else {
+      this.dateTimeOrDateProperty =
+        parameters?.dateTimeOrDateProperty satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.stringOrDateProperty)) {
+      this.stringOrDateProperty = parameters?.stringOrDateProperty;
+    } else if (typeof parameters?.stringOrDateProperty === "object") {
+      this.stringOrDateProperty = purify.Maybe.of(
+        parameters?.stringOrDateProperty,
+      );
+    } else if (typeof parameters?.stringOrDateProperty === "undefined") {
+      this.stringOrDateProperty = purify.Maybe.empty();
+    } else {
+      this.stringOrDateProperty =
+        parameters?.stringOrDateProperty satisfies never;
+    }
+  }
+
+  get $identifier(): DateUnionPropertiesClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: DateUnionPropertiesClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left:
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
+              right:
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
+            ) => {
+              if (left.type === "date" && right.type === "date") {
+                return $dateEquals(left.value, right.value);
+              }
+              if (left.type === "dateTime" && right.type === "dateTime") {
+                return $dateEquals(left.value, right.value);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.dateOrDateTimeProperty, other.dateOrDateTimeProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "dateOrDateTimeProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left:
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string },
+              right:
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string },
+            ) => {
+              if (left.type === "date" && right.type === "date") {
+                return $dateEquals(left.value, right.value);
+              }
+              if (left.type === "string" && right.type === "string") {
+                return $strictEquals(left.value, right.value);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.dateOrStringProperty, other.dateOrStringProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "dateOrStringProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left:
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
+              right:
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
+            ) => {
+              if (left.type === "dateTime" && right.type === "dateTime") {
+                return $dateEquals(left.value, right.value);
+              }
+              if (left.type === "date" && right.type === "date") {
+                return $dateEquals(left.value, right.value);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.dateTimeOrDateProperty, other.dateTimeOrDateProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "dateTimeOrDateProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $maybeEquals(
+            left,
+            right,
+            (
+              left:
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date },
+              right:
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date },
+            ) => {
+              if (left.type === "string" && right.type === "string") {
+                return $strictEquals(left.value, right.value);
+              }
+              if (left.type === "date" && right.type === "date") {
+                return $dateEquals(left.value, right.value);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(this.stringOrDateProperty, other.stringOrDateProperty).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "stringOrDateProperty",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    this.dateOrDateTimeProperty.ifJust((value0) => {
+      switch (value0.type) {
+        case "date": {
+          _hasher.update(value0.value.toISOString());
+          break;
+        }
+        case "dateTime": {
+          _hasher.update(value0.value.toISOString());
+          break;
+        }
+        default:
+          value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    this.dateOrStringProperty.ifJust((value0) => {
+      switch (value0.type) {
+        case "date": {
+          _hasher.update(value0.value.toISOString());
+          break;
+        }
+        case "string": {
+          _hasher.update(value0.value);
+          break;
+        }
+        default:
+          value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    this.dateTimeOrDateProperty.ifJust((value0) => {
+      switch (value0.type) {
+        case "dateTime": {
+          _hasher.update(value0.value.toISOString());
+          break;
+        }
+        case "date": {
+          _hasher.update(value0.value.toISOString());
+          break;
+        }
+        default:
+          value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    this.stringOrDateProperty.ifJust((value0) => {
+      switch (value0.type) {
+        case "string": {
+          _hasher.update(value0.value);
+          break;
+        }
+        case "date": {
+          _hasher.update(value0.value.toISOString());
+          break;
+        }
+        default:
+          value0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    });
+    return _hasher;
+  }
+
+  $toJson(): DateUnionPropertiesClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        dateOrDateTimeProperty: this.dateOrDateTimeProperty
+          .map((item) =>
+            item.type === "dateTime"
+              ? { type: "dateTime" as const, value: item.value.toISOString() }
+              : {
+                  type: "date" as const,
+                  value: item.value.toISOString().replace(/T.*$/, ""),
+                },
+          )
+          .extract(),
+        dateOrStringProperty: this.dateOrStringProperty
+          .map((item) =>
+            item.type === "string"
+              ? { type: "string" as const, value: item.value }
+              : {
+                  type: "date" as const,
+                  value: item.value.toISOString().replace(/T.*$/, ""),
+                },
+          )
+          .extract(),
+        dateTimeOrDateProperty: this.dateTimeOrDateProperty
+          .map((item) =>
+            item.type === "date"
+              ? {
+                  type: "date" as const,
+                  value: item.value.toISOString().replace(/T.*$/, ""),
+                }
+              : { type: "dateTime" as const, value: item.value.toISOString() },
+          )
+          .extract(),
+        stringOrDateProperty: this.stringOrDateProperty
+          .map((item) =>
+            item.type === "date"
+              ? {
+                  type: "date" as const,
+                  value: item.value.toISOString().replace(/T.*$/, ""),
+                }
+              : { type: "string" as const, value: item.value },
+          )
+          .extract(),
+      } satisfies DateUnionPropertiesClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      DateUnionPropertiesClass.$properties.dateOrDateTimeProperty["identifier"],
+      ...this.dateOrDateTimeProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "dateTime"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString(),
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
+    );
+    resource.add(
+      DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
+      ...this.dateOrStringProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "string"
+            ? ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
+    );
+    resource.add(
+      DateUnionPropertiesClass.$properties.dateTimeOrDateProperty["identifier"],
+      ...this.dateTimeOrDateProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "date"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString(),
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
+    );
+    resource.add(
+      DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
+      ...this.stringOrDateProperty
+        .toList()
+        .flatMap((value) =>
+          value.type === "date"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
+        ),
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace DateUnionPropertiesClass {
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, DateUnionPropertiesClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new DateUnionPropertiesClass(properties),
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, DateUnionPropertiesClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return DateUnionPropertiesClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new DateUnionPropertiesClass(properties));
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "DateUnionPropertiesClass";
+    readonly dateOrDateTimeProperty?:
+      | { type: "date"; value: string }
+      | { type: "dateTime"; value: string };
+    readonly dateOrStringProperty?:
+      | { type: "date"; value: string }
+      | { type: "string"; value: string };
+    readonly dateTimeOrDateProperty?:
+      | { type: "dateTime"; value: string }
+      | { type: "date"; value: string };
+    readonly stringOrDateProperty?:
+      | { type: "string"; value: string }
+      | { type: "date"; value: string };
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "DateUnionPropertiesClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateOrDateTimeProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateOrStringProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/dateTimeOrDateProperty`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/stringOrDateProperty`,
+          type: "Control",
+        },
+      ],
+      label: "DateUnionPropertiesClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("DateUnionPropertiesClass"),
+      dateOrDateTimeProperty: zod
+        .discriminatedUnion("type", [
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+          zod.object({
+            type: zod.literal("dateTime"),
+            value: zod.iso.datetime(),
+          }),
+        ])
+        .optional(),
+      dateOrStringProperty: zod
+        .discriminatedUnion("type", [
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+          zod.object({ type: zod.literal("string"), value: zod.string() }),
+        ])
+        .optional(),
+      dateTimeOrDateProperty: zod
+        .discriminatedUnion("type", [
+          zod.object({
+            type: zod.literal("dateTime"),
+            value: zod.iso.datetime(),
+          }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+        ])
+        .optional(),
+      stringOrDateProperty: zod
+        .discriminatedUnion("type", [
+          zod.object({ type: zod.literal("string"), value: zod.string() }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+        ])
+        .optional(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {
+    dateOrDateTimeProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/dateOrDateTimeProperty",
+      ),
+    },
+    dateOrStringProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/dateOrStringProperty",
+      ),
+    },
+    dateTimeOrDateProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/dateTimeOrDateProperty",
+      ),
+    },
+    stringOrDateProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/stringOrDateProperty",
+      ),
+    },
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      dateOrDateTimeProperty: purify.Maybe<
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+      >;
+      dateOrStringProperty: purify.Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >;
+      dateTimeOrDateProperty: purify.Maybe<
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+      >;
+      stringOrDateProperty: purify.Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const dateOrDateTimeProperty = purify.Maybe.fromNullable(
+      $jsonObject["dateOrDateTimeProperty"],
+    ).map((item) =>
+      item.type === "dateTime"
+        ? { type: "dateTime" as const, value: new Date(item.value) }
+        : { type: "date" as const, value: new Date(item.value) },
+    );
+    const dateOrStringProperty = purify.Maybe.fromNullable(
+      $jsonObject["dateOrStringProperty"],
+    ).map((item) =>
+      item.type === "string"
+        ? { type: "string" as const, value: item.value }
+        : { type: "date" as const, value: new Date(item.value) },
+    );
+    const dateTimeOrDateProperty = purify.Maybe.fromNullable(
+      $jsonObject["dateTimeOrDateProperty"],
+    ).map((item) =>
+      item.type === "date"
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "dateTime" as const, value: new Date(item.value) },
+    );
+    const stringOrDateProperty = purify.Maybe.fromNullable(
+      $jsonObject["stringOrDateProperty"],
+    ).map((item) =>
+      item.type === "date"
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "string" as const, value: item.value },
+    );
+    return purify.Either.of({
+      $identifier,
+      dateOrDateTimeProperty,
+      dateOrStringProperty,
+      dateTimeOrDateProperty,
+      stringOrDateProperty,
+    });
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      dateOrDateTimeProperty: purify.Maybe<
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+      >;
+      dateOrStringProperty: purify.Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >;
+      dateTimeOrDateProperty: purify.Maybe<
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+      >;
+      stringOrDateProperty: purify.Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >;
+    }
+  > {
+    const $identifier: DateUnionPropertiesClass.$Identifier =
+      $resource.identifier;
+    const _dateOrDateTimePropertyEither: purify.Either<
+      Error,
+      purify.Maybe<
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
+      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.dateOrDateTimeProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues
+              .chain((values) => values.chainMap((value) => value.toDate()))
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({ type: "date" as const, value }) as
+                      | { type: "date"; value: Date }
+                      | { type: "dateTime"; value: Date },
+                ),
+              ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date }
+              >
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "dateTime" as const, value }) as
+                          | { type: "date"; value: Date }
+                          | { type: "dateTime"; value: Date },
+                    ),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date }
+                  >
+                >,
+            )
+            .chain((values) => values.head());
+        }),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date }
+              >
+            >({
+              focusResource: $resource,
+              predicate:
+                DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
+                  "identifier"
+                ],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_dateOrDateTimePropertyEither.isLeft()) {
+      return _dateOrDateTimePropertyEither;
+    }
+
+    const dateOrDateTimeProperty = _dateOrDateTimePropertyEither.unsafeCoerce();
+    const _dateOrStringPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.dateOrStringProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues
+              .chain((values) => values.chainMap((value) => value.toDate()))
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({ type: "date" as const, value }) as
+                      | { type: "date"; value: Date }
+                      | { type: "string"; value: string },
+                ),
+              ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string }
+              >
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              DateUnionPropertiesClass.$properties
+                                .dateOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "string" as const, value }) as
+                          | { type: "date"; value: Date }
+                          | { type: "string"; value: string },
+                    ),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<
+                    | { type: "date"; value: Date }
+                    | { type: "string"; value: string }
+                  >
+                >,
+            )
+            .chain((values) => values.head());
+        }),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string }
+              >
+            >({
+              focusResource: $resource,
+              predicate:
+                DateUnionPropertiesClass.$properties.dateOrStringProperty[
+                  "identifier"
+                ],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_dateOrStringPropertyEither.isLeft()) {
+      return _dateOrStringPropertyEither;
+    }
+
+    const dateOrStringProperty = _dateOrStringPropertyEither.unsafeCoerce();
+    const _dateTimeOrDatePropertyEither: purify.Either<
+      Error,
+      purify.Maybe<
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
+      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.dateTimeOrDateProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues
+              .chain((values) => values.chainMap((value) => value.toDate()))
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({ type: "dateTime" as const, value }) as
+                      | { type: "dateTime"; value: Date }
+                      | { type: "date"; value: Date },
+                ),
+              ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date }
+              >
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "date" as const, value }) as
+                          | { type: "dateTime"; value: Date }
+                          | { type: "date"; value: Date },
+                    ),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<
+                    | { type: "dateTime"; value: Date }
+                    | { type: "date"; value: Date }
+                  >
+                >,
+            )
+            .chain((values) => values.head());
+        }),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date }
+              >
+            >({
+              focusResource: $resource,
+              predicate:
+                DateUnionPropertiesClass.$properties.dateTimeOrDateProperty[
+                  "identifier"
+                ],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_dateTimeOrDatePropertyEither.isLeft()) {
+      return _dateTimeOrDatePropertyEither;
+    }
+
+    const dateTimeOrDateProperty = _dateTimeOrDatePropertyEither.unsafeCoerce();
+    const _stringOrDatePropertyEither: purify.Either<
+      Error,
+      purify.Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.stringOrDateProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues
+              .chain((values) => {
+                if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                  return purify.Either.of<
+                    Error,
+                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                  >(values);
+                }
+
+                const literalValuesEither = values.chainMap((value) =>
+                  value.toLiteral(),
+                );
+                if (literalValuesEither.isLeft()) {
+                  return literalValuesEither;
+                }
+                const literalValues = literalValuesEither.unsafeCoerce();
+
+                // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                // Within a preferredLanguage the literals may be in any order.
+                let filteredLiteralValues:
+                  | rdfjsResource.Resource.Values<rdfjs.Literal>
+                  | undefined;
+                for (const preferredLanguage of $preferredLanguages) {
+                  if (!filteredLiteralValues) {
+                    filteredLiteralValues = literalValues.filter(
+                      (value) => value.language === preferredLanguage,
+                    );
+                  } else {
+                    filteredLiteralValues = filteredLiteralValues.concat(
+                      ...literalValues
+                        .filter((value) => value.language === preferredLanguage)
+                        .toArray(),
+                    );
+                  }
+                }
+
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  filteredLiteralValues!.map(
+                    (literalValue) =>
+                      new rdfjsResource.Resource.TermValue({
+                        focusResource: $resource,
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .stringOrDateProperty["identifier"],
+                        term: literalValue,
+                      }),
+                  ),
+                );
+              })
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({ type: "string" as const, value }) as
+                      | { type: "string"; value: string }
+                      | { type: "date"; value: Date },
+                ),
+              ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date }
+              >
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "date" as const, value }) as
+                          | { type: "string"; value: string }
+                          | { type: "date"; value: Date },
+                    ),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<
+                    | { type: "string"; value: string }
+                    | { type: "date"; value: Date }
+                  >
+                >,
+            )
+            .chain((values) => values.head());
+        }),
+      )
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date }
+              >
+            >({
+              focusResource: $resource,
+              predicate:
+                DateUnionPropertiesClass.$properties.stringOrDateProperty[
+                  "identifier"
+                ],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_stringOrDatePropertyEither.isLeft()) {
+      return _stringOrDatePropertyEither;
+    }
+
+    const stringOrDateProperty = _stringOrDatePropertyEither.unsafeCoerce();
+    return purify.Either.of({
+      $identifier,
+      dateOrDateTimeProperty,
+      dateOrStringProperty,
+      dateTimeOrDateProperty,
+      stringOrDateProperty,
+    });
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        DateUnionPropertiesClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        DateUnionPropertiesClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      DateUnionPropertiesClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "dateUnionPropertiesClass");
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}DateOrDateTimeProperty`),
+      predicate:
+        DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}DateOrStringProperty`),
+      predicate:
+        DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}DateTimeOrDateProperty`),
+      predicate:
+        DateUnionPropertiesClass.$properties.dateTimeOrDateProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    triples.push({
+      object: dataFactory.variable!(`${variablePrefix}StringOrDateProperty`),
+      predicate:
+        DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "dateUnionPropertiesClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}DateOrDateTimeProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .dateOrDateTimeProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}DateOrDateTimeProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .dateOrDateTimeProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}DateOrStringProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .dateOrStringProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}DateOrStringProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .dateOrStringProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}DateOrStringProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}DateTimeOrDateProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .dateTimeOrDateProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}DateTimeOrDateProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .dateTimeOrDateProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}StringOrDateProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .stringOrDateProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}StringOrDateProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}StringOrDateProperty`,
+                        ),
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .stringOrDateProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
  * Node shape with properties whose types are convertible from other types on construction e.g., string to IRI.
  */
 export class ConvertibleTypePropertiesClass {
@@ -42293,26 +43949,29 @@ export class ConvertibleTypePropertiesClass {
       typeof parameters.convertibleLiteralOptionProperty === "boolean"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleLiteralOptionProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "object" &&
       parameters.convertibleLiteralOptionProperty instanceof Date
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleLiteralOptionProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "number"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleLiteralOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleLiteralOptionProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "string"
@@ -42336,22 +43995,22 @@ export class ConvertibleTypePropertiesClass {
     }
 
     if (typeof parameters.convertibleLiteralProperty === "boolean") {
-      this.convertibleLiteralProperty = rdfLiteral.toRdf(
-        parameters.convertibleLiteralProperty,
-        { dataFactory },
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty.toString(),
+        $RdfVocabularies.xsd.boolean,
       );
     } else if (
       typeof parameters.convertibleLiteralProperty === "object" &&
       parameters.convertibleLiteralProperty instanceof Date
     ) {
-      this.convertibleLiteralProperty = rdfLiteral.toRdf(
-        parameters.convertibleLiteralProperty,
-        { dataFactory },
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty.toISOString(),
+        $RdfVocabularies.xsd.dateTime,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "number") {
-      this.convertibleLiteralProperty = rdfLiteral.toRdf(
-        parameters.convertibleLiteralProperty,
-        { dataFactory },
+      this.convertibleLiteralProperty = dataFactory.literal(
+        parameters.convertibleLiteralProperty.toString(),
+        $RdfVocabularies.xsd.decimal,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "string") {
       this.convertibleLiteralProperty = dataFactory.literal(
@@ -42376,14 +44035,14 @@ export class ConvertibleTypePropertiesClass {
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.boolean),
         );
     } else if (
       $isReadonlyNumberArray(parameters.convertibleLiteralSetProperty)
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.decimal),
         );
     } else if (
       $isReadonlyStringArray(parameters.convertibleLiteralSetProperty)
@@ -42404,24 +44063,27 @@ export class ConvertibleTypePropertiesClass {
         parameters.convertibleTermOptionProperty;
     } else if (typeof parameters.convertibleTermOptionProperty === "boolean") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleTermOptionProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
       );
     } else if (
       typeof parameters.convertibleTermOptionProperty === "object" &&
       parameters.convertibleTermOptionProperty instanceof Date
     ) {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleTermOptionProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "number") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        rdfLiteral.toRdf(parameters.convertibleTermOptionProperty, {
-          dataFactory,
-        }),
+        dataFactory.literal(
+          parameters.convertibleTermOptionProperty.toString(),
+          $RdfVocabularies.xsd.decimal,
+        ),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "string") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
@@ -42441,22 +44103,22 @@ export class ConvertibleTypePropertiesClass {
     }
 
     if (typeof parameters.convertibleTermProperty === "boolean") {
-      this.convertibleTermProperty = rdfLiteral.toRdf(
-        parameters.convertibleTermProperty,
-        { dataFactory },
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty.toString(),
+        $RdfVocabularies.xsd.boolean,
       );
     } else if (
       typeof parameters.convertibleTermProperty === "object" &&
       parameters.convertibleTermProperty instanceof Date
     ) {
-      this.convertibleTermProperty = rdfLiteral.toRdf(
-        parameters.convertibleTermProperty,
-        { dataFactory },
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty.toISOString(),
+        $RdfVocabularies.xsd.dateTime,
       );
     } else if (typeof parameters.convertibleTermProperty === "number") {
-      this.convertibleTermProperty = rdfLiteral.toRdf(
-        parameters.convertibleTermProperty,
-        { dataFactory },
+      this.convertibleTermProperty = dataFactory.literal(
+        parameters.convertibleTermProperty.toString(),
+        $RdfVocabularies.xsd.decimal,
       );
     } else if (typeof parameters.convertibleTermProperty === "string") {
       this.convertibleTermProperty = dataFactory.literal(
@@ -42476,12 +44138,12 @@ export class ConvertibleTypePropertiesClass {
     } else if ($isReadonlyBooleanArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.boolean),
         );
     } else if ($isReadonlyNumberArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty.map((item) =>
-          rdfLiteral.toRdf(item, { dataFactory }),
+          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.decimal),
         );
     } else if ($isReadonlyStringArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
@@ -54757,6 +56419,23 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  dateUnionPropertiesClass(
+    identifier: DateUnionPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, DateUnionPropertiesClass>>;
+  dateUnionPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>
+  >;
+  dateUnionPropertiesClasses(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>>;
+  dateUnionPropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, DefaultValuePropertiesClass>>;
@@ -56034,6 +57713,35 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.convertibleTypePropertiesClassesCount(query);
+  }
+
+  dateUnionPropertiesClass(
+    identifier: DateUnionPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, DateUnionPropertiesClass>> {
+    return this.$delegate.dateUnionPropertiesClass(identifier);
+  }
+
+  dateUnionPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>
+  > {
+    return this.$delegate.dateUnionPropertiesClassIdentifiers(query);
+  }
+
+  dateUnionPropertiesClasses(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>> {
+    return this.$delegate.dateUnionPropertiesClasses(query);
+  }
+
+  dateUnionPropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.dateUnionPropertiesClassesCount(query);
   }
 
   defaultValuePropertiesClass(
@@ -58736,6 +60444,82 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
         },
       ],
+      query,
+    );
+  }
+
+  async dateUnionPropertiesClass(
+    identifier: DateUnionPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, DateUnionPropertiesClass>> {
+    return this.dateUnionPropertiesClassSync(identifier);
+  }
+
+  dateUnionPropertiesClassSync(
+    identifier: DateUnionPropertiesClass.$Identifier,
+  ): purify.Either<Error, DateUnionPropertiesClass> {
+    return this.dateUnionPropertiesClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async dateUnionPropertiesClassIdentifiers(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>
+  > {
+    return this.dateUnionPropertiesClassIdentifiersSync(query);
+  }
+
+  dateUnionPropertiesClassIdentifiersSync(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]> {
+    return this.$objectIdentifiersSync<
+      DateUnionPropertiesClass,
+      DateUnionPropertiesClass.$Identifier
+    >(
+      [{ $fromRdf: DateUnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async dateUnionPropertiesClasses(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>> {
+    return this.dateUnionPropertiesClassesSync(query);
+  }
+
+  dateUnionPropertiesClassesSync(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): purify.Either<Error, readonly DateUnionPropertiesClass[]> {
+    return this.$objectsSync<
+      DateUnionPropertiesClass,
+      DateUnionPropertiesClass.$Identifier
+    >(
+      [{ $fromRdf: DateUnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async dateUnionPropertiesClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.dateUnionPropertiesClassesCountSync(query);
+  }
+
+  dateUnionPropertiesClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      DateUnionPropertiesClass,
+      DateUnionPropertiesClass.$Identifier
+    >(
+      [{ $fromRdf: DateUnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
@@ -64319,6 +66103,48 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConvertibleTypePropertiesClass.$Identifier>(
       ConvertibleTypePropertiesClass,
+      query,
+    );
+  }
+
+  async dateUnionPropertiesClass(
+    identifier: DateUnionPropertiesClass.$Identifier,
+  ): Promise<purify.Either<Error, DateUnionPropertiesClass>> {
+    return (
+      await this.dateUnionPropertiesClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async dateUnionPropertiesClassIdentifiers(
+    query?: $SparqlObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<DateUnionPropertiesClass.$Identifier>(
+      DateUnionPropertiesClass,
+      query,
+    );
+  }
+
+  async dateUnionPropertiesClasses(
+    query?: $SparqlObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>> {
+    return this.$objects<
+      DateUnionPropertiesClass,
+      DateUnionPropertiesClass.$Identifier
+    >(DateUnionPropertiesClass, query);
+  }
+
+  async dateUnionPropertiesClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<DateUnionPropertiesClass.$Identifier>(
+      DateUnionPropertiesClass,
       query,
     );
   }

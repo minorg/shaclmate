@@ -23,7 +23,10 @@ namespace AstJson {
   }
 
   export interface Type {
+    comment?: string;
     kind: ast.Type["kind"];
+    label?: string;
+    name?: string;
 
     [index: string]: boolean | number | object | string | undefined;
   }
@@ -48,39 +51,47 @@ function termToJson(term: RdfjsTerm): AstJson.Term {
 }
 
 function typeToJson(type: ast.Type): AstJson.Type {
+  const common = {
+    kind: type.kind as AstJson.Type["kind"],
+    comment: type.comment.extract(),
+    label: type.label.extract(),
+  };
+
   switch (type.kind) {
     case "IdentifierType":
       return {
+        ...common,
         hasValue: type.hasValues.map(termToJson),
-        kind: type.kind,
         nodeKinds: [...type.nodeKinds],
       };
     case "IntersectionType":
     case "UnionType":
       return {
-        kind: type.kind,
-        types: type.memberTypes.map((type) => typeToJson(type)),
+        ...common,
+        memberDiscriminantValues:
+          type.kind === "UnionType" ? type.memberDiscriminantValues : undefined,
+        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
       };
     case "LazyObjectOptionType":
     case "LazyObjectSetType":
     case "LazyObjectType":
       return {
-        kind: type.kind,
+        ...common,
         partialType: typeToJson(type.partialType),
         resolvedType: typeToJson(type.resolvedType),
       };
     case "ListType": {
       return {
+        ...common,
         itemType: typeToJson(type.itemType),
-        kind: type.kind,
         mutable: type.mutable,
       };
     }
     case "LiteralType": {
       return {
+        ...common,
         datatype: type.datatype.extract(),
         hasValue: type.hasValues.map(termToJson),
-        kind: type.kind,
         maxExclusive: type.maxExclusive.map(termToJson).extract(),
         maxInclusive: type.maxInclusive.map(termToJson).extract(),
         minExclusive: type.minExclusive.map(termToJson).extract(),
@@ -90,16 +101,17 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "ObjectIntersectionType":
     case "ObjectUnionType":
       return {
-        kind: type.kind,
+        ...common,
         name: type.name.extract(),
+        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
         shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
-        types: type.memberTypes.map((type) => typeToJson(type)),
       };
     case "ObjectType":
       return {
-        fromRdfType: type.fromRdfType.map(termToJson).extract(),
-        kind: type.kind,
+        ...common,
         name: type.name.extract(),
+        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
+        fromRdfType: type.fromRdfType.map(termToJson).extract(),
         parentObjectTypes:
           type.parentObjectTypes.length > 0
             ? type.parentObjectTypes.map((type) =>
@@ -108,7 +120,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
             : undefined,
         identifierMintingStrategy: type.identifierMintingStrategy.extract(),
         identifierType: typeToJson(type.identifierType),
-        shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         synthetic: type.synthetic ? true : undefined,
         toRdfTypes:
           type.toRdfTypes.length > 0
@@ -117,19 +128,19 @@ function typeToJson(type: ast.Type): AstJson.Type {
       };
     case "OptionType":
       return {
+        ...common,
         itemType: typeToJson(type.itemType),
-        kind: type.kind,
       };
     case "PlaceholderType":
       throw new Error(type.kind);
     case "SetType":
       return {
+        ...common,
         itemType: typeToJson(type.itemType),
-        kind: type.kind,
       };
     case "TermType":
       return {
-        kind: type.kind,
+        ...common,
       };
   }
 }
@@ -140,7 +151,12 @@ export class AstJsonGenerator implements Generator {
       {
         objectTypes: ast.objectTypes.map((objectType) => ({
           kind: objectType.kind,
+          comment: objectType.comment.extract(),
+          label: objectType.label.extract(),
           name: objectType.name.extract(),
+          shapeIdentifier: Resource.Identifier.toString(
+            objectType.shapeIdentifier,
+          ),
           properties: objectType.properties.map((property) => ({
             comment: property.comment.extract(),
             description: property.description.extract(),

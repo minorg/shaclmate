@@ -8,13 +8,13 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
-import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { tsComment } from "../tsComment.js";
 import { Property } from "./Property.js";
 
-export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
+export class ShaclProperty<TypeT extends AbstractType> extends Property<TypeT> {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
   private readonly label: Maybe<string>;
@@ -223,7 +223,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Property<Type>["snippetDeclarations"]>[0],
+    parameters: Parameters<Property<AbstractType>["snippetDeclarations"]>[0],
   ): readonly string[] {
     return this.type.snippetDeclarations(parameters);
   }

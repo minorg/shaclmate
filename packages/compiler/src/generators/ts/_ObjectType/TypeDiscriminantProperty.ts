@@ -13,7 +13,7 @@ import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
-export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorProperty.Type> {
+export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.Type> {
   override readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
@@ -24,7 +24,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override readonly getAccessorDeclaration: Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > = Maybe.empty();
-  override readonly graphqlField: Property<TypeDiscriminatorProperty.Type>["graphqlField"] =
+  override readonly graphqlField: Property<TypeDiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
   override readonly mutable = false;
   override readonly recursive = false;
@@ -33,7 +33,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
     type,
     ...superParameters
   }: {
-    type: TypeDiscriminatorProperty.Type;
+    type: TypeDiscriminantProperty.Type;
   } & ConstructorParameters<typeof Property>[0]) {
     super({ ...superParameters, type });
     invariant(this.visibility === "public");
@@ -44,7 +44,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   }
 
   private get initializer(): string {
-    return this.objectType.discriminatorValue;
+    return this.objectType.discriminantValue;
   }
 
   override get jsonPropertySignature(): Maybe<
@@ -86,7 +86,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override hashStatements({
     variables,
   }: Parameters<
-    Property<TypeDiscriminatorProperty>["hashStatements"]
+    Property<TypeDiscriminantProperty>["hashStatements"]
   >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
   }
@@ -94,7 +94,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    Property<TypeDiscriminatorProperty.Type>["jsonUiSchemaElement"]
+    Property<TypeDiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<string> {
     const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return Maybe.of(
@@ -105,8 +105,8 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override jsonZodSchema({
     variables,
   }: Parameters<
-    Property<TypeDiscriminatorProperty.Type>["jsonZodSchema"]
-  >[0]): ReturnType<Property<TypeDiscriminatorProperty.Type>["jsonZodSchema"]> {
+    Property<TypeDiscriminantProperty.Type>["jsonZodSchema"]
+  >[0]): ReturnType<Property<TypeDiscriminantProperty.Type>["jsonZodSchema"]> {
     return Maybe.of({
       key: this.name,
       schema:
@@ -165,7 +165,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   override toJsonObjectMember({
     variables,
   }: Parameters<
-    Property<TypeDiscriminatorProperty.Type>["toJsonObjectMember"]
+    Property<TypeDiscriminantProperty.Type>["toJsonObjectMember"]
   >[0]): Maybe<string> {
     return Maybe.of(`${this.name}: ${variables.value}`);
   }
@@ -175,7 +175,7 @@ export class TypeDiscriminatorProperty extends Property<TypeDiscriminatorPropert
   }
 }
 
-export namespace TypeDiscriminatorProperty {
+export namespace TypeDiscriminantProperty {
   export class Type {
     readonly mutable: boolean;
     readonly descendantValues: readonly string[];

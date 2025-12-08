@@ -1,8 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
+import type { AbstractType } from "./AbstractType.js";
 import { DateTimeType } from "./DateTimeType.js";
-import type { PrimitiveType } from "./PrimitiveType.js";
 import { Type } from "./Type.js";
 
 export class DateType extends DateTimeType {
@@ -17,13 +17,13 @@ export class DateType extends DateTimeType {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractType["jsonZodSchema"]
+  > {
     return `${variables.zod}.iso.date()`;
   }
 
-  override toJsonExpression({
-    variables,
-  }: Parameters<PrimitiveType<Date>["toJsonExpression"]>[0]): string {
+  protected override toIsoStringExpression(variables: { value: string }) {
     return `${variables.value}.toISOString().replace(/T.*$/, '')`;
   }
 }

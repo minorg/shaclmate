@@ -1,13 +1,14 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-import { LiteralType } from "./LiteralType.js";
+import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export abstract class PrimitiveType<
+export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,
-> extends LiteralType {
+> extends AbstractLiteralType {
   override readonly equalsFunction: string =
     `${syntheticNamePrefix}strictEquals`;
   readonly primitiveDefaultValue: Maybe<ValueT>;
@@ -20,13 +21,13 @@ export abstract class PrimitiveType<
   }: {
     primitiveDefaultValue: Maybe<ValueT>;
     primitiveIn: readonly ValueT[];
-  } & ConstructorParameters<typeof LiteralType>[0]) {
+  } & ConstructorParameters<typeof AbstractLiteralType>[0]) {
     super(superParameters);
     this.primitiveDefaultValue = primitiveDefaultValue;
     this.primitiveIn = primitiveIn;
   }
 
-  override get discriminatorProperty(): Maybe<Type.DiscriminatorProperty> {
+  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
     return Maybe.empty();
   }
 
@@ -37,25 +38,25 @@ export abstract class PrimitiveType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     return variables.value;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
     return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.strictEquals);
@@ -64,7 +65,7 @@ export abstract class PrimitiveType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<LiteralType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractLiteralType["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     return super.sparqlWherePatterns({
       ...parameters,
@@ -74,7 +75,7 @@ export abstract class PrimitiveType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     return variables.value;
   }
 }

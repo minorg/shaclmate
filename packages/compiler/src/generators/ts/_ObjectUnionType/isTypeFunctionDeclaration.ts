@@ -55,10 +55,10 @@ export function isTypeFunctionDeclaration(
     ],
     returnType: `object is ${this.name}`,
     statements: [
-      `switch (object.${this._discriminatorProperty.name}) { ${[
+      `switch (object.${this._discriminantProperty.name}) { ${[
         ...new Set([
-          ...this._discriminatorProperty.descendantValues,
-          ...this._discriminatorProperty.ownValues,
+          ...this._discriminantProperty.descendantValues,
+          ...this._discriminantProperty.ownValues,
         ]),
       ]
         .toSorted()
