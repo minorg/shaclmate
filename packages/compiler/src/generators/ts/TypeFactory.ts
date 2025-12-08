@@ -521,6 +521,7 @@ export class TypeFactory {
     return new UnionType({
       comment: astType.comment,
       label: astType.label,
+      memberDiscriminantValues: astType.memberDiscriminantValues,
       memberTypes: astType.memberTypes.map((astType) =>
         this.createType(astType),
       ),

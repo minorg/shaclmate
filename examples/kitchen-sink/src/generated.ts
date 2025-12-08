@@ -42156,28 +42156,40 @@ export class DateUnionPropertiesClass {
   private _$identifier?: DateUnionPropertiesClass.$Identifier;
   readonly $type = "DateUnionPropertiesClass";
   readonly dateOrDateTimeProperty: purify.Maybe<
-    { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+    { type: "date"; value: Date } | { type: "dateTime"; value: Date }
   >;
-  readonly dateOrStringProperty: purify.Maybe<Date | string>;
+  readonly dateOrStringProperty: purify.Maybe<
+    { type: "date"; value: Date } | { type: "string"; value: string }
+  >;
   readonly dateTimeOrDateProperty: purify.Maybe<
-    { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+    { type: "dateTime"; value: Date } | { type: "date"; value: Date }
   >;
-  readonly stringOrDateProperty: purify.Maybe<string | Date>;
+  readonly stringOrDateProperty: purify.Maybe<
+    { type: "string"; value: string } | { type: "date"; value: Date }
+  >;
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly dateOrDateTimeProperty?:
-      | ({ type: "0-Date"; value: Date } | { type: "1-Date"; value: Date })
+      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
       | purify.Maybe<
-          { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
         >;
-    readonly dateOrStringProperty?: Date | purify.Maybe<Date | string> | string;
+    readonly dateOrStringProperty?:
+      | ({ type: "date"; value: Date } | { type: "string"; value: string })
+      | purify.Maybe<
+          { type: "date"; value: Date } | { type: "string"; value: string }
+        >;
     readonly dateTimeOrDateProperty?:
-      | ({ type: "0-Date"; value: Date } | { type: "1-Date"; value: Date })
+      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
       | purify.Maybe<
-          { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
         >;
-    readonly stringOrDateProperty?: Date | purify.Maybe<string | Date> | string;
+    readonly stringOrDateProperty?:
+      | ({ type: "string"; value: string } | { type: "date"; value: Date })
+      | purify.Maybe<
+          { type: "string"; value: string } | { type: "date"; value: Date }
+        >;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -42207,10 +42219,6 @@ export class DateUnionPropertiesClass {
       this.dateOrStringProperty = purify.Maybe.of(
         parameters?.dateOrStringProperty,
       );
-    } else if (typeof parameters?.dateOrStringProperty === "string") {
-      this.dateOrStringProperty = purify.Maybe.of(
-        parameters?.dateOrStringProperty,
-      );
     } else if (typeof parameters?.dateOrStringProperty === "undefined") {
       this.dateOrStringProperty = purify.Maybe.empty();
     } else {
@@ -42233,10 +42241,6 @@ export class DateUnionPropertiesClass {
 
     if (purify.Maybe.isMaybe(parameters?.stringOrDateProperty)) {
       this.stringOrDateProperty = parameters?.stringOrDateProperty;
-    } else if (typeof parameters?.stringOrDateProperty === "string") {
-      this.stringOrDateProperty = purify.Maybe.of(
-        parameters?.stringOrDateProperty,
-      );
     } else if (typeof parameters?.stringOrDateProperty === "object") {
       this.stringOrDateProperty = purify.Maybe.of(
         parameters?.stringOrDateProperty,
@@ -42284,16 +42288,16 @@ export class DateUnionPropertiesClass {
             right,
             (
               left:
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date },
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
               right:
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date },
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
             ) => {
-              if (left.type === "0-Date" && right.type === "0-Date") {
+              if (left.type === "date" && right.type === "date") {
                 return $dateEquals(left.value, right.value);
               }
-              if (left.type === "1-Date" && right.type === "1-Date") {
+              if (left.type === "dateTime" && right.type === "dateTime") {
                 return $dateEquals(left.value, right.value);
               }
 
@@ -42324,12 +42328,19 @@ export class DateUnionPropertiesClass {
           $maybeEquals(
             left,
             right,
-            (left: Date | string, right: Date | string) => {
-              if (typeof left === "object" && typeof right === "object") {
-                return $dateEquals(left, right);
+            (
+              left:
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string },
+              right:
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string },
+            ) => {
+              if (left.type === "date" && right.type === "date") {
+                return $dateEquals(left.value, right.value);
               }
-              if (typeof left === "string" && typeof right === "string") {
-                return $strictEquals(left, right);
+              if (left.type === "string" && right.type === "string") {
+                return $strictEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -42361,16 +42372,16 @@ export class DateUnionPropertiesClass {
             right,
             (
               left:
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date },
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
               right:
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date },
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
             ) => {
-              if (left.type === "0-Date" && right.type === "0-Date") {
+              if (left.type === "dateTime" && right.type === "dateTime") {
                 return $dateEquals(left.value, right.value);
               }
-              if (left.type === "1-Date" && right.type === "1-Date") {
+              if (left.type === "date" && right.type === "date") {
                 return $dateEquals(left.value, right.value);
               }
 
@@ -42401,12 +42412,19 @@ export class DateUnionPropertiesClass {
           $maybeEquals(
             left,
             right,
-            (left: string | Date, right: string | Date) => {
-              if (typeof left === "string" && typeof right === "string") {
-                return $strictEquals(left, right);
+            (
+              left:
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date },
+              right:
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date },
+            ) => {
+              if (left.type === "string" && right.type === "string") {
+                return $strictEquals(left.value, right.value);
               }
-              if (typeof left === "object" && typeof right === "object") {
-                return $dateEquals(left, right);
+              if (left.type === "date" && right.type === "date") {
+                return $dateEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -42451,11 +42469,11 @@ export class DateUnionPropertiesClass {
   >(_hasher: HasherT): HasherT {
     this.dateOrDateTimeProperty.ifJust((value0) => {
       switch (value0.type) {
-        case "0-Date": {
+        case "date": {
           _hasher.update(value0.value.toISOString());
           break;
         }
-        case "1-Date": {
+        case "dateTime": {
           _hasher.update(value0.value.toISOString());
           break;
         }
@@ -42465,13 +42483,13 @@ export class DateUnionPropertiesClass {
       }
     });
     this.dateOrStringProperty.ifJust((value0) => {
-      switch (typeof value0) {
-        case "object": {
-          _hasher.update(value0.toISOString());
+      switch (value0.type) {
+        case "date": {
+          _hasher.update(value0.value.toISOString());
           break;
         }
         case "string": {
-          _hasher.update(value0);
+          _hasher.update(value0.value);
           break;
         }
         default:
@@ -42481,11 +42499,11 @@ export class DateUnionPropertiesClass {
     });
     this.dateTimeOrDateProperty.ifJust((value0) => {
       switch (value0.type) {
-        case "0-Date": {
+        case "dateTime": {
           _hasher.update(value0.value.toISOString());
           break;
         }
-        case "1-Date": {
+        case "date": {
           _hasher.update(value0.value.toISOString());
           break;
         }
@@ -42495,13 +42513,13 @@ export class DateUnionPropertiesClass {
       }
     });
     this.stringOrDateProperty.ifJust((value0) => {
-      switch (typeof value0) {
+      switch (value0.type) {
         case "string": {
-          _hasher.update(value0);
+          _hasher.update(value0.value);
           break;
         }
-        case "object": {
-          _hasher.update(value0.toISOString());
+        case "date": {
+          _hasher.update(value0.value.toISOString());
           break;
         }
         default:
@@ -42522,36 +42540,42 @@ export class DateUnionPropertiesClass {
         $type: this.$type,
         dateOrDateTimeProperty: this.dateOrDateTimeProperty
           .map((item) =>
-            item.type === "1-Date"
-              ? { type: "1-Date" as const, value: item.value.toISOString() }
+            item.type === "dateTime"
+              ? { type: "dateTime" as const, value: item.value.toISOString() }
               : {
-                  type: "0-Date" as const,
+                  type: "date" as const,
                   value: item.value.toISOString().replace(/T.*$/, ""),
                 },
           )
           .extract(),
         dateOrStringProperty: this.dateOrStringProperty
           .map((item) =>
-            typeof item === "string"
-              ? item
-              : item.toISOString().replace(/T.*$/, ""),
+            item.type === "string"
+              ? { type: "string" as const, value: item.value }
+              : {
+                  type: "date" as const,
+                  value: item.value.toISOString().replace(/T.*$/, ""),
+                },
           )
           .extract(),
         dateTimeOrDateProperty: this.dateTimeOrDateProperty
           .map((item) =>
-            item.type === "1-Date"
+            item.type === "date"
               ? {
-                  type: "1-Date" as const,
+                  type: "date" as const,
                   value: item.value.toISOString().replace(/T.*$/, ""),
                 }
-              : { type: "0-Date" as const, value: item.value.toISOString() },
+              : { type: "dateTime" as const, value: item.value.toISOString() },
           )
           .extract(),
         stringOrDateProperty: this.stringOrDateProperty
           .map((item) =>
-            typeof item === "object"
-              ? item.toISOString().replace(/T.*$/, "")
-              : item,
+            item.type === "date"
+              ? {
+                  type: "date" as const,
+                  value: item.value.toISOString().replace(/T.*$/, ""),
+                }
+              : { type: "string" as const, value: item.value },
           )
           .extract(),
       } satisfies DateUnionPropertiesClass.$Json),
@@ -42576,7 +42600,7 @@ export class DateUnionPropertiesClass {
     resource.add(
       DateUnionPropertiesClass.$properties.dateOrDateTimeProperty["identifier"],
       ...this.dateOrDateTimeProperty.toList().flatMap((value) =>
-        value.type === "1-Date"
+        value.type === "dateTime"
           ? ([
               rdfLiteral.toRdf(value.value, {
                 dataFactory,
@@ -42596,12 +42620,12 @@ export class DateUnionPropertiesClass {
     resource.add(
       DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
       ...this.dateOrStringProperty.toList().flatMap((value) =>
-        typeof value === "string"
-          ? ([value] as readonly Parameters<
+        value.type === "string"
+          ? ([value.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : ([
-              rdfLiteral.toRdf(value, {
+              rdfLiteral.toRdf(value.value, {
                 dataFactory,
                 datatype: $RdfVocabularies.xsd.date,
               }),
@@ -42613,7 +42637,7 @@ export class DateUnionPropertiesClass {
     resource.add(
       DateUnionPropertiesClass.$properties.dateTimeOrDateProperty["identifier"],
       ...this.dateTimeOrDateProperty.toList().flatMap((value) =>
-        value.type === "1-Date"
+        value.type === "date"
           ? ([
               rdfLiteral.toRdf(value.value, {
                 dataFactory,
@@ -42633,14 +42657,14 @@ export class DateUnionPropertiesClass {
     resource.add(
       DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
       ...this.stringOrDateProperty.toList().flatMap((value) =>
-        typeof value === "object"
+        value.type === "date"
           ? ([
-              rdfLiteral.toRdf(value, {
+              rdfLiteral.toRdf(value.value, {
                 dataFactory,
                 datatype: $RdfVocabularies.xsd.date,
               }),
             ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-          : ([value] as readonly Parameters<
+          : ([value.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][]),
       ),
@@ -42712,13 +42736,17 @@ export namespace DateUnionPropertiesClass {
     readonly "@id": string;
     readonly $type: "DateUnionPropertiesClass";
     readonly dateOrDateTimeProperty?:
-      | { type: "0-Date"; value: string }
-      | { type: "1-Date"; value: string };
-    readonly dateOrStringProperty?: string | string;
+      | { type: "date"; value: string }
+      | { type: "dateTime"; value: string };
+    readonly dateOrStringProperty?:
+      | { type: "date"; value: string }
+      | { type: "string"; value: string };
     readonly dateTimeOrDateProperty?:
-      | { type: "0-Date"; value: string }
-      | { type: "1-Date"; value: string };
-    readonly stringOrDateProperty?: string | string;
+      | { type: "dateTime"; value: string }
+      | { type: "date"; value: string };
+    readonly stringOrDateProperty?:
+      | { type: "string"; value: string }
+      | { type: "date"; value: string };
   };
 
   export function $jsonSchema() {
@@ -42773,27 +42801,33 @@ export namespace DateUnionPropertiesClass {
       $type: zod.literal("DateUnionPropertiesClass"),
       dateOrDateTimeProperty: zod
         .discriminatedUnion("type", [
-          zod.object({ type: zod.literal("0-Date"), value: zod.iso.date() }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
           zod.object({
-            type: zod.literal("1-Date"),
+            type: zod.literal("dateTime"),
             value: zod.iso.datetime(),
           }),
         ])
         .optional(),
       dateOrStringProperty: zod
-        .union([zod.iso.date(), zod.string()])
+        .discriminatedUnion("type", [
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+          zod.object({ type: zod.literal("string"), value: zod.string() }),
+        ])
         .optional(),
       dateTimeOrDateProperty: zod
         .discriminatedUnion("type", [
           zod.object({
-            type: zod.literal("0-Date"),
+            type: zod.literal("dateTime"),
             value: zod.iso.datetime(),
           }),
-          zod.object({ type: zod.literal("1-Date"), value: zod.iso.date() }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
         ])
         .optional(),
       stringOrDateProperty: zod
-        .union([zod.string(), zod.iso.date()])
+        .discriminatedUnion("type", [
+          zod.object({ type: zod.literal("string"), value: zod.string() }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+        ])
         .optional(),
     }) satisfies zod.ZodType<$Json>;
   }
@@ -42826,13 +42860,17 @@ export namespace DateUnionPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       dateOrDateTimeProperty: purify.Maybe<
-        { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       >;
-      dateOrStringProperty: purify.Maybe<Date | string>;
+      dateOrStringProperty: purify.Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >;
       dateTimeOrDateProperty: purify.Maybe<
-        { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       >;
-      stringOrDateProperty: purify.Maybe<string | Date>;
+      stringOrDateProperty: purify.Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -42847,23 +42885,31 @@ export namespace DateUnionPropertiesClass {
     const dateOrDateTimeProperty = purify.Maybe.fromNullable(
       $jsonObject["dateOrDateTimeProperty"],
     ).map((item) =>
-      item.type === "1-Date"
-        ? { type: "1-Date" as const, value: new Date(item.value) }
-        : { type: "0-Date" as const, value: new Date(item.value) },
+      item.type === "dateTime"
+        ? { type: "dateTime" as const, value: new Date(item.value) }
+        : { type: "date" as const, value: new Date(item.value) },
     );
     const dateOrStringProperty = purify.Maybe.fromNullable(
       $jsonObject["dateOrStringProperty"],
-    ).map((item) => (typeof item === "string" ? item : new Date(item)));
+    ).map((item) =>
+      item.type === "string"
+        ? { type: "string" as const, value: item.value }
+        : { type: "date" as const, value: new Date(item.value) },
+    );
     const dateTimeOrDateProperty = purify.Maybe.fromNullable(
       $jsonObject["dateTimeOrDateProperty"],
     ).map((item) =>
-      item.type === "1-Date"
-        ? { type: "1-Date" as const, value: new Date(item.value) }
-        : { type: "0-Date" as const, value: new Date(item.value) },
+      item.type === "date"
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "dateTime" as const, value: new Date(item.value) },
     );
     const stringOrDateProperty = purify.Maybe.fromNullable(
       $jsonObject["stringOrDateProperty"],
-    ).map((item) => (typeof item === "object" ? new Date(item) : item));
+    ).map((item) =>
+      item.type === "date"
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "string" as const, value: item.value },
+    );
     return purify.Either.of({
       $identifier,
       dateOrDateTimeProperty,
@@ -42891,13 +42937,17 @@ export namespace DateUnionPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       dateOrDateTimeProperty: purify.Maybe<
-        { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       >;
-      dateOrStringProperty: purify.Maybe<Date | string>;
+      dateOrStringProperty: purify.Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >;
       dateTimeOrDateProperty: purify.Maybe<
-        { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       >;
-      stringOrDateProperty: purify.Maybe<string | Date>;
+      stringOrDateProperty: purify.Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >;
     }
   > {
     const $identifier: DateUnionPropertiesClass.$Identifier =
@@ -42905,7 +42955,7 @@ export namespace DateUnionPropertiesClass {
     const _dateOrDateTimePropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       >
     > = purify.Either.of<
       Error,
@@ -42924,15 +42974,15 @@ export namespace DateUnionPropertiesClass {
               .map((values) =>
                 values.map(
                   (value) =>
-                    ({ type: "0-Date" as const, value }) as
-                      | { type: "0-Date"; value: Date }
-                      | { type: "1-Date"; value: Date },
+                    ({ type: "date" as const, value }) as
+                      | { type: "date"; value: Date }
+                      | { type: "dateTime"; value: Date },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date }
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date }
               >
             >
           )
@@ -42943,15 +42993,15 @@ export namespace DateUnionPropertiesClass {
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({ type: "1-Date" as const, value }) as
-                          | { type: "0-Date"; value: Date }
-                          | { type: "1-Date"; value: Date },
+                        ({ type: "dateTime" as const, value }) as
+                          | { type: "date"; value: Date }
+                          | { type: "dateTime"; value: Date },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-Date"; value: Date }
-                    | { type: "1-Date"; value: Date }
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date }
                   >
                 >,
             )
@@ -42963,8 +43013,8 @@ export namespace DateUnionPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date }
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date }
               >
             >({
               focusResource: $resource,
@@ -42983,7 +43033,9 @@ export namespace DateUnionPropertiesClass {
     const dateOrDateTimeProperty = _dateOrDateTimePropertyEither.unsafeCoerce();
     const _dateOrStringPropertyEither: purify.Either<
       Error,
-      purify.Maybe<Date | string>
+      purify.Maybe<
+        { type: "date"; value: Date } | { type: "string"; value: string }
+      >
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -42996,11 +43048,21 @@ export namespace DateUnionPropertiesClass {
         values.chainMap((value) => {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
-            valueAsValues.chain((values) =>
-              values.chainMap((value) => value.toDate()),
-            ) as purify.Either<
+            valueAsValues
+              .chain((values) => values.chainMap((value) => value.toDate()))
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({ type: "date" as const, value }) as
+                      | { type: "date"; value: Date }
+                      | { type: "string"; value: string },
+                ),
+              ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<Date | string>
+              rdfjsResource.Resource.Values<
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string }
+              >
             >
           )
             .altLazy(
@@ -43064,9 +43126,20 @@ export namespace DateUnionPropertiesClass {
                   })
                   .chain((values) =>
                     values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "string" as const, value }) as
+                          | { type: "date"; value: Date }
+                          | { type: "string"; value: string },
+                    ),
                   ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<Date | string>
+                  rdfjsResource.Resource.Values<
+                    | { type: "date"; value: Date }
+                    | { type: "string"; value: string }
+                  >
                 >,
             )
             .chain((values) => values.head());
@@ -43076,7 +43149,10 @@ export namespace DateUnionPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<Date | string>
+              purify.Maybe<
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string }
+              >
             >({
               focusResource: $resource,
               predicate:
@@ -43095,7 +43171,7 @@ export namespace DateUnionPropertiesClass {
     const _dateTimeOrDatePropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        { type: "0-Date"; value: Date } | { type: "1-Date"; value: Date }
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       >
     > = purify.Either.of<
       Error,
@@ -43114,15 +43190,15 @@ export namespace DateUnionPropertiesClass {
               .map((values) =>
                 values.map(
                   (value) =>
-                    ({ type: "0-Date" as const, value }) as
-                      | { type: "0-Date"; value: Date }
-                      | { type: "1-Date"; value: Date },
+                    ({ type: "dateTime" as const, value }) as
+                      | { type: "dateTime"; value: Date }
+                      | { type: "date"; value: Date },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date }
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date }
               >
             >
           )
@@ -43133,15 +43209,15 @@ export namespace DateUnionPropertiesClass {
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({ type: "1-Date" as const, value }) as
-                          | { type: "0-Date"; value: Date }
-                          | { type: "1-Date"; value: Date },
+                        ({ type: "date" as const, value }) as
+                          | { type: "dateTime"; value: Date }
+                          | { type: "date"; value: Date },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-Date"; value: Date }
-                    | { type: "1-Date"; value: Date }
+                    | { type: "dateTime"; value: Date }
+                    | { type: "date"; value: Date }
                   >
                 >,
             )
@@ -43153,8 +43229,8 @@ export namespace DateUnionPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "0-Date"; value: Date }
-                | { type: "1-Date"; value: Date }
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date }
               >
             >({
               focusResource: $resource,
@@ -43173,7 +43249,9 @@ export namespace DateUnionPropertiesClass {
     const dateTimeOrDateProperty = _dateTimeOrDatePropertyEither.unsafeCoerce();
     const _stringOrDatePropertyEither: purify.Either<
       Error,
-      purify.Maybe<string | Date>
+      purify.Maybe<
+        { type: "string"; value: string } | { type: "date"; value: Date }
+      >
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -43238,20 +43316,39 @@ export namespace DateUnionPropertiesClass {
                   ),
                 );
               })
-              .chain((values) =>
-                values.chainMap((value) => value.toString()),
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) =>
+                values.map(
+                  (value) =>
+                    ({ type: "string" as const, value }) as
+                      | { type: "string"; value: string }
+                      | { type: "date"; value: Date },
+                ),
               ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<string | Date>
+              rdfjsResource.Resource.Values<
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date }
+              >
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toDate()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "date" as const, value }) as
+                          | { type: "string"; value: string }
+                          | { type: "date"; value: Date },
+                    ),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<string | Date>
+                  rdfjsResource.Resource.Values<
+                    | { type: "string"; value: string }
+                    | { type: "date"; value: Date }
+                  >
                 >,
             )
             .chain((values) => values.head());
@@ -43261,7 +43358,10 @@ export namespace DateUnionPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<string | Date>
+              purify.Maybe<
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date }
+              >
             >({
               focusResource: $resource,
               predicate:

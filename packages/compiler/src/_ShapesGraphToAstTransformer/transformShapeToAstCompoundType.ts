@@ -113,11 +113,18 @@ export function transformShapeToAstCompoundType(
             memberDiscriminantValue = memberShape.discriminantValue.extract();
           }
           if (memberDiscriminantValue) {
+            if (memberDiscriminantValues.includes(memberDiscriminantValue)) {
+              return Left(
+                new Error(
+                  `${shape} member ${memberShape} has a duplicate discriminant value: ${memberDiscriminantValue}`,
+                ),
+              );
+            }
             memberDiscriminantValues.push(memberDiscriminantValue);
           } else if (memberDiscriminantValues.length > 0) {
             return Left(
               new Error(
-                `${memberShape} member of ${shape} does not have a discriminant value while the other members of the compound type do`,
+                `${shape} member ${memberShape} does not have a discriminant value while the other members of the compound type do`,
               ),
             );
           }

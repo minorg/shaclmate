@@ -10,31 +10,31 @@ import { objectInitializer } from "./objectInitializer.js";
 class MemberType {
   private readonly delegate: AbstractType;
   private readonly delegateIndex: number;
-  private readonly discriminantKind: DiscriminantKind;
+  private readonly discriminant: Discriminant;
   private readonly universe: readonly AbstractType[];
 
   constructor({
     delegate,
     delegateIndex,
-    discriminantKind,
+    discriminant,
     universe,
   }: {
     delegate: AbstractType;
     delegateIndex: number;
-    discriminantKind: DiscriminantKind;
+    discriminant: Discriminant;
     universe: readonly AbstractType[];
   }) {
     this.delegate = delegate;
     this.delegateIndex = delegateIndex;
-    this.discriminantKind = discriminantKind;
+    this.discriminant = discriminant;
     this.universe = universe;
   }
 
   @Memoize()
   get discriminantValues(): readonly string[] {
-    switch (this.discriminantKind) {
+    switch (this.discriminant.kind) {
       case "envelope":
-        return [`${this.delegateIndex}-${this.delegate.name}`];
+        return [this.discriminant.ownValues[this.delegateIndex]];
       case "inline": {
         // A member type's combined discriminant property values are its "own" values plus any descendant values that are
         // not the "own" values of some other member type.
@@ -69,7 +69,7 @@ class MemberType {
       case "typeof":
         return this.delegate.typeofs;
       default:
-        throw this.discriminantKind satisfies never;
+        throw this.discriminant satisfies never;
     }
   }
 
@@ -114,7 +114,7 @@ class MemberType {
   }
 
   payload(instance: string): string {
-    switch (this.discriminantKind) {
+    switch (this.discriminant.kind) {
       case "envelope":
         return `${instance}.value`;
       case "inline":
@@ -165,53 +165,69 @@ export class UnionType extends AbstractType {
   readonly kind = "UnionType";
 
   constructor({
+    memberDiscriminantValues,
     memberTypes,
     name,
     ...superParameters
   }: {
+    memberDiscriminantValues: readonly string[];
     memberTypes: readonly AbstractType[];
     name?: string;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     invariant(memberTypes.length >= 2);
+    invariant(
+      memberDiscriminantValues.length === 0 ||
+        memberDiscriminantValues.length === memberTypes.length,
+    );
     this.#name = name;
 
-    const inlineDiscriminantProperty_ = inlineDiscriminantProperty(memberTypes);
-    if (inlineDiscriminantProperty_) {
-      this.discriminant = {
-        ...inlineDiscriminantProperty_,
-        kind: "inline",
-      };
-    } else {
-      const memberTypeofs = new Set<string>();
-      for (const memberType of memberTypes) {
-        for (const typeof_ of memberType.typeofs) {
-          memberTypeofs.add(typeof_);
-        }
-      }
-      if (memberTypeofs.size === memberTypes.length) {
-        this.discriminant = {
-          kind: "typeof",
+    let discriminant: Discriminant | undefined;
+    if (memberDiscriminantValues.length === 0) {
+      // Infer the discriminant kind
+      const inlineDiscriminantProperty_ =
+        inlineDiscriminantProperty(memberTypes);
+      if (inlineDiscriminantProperty_) {
+        discriminant = {
+          ...inlineDiscriminantProperty_,
+          kind: "inline",
         };
       } else {
-        this.discriminant = {
-          descendantValues: [],
-          kind: "envelope",
-          name: "type",
-          ownValues: memberTypes.map(
-            (memberType, memberTypeIndex) =>
-              `${memberTypeIndex}-${memberType.name}`,
-          ),
-        };
+        const memberTypeofs = new Set<string>();
+        for (const memberType of memberTypes) {
+          for (const typeof_ of memberType.typeofs) {
+            memberTypeofs.add(typeof_);
+          }
+        }
+        if (memberTypeofs.size === memberTypes.length) {
+          discriminant = {
+            kind: "typeof",
+          };
+        }
       }
     }
+    if (!discriminant) {
+      discriminant = {
+        descendantValues: [],
+        kind: "envelope",
+        name: "type",
+        ownValues:
+          memberDiscriminantValues.length > 0
+            ? memberDiscriminantValues
+            : memberTypes.map(
+                (memberType, memberTypeIndex) =>
+                  `${memberTypeIndex}-${memberType.name}`,
+              ),
+      };
+    }
+    this.discriminant = discriminant;
 
     this.memberTypes = memberTypes.map(
       (memberType, memberTypeIndex) =>
         new MemberType({
           delegate: memberType,
           delegateIndex: memberTypeIndex,
-          discriminantKind: this.discriminant.kind,
+          discriminant: this.discriminant,
           universe: memberTypes,
         }),
     );
@@ -606,8 +622,6 @@ type Discriminant =
   | EnvelopeDiscriminant
   | InlineDiscriminant
   | TypeofDiscriminant;
-
-type DiscriminantKind = Discriminant["kind"];
 
 type EnvelopeDiscriminant = {
   kind: "envelope";
