@@ -68,7 +68,9 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "UnionType":
       return {
         ...common,
-        types: type.memberTypes.map((type) => typeToJson(type)),
+        memberDiscriminantValues:
+          type.kind === "UnionType" ? type.memberDiscriminantValues : undefined,
+        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
       };
     case "LazyObjectOptionType":
     case "LazyObjectSetType":
@@ -101,8 +103,8 @@ function typeToJson(type: ast.Type): AstJson.Type {
       return {
         ...common,
         name: type.name.extract(),
+        memberTypes: type.memberTypes.map((type) => typeToJson(type)),
         shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
-        types: type.memberTypes.map((type) => typeToJson(type)),
       };
     case "ObjectType":
       return {

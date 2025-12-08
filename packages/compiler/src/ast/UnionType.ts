@@ -6,4 +6,15 @@ import type { Type } from "./Type.js";
  */
 export class UnionType extends AbstractCompoundType<Type> {
   readonly kind = "UnionType";
+  readonly memberDiscriminantValues: readonly string[];
+
+  constructor({
+    memberDiscriminantValues,
+    ...superParameters
+  }: {
+    memberDiscriminantValues: readonly string[];
+  } & ConstructorParameters<typeof AbstractCompoundType<Type>>[0]) {
+    super(superParameters);
+    this.memberDiscriminantValues = memberDiscriminantValues;
+  }
 }

@@ -429,10 +429,13 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [
+                "date",
+                "dateTime"
+              ],
+              "memberTypes": [
                 {
                   "kind": "LiteralType",
-                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -441,7 +444,6 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "label": "dateTime",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -462,10 +464,13 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [
+                "dateTime",
+                "date"
+              ],
+              "memberTypes": [
                 {
                   "kind": "LiteralType",
-                  "label": "dateTime",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -474,7 +479,6 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -495,10 +499,13 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [
+                "date",
+                "string"
+              ],
+              "memberTypes": [
                 {
                   "kind": "LiteralType",
-                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -507,7 +514,6 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "label": "string",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
@@ -528,10 +534,13 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [
+                "string",
+                "date"
+              ],
+              "memberTypes": [
                 {
                   "kind": "LiteralType",
-                  "label": "string",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
@@ -540,7 +549,6 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -1450,8 +1458,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
@@ -1498,7 +1505,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>"
               }
             }
           },
@@ -1695,8 +1703,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
@@ -1743,7 +1750,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>"
               }
             }
           },
@@ -1762,8 +1770,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
-                "shapeIdentifier": "<http://example.com/PartialClassUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/PartialClassUnionMember1>",
@@ -1810,7 +1817,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/PartialClassUnion>"
               }
             },
             "resolvedType": {
@@ -1819,8 +1827,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnionMember1>",
@@ -1867,7 +1874,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedClassUnion>"
               }
             }
           },
@@ -2132,8 +2140,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
@@ -2180,7 +2187,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>"
               }
             }
           },
@@ -2377,8 +2385,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
@@ -2425,7 +2432,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>"
               }
             }
           },
@@ -2444,8 +2452,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Counterpart of InterfaceUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.",
-                "shapeIdentifier": "<http://example.com/PartialInterfaceUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/PartialInterfaceUnionMember1>",
@@ -2492,7 +2499,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/PartialInterfaceUnion>"
               }
             },
             "resolvedType": {
@@ -2501,8 +2509,7 @@
               "itemType": {
                 "kind": "ObjectUnionType",
                 "comment": "Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.",
-                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>",
-                "types": [
+                "memberTypes": [
                   {
                     "kind": "ObjectType",
                     "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnionMember1>",
@@ -2549,7 +2556,8 @@
                       }
                     ]
                   }
-                ]
+                ],
+                "shapeIdentifier": "<http://example.com/LazilyResolvedInterfaceUnion>"
               }
             }
           },
@@ -3189,8 +3197,7 @@
             "itemType": {
               "kind": "ObjectUnionType",
               "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
-              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>",
-              "types": [
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
                   "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
@@ -3217,7 +3224,8 @@
                     ]
                   }
                 }
-              ]
+              ],
+              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>"
             }
           },
           "visibility": "public"
@@ -3240,8 +3248,7 @@
             "itemType": {
               "kind": "ObjectUnionType",
               "comment": "Node shape sh:xone's node shapes that have properties with the union's type",
-              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>",
-              "types": [
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
                   "shapeIdentifier": "<http://example.com/RecursiveClassUnionMember1>",
@@ -3268,7 +3275,8 @@
                     ]
                   }
                 }
-              ]
+              ],
+              "shapeIdentifier": "<http://example.com/RecursiveClassUnion>"
             }
           },
           "visibility": "public"
@@ -3453,7 +3461,8 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
                   "comment": "Node shape that isn't an rdfs:Class.",
@@ -3498,7 +3507,8 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "IdentifierType",
                   "hasValue": [],
@@ -3525,7 +3535,8 @@
             "kind": "OptionType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "IdentifierType",
                   "hasValue": [],
@@ -3554,7 +3565,8 @@
           "shapeIdentifier": "_:n3-330",
           "type": {
             "kind": "UnionType",
-            "types": [
+            "memberDiscriminantValues": [],
+            "memberTypes": [
               {
                 "kind": "ObjectType",
                 "comment": "Node shape that isn't an rdfs:Class.",
@@ -3596,7 +3608,8 @@
           "shapeIdentifier": "_:n3-337",
           "type": {
             "kind": "UnionType",
-            "types": [
+            "memberDiscriminantValues": [],
+            "memberTypes": [
               {
                 "kind": "IdentifierType",
                 "hasValue": [],
@@ -3620,7 +3633,8 @@
           "shapeIdentifier": "_:n3-342",
           "type": {
             "kind": "UnionType",
-            "types": [
+            "memberDiscriminantValues": [],
+            "memberTypes": [
               {
                 "kind": "IdentifierType",
                 "hasValue": [],
@@ -3650,7 +3664,8 @@
             "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "ObjectType",
                   "comment": "Node shape that isn't an rdfs:Class.",
@@ -3695,7 +3710,8 @@
             "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "IdentifierType",
                   "hasValue": [],
@@ -3722,7 +3738,8 @@
             "kind": "SetType",
             "itemType": {
               "kind": "UnionType",
-              "types": [
+              "memberDiscriminantValues": [],
+              "memberTypes": [
                 {
                   "kind": "IdentifierType",
                   "hasValue": [],

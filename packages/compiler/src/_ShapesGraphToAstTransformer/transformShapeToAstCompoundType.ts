@@ -81,16 +81,18 @@ export function transformShapeToAstCompoundType(
         }
         memberTypes.push(memberTypeEither.unsafeCoerce());
 
-        const memberDiscriminantValue =
-          memberNodeShape.discriminantValue.extract();
-        if (memberDiscriminantValue) {
-          memberDiscriminantValues.push(memberDiscriminantValue);
-        } else if (memberDiscriminantValues.length > 0) {
-          return Left(
-            new Error(
-              `${shape} does not have a discriminant value while the other members of the compound type do`,
-            ),
-          );
+        if (compoundTypeKind === "UnionType") {
+          const memberDiscriminantValue =
+            memberNodeShape.discriminantValue.extract();
+          if (memberDiscriminantValue) {
+            memberDiscriminantValues.push(memberDiscriminantValue);
+          } else if (memberDiscriminantValues.length > 0) {
+            return Left(
+              new Error(
+                `${shape} does not have a discriminant value while the other members of the compound type do`,
+              ),
+            );
+          }
         }
       }
     } else if (memberShapes) {
@@ -105,18 +107,20 @@ export function transformShapeToAstCompoundType(
         }
         memberTypes.push(memberTypeEither.unsafeCoerce());
 
-        let memberDiscriminantValue: string | undefined;
-        if (memberShape instanceof input.NodeShape) {
-          memberDiscriminantValue = memberShape.discriminantValue.extract();
-        }
-        if (memberDiscriminantValue) {
-          memberDiscriminantValues.push(memberDiscriminantValue);
-        } else if (memberDiscriminantValues.length > 0) {
-          return Left(
-            new Error(
-              `${shape} does not have a discriminant value while the other members of the compound type do`,
-            ),
-          );
+        if (compoundTypeKind === "UnionType") {
+          let memberDiscriminantValue: string | undefined;
+          if (memberShape instanceof input.NodeShape) {
+            memberDiscriminantValue = memberShape.discriminantValue.extract();
+          }
+          if (memberDiscriminantValue) {
+            memberDiscriminantValues.push(memberDiscriminantValue);
+          } else if (memberDiscriminantValues.length > 0) {
+            return Left(
+              new Error(
+                `${memberShape} member of ${shape} does not have a discriminant value while the other members of the compound type do`,
+              ),
+            );
+          }
         }
       }
     } else {
@@ -126,11 +130,6 @@ export function transformShapeToAstCompoundType(
     if (memberTypes.length === 1) {
       return Either.of(memberTypes[0]);
     }
-
-    invariant(
-      memberDiscriminantValues.length === 0 ||
-        memberDiscriminantValues.length === memberTypes.length,
-    );
 
     // If every member type is an ObjectType, ObjectIntersectionType, or ObjectUnionType (the latter of which can be flattened to ObjectTypes),
     // produce a different AST type (ObjectIntersectionType or ObjectUnionType).
@@ -167,14 +166,32 @@ export function transformShapeToAstCompoundType(
     }
 
     // Compound type doesn't solely consist of ObjectTypes
-    return Either.of(
-      new (compoundTypeKind === "IntersectionType"
-        ? ast.IntersectionType
-        : ast.UnionType)({
-        ...transformShapeToAstAbstractTypeProperties(shape),
-        memberTypes,
-      }),
-    );
+    switch (compoundTypeKind) {
+      case "IntersectionType":
+        return Either.of(
+          new ast.IntersectionType({
+            ...transformShapeToAstAbstractTypeProperties(shape),
+            memberTypes,
+          }),
+        );
+      case "UnionType":
+        if (
+          memberDiscriminantValues.length > 0 &&
+          memberDiscriminantValues.length !== memberTypes.length
+        ) {
+          return Left(
+            new Error(`${shape} has members without discriminant values`),
+          );
+        }
+
+        return Either.of(
+          new ast.UnionType({
+            ...transformShapeToAstAbstractTypeProperties(shape),
+            memberDiscriminantValues,
+            memberTypes,
+          }),
+        );
+    }
   } finally {
     shapeStack.pop(shape);
   }
