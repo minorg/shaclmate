@@ -1,5 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
+import { Resource } from "rdfjs-resource";
 import * as ast from "../../ast/index.js";
 import { stringToValidTsIdentifier } from "./stringToValidTsIdentifier.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -45,5 +46,7 @@ export function tsName(astConstruct: {
     );
   }
 
-  throw new Error("should never reach this point");
+  throw new Error(
+    `should never reach this point (shapeIdentifier=${Resource.Identifier.toString(shapeIdentifier)})`,
+  );
 }

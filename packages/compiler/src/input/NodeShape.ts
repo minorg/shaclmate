@@ -111,6 +111,10 @@ export class NodeShape extends ShaclCoreNodeShape<
       : [];
   }
 
+  get discriminantValue(): Maybe<string> {
+    return this.generatedShaclmateNodeShape.discriminantValue;
+  }
+
   get export(): Maybe<boolean> {
     return this.generatedShaclmateNodeShape.export_;
   }

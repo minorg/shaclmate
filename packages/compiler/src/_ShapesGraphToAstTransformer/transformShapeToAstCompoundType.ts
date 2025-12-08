@@ -4,8 +4,7 @@ import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
-import type * as input from "../input/index.js";
-import { logger } from "../logger.js";
+import * as input from "../input/index.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
@@ -19,16 +18,15 @@ export function transformShapeToAstCompoundType(
 ): Either<Error, ast.Type> {
   shapeStack.push(shape);
   try {
-    let memberTypeEithers: readonly Either<Error, ast.Type>[];
     let compoundTypeKind: "IntersectionType" | "UnionType";
+    let memberShapes: readonly input.Shape[];
 
     if (shape.constraints.and.length > 0) {
-      memberTypeEithers = shape.constraints.and.map((memberShape) =>
-        this.transformShapeToAstType(memberShape, shapeStack),
-      );
+      memberShapes = shape.constraints.and;
       compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.classes.length > 0) {
-      memberTypeEithers = shape.constraints.classes.map((classIri) => {
+      const memberShapesMutable: input.NodeShape[] = [];
+      for (const classIri of shape.constraints.classes) {
         if (
           classIri.equals(owl.Class) ||
           classIri.equals(owl.Thing) ||
@@ -50,46 +48,65 @@ export function transformShapeToAstCompoundType(
           );
         }
 
-        return this.transformNodeShapeToAstType(classNodeShape);
-      });
-      compoundTypeKind = "IntersectionType";
-
-      if (Either.rights(memberTypeEithers).length === 0) {
-        // This frequently happens with e.g., sh:class skos:Concept
-        logger.debug(
-          "shape %s sh:class(es) did not map to any node shapes",
-          shape,
-        );
-        return memberTypeEithers[0];
+        memberShapesMutable.push(classNodeShape);
       }
-    } else if (shape.constraints.nodes.length > 0) {
-      memberTypeEithers = shape.constraints.nodes.map((nodeShape) =>
-        this.transformNodeShapeToAstType(nodeShape),
+      invariant(
+        memberShapesMutable.length === shape.constraints.classes.length,
       );
+      memberShapes = memberShapesMutable;
+      compoundTypeKind = "IntersectionType";
+    } else if (shape.constraints.nodes.length > 0) {
+      memberShapes = shape.constraints.nodes;
       compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.xone.length > 0) {
-      memberTypeEithers = shape.constraints.xone.map((memberShape) =>
-        this.transformShapeToAstType(memberShape, shapeStack),
-      );
+      memberShapes = shape.constraints.xone;
       compoundTypeKind = "UnionType";
     } else {
       return Left(new Error(`unable to transform ${shape} into an AST type`));
     }
-    invariant(memberTypeEithers.length > 0);
+    invariant(memberShapes.length > 0);
 
+    const memberDiscriminantValues: string[] = [];
     const memberTypes: ast.Type[] = [];
-    for (const memberTypeEither of memberTypeEithers) {
+    for (const memberShape of memberShapes) {
+      let memberDiscriminantValue: string | undefined;
+      let memberTypeEither: Either<Error, ast.Type>;
+      if (memberShape instanceof input.NodeShape) {
+        memberDiscriminantValue = memberShape.discriminantValue.extract();
+        memberTypeEither = this.transformNodeShapeToAstType(memberShape);
+      } else {
+        memberTypeEither = this.transformShapeToAstType(
+          memberShape,
+          shapeStack,
+        );
+      }
       if (memberTypeEither.isLeft()) {
         return memberTypeEither;
       }
-      const memberType = memberTypeEither.unsafeCoerce();
-      memberTypes.push(memberType);
+      memberTypes.push(memberTypeEither.unsafeCoerce());
+
+      if (memberDiscriminantValue) {
+        memberDiscriminantValues.push(memberDiscriminantValue);
+      } else if (memberDiscriminantValues.length > 0) {
+        return Left(
+          new Error(
+            `${shape} does not have a discriminant value while the other members of the compound type do`,
+          ),
+        );
+      }
     }
 
     if (memberTypes.length === 1) {
       return Either.of(memberTypes[0]);
     }
 
+    invariant(
+      memberDiscriminantValues.length === 0 ||
+        memberDiscriminantValues.length === memberTypes.length,
+    );
+
+    // If every member type is an ObjectType, ObjectIntersectionType, or ObjectUnionType (the latter of which can be flattened to ObjectTypes),
+    // produce a different AST type (ObjectIntersectionType or ObjectUnionType).
     if (
       memberTypes.every((memberType) => {
         switch (memberType.kind) {

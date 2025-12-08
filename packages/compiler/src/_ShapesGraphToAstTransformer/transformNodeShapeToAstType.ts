@@ -46,6 +46,7 @@ function transformNodeShapeToAstListType(
   invariant(nodeShape.isList);
 
   // Put a placeholder in the cache to deal with cyclic references
+  // Remove the placeholder if the transformation fails.
   const listType = new ast.ListType<ast.Type>({
     comment: nodeShape.comment,
     identifierNodeKind: nodeShape.nodeKinds.has("BlankNode")
@@ -59,87 +60,96 @@ function transformNodeShapeToAstListType(
     toRdfTypes: nodeShape.toRdfTypes,
   });
 
-  // Will be overwritten if the transformation fails.
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, listType);
 
-  const properties: ast.ObjectType.Property[] = [];
-  for (const propertyShape of nodeShape.constraints.properties) {
-    const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty({
-      // Just need a dummy ast.ObjectType here to get the properties transformed.
-      objectType: listPropertiesObjectType,
-      propertyShape,
-    });
-    if (propertyEither.isLeft()) {
-      logger.warn(
-        "error transforming %s %s: %s",
-        nodeShape,
-        propertyShape,
-        (propertyEither.extract() as Error).message,
+  return (() => {
+    const properties: ast.ObjectType.Property[] = [];
+    for (const propertyShape of nodeShape.constraints.properties) {
+      const propertyEither = this.transformPropertyShapeToAstObjectTypeProperty(
+        {
+          // Just need a dummy ast.ObjectType here to get the properties transformed.
+          objectType: listPropertiesObjectType,
+          propertyShape,
+        },
       );
-      continue;
-      // return property;
+      if (propertyEither.isLeft()) {
+        logger.warn(
+          "error transforming %s %s: %s",
+          nodeShape,
+          propertyShape,
+          (propertyEither.extract() as Error).message,
+        );
+        continue;
+        // return property;
+      }
+      properties.push(propertyEither.unsafeCoerce());
     }
-    properties.push(propertyEither.unsafeCoerce());
-  }
 
-  if (properties.length !== 2) {
-    return Left(new Error(`${nodeShape} does not have exactly two properties`));
-  }
+    if (properties.length !== 2) {
+      return Left(
+        new Error(`${nodeShape} does not have exactly two properties`),
+      );
+    }
 
-  // rdf:first can have any type
-  // The type of the rdf:first property is the list item type.
-  const firstProperty = properties.find((property) =>
-    property.path.equals(rdf.first),
-  );
-  if (!firstProperty) {
-    return Left(new Error(`${nodeShape} does not have an rdf:first property`));
-  }
-
-  const restProperty = properties.find((property) =>
-    property.path.equals(rdf.rest),
-  );
-  if (!restProperty) {
-    return Left(new Error(`${nodeShape} does not have an rdf:rest property`));
-  }
-  if (restProperty.type.kind !== "UnionType") {
-    return Left(new Error(`${nodeShape} rdf:rest property is not sh:xone`));
-  }
-  if (restProperty.type.memberTypes.length !== 2) {
-    return Left(
-      new Error(
-        `${nodeShape} rdf:rest property sh:xone does not have exactly two member types`,
-      ),
+    // rdf:first can have any type
+    // The type of the rdf:first property is the list item type.
+    const firstProperty = properties.find((property) =>
+      property.path.equals(rdf.first),
     );
-  }
-  // rdf:rest should be sh:xone ( [ sh:class nodeShape ] [ sh:hasValue rdf:nil ] )
-  if (
-    !restProperty.type.memberTypes.find(
-      (type) =>
-        type.kind === "ListType" &&
-        type.shapeIdentifier.equals(nodeShape.identifier),
-    )
-  ) {
-    return Left(
-      new Error(
-        `${nodeShape} rdf:rest property sh:xone is not recursive into the node shape`,
-      ),
-    );
-  }
-  if (
-    !restProperty.type.memberTypes.find(
-      (type) => type.kind === "IdentifierType",
-    )
-  ) {
-    return Left(
-      new Error(
-        `${nodeShape} rdf:rest property sh:xone does not include sh:hasValue rdf:nil`,
-      ),
-    );
-  }
+    if (!firstProperty) {
+      return Left(
+        new Error(`${nodeShape} does not have an rdf:first property`),
+      );
+    }
 
-  listType.itemType = firstProperty.type;
+    const restProperty = properties.find((property) =>
+      property.path.equals(rdf.rest),
+    );
+    if (!restProperty) {
+      return Left(new Error(`${nodeShape} does not have an rdf:rest property`));
+    }
+    if (restProperty.type.kind !== "UnionType") {
+      return Left(new Error(`${nodeShape} rdf:rest property is not sh:xone`));
+    }
+    if (restProperty.type.memberTypes.length !== 2) {
+      return Left(
+        new Error(
+          `${nodeShape} rdf:rest property sh:xone does not have exactly two member types`,
+        ),
+      );
+    }
+    // rdf:rest should be sh:xone ( [ sh:class nodeShape ] [ sh:hasValue rdf:nil ] )
+    if (
+      !restProperty.type.memberTypes.find(
+        (type) =>
+          type.kind === "ListType" &&
+          type.shapeIdentifier.equals(nodeShape.identifier),
+      )
+    ) {
+      return Left(
+        new Error(
+          `${nodeShape} rdf:rest property sh:xone is not recursive into the node shape`,
+        ),
+      );
+    }
+    if (
+      !restProperty.type.memberTypes.find(
+        (type) => type.kind === "IdentifierType",
+      )
+    ) {
+      return Left(
+        new Error(
+          `${nodeShape} rdf:rest property sh:xone does not include sh:hasValue rdf:nil`,
+        ),
+      );
+    }
 
-  return Either.of(listType);
+    listType.itemType = firstProperty.type;
+
+    return Either.of<Error, ast.ListType<ast.Type>>(listType);
+  })().ifLeft(() => {
+    this.nodeShapeAstTypesByIdentifier.delete(nodeShape.identifier);
+  });
 }
 
 export function transformNodeShapeToAstObjectCompoundType(
@@ -196,21 +206,27 @@ export function transformNodeShapeToAstObjectCompoundType(
   });
 
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compoundType);
-
-  for (const memberNodeShape of compoundTypeNodeShapes) {
-    const memberTypeEither = this.transformNodeShapeToAstType(memberNodeShape);
-    if (memberTypeEither.isLeft()) {
-      return memberTypeEither;
+  return (() => {
+    for (const memberNodeShape of compoundTypeNodeShapes) {
+      const memberTypeEither =
+        this.transformNodeShapeToAstType(memberNodeShape);
+      if (memberTypeEither.isLeft()) {
+        return memberTypeEither;
+      }
+      const addMemberTypeResult = compoundType.addMemberType(
+        memberTypeEither.unsafeCoerce(),
+      );
+      if (addMemberTypeResult.isLeft()) {
+        return addMemberTypeResult;
+      }
     }
-    const addMemberTypeResult = compoundType.addMemberType(
-      memberTypeEither.unsafeCoerce(),
+
+    return Either.of<Error, ast.ObjectIntersectionType | ast.ObjectUnionType>(
+      compoundType,
     );
-    if (addMemberTypeResult.isLeft()) {
-      return addMemberTypeResult;
-    }
-  }
-
-  return Either.of(compoundType);
+  })().ifLeft(() => {
+    this.nodeShapeAstTypesByIdentifier.delete(nodeShape.identifier);
+  });
 }
 
 export function transformNodeShapeToAstType(
@@ -268,6 +284,7 @@ export function transformNodeShapeToAstType(
   }
 
   // Put a placeholder in the cache to deal with cyclic references
+  // Remove the placeholder if the transformation fails.
   // If this node shape's properties (directly or indirectly) refer to the node shape itself,
   // we'll return this placeholder.
   const objectType = new ast.ObjectType({
@@ -298,52 +315,57 @@ export function transformNodeShapeToAstType(
     tsObjectDeclarationType:
       nodeShape.tsObjectDeclarationType.orDefault("class"),
   });
+
   this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, objectType);
 
-  // Populate ancestor and descendant object types
-  const relatedObjectTypes = (
-    relatedNodeShapes: readonly input.NodeShape[],
-  ): readonly ast.ObjectType[] => {
-    return relatedNodeShapes.flatMap((relatedNodeShape) =>
-      this.transformNodeShapeToAstType(relatedNodeShape)
-        .toMaybe()
-        .filter((astType) => astType.kind === "ObjectType")
-        .toList(),
+  return (() => {
+    // Populate ancestor and descendant object types
+    const relatedObjectTypes = (
+      relatedNodeShapes: readonly input.NodeShape[],
+    ): readonly ast.ObjectType[] => {
+      return relatedNodeShapes.flatMap((relatedNodeShape) =>
+        this.transformNodeShapeToAstType(relatedNodeShape)
+          .toMaybe()
+          .filter((astType) => astType.kind === "ObjectType")
+          .toList(),
+      );
+    };
+    objectType.addAncestorObjectTypes(
+      ...relatedObjectTypes(nodeShape.ancestorNodeShapes),
     );
-  };
-  objectType.addAncestorObjectTypes(
-    ...relatedObjectTypes(nodeShape.ancestorNodeShapes),
-  );
-  objectType.addChildObjectTypes(
-    ...relatedObjectTypes(nodeShape.childNodeShapes),
-  );
-  objectType.addDescendantObjectTypes(
-    ...relatedObjectTypes(nodeShape.descendantNodeShapes),
-  );
-  objectType.addParentObjectTypes(
-    ...relatedObjectTypes(nodeShape.parentNodeShapes),
-  );
+    objectType.addChildObjectTypes(
+      ...relatedObjectTypes(nodeShape.childNodeShapes),
+    );
+    objectType.addDescendantObjectTypes(
+      ...relatedObjectTypes(nodeShape.descendantNodeShapes),
+    );
+    objectType.addParentObjectTypes(
+      ...relatedObjectTypes(nodeShape.parentNodeShapes),
+    );
 
-  // Populate properties
-  for (const propertyShape of nodeShape.constraints.properties) {
-    this.transformPropertyShapeToAstObjectTypeProperty({
-      objectType,
-      propertyShape,
-    })
-      .ifLeft((error) => {
-        logger.warn(
-          "error transforming %s %s: %s",
-          nodeShape,
-          propertyShape,
-          error.message,
-        );
+    // Populate properties
+    for (const propertyShape of nodeShape.constraints.properties) {
+      this.transformPropertyShapeToAstObjectTypeProperty({
+        objectType,
+        propertyShape,
       })
-      .ifRight((property) => {
-        objectType.addProperties(property);
-      });
-  }
+        .ifLeft((error) => {
+          logger.warn(
+            "error transforming %s %s: %s",
+            nodeShape,
+            propertyShape,
+            error.message,
+          );
+        })
+        .ifRight((property) => {
+          objectType.addProperties(property);
+        });
+    }
 
-  objectType.sortProperties();
+    objectType.sortProperties();
 
-  return Either.of(objectType);
+    return Either.of<Error, ast.ObjectType>(objectType);
+  })().ifLeft(() => {
+    this.nodeShapeAstTypesByIdentifier.delete(nodeShape.identifier);
+  });
 }
