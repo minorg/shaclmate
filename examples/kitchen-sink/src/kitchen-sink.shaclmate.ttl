@@ -213,11 +213,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:path :dateOrDateTimeProperty ;
         sh:xone ([
-                shaclmate:name "date" ;
+                rdfs:label "date" ;
                 sh:datatype xsd:date
             ]
             [
-                shaclmate:name "dateTime" ;
+                rdfs:label "dateTime" ;
                 sh:datatype xsd:dateTime
             ]
         )
@@ -225,11 +225,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:path :dateTimeOrDateProperty ;
         sh:xone ([
-                shaclmate:name "dateTime" ;
+                rdfs:label "dateTime" ;
                 sh:datatype xsd:dateTime
             ]
             [
-                shaclmate:name "date" ;
+                rdfs:label "date" ;
                 sh:datatype xsd:date
             ]
         )
@@ -237,11 +237,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:path :dateOrStringProperty ;
         sh:xone ([
-                shaclmate:name "date" ;
+                rdfs:label "date" ;
                 sh:datatype xsd:date
             ]
             [
-                shaclmate:name "string" ;
+                rdfs:label "string" ;
                 sh:datatype xsd:string
             ]
         )
@@ -249,11 +249,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
         sh:maxCount 1 ;
         sh:path :stringOrDateProperty ;
         sh:xone ([
-                shaclmate:name "string" ;
+                rdfs:label "string" ;
                 sh:datatype xsd:string
             ]
             [
-                shaclmate:name "date" ;
+                rdfs:label "date" ;
                 sh:datatype xsd:date
             ]
         )

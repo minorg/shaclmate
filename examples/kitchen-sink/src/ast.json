@@ -432,7 +432,7 @@
               "types": [
                 {
                   "kind": "LiteralType",
-                  "name": "date",
+                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -441,7 +441,7 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "name": "dateTime",
+                  "label": "dateTime",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -465,7 +465,7 @@
               "types": [
                 {
                   "kind": "LiteralType",
-                  "name": "dateTime",
+                  "label": "dateTime",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#dateTime"
@@ -474,7 +474,7 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "name": "date",
+                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -498,7 +498,7 @@
               "types": [
                 {
                   "kind": "LiteralType",
-                  "name": "date",
+                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -507,7 +507,7 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "name": "string",
+                  "label": "string",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
@@ -531,7 +531,7 @@
               "types": [
                 {
                   "kind": "LiteralType",
-                  "name": "string",
+                  "label": "string",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#string"
@@ -540,7 +540,7 @@
                 },
                 {
                   "kind": "LiteralType",
-                  "name": "date",
+                  "label": "date",
                   "datatype": {
                     "termType": "NamedNode",
                     "value": "http://www.w3.org/2001/XMLSchema#date"
@@ -1387,7 +1387,6 @@
             "kind": "LazyObjectOptionType",
             "partialType": {
               "kind": "OptionType",
-              "name": "NamedDefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "NamedDefaultPartial",
@@ -1430,7 +1429,6 @@
             "kind": "LazyObjectOptionType",
             "partialType": {
               "kind": "OptionType",
-              "name": "DefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
@@ -1884,7 +1882,6 @@
             "kind": "LazyObjectOptionType",
             "partialType": {
               "kind": "OptionType",
-              "name": "DefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
@@ -1940,7 +1937,6 @@
             "kind": "LazyObjectSetType",
             "partialType": {
               "kind": "SetType",
-              "name": "DefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
@@ -2073,7 +2069,6 @@
             "kind": "LazyObjectOptionType",
             "partialType": {
               "kind": "OptionType",
-              "name": "NamedDefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "NamedDefaultPartial",
@@ -2116,7 +2111,6 @@
             "kind": "LazyObjectOptionType",
             "partialType": {
               "kind": "OptionType",
-              "name": "DefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
@@ -2570,7 +2564,6 @@
             "kind": "LazyObjectOptionType",
             "partialType": {
               "kind": "OptionType",
-              "name": "DefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
@@ -2626,7 +2619,6 @@
             "kind": "LazyObjectSetType",
             "partialType": {
               "kind": "SetType",
-              "name": "DefaultPartial",
               "itemType": {
                 "kind": "ObjectType",
                 "name": "DefaultPartial",
