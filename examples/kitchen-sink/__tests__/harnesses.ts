@@ -108,6 +108,32 @@ export const harnesses = {
     }),
     kitchenSink.ConvertibleTypePropertiesClass,
   ),
+  dateUnionProperties1: new ClassHarness(
+    new kitchenSink.DateUnionPropertiesClass({
+      $identifier,
+      dateOrDateTimeProperty: { type: "date", value: new Date("2025-12-08") },
+      dateTimeOrDateProperty: {
+        type: "dateTime",
+        value: new Date("2025-12-08T21:17:27+00:00"),
+      },
+      dateOrStringProperty: { type: "date", value: new Date("2025-12-08") },
+      stringOrDateProperty: { type: "string", value: "2025-12-08" }, // Shouldn't parse as a Date
+    }),
+    kitchenSink.DateUnionPropertiesClass,
+  ),
+  dateUnionProperties2: new ClassHarness(
+    new kitchenSink.DateUnionPropertiesClass({
+      $identifier,
+      dateOrDateTimeProperty: {
+        type: "dateTime",
+        value: new Date("2025-12-08T21:17:27+00:00"),
+      },
+      dateTimeOrDateProperty: { type: "date", value: new Date("2025-12-08") },
+      dateOrStringProperty: { type: "string", value: "2025-12-08" }, // Shouldn't parse as a Date
+      stringOrDateProperty: { type: "date", value: new Date("2025-12-08") },
+    }),
+    kitchenSink.DateUnionPropertiesClass,
+  ),
   defaultValuePropertiesClass: new ClassHarness(
     new kitchenSink.DefaultValuePropertiesClass({
       $identifier,
