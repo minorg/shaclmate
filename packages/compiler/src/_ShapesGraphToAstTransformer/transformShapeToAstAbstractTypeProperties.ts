@@ -4,14 +4,12 @@ import * as input from "../input/index.js";
 type AstAbstractTypeProperties = {
   readonly comment: Maybe<string>;
   readonly label: Maybe<string>;
-  readonly name: Maybe<string>;
 };
 
 namespace AstAbstractTypeProperties {
   export const empty: AstAbstractTypeProperties = {
     comment: Maybe.empty(),
     label: Maybe.empty(),
-    name: Maybe.empty(),
   };
 }
 
@@ -36,6 +34,5 @@ export function transformShapeToAstAbstractTypeProperties(
   return {
     comment: shape.comment,
     label: shape.label,
-    name: shape.shaclmateName,
   };
 }

@@ -29,6 +29,11 @@ export abstract class AbstractObjectCompoundType<
   abstract override readonly kind: "ObjectIntersectionType" | "ObjectUnionType";
 
   /**
+   * Name of this type, from shaclmate:name.
+   */
+  readonly name: Maybe<string>;
+
+  /**
    * Identifier of the shape this ObjectType was derived from.
    */
   readonly shapeIdentifier: BlankNode | NamedNode;
@@ -40,13 +45,12 @@ export abstract class AbstractObjectCompoundType<
 
   constructor({
     export_,
+    name,
     shapeIdentifier,
     tsFeatures,
     ...superParameters
   }: {
-    comment: Maybe<string>;
     export_: boolean;
-    label: Maybe<string>;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | NamedNode;
     tsFeatures: Maybe<ReadonlySet<TsFeature>>;
@@ -55,6 +59,7 @@ export abstract class AbstractObjectCompoundType<
   >[0]) {
     super(superParameters);
     this.export = export_;
+    this.name = name;
     this.shapeIdentifier = shapeIdentifier;
     this.#tsFeatures = tsFeatures;
   }
@@ -89,7 +94,6 @@ export abstract class AbstractObjectCompoundType<
       hasValues: [],
       in_: [...memberIdentifierTypesIn],
       label: Maybe.empty(),
-      name: Maybe.empty(),
       nodeKinds: memberIdentifierTypeNodeKinds,
     });
   }

@@ -15,19 +15,12 @@ export abstract class AbstractType {
    */
   readonly label: Maybe<string> = Maybe.empty();
 
-  /**
-   * Name of this type, usually derived from sh:name or shaclmate:name.
-   */
-  readonly name: Maybe<string> = Maybe.empty();
-
   constructor({
     comment,
     label,
-    name,
-  }: { comment: Maybe<string>; label: Maybe<string>; name: Maybe<string> }) {
+  }: { comment: Maybe<string>; label: Maybe<string> }) {
     this.comment = comment;
     this.label = label;
-    this.name = name;
   }
 
   equals(other: AbstractType): boolean {
@@ -36,10 +29,6 @@ export abstract class AbstractType {
     }
 
     if (!maybeEquals(this.label, other.label, strictEquals)) {
-      return false;
-    }
-
-    if (!maybeEquals(this.name, other.name, strictEquals)) {
       return false;
     }
 

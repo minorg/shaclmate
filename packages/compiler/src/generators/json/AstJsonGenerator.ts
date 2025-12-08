@@ -55,7 +55,6 @@ function typeToJson(type: ast.Type): AstJson.Type {
     kind: type.kind as AstJson.Type["kind"],
     comment: type.comment.extract(),
     label: type.label.extract(),
-    name: type.name.extract(),
   };
 
   switch (type.kind) {
@@ -101,12 +100,14 @@ function typeToJson(type: ast.Type): AstJson.Type {
     case "ObjectUnionType":
       return {
         ...common,
+        name: type.name.extract(),
         shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         types: type.memberTypes.map((type) => typeToJson(type)),
       };
     case "ObjectType":
       return {
         ...common,
+        name: type.name.extract(),
         shapeIdentifier: Resource.Identifier.toString(type.shapeIdentifier),
         fromRdfType: type.fromRdfType.map(termToJson).extract(),
         parentObjectTypes:

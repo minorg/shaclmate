@@ -83,6 +83,11 @@ export class ObjectType extends AbstractType {
   readonly kind = "ObjectType";
 
   /**
+   * Name of this type, from shaclmate:name.
+   */
+  readonly name: Maybe<string>;
+
+  /**
    * Immediate parent ObjectTypes of this Object types.
    *
    * Mutable to support cycle-handling logic in the compiler.
@@ -141,6 +146,7 @@ export class ObjectType extends AbstractType {
     fromRdfType,
     identifierMintingStrategy,
     identifierType,
+    name,
     shapeIdentifier,
     synthetic,
     toRdfTypes,
@@ -155,6 +161,7 @@ export class ObjectType extends AbstractType {
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierType: IdentifierType;
+    name: Maybe<string>;
     shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
     toRdfTypes: readonly NamedNode[];
@@ -169,6 +176,7 @@ export class ObjectType extends AbstractType {
     this.fromRdfType = fromRdfType;
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierType = identifierType;
+    this.name = name;
     this.shapeIdentifier = shapeIdentifier;
     this.synthetic = synthetic;
     this.toRdfTypes = toRdfTypes;

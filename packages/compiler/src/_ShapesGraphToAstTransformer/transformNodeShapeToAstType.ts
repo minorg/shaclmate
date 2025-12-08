@@ -22,7 +22,6 @@ const listPropertiesObjectType = new ast.ObjectType({
     defaultValue: Maybe.empty(),
     hasValues: [],
     label: Maybe.empty(),
-    name: Maybe.empty(),
     in_: [],
     nodeKinds: new Set(["BlankNode", "NamedNode"]),
   }),
@@ -55,7 +54,6 @@ function transformNodeShapeToAstListType(
     itemType: ast.PlaceholderType.instance,
     label: nodeShape.label,
     mutable: nodeShape.mutable.orDefault(false),
-    name: nodeShape.shaclmateName,
     identifierMintingStrategy: nodeShape.identifierMintingStrategy,
     shapeIdentifier: this.shapeIdentifier(nodeShape),
     toRdfTypes: nodeShape.toRdfTypes,
@@ -285,7 +283,6 @@ export function transformNodeShapeToAstType(
       hasValues: [],
       in_: identifierIn,
       label: Maybe.empty(),
-      name: Maybe.empty(),
       nodeKinds:
         identifierIn.length === 0
           ? nodeShape.nodeKinds

@@ -109,6 +109,7 @@ export function transformShapeToAstCompoundType(
       )({
         ...transformShapeToAstAbstractTypeProperties(shape),
         export_: true,
+        name: shape.shaclmateName,
         shapeIdentifier: this.shapeIdentifier(shape),
         tsFeatures: Maybe.empty(),
       });
