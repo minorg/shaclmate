@@ -19,13 +19,16 @@ export function transformShapeToAstCompoundType(
   shapeStack.push(shape);
   try {
     let compoundTypeKind: "IntersectionType" | "UnionType";
-    let memberShapes: readonly input.Shape[];
+    // Distinguish constraints that take arbitrary shapes from those that only take node shapes
+    // With the latter we'll do special transformations.
+    let memberShapes: readonly input.Shape[] | undefined;
+    let memberNodeShapes: readonly input.NodeShape[] | undefined;
 
     if (shape.constraints.and.length > 0) {
       memberShapes = shape.constraints.and;
       compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.classes.length > 0) {
-      const memberShapesMutable: input.NodeShape[] = [];
+      const memberNodeShapesMutable: input.NodeShape[] = [];
       for (const classIri of shape.constraints.classes) {
         if (
           classIri.equals(owl.Class) ||
@@ -48,15 +51,15 @@ export function transformShapeToAstCompoundType(
           );
         }
 
-        memberShapesMutable.push(classNodeShape);
+        memberNodeShapesMutable.push(classNodeShape);
       }
       invariant(
-        memberShapesMutable.length === shape.constraints.classes.length,
+        memberNodeShapesMutable.length === shape.constraints.classes.length,
       );
-      memberShapes = memberShapesMutable;
+      memberNodeShapes = memberNodeShapesMutable;
       compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.nodes.length > 0) {
-      memberShapes = shape.constraints.nodes;
+      memberNodeShapes = shape.constraints.nodes;
       compoundTypeKind = "IntersectionType";
     } else if (shape.constraints.xone.length > 0) {
       memberShapes = shape.constraints.xone;
@@ -64,36 +67,60 @@ export function transformShapeToAstCompoundType(
     } else {
       return Left(new Error(`unable to transform ${shape} into an AST type`));
     }
-    invariant(memberShapes.length > 0);
 
     const memberDiscriminantValues: string[] = [];
     const memberTypes: ast.Type[] = [];
-    for (const memberShape of memberShapes) {
-      let memberDiscriminantValue: string | undefined;
-      let memberTypeEither: Either<Error, ast.Type>;
-      if (memberShape instanceof input.NodeShape) {
-        memberDiscriminantValue = memberShape.discriminantValue.extract();
-        memberTypeEither = this.transformNodeShapeToAstType(memberShape);
-      } else {
-        memberTypeEither = this.transformShapeToAstType(
+    if (memberNodeShapes) {
+      invariant(memberNodeShapes.length > 0);
+      invariant(!memberShapes);
+      for (const memberNodeShape of memberNodeShapes) {
+        const memberTypeEither =
+          this.transformNodeShapeToAstType(memberNodeShape);
+        if (memberTypeEither.isLeft()) {
+          return memberTypeEither;
+        }
+        memberTypes.push(memberTypeEither.unsafeCoerce());
+
+        const memberDiscriminantValue =
+          memberNodeShape.discriminantValue.extract();
+        if (memberDiscriminantValue) {
+          memberDiscriminantValues.push(memberDiscriminantValue);
+        } else if (memberDiscriminantValues.length > 0) {
+          return Left(
+            new Error(
+              `${shape} does not have a discriminant value while the other members of the compound type do`,
+            ),
+          );
+        }
+      }
+    } else if (memberShapes) {
+      invariant(memberShapes.length > 0);
+      for (const memberShape of memberShapes) {
+        const memberTypeEither = this.transformShapeToAstType(
           memberShape,
           shapeStack,
         );
-      }
-      if (memberTypeEither.isLeft()) {
-        return memberTypeEither;
-      }
-      memberTypes.push(memberTypeEither.unsafeCoerce());
+        if (memberTypeEither.isLeft()) {
+          return memberTypeEither;
+        }
+        memberTypes.push(memberTypeEither.unsafeCoerce());
 
-      if (memberDiscriminantValue) {
-        memberDiscriminantValues.push(memberDiscriminantValue);
-      } else if (memberDiscriminantValues.length > 0) {
-        return Left(
-          new Error(
-            `${shape} does not have a discriminant value while the other members of the compound type do`,
-          ),
-        );
+        let memberDiscriminantValue: string | undefined;
+        if (memberShape instanceof input.NodeShape) {
+          memberDiscriminantValue = memberShape.discriminantValue.extract();
+        }
+        if (memberDiscriminantValue) {
+          memberDiscriminantValues.push(memberDiscriminantValue);
+        } else if (memberDiscriminantValues.length > 0) {
+          return Left(
+            new Error(
+              `${shape} does not have a discriminant value while the other members of the compound type do`,
+            ),
+          );
+        }
       }
+    } else {
+      invariant(false);
     }
 
     if (memberTypes.length === 1) {

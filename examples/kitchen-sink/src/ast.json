@@ -431,32 +431,22 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "date",
-                  "shapeIdentifier": "_:n3-156",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "dateTime",
-                  "shapeIdentifier": "_:n3-158",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -474,32 +464,22 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "dateTime",
-                  "shapeIdentifier": "_:n3-161",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "date",
-                  "shapeIdentifier": "_:n3-163",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -517,32 +497,22 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "date",
-                  "shapeIdentifier": "_:n3-166",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "string",
-                  "shapeIdentifier": "_:n3-168",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -560,32 +530,22 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "string",
-                  "shapeIdentifier": "_:n3-171",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "ObjectType",
+                  "kind": "LiteralType",
                   "label": "date",
-                  "shapeIdentifier": "_:n3-173",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -2741,8 +2701,25 @@
           "shapeIdentifier": "_:n3-257",
           "type": {
             "kind": "OptionType",
+            "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
             "itemType": {
-              "kind": "TermType"
+              "kind": "ListType",
+              "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
+              "itemType": {
+                "kind": "ObjectType",
+                "comment": "Node shape that isn't an rdfs:Class.",
+                "shapeIdentifier": "<http://example.com/NonClass>",
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                }
+              },
+              "mutable": false
             }
           },
           "visibility": "public"
@@ -2754,8 +2731,18 @@
           "shapeIdentifier": "_:n3-258",
           "type": {
             "kind": "OptionType",
+            "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
             "itemType": {
-              "kind": "TermType"
+              "kind": "ListType",
+              "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
+              "itemType": {
+                "kind": "IdentifierType",
+                "hasValue": [],
+                "nodeKinds": [
+                  "NamedNode"
+                ]
+              },
+              "mutable": false
             }
           },
           "visibility": "public"
@@ -2767,8 +2754,19 @@
           "shapeIdentifier": "_:n3-259",
           "type": {
             "kind": "OptionType",
+            "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
             "itemType": {
-              "kind": "TermType"
+              "kind": "ListType",
+              "comment": "A node shape that models an RDF list. Should be transformed into a list data structure when used as a property instead of surfacing the RDF list structure in code.",
+              "itemType": {
+                "kind": "LiteralType",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hasValue": []
+              },
+              "mutable": false
             }
           },
           "visibility": "public"
@@ -2808,7 +2806,16 @@
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "TermType"
+              "kind": "ListType",
+              "itemType": {
+                "kind": "LiteralType",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hasValue": []
+              },
+              "mutable": true
             }
           },
           "visibility": "public"
@@ -3449,7 +3456,8 @@
               "types": [
                 {
                   "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-315",
+                  "comment": "Node shape that isn't an rdfs:Class.",
+                  "shapeIdentifier": "<http://example.com/NonClass>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
@@ -3461,28 +3469,19 @@
                   }
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-317",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "NamedNode"
+                  ]
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-319",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3501,28 +3500,15 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-322",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "NamedNode"
+                  ]
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-324",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "LiteralType",
+                  "hasValue": []
                 }
               ]
             }
@@ -3541,28 +3527,19 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-327",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "NamedNode"
+                  ]
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-329",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3580,7 +3557,8 @@
             "types": [
               {
                 "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-332",
+                "comment": "Node shape that isn't an rdfs:Class.",
+                "shapeIdentifier": "<http://example.com/NonClass>",
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
@@ -3592,28 +3570,19 @@
                 }
               },
               {
-                "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-334",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "NamedNode"
-                  ]
-                }
+                "kind": "IdentifierType",
+                "hasValue": [],
+                "nodeKinds": [
+                  "NamedNode"
+                ]
               },
               {
-                "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-336",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                }
+                "kind": "LiteralType",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hasValue": []
               }
             ]
           },
@@ -3629,28 +3598,15 @@
             "kind": "UnionType",
             "types": [
               {
-                "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-339",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "NamedNode"
-                  ]
-                }
+                "kind": "IdentifierType",
+                "hasValue": [],
+                "nodeKinds": [
+                  "NamedNode"
+                ]
               },
               {
-                "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-341",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                }
+                "kind": "LiteralType",
+                "hasValue": []
               }
             ]
           },
@@ -3666,28 +3622,19 @@
             "kind": "UnionType",
             "types": [
               {
-                "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-344",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "NamedNode"
-                  ]
-                }
+                "kind": "IdentifierType",
+                "hasValue": [],
+                "nodeKinds": [
+                  "NamedNode"
+                ]
               },
               {
-                "kind": "ObjectType",
-                "shapeIdentifier": "_:n3-346",
-                "identifierMintingStrategy": "blankNode",
-                "identifierType": {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
-                }
+                "kind": "LiteralType",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hasValue": []
               }
             ]
           },
@@ -3706,7 +3653,8 @@
               "types": [
                 {
                   "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-349",
+                  "comment": "Node shape that isn't an rdfs:Class.",
+                  "shapeIdentifier": "<http://example.com/NonClass>",
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
@@ -3718,28 +3666,19 @@
                   }
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-351",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "NamedNode"
+                  ]
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-353",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3758,28 +3697,15 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-356",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "NamedNode"
+                  ]
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-358",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "LiteralType",
+                  "hasValue": []
                 }
               ]
             }
@@ -3798,28 +3724,19 @@
               "kind": "UnionType",
               "types": [
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-361",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "NamedNode"
+                  ]
                 },
                 {
-                  "kind": "ObjectType",
-                  "shapeIdentifier": "_:n3-363",
-                  "identifierMintingStrategy": "blankNode",
-                  "identifierType": {
-                    "kind": "IdentifierType",
-                    "hasValue": [],
-                    "nodeKinds": [
-                      "BlankNode",
-                      "NamedNode"
-                    ]
-                  }
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
