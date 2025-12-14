@@ -2082,7 +2082,7 @@ export class UnionDiscriminantsClass {
   private _$identifier?: UnionDiscriminantsClass.$Identifier;
   readonly $type = "UnionDiscriminantsClass";
   /**
-   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly optionalClassOrIriOrStringProperty: purify.Maybe<
     | { type: "0-NonClass"; value: NonClass }
@@ -2090,7 +2090,7 @@ export class UnionDiscriminantsClass {
     | { type: "2-string"; value: string }
   >;
   /**
-   * Union that can be discriminated by a shared discriminator property (termType).
+   * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly optionalIriOrLiteralProperty: purify.Maybe<
     rdfjs.NamedNode | rdfjs.Literal
@@ -2100,14 +2100,14 @@ export class UnionDiscriminantsClass {
    */
   readonly optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
   /**
-   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly requiredClassOrIriOrStringProperty:
     | { type: "0-NonClass"; value: NonClass }
     | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
     | { type: "2-string"; value: string };
   /**
-   * Union that can be discriminated by a shared discriminator property (termType).
+   * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
   /**
@@ -2115,7 +2115,7 @@ export class UnionDiscriminantsClass {
    */
   readonly requiredIriOrStringProperty: rdfjs.NamedNode | string;
   /**
-   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly setClassOrIriOrStringProperty: readonly (
     | { type: "0-NonClass"; value: NonClass }
@@ -2123,7 +2123,7 @@ export class UnionDiscriminantsClass {
     | { type: "2-string"; value: string }
   )[];
   /**
-   * Union that can be discriminated by a shared discriminator property (termType).
+   * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly setIriOrLiteralProperty: readonly (
     | rdfjs.NamedNode
@@ -3327,7 +3327,7 @@ export namespace UnionDiscriminantsClass {
         ])
         .optional()
         .describe(
-          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
         ),
       optionalIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3344,7 +3344,7 @@ export namespace UnionDiscriminantsClass {
         ])
         .optional()
         .describe(
-          "Union that can be discriminated by a shared discriminator property (termType).",
+          "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       optionalIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
@@ -3363,7 +3363,7 @@ export namespace UnionDiscriminantsClass {
           zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
         .describe(
-          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
         ),
       requiredIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3379,7 +3379,7 @@ export namespace UnionDiscriminantsClass {
           }),
         ])
         .describe(
-          "Union that can be discriminated by a shared discriminator property (termType).",
+          "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       requiredIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
@@ -3399,7 +3399,7 @@ export namespace UnionDiscriminantsClass {
         .array()
         .default(() => [])
         .describe(
-          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
         ),
       setIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3417,7 +3417,7 @@ export namespace UnionDiscriminantsClass {
         .array()
         .default(() => [])
         .describe(
-          "Union that can be discriminated by a shared discriminator property (termType).",
+          "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       setIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])

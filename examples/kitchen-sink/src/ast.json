@@ -3452,7 +3452,7 @@
       "shapeIdentifier": "<http://example.com/UnionDiscriminantsClass>",
       "properties": [
         {
-          "comment": "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalClassOrIriOrStringProperty",
@@ -3498,7 +3498,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by a shared discriminator property (termType).",
+          "comment": "Union that can be discriminated by an inline discriminant property (termType).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrLiteralProperty",
@@ -3558,7 +3558,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredClassOrIriOrStringProperty",
@@ -3601,7 +3601,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by a shared discriminator property (termType).",
+          "comment": "Union that can be discriminated by an inline discriminant property (termType).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrLiteralProperty",
@@ -3655,7 +3655,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setClassOrIriOrStringProperty",
@@ -3701,7 +3701,7 @@
           "visibility": "public"
         },
         {
-          "comment": "Union that can be discriminated by a shared discriminator property (termType).",
+          "comment": "Union that can be discriminated by an inline discriminant property (termType).",
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrLiteralProperty",
