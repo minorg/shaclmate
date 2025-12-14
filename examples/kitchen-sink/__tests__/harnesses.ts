@@ -11,6 +11,18 @@ import { InterfaceHarness } from "./InterfaceHarness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 
+const jsPrimitiveValues = [true, 1, "test"];
+
+const permute = <T>(arr: T[]): T[][] =>
+  arr.length === 0
+    ? [[]]
+    : arr.flatMap((v, i) =>
+        permute([...arr.slice(0, i), ...arr.slice(i + 1)]).map((p) => [
+          v,
+          ...p,
+        ]),
+      );
+
 export const harnesses = {
   blankNodeIdentifierClassWithExplicitIdentifier: new ClassHarness(
     new kitchenSink.BlankNodeIdentifierClass({
@@ -298,6 +310,29 @@ export const harnesses = {
       ],
     }),
     kitchenSink.ListPropertiesClass,
+  ),
+  // ...permute(jsPrimitiveValues).reduce(
+  //   (harnesses, jsPrimitiveValues, i) => {
+  //     harnesses[`jsPrimitiveUnionProperty${i}`] = new ClassHarness(
+  //       new kitchenSink.JsPrimitiveUnionPropertyClass({
+  //         $identifier,
+  //         jsPrimitiveUnionProperty: jsPrimitiveValues,
+  //       }),
+  //       kitchenSink.JsPrimitiveUnionPropertyClass,
+  //     );
+  //     return harnesses;
+  //   },
+  //   {} as Record<
+  //     string,
+  //     ClassHarness<kitchenSink.JsPrimitiveUnionPropertyClass>
+  //   >,
+  // ),
+  jsPrimitiveUnionProperty: new ClassHarness(
+    new kitchenSink.JsPrimitiveUnionPropertyClass({
+      $identifier,
+      jsPrimitiveUnionProperty: jsPrimitiveValues,
+    }),
+    kitchenSink.JsPrimitiveUnionPropertyClass,
   ),
   languageInPropertiesClass: new ClassHarness(
     new kitchenSink.LanguageInPropertiesClass({

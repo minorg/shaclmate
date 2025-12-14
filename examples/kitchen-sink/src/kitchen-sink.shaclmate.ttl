@@ -568,6 +568,24 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:JsPrimitiveUnionPropertyClass
+    a sh:NodeShape ;
+    rdfs:comment "Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models." ;
+    sh:property [
+        sh:path :jsPrimitiveUnionProperty ;
+        sh:xone ([
+                sh:datatype xsd:boolean
+            ]
+            [
+                sh:datatype xsd:decimal
+            ]
+            [
+                rdfs:comment "String must be last since the date-time is also serialized as a string in JSON." ;
+                sh:datatype xsd:string
+            ]
+        )
+    ] .
+
 :LanguageInPropertiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringList in a property." ;
@@ -1175,7 +1193,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality." ;
     sh:property [
-        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
+        rdfs:comment "Union with an envelope discriminant (multiple typeofs, no inline discriminant property)." ;
         sh:maxCount 1 ;
         sh:path :optionalClassOrIriOrStringProperty ;
         sh:xone ([
@@ -1189,7 +1207,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by a shared discriminator property (termType)." ;
+        rdfs:comment "Union that can be discriminated by an inline discriminant property (termType)." ;
         sh:maxCount 1 ;
         sh:path :optionalIriOrLiteralProperty ;
         sh:xone ([
@@ -1211,7 +1229,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
+        rdfs:comment "Union with an envelope discriminant (multiple typeofs, no inline discriminant property)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredClassOrIriOrStringProperty ;
@@ -1226,7 +1244,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by a shared discriminator property (termType)." ;
+        rdfs:comment "Union that can be discriminated by an inline discriminant property (termType)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :requiredIriOrLiteralProperty ;
@@ -1250,7 +1268,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
+        rdfs:comment "Union with an envelope discriminant (multiple typeofs, no inline discriminant property)." ;
         sh:path :setClassOrIriOrStringProperty ;
         sh:xone ([
                 sh:node :NonClass
@@ -1263,7 +1281,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
             ]
         )
     ], [
-        rdfs:comment "Union that can be discriminated by a shared discriminator property (termType)." ;
+        rdfs:comment "Union that can be discriminated by an inline discriminant property (termType)." ;
         sh:path :setIriOrLiteralProperty ;
         sh:xone ([
                 sh:nodeKind sh:IRI

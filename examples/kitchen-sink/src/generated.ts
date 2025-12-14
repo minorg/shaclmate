@@ -2082,7 +2082,7 @@ export class UnionDiscriminantsClass {
   private _$identifier?: UnionDiscriminantsClass.$Identifier;
   readonly $type = "UnionDiscriminantsClass";
   /**
-   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly optionalClassOrIriOrStringProperty: purify.Maybe<
     | { type: "0-NonClass"; value: NonClass }
@@ -2090,7 +2090,7 @@ export class UnionDiscriminantsClass {
     | { type: "2-string"; value: string }
   >;
   /**
-   * Union that can be discriminated by a shared discriminator property (termType).
+   * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly optionalIriOrLiteralProperty: purify.Maybe<
     rdfjs.NamedNode | rdfjs.Literal
@@ -2100,14 +2100,14 @@ export class UnionDiscriminantsClass {
    */
   readonly optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
   /**
-   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly requiredClassOrIriOrStringProperty:
     | { type: "0-NonClass"; value: NonClass }
     | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
     | { type: "2-string"; value: string };
   /**
-   * Union that can be discriminated by a shared discriminator property (termType).
+   * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
   /**
@@ -2115,7 +2115,7 @@ export class UnionDiscriminantsClass {
    */
   readonly requiredIriOrStringProperty: rdfjs.NamedNode | string;
   /**
-   * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
+   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly setClassOrIriOrStringProperty: readonly (
     | { type: "0-NonClass"; value: NonClass }
@@ -2123,7 +2123,7 @@ export class UnionDiscriminantsClass {
     | { type: "2-string"; value: string }
   )[];
   /**
-   * Union that can be discriminated by a shared discriminator property (termType).
+   * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly setIriOrLiteralProperty: readonly (
     | rdfjs.NamedNode
@@ -3327,7 +3327,7 @@ export namespace UnionDiscriminantsClass {
         ])
         .optional()
         .describe(
-          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
         ),
       optionalIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3344,7 +3344,7 @@ export namespace UnionDiscriminantsClass {
         ])
         .optional()
         .describe(
-          "Union that can be discriminated by a shared discriminator property (termType).",
+          "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       optionalIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
@@ -3363,7 +3363,7 @@ export namespace UnionDiscriminantsClass {
           zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
         .describe(
-          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
         ),
       requiredIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3379,7 +3379,7 @@ export namespace UnionDiscriminantsClass {
           }),
         ])
         .describe(
-          "Union that can be discriminated by a shared discriminator property (termType).",
+          "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       requiredIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
@@ -3399,7 +3399,7 @@ export namespace UnionDiscriminantsClass {
         .array()
         .default(() => [])
         .describe(
-          "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
         ),
       setIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3417,7 +3417,7 @@ export namespace UnionDiscriminantsClass {
         .array()
         .default(() => [])
         .describe(
-          "Union that can be discriminated by a shared discriminator property (termType).",
+          "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       setIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
@@ -6370,7 +6370,7 @@ export class TermPropertiesClass {
     });
     resource.add(
       TermPropertiesClass.$properties.booleanTermProperty["identifier"],
-      ...this.booleanTermProperty.toList().flat(),
+      ...this.booleanTermProperty.toList(),
     );
     resource.add(
       TermPropertiesClass.$properties.dateTermProperty["identifier"],
@@ -30331,6 +30331,679 @@ export namespace LanguageInPropertiesClass {
   }
 }
 /**
+ * Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models.
+ */
+export class JsPrimitiveUnionPropertyClass {
+  private _$identifier?: JsPrimitiveUnionPropertyClass.$Identifier;
+  readonly $type = "JsPrimitiveUnionPropertyClass";
+  readonly jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
+
+  constructor(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+
+    if (typeof parameters?.jsPrimitiveUnionProperty === "undefined") {
+      this.jsPrimitiveUnionProperty = [];
+    } else if (typeof parameters?.jsPrimitiveUnionProperty === "object") {
+      this.jsPrimitiveUnionProperty = parameters?.jsPrimitiveUnionProperty;
+    } else {
+      this.jsPrimitiveUnionProperty =
+        parameters?.jsPrimitiveUnionProperty satisfies never;
+    }
+  }
+
+  get $identifier(): JsPrimitiveUnionPropertyClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: JsPrimitiveUnionPropertyClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        ((left, right) =>
+          $arrayEquals(
+            left,
+            right,
+            (
+              left: boolean | number | string,
+              right: boolean | number | string,
+            ) => {
+              if (typeof left === "boolean" && typeof right === "boolean") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
+              }
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
+              }
+
+              return purify.Left({
+                left,
+                right,
+                propertyName: "type",
+                propertyValuesUnequal: {
+                  left: typeof left,
+                  right: typeof right,
+                  type: "BooleanEquals" as const,
+                },
+                type: "Property" as const,
+              });
+            },
+          ))(
+          this.jsPrimitiveUnionProperty,
+          other.jsPrimitiveUnionProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "jsPrimitiveUnionProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    for (const item0 of this.jsPrimitiveUnionProperty) {
+      switch (typeof item0) {
+        case "boolean": {
+          _hasher.update(item0.toString());
+          break;
+        }
+        case "number": {
+          _hasher.update(item0.toString());
+          break;
+        }
+        case "string": {
+          _hasher.update(item0);
+          break;
+        }
+        default:
+          item0 satisfies never;
+          throw new Error("unrecognized type");
+      }
+    }
+
+    return _hasher;
+  }
+
+  $toJson(): JsPrimitiveUnionPropertyClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map(
+          (item) => item,
+        ),
+      } satisfies JsPrimitiveUnionPropertyClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
+        "identifier"
+      ],
+      ...this.jsPrimitiveUnionProperty.flatMap(
+        (item) =>
+          [item] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][],
+      ),
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace JsPrimitiveUnionPropertyClass {
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, JsPrimitiveUnionPropertyClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new JsPrimitiveUnionPropertyClass(properties),
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      [_index: string]: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, JsPrimitiveUnionPropertyClass> {
+    let {
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+      ...context
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return JsPrimitiveUnionPropertyClass.$propertiesFromRdf({
+      ...context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new JsPrimitiveUnionPropertyClass(properties));
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "JsPrimitiveUnionPropertyClass";
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "JsPrimitiveUnionPropertyClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/jsPrimitiveUnionProperty`,
+          type: "Control",
+        },
+      ],
+      label: "JsPrimitiveUnionPropertyClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("JsPrimitiveUnionPropertyClass"),
+      jsPrimitiveUnionProperty: zod
+        .union([zod.boolean(), zod.number(), zod.string()])
+        .array()
+        .default(() => []),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {
+    jsPrimitiveUnionProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/jsPrimitiveUnionProperty",
+      ),
+    },
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const jsPrimitiveUnionProperty = $jsonObject["jsPrimitiveUnionProperty"];
+    return purify.Either.of({ $identifier, jsPrimitiveUnionProperty });
+  }
+
+  export function $propertiesFromRdf({
+    ignoreRdfType: $ignoreRdfType,
+    objectSet: $objectSet,
+    preferredLanguages: $preferredLanguages,
+    resource: $resource,
+    // @ts-ignore
+    ...$context
+  }: {
+    [_index: string]: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
+    }
+  > {
+    const $identifier: JsPrimitiveUnionPropertyClass.$Identifier =
+      $resource.identifier;
+    const _jsPrimitiveUnionPropertyEither: purify.Either<
+      Error,
+      readonly (boolean | number | string)[]
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $resource.values($properties.jsPrimitiveUnionProperty["identifier"], {
+        unique: true,
+      }),
+    )
+      .chain((values) =>
+        values.chainMap((value) => {
+          const valueAsValues = purify.Either.of(value.toValues());
+          return (
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toBoolean()),
+            ) as purify.Either<
+              Error,
+              rdfjsResource.Resource.Values<boolean | number | string>
+            >
+          )
+            .altLazy(
+              () =>
+                valueAsValues.chain((values) =>
+                  values.chainMap((value) => value.toNumber()),
+                ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<boolean | number | string>
+                >,
+            )
+            .altLazy(
+              () =>
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              JsPrimitiveUnionPropertyClass.$properties
+                                .jsPrimitiveUnionProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<boolean | number | string>
+                >,
+            )
+            .chain((values) => values.head());
+        }),
+      )
+      .map((values) => values.toArray())
+      .map((valuesArray) =>
+        rdfjsResource.Resource.Values.fromValue({
+          focusResource: $resource,
+          predicate:
+            JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
+              "identifier"
+            ],
+          value: valuesArray,
+        }),
+      )
+      .chain((values) => values.head());
+    if (_jsPrimitiveUnionPropertyEither.isLeft()) {
+      return _jsPrimitiveUnionPropertyEither;
+    }
+
+    const jsPrimitiveUnionProperty =
+      _jsPrimitiveUnionPropertyEither.unsafeCoerce();
+    return purify.Either.of({ $identifier, jsPrimitiveUnionProperty });
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        JsPrimitiveUnionPropertyClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      JsPrimitiveUnionPropertyClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("jsPrimitiveUnionPropertyClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "jsPrimitiveUnionPropertyClass");
+    triples.push({
+      object: dataFactory.variable!(
+        `${variablePrefix}JsPrimitiveUnionProperty`,
+      ),
+      predicate:
+        JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
+          "identifier"
+        ],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("jsPrimitiveUnionPropertyClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "jsPrimitiveUnionPropertyClass");
+    const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            patterns: [
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}JsPrimitiveUnionProperty`,
+                        ),
+                        predicate:
+                          JsPrimitiveUnionPropertyClass.$properties
+                            .jsPrimitiveUnionProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}JsPrimitiveUnionProperty`,
+                        ),
+                        predicate:
+                          JsPrimitiveUnionPropertyClass.$properties
+                            .jsPrimitiveUnionProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}JsPrimitiveUnionProperty`,
+                        ),
+                        predicate:
+                          JsPrimitiveUnionPropertyClass.$properties
+                            .jsPrimitiveUnionProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${variablePrefix}JsPrimitiveUnionProperty`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
+                ],
+                type: "group",
+              },
+            ],
+            type: "union",
+          },
+        ],
+        type: "optional",
+      },
+    ];
+    for (const pattern of propertyPatterns) {
+      if (pattern.type === "optional") {
+        optionalPatterns.push(pattern);
+      } else {
+        requiredPatterns.push(pattern);
+      }
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
  * A node shape that only allows IRI identifiers.
  */
 export interface IriIdentifierInterface {
@@ -34282,7 +34955,7 @@ export class InPropertiesClass {
     });
     resource.add(
       InPropertiesClass.$properties.inBooleansProperty["identifier"],
-      ...this.inBooleansProperty.toList().flat(),
+      ...this.inBooleansProperty.toList(),
     );
     resource.add(
       InPropertiesClass.$properties.inDateTimesProperty["identifier"],
@@ -56721,6 +57394,23 @@ export interface $ObjectSet {
   iriIdentifierInterfacesCount(
     query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
+  jsPrimitiveUnionPropertyClass(
+    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, JsPrimitiveUnionPropertyClass>>;
+  jsPrimitiveUnionPropertyClassIdentifiers(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]>
+  >;
+  jsPrimitiveUnionPropertyClasses(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>>;
+  jsPrimitiveUnionPropertyClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, LanguageInPropertiesClass>>;
@@ -58264,6 +58954,35 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.iriIdentifierInterfacesCount(query);
+  }
+
+  jsPrimitiveUnionPropertyClass(
+    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, JsPrimitiveUnionPropertyClass>> {
+    return this.$delegate.jsPrimitiveUnionPropertyClass(identifier);
+  }
+
+  jsPrimitiveUnionPropertyClassIdentifiers(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]>
+  > {
+    return this.$delegate.jsPrimitiveUnionPropertyClassIdentifiers(query);
+  }
+
+  jsPrimitiveUnionPropertyClasses(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
+    return this.$delegate.jsPrimitiveUnionPropertyClasses(query);
+  }
+
+  jsPrimitiveUnionPropertyClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.jsPrimitiveUnionPropertyClassesCount(query);
   }
 
   languageInPropertiesClass(
@@ -62010,6 +62729,85 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IriIdentifierInterface.$Identifier
     >(
       [{ $fromRdf: IriIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async jsPrimitiveUnionPropertyClass(
+    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, JsPrimitiveUnionPropertyClass>> {
+    return this.jsPrimitiveUnionPropertyClassSync(identifier);
+  }
+
+  jsPrimitiveUnionPropertyClassSync(
+    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+  ): purify.Either<Error, JsPrimitiveUnionPropertyClass> {
+    return this.jsPrimitiveUnionPropertyClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async jsPrimitiveUnionPropertyClassIdentifiers(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]>
+  > {
+    return this.jsPrimitiveUnionPropertyClassIdentifiersSync(query);
+  }
+
+  jsPrimitiveUnionPropertyClassIdentifiersSync(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly JsPrimitiveUnionPropertyClass.$Identifier[]
+  > {
+    return this.$objectIdentifiersSync<
+      JsPrimitiveUnionPropertyClass,
+      JsPrimitiveUnionPropertyClass.$Identifier
+    >(
+      [{ $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async jsPrimitiveUnionPropertyClasses(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
+    return this.jsPrimitiveUnionPropertyClassesSync(query);
+  }
+
+  jsPrimitiveUnionPropertyClassesSync(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]> {
+    return this.$objectsSync<
+      JsPrimitiveUnionPropertyClass,
+      JsPrimitiveUnionPropertyClass.$Identifier
+    >(
+      [{ $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async jsPrimitiveUnionPropertyClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.jsPrimitiveUnionPropertyClassesCountSync(query);
+  }
+
+  jsPrimitiveUnionPropertyClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      JsPrimitiveUnionPropertyClass,
+      JsPrimitiveUnionPropertyClass.$Identifier
+    >(
+      [{ $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf, $fromRdfTypes: [] }],
       query,
     );
   }
@@ -66950,6 +67748,48 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IriIdentifierInterface.$Identifier>(
       IriIdentifierInterface,
+      query,
+    );
+  }
+
+  async jsPrimitiveUnionPropertyClass(
+    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+  ): Promise<purify.Either<Error, JsPrimitiveUnionPropertyClass>> {
+    return (
+      await this.jsPrimitiveUnionPropertyClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async jsPrimitiveUnionPropertyClassIdentifiers(
+    query?: $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<JsPrimitiveUnionPropertyClass.$Identifier>(
+      JsPrimitiveUnionPropertyClass,
+      query,
+    );
+  }
+
+  async jsPrimitiveUnionPropertyClasses(
+    query?: $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
+    return this.$objects<
+      JsPrimitiveUnionPropertyClass,
+      JsPrimitiveUnionPropertyClass.$Identifier
+    >(JsPrimitiveUnionPropertyClass, query);
+  }
+
+  async jsPrimitiveUnionPropertyClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<JsPrimitiveUnionPropertyClass.$Identifier>(
+      JsPrimitiveUnionPropertyClass,
       query,
     );
   }

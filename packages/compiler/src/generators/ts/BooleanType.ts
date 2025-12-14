@@ -84,6 +84,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
         // If the default is false, only serialize the value if it's true
         return `(${variables.value} ? [true] : [])`;
       })
-      .orDefault(variables.value);
+      .orDefault(`[${variables.value}]`);
   }
 }
