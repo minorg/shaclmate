@@ -11,7 +11,7 @@ import { InterfaceHarness } from "./InterfaceHarness.js";
 
 const $identifier = dataFactory.namedNode("http://example.com/instance");
 
-const jsPrimitiveValues = [true, new Date(1523268000000), 1, "test"];
+const jsPrimitiveValues = [true, 1, "test"];
 
 const permute = <T>(arr: T[]): T[][] =>
   arr.length === 0

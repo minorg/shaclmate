@@ -30336,21 +30336,11 @@ export namespace LanguageInPropertiesClass {
 export class JsPrimitiveUnionPropertyClass {
   private _$identifier?: JsPrimitiveUnionPropertyClass.$Identifier;
   readonly $type = "JsPrimitiveUnionPropertyClass";
-  readonly jsPrimitiveUnionProperty: readonly (
-    | boolean
-    | Date
-    | number
-    | string
-  )[];
+  readonly jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly jsPrimitiveUnionProperty?: readonly (
-      | boolean
-      | Date
-      | number
-      | string
-    )[];
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -30364,8 +30354,7 @@ export class JsPrimitiveUnionPropertyClass {
     if (typeof parameters?.jsPrimitiveUnionProperty === "undefined") {
       this.jsPrimitiveUnionProperty = [];
     } else if (typeof parameters?.jsPrimitiveUnionProperty === "object") {
-      this.jsPrimitiveUnionProperty =
-        parameters?.jsPrimitiveUnionProperty.concat();
+      this.jsPrimitiveUnionProperty = parameters?.jsPrimitiveUnionProperty;
     } else {
       this.jsPrimitiveUnionProperty =
         parameters?.jsPrimitiveUnionProperty satisfies never;
@@ -30406,14 +30395,11 @@ export class JsPrimitiveUnionPropertyClass {
             left,
             right,
             (
-              left: boolean | Date | number | string,
-              right: boolean | Date | number | string,
+              left: boolean | number | string,
+              right: boolean | number | string,
             ) => {
               if (typeof left === "boolean" && typeof right === "boolean") {
                 return $strictEquals(left, right);
-              }
-              if (typeof left === "object" && typeof right === "object") {
-                return $dateEquals(left, right);
               }
               if (typeof left === "number" && typeof right === "number") {
                 return $strictEquals(left, right);
@@ -30469,10 +30455,6 @@ export class JsPrimitiveUnionPropertyClass {
           _hasher.update(item0.toString());
           break;
         }
-        case "object": {
-          _hasher.update(item0.toISOString());
-          break;
-        }
         case "number": {
           _hasher.update(item0.toString());
           break;
@@ -30498,14 +30480,8 @@ export class JsPrimitiveUnionPropertyClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map((item) =>
-          typeof item === "string"
-            ? item
-            : typeof item === "number"
-              ? item
-              : typeof item === "object"
-                ? item.toISOString()
-                : item,
+        jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map(
+          (item) => item,
         ),
       } satisfies JsPrimitiveUnionPropertyClass.$Json),
     );
@@ -30530,27 +30506,11 @@ export class JsPrimitiveUnionPropertyClass {
       JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
         "identifier"
       ],
-      ...this.jsPrimitiveUnionProperty.flatMap((item) =>
-        typeof item === "string"
-          ? ([item] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][])
-          : typeof item === "number"
-            ? ([item] as readonly Parameters<
-                rdfjsResource.MutableResource["add"]
-              >[1][])
-            : typeof item === "object"
-              ? ([
-                  dataFactory.literal(
-                    item.toISOString(),
-                    $RdfVocabularies.xsd.dateTime,
-                  ),
-                ] as readonly Parameters<
-                  rdfjsResource.MutableResource["add"]
-                >[1][])
-              : ([item] as readonly Parameters<
-                  rdfjsResource.MutableResource["add"]
-                >[1][]),
+      ...this.jsPrimitiveUnionProperty.flatMap(
+        (item) =>
+          [item] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][],
       ),
     );
     return resource;
@@ -30619,12 +30579,7 @@ export namespace JsPrimitiveUnionPropertyClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "JsPrimitiveUnionPropertyClass";
-    readonly jsPrimitiveUnionProperty?: readonly (
-      | boolean
-      | string
-      | number
-      | string
-    )[];
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   };
 
   export function $jsonSchema() {
@@ -30666,7 +30621,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       "@id": zod.string().min(1),
       $type: zod.literal("JsPrimitiveUnionPropertyClass"),
       jsPrimitiveUnionProperty: zod
-        .union([zod.boolean(), zod.iso.datetime(), zod.number(), zod.string()])
+        .union([zod.boolean(), zod.number(), zod.string()])
         .array()
         .default(() => []),
     }) satisfies zod.ZodType<$Json>;
@@ -30684,7 +30639,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      jsPrimitiveUnionProperty: readonly (boolean | Date | number | string)[];
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -30696,17 +30651,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const jsPrimitiveUnionProperty = $jsonObject[
-      "jsPrimitiveUnionProperty"
-    ].map((item) =>
-      typeof item === "string"
-        ? item
-        : typeof item === "number"
-          ? item
-          : typeof item === "object"
-            ? new Date(item)
-            : item,
-    );
+    const jsPrimitiveUnionProperty = $jsonObject["jsPrimitiveUnionProperty"];
     return purify.Either.of({ $identifier, jsPrimitiveUnionProperty });
   }
 
@@ -30727,14 +30672,14 @@ export namespace JsPrimitiveUnionPropertyClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      jsPrimitiveUnionProperty: readonly (boolean | Date | number | string)[];
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
     }
   > {
     const $identifier: JsPrimitiveUnionPropertyClass.$Identifier =
       $resource.identifier;
     const _jsPrimitiveUnionPropertyEither: purify.Either<
       Error,
-      readonly (boolean | Date | number | string)[]
+      readonly (boolean | number | string)[]
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -30751,29 +30696,16 @@ export namespace JsPrimitiveUnionPropertyClass {
               values.chainMap((value) => value.toBoolean()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<boolean | Date | number | string>
+              rdfjsResource.Resource.Values<boolean | number | string>
             >
           )
-            .altLazy(
-              () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toDate()),
-                ) as purify.Either<
-                  Error,
-                  rdfjsResource.Resource.Values<
-                    boolean | Date | number | string
-                  >
-                >,
-            )
             .altLazy(
               () =>
                 valueAsValues.chain((values) =>
                   values.chainMap((value) => value.toNumber()),
                 ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    boolean | Date | number | string
-                  >
+                  rdfjsResource.Resource.Values<boolean | number | string>
                 >,
             )
             .altLazy(
@@ -30839,9 +30771,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                     values.chainMap((value) => value.toString()),
                   ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    boolean | Date | number | string
-                  >
+                  rdfjsResource.Resource.Values<boolean | number | string>
                 >,
             )
             .chain((values) => values.head());
@@ -30962,25 +30892,6 @@ export namespace JsPrimitiveUnionPropertyClass {
         patterns: [
           {
             patterns: [
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                ],
-                type: "group",
-              },
               {
                 patterns: [
                   {

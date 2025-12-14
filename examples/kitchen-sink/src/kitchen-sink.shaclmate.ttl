@@ -577,9 +577,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:datatype xsd:boolean
             ]
             [
-                sh:datatype xsd:dateTime
-            ]
-            [
                 sh:datatype xsd:decimal
             ]
             [
