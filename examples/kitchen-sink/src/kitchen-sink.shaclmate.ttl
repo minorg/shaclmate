@@ -568,6 +568,26 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         ]
     ) .
 
+:JsPrimitiveUnionPropertyClass
+    a sh:NodeShape ;
+    rdfs:comment "Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models." ;
+    sh:property [
+        sh:path :jsPrimitiveUnionProperty ;
+        sh:xone ([
+                sh:datatype xsd:string
+            ]
+            [
+                sh:datatype xsd:dateTime
+            ]
+            [
+                sh:datatype xsd:decimal
+            ]
+            [
+                sh:datatype xsd:boolean
+            ]
+        )
+    ] .
+
 :LanguageInPropertiesClass
     a sh:NodeShape ;
     rdfs:comment "Shape that uses the StringList in a property." ;
@@ -1022,28 +1042,6 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:maxCount 1 ;
         sh:minCount 1 ;
         sh:path :lazilyResolvedStringProperty
-    ] .
-
-:PrimitiveUnionPropertiesClass
-    a sh:NodeShape ;
-    rdfs:comment "Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models." ;
-    sh:property [
-        sh:maxCount 1 ;
-        sh:minCount 1 ;
-        sh:path :primitiveUnionProperty ;
-        sh:xone ([
-                sh:datatype xsd:string
-            ]
-            [
-                sh:datatype xsd:dateTime
-            ]
-            [
-                sh:datatype xsd:decimal
-            ]
-            [
-                sh:datatype xsd:boolean
-            ]
-        )
     ] .
 
 :PropertyCardinalitiesClass
