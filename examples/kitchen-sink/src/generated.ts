@@ -30337,19 +30337,19 @@ export class JsPrimitiveUnionPropertyClass {
   private _$identifier?: JsPrimitiveUnionPropertyClass.$Identifier;
   readonly $type = "JsPrimitiveUnionPropertyClass";
   readonly jsPrimitiveUnionProperty: readonly (
-    | string
+    | boolean
     | Date
     | number
-    | boolean
+    | string
   )[];
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly jsPrimitiveUnionProperty?: readonly (
-      | string
+      | boolean
       | Date
       | number
-      | boolean
+      | string
     )[];
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -30406,10 +30406,10 @@ export class JsPrimitiveUnionPropertyClass {
             left,
             right,
             (
-              left: string | Date | number | boolean,
-              right: string | Date | number | boolean,
+              left: boolean | Date | number | string,
+              right: boolean | Date | number | string,
             ) => {
-              if (typeof left === "string" && typeof right === "string") {
+              if (typeof left === "boolean" && typeof right === "boolean") {
                 return $strictEquals(left, right);
               }
               if (typeof left === "object" && typeof right === "object") {
@@ -30418,7 +30418,7 @@ export class JsPrimitiveUnionPropertyClass {
               if (typeof left === "number" && typeof right === "number") {
                 return $strictEquals(left, right);
               }
-              if (typeof left === "boolean" && typeof right === "boolean") {
+              if (typeof left === "string" && typeof right === "string") {
                 return $strictEquals(left, right);
               }
 
@@ -30465,8 +30465,8 @@ export class JsPrimitiveUnionPropertyClass {
   >(_hasher: HasherT): HasherT {
     for (const item0 of this.jsPrimitiveUnionProperty) {
       switch (typeof item0) {
-        case "string": {
-          _hasher.update(item0);
+        case "boolean": {
+          _hasher.update(item0.toString());
           break;
         }
         case "object": {
@@ -30477,8 +30477,8 @@ export class JsPrimitiveUnionPropertyClass {
           _hasher.update(item0.toString());
           break;
         }
-        case "boolean": {
-          _hasher.update(item0.toString());
+        case "string": {
+          _hasher.update(item0);
           break;
         }
         default:
@@ -30499,7 +30499,7 @@ export class JsPrimitiveUnionPropertyClass {
             : this.$identifier.value,
         $type: this.$type,
         jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map((item) =>
-          typeof item === "boolean"
+          typeof item === "string"
             ? item
             : typeof item === "number"
               ? item
@@ -30531,7 +30531,7 @@ export class JsPrimitiveUnionPropertyClass {
         "identifier"
       ],
       ...this.jsPrimitiveUnionProperty.flatMap((item) =>
-        typeof item === "boolean"
+        typeof item === "string"
           ? ([item] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
@@ -30620,10 +30620,10 @@ export namespace JsPrimitiveUnionPropertyClass {
     readonly "@id": string;
     readonly $type: "JsPrimitiveUnionPropertyClass";
     readonly jsPrimitiveUnionProperty?: readonly (
-      | string
+      | boolean
       | string
       | number
-      | boolean
+      | string
     )[];
   };
 
@@ -30666,7 +30666,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       "@id": zod.string().min(1),
       $type: zod.literal("JsPrimitiveUnionPropertyClass"),
       jsPrimitiveUnionProperty: zod
-        .union([zod.string(), zod.iso.datetime(), zod.number(), zod.boolean()])
+        .union([zod.boolean(), zod.iso.datetime(), zod.number(), zod.string()])
         .array()
         .default(() => []),
     }) satisfies zod.ZodType<$Json>;
@@ -30684,7 +30684,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      jsPrimitiveUnionProperty: readonly (string | Date | number | boolean)[];
+      jsPrimitiveUnionProperty: readonly (boolean | Date | number | string)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -30699,7 +30699,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     const jsPrimitiveUnionProperty = $jsonObject[
       "jsPrimitiveUnionProperty"
     ].map((item) =>
-      typeof item === "boolean"
+      typeof item === "string"
         ? item
         : typeof item === "number"
           ? item
@@ -30727,14 +30727,14 @@ export namespace JsPrimitiveUnionPropertyClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      jsPrimitiveUnionProperty: readonly (string | Date | number | boolean)[];
+      jsPrimitiveUnionProperty: readonly (boolean | Date | number | string)[];
     }
   > {
     const $identifier: JsPrimitiveUnionPropertyClass.$Identifier =
       $resource.identifier;
     const _jsPrimitiveUnionPropertyEither: purify.Either<
       Error,
-      readonly (string | Date | number | boolean)[]
+      readonly (boolean | Date | number | string)[]
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -30747,63 +30747,11 @@ export namespace JsPrimitiveUnionPropertyClass {
         values.chainMap((value) => {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
-            valueAsValues
-              .chain((values) => {
-                if (!$preferredLanguages || $preferredLanguages.length === 0) {
-                  return purify.Either.of<
-                    Error,
-                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                  >(values);
-                }
-
-                const literalValuesEither = values.chainMap((value) =>
-                  value.toLiteral(),
-                );
-                if (literalValuesEither.isLeft()) {
-                  return literalValuesEither;
-                }
-                const literalValues = literalValuesEither.unsafeCoerce();
-
-                // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-                // Within a preferredLanguage the literals may be in any order.
-                let filteredLiteralValues:
-                  | rdfjsResource.Resource.Values<rdfjs.Literal>
-                  | undefined;
-                for (const preferredLanguage of $preferredLanguages) {
-                  if (!filteredLiteralValues) {
-                    filteredLiteralValues = literalValues.filter(
-                      (value) => value.language === preferredLanguage,
-                    );
-                  } else {
-                    filteredLiteralValues = filteredLiteralValues.concat(
-                      ...literalValues
-                        .filter((value) => value.language === preferredLanguage)
-                        .toArray(),
-                    );
-                  }
-                }
-
-                return purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(
-                  filteredLiteralValues!.map(
-                    (literalValue) =>
-                      new rdfjsResource.Resource.TermValue({
-                        focusResource: $resource,
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        term: literalValue,
-                      }),
-                  ),
-                );
-              })
-              .chain((values) =>
-                values.chainMap((value) => value.toString()),
-              ) as purify.Either<
+            valueAsValues.chain((values) =>
+              values.chainMap((value) => value.toBoolean()),
+            ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<string | Date | number | boolean>
+              rdfjsResource.Resource.Values<boolean | Date | number | string>
             >
           )
             .altLazy(
@@ -30813,7 +30761,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    string | Date | number | boolean
+                    boolean | Date | number | string
                   >
                 >,
             )
@@ -30824,18 +30772,75 @@ export namespace JsPrimitiveUnionPropertyClass {
                 ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    string | Date | number | boolean
+                    boolean | Date | number | string
                   >
                 >,
             )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toBoolean()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$preferredLanguages ||
+                      $preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $resource,
+                            predicate:
+                              JsPrimitiveUnionPropertyClass.$properties
+                                .jsPrimitiveUnionProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    string | Date | number | boolean
+                    boolean | Date | number | string
                   >
                 >,
             )
@@ -30973,6 +30978,63 @@ export namespace JsPrimitiveUnionPropertyClass {
                     ],
                     type: "bgp",
                   },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}JsPrimitiveUnionProperty`,
+                        ),
+                        predicate:
+                          JsPrimitiveUnionPropertyClass.$properties
+                            .jsPrimitiveUnionProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}JsPrimitiveUnionProperty`,
+                        ),
+                        predicate:
+                          JsPrimitiveUnionPropertyClass.$properties
+                            .jsPrimitiveUnionProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
+                ],
+                type: "group",
+              },
+              {
+                patterns: [
+                  {
+                    triples: [
+                      {
+                        object: dataFactory.variable!(
+                          `${variablePrefix}JsPrimitiveUnionProperty`,
+                        ),
+                        predicate:
+                          JsPrimitiveUnionPropertyClass.$properties
+                            .jsPrimitiveUnionProperty["identifier"],
+                        subject,
+                      },
+                    ],
+                    type: "bgp",
+                  },
                   ...[parameters?.preferredLanguages ?? []]
                     .filter((languages) => languages.length > 0)
                     .map((languages) =>
@@ -31009,63 +31071,6 @@ export namespace JsPrimitiveUnionPropertyClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
-                ],
-                type: "group",
-              },
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                ],
-                type: "group",
-              },
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                ],
-                type: "group",
-              },
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
                 ],
                 type: "group",
               },

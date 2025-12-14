@@ -1140,7 +1140,7 @@
                   "kind": "LiteralType",
                   "datatype": {
                     "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                    "value": "http://www.w3.org/2001/XMLSchema#boolean"
                   },
                   "hasValue": []
                 },
@@ -1162,9 +1162,10 @@
                 },
                 {
                   "kind": "LiteralType",
+                  "comment": "String must be last since the date-time is also serialized as a string in JSON.",
                   "datatype": {
                     "termType": "NamedNode",
-                    "value": "http://www.w3.org/2001/XMLSchema#boolean"
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
                   },
                   "hasValue": []
                 }

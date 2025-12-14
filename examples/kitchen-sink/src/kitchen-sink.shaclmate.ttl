@@ -574,7 +574,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:property [
         sh:path :jsPrimitiveUnionProperty ;
         sh:xone ([
-                sh:datatype xsd:string
+                sh:datatype xsd:boolean
             ]
             [
                 sh:datatype xsd:dateTime
@@ -583,7 +583,8 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
                 sh:datatype xsd:decimal
             ]
             [
-                sh:datatype xsd:boolean
+                rdfs:comment "String must be last since the date-time is also serialized as a string in JSON." ;
+                sh:datatype xsd:string
             ]
         )
     ] .
