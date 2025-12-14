@@ -4,9 +4,9 @@ import { harnesses } from "./harnesses.js";
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
     {
-      const jsonObject = harnesses.unionProperties1.instance.$toJson();
+      const jsonObject = harnesses.unionDiscriminants1.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.$type).toStrictEqual("UnionPropertiesClass");
+      expect(jsonObject.$type).toStrictEqual("UnionDiscriminantsClass");
       expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
         type: "0-NonClass",
         value: {
@@ -43,7 +43,7 @@ describe("toJson", () => {
     }
 
     {
-      const jsonObject = harnesses.unionProperties2Class.instance.$toJson();
+      const jsonObject = harnesses.unionDiscriminants2Class.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
         type: "1-(rdfjs.NamedNode)",

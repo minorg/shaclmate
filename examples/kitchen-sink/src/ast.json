@@ -3448,8 +3448,8 @@
     },
     {
       "kind": "ObjectType",
-      "comment": "Shape with sh:xone (union) properties. Combinations of discriminator type (synthetic, typeof, property) x cardinality.",
-      "shapeIdentifier": "<http://example.com/UnionPropertiesClass>",
+      "comment": "Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality.",
+      "shapeIdentifier": "<http://example.com/UnionDiscriminantsClass>",
       "properties": [
         {
           "comment": "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).",

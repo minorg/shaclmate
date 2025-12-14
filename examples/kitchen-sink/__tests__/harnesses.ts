@@ -562,8 +562,8 @@ export const harnesses = {
     }),
     kitchenSink.TermPropertiesClass,
   ),
-  unionProperties1: new ClassHarness(
-    new kitchenSink.UnionPropertiesClass({
+  unionDiscriminants1: new ClassHarness(
+    new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrIriOrStringProperty: {
         type: "0-NonClass",
@@ -585,10 +585,10 @@ export const harnesses = {
       requiredIriOrStringProperty: dataFactory.namedNode("http://example.com"),
       // Don't specify the set properties to test undefined
     }),
-    kitchenSink.UnionPropertiesClass,
+    kitchenSink.UnionDiscriminantsClass,
   ),
-  unionProperties2Class: new ClassHarness(
-    new kitchenSink.UnionPropertiesClass({
+  unionDiscriminants2Class: new ClassHarness(
+    new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrIriOrStringProperty: {
         type: "1-(rdfjs.NamedNode)",
@@ -629,7 +629,7 @@ export const harnesses = {
         dataFactory.namedNode("http://example.com"),
       ],
     }),
-    kitchenSink.UnionPropertiesClass,
+    kitchenSink.UnionDiscriminantsClass,
   ),
   uuidv4IriIdentifierClassWithExplicitIdentifier: new ClassHarness(
     new kitchenSink.UuidV4IriIdentifierClass({

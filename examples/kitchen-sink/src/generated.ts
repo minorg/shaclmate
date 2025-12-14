@@ -2076,11 +2076,11 @@ export namespace UuidV4IriIdentifierClass {
   }
 }
 /**
- * Shape with sh:xone (union) properties. Combinations of discriminator type (synthetic, typeof, property) x cardinality.
+ * Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality.
  */
-export class UnionPropertiesClass {
-  private _$identifier?: UnionPropertiesClass.$Identifier;
-  readonly $type = "UnionPropertiesClass";
+export class UnionDiscriminantsClass {
+  private _$identifier?: UnionDiscriminantsClass.$Identifier;
+  readonly $type = "UnionDiscriminantsClass";
   /**
    * Union with a synthetic discriminator (multiple typeofs, no shared discriminator property).
    */
@@ -2270,7 +2270,7 @@ export class UnionPropertiesClass {
     }
   }
 
-  get $identifier(): UnionPropertiesClass.$Identifier {
+  get $identifier(): UnionDiscriminantsClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
@@ -2278,7 +2278,7 @@ export class UnionPropertiesClass {
     return this._$identifier;
   }
 
-  $equals(other: UnionPropertiesClass): $EqualsResult {
+  $equals(other: UnionDiscriminantsClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
         left: this,
@@ -2867,7 +2867,7 @@ export class UnionPropertiesClass {
     return _hasher;
   }
 
-  $toJson(): UnionPropertiesClass.$Json {
+  $toJson(): UnionDiscriminantsClass.$Json {
     return JSON.parse(
       JSON.stringify({
         "@id":
@@ -2985,7 +2985,7 @@ export class UnionPropertiesClass {
         setIriOrStringProperty: this.setIriOrStringProperty.map((item) =>
           typeof item === "string" ? item : { "@id": item.value },
         ),
-      } satisfies UnionPropertiesClass.$Json),
+      } satisfies UnionDiscriminantsClass.$Json),
     );
   }
 
@@ -3005,7 +3005,7 @@ export class UnionPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      UnionPropertiesClass.$properties.optionalClassOrIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.optionalClassOrIriOrStringProperty[
         "identifier"
       ],
       ...this.optionalClassOrIriOrStringProperty.toList().flatMap((value) =>
@@ -3028,7 +3028,7 @@ export class UnionPropertiesClass {
       ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
+      UnionDiscriminantsClass.$properties.optionalIriOrLiteralProperty[
         "identifier"
       ],
       ...this.optionalIriOrLiteralProperty
@@ -3041,7 +3041,7 @@ export class UnionPropertiesClass {
         ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.optionalIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.optionalIriOrStringProperty[
         "identifier"
       ],
       ...this.optionalIriOrStringProperty
@@ -3054,7 +3054,7 @@ export class UnionPropertiesClass {
         ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.requiredClassOrIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
         "identifier"
       ],
       ...(this.requiredClassOrIriOrStringProperty.type === "2-string"
@@ -3075,7 +3075,7 @@ export class UnionPropertiesClass {
             >[1][])),
     );
     resource.add(
-      UnionPropertiesClass.$properties.requiredIriOrLiteralProperty[
+      UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
         "identifier"
       ],
       ...([this.requiredIriOrLiteralProperty] as readonly Parameters<
@@ -3083,7 +3083,7 @@ export class UnionPropertiesClass {
       >[1][]),
     );
     resource.add(
-      UnionPropertiesClass.$properties.requiredIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.requiredIriOrStringProperty[
         "identifier"
       ],
       ...([this.requiredIriOrStringProperty] as readonly Parameters<
@@ -3091,7 +3091,7 @@ export class UnionPropertiesClass {
       >[1][]),
     );
     resource.add(
-      UnionPropertiesClass.$properties.setClassOrIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
         "identifier"
       ],
       ...this.setClassOrIriOrStringProperty.flatMap((item) =>
@@ -3114,7 +3114,7 @@ export class UnionPropertiesClass {
       ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.setIriOrLiteralProperty["identifier"],
+      UnionDiscriminantsClass.$properties.setIriOrLiteralProperty["identifier"],
       ...this.setIriOrLiteralProperty.flatMap(
         (item) =>
           [item] as readonly Parameters<
@@ -3123,7 +3123,7 @@ export class UnionPropertiesClass {
       ),
     );
     resource.add(
-      UnionPropertiesClass.$properties.setIriOrStringProperty["identifier"],
+      UnionDiscriminantsClass.$properties.setIriOrStringProperty["identifier"],
       ...this.setIriOrStringProperty.flatMap(
         (item) =>
           [item] as readonly Parameters<
@@ -3139,12 +3139,12 @@ export class UnionPropertiesClass {
   }
 }
 
-export namespace UnionPropertiesClass {
+export namespace UnionDiscriminantsClass {
   export function $fromJson(
     json: unknown,
-  ): purify.Either<zod.ZodError, UnionPropertiesClass> {
+  ): purify.Either<zod.ZodError, UnionDiscriminantsClass> {
     return $propertiesFromJson(json).map(
-      (properties) => new UnionPropertiesClass(properties),
+      (properties) => new UnionDiscriminantsClass(properties),
     );
   }
 
@@ -3156,7 +3156,7 @@ export namespace UnionPropertiesClass {
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
-  ): purify.Either<Error, UnionPropertiesClass> {
+  ): purify.Either<Error, UnionDiscriminantsClass> {
     let {
       ignoreRdfType = false,
       objectSet,
@@ -3167,13 +3167,13 @@ export namespace UnionPropertiesClass {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
-    return UnionPropertiesClass.$propertiesFromRdf({
+    return UnionDiscriminantsClass.$propertiesFromRdf({
       ...context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
       resource,
-    }).map((properties) => new UnionPropertiesClass(properties));
+    }).map((properties) => new UnionDiscriminantsClass(properties));
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -3196,7 +3196,7 @@ export namespace UnionPropertiesClass {
 
   export type $Json = {
     readonly "@id": string;
-    readonly $type: "UnionPropertiesClass";
+    readonly $type: "UnionDiscriminantsClass";
     readonly optionalClassOrIriOrStringProperty?:
       | { type: "0-NonClass"; value: NonClass.$Json }
       | { type: "1-(rdfjs.NamedNode)"; value: { readonly "@id": string } }
@@ -3259,7 +3259,7 @@ export namespace UnionPropertiesClass {
         {
           rule: {
             condition: {
-              schema: { const: "UnionPropertiesClass" },
+              schema: { const: "UnionDiscriminantsClass" },
               scope: `${scopePrefix}/properties/$type`,
             },
             effect: "HIDE",
@@ -3304,7 +3304,7 @@ export namespace UnionPropertiesClass {
           type: "Control",
         },
       ],
-      label: "UnionPropertiesClass",
+      label: "UnionDiscriminantsClass",
       type: "Group",
     };
   }
@@ -3312,7 +3312,7 @@ export namespace UnionPropertiesClass {
   export function $jsonZodSchema() {
     return zod.object({
       "@id": zod.string().min(1),
-      $type: zod.literal("UnionPropertiesClass"),
+      $type: zod.literal("UnionDiscriminantsClass"),
       optionalClassOrIriOrStringProperty: zod
         .discriminatedUnion("type", [
           zod.object({
@@ -3676,7 +3676,8 @@ export namespace UnionPropertiesClass {
       setIriOrStringProperty: readonly (rdfjs.NamedNode | string)[];
     }
   > {
-    const $identifier: UnionPropertiesClass.$Identifier = $resource.identifier;
+    const $identifier: UnionDiscriminantsClass.$Identifier =
+      $resource.identifier;
     const _optionalClassOrIriOrStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<
@@ -3802,7 +3803,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .optionalClassOrIriOrStringProperty[
                                 "identifier"
                               ],
@@ -3849,7 +3850,7 @@ export namespace UnionPropertiesClass {
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties
+                UnionDiscriminantsClass.$properties
                   .optionalClassOrIriOrStringProperty["identifier"],
               value: purify.Maybe.empty(),
             }),
@@ -3935,7 +3936,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .optionalIriOrLiteralProperty["identifier"],
                             term: literalValue,
                           }),
@@ -3960,9 +3961,8 @@ export namespace UnionPropertiesClass {
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
-                  "identifier"
-                ],
+                UnionDiscriminantsClass.$properties
+                  .optionalIriOrLiteralProperty["identifier"],
               value: purify.Maybe.empty(),
             }),
       )
@@ -4047,7 +4047,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .optionalIriOrStringProperty["identifier"],
                             term: literalValue,
                           }),
@@ -4072,7 +4072,7 @@ export namespace UnionPropertiesClass {
             >({
               focusResource: $resource,
               predicate:
-                UnionPropertiesClass.$properties.optionalIriOrStringProperty[
+                UnionDiscriminantsClass.$properties.optionalIriOrStringProperty[
                   "identifier"
                 ],
               value: purify.Maybe.empty(),
@@ -4208,7 +4208,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .requiredClassOrIriOrStringProperty[
                                 "identifier"
                               ],
@@ -4324,7 +4324,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .requiredIriOrLiteralProperty["identifier"],
                             term: literalValue,
                           }),
@@ -4422,7 +4422,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .requiredIriOrStringProperty["identifier"],
                             term: literalValue,
                           }),
@@ -4571,7 +4571,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .setClassOrIriOrStringProperty["identifier"],
                             term: literalValue,
                           }),
@@ -4609,7 +4609,7 @@ export namespace UnionPropertiesClass {
         rdfjsResource.Resource.Values.fromValue({
           focusResource: $resource,
           predicate:
-            UnionPropertiesClass.$properties.setClassOrIriOrStringProperty[
+            UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
               "identifier"
             ],
           value: valuesArray,
@@ -4696,7 +4696,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .setIriOrLiteralProperty["identifier"],
                             term: literalValue,
                           }),
@@ -4718,7 +4718,7 @@ export namespace UnionPropertiesClass {
         rdfjsResource.Resource.Values.fromValue({
           focusResource: $resource,
           predicate:
-            UnionPropertiesClass.$properties.setIriOrLiteralProperty[
+            UnionDiscriminantsClass.$properties.setIriOrLiteralProperty[
               "identifier"
             ],
           value: valuesArray,
@@ -4805,7 +4805,7 @@ export namespace UnionPropertiesClass {
                           new rdfjsResource.Resource.TermValue({
                             focusResource: $resource,
                             predicate:
-                              UnionPropertiesClass.$properties
+                              UnionDiscriminantsClass.$properties
                                 .setIriOrStringProperty["identifier"],
                             term: literalValue,
                           }),
@@ -4827,7 +4827,7 @@ export namespace UnionPropertiesClass {
         rdfjsResource.Resource.Values.fromValue({
           focusResource: $resource,
           predicate:
-            UnionPropertiesClass.$properties.setIriOrStringProperty[
+            UnionDiscriminantsClass.$properties.setIriOrStringProperty[
               "identifier"
             ],
           value: valuesArray,
@@ -4869,14 +4869,14 @@ export namespace UnionPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionPropertiesClass.$sparqlConstructTemplateTriples({
+        UnionDiscriminantsClass.$sparqlConstructTemplateTriples({
           ignoreRdfType,
           subject,
         }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionPropertiesClass.$sparqlWherePatterns({
+        UnionDiscriminantsClass.$sparqlWherePatterns({
           ignoreRdfType,
           preferredLanguages,
           subject,
@@ -4895,7 +4895,7 @@ export namespace UnionPropertiesClass {
       sparqljs.GeneratorOptions,
   ): string {
     return new sparqljs.Generator(parameters).stringify(
-      UnionPropertiesClass.$sparqlConstructQuery(parameters),
+      UnionDiscriminantsClass.$sparqlConstructQuery(parameters),
     );
   }
 
@@ -4905,19 +4905,19 @@ export namespace UnionPropertiesClass {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     const subject =
-      parameters?.subject ?? dataFactory.variable!("unionPropertiesClass");
+      parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
     const triples: sparqljs.Triple[] = [];
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "unionPropertiesClass");
+        : "unionDiscriminantsClass");
     triples.push({
       object: dataFactory.variable!(
         `${variablePrefix}OptionalClassOrIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.optionalClassOrIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.optionalClassOrIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -4935,7 +4935,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}OptionalIriOrLiteralProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.optionalIriOrLiteralProperty[
+        UnionDiscriminantsClass.$properties.optionalIriOrLiteralProperty[
           "identifier"
         ],
       subject,
@@ -4945,7 +4945,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}OptionalIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.optionalIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.optionalIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -4955,7 +4955,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredClassOrIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredClassOrIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -4973,7 +4973,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredClassOrIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredClassOrIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -4983,7 +4983,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredClassOrIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredClassOrIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -4993,7 +4993,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredIriOrLiteralProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredIriOrLiteralProperty[
+        UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
           "identifier"
         ],
       subject,
@@ -5003,7 +5003,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredIriOrLiteralProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredIriOrLiteralProperty[
+        UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
           "identifier"
         ],
       subject,
@@ -5013,7 +5013,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.requiredIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -5023,7 +5023,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}RequiredIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.requiredIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.requiredIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -5033,7 +5033,7 @@ export namespace UnionPropertiesClass {
         `${variablePrefix}SetClassOrIriOrStringProperty`,
       ),
       predicate:
-        UnionPropertiesClass.$properties.setClassOrIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -5049,13 +5049,17 @@ export namespace UnionPropertiesClass {
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}SetIriOrLiteralProperty`),
       predicate:
-        UnionPropertiesClass.$properties.setIriOrLiteralProperty["identifier"],
+        UnionDiscriminantsClass.$properties.setIriOrLiteralProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(`${variablePrefix}SetIriOrStringProperty`),
       predicate:
-        UnionPropertiesClass.$properties.setIriOrStringProperty["identifier"],
+        UnionDiscriminantsClass.$properties.setIriOrStringProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -5070,12 +5074,12 @@ export namespace UnionPropertiesClass {
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
-      parameters?.subject ?? dataFactory.variable!("unionPropertiesClass");
+      parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable"
         ? subject.value
-        : "unionPropertiesClass");
+        : "unionDiscriminantsClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
       {
         patterns: [
@@ -5090,7 +5094,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalClassOrIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalClassOrIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5116,7 +5120,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalClassOrIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalClassOrIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5135,7 +5139,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalClassOrIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalClassOrIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5200,7 +5204,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalIriOrLiteralProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalIriOrLiteralProperty["identifier"],
                         subject,
                       },
@@ -5219,7 +5223,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalIriOrLiteralProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalIriOrLiteralProperty["identifier"],
                         subject,
                       },
@@ -5284,7 +5288,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5303,7 +5307,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}OptionalIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .optionalIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5366,7 +5370,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredClassOrIriOrStringProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredClassOrIriOrStringProperty["identifier"],
                     subject,
                   },
@@ -5392,7 +5396,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredClassOrIriOrStringProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredClassOrIriOrStringProperty["identifier"],
                     subject,
                   },
@@ -5411,7 +5415,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredClassOrIriOrStringProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredClassOrIriOrStringProperty["identifier"],
                     subject,
                   },
@@ -5471,7 +5475,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredIriOrLiteralProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredIriOrLiteralProperty["identifier"],
                     subject,
                   },
@@ -5490,7 +5494,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredIriOrLiteralProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredIriOrLiteralProperty["identifier"],
                     subject,
                   },
@@ -5550,7 +5554,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredIriOrStringProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredIriOrStringProperty["identifier"],
                     subject,
                   },
@@ -5569,7 +5573,7 @@ export namespace UnionPropertiesClass {
                       `${variablePrefix}RequiredIriOrStringProperty`,
                     ),
                     predicate:
-                      UnionPropertiesClass.$properties
+                      UnionDiscriminantsClass.$properties
                         .requiredIriOrStringProperty["identifier"],
                     subject,
                   },
@@ -5631,7 +5635,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetClassOrIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setClassOrIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5657,7 +5661,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetClassOrIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setClassOrIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5676,7 +5680,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetClassOrIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setClassOrIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5741,7 +5745,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetIriOrLiteralProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setIriOrLiteralProperty["identifier"],
                         subject,
                       },
@@ -5760,7 +5764,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetIriOrLiteralProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setIriOrLiteralProperty["identifier"],
                         subject,
                       },
@@ -5825,7 +5829,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -5844,7 +5848,7 @@ export namespace UnionPropertiesClass {
                           `${variablePrefix}SetIriOrStringProperty`,
                         ),
                         predicate:
-                          UnionPropertiesClass.$properties
+                          UnionDiscriminantsClass.$properties
                             .setIriOrStringProperty["identifier"],
                         subject,
                       },
@@ -57207,17 +57211,22 @@ export interface $ObjectSet {
   termPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Identifier>, "where">,
   ): Promise<purify.Either<Error, number>>;
-  unionPropertiesClass(
-    identifier: UnionPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, UnionPropertiesClass>>;
-  unionPropertiesClassIdentifiers(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionPropertiesClass.$Identifier[]>>;
-  unionPropertiesClasses(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionPropertiesClass[]>>;
-  unionPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<UnionPropertiesClass.$Identifier>, "where">,
+  unionDiscriminantsClass(
+    identifier: UnionDiscriminantsClass.$Identifier,
+  ): Promise<purify.Either<Error, UnionDiscriminantsClass>>;
+  unionDiscriminantsClassIdentifiers(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>
+  >;
+  unionDiscriminantsClasses(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>>;
+  unionDiscriminantsClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>>;
   uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
@@ -59115,30 +59124,33 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     return this.$delegate.termPropertiesClassesCount(query);
   }
 
-  unionPropertiesClass(
-    identifier: UnionPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, UnionPropertiesClass>> {
-    return this.$delegate.unionPropertiesClass(identifier);
+  unionDiscriminantsClass(
+    identifier: UnionDiscriminantsClass.$Identifier,
+  ): Promise<purify.Either<Error, UnionDiscriminantsClass>> {
+    return this.$delegate.unionDiscriminantsClass(identifier);
   }
 
-  unionPropertiesClassIdentifiers(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
+  unionDiscriminantsClassIdentifiers(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly UnionPropertiesClass.$Identifier[]>
+    purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>
   > {
-    return this.$delegate.unionPropertiesClassIdentifiers(query);
+    return this.$delegate.unionDiscriminantsClassIdentifiers(query);
   }
 
-  unionPropertiesClasses(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionPropertiesClass[]>> {
-    return this.$delegate.unionPropertiesClasses(query);
+  unionDiscriminantsClasses(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>> {
+    return this.$delegate.unionDiscriminantsClasses(query);
   }
 
-  unionPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<UnionPropertiesClass.$Identifier>, "where">,
+  unionDiscriminantsClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$delegate.unionPropertiesClassesCount(query);
+    return this.$delegate.unionDiscriminantsClassesCount(query);
   }
 
   uuidV4IriIdentifierClass(
@@ -64357,65 +64369,80 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >([{ $fromRdf: TermPropertiesClass.$fromRdf, $fromRdfTypes: [] }], query);
   }
 
-  async unionPropertiesClass(
-    identifier: UnionPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, UnionPropertiesClass>> {
-    return this.unionPropertiesClassSync(identifier);
+  async unionDiscriminantsClass(
+    identifier: UnionDiscriminantsClass.$Identifier,
+  ): Promise<purify.Either<Error, UnionDiscriminantsClass>> {
+    return this.unionDiscriminantsClassSync(identifier);
   }
 
-  unionPropertiesClassSync(
-    identifier: UnionPropertiesClass.$Identifier,
-  ): purify.Either<Error, UnionPropertiesClass> {
-    return this.unionPropertiesClassesSync({
+  unionDiscriminantsClassSync(
+    identifier: UnionDiscriminantsClass.$Identifier,
+  ): purify.Either<Error, UnionDiscriminantsClass> {
+    return this.unionDiscriminantsClassesSync({
       where: { identifiers: [identifier], type: "identifiers" },
     }).map((objects) => objects[0]);
   }
 
-  async unionPropertiesClassIdentifiers(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
+  async unionDiscriminantsClassIdentifiers(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly UnionPropertiesClass.$Identifier[]>
+    purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>
   > {
-    return this.unionPropertiesClassIdentifiersSync(query);
+    return this.unionDiscriminantsClassIdentifiersSync(query);
   }
 
-  unionPropertiesClassIdentifiersSync(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): purify.Either<Error, readonly UnionPropertiesClass.$Identifier[]> {
+  unionDiscriminantsClassIdentifiersSync(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]> {
     return this.$objectIdentifiersSync<
-      UnionPropertiesClass,
-      UnionPropertiesClass.$Identifier
-    >([{ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }], query);
+      UnionDiscriminantsClass,
+      UnionDiscriminantsClass.$Identifier
+    >(
+      [{ $fromRdf: UnionDiscriminantsClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
   }
 
-  async unionPropertiesClasses(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionPropertiesClass[]>> {
-    return this.unionPropertiesClassesSync(query);
+  async unionDiscriminantsClasses(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>> {
+    return this.unionDiscriminantsClassesSync(query);
   }
 
-  unionPropertiesClassesSync(
-    query?: $ObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): purify.Either<Error, readonly UnionPropertiesClass[]> {
+  unionDiscriminantsClassesSync(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): purify.Either<Error, readonly UnionDiscriminantsClass[]> {
     return this.$objectsSync<
-      UnionPropertiesClass,
-      UnionPropertiesClass.$Identifier
-    >([{ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }], query);
+      UnionDiscriminantsClass,
+      UnionDiscriminantsClass.$Identifier
+    >(
+      [{ $fromRdf: UnionDiscriminantsClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
   }
 
-  async unionPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<UnionPropertiesClass.$Identifier>, "where">,
+  async unionDiscriminantsClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+      "where"
+    >,
   ): Promise<purify.Either<Error, number>> {
-    return this.unionPropertiesClassesCountSync(query);
+    return this.unionDiscriminantsClassesCountSync(query);
   }
 
-  unionPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<UnionPropertiesClass.$Identifier>, "where">,
+  unionDiscriminantsClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+      "where"
+    >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
-      UnionPropertiesClass,
-      UnionPropertiesClass.$Identifier
-    >([{ $fromRdf: UnionPropertiesClass.$fromRdf, $fromRdfTypes: [] }], query);
+      UnionDiscriminantsClass,
+      UnionDiscriminantsClass.$Identifier
+    >(
+      [{ $fromRdf: UnionDiscriminantsClass.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
   }
 
   async uuidV4IriIdentifierClass(
@@ -68149,44 +68176,44 @@ export class $SparqlObjectSet implements $ObjectSet {
     );
   }
 
-  async unionPropertiesClass(
-    identifier: UnionPropertiesClass.$Identifier,
-  ): Promise<purify.Either<Error, UnionPropertiesClass>> {
+  async unionDiscriminantsClass(
+    identifier: UnionDiscriminantsClass.$Identifier,
+  ): Promise<purify.Either<Error, UnionDiscriminantsClass>> {
     return (
-      await this.unionPropertiesClasses({
+      await this.unionDiscriminantsClasses({
         where: { identifiers: [identifier], type: "identifiers" },
       })
     ).map((objects) => objects[0]);
   }
 
-  async unionPropertiesClassIdentifiers(
-    query?: $SparqlObjectSet.Query<UnionPropertiesClass.$Identifier>,
+  async unionDiscriminantsClassIdentifiers(
+    query?: $SparqlObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
   ): Promise<
-    purify.Either<Error, readonly UnionPropertiesClass.$Identifier[]>
+    purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<UnionPropertiesClass.$Identifier>(
-      UnionPropertiesClass,
+    return this.$objectIdentifiers<UnionDiscriminantsClass.$Identifier>(
+      UnionDiscriminantsClass,
       query,
     );
   }
 
-  async unionPropertiesClasses(
-    query?: $SparqlObjectSet.Query<UnionPropertiesClass.$Identifier>,
-  ): Promise<purify.Either<Error, readonly UnionPropertiesClass[]>> {
+  async unionDiscriminantsClasses(
+    query?: $SparqlObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>> {
     return this.$objects<
-      UnionPropertiesClass,
-      UnionPropertiesClass.$Identifier
-    >(UnionPropertiesClass, query);
+      UnionDiscriminantsClass,
+      UnionDiscriminantsClass.$Identifier
+    >(UnionDiscriminantsClass, query);
   }
 
-  async unionPropertiesClassesCount(
+  async unionDiscriminantsClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<UnionPropertiesClass.$Identifier>,
+      $SparqlObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
       "where"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<UnionPropertiesClass.$Identifier>(
-      UnionPropertiesClass,
+    return this.$objectsCount<UnionDiscriminantsClass.$Identifier>(
+      UnionDiscriminantsClass,
       query,
     );
   }

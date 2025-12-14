@@ -1171,9 +1171,9 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         sh:path :termProperty
     ] .
 
-:UnionPropertiesClass
+:UnionDiscriminantsClass
     a sh:NodeShape ;
-    rdfs:comment "Shape with sh:xone (union) properties. Combinations of discriminator type (synthetic, typeof, property) x cardinality." ;
+    rdfs:comment "Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality." ;
     sh:property [
         rdfs:comment "Union with a synthetic discriminator (multiple typeofs, no shared discriminator property)." ;
         sh:maxCount 1 ;
