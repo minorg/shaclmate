@@ -8,11 +8,10 @@
     "@rdfjs/prefix-map": "^0.1.2",
     "@types/n3": "^1.26.0",
     "@types/rdfjs__prefix-map": "^0.1.5",
-    "@types/rdf-validate-shacl": "^0.4.7",
     "cmd-ts": "^0.13.0",
     "n3": "^1.26.0",
     "pino": "^9.1.0",
-    "rdf-validate-shacl": "^0.5.6"
+    "rdf-validate-shacl": "0.5.8"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",

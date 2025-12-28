@@ -10,14 +10,19 @@ import { Harness } from "./Harness.js";
 export class ClassHarness<
   T extends {
     $equals: (other: T) => $EqualsResult;
-    $identifier: Resource.Identifier;
+    readonly $identifier: Resource.Identifier;
     $toJson: () => any;
     $toRdf: (options?: {
       mutateGraph: MutableResource.MutateGraph;
       resourceSet: MutableResourceSet;
     }) => Resource;
+    readonly $type: string;
   },
 > extends Harness<T> {
+  get shapeName(): string {
+    return this.instance.$type;
+  }
+
   override equals(other: T): $EqualsResult {
     return this.instance.$equals(other);
   }

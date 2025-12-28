@@ -561,7 +561,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :IriList
+            sh:node :IriList
         ]
         [
             sh:hasValue ( )
@@ -877,7 +877,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :MutableStringList
+            sh:node :MutableStringList
         ]
         [
             sh:hasValue ( )
@@ -939,7 +939,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :ObjectList
+            sh:node :ObjectList
         ]
         [
             sh:hasValue ( )
@@ -1146,7 +1146,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:minCount 1 ;
     sh:path rdf:rest ;
     sh:xone ([
-            sh:class :StringList
+            sh:node :StringList
         ]
         [
             sh:hasValue ( )

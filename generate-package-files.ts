@@ -50,6 +50,7 @@ const externalDependencyVersions = {
   pino: { pino: "^9.1.0" },
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },
+  "rdf-validate-shacl": { "rdf-validate-shacl": "0.5.8" },
   "rdfjs-resource": { "rdfjs-resource": "1.0.25" },
   rimraf: { rimraf: "^6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
@@ -84,7 +85,10 @@ const packages: readonly Package[] = [
     },
     devDependencies: {
       external: {
+        "@kos-kit/sparql-client": "2.0.116",
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+        oxigraph: "0.4.11",
+        ...externalDependencyVersions["rdf-validate-shacl"],
       },
     },
     directory: "examples",
@@ -141,10 +145,6 @@ const packages: readonly Package[] = [
       internal: ["shacl-ast"],
     },
     devDependencies: {
-      external: {
-        "@kos-kit/sparql-client": "2.0.116",
-        oxigraph: "0.4.11",
-      },
       internal: ["kitchen-sink-example"],
     },
     directory: "packages",
@@ -161,11 +161,10 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["@rdfjs/prefix-map"],
         ...externalDependencyVersions["@types/n3"],
         ...externalDependencyVersions["@types/rdfjs__prefix-map"],
-        "@types/rdf-validate-shacl": "^0.4.7",
         "cmd-ts": "^0.13.0",
         ...externalDependencyVersions["n3"],
         ...externalDependencyVersions["pino"],
-        "rdf-validate-shacl": "^0.5.6",
+        ...externalDependencyVersions["rdf-validate-shacl"],
       },
       internal: ["compiler"],
     },

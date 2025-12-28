@@ -52,6 +52,7 @@ export const harnesses = {
       classUnionMember1Property: "test",
     }),
     kitchenSink.ClassUnion,
+    "ClassUnion",
   ),
   classUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
@@ -60,6 +61,7 @@ export const harnesses = {
       classUnionMember2Property: "test",
     }),
     kitchenSink.ClassUnion,
+    "ClassUnion",
   ),
   concreteChildClass: new ClassHarness(
     new kitchenSink.ConcreteChildClass({
@@ -208,6 +210,7 @@ export const harnesses = {
       classUnionMember1Property: "test member 1",
     }),
     kitchenSink.FlattenClassUnion,
+    "FlattenClassUnion",
   ),
   flattenClassUnionMember2: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember2({
@@ -216,6 +219,7 @@ export const harnesses = {
       classUnionMember2Property: "test member 2",
     }),
     kitchenSink.FlattenClassUnion,
+    "FlattenClassUnion",
   ),
   flattenClassUnionMember3: new ClassUnionHarness(
     new kitchenSink.FlattenClassUnionMember3({
@@ -223,6 +227,7 @@ export const harnesses = {
       flattenClassUnionMember3Property: "test",
     }),
     kitchenSink.FlattenClassUnion,
+    "FlattenClassUnion",
   ),
   indirectRecursive: new ClassHarness(
     new kitchenSink.IndirectRecursiveClass({
@@ -284,6 +289,7 @@ export const harnesses = {
       $type: "InterfaceUnionMember1",
     },
     kitchenSink.InterfaceUnion,
+    "InterfaceUnion",
   ),
   interfaceUnionMember2: new InterfaceHarness<kitchenSink.InterfaceUnion>(
     {
@@ -293,6 +299,7 @@ export const harnesses = {
       $type: "InterfaceUnionMember2",
     },
     kitchenSink.InterfaceUnion,
+    "InterfaceUnion",
   ),
   iriIdentifierClass: new ClassHarness(
     new kitchenSink.IriIdentifierClass({
@@ -510,6 +517,7 @@ export const harnesses = {
       noRdfTypeClassUnionMember1Property: "test",
     }),
     kitchenSink.NoRdfTypeClassUnion,
+    "NoRdfTypeClassUnion",
   ),
   noRdfTypeClassUnionMember2: new ClassUnionHarness(
     new kitchenSink.NoRdfTypeClassUnionMember2({
@@ -517,6 +525,7 @@ export const harnesses = {
       noRdfTypeClassUnionMember2Property: "test",
     }),
     kitchenSink.NoRdfTypeClassUnion,
+    "NoRdfTypeClassUnion",
   ),
   objectListProperty: new ClassHarness(
     new kitchenSink.ListPropertiesClass({

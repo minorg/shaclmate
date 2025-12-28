@@ -118,7 +118,7 @@ function transformNodeShapeToAstListType(
         ),
       );
     }
-    // rdf:rest should be sh:xone ( [ sh:class nodeShape ] [ sh:hasValue rdf:nil ] )
+    // rdf:rest should be sh:xone ( [ sh:node nodeShape ] [ sh:hasValue rdf:nil ] )
     if (
       !restProperty.type.memberTypes.find(
         (type) =>

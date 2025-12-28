@@ -8,9 +8,13 @@ import type { $EqualsResult } from "../src/index.js";
 import { Harness } from "./Harness.js";
 
 export class InterfaceHarness<
-  T extends { readonly $identifier: Resource.Identifier },
+  T extends {
+    readonly $identifier: Resource.Identifier;
+    readonly $type: string;
+  },
 > extends Harness<T> {
   readonly equals: (other: T) => $EqualsResult;
+  readonly shapeName: string;
   readonly toJson: () => any;
   readonly toRdf: (options?: {
     mutateGraph?: MutableResource.MutateGraph;
@@ -35,9 +39,11 @@ export class InterfaceHarness<
         },
       ) => Resource;
     } & ConstructorParameters<typeof Harness<T>>[1],
+    shapeName?: string,
   ) {
     super(instance, superParameters);
     this.equals = (other) => $equals(this.instance, other);
+    this.shapeName = shapeName ?? this.instance.$type;
     this.toJson = () => $toJson(this.instance);
     this.toRdf = (kwds) => $toRdf(this.instance, kwds);
   }
