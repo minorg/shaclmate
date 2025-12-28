@@ -18,6 +18,7 @@ export abstract class Harness<
       [_index: string]: any;
     },
   ) => Either<Error, T>;
+  abstract readonly shapeName: string;
   readonly sparqlConstructQueryString: () => string;
 
   constructor(

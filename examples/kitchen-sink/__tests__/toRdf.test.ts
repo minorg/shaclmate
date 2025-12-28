@@ -1,12 +1,34 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import N3, { DataFactory as dataFactory } from "n3";
+import N3, { DataFactory as dataFactory, Parser, Store } from "n3";
 import { describe, it } from "vitest";
 
+import { fail } from "node:assert";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import SHACLValidator from "rdf-validate-shacl";
 import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
+import { quadsToTurtle } from "./quadsToTurtle.js";
 
-describe("toRdf", () => {
+describe("toRdf", async () => {
+  const shapesGraph = new Store();
+  shapesGraph.addQuads(
+    new Parser({ format: "Turtle" }).parse(
+      (
+        await fs.readFile(
+          path.join(
+            path.dirname(fileURLToPath(import.meta.url)),
+            "..",
+            "src",
+            "kitchen-sink.shaclmate.ttl",
+          ),
+        )
+      ).toString(),
+    ),
+  );
+
   it("should populate a dataset", ({ expect }) => {
     const resource = harnesses.concreteChildClass.toRdf();
     expect(resource.dataset.size).toStrictEqual(4);
@@ -103,4 +125,38 @@ describe("toRdf", () => {
         .unsafeCoerce(),
     ).toStrictEqual(true);
   });
+
+  for (const [id, harness] of Object.entries(harnesses)) {
+    // if (id !== "mutablePropertiesClass") {
+    //   continue;
+    // }
+    it.only(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
+      expect,
+    }) => {
+      const dataResource = harness.toRdf();
+      const dataGraph = dataResource.dataset;
+
+      const shapeNode = dataFactory.namedNode(
+        `http://example.com/${harness.shapeName}`,
+      );
+      expect(shapesGraph.match(shapeNode).size).toBeGreaterThan(0);
+
+      const validationReport = new SHACLValidator(shapesGraph, {}).validateNode(
+        dataGraph,
+        dataResource.identifier,
+        shapeNode,
+      );
+      if (validationReport.conforms) {
+        return;
+      }
+
+      fail(`\
+${id}: data graph:
+${await quadsToTurtle(dataGraph)}
+
+${id}: validation report:
+${await quadsToTurtle(validationReport.dataset)}
+`);
+    });
+  }
 });
