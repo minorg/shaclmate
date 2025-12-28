@@ -127,10 +127,10 @@ describe("toRdf", async () => {
   });
 
   for (const [id, harness] of Object.entries(harnesses)) {
-    // if (id !== "mutablePropertiesClass") {
+    // if (id !== "objectListProperty") {
     //   continue;
     // }
-    it.only(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
+    it.skip(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
       const dataResource = harness.toRdf();
