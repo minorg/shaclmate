@@ -27,8 +27,6 @@
   },
   "devDependencies": {
     "@shaclmate/kitchen-sink-example": "3.0.4",
-    "@kos-kit/sparql-client": "2.0.116",
-    "oxigraph": "0.4.11",
     "@biomejs/biome": "1.9.4",
     "@tsconfig/node18": "^18.2.4",
     "@tsconfig/strictest": "^2.0.5",
