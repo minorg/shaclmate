@@ -70,6 +70,9 @@ export class NodeShape extends ShaclCoreNodeShape<
             return "sha256";
           case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
             return "uuidv4";
+          default:
+            iri.value satisfies never;
+            throw new RangeError(iri.value);
         }
       });
     this.isClass = isClass;

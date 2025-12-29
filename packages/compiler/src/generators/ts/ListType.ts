@@ -280,6 +280,7 @@ export class ListType<
             break;
           case "uuidv4":
             listIdentifier =
+              // biome-ignore lint/suspicious/noTemplateCurlyInString: necessary
               "dataFactory.namedNode(`urn:shaclmate:list:${uuid.v4()}`)";
             break;
         }
@@ -287,6 +288,7 @@ export class ListType<
           "rdfjsResource.MutableResource<rdfjs.NamedNode>";
         resourceSetMethodName = "mutableNamedResource";
         subListIdentifier =
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: necessary
           "dataFactory.namedNode(`${listResource.identifier.value}:${itemIndex}`)";
         break;
       }
