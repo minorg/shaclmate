@@ -1,9 +1,11 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import type { TsFeature } from "enums/TsFeature.js";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { AbstractType } from "./AbstractType.js";
+import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -126,5 +128,17 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
           `(${variables.value}.getTime() !== ${defaultValue.getTime()} ? [${valueToRdf}] : [])`,
       )
       .orDefault(`[${valueToRdf}]`);
+  }
+
+  override useImports({
+    features,
+  }: {
+    features: ReadonlySet<TsFeature>;
+  }): readonly Import[] {
+    const imports = super.useImports({ features }).concat();
+    if (features.has("graphql")) {
+      imports.push(Import.GRAPHQL_SCALARS);
+    }
+    return imports;
   }
 }

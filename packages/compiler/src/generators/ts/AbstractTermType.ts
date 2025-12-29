@@ -1,5 +1,6 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import type { TsFeature } from "enums/TsFeature.js";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
@@ -262,7 +263,9 @@ export abstract class AbstractTermType<
       .orDefault(`[${variables.value}]`);
   }
 
-  override useImports(): readonly Import[] {
+  override useImports(_object: {
+    features: ReadonlySet<TsFeature>;
+  }): readonly Import[] {
     return [Import.RDFJS_TYPES];
   }
 }

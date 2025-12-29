@@ -138,7 +138,6 @@ export class ObjectType extends AbstractDeclaredType {
     );
     if (this.features.has("graphql")) {
       imports.push(Import.GRAPHQL);
-      imports.push(Import.GRAPHQL_SCALARS);
     }
     if (this.features.has("json")) {
       imports.push(Import.ZOD);

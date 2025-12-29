@@ -85,7 +85,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
   }
 
   override get declarationImports(): readonly Import[] {
-    const imports = this.type.useImports().concat();
+    const imports = this.type
+      .useImports({ features: this.objectType.features })
+      .concat();
 
     this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
       switch (identifierMintingStrategy) {
