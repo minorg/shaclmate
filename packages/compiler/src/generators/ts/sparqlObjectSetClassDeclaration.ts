@@ -159,7 +159,7 @@ if (typeof count === "undefined") {
 if (count.termType !== "Literal") {
   return purify.Left(new Error("'count' variable is not a Literal"));
 }
-const parsedCount = Number.parseInt(count.value);
+const parsedCount = Number.parseInt(count.value, 10);
 if (Number.isNaN(parsedCount)) {
   return purify.Left(new Error("'count' variable is NaN"));
 }
