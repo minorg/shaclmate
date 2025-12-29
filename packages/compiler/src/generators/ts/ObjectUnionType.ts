@@ -7,18 +7,17 @@ import {
   type TypeAliasDeclarationStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
+import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
+import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
-import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
-import { Type } from "./Type.js";
-import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
-import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { Type } from "./Type.js";
 import { tsComment } from "./tsComment.js";
 
 /**
@@ -210,7 +209,9 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override graphqlResolveExpression({
     variables,
-  }: { variables: { value: string } }): string {
+  }: {
+    variables: { value: string };
+  }): string {
     return variables.value;
   }
 

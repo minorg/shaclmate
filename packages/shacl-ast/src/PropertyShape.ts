@@ -1,10 +1,10 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
+import type * as generated from "./generated.js";
 import type { OntologyLike } from "./OntologyLike.js";
 import type { PropertyPath } from "./PropertyPath.js";
 import { Shape } from "./Shape.js";
 import type { ShapesGraph } from "./ShapesGraph.js";
-import type * as generated from "./generated.js";
 
 export class PropertyShape<
   NodeShapeT extends ShapeT,

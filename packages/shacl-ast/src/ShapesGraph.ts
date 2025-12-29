@@ -1,6 +1,5 @@
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
-import type {} from "@rdfjs/types";
 import type {
   BlankNode,
   DatasetCore,
@@ -9,17 +8,16 @@ import type {
   Term,
 } from "@rdfjs/types";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
-import { Maybe } from "purify-ts";
-import { Either } from "purify-ts";
+import { Either, Maybe } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
+import * as generated from "./generated.js";
 import { NodeShape } from "./NodeShape.js";
 import { Ontology } from "./Ontology.js";
 import type { OntologyLike } from "./OntologyLike.js";
 import { PropertyGroup } from "./PropertyGroup.js";
 import { PropertyShape } from "./PropertyShape.js";
 import type { Shape } from "./Shape.js";
-import * as generated from "./generated.js";
 
 export class ShapesGraph<
   NodeShapeT extends ShapeT,
@@ -517,10 +515,10 @@ export namespace ShapesGraph {
     protected override createPropertyShape({
       resource,
       shapesGraph,
-    }: { resource: Resource; shapesGraph: DefaultShapesGraph }): Either<
-      Error,
-      DefaultPropertyShape
-    > {
+    }: {
+      resource: Resource;
+      shapesGraph: DefaultShapesGraph;
+    }): Either<Error, DefaultPropertyShape> {
       return generated.ShaclCorePropertyShape.$fromRdf(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,

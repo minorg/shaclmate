@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { OntologyLike } from "./OntologyLike.js";
 import type * as generated from "./generated.js";
+import type { OntologyLike } from "./OntologyLike.js";
 
 export class Ontology implements OntologyLike {
   constructor(

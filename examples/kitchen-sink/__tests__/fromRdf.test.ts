@@ -1,11 +1,9 @@
-import * as kitchenSink from "../src/index.js";
-import { harnesses } from "./harnesses.js";
-
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
-
 import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet, Resource, ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
+import * as kitchenSink from "../src/index.js";
+import { harnesses } from "./harnesses.js";
 
 describe("fromRdf", () => {
   let invalidLanguageInResource: Resource;

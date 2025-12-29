@@ -4,12 +4,12 @@ import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TermType } from "./TermType.js";
+import { Type } from "./Type.js";
 
 export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;

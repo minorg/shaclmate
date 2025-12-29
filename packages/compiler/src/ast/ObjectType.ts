@@ -12,9 +12,9 @@ import type {
 } from "../enums/index.js";
 import { AbstractType } from "./AbstractType.js";
 import type { Curie } from "./Curie.js";
+import { arrayEquals } from "./equals.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Type } from "./Type.js";
-import { arrayEquals } from "./equals.js";
 
 export class ObjectType extends AbstractType {
   /**

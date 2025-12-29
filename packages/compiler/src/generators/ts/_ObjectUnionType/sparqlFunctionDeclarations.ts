@@ -1,8 +1,8 @@
 import { camelCase, pascalCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
-import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
+import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 

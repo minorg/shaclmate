@@ -1,7 +1,7 @@
 import { invariant } from "ts-invariant";
 import { AbstractType } from "./AbstractType.js";
-import { Type } from "./Type.js";
 import { arrayEquals } from "./equals.js";
+import { Type } from "./Type.js";
 
 /**
  * A compound of types, such as an intersection or union.

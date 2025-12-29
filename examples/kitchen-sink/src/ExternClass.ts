@@ -1,10 +1,8 @@
-import * as rdfjsResource from "rdfjs-resource";
-
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import * as N3 from "n3";
 
 import { Either } from "purify-ts";
-
-import * as N3 from "n3";
+import * as rdfjsResource from "rdfjs-resource";
 import {
   type $ObjectSet,
   AbstractBaseClassForExternClass,

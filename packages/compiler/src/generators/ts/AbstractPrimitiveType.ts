@@ -3,8 +3,8 @@ import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { Type } from "./Type.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,

@@ -1,12 +1,10 @@
 import {
-  VariableDeclarationKind,
-  type VariableStatementStructure,
-} from "ts-morph";
-import {
   type FunctionDeclarationStructure,
   type ModuleDeclarationStructure,
   StructureKind,
   type TypeAliasDeclarationStructure,
+  VariableDeclarationKind,
+  type VariableStatementStructure,
 } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";

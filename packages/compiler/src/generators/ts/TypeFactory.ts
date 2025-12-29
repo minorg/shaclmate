@@ -2,9 +2,8 @@ import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
-import { fromRdf } from "rdf-literal";
-
 import { Maybe } from "purify-ts";
+import { fromRdf } from "rdf-literal";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
 import type { AbstractLiteralType } from "./AbstractLiteralType.js";
@@ -25,10 +24,10 @@ import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
 import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
-import { TermType } from "./TermType.js";
-import { UnionType } from "./UnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { TermType } from "./TermType.js";
 import { tsName } from "./tsName.js";
+import { UnionType } from "./UnionType.js";
 
 export class TypeFactory {
   private cachedObjectTypePropertiesByShapeIdentifier: TermMap<

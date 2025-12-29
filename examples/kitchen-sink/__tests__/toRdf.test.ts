@@ -1,13 +1,11 @@
-import { rdf } from "@tpluscode/rdf-ns-builders";
-
-import N3, { DataFactory as dataFactory, Parser, Store } from "n3";
-import { describe, it } from "vitest";
-
 import { fail } from "node:assert";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { rdf } from "@tpluscode/rdf-ns-builders";
+import N3, { DataFactory as dataFactory, Parser, Store } from "n3";
 import SHACLValidator from "rdf-validate-shacl";
+import { describe, it } from "vitest";
 import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";

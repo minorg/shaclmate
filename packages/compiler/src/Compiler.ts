@@ -1,8 +1,8 @@
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import type { Either } from "purify-ts";
-import { ShapesGraphToAstTransformer } from "./ShapesGraphToAstTransformer.js";
 import type { Generator } from "./generators/Generator.js";
 import type { ShapesGraph } from "./input/ShapesGraph.js";
+import { ShapesGraphToAstTransformer } from "./ShapesGraphToAstTransformer.js";
 
 export class Compiler {
   private readonly generator: Generator;

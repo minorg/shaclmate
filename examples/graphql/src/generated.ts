@@ -1,5 +1,7 @@
 import { StoreFactory as _DatasetFactory } from "n3";
+
 const datasetFactory = new _DatasetFactory();
+
 import type * as rdfjs from "@rdfjs/types";
 import * as graphql from "graphql";
 import { DataFactory as dataFactory } from "n3";
@@ -76,9 +78,10 @@ export class $LazyObjectSet<
     return this.partials.length;
   }
 
-  async resolve(options?: { limit?: number; offset?: number }): Promise<
-    purify.Either<Error, readonly ResolvedObjectT[]>
-  > {
+  async resolve(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
       return purify.Either.of([]);
     }
@@ -228,7 +231,7 @@ export namespace $DefaultPartial {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -403,7 +406,7 @@ export namespace UnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -689,7 +692,7 @@ export namespace UnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -980,7 +983,7 @@ export namespace Nested {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -1362,7 +1365,7 @@ export namespace ParentStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -1882,7 +1885,7 @@ export namespace Child {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;

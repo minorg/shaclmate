@@ -1,5 +1,7 @@
 import { StoreFactory as _DatasetFactory } from "n3";
+
 const datasetFactory = new _DatasetFactory();
+
 import type * as rdfjs from "@rdfjs/types";
 import { sha256 } from "js-sha256";
 import { DataFactory as dataFactory } from "n3";
@@ -383,9 +385,10 @@ export class $LazyObjectSet<
     return this.partials.length;
   }
 
-  async resolve(options?: { limit?: number; offset?: number }): Promise<
-    purify.Either<Error, readonly ResolvedObjectT[]>
-  > {
+  async resolve(options?: {
+    limit?: number;
+    offset?: number;
+  }): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
       return purify.Either.of([]);
     }
@@ -653,7 +656,7 @@ export namespace $NamedDefaultPartial {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -956,7 +959,7 @@ export namespace $DefaultPartial {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -1265,7 +1268,7 @@ export namespace UuidV4IriIdentifierInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -1836,7 +1839,7 @@ export namespace UuidV4IriIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -3640,7 +3643,7 @@ export namespace UnionDiscriminantsClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -6721,7 +6724,7 @@ export namespace TermPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -7752,7 +7755,7 @@ export namespace Sha256IriIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -8293,7 +8296,7 @@ export namespace RecursiveClassUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -8725,7 +8728,7 @@ export namespace RecursiveClassUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -9175,7 +9178,7 @@ export namespace PropertyVisibilitiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -10095,7 +10098,7 @@ export namespace PropertyCardinalitiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -11019,7 +11022,7 @@ export namespace PartialInterfaceUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -11641,7 +11644,7 @@ export namespace PartialInterfaceUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -12300,7 +12303,7 @@ export namespace PartialClassUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -12896,7 +12899,7 @@ export namespace PartialClassUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -13543,7 +13546,7 @@ export namespace OrderedPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -14275,7 +14278,7 @@ export namespace NonClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -14754,7 +14757,7 @@ export namespace NoRdfTypeClassUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -15266,7 +15269,7 @@ export namespace NoRdfTypeClassUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -15991,7 +15994,7 @@ export namespace MutablePropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -17200,7 +17203,7 @@ export namespace ListPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -18207,7 +18210,7 @@ export namespace PartialInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -20014,7 +20017,7 @@ export namespace LazyPropertiesInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -21717,7 +21720,7 @@ export namespace PartialClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -23538,7 +23541,7 @@ export namespace LazyPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -25004,7 +25007,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -25555,7 +25558,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -26043,7 +26046,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -26668,7 +26671,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -27328,7 +27331,7 @@ export namespace LazilyResolvedClassUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -27926,7 +27929,7 @@ export namespace LazilyResolvedClassUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -28499,7 +28502,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -29169,7 +29172,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -29860,7 +29863,7 @@ export namespace LanguageInPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -30660,7 +30663,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -31203,7 +31206,7 @@ export namespace IriIdentifierInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -31539,7 +31542,7 @@ export namespace IriIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -31824,7 +31827,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -32317,7 +32320,7 @@ export namespace InterfaceUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -32942,7 +32945,7 @@ export namespace InterfaceUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -33580,7 +33583,7 @@ export namespace Interface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -34128,7 +34131,7 @@ export namespace IndirectRecursiveHelperClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -34553,7 +34556,7 @@ export namespace IndirectRecursiveClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -35200,7 +35203,7 @@ export namespace InPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -36123,7 +36126,7 @@ export namespace InIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -36637,7 +36640,7 @@ export namespace IdentifierOverride1ClassStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -37010,7 +37013,7 @@ export namespace IdentifierOverride2ClassStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -37319,7 +37322,7 @@ export namespace IdentifierOverride3ClassStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -37748,7 +37751,7 @@ export namespace IdentifierOverride4ClassStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -38168,7 +38171,7 @@ export namespace IdentifierOverride5Class {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -38713,7 +38716,7 @@ export namespace HasValuePropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -39301,7 +39304,7 @@ export namespace FlattenClassUnionMember3 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -39910,7 +39913,7 @@ export namespace ExternClassPropertyClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -40377,7 +40380,7 @@ export namespace ExplicitRdfTypeClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -40977,7 +40980,7 @@ export namespace ExplicitFromToRdfTypesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -41592,7 +41595,7 @@ export namespace DirectRecursiveClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -42283,7 +42286,7 @@ export namespace DefaultValuePropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -43638,7 +43641,7 @@ export namespace DateUnionPropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -45905,7 +45908,7 @@ export namespace ConvertibleTypePropertiesClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -47429,7 +47432,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -48021,7 +48024,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -48529,7 +48532,7 @@ export namespace ConcreteParentInterfaceStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -49177,7 +49180,7 @@ export namespace ConcreteChildInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -49858,7 +49861,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -50228,7 +50231,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -50620,7 +50623,7 @@ export namespace ConcreteParentClassStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -51235,7 +51238,7 @@ export namespace ConcreteChildClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -51827,7 +51830,7 @@ export namespace ClassUnionMemberCommonParentStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -52296,7 +52299,7 @@ export namespace ClassUnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -52882,7 +52885,7 @@ export namespace ClassUnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -53445,7 +53448,7 @@ export namespace BlankNodeIdentifierInterface {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -53804,7 +53807,7 @@ export namespace BlankNodeIdentifierClass {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -54212,7 +54215,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;

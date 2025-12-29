@@ -5,12 +5,12 @@ import {
 } from "ts-morph";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
+import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { TypeFactory } from "./TypeFactory.js";
-import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { TypeFactory } from "./TypeFactory.js";
 
 export class TsGenerator implements Generator {
   private readonly typeFactory = new TypeFactory();

@@ -1,7 +1,6 @@
 import { PropertyShape as ShaclCorePropertyShape } from "@shaclmate/shacl-ast";
 import { List, Maybe } from "purify-ts";
 import type { PropertyVisibility } from "../enums/index.js";
-import type { Shape } from "./Shape.js";
 import type * as generated from "./generated.js";
 import type {
   NodeShape,
@@ -9,6 +8,7 @@ import type {
   PropertyGroup,
   ShapesGraph,
 } from "./index.js";
+import type { Shape } from "./Shape.js";
 
 export class PropertyShape extends ShaclCorePropertyShape<
   NodeShape,

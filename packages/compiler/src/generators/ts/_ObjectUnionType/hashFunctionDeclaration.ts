@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
-import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { hasherTypeConstraint } from "../_ObjectType/hashFunctionOrMethodDeclarations.js";
+import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function hashFunctionDeclaration(

@@ -1,5 +1,7 @@
 import { StoreFactory as _DatasetFactory } from "n3";
+
 const datasetFactory = new _DatasetFactory();
+
 import type * as rdfjs from "@rdfjs/types";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
@@ -201,7 +203,7 @@ export namespace BaseShaclCoreShapeStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -2057,7 +2059,7 @@ export namespace ShaclCorePropertyShape {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -2588,7 +2590,7 @@ export namespace ShaclCorePropertyGroup {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -2881,7 +2883,7 @@ export namespace ShaclCoreNodeShape {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -3219,7 +3221,7 @@ export namespace OwlOntology {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
