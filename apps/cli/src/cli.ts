@@ -73,7 +73,6 @@ function generate({
         null,
         (prefix, prefixNode) => {
           const existingIriPrefix = iriPrefixes.find(
-            // @ts-expect-error
             (iriPrefix) =>
               iriPrefix[0] === prefix || iriPrefix[1].equals(prefixNode),
           );
