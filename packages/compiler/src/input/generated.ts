@@ -2063,7 +2063,6 @@ export namespace ShaclCorePropertyShapeStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;

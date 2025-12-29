@@ -545,17 +545,17 @@ export namespace $NamedDefaultPartial {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, $NamedDefaultPartial> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
@@ -563,7 +563,7 @@ export namespace $NamedDefaultPartial {
 
     return $NamedDefaultPartial
       .$propertiesFromRdf({
-        ...context,
+        context,
         ignoreRdfType,
         objectSet,
         preferredLanguages,
@@ -590,7 +590,7 @@ export namespace $NamedDefaultPartial {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -651,32 +651,26 @@ export namespace $NamedDefaultPartial {
     return purify.Either.of({ $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
-    const $identifier: $NamedDefaultPartial.$Identifier = $resource.identifier;
+    const $identifier: $NamedDefaultPartial.$Identifier =
+      $parameters.resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -847,17 +841,17 @@ export namespace $DefaultPartial {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, $DefaultPartial> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
@@ -865,7 +859,7 @@ export namespace $DefaultPartial {
 
     return $DefaultPartial
       .$propertiesFromRdf({
-        ...context,
+        context,
         ignoreRdfType,
         objectSet,
         preferredLanguages,
@@ -888,7 +882,7 @@ export namespace $DefaultPartial {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -954,21 +948,15 @@ export namespace $DefaultPartial {
     return purify.Either.of({ $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
-    const $identifier: $DefaultPartial.$Identifier = $resource.identifier;
+    const $identifier: $DefaultPartial.$Identifier =
+      $parameters.resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -1113,24 +1101,24 @@ export namespace UuidV4IriIdentifierInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UuidV4IriIdentifierInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return UuidV4IriIdentifierInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -1185,7 +1173,7 @@ export namespace UuidV4IriIdentifierInterface {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -1263,15 +1251,8 @@ export namespace UuidV4IriIdentifierInterface {
     return purify.Either.of({ $identifier, $type, uuidV4IriProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -1284,31 +1265,35 @@ export namespace UuidV4IriIdentifierInterface {
       uuidV4IriProperty: string;
     }
   > {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: UuidV4IriIdentifierInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "UuidV4IriIdentifierInterface" as const;
     const _uuidV4IriPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.uuidV4IriProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.uuidV4IriProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -1328,7 +1313,7 @@ export namespace UuidV4IriIdentifierInterface {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -1349,7 +1334,7 @@ export namespace UuidV4IriIdentifierInterface {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
                       "identifier"
@@ -1716,24 +1701,24 @@ export namespace UuidV4IriIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UuidV4IriIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return UuidV4IriIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -1759,7 +1744,7 @@ export namespace UuidV4IriIdentifierClass {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -1834,15 +1819,8 @@ export namespace UuidV4IriIdentifierClass {
     return purify.Either.of({ $identifier, uuidV4IriProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -1851,30 +1829,34 @@ export namespace UuidV4IriIdentifierClass {
     Error,
     { $identifier: rdfjs.NamedNode; uuidV4IriProperty: string }
   > {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: UuidV4IriIdentifierClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _uuidV4IriPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.uuidV4IriProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.uuidV4IriProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -1894,7 +1876,7 @@ export namespace UuidV4IriIdentifierClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -1915,7 +1897,7 @@ export namespace UuidV4IriIdentifierClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     UuidV4IriIdentifierClass.$properties.uuidV4IriProperty[
                       "identifier"
@@ -3154,24 +3136,24 @@ export namespace UnionDiscriminantsClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, UnionDiscriminantsClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return UnionDiscriminantsClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -3193,7 +3175,7 @@ export namespace UnionDiscriminantsClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -3638,15 +3620,8 @@ export namespace UnionDiscriminantsClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -3680,7 +3655,7 @@ export namespace UnionDiscriminantsClass {
     }
   > {
     const $identifier: UnionDiscriminantsClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _optionalClassOrIriOrStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<
@@ -3692,7 +3667,7 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalClassOrIriOrStringProperty["identifier"],
         { unique: true },
       ),
@@ -3706,9 +3681,9 @@ export namespace UnionDiscriminantsClass {
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
                     NonClass.$fromRdf(resource, {
-                      ...$context,
-                      objectSet: $objectSet,
-                      preferredLanguages: $preferredLanguages,
+                      ...$parameters.context,
+                      objectSet: $parameters.objectSet,
+                      preferredLanguages: $parameters.preferredLanguages,
                     }),
                   ),
                 ),
@@ -3759,8 +3734,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -3781,7 +3756,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -3804,7 +3779,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .optionalClassOrIriOrStringProperty[
@@ -3851,7 +3826,7 @@ export namespace UnionDiscriminantsClass {
                 | { type: "2-string"; value: string }
               >
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 UnionDiscriminantsClass.$properties
                   .optionalClassOrIriOrStringProperty["identifier"],
@@ -3872,9 +3847,10 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.optionalIriOrLiteralProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.optionalIriOrLiteralProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -3892,8 +3868,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -3914,7 +3890,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -3937,7 +3913,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .optionalIriOrLiteralProperty["identifier"],
@@ -3962,7 +3938,7 @@ export namespace UnionDiscriminantsClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 UnionDiscriminantsClass.$properties
                   .optionalIriOrLiteralProperty["identifier"],
@@ -3983,9 +3959,10 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.optionalIriOrStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.optionalIriOrStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -4003,8 +3980,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4025,7 +4002,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4048,7 +4025,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .optionalIriOrStringProperty["identifier"],
@@ -4073,7 +4050,7 @@ export namespace UnionDiscriminantsClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.NamedNode | string>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 UnionDiscriminantsClass.$properties.optionalIriOrStringProperty[
                   "identifier"
@@ -4097,7 +4074,7 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.requiredClassOrIriOrStringProperty["identifier"],
         { unique: true },
       ),
@@ -4111,9 +4088,9 @@ export namespace UnionDiscriminantsClass {
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
                     NonClass.$fromRdf(resource, {
-                      ...$context,
-                      objectSet: $objectSet,
-                      preferredLanguages: $preferredLanguages,
+                      ...$parameters.context,
+                      objectSet: $parameters.objectSet,
+                      preferredLanguages: $parameters.preferredLanguages,
                     }),
                   ),
                 ),
@@ -4164,8 +4141,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4186,7 +4163,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4209,7 +4186,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .requiredClassOrIriOrStringProperty[
@@ -4260,9 +4237,10 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.requiredIriOrLiteralProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.requiredIriOrLiteralProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -4280,8 +4258,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4302,7 +4280,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4325,7 +4303,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .requiredIriOrLiteralProperty["identifier"],
@@ -4358,9 +4336,10 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.requiredIriOrStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.requiredIriOrStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -4378,8 +4357,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4400,7 +4379,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4423,7 +4402,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .requiredIriOrStringProperty["identifier"],
@@ -4460,7 +4439,7 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.setClassOrIriOrStringProperty["identifier"],
         { unique: true },
       ),
@@ -4474,9 +4453,9 @@ export namespace UnionDiscriminantsClass {
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
                     NonClass.$fromRdf(resource, {
-                      ...$context,
-                      objectSet: $objectSet,
-                      preferredLanguages: $preferredLanguages,
+                      ...$parameters.context,
+                      objectSet: $parameters.objectSet,
+                      preferredLanguages: $parameters.preferredLanguages,
                     }),
                   ),
                 ),
@@ -4527,8 +4506,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4549,7 +4528,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4572,7 +4551,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .setClassOrIriOrStringProperty["identifier"],
@@ -4610,7 +4589,7 @@ export namespace UnionDiscriminantsClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
               "identifier"
@@ -4632,9 +4611,10 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.setIriOrLiteralProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.setIriOrLiteralProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -4652,8 +4632,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4674,7 +4654,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4697,7 +4677,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .setIriOrLiteralProperty["identifier"],
@@ -4719,7 +4699,7 @@ export namespace UnionDiscriminantsClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             UnionDiscriminantsClass.$properties.setIriOrLiteralProperty[
               "identifier"
@@ -4741,9 +4721,10 @@ export namespace UnionDiscriminantsClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.setIriOrStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.setIriOrStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -4761,8 +4742,8 @@ export namespace UnionDiscriminantsClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -4783,7 +4764,7 @@ export namespace UnionDiscriminantsClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -4806,7 +4787,7 @@ export namespace UnionDiscriminantsClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
                                 .setIriOrStringProperty["identifier"],
@@ -4828,7 +4809,7 @@ export namespace UnionDiscriminantsClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             UnionDiscriminantsClass.$properties.setIriOrStringProperty[
               "identifier"
@@ -6437,24 +6418,24 @@ export namespace TermPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, TermPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return TermPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -6476,7 +6457,7 @@ export namespace TermPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -6719,15 +6700,8 @@ export namespace TermPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -6748,7 +6722,8 @@ export namespace TermPropertiesClass {
       >;
     }
   > {
-    const $identifier: TermPropertiesClass.$Identifier = $resource.identifier;
+    const $identifier: TermPropertiesClass.$Identifier =
+      $parameters.resource.identifier;
     const _booleanTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<boolean>
@@ -6756,16 +6731,17 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.booleanTermProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.booleanTermProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toBoolean()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<boolean>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.booleanTermProperty[
                   "identifier"
@@ -6786,7 +6762,7 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.dateTermProperty["identifier"], {
+      $parameters.resource.values($properties.dateTermProperty["identifier"], {
         unique: true,
       }),
     )
@@ -6795,7 +6771,7 @@ export namespace TermPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.dateTermProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -6814,16 +6790,17 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.dateTimeTermProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.dateTimeTermProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toDate()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.dateTimeTermProperty[
                   "identifier"
@@ -6844,7 +6821,7 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.iriTermProperty["identifier"], {
+      $parameters.resource.values($properties.iriTermProperty["identifier"], {
         unique: true,
       }),
     )
@@ -6855,7 +6832,7 @@ export namespace TermPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.NamedNode>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.iriTermProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -6874,12 +6851,16 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.literalTermProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.literalTermProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -6899,7 +6880,7 @@ export namespace TermPropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -6920,7 +6901,7 @@ export namespace TermPropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   TermPropertiesClass.$properties.literalTermProperty[
                     "identifier"
@@ -6937,7 +6918,7 @@ export namespace TermPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.literalTermProperty[
                   "identifier"
@@ -6958,16 +6939,17 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.numberTermProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.numberTermProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toNumber()))
       .map((values) =>
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<number>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.numberTermProperty[
                   "identifier"
@@ -6988,12 +6970,16 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.stringTermProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.stringTermProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -7013,7 +6999,7 @@ export namespace TermPropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -7034,7 +7020,7 @@ export namespace TermPropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   TermPropertiesClass.$properties.stringTermProperty[
                     "identifier"
@@ -7049,7 +7035,7 @@ export namespace TermPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.stringTermProperty[
                   "identifier"
@@ -7070,7 +7056,7 @@ export namespace TermPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.termProperty["identifier"], {
+      $parameters.resource.values($properties.termProperty["identifier"], {
         unique: true,
       }),
     )
@@ -7088,7 +7074,7 @@ export namespace TermPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 TermPropertiesClass.$properties.termProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -7632,24 +7618,24 @@ export namespace Sha256IriIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Sha256IriIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return Sha256IriIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -7675,7 +7661,7 @@ export namespace Sha256IriIdentifierClass {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -7750,15 +7736,8 @@ export namespace Sha256IriIdentifierClass {
     return purify.Either.of({ $identifier, sha256IriProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -7767,30 +7746,34 @@ export namespace Sha256IriIdentifierClass {
     Error,
     { $identifier: rdfjs.NamedNode; sha256IriProperty: string }
   > {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: Sha256IriIdentifierClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _sha256IriPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.sha256IriProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.sha256IriProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -7810,7 +7793,7 @@ export namespace Sha256IriIdentifierClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -7831,7 +7814,7 @@ export namespace Sha256IriIdentifierClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     Sha256IriIdentifierClass.$properties.sha256IriProperty[
                       "identifier"
@@ -8160,24 +8143,24 @@ export namespace RecursiveClassUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, RecursiveClassUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return RecursiveClassUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -8199,7 +8182,7 @@ export namespace RecursiveClassUnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -8291,15 +8274,8 @@ export namespace RecursiveClassUnionMember2 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -8312,7 +8288,7 @@ export namespace RecursiveClassUnionMember2 {
     }
   > {
     const $identifier: RecursiveClassUnionMember2.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _recursiveClassUnionMember2PropertyEither: purify.Either<
       Error,
       purify.Maybe<RecursiveClassUnion>
@@ -8320,7 +8296,7 @@ export namespace RecursiveClassUnionMember2 {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.recursiveClassUnionMember2Property["identifier"],
         { unique: true },
       ),
@@ -8329,10 +8305,10 @@ export namespace RecursiveClassUnionMember2 {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             RecursiveClassUnion.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: false,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -8343,7 +8319,7 @@ export namespace RecursiveClassUnionMember2 {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<RecursiveClassUnion>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 RecursiveClassUnionMember2.$properties
                   .recursiveClassUnionMember2Property["identifier"],
@@ -8592,24 +8568,24 @@ export namespace RecursiveClassUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, RecursiveClassUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return RecursiveClassUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -8631,7 +8607,7 @@ export namespace RecursiveClassUnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -8723,15 +8699,8 @@ export namespace RecursiveClassUnionMember1 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -8744,7 +8713,7 @@ export namespace RecursiveClassUnionMember1 {
     }
   > {
     const $identifier: RecursiveClassUnionMember1.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _recursiveClassUnionMember1PropertyEither: purify.Either<
       Error,
       purify.Maybe<RecursiveClassUnion>
@@ -8752,7 +8721,7 @@ export namespace RecursiveClassUnionMember1 {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.recursiveClassUnionMember1Property["identifier"],
         { unique: true },
       ),
@@ -8761,10 +8730,10 @@ export namespace RecursiveClassUnionMember1 {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             RecursiveClassUnion.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: false,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -8775,7 +8744,7 @@ export namespace RecursiveClassUnionMember1 {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<RecursiveClassUnion>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 RecursiveClassUnionMember1.$properties
                   .recursiveClassUnionMember1Property["identifier"],
@@ -9035,24 +9004,24 @@ export namespace PropertyVisibilitiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PropertyVisibilitiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PropertyVisibilitiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -9074,7 +9043,7 @@ export namespace PropertyVisibilitiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -9173,15 +9142,8 @@ export namespace PropertyVisibilitiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -9196,18 +9158,21 @@ export namespace PropertyVisibilitiesClass {
     }
   > {
     const $identifier: PropertyVisibilitiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _privatePropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.privateProperty["identifier"], {
+        $parameters.resource.values($properties.privateProperty["identifier"], {
           unique: true,
         }),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -9227,7 +9192,7 @@ export namespace PropertyVisibilitiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -9248,7 +9213,7 @@ export namespace PropertyVisibilitiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PropertyVisibilitiesClass.$properties.privateProperty[
                       "identifier"
@@ -9270,12 +9235,16 @@ export namespace PropertyVisibilitiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.protectedProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.protectedProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -9295,7 +9264,7 @@ export namespace PropertyVisibilitiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -9316,7 +9285,7 @@ export namespace PropertyVisibilitiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PropertyVisibilitiesClass.$properties.protectedProperty[
                       "identifier"
@@ -9338,12 +9307,15 @@ export namespace PropertyVisibilitiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.publicProperty["identifier"], {
+        $parameters.resource.values($properties.publicProperty["identifier"], {
           unique: true,
         }),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -9363,7 +9335,7 @@ export namespace PropertyVisibilitiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -9384,7 +9356,7 @@ export namespace PropertyVisibilitiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PropertyVisibilitiesClass.$properties.publicProperty[
                       "identifier"
@@ -9911,24 +9883,24 @@ export namespace PropertyCardinalitiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PropertyCardinalitiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PropertyCardinalitiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -9950,7 +9922,7 @@ export namespace PropertyCardinalitiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -10093,15 +10065,8 @@ export namespace PropertyCardinalitiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -10117,7 +10082,7 @@ export namespace PropertyCardinalitiesClass {
     }
   > {
     const $identifier: PropertyCardinalitiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _emptyStringSetPropertyEither: purify.Either<
       Error,
       readonly string[]
@@ -10125,12 +10090,16 @@ export namespace PropertyCardinalitiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.emptyStringSetProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.emptyStringSetProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -10150,7 +10119,7 @@ export namespace PropertyCardinalitiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -10171,7 +10140,7 @@ export namespace PropertyCardinalitiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
                     "identifier"
@@ -10185,7 +10154,7 @@ export namespace PropertyCardinalitiesClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
               "identifier"
@@ -10206,12 +10175,16 @@ export namespace PropertyCardinalitiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.nonEmptyStringSetProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.nonEmptyStringSetProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -10231,7 +10204,7 @@ export namespace PropertyCardinalitiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -10252,7 +10225,7 @@ export namespace PropertyCardinalitiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   PropertyCardinalitiesClass.$properties
                     .nonEmptyStringSetProperty["identifier"],
@@ -10265,13 +10238,13 @@ export namespace PropertyCardinalitiesClass {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
               "identifier"
@@ -10293,12 +10266,16 @@ export namespace PropertyCardinalitiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.optionalStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.optionalStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -10318,7 +10295,7 @@ export namespace PropertyCardinalitiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -10339,7 +10316,7 @@ export namespace PropertyCardinalitiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   PropertyCardinalitiesClass.$properties.optionalStringProperty[
                     "identifier"
@@ -10354,7 +10331,7 @@ export namespace PropertyCardinalitiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 PropertyCardinalitiesClass.$properties.optionalStringProperty[
                   "identifier"
@@ -10373,12 +10350,16 @@ export namespace PropertyCardinalitiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.requiredStringProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.requiredStringProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -10398,7 +10379,7 @@ export namespace PropertyCardinalitiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -10419,7 +10400,7 @@ export namespace PropertyCardinalitiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PropertyCardinalitiesClass.$properties
                       .requiredStringProperty["identifier"],
@@ -10858,24 +10839,24 @@ export namespace PartialInterfaceUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PartialInterfaceUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PartialInterfaceUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -10930,7 +10911,7 @@ export namespace PartialInterfaceUnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -11017,15 +10998,8 @@ export namespace PartialInterfaceUnionMember2 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -11038,8 +11012,8 @@ export namespace PartialInterfaceUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -11051,14 +11025,16 @@ export namespace PartialInterfaceUnionMember2 {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(PartialInterfaceUnionMember2.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              PartialInterfaceUnionMember2.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember2)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember2)`,
             ),
           );
         });
@@ -11068,20 +11044,23 @@ export namespace PartialInterfaceUnionMember2 {
     }
 
     const $identifier: PartialInterfaceUnionMember2.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "PartialInterfaceUnionMember2" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -11101,7 +11080,7 @@ export namespace PartialInterfaceUnionMember2 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -11122,7 +11101,7 @@ export namespace PartialInterfaceUnionMember2 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PartialInterfaceUnionMember2.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -11480,24 +11459,24 @@ export namespace PartialInterfaceUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PartialInterfaceUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PartialInterfaceUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -11552,7 +11531,7 @@ export namespace PartialInterfaceUnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -11639,15 +11618,8 @@ export namespace PartialInterfaceUnionMember1 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -11660,8 +11632,8 @@ export namespace PartialInterfaceUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -11673,14 +11645,16 @@ export namespace PartialInterfaceUnionMember1 {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(PartialInterfaceUnionMember1.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              PartialInterfaceUnionMember1.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember1)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialInterfaceUnionMember1)`,
             ),
           );
         });
@@ -11690,20 +11664,23 @@ export namespace PartialInterfaceUnionMember1 {
     }
 
     const $identifier: PartialInterfaceUnionMember1.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "PartialInterfaceUnionMember1" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -11723,7 +11700,7 @@ export namespace PartialInterfaceUnionMember1 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -11744,7 +11721,7 @@ export namespace PartialInterfaceUnionMember1 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PartialInterfaceUnionMember1.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -12175,24 +12152,24 @@ export namespace PartialClassUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PartialClassUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PartialClassUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -12217,7 +12194,7 @@ export namespace PartialClassUnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -12298,15 +12275,8 @@ export namespace PartialClassUnionMember2 {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -12318,8 +12288,8 @@ export namespace PartialClassUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -12330,13 +12300,17 @@ export namespace PartialClassUnionMember2 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(PartialClassUnionMember2.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              PartialClassUnionMember2.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember2)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember2)`,
             ),
           );
         });
@@ -12346,19 +12320,22 @@ export namespace PartialClassUnionMember2 {
     }
 
     const $identifier: PartialClassUnionMember2.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -12378,7 +12355,7 @@ export namespace PartialClassUnionMember2 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -12399,7 +12376,7 @@ export namespace PartialClassUnionMember2 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PartialClassUnionMember2.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -12771,24 +12748,24 @@ export namespace PartialClassUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PartialClassUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PartialClassUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -12813,7 +12790,7 @@ export namespace PartialClassUnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -12894,15 +12871,8 @@ export namespace PartialClassUnionMember1 {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -12914,8 +12884,8 @@ export namespace PartialClassUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -12926,13 +12896,17 @@ export namespace PartialClassUnionMember1 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(PartialClassUnionMember1.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              PartialClassUnionMember1.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember1)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/PartialClassUnionMember1)`,
             ),
           );
         });
@@ -12942,19 +12916,22 @@ export namespace PartialClassUnionMember1 {
     }
 
     const $identifier: PartialClassUnionMember1.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -12974,7 +12951,7 @@ export namespace PartialClassUnionMember1 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -12995,7 +12972,7 @@ export namespace PartialClassUnionMember1 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PartialClassUnionMember1.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -13397,24 +13374,24 @@ export namespace OrderedPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, OrderedPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return OrderedPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -13436,7 +13413,7 @@ export namespace OrderedPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -13541,15 +13518,8 @@ export namespace OrderedPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -13564,18 +13534,22 @@ export namespace OrderedPropertiesClass {
     }
   > {
     const $identifier: OrderedPropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _orderedPropertyCEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.orderedPropertyC["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.orderedPropertyC["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -13595,7 +13569,7 @@ export namespace OrderedPropertiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -13616,7 +13590,7 @@ export namespace OrderedPropertiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     OrderedPropertiesClass.$properties.orderedPropertyC[
                       "identifier"
@@ -13638,12 +13612,16 @@ export namespace OrderedPropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.orderedPropertyB["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.orderedPropertyB["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -13663,7 +13641,7 @@ export namespace OrderedPropertiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -13684,7 +13662,7 @@ export namespace OrderedPropertiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     OrderedPropertiesClass.$properties.orderedPropertyB[
                       "identifier"
@@ -13706,12 +13684,16 @@ export namespace OrderedPropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.orderedPropertyA["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.orderedPropertyA["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -13731,7 +13713,7 @@ export namespace OrderedPropertiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -13752,7 +13734,7 @@ export namespace OrderedPropertiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     OrderedPropertiesClass.$properties.orderedPropertyA[
                       "identifier"
@@ -14157,24 +14139,24 @@ export namespace NonClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, NonClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return NonClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -14196,7 +14178,7 @@ export namespace NonClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -14273,15 +14255,8 @@ export namespace NonClass {
     return purify.Either.of({ $identifier, nonClassProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -14290,18 +14265,22 @@ export namespace NonClass {
     Error,
     { $identifier: rdfjs.BlankNode | rdfjs.NamedNode; nonClassProperty: string }
   > {
-    const $identifier: NonClass.$Identifier = $resource.identifier;
+    const $identifier: NonClass.$Identifier = $parameters.resource.identifier;
     const _nonClassPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.nonClassProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.nonClassProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -14321,7 +14300,7 @@ export namespace NonClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -14342,7 +14321,7 @@ export namespace NonClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     NonClass.$properties.nonClassProperty["identifier"],
                   term: literalValue,
@@ -14629,24 +14608,24 @@ export namespace NoRdfTypeClassUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, NoRdfTypeClassUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return NoRdfTypeClassUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -14668,7 +14647,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -14752,15 +14731,8 @@ export namespace NoRdfTypeClassUnionMember2 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -14773,7 +14745,7 @@ export namespace NoRdfTypeClassUnionMember2 {
     }
   > {
     const $identifier: NoRdfTypeClassUnionMember2.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _noRdfTypeClassUnionMember2PropertyEither: purify.Either<
       Error,
       string
@@ -14781,13 +14753,16 @@ export namespace NoRdfTypeClassUnionMember2 {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.noRdfTypeClassUnionMember2Property["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -14807,7 +14782,7 @@ export namespace NoRdfTypeClassUnionMember2 {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -14828,7 +14803,7 @@ export namespace NoRdfTypeClassUnionMember2 {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   NoRdfTypeClassUnionMember2.$properties
                     .noRdfTypeClassUnionMember2Property["identifier"],
@@ -15141,24 +15116,24 @@ export namespace NoRdfTypeClassUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, NoRdfTypeClassUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return NoRdfTypeClassUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -15180,7 +15155,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -15264,15 +15239,8 @@ export namespace NoRdfTypeClassUnionMember1 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -15285,7 +15253,7 @@ export namespace NoRdfTypeClassUnionMember1 {
     }
   > {
     const $identifier: NoRdfTypeClassUnionMember1.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _noRdfTypeClassUnionMember1PropertyEither: purify.Either<
       Error,
       string
@@ -15293,13 +15261,16 @@ export namespace NoRdfTypeClassUnionMember1 {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.noRdfTypeClassUnionMember1Property["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -15319,7 +15290,7 @@ export namespace NoRdfTypeClassUnionMember1 {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -15340,7 +15311,7 @@ export namespace NoRdfTypeClassUnionMember1 {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   NoRdfTypeClassUnionMember1.$properties
                     .noRdfTypeClassUnionMember1Property["identifier"],
@@ -15819,24 +15790,24 @@ export namespace MutablePropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, MutablePropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return MutablePropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -15858,7 +15829,7 @@ export namespace MutablePropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -15989,15 +15960,8 @@ export namespace MutablePropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -16012,7 +15976,7 @@ export namespace MutablePropertiesClass {
     }
   > {
     const $identifier: MutablePropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _mutableListPropertyEither: purify.Either<
       Error,
       purify.Maybe<string[]>
@@ -16020,9 +15984,10 @@ export namespace MutablePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.mutableListProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.mutableListProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
@@ -16032,7 +15997,7 @@ export namespace MutablePropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 MutablePropertiesClass.$properties.mutableListProperty[
                   "identifier"
@@ -16041,7 +16006,10 @@ export namespace MutablePropertiesClass {
             }),
           )
             .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+              if (
+                !$parameters.preferredLanguages ||
+                $parameters.preferredLanguages.length === 0
+              ) {
                 return purify.Either.of<
                   Error,
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -16061,7 +16029,7 @@ export namespace MutablePropertiesClass {
               let filteredLiteralValues:
                 | rdfjsResource.Resource.Values<rdfjs.Literal>
                 | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
+              for (const preferredLanguage of $parameters.preferredLanguages) {
                 if (!filteredLiteralValues) {
                   filteredLiteralValues = literalValues.filter(
                     (value) => value.language === preferredLanguage,
@@ -16082,7 +16050,7 @@ export namespace MutablePropertiesClass {
                 filteredLiteralValues!.map(
                   (literalValue) =>
                     new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
+                      focusResource: $parameters.resource,
                       predicate:
                         MutablePropertiesClass.$properties.mutableListProperty[
                           "identifier"
@@ -16102,7 +16070,7 @@ export namespace MutablePropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string[]>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 MutablePropertiesClass.$properties.mutableListProperty[
                   "identifier"
@@ -16121,12 +16089,16 @@ export namespace MutablePropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.mutableSetProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.mutableSetProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -16146,7 +16118,7 @@ export namespace MutablePropertiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -16167,7 +16139,7 @@ export namespace MutablePropertiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     MutablePropertiesClass.$properties.mutableSetProperty[
                       "identifier"
@@ -16181,7 +16153,7 @@ export namespace MutablePropertiesClass {
         .map((values) => values.toArray().concat())
         .map((valuesArray) =>
           rdfjsResource.Resource.Values.fromValue({
-            focusResource: $resource,
+            focusResource: $parameters.resource,
             predicate:
               MutablePropertiesClass.$properties.mutableSetProperty[
                 "identifier"
@@ -16202,12 +16174,16 @@ export namespace MutablePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.mutableStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.mutableStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -16227,7 +16203,7 @@ export namespace MutablePropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -16248,7 +16224,7 @@ export namespace MutablePropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   MutablePropertiesClass.$properties.mutableStringProperty[
                     "identifier"
@@ -16263,7 +16239,7 @@ export namespace MutablePropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 MutablePropertiesClass.$properties.mutableStringProperty[
                   "identifier"
@@ -17035,24 +17011,24 @@ export namespace ListPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ListPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ListPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -17074,7 +17050,7 @@ export namespace ListPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -17198,15 +17174,8 @@ export namespace ListPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -17220,7 +17189,8 @@ export namespace ListPropertiesClass {
       stringListProperty: purify.Maybe<readonly string[]>;
     }
   > {
-    const $identifier: ListPropertiesClass.$Identifier = $resource.identifier;
+    const $identifier: ListPropertiesClass.$Identifier =
+      $parameters.resource.identifier;
     const _iriListPropertyEither: purify.Either<
       Error,
       purify.Maybe<readonly rdfjs.NamedNode[]>
@@ -17228,7 +17198,7 @@ export namespace ListPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.iriListProperty["identifier"], {
+      $parameters.resource.values($properties.iriListProperty["identifier"], {
         unique: true,
       }),
     )
@@ -17240,7 +17210,7 @@ export namespace ListPropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ListPropertiesClass.$properties.iriListProperty["identifier"],
               values: valueList,
@@ -17255,7 +17225,7 @@ export namespace ListPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<readonly rdfjs.NamedNode[]>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ListPropertiesClass.$properties.iriListProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -17274,9 +17244,10 @@ export namespace ListPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.objectListProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.objectListProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
@@ -17286,7 +17257,7 @@ export namespace ListPropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ListPropertiesClass.$properties.objectListProperty[
                   "identifier"
@@ -17297,10 +17268,10 @@ export namespace ListPropertiesClass {
             values.chainMap((value) =>
               value.toResource().chain((resource) =>
                 NonClass.$fromRdf(resource, {
-                  ...$context,
+                  ...$parameters.context,
                   ignoreRdfType: true,
-                  objectSet: $objectSet,
-                  preferredLanguages: $preferredLanguages,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
                 }),
               ),
             ),
@@ -17314,7 +17285,7 @@ export namespace ListPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<readonly NonClass[]>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ListPropertiesClass.$properties.objectListProperty[
                   "identifier"
@@ -17335,9 +17306,10 @@ export namespace ListPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.stringListProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.stringListProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toList()))
       .chain((valueLists) =>
@@ -17347,7 +17319,7 @@ export namespace ListPropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             rdfjsResource.Resource.Values.fromArray({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ListPropertiesClass.$properties.stringListProperty[
                   "identifier"
@@ -17356,7 +17328,10 @@ export namespace ListPropertiesClass {
             }),
           )
             .chain((values) => {
-              if (!$preferredLanguages || $preferredLanguages.length === 0) {
+              if (
+                !$parameters.preferredLanguages ||
+                $parameters.preferredLanguages.length === 0
+              ) {
                 return purify.Either.of<
                   Error,
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -17376,7 +17351,7 @@ export namespace ListPropertiesClass {
               let filteredLiteralValues:
                 | rdfjsResource.Resource.Values<rdfjs.Literal>
                 | undefined;
-              for (const preferredLanguage of $preferredLanguages) {
+              for (const preferredLanguage of $parameters.preferredLanguages) {
                 if (!filteredLiteralValues) {
                   filteredLiteralValues = literalValues.filter(
                     (value) => value.language === preferredLanguage,
@@ -17397,7 +17372,7 @@ export namespace ListPropertiesClass {
                 filteredLiteralValues!.map(
                   (literalValue) =>
                     new rdfjsResource.Resource.TermValue({
-                      focusResource: $resource,
+                      focusResource: $parameters.resource,
                       predicate:
                         ListPropertiesClass.$properties.stringListProperty[
                           "identifier"
@@ -17417,7 +17392,7 @@ export namespace ListPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<readonly string[]>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ListPropertiesClass.$properties.stringListProperty[
                   "identifier"
@@ -18059,24 +18034,24 @@ export namespace PartialInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PartialInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PartialInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -18118,7 +18093,7 @@ export namespace PartialInterface {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -18205,15 +18180,8 @@ export namespace PartialInterface {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -18226,20 +18194,24 @@ export namespace PartialInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
-    const $identifier: PartialInterface.$Identifier = $resource.identifier;
+    const $identifier: PartialInterface.$Identifier =
+      $parameters.resource.identifier;
     const $type = "PartialInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -18259,7 +18231,7 @@ export namespace PartialInterface {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -18280,7 +18252,7 @@ export namespace PartialInterface {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PartialInterface.$properties.lazilyResolvedStringProperty[
                       "identifier"
@@ -19472,24 +19444,24 @@ export namespace LazyPropertiesInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazyPropertiesInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazyPropertiesInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -19587,7 +19559,7 @@ export namespace LazyPropertiesInterface {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -20012,15 +19984,8 @@ export namespace LazyPropertiesInterface {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -20083,7 +20048,7 @@ export namespace LazyPropertiesInterface {
     }
   > {
     const $identifier: LazyPropertiesInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "LazyPropertiesInterface" as const;
     const _optionalLazyToResolvedInterfacePropertyEither: purify.Either<
       Error,
@@ -20096,7 +20061,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalLazyToResolvedInterfaceProperty["identifier"],
         { unique: true },
       ),
@@ -20105,10 +20070,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20119,7 +20084,7 @@ export namespace LazyPropertiesInterface {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<$DefaultPartial>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesInterface.$properties
                   .optionalLazyToResolvedInterfaceProperty["identifier"],
@@ -20136,7 +20101,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                   identifier,
                 ),
             }),
@@ -20160,7 +20125,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalLazyToResolvedInterfaceUnionProperty["identifier"],
         { unique: true },
       ),
@@ -20169,10 +20134,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20183,7 +20148,7 @@ export namespace LazyPropertiesInterface {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<$DefaultPartial>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesInterface.$properties
                   .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
@@ -20200,7 +20165,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+                $parameters.objectSet.lazilyResolvedInterfaceUnion(identifier),
             }),
         ),
       )
@@ -20222,7 +20187,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalLazyToResolvedIriIdentifierInterfaceProperty[
           "identifier"
         ],
@@ -20233,10 +20198,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $NamedDefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20247,7 +20212,7 @@ export namespace LazyPropertiesInterface {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<$NamedDefaultPartial>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesInterface.$properties
                   .optionalLazyToResolvedIriIdentifierInterfaceProperty[
@@ -20266,7 +20231,9 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedIriIdentifierInterface(identifier),
+                $parameters.objectSet.lazilyResolvedIriIdentifierInterface(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -20288,7 +20255,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalPartialInterfaceToResolvedInterfaceProperty[
           "identifier"
         ],
@@ -20299,10 +20266,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20313,7 +20280,7 @@ export namespace LazyPropertiesInterface {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<PartialInterface>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesInterface.$properties
                   .optionalPartialInterfaceToResolvedInterfaceProperty[
@@ -20332,7 +20299,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                   identifier,
                 ),
             }),
@@ -20356,7 +20323,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalPartialInterfaceToResolvedInterfaceUnionProperty[
           "identifier"
         ],
@@ -20367,10 +20334,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20381,7 +20348,7 @@ export namespace LazyPropertiesInterface {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<PartialInterface>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesInterface.$properties
                   .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
@@ -20400,7 +20367,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+                $parameters.objectSet.lazilyResolvedInterfaceUnion(identifier),
             }),
         ),
       )
@@ -20424,7 +20391,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties
           .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
           "identifier"
@@ -20436,10 +20403,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterfaceUnion.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: false,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20450,7 +20417,7 @@ export namespace LazyPropertiesInterface {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<PartialInterfaceUnion>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesInterface.$properties
                   .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
@@ -20469,7 +20436,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedInterfaceUnion(identifier),
+                $parameters.objectSet.lazilyResolvedInterfaceUnion(identifier),
             }),
         ),
       )
@@ -20493,7 +20460,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.requiredLazyToResolvedInterfaceProperty["identifier"],
         { unique: true },
       ),
@@ -20502,10 +20469,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20520,7 +20487,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                   identifier,
                 ),
             }),
@@ -20544,7 +20511,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.requiredPartialInterfaceToResolvedInterfaceProperty[
           "identifier"
         ],
@@ -20555,10 +20522,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20573,7 +20540,7 @@ export namespace LazyPropertiesInterface {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterface(
                   identifier,
                 ),
             }),
@@ -20597,7 +20564,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.setLazyToResolvedInterfaceProperty["identifier"],
         { unique: true },
       ),
@@ -20606,10 +20573,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20617,7 +20584,7 @@ export namespace LazyPropertiesInterface {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             LazyPropertiesInterface.$properties
               .setLazyToResolvedInterfaceProperty["identifier"],
@@ -20634,9 +20601,9 @@ export namespace LazyPropertiesInterface {
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces({
-                  where: { identifiers, type: "identifiers" },
-                }),
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+                  { where: { identifiers, type: "identifiers" } },
+                ),
             }),
         ),
       )
@@ -20658,7 +20625,7 @@ export namespace LazyPropertiesInterface {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.setPartialInterfaceToResolvedInterfaceProperty[
           "identifier"
         ],
@@ -20669,10 +20636,10 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -20680,7 +20647,7 @@ export namespace LazyPropertiesInterface {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             LazyPropertiesInterface.$properties
               .setPartialInterfaceToResolvedInterfaceProperty["identifier"],
@@ -20697,9 +20664,9 @@ export namespace LazyPropertiesInterface {
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces({
-                  where: { identifiers, type: "identifiers" },
-                }),
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
+                  { where: { identifiers, type: "identifiers" } },
+                ),
             }),
         ),
       )
@@ -21595,24 +21562,24 @@ export namespace PartialClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, PartialClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return PartialClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -21634,7 +21601,7 @@ export namespace PartialClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -21715,15 +21682,8 @@ export namespace PartialClass {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -21735,19 +21695,23 @@ export namespace PartialClass {
       lazilyResolvedStringProperty: string;
     }
   > {
-    const $identifier: PartialClass.$Identifier = $resource.identifier;
+    const $identifier: PartialClass.$Identifier =
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -21767,7 +21731,7 @@ export namespace PartialClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -21788,7 +21752,7 @@ export namespace PartialClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     PartialClass.$properties.lazilyResolvedStringProperty[
                       "identifier"
@@ -23081,24 +23045,24 @@ export namespace LazyPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazyPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazyPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -23120,7 +23084,7 @@ export namespace LazyPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -23536,15 +23500,8 @@ export namespace LazyPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -23605,7 +23562,8 @@ export namespace LazyPropertiesClass {
       >;
     }
   > {
-    const $identifier: LazyPropertiesClass.$Identifier = $resource.identifier;
+    const $identifier: LazyPropertiesClass.$Identifier =
+      $parameters.resource.identifier;
     const _optionalLazyToResolvedClassPropertyEither: purify.Either<
       Error,
       $LazyObjectOption<
@@ -23617,7 +23575,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalLazyToResolvedClassProperty["identifier"],
         { unique: true },
       ),
@@ -23626,10 +23584,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -23640,7 +23598,7 @@ export namespace LazyPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<$DefaultPartial>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesClass.$properties
                   .optionalLazyToResolvedClassProperty["identifier"],
@@ -23657,7 +23615,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                   identifier,
                 ),
             }),
@@ -23681,7 +23639,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalLazyToResolvedClassUnionProperty["identifier"],
         { unique: true },
       ),
@@ -23690,10 +23648,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -23704,7 +23662,7 @@ export namespace LazyPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<$DefaultPartial>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesClass.$properties
                   .optionalLazyToResolvedClassUnionProperty["identifier"],
@@ -23721,7 +23679,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedClassUnion(identifier),
+                $parameters.objectSet.lazilyResolvedClassUnion(identifier),
             }),
         ),
       )
@@ -23743,7 +23701,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalLazyToResolvedIriIdentifierClassProperty[
           "identifier"
         ],
@@ -23754,10 +23712,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $NamedDefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -23768,7 +23726,7 @@ export namespace LazyPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<$NamedDefaultPartial>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesClass.$properties
                   .optionalLazyToResolvedIriIdentifierClassProperty[
@@ -23787,7 +23745,9 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedIriIdentifierClass(identifier),
+                $parameters.objectSet.lazilyResolvedIriIdentifierClass(
+                  identifier,
+                ),
             }),
         ),
       )
@@ -23809,7 +23769,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalPartialClassToResolvedClassProperty["identifier"],
         { unique: true },
       ),
@@ -23818,10 +23778,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -23831,7 +23791,7 @@ export namespace LazyPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<PartialClass>>(
               {
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   LazyPropertiesClass.$properties
                     .optionalPartialClassToResolvedClassProperty["identifier"],
@@ -23849,7 +23809,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                   identifier,
                 ),
             }),
@@ -23873,7 +23833,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalPartialClassToResolvedClassUnionProperty[
           "identifier"
         ],
@@ -23884,10 +23844,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -23897,7 +23857,7 @@ export namespace LazyPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<PartialClass>>(
               {
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   LazyPropertiesClass.$properties
                     .optionalPartialClassToResolvedClassUnionProperty[
@@ -23917,7 +23877,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedClassUnion(identifier),
+                $parameters.objectSet.lazilyResolvedClassUnion(identifier),
             }),
         ),
       )
@@ -23939,7 +23899,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.optionalPartialClassUnionToResolvedClassUnionProperty[
           "identifier"
         ],
@@ -23950,10 +23910,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClassUnion.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: false,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -23964,7 +23924,7 @@ export namespace LazyPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<PartialClassUnion>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 LazyPropertiesClass.$properties
                   .optionalPartialClassUnionToResolvedClassUnionProperty[
@@ -23983,7 +23943,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedClassUnion(identifier),
+                $parameters.objectSet.lazilyResolvedClassUnion(identifier),
             }),
         ),
       )
@@ -24005,7 +23965,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.requiredLazyToResolvedClassProperty["identifier"],
         { unique: true },
       ),
@@ -24014,10 +23974,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -24032,7 +23992,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                   identifier,
                 ),
             }),
@@ -24056,7 +24016,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.requiredPartialClassToResolvedClassProperty["identifier"],
         { unique: true },
       ),
@@ -24065,10 +24025,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -24083,7 +24043,7 @@ export namespace LazyPropertiesClass {
             >({
               partial,
               resolver: (identifier) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClass(
                   identifier,
                 ),
             }),
@@ -24107,7 +24067,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.setLazyToResolvedClassProperty["identifier"],
         { unique: true },
       ),
@@ -24116,10 +24076,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -24127,7 +24087,7 @@ export namespace LazyPropertiesClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
               "identifier"
@@ -24145,9 +24105,9 @@ export namespace LazyPropertiesClass {
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses({
-                  where: { identifiers, type: "identifiers" },
-                }),
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
+                  { where: { identifiers, type: "identifiers" } },
+                ),
             }),
         ),
       )
@@ -24169,7 +24129,7 @@ export namespace LazyPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.setPartialClassToResolvedClassProperty["identifier"],
         { unique: true },
       ),
@@ -24178,10 +24138,10 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -24189,7 +24149,7 @@ export namespace LazyPropertiesClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             LazyPropertiesClass.$properties
               .setPartialClassToResolvedClassProperty["identifier"],
@@ -24206,9 +24166,9 @@ export namespace LazyPropertiesClass {
             >({
               partials,
               resolver: (identifiers) =>
-                $objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses({
-                  where: { identifiers, type: "identifiers" },
-                }),
+                $parameters.objectSet.lazilyResolvedBlankNodeOrIriIdentifierClasses(
+                  { where: { identifiers, type: "identifiers" } },
+                ),
             }),
         ),
       )
@@ -24843,24 +24803,24 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedIriIdentifierInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedIriIdentifierInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -24917,7 +24877,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -25002,15 +24962,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -25023,32 +24976,35 @@ export namespace LazilyResolvedIriIdentifierInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: LazilyResolvedIriIdentifierInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "LazilyResolvedIriIdentifierInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -25068,7 +25024,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -25089,7 +25045,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedIriIdentifierInterface.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -25432,24 +25388,24 @@ export namespace LazilyResolvedIriIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedIriIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedIriIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -25475,7 +25431,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -25553,15 +25509,8 @@ export namespace LazilyResolvedIriIdentifierClass {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -25570,31 +25519,34 @@ export namespace LazilyResolvedIriIdentifierClass {
     Error,
     { $identifier: rdfjs.NamedNode; lazilyResolvedStringProperty: string }
   > {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: LazilyResolvedIriIdentifierClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -25614,7 +25566,7 @@ export namespace LazilyResolvedIriIdentifierClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -25635,7 +25587,7 @@ export namespace LazilyResolvedIriIdentifierClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedIriIdentifierClass.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -25880,24 +25832,24 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedInterfaceUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedInterfaceUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -25954,7 +25906,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -26041,15 +25993,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -26062,8 +26007,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -26075,7 +26020,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(
+            $parameters.resource.isInstanceOf(
               LazilyResolvedInterfaceUnionMember2.$fromRdfType,
             )
           ) {
@@ -26084,7 +26029,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember2)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember2)`,
             ),
           );
         });
@@ -26094,20 +26039,23 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     }
 
     const $identifier: LazilyResolvedInterfaceUnionMember2.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "LazilyResolvedInterfaceUnionMember2" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -26127,7 +26075,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -26148,7 +26096,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedInterfaceUnionMember2.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -26505,24 +26453,24 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedInterfaceUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedInterfaceUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -26579,7 +26527,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -26666,15 +26614,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -26687,8 +26628,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -26700,7 +26641,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(
+            $parameters.resource.isInstanceOf(
               LazilyResolvedInterfaceUnionMember1.$fromRdfType,
             )
           ) {
@@ -26709,7 +26650,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember1)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedInterfaceUnionMember1)`,
             ),
           );
         });
@@ -26719,20 +26660,23 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     }
 
     const $identifier: LazilyResolvedInterfaceUnionMember1.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "LazilyResolvedInterfaceUnionMember1" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -26752,7 +26696,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -26773,7 +26717,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedInterfaceUnionMember1.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -27203,24 +27147,24 @@ export namespace LazilyResolvedClassUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedClassUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -27245,7 +27189,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -27326,15 +27270,8 @@ export namespace LazilyResolvedClassUnionMember2 {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -27346,8 +27283,8 @@ export namespace LazilyResolvedClassUnionMember2 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -27359,14 +27296,16 @@ export namespace LazilyResolvedClassUnionMember2 {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(LazilyResolvedClassUnionMember2.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              LazilyResolvedClassUnionMember2.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember2)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember2)`,
             ),
           );
         });
@@ -27376,19 +27315,22 @@ export namespace LazilyResolvedClassUnionMember2 {
     }
 
     const $identifier: LazilyResolvedClassUnionMember2.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -27408,7 +27350,7 @@ export namespace LazilyResolvedClassUnionMember2 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -27429,7 +27371,7 @@ export namespace LazilyResolvedClassUnionMember2 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedClassUnionMember2.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -27801,24 +27743,24 @@ export namespace LazilyResolvedClassUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedClassUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -27843,7 +27785,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -27924,15 +27866,8 @@ export namespace LazilyResolvedClassUnionMember1 {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -27944,8 +27879,8 @@ export namespace LazilyResolvedClassUnionMember1 {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -27957,14 +27892,16 @@ export namespace LazilyResolvedClassUnionMember1 {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(LazilyResolvedClassUnionMember1.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              LazilyResolvedClassUnionMember1.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember1)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedClassUnionMember1)`,
             ),
           );
         });
@@ -27974,19 +27911,22 @@ export namespace LazilyResolvedClassUnionMember1 {
     }
 
     const $identifier: LazilyResolvedClassUnionMember1.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -28006,7 +27946,7 @@ export namespace LazilyResolvedClassUnionMember1 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -28027,7 +27967,7 @@ export namespace LazilyResolvedClassUnionMember1 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedClassUnionMember1.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -28332,24 +28272,24 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedBlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -28408,7 +28348,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -28497,15 +28437,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -28518,8 +28451,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -28531,7 +28464,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(
+            $parameters.resource.isInstanceOf(
               LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
             )
           ) {
@@ -28540,7 +28473,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierInterface)`,
             ),
           );
         });
@@ -28550,20 +28483,23 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     }
 
     const $identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "LazilyResolvedBlankNodeOrIriIdentifierInterface" as const;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -28583,7 +28519,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -28604,7 +28540,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -29041,24 +28977,24 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LazilyResolvedBlankNodeOrIriIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -29086,7 +29022,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -29167,15 +29103,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     return purify.Either.of({ $identifier, lazilyResolvedStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -29187,8 +29116,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       lazilyResolvedStringProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -29200,7 +29129,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(
+            $parameters.resource.isInstanceOf(
               LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
             )
           ) {
@@ -29209,7 +29138,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/LazilyResolvedBlankNodeOrIriIdentifierClass)`,
             ),
           );
         });
@@ -29219,19 +29148,22 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     }
 
     const $identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _lazilyResolvedStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -29251,7 +29183,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -29272,7 +29204,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
                       .lazilyResolvedStringProperty["identifier"],
@@ -29687,24 +29619,24 @@ export namespace LanguageInPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, LanguageInPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return LanguageInPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -29726,7 +29658,7 @@ export namespace LanguageInPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -29858,15 +29790,8 @@ export namespace LanguageInPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -29880,7 +29805,7 @@ export namespace LanguageInPropertiesClass {
     }
   > {
     const $identifier: LanguageInPropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _languageInLiteralPropertyEither: purify.Either<
       Error,
       purify.NonEmptyList<rdfjs.Literal>
@@ -29888,9 +29813,10 @@ export namespace LanguageInPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.languageInLiteralProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.languageInLiteralProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
@@ -29904,7 +29830,7 @@ export namespace LanguageInPropertiesClass {
                   new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: literalValue,
                     expectedValueType: "(rdfjs.Literal)",
-                    focusResource: $resource,
+                    focusResource: $parameters.resource,
                     predicate:
                       LanguageInPropertiesClass.$properties
                         .languageInLiteralProperty["identifier"],
@@ -29915,7 +29841,10 @@ export namespace LanguageInPropertiesClass {
         ),
       )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -29935,7 +29864,7 @@ export namespace LanguageInPropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -29956,7 +29885,7 @@ export namespace LanguageInPropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   LanguageInPropertiesClass.$properties
                     .languageInLiteralProperty["identifier"],
@@ -29969,13 +29898,13 @@ export namespace LanguageInPropertiesClass {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             LanguageInPropertiesClass.$properties.languageInLiteralProperty[
               "identifier"
@@ -29997,9 +29926,10 @@ export namespace LanguageInPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.languageInStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.languageInStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
@@ -30014,7 +29944,7 @@ export namespace LanguageInPropertiesClass {
                   new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: literalValue,
                     expectedValueType: "string",
-                    focusResource: $resource,
+                    focusResource: $parameters.resource,
                     predicate:
                       LanguageInPropertiesClass.$properties
                         .languageInStringProperty["identifier"],
@@ -30025,7 +29955,10 @@ export namespace LanguageInPropertiesClass {
         ),
       )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -30045,7 +29978,7 @@ export namespace LanguageInPropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -30066,7 +29999,7 @@ export namespace LanguageInPropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   LanguageInPropertiesClass.$properties
                     .languageInStringProperty["identifier"],
@@ -30079,13 +30012,13 @@ export namespace LanguageInPropertiesClass {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             LanguageInPropertiesClass.$properties.languageInStringProperty[
               "identifier"
@@ -30536,24 +30469,24 @@ export namespace JsPrimitiveUnionPropertyClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, JsPrimitiveUnionPropertyClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return JsPrimitiveUnionPropertyClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -30575,7 +30508,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -30658,15 +30591,8 @@ export namespace JsPrimitiveUnionPropertyClass {
     return purify.Either.of({ $identifier, jsPrimitiveUnionProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -30679,7 +30605,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     }
   > {
     const $identifier: JsPrimitiveUnionPropertyClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _jsPrimitiveUnionPropertyEither: purify.Either<
       Error,
       readonly (boolean | number | string)[]
@@ -30687,9 +30613,10 @@ export namespace JsPrimitiveUnionPropertyClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.jsPrimitiveUnionProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.jsPrimitiveUnionProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -30716,8 +30643,8 @@ export namespace JsPrimitiveUnionPropertyClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -30738,7 +30665,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -30761,7 +30688,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               JsPrimitiveUnionPropertyClass.$properties
                                 .jsPrimitiveUnionProperty["identifier"],
@@ -30783,7 +30710,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
               "identifier"
@@ -31065,24 +30992,24 @@ export namespace IriIdentifierInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IriIdentifierInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IriIdentifierInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -31136,7 +31063,7 @@ export namespace IriIdentifierInterface {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -31201,15 +31128,8 @@ export namespace IriIdentifierInterface {
     return purify.Either.of({ $identifier, $type });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -31218,19 +31138,19 @@ export namespace IriIdentifierInterface {
     Error,
     { $identifier: rdfjs.NamedNode; $type: "IriIdentifierInterface" }
   > {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: IriIdentifierInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "IriIdentifierInterface" as const;
     return purify.Either.of({ $identifier, $type });
   }
@@ -31433,24 +31353,24 @@ export namespace IriIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IriIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IriIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -31476,7 +31396,7 @@ export namespace IriIdentifierClass {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -31537,32 +31457,26 @@ export namespace IriIdentifierClass {
     return purify.Either.of({ $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
-    const $identifier: IriIdentifierClass.$Identifier = $resource.identifier;
+    const $identifier: IriIdentifierClass.$Identifier =
+      $parameters.resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -31738,7 +31652,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -31822,15 +31736,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -31843,7 +31750,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     }
   > {
     const $identifier: InterfaceUnionMemberCommonParentStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _interfaceUnionMemberCommonParentPropertyEither: purify.Either<
       Error,
       string
@@ -31851,13 +31758,16 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.interfaceUnionMemberCommonParentProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -31877,7 +31787,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -31898,7 +31808,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   InterfaceUnionMemberCommonParentStatic.$properties
                     .interfaceUnionMemberCommonParentProperty["identifier"],
@@ -32181,24 +32091,24 @@ export namespace InterfaceUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return InterfaceUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -32315,15 +32225,8 @@ export namespace InterfaceUnionMember2 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -32342,19 +32245,16 @@ export namespace InterfaceUnionMember2 {
   > {
     const $super0Either =
       InterfaceUnionMemberCommonParentStatic.$propertiesFromRdf({
-        ...$context,
+        ...$parameters,
         ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
       });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -32365,13 +32265,17 @@ export namespace InterfaceUnionMember2 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(InterfaceUnionMember2.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              InterfaceUnionMember2.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember2)`,
             ),
           );
         });
@@ -32380,20 +32284,24 @@ export namespace InterfaceUnionMember2 {
       }
     }
 
-    const $identifier: InterfaceUnionMember2.$Identifier = $resource.identifier;
+    const $identifier: InterfaceUnionMember2.$Identifier =
+      $parameters.resource.identifier;
     const $type = "InterfaceUnionMember2" as const;
     const _interfaceUnionMember2PropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.interfaceUnionMember2Property["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -32413,7 +32321,7 @@ export namespace InterfaceUnionMember2 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -32434,7 +32342,7 @@ export namespace InterfaceUnionMember2 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     InterfaceUnionMember2.$properties
                       .interfaceUnionMember2Property["identifier"],
@@ -32806,24 +32714,24 @@ export namespace InterfaceUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InterfaceUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return InterfaceUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -32940,15 +32848,8 @@ export namespace InterfaceUnionMember1 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -32967,19 +32868,16 @@ export namespace InterfaceUnionMember1 {
   > {
     const $super0Either =
       InterfaceUnionMemberCommonParentStatic.$propertiesFromRdf({
-        ...$context,
+        ...$parameters,
         ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
       });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -32990,13 +32888,17 @@ export namespace InterfaceUnionMember1 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(InterfaceUnionMember1.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              InterfaceUnionMember1.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InterfaceUnionMember1)`,
             ),
           );
         });
@@ -33005,20 +32907,24 @@ export namespace InterfaceUnionMember1 {
       }
     }
 
-    const $identifier: InterfaceUnionMember1.$Identifier = $resource.identifier;
+    const $identifier: InterfaceUnionMember1.$Identifier =
+      $parameters.resource.identifier;
     const $type = "InterfaceUnionMember1" as const;
     const _interfaceUnionMember1PropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.interfaceUnionMember1Property["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -33038,7 +32944,7 @@ export namespace InterfaceUnionMember1 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -33059,7 +32965,7 @@ export namespace InterfaceUnionMember1 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     InterfaceUnionMember1.$properties
                       .interfaceUnionMember1Property["identifier"],
@@ -33439,24 +33345,24 @@ export namespace Interface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, Interface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return Interface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -33498,7 +33404,7 @@ export namespace Interface {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -33578,15 +33484,8 @@ export namespace Interface {
     return purify.Either.of({ $identifier, $type, interfaceProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -33599,19 +33498,23 @@ export namespace Interface {
       interfaceProperty: string;
     }
   > {
-    const $identifier: Interface.$Identifier = $resource.identifier;
+    const $identifier: Interface.$Identifier = $parameters.resource.identifier;
     const $type = "Interface" as const;
     const _interfacePropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.interfaceProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.interfaceProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -33631,7 +33534,7 @@ export namespace Interface {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -33652,7 +33555,7 @@ export namespace Interface {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     Interface.$properties.interfaceProperty["identifier"],
                   term: literalValue,
@@ -34001,24 +33904,24 @@ export namespace IndirectRecursiveHelperClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IndirectRecursiveHelperClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IndirectRecursiveHelperClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -34040,7 +33943,7 @@ export namespace IndirectRecursiveHelperClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -34126,15 +34029,8 @@ export namespace IndirectRecursiveHelperClass {
     return purify.Either.of({ $identifier, indirectRecursiveProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -34147,7 +34043,7 @@ export namespace IndirectRecursiveHelperClass {
     }
   > {
     const $identifier: IndirectRecursiveHelperClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _indirectRecursivePropertyEither: purify.Either<
       Error,
       purify.Maybe<IndirectRecursiveClass>
@@ -34155,18 +34051,19 @@ export namespace IndirectRecursiveHelperClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.indirectRecursiveProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.indirectRecursiveProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             IndirectRecursiveClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -34177,7 +34074,7 @@ export namespace IndirectRecursiveHelperClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<IndirectRecursiveClass>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 IndirectRecursiveHelperClass.$properties
                   .indirectRecursiveProperty["identifier"],
@@ -34424,24 +34321,24 @@ export namespace IndirectRecursiveClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IndirectRecursiveClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IndirectRecursiveClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -34463,7 +34360,7 @@ export namespace IndirectRecursiveClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -34551,15 +34448,8 @@ export namespace IndirectRecursiveClass {
     return purify.Either.of({ $identifier, indirectRecursiveHelperProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -34572,7 +34462,7 @@ export namespace IndirectRecursiveClass {
     }
   > {
     const $identifier: IndirectRecursiveClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _indirectRecursiveHelperPropertyEither: purify.Either<
       Error,
       purify.Maybe<IndirectRecursiveHelperClass>
@@ -34580,7 +34470,7 @@ export namespace IndirectRecursiveClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.indirectRecursiveHelperProperty["identifier"],
         { unique: true },
       ),
@@ -34589,10 +34479,10 @@ export namespace IndirectRecursiveClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             IndirectRecursiveHelperClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -34603,7 +34493,7 @@ export namespace IndirectRecursiveClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<IndirectRecursiveHelperClass>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 IndirectRecursiveClass.$properties
                   .indirectRecursiveHelperProperty["identifier"],
@@ -35003,24 +34893,24 @@ export namespace InPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return InPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -35042,7 +34932,7 @@ export namespace InPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -35198,15 +35088,8 @@ export namespace InPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -35227,7 +35110,8 @@ export namespace InPropertiesClass {
       inStringsProperty: purify.Maybe<"text" | "html">;
     }
   > {
-    const $identifier: InPropertiesClass.$Identifier = $resource.identifier;
+    const $identifier: InPropertiesClass.$Identifier =
+      $parameters.resource.identifier;
     const _inBooleansPropertyEither: purify.Either<
       Error,
       purify.Maybe<true>
@@ -35235,9 +35119,10 @@ export namespace InPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.inBooleansProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.inBooleansProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
@@ -35248,7 +35133,7 @@ export namespace InPropertiesClass {
                   new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: value.toTerm(),
                     expectedValueType: "true",
-                    focusResource: $resource,
+                    focusResource: $parameters.resource,
                     predicate:
                       InPropertiesClass.$properties.inBooleansProperty[
                         "identifier"
@@ -35262,7 +35147,7 @@ export namespace InPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 InPropertiesClass.$properties.inBooleansProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -35281,9 +35166,10 @@ export namespace InPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.inDateTimesProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.inDateTimesProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
@@ -35295,7 +35181,7 @@ export namespace InPropertiesClass {
               new rdfjsResource.Resource.MistypedTermValueError({
                 actualValue: value.toTerm(),
                 expectedValueType: "Date",
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   InPropertiesClass.$properties.inDateTimesProperty[
                     "identifier"
@@ -35309,7 +35195,7 @@ export namespace InPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 InPropertiesClass.$properties.inDateTimesProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -35333,7 +35219,7 @@ export namespace InPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.inIrisProperty["identifier"], {
+      $parameters.resource.values($properties.inIrisProperty["identifier"], {
         unique: true,
       }),
     )
@@ -35373,7 +35259,7 @@ export namespace InPropertiesClass {
                     actualValue: iri,
                     expectedValueType:
                       'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
-                    focusResource: $resource,
+                    focusResource: $parameters.resource,
                     predicate:
                       InPropertiesClass.$properties.inIrisProperty[
                         "identifier"
@@ -35395,7 +35281,7 @@ export namespace InPropertiesClass {
                 >
               >
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 InPropertiesClass.$properties.inIrisProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -35414,7 +35300,7 @@ export namespace InPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.inNumbersProperty["identifier"], {
+      $parameters.resource.values($properties.inNumbersProperty["identifier"], {
         unique: true,
       }),
     )
@@ -35430,7 +35316,7 @@ export namespace InPropertiesClass {
                   new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: value.toTerm(),
                     expectedValueType: "1 | 2",
-                    focusResource: $resource,
+                    focusResource: $parameters.resource,
                     predicate:
                       InPropertiesClass.$properties.inNumbersProperty[
                         "identifier"
@@ -35445,7 +35331,7 @@ export namespace InPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<1 | 2>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 InPropertiesClass.$properties.inNumbersProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -35464,12 +35350,15 @@ export namespace InPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.inStringsProperty["identifier"], {
+      $parameters.resource.values($properties.inStringsProperty["identifier"], {
         unique: true,
       }),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -35489,7 +35378,7 @@ export namespace InPropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -35510,7 +35399,7 @@ export namespace InPropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   InPropertiesClass.$properties.inStringsProperty["identifier"],
                 term: literalValue,
@@ -35530,7 +35419,7 @@ export namespace InPropertiesClass {
                   new rdfjsResource.Resource.MistypedTermValueError({
                     actualValue: value.toTerm(),
                     expectedValueType: '"text" | "html"',
-                    focusResource: $resource,
+                    focusResource: $parameters.resource,
                     predicate:
                       InPropertiesClass.$properties.inStringsProperty[
                         "identifier"
@@ -35547,7 +35436,7 @@ export namespace InPropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<"text" | "html">
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 InPropertiesClass.$properties.inStringsProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -35958,24 +35847,24 @@ export namespace InIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, InIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return InIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -36035,7 +35924,7 @@ export namespace InIdentifierClass {
       >;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -36121,15 +36010,8 @@ export namespace InIdentifierClass {
     return purify.Either.of({ $identifier, inIdentifierProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -36145,7 +36027,7 @@ export namespace InIdentifierClass {
     }
   > {
     let $identifier: InIdentifierClass.$Identifier;
-    switch ($resource.identifier.value) {
+    switch ($parameters.resource.identifier.value) {
       case "http://example.com/InIdentifierInstance1":
         $identifier = dataFactory.namedNode(
           "http://example.com/InIdentifierInstance1",
@@ -36159,10 +36041,10 @@ export namespace InIdentifierClass {
       default:
         return purify.Left(
           new rdfjsResource.Resource.MistypedTermValueError({
-            actualValue: $resource.identifier,
+            actualValue: $parameters.resource.identifier,
             expectedValueType:
               'rdfjs.NamedNode<"http://example.com/InIdentifierInstance1" | "http://example.com/InIdentifierInstance2">',
-            focusResource: $resource,
+            focusResource: $parameters.resource,
             predicate: $RdfVocabularies.rdf.subject,
           }),
         );
@@ -36175,12 +36057,16 @@ export namespace InIdentifierClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.inIdentifierProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.inIdentifierProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -36200,7 +36086,7 @@ export namespace InIdentifierClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -36221,7 +36107,7 @@ export namespace InIdentifierClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   InIdentifierClass.$properties.inIdentifierProperty[
                     "identifier"
@@ -36236,7 +36122,7 @@ export namespace InIdentifierClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 InIdentifierClass.$properties.inIdentifierProperty[
                   "identifier"
@@ -36547,7 +36433,7 @@ export namespace IdentifierOverride1ClassStatic {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -36635,15 +36521,8 @@ export namespace IdentifierOverride1ClassStatic {
     return purify.Either.of({ $identifier, identifierOverrideProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -36656,18 +36535,22 @@ export namespace IdentifierOverride1ClassStatic {
     }
   > {
     const $identifier: IdentifierOverride1ClassStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _identifierOverridePropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.identifierOverrideProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.identifierOverrideProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -36687,7 +36570,7 @@ export namespace IdentifierOverride1ClassStatic {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -36708,7 +36591,7 @@ export namespace IdentifierOverride1ClassStatic {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     IdentifierOverride1ClassStatic.$properties
                       .identifierOverrideProperty["identifier"],
@@ -36949,7 +36832,7 @@ export namespace IdentifierOverride2ClassStatic {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -37008,15 +36891,8 @@ export namespace IdentifierOverride2ClassStatic {
     return purify.Either.of({ ...$super0, $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -37028,30 +36904,27 @@ export namespace IdentifierOverride2ClassStatic {
     >
   > {
     const $super0Either = IdentifierOverride1ClassStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: IdentifierOverride2ClassStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -37232,24 +37105,24 @@ export namespace IdentifierOverride3ClassStatic {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IdentifierOverride3Class> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IdentifierOverride3ClassStatic.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -37317,15 +37190,8 @@ export namespace IdentifierOverride3ClassStatic {
     return purify.Either.of({ ...$super0, $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -37337,19 +37203,16 @@ export namespace IdentifierOverride3ClassStatic {
     >
   > {
     const $super0Either = IdentifierOverride2ClassStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -37363,14 +37226,16 @@ export namespace IdentifierOverride3ClassStatic {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(IdentifierOverride3ClassStatic.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              IdentifierOverride3ClassStatic.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride3Class)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride3Class)`,
             ),
           );
         });
@@ -37379,19 +37244,19 @@ export namespace IdentifierOverride3ClassStatic {
       }
     }
 
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: IdentifierOverride3ClassStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -37662,24 +37527,24 @@ export namespace IdentifierOverride4ClassStatic {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IdentifierOverride4Class> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IdentifierOverride4ClassStatic.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -37746,15 +37611,8 @@ export namespace IdentifierOverride4ClassStatic {
     return purify.Either.of({ ...$super0, $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -37766,19 +37624,16 @@ export namespace IdentifierOverride4ClassStatic {
     >
   > {
     const $super0Either = IdentifierOverride3ClassStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -37791,14 +37646,16 @@ export namespace IdentifierOverride4ClassStatic {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(IdentifierOverride4ClassStatic.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              IdentifierOverride4ClassStatic.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride4Class)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride4Class)`,
             ),
           );
         });
@@ -37807,19 +37664,19 @@ export namespace IdentifierOverride4ClassStatic {
       }
     }
 
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: IdentifierOverride4ClassStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -38085,24 +37942,24 @@ export namespace IdentifierOverride5Class {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, IdentifierOverride5Class> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return IdentifierOverride5Class.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -38166,15 +38023,8 @@ export namespace IdentifierOverride5Class {
     return purify.Either.of({ ...$super0, $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -38186,19 +38036,16 @@ export namespace IdentifierOverride5Class {
     >
   > {
     const $super0Either = IdentifierOverride4ClassStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -38209,13 +38056,17 @@ export namespace IdentifierOverride5Class {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(IdentifierOverride5Class.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              IdentifierOverride5Class.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride5Class)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IdentifierOverride5Class)`,
             ),
           );
         });
@@ -38224,19 +38075,19 @@ export namespace IdentifierOverride5Class {
       }
     }
 
-    if ($resource.identifier.termType !== "NamedNode") {
+    if ($parameters.resource.identifier.termType !== "NamedNode") {
       return purify.Left(
         new rdfjsResource.Resource.MistypedTermValueError({
-          actualValue: $resource.identifier,
+          actualValue: $parameters.resource.identifier,
           expectedValueType: "(rdfjs.NamedNode)",
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate: $RdfVocabularies.rdf.subject,
         }),
       );
     }
 
     const $identifier: IdentifierOverride5Class.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -38573,24 +38424,24 @@ export namespace HasValuePropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, HasValuePropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return HasValuePropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -38612,7 +38463,7 @@ export namespace HasValuePropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -38711,15 +38562,8 @@ export namespace HasValuePropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -38733,15 +38577,16 @@ export namespace HasValuePropertiesClass {
     }
   > {
     const $identifier: HasValuePropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _hasIriValuePropertyEither: purify.Either<Error, rdfjs.NamedNode> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.hasIriValueProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.hasIriValueProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
           for (const hasValue of [
@@ -38773,9 +38618,10 @@ export namespace HasValuePropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.hasLiteralValueProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.hasLiteralValueProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
           for (const hasValue of [dataFactory.literal("test")]) {
@@ -38792,7 +38638,10 @@ export namespace HasValuePropertiesClass {
           >(values);
         })
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -38812,7 +38661,7 @@ export namespace HasValuePropertiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -38833,7 +38682,7 @@ export namespace HasValuePropertiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     HasValuePropertiesClass.$properties.hasLiteralValueProperty[
                       "identifier"
@@ -39176,24 +39025,24 @@ export namespace FlattenClassUnionMember3 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, FlattenClassUnionMember3> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return FlattenClassUnionMember3.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -39218,7 +39067,7 @@ export namespace FlattenClassUnionMember3 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -39299,15 +39148,8 @@ export namespace FlattenClassUnionMember3 {
     return purify.Either.of({ $identifier, flattenClassUnionMember3Property });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -39319,8 +39161,8 @@ export namespace FlattenClassUnionMember3 {
       flattenClassUnionMember3Property: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -39331,13 +39173,17 @@ export namespace FlattenClassUnionMember3 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(FlattenClassUnionMember3.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              FlattenClassUnionMember3.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FlattenClassUnionMember3)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FlattenClassUnionMember3)`,
             ),
           );
         });
@@ -39347,7 +39193,7 @@ export namespace FlattenClassUnionMember3 {
     }
 
     const $identifier: FlattenClassUnionMember3.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _flattenClassUnionMember3PropertyEither: purify.Either<
       Error,
       string
@@ -39355,13 +39201,16 @@ export namespace FlattenClassUnionMember3 {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.flattenClassUnionMember3Property["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -39381,7 +39230,7 @@ export namespace FlattenClassUnionMember3 {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -39402,7 +39251,7 @@ export namespace FlattenClassUnionMember3 {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   FlattenClassUnionMember3.$properties
                     .flattenClassUnionMember3Property["identifier"],
@@ -39788,24 +39637,24 @@ export namespace ExternClassPropertyClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ExternClassPropertyClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ExternClassPropertyClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -39827,7 +39676,7 @@ export namespace ExternClassPropertyClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -39908,15 +39757,8 @@ export namespace ExternClassPropertyClass {
     return purify.Either.of({ $identifier, externClassProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -39929,7 +39771,7 @@ export namespace ExternClassPropertyClass {
     }
   > {
     const $identifier: ExternClassPropertyClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _externClassPropertyEither: purify.Either<
       Error,
       purify.Maybe<ExternClass>
@@ -39937,18 +39779,19 @@ export namespace ExternClassPropertyClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.externClassProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.externClassProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             ExternClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -39957,7 +39800,7 @@ export namespace ExternClassPropertyClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<ExternClass>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ExternClassPropertyClass.$properties.externClassProperty[
                   "identifier"
@@ -40253,24 +40096,24 @@ export namespace ExplicitRdfTypeClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ExplicitRdfTypeClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ExplicitRdfTypeClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -40295,7 +40138,7 @@ export namespace ExplicitRdfTypeClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -40375,15 +40218,8 @@ export namespace ExplicitRdfTypeClass {
     return purify.Either.of({ $identifier, explicitRdfTypeProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -40395,8 +40231,8 @@ export namespace ExplicitRdfTypeClass {
       explicitRdfTypeProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -40407,13 +40243,15 @@ export namespace ExplicitRdfTypeClass {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(ExplicitRdfTypeClass.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(ExplicitRdfTypeClass.$fromRdfType)
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RdfType)`,
             ),
           );
         });
@@ -40422,18 +40260,23 @@ export namespace ExplicitRdfTypeClass {
       }
     }
 
-    const $identifier: ExplicitRdfTypeClass.$Identifier = $resource.identifier;
+    const $identifier: ExplicitRdfTypeClass.$Identifier =
+      $parameters.resource.identifier;
     const _explicitRdfTypePropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.explicitRdfTypeProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.explicitRdfTypeProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -40453,7 +40296,7 @@ export namespace ExplicitRdfTypeClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -40474,7 +40317,7 @@ export namespace ExplicitRdfTypeClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
                       "identifier"
@@ -40852,24 +40695,24 @@ export namespace ExplicitFromToRdfTypesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ExplicitFromToRdfTypesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -40894,7 +40737,7 @@ export namespace ExplicitFromToRdfTypesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -40975,15 +40818,8 @@ export namespace ExplicitFromToRdfTypesClass {
     return purify.Either.of({ $identifier, explicitFromToRdfTypesProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -40995,8 +40831,8 @@ export namespace ExplicitFromToRdfTypesClass {
       explicitFromToRdfTypesProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -41008,14 +40844,16 @@ export namespace ExplicitFromToRdfTypesClass {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(ExplicitFromToRdfTypesClass.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              ExplicitFromToRdfTypesClass.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/FromRdfType)`,
             ),
           );
         });
@@ -41025,19 +40863,22 @@ export namespace ExplicitFromToRdfTypesClass {
     }
 
     const $identifier: ExplicitFromToRdfTypesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _explicitFromToRdfTypesPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.explicitFromToRdfTypesProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -41057,7 +40898,7 @@ export namespace ExplicitFromToRdfTypesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -41078,7 +40919,7 @@ export namespace ExplicitFromToRdfTypesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ExplicitFromToRdfTypesClass.$properties
                       .explicitFromToRdfTypesProperty["identifier"],
@@ -41465,24 +41306,24 @@ export namespace DirectRecursiveClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, DirectRecursiveClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return DirectRecursiveClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -41504,7 +41345,7 @@ export namespace DirectRecursiveClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -41590,15 +41431,8 @@ export namespace DirectRecursiveClass {
     return purify.Either.of({ $identifier, directRecursiveProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -41610,7 +41444,8 @@ export namespace DirectRecursiveClass {
       directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
     }
   > {
-    const $identifier: DirectRecursiveClass.$Identifier = $resource.identifier;
+    const $identifier: DirectRecursiveClass.$Identifier =
+      $parameters.resource.identifier;
     const _directRecursivePropertyEither: purify.Either<
       Error,
       purify.Maybe<DirectRecursiveClass>
@@ -41618,18 +41453,19 @@ export namespace DirectRecursiveClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.directRecursiveProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.directRecursiveProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             DirectRecursiveClass.$fromRdf(resource, {
-              ...$context,
+              ...$parameters.context,
               ignoreRdfType: true,
-              objectSet: $objectSet,
-              preferredLanguages: $preferredLanguages,
+              objectSet: $parameters.objectSet,
+              preferredLanguages: $parameters.preferredLanguages,
             }),
           ),
         ),
@@ -41640,7 +41476,7 @@ export namespace DirectRecursiveClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<DirectRecursiveClass>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DirectRecursiveClass.$properties.directRecursiveProperty[
                   "identifier"
@@ -42081,24 +41917,24 @@ export namespace DefaultValuePropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, DefaultValuePropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return DefaultValuePropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -42120,7 +41956,7 @@ export namespace DefaultValuePropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -42281,15 +42117,8 @@ export namespace DefaultValuePropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -42307,21 +42136,22 @@ export namespace DefaultValuePropertiesClass {
     }
   > {
     const $identifier: DefaultValuePropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _dateDefaultValuePropertyEither: purify.Either<Error, Date> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.dateDefaultValueProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.dateDefaultValueProperty["identifier"],
+          { unique: true },
+        ),
       )
         .map((values) =>
           values.length > 0
             ? values
             : new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   DefaultValuePropertiesClass.$properties
                     .dateDefaultValueProperty["identifier"],
@@ -42344,7 +42174,7 @@ export namespace DefaultValuePropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.dateTimeDefaultValueProperty["identifier"],
           { unique: true },
         ),
@@ -42353,7 +42183,7 @@ export namespace DefaultValuePropertiesClass {
           values.length > 0
             ? values
             : new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   DefaultValuePropertiesClass.$properties
                     .dateTimeDefaultValueProperty["identifier"],
@@ -42378,7 +42208,7 @@ export namespace DefaultValuePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.falseBooleanDefaultValueProperty["identifier"],
         { unique: true },
       ),
@@ -42387,7 +42217,7 @@ export namespace DefaultValuePropertiesClass {
         values.length > 0
           ? values
           : new rdfjsResource.Resource.TermValue({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DefaultValuePropertiesClass.$properties
                   .falseBooleanDefaultValueProperty["identifier"],
@@ -42407,15 +42237,16 @@ export namespace DefaultValuePropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.numberDefaultValueProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.numberDefaultValueProperty["identifier"],
+          { unique: true },
+        ),
       )
         .map((values) =>
           values.length > 0
             ? values
             : new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   DefaultValuePropertiesClass.$properties
                     .numberDefaultValueProperty["identifier"],
@@ -42435,15 +42266,16 @@ export namespace DefaultValuePropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.stringDefaultValueProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.stringDefaultValueProperty["identifier"],
+          { unique: true },
+        ),
       )
         .map((values) =>
           values.length > 0
             ? values
             : new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   DefaultValuePropertiesClass.$properties
                     .stringDefaultValueProperty["identifier"],
@@ -42451,7 +42283,10 @@ export namespace DefaultValuePropertiesClass {
               }).toValues(),
         )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -42471,7 +42306,7 @@ export namespace DefaultValuePropertiesClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -42492,7 +42327,7 @@ export namespace DefaultValuePropertiesClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     DefaultValuePropertiesClass.$properties
                       .stringDefaultValueProperty["identifier"],
@@ -42516,7 +42351,7 @@ export namespace DefaultValuePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.trueBooleanDefaultValueProperty["identifier"],
         { unique: true },
       ),
@@ -42525,7 +42360,7 @@ export namespace DefaultValuePropertiesClass {
         values.length > 0
           ? values
           : new rdfjsResource.Resource.TermValue({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DefaultValuePropertiesClass.$properties
                   .trueBooleanDefaultValueProperty["identifier"],
@@ -43406,24 +43241,24 @@ export namespace DateUnionPropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, DateUnionPropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return DateUnionPropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -43445,7 +43280,7 @@ export namespace DateUnionPropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -43636,15 +43471,8 @@ export namespace DateUnionPropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -43668,7 +43496,7 @@ export namespace DateUnionPropertiesClass {
     }
   > {
     const $identifier: DateUnionPropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _dateOrDateTimePropertyEither: purify.Either<
       Error,
       purify.Maybe<
@@ -43678,9 +43506,10 @@ export namespace DateUnionPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.dateOrDateTimeProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.dateOrDateTimeProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -43734,7 +43563,7 @@ export namespace DateUnionPropertiesClass {
                 | { type: "dateTime"; value: Date }
               >
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
                   "identifier"
@@ -43757,9 +43586,10 @@ export namespace DateUnionPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.dateOrStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.dateOrStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -43787,8 +43617,8 @@ export namespace DateUnionPropertiesClass {
                 valueAsValues
                   .chain((values) => {
                     if (
-                      !$preferredLanguages ||
-                      $preferredLanguages.length === 0
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
                     ) {
                       return purify.Either.of<
                         Error,
@@ -43809,7 +43639,7 @@ export namespace DateUnionPropertiesClass {
                     let filteredLiteralValues:
                       | rdfjsResource.Resource.Values<rdfjs.Literal>
                       | undefined;
-                    for (const preferredLanguage of $preferredLanguages) {
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
                       if (!filteredLiteralValues) {
                         filteredLiteralValues = literalValues.filter(
                           (value) => value.language === preferredLanguage,
@@ -43832,7 +43662,7 @@ export namespace DateUnionPropertiesClass {
                       filteredLiteralValues!.map(
                         (literalValue) =>
                           new rdfjsResource.Resource.TermValue({
-                            focusResource: $resource,
+                            focusResource: $parameters.resource,
                             predicate:
                               DateUnionPropertiesClass.$properties
                                 .dateOrStringProperty["identifier"],
@@ -43871,7 +43701,7 @@ export namespace DateUnionPropertiesClass {
                 | { type: "string"; value: string }
               >
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DateUnionPropertiesClass.$properties.dateOrStringProperty[
                   "identifier"
@@ -43894,9 +43724,10 @@ export namespace DateUnionPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.dateTimeOrDateProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.dateTimeOrDateProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -43950,7 +43781,7 @@ export namespace DateUnionPropertiesClass {
                 | { type: "date"; value: Date }
               >
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DateUnionPropertiesClass.$properties.dateTimeOrDateProperty[
                   "identifier"
@@ -43973,9 +43804,10 @@ export namespace DateUnionPropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.stringOrDateProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.stringOrDateProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) => {
@@ -43983,7 +43815,10 @@ export namespace DateUnionPropertiesClass {
           return (
             valueAsValues
               .chain((values) => {
-                if (!$preferredLanguages || $preferredLanguages.length === 0) {
+                if (
+                  !$parameters.preferredLanguages ||
+                  $parameters.preferredLanguages.length === 0
+                ) {
                   return purify.Either.of<
                     Error,
                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -44003,7 +43838,7 @@ export namespace DateUnionPropertiesClass {
                 let filteredLiteralValues:
                   | rdfjsResource.Resource.Values<rdfjs.Literal>
                   | undefined;
-                for (const preferredLanguage of $preferredLanguages) {
+                for (const preferredLanguage of $parameters.preferredLanguages) {
                   if (!filteredLiteralValues) {
                     filteredLiteralValues = literalValues.filter(
                       (value) => value.language === preferredLanguage,
@@ -44024,7 +43859,7 @@ export namespace DateUnionPropertiesClass {
                   filteredLiteralValues!.map(
                     (literalValue) =>
                       new rdfjsResource.Resource.TermValue({
-                        focusResource: $resource,
+                        focusResource: $parameters.resource,
                         predicate:
                           DateUnionPropertiesClass.$properties
                             .stringOrDateProperty["identifier"],
@@ -44080,7 +43915,7 @@ export namespace DateUnionPropertiesClass {
                 | { type: "date"; value: Date }
               >
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 DateUnionPropertiesClass.$properties.stringOrDateProperty[
                   "identifier"
@@ -45341,24 +45176,24 @@ export namespace ConvertibleTypePropertiesClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConvertibleTypePropertiesClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ConvertibleTypePropertiesClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -45383,7 +45218,7 @@ export namespace ConvertibleTypePropertiesClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -45903,15 +45738,8 @@ export namespace ConvertibleTypePropertiesClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -45945,8 +45773,8 @@ export namespace ConvertibleTypePropertiesClass {
       )[];
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -45958,14 +45786,16 @@ export namespace ConvertibleTypePropertiesClass {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(ConvertibleTypePropertiesClass.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              ConvertibleTypePropertiesClass.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConvertibleTypePropertiesClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConvertibleTypePropertiesClass)`,
             ),
           );
         });
@@ -45975,7 +45805,7 @@ export namespace ConvertibleTypePropertiesClass {
     }
 
     const $identifier: ConvertibleTypePropertiesClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _convertibleIriNonEmptySetPropertyEither: purify.Either<
       Error,
       purify.NonEmptyList<rdfjs.NamedNode>
@@ -45983,7 +45813,7 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.convertibleIriNonEmptySetProperty["identifier"],
         { unique: true },
       ),
@@ -45992,13 +45822,13 @@ export namespace ConvertibleTypePropertiesClass {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             ConvertibleTypePropertiesClass.$properties
               .convertibleIriNonEmptySetProperty["identifier"],
@@ -46019,9 +45849,10 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.convertibleIriOptionProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.convertibleIriOptionProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toIri()))
       .map((values) =>
@@ -46030,7 +45861,7 @@ export namespace ConvertibleTypePropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.NamedNode>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ConvertibleTypePropertiesClass.$properties
                   .convertibleIriOptionProperty["identifier"],
@@ -46049,9 +45880,10 @@ export namespace ConvertibleTypePropertiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.convertibleIriProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.convertibleIriProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head());
@@ -46067,15 +45899,16 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.convertibleIriSetProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.convertibleIriSetProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => values.chainMap((value) => value.toIri()))
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             ConvertibleTypePropertiesClass.$properties
               .convertibleIriSetProperty["identifier"],
@@ -46096,13 +45929,16 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.convertibleLiteralNonEmptySetProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46122,7 +45958,7 @@ export namespace ConvertibleTypePropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -46143,7 +45979,7 @@ export namespace ConvertibleTypePropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   ConvertibleTypePropertiesClass.$properties
                     .convertibleLiteralNonEmptySetProperty["identifier"],
@@ -46156,13 +45992,13 @@ export namespace ConvertibleTypePropertiesClass {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             ConvertibleTypePropertiesClass.$properties
               .convertibleLiteralNonEmptySetProperty["identifier"],
@@ -46183,13 +46019,16 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.convertibleLiteralOptionProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46209,7 +46048,7 @@ export namespace ConvertibleTypePropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -46230,7 +46069,7 @@ export namespace ConvertibleTypePropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   ConvertibleTypePropertiesClass.$properties
                     .convertibleLiteralOptionProperty["identifier"],
@@ -46246,7 +46085,7 @@ export namespace ConvertibleTypePropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.Literal>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ConvertibleTypePropertiesClass.$properties
                   .convertibleLiteralOptionProperty["identifier"],
@@ -46267,12 +46106,16 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.convertibleLiteralProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.convertibleLiteralProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46292,7 +46135,7 @@ export namespace ConvertibleTypePropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -46313,7 +46156,7 @@ export namespace ConvertibleTypePropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   ConvertibleTypePropertiesClass.$properties
                     .convertibleLiteralProperty["identifier"],
@@ -46337,13 +46180,16 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.convertibleLiteralSetProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46363,7 +46209,7 @@ export namespace ConvertibleTypePropertiesClass {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -46384,7 +46230,7 @@ export namespace ConvertibleTypePropertiesClass {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   ConvertibleTypePropertiesClass.$properties
                     .convertibleLiteralSetProperty["identifier"],
@@ -46397,7 +46243,7 @@ export namespace ConvertibleTypePropertiesClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             ConvertibleTypePropertiesClass.$properties
               .convertibleLiteralSetProperty["identifier"],
@@ -46418,7 +46264,7 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.convertibleTermNonEmptySetProperty["identifier"],
         { unique: true },
       ),
@@ -46434,13 +46280,13 @@ export namespace ConvertibleTypePropertiesClass {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             ConvertibleTypePropertiesClass.$properties
               .convertibleTermNonEmptySetProperty["identifier"],
@@ -46461,7 +46307,7 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.convertibleTermOptionProperty["identifier"],
         { unique: true },
       ),
@@ -46480,7 +46326,7 @@ export namespace ConvertibleTypePropertiesClass {
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
             >({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 ConvertibleTypePropertiesClass.$properties
                   .convertibleTermOptionProperty["identifier"],
@@ -46501,9 +46347,10 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.convertibleTermProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.convertibleTermProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
@@ -46527,9 +46374,10 @@ export namespace ConvertibleTypePropertiesClass {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.convertibleTermSetProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.convertibleTermSetProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) =>
         values.chainMap((value) =>
@@ -46542,7 +46390,7 @@ export namespace ConvertibleTypePropertiesClass {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             ConvertibleTypePropertiesClass.$properties
               .convertibleTermSetProperty["identifier"],
@@ -47253,24 +47101,24 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BaseInterfaceWithProperties> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -47327,7 +47175,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -47427,15 +47275,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -47452,8 +47293,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
       baseInterfaceWithPropertiesProperty: string;
     }
   > {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -47468,7 +47309,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(
+            $parameters.resource.isInstanceOf(
               BaseInterfaceWithPropertiesStatic.$fromRdfType,
             )
           ) {
@@ -47477,7 +47318,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithProperties)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithProperties)`,
             ),
           );
         });
@@ -47487,7 +47328,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }
 
     const $identifier: BaseInterfaceWithPropertiesStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "BaseInterfaceWithProperties" as const;
     const _baseInterfaceWithPropertiesPropertyEither: purify.Either<
       Error,
@@ -47496,13 +47337,16 @@ export namespace BaseInterfaceWithPropertiesStatic {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.baseInterfaceWithPropertiesProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -47522,7 +47366,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -47543,7 +47387,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   BaseInterfaceWithPropertiesStatic.$properties
                     .baseInterfaceWithPropertiesProperty["identifier"],
@@ -47892,24 +47736,24 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BaseInterfaceWithoutProperties> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -48019,15 +47863,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return purify.Either.of({ ...$super0, $identifier, $type });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -48045,19 +47882,16 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     >
   > {
     const $super0Either = BaseInterfaceWithPropertiesStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -48071,7 +47905,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(
+            $parameters.resource.isInstanceOf(
               BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
             )
           ) {
@@ -48080,7 +47914,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithoutProperties)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BaseInterfaceWithoutProperties)`,
             ),
           );
         });
@@ -48090,7 +47924,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }
 
     const $identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "BaseInterfaceWithoutProperties" as const;
     return purify.Either.of({ ...$super0, $identifier, $type });
   }
@@ -48384,24 +48218,24 @@ export namespace ConcreteParentInterfaceStatic {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteParentInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ConcreteParentInterfaceStatic.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -48527,15 +48361,8 @@ export namespace ConcreteParentInterfaceStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -48552,19 +48379,16 @@ export namespace ConcreteParentInterfaceStatic {
   > {
     const $super0Either =
       BaseInterfaceWithoutPropertiesStatic.$propertiesFromRdf({
-        ...$context,
+        ...$parameters,
         ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
       });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -48577,14 +48401,16 @@ export namespace ConcreteParentInterfaceStatic {
 
           // Check arbitrary rdfs:subClassOf's of the expected type
           if (
-            $resource.isInstanceOf(ConcreteParentInterfaceStatic.$fromRdfType)
+            $parameters.resource.isInstanceOf(
+              ConcreteParentInterfaceStatic.$fromRdfType,
+            )
           ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentInterface)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentInterface)`,
             ),
           );
         });
@@ -48594,20 +48420,23 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     const $identifier: ConcreteParentInterfaceStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "ConcreteParentInterface" as const;
     const _concreteParentInterfacePropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.concreteParentInterfaceProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -48627,7 +48456,7 @@ export namespace ConcreteParentInterfaceStatic {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -48648,7 +48477,7 @@ export namespace ConcreteParentInterfaceStatic {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ConcreteParentInterfaceStatic.$properties
                       .concreteParentInterfaceProperty["identifier"],
@@ -49034,24 +48863,24 @@ export namespace ConcreteChildInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteChildInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ConcreteChildInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -49175,15 +49004,8 @@ export namespace ConcreteChildInterface {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -49199,19 +49021,16 @@ export namespace ConcreteChildInterface {
     >
   > {
     const $super0Either = ConcreteParentInterfaceStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -49222,13 +49041,17 @@ export namespace ConcreteChildInterface {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(ConcreteChildInterface.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              ConcreteChildInterface.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildInterface)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildInterface)`,
             ),
           );
         });
@@ -49238,20 +49061,23 @@ export namespace ConcreteChildInterface {
     }
 
     const $identifier: ConcreteChildInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "ConcreteChildInterface" as const;
     const _concreteChildInterfacePropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.concreteChildInterfaceProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -49271,7 +49097,7 @@ export namespace ConcreteChildInterface {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -49292,7 +49118,7 @@ export namespace ConcreteChildInterface {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ConcreteChildInterface.$properties
                       .concreteChildInterfaceProperty["identifier"],
@@ -49772,7 +49598,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -49856,15 +49682,8 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -49877,7 +49696,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     }
   > {
     const $identifier: AbstractBaseClassWithPropertiesStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _abstractBaseClassWithPropertiesPropertyEither: purify.Either<
       Error,
       string
@@ -49885,13 +49704,16 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.abstractBaseClassWithPropertiesProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -49911,7 +49733,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -49932,7 +49754,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   AbstractBaseClassWithPropertiesStatic.$properties
                     .abstractBaseClassWithPropertiesProperty["identifier"],
@@ -50226,15 +50048,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return purify.Either.of({ ...$super0, $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -50249,11 +50064,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   > {
     const $super0Either =
       AbstractBaseClassWithPropertiesStatic.$propertiesFromRdf({
-        ...$context,
+        ...$parameters,
         ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
       });
     if ($super0Either.isLeft()) {
       return $super0Either;
@@ -50261,7 +50073,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 
     const $super0 = $super0Either.unsafeCoerce();
     const $identifier: AbstractBaseClassWithoutPropertiesStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     return purify.Either.of({ ...$super0, $identifier });
   }
 
@@ -50508,24 +50320,24 @@ export namespace ConcreteParentClassStatic {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteParentClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ConcreteParentClassStatic.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -50618,15 +50430,8 @@ export namespace ConcreteParentClassStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -50644,19 +50449,16 @@ export namespace ConcreteParentClassStatic {
   > {
     const $super0Either =
       AbstractBaseClassWithoutPropertiesStatic.$propertiesFromRdf({
-        ...$context,
+        ...$parameters,
         ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
       });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -50668,13 +50470,17 @@ export namespace ConcreteParentClassStatic {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(ConcreteParentClassStatic.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              ConcreteParentClassStatic.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteParentClass)`,
             ),
           );
         });
@@ -50684,19 +50490,22 @@ export namespace ConcreteParentClassStatic {
     }
 
     const $identifier: ConcreteParentClassStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _concreteParentClassPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values(
+        $parameters.resource.values(
           $properties.concreteParentClassProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -50716,7 +50525,7 @@ export namespace ConcreteParentClassStatic {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -50737,7 +50546,7 @@ export namespace ConcreteParentClassStatic {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ConcreteParentClassStatic.$properties
                       .concreteParentClassProperty["identifier"],
@@ -51127,24 +50936,24 @@ export namespace ConcreteChildClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ConcreteChildClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ConcreteChildClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -51233,15 +51042,8 @@ export namespace ConcreteChildClass {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -51256,19 +51058,16 @@ export namespace ConcreteChildClass {
     >
   > {
     const $super0Either = ConcreteParentClassStatic.$propertiesFromRdf({
-      ...$context,
+      ...$parameters,
       ignoreRdfType: true,
-      objectSet: $objectSet,
-      preferredLanguages: $preferredLanguages,
-      resource: $resource,
     });
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -51279,13 +51078,15 @@ export namespace ConcreteChildClass {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(ConcreteChildClass.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(ConcreteChildClass.$fromRdfType)
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ConcreteChildClass)`,
             ),
           );
         });
@@ -51294,18 +51095,23 @@ export namespace ConcreteChildClass {
       }
     }
 
-    const $identifier: ConcreteChildClass.$Identifier = $resource.identifier;
+    const $identifier: ConcreteChildClass.$Identifier =
+      $parameters.resource.identifier;
     const _concreteChildClassPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.concreteChildClassProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.concreteChildClassProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -51325,7 +51131,7 @@ export namespace ConcreteChildClass {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -51346,7 +51152,7 @@ export namespace ConcreteChildClass {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ConcreteChildClass.$properties.concreteChildClassProperty[
                       "identifier"
@@ -51741,7 +51547,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -51825,15 +51631,8 @@ export namespace ClassUnionMemberCommonParentStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -51846,7 +51645,7 @@ export namespace ClassUnionMemberCommonParentStatic {
     }
   > {
     const $identifier: ClassUnionMemberCommonParentStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _classUnionMemberCommonParentPropertyEither: purify.Either<
       Error,
       string
@@ -51854,13 +51653,16 @@ export namespace ClassUnionMemberCommonParentStatic {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.classUnionMemberCommonParentProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -51880,7 +51682,7 @@ export namespace ClassUnionMemberCommonParentStatic {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -51901,7 +51703,7 @@ export namespace ClassUnionMemberCommonParentStatic {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   ClassUnionMemberCommonParentStatic.$properties
                     .classUnionMemberCommonParentProperty["identifier"],
@@ -52189,24 +51991,24 @@ export namespace ClassUnionMember2 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ClassUnionMember2> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ClassUnionMember2.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -52294,15 +52096,8 @@ export namespace ClassUnionMember2 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -52317,21 +52112,15 @@ export namespace ClassUnionMember2 {
     >
   > {
     const $super0Either = ClassUnionMemberCommonParentStatic.$propertiesFromRdf(
-      {
-        ...$context,
-        ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
-      },
+      { ...$parameters, ignoreRdfType: true },
     );
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -52342,13 +52131,15 @@ export namespace ClassUnionMember2 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(ClassUnionMember2.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(ClassUnionMember2.$fromRdfType)
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember2)`,
             ),
           );
         });
@@ -52357,18 +52148,23 @@ export namespace ClassUnionMember2 {
       }
     }
 
-    const $identifier: ClassUnionMember2.$Identifier = $resource.identifier;
+    const $identifier: ClassUnionMember2.$Identifier =
+      $parameters.resource.identifier;
     const _classUnionMember2PropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.classUnionMember2Property["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.classUnionMember2Property["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -52388,7 +52184,7 @@ export namespace ClassUnionMember2 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -52409,7 +52205,7 @@ export namespace ClassUnionMember2 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ClassUnionMember2.$properties.classUnionMember2Property[
                       "identifier"
@@ -52775,24 +52571,24 @@ export namespace ClassUnionMember1 {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, ClassUnionMember1> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return ClassUnionMember1.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -52880,15 +52676,8 @@ export namespace ClassUnionMember1 {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -52903,21 +52692,15 @@ export namespace ClassUnionMember1 {
     >
   > {
     const $super0Either = ClassUnionMemberCommonParentStatic.$propertiesFromRdf(
-      {
-        ...$context,
-        ignoreRdfType: true,
-        objectSet: $objectSet,
-        preferredLanguages: $preferredLanguages,
-        resource: $resource,
-      },
+      { ...$parameters, ignoreRdfType: true },
     );
     if ($super0Either.isLeft()) {
       return $super0Either;
     }
 
     const $super0 = $super0Either.unsafeCoerce();
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -52928,13 +52711,15 @@ export namespace ClassUnionMember1 {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(ClassUnionMember1.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(ClassUnionMember1.$fromRdfType)
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ClassUnionMember1)`,
             ),
           );
         });
@@ -52943,18 +52728,23 @@ export namespace ClassUnionMember1 {
       }
     }
 
-    const $identifier: ClassUnionMember1.$Identifier = $resource.identifier;
+    const $identifier: ClassUnionMember1.$Identifier =
+      $parameters.resource.identifier;
     const _classUnionMember1PropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.classUnionMember1Property["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.classUnionMember1Property["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -52974,7 +52764,7 @@ export namespace ClassUnionMember1 {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -52995,7 +52785,7 @@ export namespace ClassUnionMember1 {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     ClassUnionMember1.$properties.classUnionMember1Property[
                       "identifier"
@@ -53308,24 +53098,24 @@ export namespace BlankNodeIdentifierInterface {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BlankNodeIdentifierInterface> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return BlankNodeIdentifierInterface.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -53375,7 +53165,7 @@ export namespace BlankNodeIdentifierInterface {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -53443,15 +53233,8 @@ export namespace BlankNodeIdentifierInterface {
     return purify.Either.of({ $identifier, $type });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -53464,7 +53247,7 @@ export namespace BlankNodeIdentifierInterface {
     }
   > {
     const $identifier: BlankNodeIdentifierInterface.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const $type = "BlankNodeIdentifierInterface" as const;
     return purify.Either.of({ $identifier, $type });
   }
@@ -53694,24 +53477,24 @@ export namespace BlankNodeIdentifierClass {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, BlankNodeIdentifierClass> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return BlankNodeIdentifierClass.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -53736,7 +53519,7 @@ export namespace BlankNodeIdentifierClass {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -53802,22 +53585,15 @@ export namespace BlankNodeIdentifierClass {
     return purify.Either.of({ $identifier });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
-    if (!$ignoreRdfType) {
-      const $rdfTypeCheck: purify.Either<Error, true> = $resource
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
         .chain((actualRdfType) => actualRdfType.toIri())
         .chain((actualRdfType) => {
@@ -53828,13 +53604,17 @@ export namespace BlankNodeIdentifierClass {
           }
 
           // Check arbitrary rdfs:subClassOf's of the expected type
-          if ($resource.isInstanceOf(BlankNodeIdentifierClass.$fromRdfType)) {
+          if (
+            $parameters.resource.isInstanceOf(
+              BlankNodeIdentifierClass.$fromRdfType,
+            )
+          ) {
             return purify.Either.of(true);
           }
 
           return purify.Left(
             new Error(
-              `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierClass)`,
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierClass)`,
             ),
           );
         });
@@ -53844,7 +53624,7 @@ export namespace BlankNodeIdentifierClass {
     }
 
     const $identifier: BlankNodeIdentifierClass.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     return purify.Either.of({ $identifier });
   }
 
@@ -54126,7 +53906,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -54210,15 +53990,8 @@ export namespace AbstractBaseClassForExternClassStatic {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-    // @ts-expect-error
-    ...$context
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -54231,7 +54004,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     }
   > {
     const $identifier: AbstractBaseClassForExternClassStatic.$Identifier =
-      $resource.identifier;
+      $parameters.resource.identifier;
     const _abstractBaseClassForExternClassPropertyEither: purify.Either<
       Error,
       string
@@ -54239,13 +54012,16 @@ export namespace AbstractBaseClassForExternClassStatic {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values(
+      $parameters.resource.values(
         $properties.abstractBaseClassForExternClassProperty["identifier"],
         { unique: true },
       ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -54265,7 +54041,7 @@ export namespace AbstractBaseClassForExternClassStatic {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -54286,7 +54062,7 @@ export namespace AbstractBaseClassForExternClassStatic {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   AbstractBaseClassForExternClassStatic.$properties
                     .abstractBaseClassForExternClassProperty["identifier"],
@@ -54550,7 +54326,7 @@ export namespace ClassUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -54836,7 +54612,7 @@ export namespace FlattenClassUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -55120,7 +54896,7 @@ export namespace InterfaceUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -55395,7 +55171,7 @@ export namespace LazilyResolvedClassUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -55678,7 +55454,7 @@ export namespace LazilyResolvedInterfaceUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -55956,7 +55732,7 @@ export namespace PartialClassUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -56230,7 +56006,7 @@ export namespace PartialInterfaceUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -56502,7 +56278,7 @@ export namespace NoRdfTypeClassUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -56760,7 +56536,7 @@ export namespace RecursiveClassUnion {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -69516,7 +69292,7 @@ export class $SparqlObjectSet implements $ObjectSet {
     if (count.termType !== "Literal") {
       return purify.Left(new Error("'count' variable is not a Literal"));
     }
-    const parsedCount = Number.parseInt(count.value);
+    const parsedCount = Number.parseInt(count.value, 10);
     if (Number.isNaN(parsedCount)) {
       return purify.Left(new Error("'count' variable is NaN"));
     }

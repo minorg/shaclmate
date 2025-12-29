@@ -117,6 +117,9 @@ export namespace $RdfVocabularies {
     export const dateTime = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
     );
+    export const decimal = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#decimal",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
     );
@@ -368,7 +371,7 @@ export namespace NestedNodeShape {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -456,8 +459,6 @@ export namespace NestedNodeShape {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -857,7 +858,7 @@ export namespace FormNodeShape {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -1031,8 +1032,6 @@ export namespace FormNodeShape {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;

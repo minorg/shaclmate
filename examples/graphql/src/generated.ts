@@ -42,6 +42,9 @@ export namespace $RdfVocabularies {
     export const dateTime = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#dateTime",
     );
+    export const decimal = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#decimal",
+    );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
     );
@@ -220,7 +223,7 @@ export namespace $DefaultPartial {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -231,8 +234,6 @@ export namespace $DefaultPartial {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -389,7 +390,7 @@ export namespace UnionMember2 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -406,8 +407,6 @@ export namespace UnionMember2 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -675,7 +674,7 @@ export namespace UnionMember1 {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -692,8 +691,6 @@ export namespace UnionMember1 {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -956,7 +953,7 @@ export namespace Nested {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -983,8 +980,6 @@ export namespace Nested {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -1348,7 +1343,7 @@ export namespace ParentStatic {
       ) as purify.Either<Error, rdfjs.NamedNode>;
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
@@ -1365,8 +1360,6 @@ export namespace ParentStatic {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -1885,8 +1878,6 @@ export namespace Child {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-expect-error
-    ...$context
   }: {
     [_index: string]: any;
     ignoreRdfType: boolean;
@@ -2392,7 +2383,7 @@ export namespace Union {
       );
     }
 
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames:
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
       toString = rdfjsResource.Resource.Identifier.toString;
   }
 
