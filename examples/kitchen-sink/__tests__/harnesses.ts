@@ -201,6 +201,13 @@ export const harnesses = {
     }),
     kitchenSink.ExplicitRdfTypeClass,
   ),
+  externClassPropertyClass: new ClassHarness(
+    new kitchenSink.ExternClassPropertyClass({
+      externClassProperty: new kitchenSink.ExternClass(dataFactory.blankNode()),
+      $identifier,
+    }),
+    kitchenSink.ExternClassPropertyClass,
+  ),
   flattenClassUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,

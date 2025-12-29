@@ -312,24 +312,24 @@ export namespace NestedNodeShape {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, NestedNodeShape> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return NestedNodeShape.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -454,13 +454,8 @@ export namespace NestedNodeShape {
     return purify.Either.of({ $identifier, $type, requiredStringProperty });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -473,19 +468,24 @@ export namespace NestedNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const $identifier: NestedNodeShape.$Identifier = $resource.identifier;
+    const $identifier: NestedNodeShape.$Identifier =
+      $parameters.resource.identifier;
     const $type = "NestedNodeShape" as const;
     const _requiredStringPropertyEither: purify.Either<Error, string> =
       purify.Either.of<
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.requiredStringProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.requiredStringProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -505,7 +505,7 @@ export namespace NestedNodeShape {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -526,7 +526,7 @@ export namespace NestedNodeShape {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     NestedNodeShape.$properties.requiredStringProperty[
                       "identifier"
@@ -786,24 +786,24 @@ export namespace FormNodeShape {
   export function $fromRdf(
     resource: rdfjsResource.Resource,
     options?: {
-      [_index: string]: any;
+      context?: any;
       ignoreRdfType?: boolean;
       objectSet?: $ObjectSet;
       preferredLanguages?: readonly string[];
     },
   ): purify.Either<Error, FormNodeShape> {
     let {
+      context,
       ignoreRdfType = false,
       objectSet,
       preferredLanguages,
-      ...context
     } = options ?? {};
     if (!objectSet) {
       objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
     }
 
     return FormNodeShape.$propertiesFromRdf({
-      ...context,
+      context,
       ignoreRdfType,
       objectSet,
       preferredLanguages,
@@ -1027,13 +1027,8 @@ export namespace FormNodeShape {
     });
   }
 
-  export function $propertiesFromRdf({
-    ignoreRdfType: $ignoreRdfType,
-    objectSet: $objectSet,
-    preferredLanguages: $preferredLanguages,
-    resource: $resource,
-  }: {
-    [_index: string]: any;
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
     ignoreRdfType: boolean;
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
@@ -1051,7 +1046,8 @@ export namespace FormNodeShape {
       requiredStringProperty: string;
     }
   > {
-    const $identifier: FormNodeShape.$Identifier = $resource.identifier;
+    const $identifier: FormNodeShape.$Identifier =
+      $parameters.resource.identifier;
     const $type = "FormNodeShape" as const;
     const _emptyStringSetPropertyEither: purify.Either<
       Error,
@@ -1060,12 +1056,16 @@ export namespace FormNodeShape {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.emptyStringSetProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.emptyStringSetProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -1085,7 +1085,7 @@ export namespace FormNodeShape {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -1106,7 +1106,7 @@ export namespace FormNodeShape {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   FormNodeShape.$properties.emptyStringSetProperty[
                     "identifier"
@@ -1120,7 +1120,7 @@ export namespace FormNodeShape {
       .map((values) => values.toArray())
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             FormNodeShape.$properties.emptyStringSetProperty["identifier"],
           value: valuesArray,
@@ -1137,18 +1137,19 @@ export namespace FormNodeShape {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.nestedObjectProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.nestedObjectProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) =>
           values.chainMap((value) =>
             value.toResource().chain((resource) =>
               NestedNodeShape.$fromRdf(resource, {
-                ...$context,
+                context: $parameters.context,
                 ignoreRdfType: true,
-                objectSet: $objectSet,
-                preferredLanguages: $preferredLanguages,
+                objectSet: $parameters.objectSet,
+                preferredLanguages: $parameters.preferredLanguages,
               }),
             ),
           ),
@@ -1166,12 +1167,16 @@ export namespace FormNodeShape {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.nonEmptyStringSetProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.nonEmptyStringSetProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -1191,7 +1196,7 @@ export namespace FormNodeShape {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -1212,7 +1217,7 @@ export namespace FormNodeShape {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   FormNodeShape.$properties.nonEmptyStringSetProperty[
                     "identifier"
@@ -1226,13 +1231,13 @@ export namespace FormNodeShape {
       .chain((values) =>
         purify.NonEmptyList.fromArray(values.toArray()).toEither(
           new Error(
-            `${rdfjsResource.Resource.Identifier.toString($resource.identifier)} is an empty set`,
+            `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} is an empty set`,
           ),
         ),
       )
       .map((valuesArray) =>
         rdfjsResource.Resource.Values.fromValue({
-          focusResource: $resource,
+          focusResource: $parameters.resource,
           predicate:
             FormNodeShape.$properties.nonEmptyStringSetProperty["identifier"],
           value: valuesArray,
@@ -1252,12 +1257,16 @@ export namespace FormNodeShape {
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
-      $resource.values($properties.optionalStringProperty["identifier"], {
-        unique: true,
-      }),
+      $parameters.resource.values(
+        $properties.optionalStringProperty["identifier"],
+        { unique: true },
+      ),
     )
       .chain((values) => {
-        if (!$preferredLanguages || $preferredLanguages.length === 0) {
+        if (
+          !$parameters.preferredLanguages ||
+          $parameters.preferredLanguages.length === 0
+        ) {
           return purify.Either.of<
             Error,
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -1277,7 +1286,7 @@ export namespace FormNodeShape {
         let filteredLiteralValues:
           | rdfjsResource.Resource.Values<rdfjs.Literal>
           | undefined;
-        for (const preferredLanguage of $preferredLanguages) {
+        for (const preferredLanguage of $parameters.preferredLanguages) {
           if (!filteredLiteralValues) {
             filteredLiteralValues = literalValues.filter(
               (value) => value.language === preferredLanguage,
@@ -1298,7 +1307,7 @@ export namespace FormNodeShape {
           filteredLiteralValues!.map(
             (literalValue) =>
               new rdfjsResource.Resource.TermValue({
-                focusResource: $resource,
+                focusResource: $parameters.resource,
                 predicate:
                   FormNodeShape.$properties.optionalStringProperty[
                     "identifier"
@@ -1313,7 +1322,7 @@ export namespace FormNodeShape {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-              focusResource: $resource,
+              focusResource: $parameters.resource,
               predicate:
                 FormNodeShape.$properties.optionalStringProperty["identifier"],
               value: purify.Maybe.empty(),
@@ -1330,9 +1339,10 @@ export namespace FormNodeShape {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.requiredIntegerProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.requiredIntegerProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => values.chainMap((value) => value.toNumber()))
         .chain((values) => values.head());
@@ -1347,12 +1357,16 @@ export namespace FormNodeShape {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $resource.values($properties.requiredStringProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $properties.requiredStringProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) => {
-          if (!$preferredLanguages || $preferredLanguages.length === 0) {
+          if (
+            !$parameters.preferredLanguages ||
+            $parameters.preferredLanguages.length === 0
+          ) {
             return purify.Either.of<
               Error,
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -1372,7 +1386,7 @@ export namespace FormNodeShape {
           let filteredLiteralValues:
             | rdfjsResource.Resource.Values<rdfjs.Literal>
             | undefined;
-          for (const preferredLanguage of $preferredLanguages) {
+          for (const preferredLanguage of $parameters.preferredLanguages) {
             if (!filteredLiteralValues) {
               filteredLiteralValues = literalValues.filter(
                 (value) => value.language === preferredLanguage,
@@ -1393,7 +1407,7 @@ export namespace FormNodeShape {
             filteredLiteralValues!.map(
               (literalValue) =>
                 new rdfjsResource.Resource.TermValue({
-                  focusResource: $resource,
+                  focusResource: $parameters.resource,
                   predicate:
                     FormNodeShape.$properties.requiredStringProperty[
                       "identifier"

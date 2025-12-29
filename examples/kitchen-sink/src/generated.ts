@@ -3681,7 +3681,7 @@ export namespace UnionDiscriminantsClass {
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
                     NonClass.$fromRdf(resource, {
-                      ...$parameters.context,
+                      context: $parameters.context,
                       objectSet: $parameters.objectSet,
                       preferredLanguages: $parameters.preferredLanguages,
                     }),
@@ -4088,7 +4088,7 @@ export namespace UnionDiscriminantsClass {
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
                     NonClass.$fromRdf(resource, {
-                      ...$parameters.context,
+                      context: $parameters.context,
                       objectSet: $parameters.objectSet,
                       preferredLanguages: $parameters.preferredLanguages,
                     }),
@@ -4453,7 +4453,7 @@ export namespace UnionDiscriminantsClass {
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
                     NonClass.$fromRdf(resource, {
-                      ...$parameters.context,
+                      context: $parameters.context,
                       objectSet: $parameters.objectSet,
                       preferredLanguages: $parameters.preferredLanguages,
                     }),
@@ -8305,7 +8305,7 @@ export namespace RecursiveClassUnionMember2 {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             RecursiveClassUnion.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: false,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -8730,7 +8730,7 @@ export namespace RecursiveClassUnionMember1 {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             RecursiveClassUnion.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: false,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -17268,7 +17268,7 @@ export namespace ListPropertiesClass {
             values.chainMap((value) =>
               value.toResource().chain((resource) =>
                 NonClass.$fromRdf(resource, {
-                  ...$parameters.context,
+                  context: $parameters.context,
                   ignoreRdfType: true,
                   objectSet: $parameters.objectSet,
                   preferredLanguages: $parameters.preferredLanguages,
@@ -20070,7 +20070,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20134,7 +20134,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20198,7 +20198,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $NamedDefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20266,7 +20266,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20334,7 +20334,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20403,7 +20403,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterfaceUnion.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: false,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20469,7 +20469,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20522,7 +20522,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20573,7 +20573,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -20636,7 +20636,7 @@ export namespace LazyPropertiesInterface {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialInterface.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23584,7 +23584,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23648,7 +23648,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23712,7 +23712,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $NamedDefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23778,7 +23778,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23844,7 +23844,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23910,7 +23910,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClassUnion.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: false,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -23974,7 +23974,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -24025,7 +24025,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -24076,7 +24076,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             $DefaultPartial.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -24138,7 +24138,7 @@ export namespace LazyPropertiesClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             PartialClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -34060,7 +34060,7 @@ export namespace IndirectRecursiveHelperClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             IndirectRecursiveClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -34479,7 +34479,7 @@ export namespace IndirectRecursiveClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             IndirectRecursiveHelperClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -39788,7 +39788,7 @@ export namespace ExternClassPropertyClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             ExternClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,
@@ -41462,7 +41462,7 @@ export namespace DirectRecursiveClass {
         values.chainMap((value) =>
           value.toResource().chain((resource) =>
             DirectRecursiveClass.$fromRdf(resource, {
-              ...$parameters.context,
+              context: $parameters.context,
               ignoreRdfType: true,
               objectSet: $parameters.objectSet,
               preferredLanguages: $parameters.preferredLanguages,

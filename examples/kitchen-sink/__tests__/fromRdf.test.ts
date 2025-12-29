@@ -66,7 +66,9 @@ describe("fromRdf", () => {
     it(`${id} round trip`, ({ expect }) => {
       const fromRdfInstance = harness
         .fromRdf(harness.toRdf(), {
-          extra: 1,
+          context: {
+            extra: 1,
+          },
         })
         .unsafeCoerce() as any;
       expect(harness.equals(fromRdfInstance).extract()).toStrictEqual(true);
