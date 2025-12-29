@@ -27,7 +27,7 @@ interface Package {
 }
 
 const externalDependencyVersions = {
-  "@biomejs/biome": { "@biomejs/biome": "1.9.4" },
+  "@biomejs/biome": { "@biomejs/biome": "2.3.10" },
   "@rdfjs/prefix-map": { "@rdfjs/prefix-map": "^0.1.2" },
   "@rdfjs/term-map": { "@rdfjs/term-map": "^2.0.2" },
   "@rdfjs/term-set": { "@rdfjs/term-set": "^2.0.3" },
