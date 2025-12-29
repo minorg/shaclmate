@@ -5,5 +5,5 @@ export * from "./transformPropertyShapeToAstObjectTypeProperty.js";
 export * from "./transformShapeToAstCompoundType.js";
 export * from "./transformShapeToAstIdentifierType.js";
 export * from "./transformShapeToAstLiteralType.js";
-export * from "./transformShapeToAstType.js";
 export * from "./transformShapeToAstTermType.js";
+export * from "./transformShapeToAstType.js";

@@ -1,7 +1,24 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "files": {
-    "ignore": ["*.css", "*.js", "*.js.map", "*.d.ts", "*.d.ts.map", "*.json"],
+    "includes": [
+      "**",
+      "!**/*.css",
+      "!**/*.js",
+      "!**/*.js.map",
+      "!**/*.d.ts",
+      "!**/*.d.ts.map",
+      "!**/*.html",
+      "!**/*.json",
+      "!**/*.tsx"
+    ],
     "maxSize": 4194304
   },
   "formatter": {
@@ -15,29 +32,16 @@
         "useLiteralKeys": "off"
       },
       "correctness": {
-        "noUnusedImports": "error",
-        "useImportExtensions": {
-          "level": "error",
-          "options": {
-            "suggestedExtensions": {
-              "ts": {
-                "module": "js"
-              }
-            }
-          }
-        }
+        "noUnusedImports": "error"
       },
       "recommended": true,
       "style": {
         "noNonNullAssertion": "off"
       },
       "suspicious": {
-        "noExplicitAny": "off",
-        "noEmptyInterface": "off"
+        "noEmptyInterface": "off",
+        "noExplicitAny": "off"
       }
     }
-  },
-  "organizeImports": {
-    "enabled": true
   }
 }

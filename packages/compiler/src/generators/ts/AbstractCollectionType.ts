@@ -3,8 +3,8 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { Type } from "./Type.js";
 
 function isTypeofString(
   x: string,

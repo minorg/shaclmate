@@ -1,10 +1,9 @@
-import { Memoize } from "typescript-memoize";
-
 import { NonEmptyList } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { AbstractType } from "./AbstractType.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { Type } from "./Type.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   readonly kind = "StringType";

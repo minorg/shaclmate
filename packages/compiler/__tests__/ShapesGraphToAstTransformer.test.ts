@@ -1,5 +1,5 @@
-// biome-ignore lint/correctness/noUnusedImports: <explanation>
-import { ShapesGraphToAstTransformer, type ast } from "@shaclmate/compiler";
+// biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
+import { type ast, ShapesGraphToAstTransformer } from "@shaclmate/compiler";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";

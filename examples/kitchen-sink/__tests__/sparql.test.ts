@@ -85,7 +85,9 @@ describe("sparql", () => {
           dataset: constructResultDataset,
         }).namedResource(harness.instance.$identifier as NamedNode),
         {
-          extra: 1,
+          context: {
+            extra: 1,
+          },
         },
       );
       if (constructInstanceEither.isRight()) {

@@ -1,5 +1,5 @@
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
-
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -9,15 +9,13 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
-
-import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
-import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
@@ -87,7 +85,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
   }
 
   override get declarationImports(): readonly Import[] {
-    const imports = this.type.useImports().concat();
+    const imports = this.type
+      .useImports({ features: this.objectType.features })
+      .concat();
 
     this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
       switch (identifierMintingStrategy) {

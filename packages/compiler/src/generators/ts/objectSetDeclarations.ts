@@ -3,9 +3,9 @@ import type {
   InterfaceDeclarationStructure,
   ModuleDeclarationStructure,
 } from "ts-morph";
+import { forwardingObjectSetClassDeclaration } from "./forwardingObjectSetClassDeclaration.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { forwardingObjectSetClassDeclaration } from "./forwardingObjectSetClassDeclaration.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";

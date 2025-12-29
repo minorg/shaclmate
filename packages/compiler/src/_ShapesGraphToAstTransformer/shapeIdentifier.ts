@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type * as input from "../input/index.js";
+import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 
 export function shapeIdentifier(
   this: ShapesGraphToAstTransformer,

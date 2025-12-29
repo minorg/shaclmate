@@ -1,10 +1,10 @@
-import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import type * as rdfjs from "@rdfjs/types";
+import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
+import type * as generated from "./generated.js";
 import type { NodeKind } from "./NodeKind.js";
 import type { OntologyLike } from "./OntologyLike.js";
 import type { ShapesGraph } from "./ShapesGraph.js";
-import type * as generated from "./generated.js";
 
 export abstract class Shape<
   NodeShapeT extends ShapeT,

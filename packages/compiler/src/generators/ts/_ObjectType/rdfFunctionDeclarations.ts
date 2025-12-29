@@ -14,11 +14,11 @@ function fromRdfFunctionDeclaration(
   }
 
   const statements: string[] = [
-    "let { ignoreRdfType = false, objectSet, preferredLanguages, ...context } = (options ?? {});",
+    "let { context, ignoreRdfType = false, objectSet, preferredLanguages } = (options ?? {});",
     `if (!objectSet) { objectSet = new ${syntheticNamePrefix}RdfjsDatasetObjectSet({ dataset: resource.dataset }); }`,
   ];
 
-  let propertiesFromRdfExpression = `${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...context, ignoreRdfType, objectSet, preferredLanguages, resource })`;
+  let propertiesFromRdfExpression = `${this.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ context, ignoreRdfType, objectSet, preferredLanguages, resource })`;
   if (this.declarationType === "class") {
     propertiesFromRdfExpression = `${propertiesFromRdfExpression}.map(properties => new ${this.name}(properties))`;
   }
@@ -36,7 +36,7 @@ function fromRdfFunctionDeclaration(
       {
         hasQuestionToken: true,
         name: "options",
-        type: `{ [_index: string]: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }`,
+        type: `{ context?: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }`,
       },
     ],
     returnType: `purify.Either<Error, ${this.name}>`,
@@ -52,9 +52,17 @@ function propertiesFromRdfFunctionDeclaration(
   const returnType: string[] = [];
   const statements: string[] = [];
 
+  const variables = {
+    context: `${syntheticNamePrefix}parameters.context`,
+    ignoreRdfType: `${syntheticNamePrefix}parameters.ignoreRdfType`,
+    objectSet: `${syntheticNamePrefix}parameters.objectSet`,
+    preferredLanguages: `${syntheticNamePrefix}parameters.preferredLanguages`,
+    resource: `${syntheticNamePrefix}parameters.resource`,
+  };
+
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     statements.push(
-      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${variables.context}, ignoreRdfType: true, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages}, resource: ${variables.resource} });`,
+      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${syntheticNamePrefix}parameters, ignoreRdfType: true });`,
       `if (${syntheticNamePrefix}super${parentObjectTypeI}Either.isLeft()) { return ${syntheticNamePrefix}super${parentObjectTypeI}Either; }`,
       `const ${syntheticNamePrefix}super${parentObjectTypeI} = ${syntheticNamePrefix}super${parentObjectTypeI}Either.unsafeCoerce()`,
     );
@@ -126,8 +134,8 @@ if (!${variables.ignoreRdfType}) {
     name: `${syntheticNamePrefix}propertiesFromRdf`,
     parameters: [
       {
-        name: `{ ignoreRdfType: ${variables.ignoreRdfType}, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages}, resource: ${variables.resource},\n// @ts-ignore\n...${variables.context} }`,
-        type: `{ [_index: string]: any; ignoreRdfType: boolean; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; resource: rdfjsResource.Resource; }`,
+        name: `${syntheticNamePrefix}parameters`,
+        type: `{ context?: any; ignoreRdfType: boolean; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; resource: rdfjsResource.Resource; }`,
       },
     ],
     returnType: `purify.Either<Error, ${returnType.join(" & ")}>`,
@@ -168,11 +176,3 @@ function toRdfFunctionDeclaration(
       kind: StructureKind.Function,
     }));
 }
-
-const variables = {
-  context: `${syntheticNamePrefix}context`,
-  ignoreRdfType: `${syntheticNamePrefix}ignoreRdfType`,
-  objectSet: `${syntheticNamePrefix}objectSet`,
-  preferredLanguages: `${syntheticNamePrefix}preferredLanguages`,
-  resource: `${syntheticNamePrefix}resource`,
-};

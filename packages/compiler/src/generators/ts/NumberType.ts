@@ -1,11 +1,10 @@
-import { Memoize } from "typescript-memoize";
-
 import { NonEmptyList } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { AbstractType } from "./AbstractType.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
-import { objectInitializer } from "./objectInitializer.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
   readonly kind = "NumberType";

@@ -1,17 +1,15 @@
 import type { NamedNode } from "@rdfjs/types";
-
-import type { Maybe } from "purify-ts";
-
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { Type } from "./Type.js";
 
 export class ListType<
   ItemTypeT extends AbstractType,
@@ -282,6 +280,7 @@ export class ListType<
             break;
           case "uuidv4":
             listIdentifier =
+              // biome-ignore lint/suspicious/noTemplateCurlyInString: necessary
               "dataFactory.namedNode(`urn:shaclmate:list:${uuid.v4()}`)";
             break;
         }
@@ -289,6 +288,7 @@ export class ListType<
           "rdfjsResource.MutableResource<rdfjs.NamedNode>";
         resourceSetMethodName = "mutableNamedResource";
         subListIdentifier =
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: necessary
           "dataFactory.namedNode(`${listResource.identifier.value}:${itemIndex}`)";
         break;
       }

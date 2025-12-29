@@ -2,13 +2,13 @@
 import * as fs from "node:fs";
 import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
+import type { Generator } from "@shaclmate/compiler";
 import {
   AstJsonGenerator,
   Compiler,
   ShapesGraph,
   TsGenerator,
 } from "@shaclmate/compiler";
-import type { Generator } from "@shaclmate/compiler";
 import {
   command,
   option,
@@ -73,7 +73,6 @@ function generate({
         null,
         (prefix, prefixNode) => {
           const existingIriPrefix = iriPrefixes.find(
-            // @ts-ignore
             (iriPrefix) =>
               iriPrefix[0] === prefix || iriPrefix[1].equals(prefixNode),
           );

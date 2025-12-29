@@ -5,21 +5,19 @@ import {
 } from "@shaclmate/shacl-ast";
 
 import { List, Maybe } from "purify-ts";
-
-import type * as generated from "./generated.js";
-
 import type {
   IdentifierMintingStrategy,
   TsFeature,
   TsObjectDeclarationType,
 } from "../enums/index.js";
-import type { Shape } from "./Shape.js";
+import type * as generated from "./generated.js";
 import type {
   Ontology,
   PropertyGroup,
   PropertyShape,
   ShapesGraph,
 } from "./index.js";
+import type { Shape } from "./Shape.js";
 import { tsFeatures } from "./tsFeatures.js";
 
 export class NodeShape extends ShaclCoreNodeShape<
@@ -72,6 +70,9 @@ export class NodeShape extends ShaclCoreNodeShape<
             return "sha256";
           case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
             return "uuidv4";
+          default:
+            iri.value satisfies never;
+            throw new RangeError(iri.value);
         }
       });
     this.isClass = isClass;

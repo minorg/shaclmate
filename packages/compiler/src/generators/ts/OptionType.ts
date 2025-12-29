@@ -1,13 +1,12 @@
-import { Memoize } from "typescript-memoize";
-
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { Type } from "./Type.js";
 
 export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =

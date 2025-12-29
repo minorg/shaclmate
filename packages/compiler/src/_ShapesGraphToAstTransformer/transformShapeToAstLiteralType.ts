@@ -1,10 +1,10 @@
 import type { Literal } from "@rdfjs/types";
 import { Either, Left } from "purify-ts";
-import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
-import type { ShapeStack } from "./ShapeStack.js";
+import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
+import type { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**

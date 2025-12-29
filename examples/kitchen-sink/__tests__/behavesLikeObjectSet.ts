@@ -115,7 +115,10 @@ const testData = {
 export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
   addQuad,
   objectSet,
-}: { addQuad: (quad: Quad) => void; objectSet: ObjectSetT }) {
+}: {
+  addQuad: (quad: Quad) => void;
+  objectSet: ObjectSetT;
+}) {
   beforeAll(() => {
     const dataset = new N3.Store();
     const mutateGraph = N3.DataFactory.defaultGraph();

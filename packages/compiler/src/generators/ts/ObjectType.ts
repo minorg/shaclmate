@@ -10,22 +10,20 @@ import {
   StructureKind,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
-import * as _ObjectType from "./_ObjectType/index.js";
-
 import type {
   IdentifierMintingStrategy,
   TsObjectDeclarationType,
 } from "../../enums/index.js";
+import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
+import { objectInitializer } from "./objectInitializer.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
-import { Type } from "./Type.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { Type } from "./Type.js";
 
 export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
@@ -140,7 +138,6 @@ export class ObjectType extends AbstractDeclaredType {
     );
     if (this.features.has("graphql")) {
       imports.push(Import.GRAPHQL);
-      imports.push(Import.GRAPHQL_SCALARS);
     }
     if (this.features.has("json")) {
       imports.push(Import.ZOD);
@@ -377,12 +374,14 @@ export class ObjectType extends AbstractDeclaredType {
   override fromRdfExpression({
     variables,
   }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
+    return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ${variables.ignoreRdfType ? "ignoreRdfType: true, " : ""}objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: { variables: { value: string } }): string {
+  }: {
+    variables: { value: string };
+  }): string {
     return variables.value;
   }
 

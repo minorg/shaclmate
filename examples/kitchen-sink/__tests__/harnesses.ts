@@ -1,9 +1,7 @@
-import * as kitchenSink from "../src/index.js";
-
 import type {} from "@rdfjs/types";
-
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
+import * as kitchenSink from "../src/index.js";
 
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
@@ -202,6 +200,13 @@ export const harnesses = {
       $identifier,
     }),
     kitchenSink.ExplicitRdfTypeClass,
+  ),
+  externClassPropertyClass: new ClassHarness(
+    new kitchenSink.ExternClassPropertyClass({
+      externClassProperty: new kitchenSink.ExternClass(dataFactory.blankNode()),
+      $identifier,
+    }),
+    kitchenSink.ExternClassPropertyClass,
   ),
   flattenClassUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({

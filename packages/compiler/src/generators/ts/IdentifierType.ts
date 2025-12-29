@@ -147,7 +147,7 @@ export class IdentifierType extends AbstractTermType<
         {
           initializer: "rdfjsResource.Resource.Identifier.toString",
           leadingTrivia:
-            "// biome-ignore lint/suspicious/noShadowRestrictedNames:",
+            "// biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString",
           name: "toString",
         },
       ],

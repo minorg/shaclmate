@@ -6,8 +6,8 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
-import type { Type } from "./Type.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { Type } from "./Type.js";
 
 export class LazyObjectSetType extends AbstractLazyObjectType<
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>,

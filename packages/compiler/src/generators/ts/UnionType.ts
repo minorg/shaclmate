@@ -4,8 +4,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
-import { Type } from "./Type.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { Type } from "./Type.js";
 
 class MemberType {
   private readonly delegate: AbstractType;

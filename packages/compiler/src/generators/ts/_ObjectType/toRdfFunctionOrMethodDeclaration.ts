@@ -1,7 +1,6 @@
+import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
-
-import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";

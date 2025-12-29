@@ -1,7 +1,6 @@
+import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
-
-import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
