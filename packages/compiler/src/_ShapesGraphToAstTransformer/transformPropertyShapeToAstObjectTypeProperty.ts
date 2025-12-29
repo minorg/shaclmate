@@ -62,23 +62,6 @@ function transformPropertyShapeToAstType(
   }
   const itemType = itemTypeEither.unsafeCoerce();
 
-  if (propertyShape.defaultValue.isJust()) {
-    return Either.of(itemType);
-  }
-
-  if (
-    propertyShape.constraints.maxCount.isNothing() &&
-    propertyShape.constraints.minCount.isNothing()
-  ) {
-    return Either.of(
-      new ast.SetType({
-        itemType,
-        mutable: propertyShape.mutable.orDefault(false),
-        minCount: 0,
-      }),
-    );
-  }
-
   let maxCount = propertyShape.constraints.maxCount.orDefault(
     Number.MAX_SAFE_INTEGER,
   );
@@ -93,6 +76,28 @@ function transformPropertyShapeToAstType(
     maxCount = minCount;
   }
 
+  if (propertyShape.defaultValue.isJust()) {
+    if (minCount > 0) {
+      return Left(
+        new Error(`${propertyShape}: has sh:minCount > 0 and sh:defaultValue`),
+      );
+    }
+
+    if (maxCount > 1) {
+      return Left(
+        new Error(
+          `${propertyShape}: sets with sh:defaultValue are currently unsupported`,
+        ),
+      );
+    }
+
+    // If a property shape has sh:defaultValue, sh:minCount = 0, and sh:maxCount = 1,
+    // treat its type as required. The generated type will fill in the sh:defaultValue on
+    // construction/deserialization.
+
+    return Either.of(itemType);
+  }
+
   if (minCount === 0 && maxCount === 1) {
     return Either.of(
       new ast.OptionType({
@@ -105,10 +110,6 @@ function transformPropertyShapeToAstType(
     return Either.of(itemType);
   }
 
-  invariant(
-    propertyShape.constraints.minCount.isJust() ||
-      propertyShape.constraints.maxCount.isJust(),
-  );
   return Either.of(
     new ast.SetType({
       itemType,

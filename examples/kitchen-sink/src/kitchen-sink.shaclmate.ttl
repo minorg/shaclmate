@@ -266,32 +266,26 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     sh:property [
         sh:defaultValue "" ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
         sh:path :stringDefaultValueProperty
     ], [
         sh:defaultValue true ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
         sh:path :trueBooleanDefaultValueProperty
     ], [
         sh:defaultValue false ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
         sh:path :falseBooleanDefaultValueProperty
     ], [
         sh:defaultValue "2018-04-09"^^xsd:date ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
         sh:path :dateDefaultValueProperty
     ], [
         sh:defaultValue "2018-04-09T10:00:00Z"^^xsd:dateTime ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
         sh:path :dateTimeDefaultValueProperty
     ], [
         sh:defaultValue 0 ;
         sh:maxCount 1 ;
-        sh:minCount 1 ;
         sh:path :numberDefaultValueProperty
     ] .
 

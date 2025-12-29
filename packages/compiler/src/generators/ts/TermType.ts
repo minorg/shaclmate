@@ -8,8 +8,6 @@ import type { AbstractType } from "./AbstractType.js";
 import { Type } from "./Type.js";
 
 /**
- * Abstract base class for IdentifierType and LiteralType.
- *
  * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
  * RuntimeTermT is the type of values at runtime.
  *
