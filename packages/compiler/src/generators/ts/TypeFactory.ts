@@ -539,6 +539,9 @@ function objectTypeNeedsIdentifierPrefixProperty(
         case "sha256":
         case "uuidv4":
           return true;
+        default:
+          identifierMintingStrategy satisfies never;
+          throw new RangeError(identifierMintingStrategy);
       }
     })
     .orDefault(false);

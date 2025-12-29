@@ -1,5 +1,7 @@
 import { StoreFactory as _DatasetFactory } from "n3";
+
 const datasetFactory = new _DatasetFactory();
+
 import type * as rdfjs from "@rdfjs/types";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
@@ -454,7 +456,7 @@ export namespace NestedNodeShape {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
@@ -1029,7 +1031,7 @@ export namespace FormNodeShape {
     objectSet: $objectSet,
     preferredLanguages: $preferredLanguages,
     resource: $resource,
-    // @ts-ignore
+    // @ts-expect-error
     ...$context
   }: {
     [_index: string]: any;
