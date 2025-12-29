@@ -2,6 +2,7 @@ import { Memoize } from "typescript-memoize";
 
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -39,6 +40,15 @@ export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
           `purify.Maybe.of(${itemTypeConversion.conversionExpression(value)})`,
       });
     }
+
+    // Unless itemType is a list, it should only have a conversion from undefined if it has a
+    // defaultValue. Per the CST->AST transformation logic, a type with a defaultValue
+    // should never be wrapped in an OptionType.
+    invariant(
+      !conversions.some(
+        (conversion) => conversion.sourceTypeName === "undefined",
+      ) || this.itemType instanceof AbstractCollectionType,
+    );
     if (
       !conversions.some(
         (conversion) => conversion.sourceTypeName === "undefined",
@@ -50,6 +60,7 @@ export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
         sourceTypeName: "undefined",
       });
     }
+
     return conversions;
   }
 
