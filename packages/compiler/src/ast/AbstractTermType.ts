@@ -61,19 +61,19 @@ export abstract class AbstractTermType<
       return false;
     }
 
-    if (!maybeEquals(this.defaultValue, other.defaultValue, termEquals)) {
+    if (!maybeEquals(termEquals)(this.defaultValue, other.defaultValue)) {
       return false;
     }
 
-    if (!arrayEquals(this.hasValues, other.hasValues, termEquals)) {
+    if (!arrayEquals(termEquals)(this.hasValues, other.hasValues)) {
       return false;
     }
 
-    if (!arrayEquals(this.in_, other.in_, termEquals)) {
+    if (!arrayEquals(termEquals)(this.in_, other.in_)) {
       return false;
     }
 
-    if (!setEquals(this.nodeKinds, other.nodeKinds, strictEquals)) {
+    if (!setEquals(strictEquals)(this.nodeKinds, other.nodeKinds)) {
       return false;
     }
 

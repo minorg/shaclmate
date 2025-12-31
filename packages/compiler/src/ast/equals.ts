@@ -1,52 +1,88 @@
 import type { Term } from "@rdfjs/types";
+
 import type { Maybe } from "purify-ts";
 
-export function arrayEquals<T>(
-  left: readonly T[],
-  right: readonly T[],
-  equalator: (left: T, right: T) => boolean,
-): boolean {
-  if (left.length !== right.length) {
-    return false;
-  }
+type EqualsFunction<T> = (left: T, right: T) => boolean;
 
-  for (let i = 0; i < left.length; i++) {
-    if (!equalator(left[i], right[i])) {
+export function arrayEquals<T>(
+  elementEquals: EqualsFunction<T>,
+): EqualsFunction<readonly T[]> {
+  return (left: readonly T[], right: readonly T[]): boolean => {
+    if (left.length !== right.length) {
       return false;
     }
-  }
 
-  return true;
+    for (let i = 0; i < left.length; i++) {
+      if (!elementEquals(left[i], right[i])) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+}
+
+export function dateEquals(left: Date, right: Date): boolean {
+  return left.getTime() === right.getTime();
 }
 
 export function maybeEquals<T>(
-  left: Maybe<T>,
-  right: Maybe<T>,
-  equalator: (left: T, right: T) => boolean,
-): boolean {
-  if (left.isJust()) {
-    if (right.isJust()) {
-      return equalator(left.unsafeCoerce(), right.unsafeCoerce());
+  valueEquals: EqualsFunction<T>,
+): EqualsFunction<Maybe<T>> {
+  return (left: Maybe<T>, right: Maybe<T>): boolean => {
+    if (left.isJust()) {
+      if (right.isJust()) {
+        return valueEquals(left.unsafeCoerce(), right.unsafeCoerce());
+      }
+      return false;
     }
-    return false;
-  }
 
-  if (right.isJust()) {
-    return false;
-  }
+    if (right.isJust()) {
+      return false;
+    }
 
-  return true;
+    return true;
+  };
+}
+
+export function recordEquals<KeyT extends keyof any, ValueT>(
+  valueEquals: EqualsFunction<ValueT>,
+): EqualsFunction<Record<KeyT, ValueT>> {
+  return (
+    left: Readonly<Record<KeyT, ValueT>>,
+    right: Readonly<Record<KeyT, ValueT>>,
+  ): boolean => {
+    const leftKeys = Object.keys(left) as unknown as readonly KeyT[];
+    const rightKeys = Object.keys(right) as unknown as readonly KeyT[];
+
+    if (leftKeys.length !== rightKeys.length) {
+      return false;
+    }
+
+    for (const leftKey of leftKeys) {
+      const leftValue = left[leftKey];
+      const rightValue = right[leftKey];
+      if (typeof rightValue === "undefined") {
+        return false;
+      }
+      if (!valueEquals(leftValue, rightValue)) {
+        return false;
+      }
+    }
+
+    return true;
+  };
 }
 
 export function setEquals<T>(
-  left: ReadonlySet<T>,
-  right: ReadonlySet<T>,
-  equalator: (left: T, right: T) => boolean,
-): boolean {
-  if (left.size !== right.size) {
-    return false;
-  }
-  return arrayEquals([...left], [...right], equalator);
+  elementEquals: EqualsFunction<T>,
+): EqualsFunction<ReadonlySet<T>> {
+  return (left: ReadonlySet<T>, right: ReadonlySet<T>): boolean => {
+    if (left.size !== right.size) {
+      return false;
+    }
+    return arrayEquals(elementEquals)([...left], [...right]);
+  };
 }
 
 export function strictEquals<T>(left: T, right: T): boolean {

@@ -400,10 +400,9 @@ export namespace ObjectType {
             continue;
           }
           if (
-            !arrayEquals(
+            !arrayEquals(Type.equals)(
               currentStackFrame.propertyType ?? [],
               lowerStackFrame.propertyType ?? [],
-              Type.equals,
             )
           ) {
             continue;

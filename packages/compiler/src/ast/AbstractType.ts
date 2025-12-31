@@ -24,11 +24,11 @@ export abstract class AbstractType {
   }
 
   equals(other: AbstractType): boolean {
-    if (!maybeEquals(this.comment, other.comment, strictEquals)) {
+    if (!maybeEquals(strictEquals)(this.comment, other.comment)) {
       return false;
     }
 
-    if (!maybeEquals(this.label, other.label, strictEquals)) {
+    if (!maybeEquals(strictEquals)(this.label, other.label)) {
       return false;
     }
 

@@ -47,7 +47,7 @@ export abstract class AbstractCompoundType<
       return false;
     }
 
-    return arrayEquals(this.memberTypes, other.memberTypes, Type.equals);
+    return arrayEquals(Type.equals)(this.memberTypes, other.memberTypes);
   }
 
   get memberTypes(): readonly MemberTypeT[] {
