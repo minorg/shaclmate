@@ -353,7 +353,6 @@ export const harnesses = {
         dataFactory.literal("frvalue", "fr"),
         dataFactory.literal("envalue", "en"),
       ]),
-      languageInStringProperty: NonEmptyList(["frvalue", "envalue"]),
     }),
     kitchenSink.LanguageInPropertiesClass,
   ),
