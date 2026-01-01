@@ -125,9 +125,9 @@ describe("toRdf", async () => {
   });
 
   for (const [id, harness] of Object.entries(harnesses)) {
-    // if (id !== "objectListProperty") {
-    //   continue;
-    // }
+    if (id.startsWith("lazy")) {
+      continue;
+    }
     it.skip(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
@@ -150,10 +150,10 @@ describe("toRdf", async () => {
 
       fail(`\
 ${id}: data graph:
-${await quadsToTurtle(dataGraph)}
+${quadsToTurtle(dataGraph)}
 
 ${id}: validation report:
-${await quadsToTurtle(validationReport.dataset)}
+${quadsToTurtle(validationReport.dataset)}
 `);
     });
   }
