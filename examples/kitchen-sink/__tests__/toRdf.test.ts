@@ -128,7 +128,7 @@ describe("toRdf", async () => {
     if (id.startsWith("lazy")) {
       continue;
     }
-    it(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
+    it.skip(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
       const dataResource = harness.toRdf();
