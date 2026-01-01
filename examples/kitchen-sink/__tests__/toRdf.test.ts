@@ -150,10 +150,10 @@ describe("toRdf", async () => {
 
       fail(`\
 ${id}: data graph:
-${await quadsToTurtle(dataGraph)}
+${quadsToTurtle(dataGraph)}
 
 ${id}: validation report:
-${await quadsToTurtle(validationReport.dataset)}
+${quadsToTurtle(validationReport.dataset)}
 `);
     });
   }

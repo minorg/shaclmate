@@ -29,6 +29,7 @@ interface Package {
 const externalDependencyVersions = {
   "@biomejs/biome": { "@biomejs/biome": "2.3.10" },
   "@rdfjs/prefix-map": { "@rdfjs/prefix-map": "^0.1.2" },
+  "@rdfjs/serializer-turtle": { "@rdfjs/serializer-turtle": "^1.1.5" },
   "@rdfjs/term-map": { "@rdfjs/term-map": "^2.0.2" },
   "@rdfjs/term-set": { "@rdfjs/term-set": "^2.0.3" },
   "@rdfjs/types": { "@rdfjs/types": "^1.1.0" },
@@ -38,6 +39,9 @@ const externalDependencyVersions = {
   "@types/node": { "@types/node": "^22" },
   "@types/n3": { "@types/n3": "^1.26.0" },
   "@types/rdfjs__prefix-map": { "@types/rdfjs__prefix-map": "^0.1.5" },
+  "@types/rdfjs__serializer-turtle": {
+    "@types/rdfjs__serializer-turtle": "^1.1.0",
+  },
   "@types/rdfjs__term-map": { "@types/rdfjs__term-map": "^2.0.10" },
   "@types/rdfjs__term-set": { "@types/rdfjs__term-set": "^2.0.9" },
   "@types/sparqljs": { "@types/sparqljs": "3.1.12" },
@@ -86,7 +90,11 @@ const packages: readonly Package[] = [
     devDependencies: {
       external: {
         "@kos-kit/sparql-client": "2.0.116",
+        ...externalDependencyVersions["@rdfjs/prefix-map"],
+        ...externalDependencyVersions["@rdfjs/serializer-turtle"],
         ...externalDependencyVersions["@tpluscode/rdf-ns-builders"],
+        ...externalDependencyVersions["@types/rdfjs__prefix-map"],
+        ...externalDependencyVersions["@types/rdfjs__serializer-turtle"],
         oxigraph: "0.4.11",
         ...externalDependencyVersions["rdf-validate-shacl"],
       },

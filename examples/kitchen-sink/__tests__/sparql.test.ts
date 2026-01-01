@@ -96,10 +96,8 @@ describe("sparql", () => {
         expect(equalsResult).toStrictEqual(true);
         return;
       }
-      const toRdfString = await quadsToTurtle(toRdfQuads);
-      const constructResultString = await quadsToTurtle([
-        ...constructResultDataset,
-      ]);
+      const toRdfString = quadsToTurtle(toRdfQuads);
+      const constructResultString = quadsToTurtle([...constructResultDataset]);
       console.log(
         "not equal:\nexpected:\n",
         toRdfString,
