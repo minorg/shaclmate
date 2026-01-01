@@ -1182,16 +1182,16 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :UnionDiscriminantsClass
     a sh:NodeShape ;
-    rdfs:comment "Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality." ;
+    rdfs:comment "Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality." ;
     sh:property [
-        rdfs:comment "Union with an envelope discriminant (multiple typeofs, no inline discriminant property)." ;
+        rdfs:comment "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property)." ;
         sh:maxCount 1 ;
-        sh:path :optionalClassOrIriOrStringProperty ;
+        sh:path :optionalClassOrClassOrStringProperty ;
         sh:xone ([
-                sh:node :NonClass
+                sh:node :ClassUnionMember1
             ]
             [
-                sh:nodeKind sh:IRI
+                sh:node :ClassUnionMember2
             ]
             [
                 sh:datatype xsd:string
@@ -1223,12 +1223,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         rdfs:comment "Union with an envelope discriminant (multiple typeofs, no inline discriminant property)." ;
         sh:maxCount 1 ;
         sh:minCount 1 ;
-        sh:path :requiredClassOrIriOrStringProperty ;
+        sh:path :requiredClassOrClassOrStringProperty ;
         sh:xone ([
-                sh:node :NonClass
+                sh:node :ClassUnionMember1
             ]
             [
-                sh:nodeKind sh:IRI
+                sh:node :ClassUnionMember2
             ]
             [
                 sh:datatype xsd:string
@@ -1260,12 +1260,12 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
         )
     ], [
         rdfs:comment "Union with an envelope discriminant (multiple typeofs, no inline discriminant property)." ;
-        sh:path :setClassOrIriOrStringProperty ;
+        sh:path :setClassOrClassOrStringProperty ;
         sh:xone ([
-                sh:node :NonClass
+                sh:node :ClassUnionMember1
             ]
             [
-                sh:nodeKind sh:IRI
+                sh:node :ClassUnionMember2
             ]
             [
                 sh:datatype xsd:string

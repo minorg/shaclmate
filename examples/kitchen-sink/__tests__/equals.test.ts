@@ -39,7 +39,10 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
-        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredClassOrClassOrStringProperty: {
+          type: "2-string",
+          value: "test",
+        },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -48,7 +51,7 @@ describe("equals", () => {
         .$equals(
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
-            requiredClassOrIriOrStringProperty: {
+            requiredClassOrClassOrStringProperty: {
               type: "2-string",
               value: "test",
             },
@@ -64,7 +67,10 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
-        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredClassOrClassOrStringProperty: {
+          type: "2-string",
+          value: "test",
+        },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -73,7 +79,7 @@ describe("equals", () => {
         .$equals(
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
-            requiredClassOrIriOrStringProperty: {
+            requiredClassOrClassOrStringProperty: {
               type: "2-string",
               value: "test",
             },
@@ -90,7 +96,10 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
-        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredClassOrClassOrStringProperty: {
+          type: "2-string",
+          value: "test",
+        },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -99,7 +108,7 @@ describe("equals", () => {
         .$equals(
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
-            requiredClassOrIriOrStringProperty: {
+            requiredClassOrClassOrStringProperty: {
               type: "2-string",
               value: "test",
             },
@@ -115,7 +124,10 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
-        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredClassOrClassOrStringProperty: {
+          type: "2-string",
+          value: "test",
+        },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -124,9 +136,15 @@ describe("equals", () => {
         .$equals(
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
-            requiredClassOrIriOrStringProperty: {
-              type: "1-(rdfjs.NamedNode)",
-              value: dataFactory.namedNode("http://example.com"),
+            requiredClassOrClassOrStringProperty: {
+              type: "0-ClassUnionMember1",
+              value: new kitchenSink.ClassUnionMember1({
+                $identifier: dataFactory.namedNode(
+                  "http://example.com/classUnionMember1",
+                ),
+                classUnionMember1Property: "test",
+                classUnionMemberCommonParentProperty: "test",
+              }),
             },
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
@@ -143,7 +161,10 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
-        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredClassOrClassOrStringProperty: {
+          type: "2-string",
+          value: "test",
+        },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -152,7 +173,7 @@ describe("equals", () => {
         .$equals(
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
-            requiredClassOrIriOrStringProperty: {
+            requiredClassOrClassOrStringProperty: {
               type: "2-string",
               value: "test",
             },
@@ -168,7 +189,10 @@ describe("equals", () => {
     expect(
       new kitchenSink.UnionDiscriminantsClass({
         $identifier,
-        requiredClassOrIriOrStringProperty: { type: "2-string", value: "test" },
+        requiredClassOrClassOrStringProperty: {
+          type: "2-string",
+          value: "test",
+        },
         requiredIriOrLiteralProperty: dataFactory.namedNode(
           "http://example.com/term",
         ),
@@ -178,9 +202,15 @@ describe("equals", () => {
         .$equals(
           new kitchenSink.UnionDiscriminantsClass({
             $identifier,
-            requiredClassOrIriOrStringProperty: {
-              type: "1-(rdfjs.NamedNode)",
-              value: dataFactory.namedNode("http://example.com"),
+            requiredClassOrClassOrStringProperty: {
+              type: "0-ClassUnionMember1",
+              value: new kitchenSink.ClassUnionMember1({
+                $identifier: dataFactory.namedNode(
+                  "http://example.com/classUnionMember1",
+                ),
+                classUnionMember1Property: "test",
+                classUnionMemberCommonParentProperty: "test",
+              }),
             },
             requiredIriOrLiteralProperty: dataFactory.namedNode(
               "http://example.com/term",
