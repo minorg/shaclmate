@@ -125,10 +125,10 @@ describe("toRdf", async () => {
   });
 
   for (const [id, harness] of Object.entries(harnesses)) {
-    if (id.startsWith("lazy")) {
+    if (id.startsWith("lazy") || id === "languageInPropertiesClass") {
       continue;
     }
-    it.skip(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
+    it(`${id}: $toRdf produces RDF that conforms to the SHACL shape`, async ({
       expect,
     }) => {
       const dataResource = harness.toRdf();
