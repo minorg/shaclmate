@@ -6388,7 +6388,11 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$properties.numberTermProperty["identifier"],
-      ...this.numberTermProperty.toList(),
+      ...this.numberTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.decimal),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$properties.stringTermProperty["identifier"],
@@ -30442,11 +30446,23 @@ export class JsPrimitiveUnionPropertyClass {
       JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
         "identifier"
       ],
-      ...this.jsPrimitiveUnionProperty.flatMap(
-        (item) =>
-          [item] as readonly Parameters<
-            rdfjsResource.MutableResource["add"]
-          >[1][],
+      ...this.jsPrimitiveUnionProperty.flatMap((item) =>
+        typeof item === "string"
+          ? ([item] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][])
+          : typeof item === "number"
+            ? ([
+                dataFactory.literal(
+                  item.toString(10),
+                  $RdfVocabularies.xsd.decimal,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([item] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
       ),
     );
     return resource;
@@ -34867,7 +34883,11 @@ export class InPropertiesClass {
     );
     resource.add(
       InPropertiesClass.$properties.inNumbersProperty["identifier"],
-      ...this.inNumbersProperty.toList(),
+      ...this.inNumbersProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.integer),
+        ]),
     );
     resource.add(
       InPropertiesClass.$properties.inStringsProperty["identifier"],
@@ -41880,7 +41900,12 @@ export class DefaultValuePropertiesClass {
         "identifier"
       ],
       ...(this.numberDefaultValueProperty !== 0
-        ? [this.numberDefaultValueProperty]
+        ? [
+            dataFactory.literal(
+              this.numberDefaultValueProperty.toString(10),
+              $RdfVocabularies.xsd.integer,
+            ),
+          ]
         : []),
     );
     resource.add(

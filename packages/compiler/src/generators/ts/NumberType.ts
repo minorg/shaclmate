@@ -1,14 +1,27 @@
+import type { NamedNode } from "@rdfjs/types";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
+  private readonly datatype: NamedNode;
   readonly kind = "NumberType";
   override readonly typeofs = NonEmptyList(["number" as const]);
+
+  constructor({
+    datatype,
+    ...superParameters
+  }: {
+    datatype: NamedNode;
+  } & ConstructorParameters<typeof AbstractPrimitiveType<number>>[0]) {
+    super(superParameters);
+    this.datatype = datatype;
+  }
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {
@@ -74,11 +87,12 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
+    const valueToRdf = `dataFactory.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})`;
     return this.primitiveDefaultValue
       .map(
         (defaultValue) =>
-          `(${variables.value} !== ${defaultValue} ? [${variables.value}] : [])`,
+          `(${variables.value} !== ${defaultValue} ? [${valueToRdf}] : [])`,
       )
-      .orDefault(`[${variables.value}]`);
+      .orDefault(`[${valueToRdf}]`);
   }
 }

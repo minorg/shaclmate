@@ -175,6 +175,7 @@ export class TypeFactory {
           if (datatype.equals(numberDatatype)) {
             return new (floatOrInt === "float" ? FloatType : IntType)({
               comment: astType.comment,
+              datatype: numberDatatype,
               defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               in_: astType.in_,
@@ -191,7 +192,7 @@ export class TypeFactory {
         }
       }
 
-      if (datatype.equals(xsd.anyURI) || datatype.equals(xsd.string)) {
+      if (datatype.equals(xsd.string)) {
         return new StringType({
           comment: astType.comment,
           defaultValue: astType.defaultValue,
