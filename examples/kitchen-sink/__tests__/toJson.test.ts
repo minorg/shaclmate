@@ -7,12 +7,13 @@ describe("toJson", () => {
       const jsonObject = harnesses.unionDiscriminants1.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionDiscriminantsClass");
-      expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
-        type: "0-NonClass",
+      expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
+        type: "0-ClassUnionMember1",
         value: {
-          $type: "NonClass",
-          "@id": "http://example.com/nonClass",
-          nonClassProperty: "test",
+          $type: "ClassUnionMember1",
+          "@id": "http://example.com/classUnionMember1",
+          classUnionMember1Property: "test",
+          classUnionMemberCommonParentProperty: "test",
         },
       });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
@@ -22,12 +23,13 @@ describe("toJson", () => {
       expect(jsonObject.optionalIriOrStringProperty).toStrictEqual({
         "@id": "http://example.com",
       });
-      expect(jsonObject.requiredClassOrIriOrStringProperty).toStrictEqual({
-        type: "0-NonClass",
+      expect(jsonObject.requiredClassOrClassOrStringProperty).toStrictEqual({
+        type: "0-ClassUnionMember1",
         value: {
-          $type: "NonClass",
-          "@id": "http://example.com/nonClass",
-          nonClassProperty: "test",
+          $type: "ClassUnionMember1",
+          "@id": "http://example.com/classUnionMember1",
+          classUnionMember1Property: "test",
+          classUnionMemberCommonParentProperty: "test",
         },
       });
       expect(jsonObject.requiredIriOrLiteralProperty).toStrictEqual({
@@ -37,7 +39,7 @@ describe("toJson", () => {
       expect(jsonObject.requiredIriOrStringProperty).toStrictEqual({
         "@id": "http://example.com",
       });
-      expect(jsonObject.setClassOrIriOrStringProperty).toHaveLength(0);
+      expect(jsonObject.setClassOrClassOrStringProperty).toHaveLength(0);
       expect(jsonObject.setIriOrLiteralProperty).toHaveLength(0);
       expect(jsonObject.setIriOrStringProperty).toHaveLength(0);
     }
@@ -45,10 +47,13 @@ describe("toJson", () => {
     {
       const jsonObject = harnesses.unionDiscriminants2Class.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
-      expect(jsonObject.optionalClassOrIriOrStringProperty).toStrictEqual({
-        type: "1-(rdfjs.NamedNode)",
+      expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
+        type: "1-ClassUnionMember2",
         value: {
-          "@id": "http://example.com",
+          $type: "ClassUnionMember2",
+          "@id": "http://example.com/classUnionMember2",
+          classUnionMember2Property: "test",
+          classUnionMemberCommonParentProperty: "test",
         },
       });
       expect(jsonObject.optionalIriOrLiteralProperty).toStrictEqual({
@@ -56,7 +61,7 @@ describe("toJson", () => {
         "@value": "test",
       });
       expect(jsonObject.optionalIriOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.requiredClassOrIriOrStringProperty).toStrictEqual({
+      expect(jsonObject.requiredClassOrClassOrStringProperty).toStrictEqual({
         type: "2-string",
         value: "test",
       });
@@ -65,23 +70,27 @@ describe("toJson", () => {
         "@value": "test",
       });
       expect(jsonObject.requiredIriOrStringProperty).toStrictEqual("test");
-      expect(jsonObject.setClassOrIriOrStringProperty).toStrictEqual([
+      expect(jsonObject.setClassOrClassOrStringProperty).toStrictEqual([
         {
           type: "2-string",
           value: "test",
         },
         {
-          type: "1-(rdfjs.NamedNode)",
+          type: "1-ClassUnionMember2",
           value: {
-            "@id": "http://example.com",
+            $type: "ClassUnionMember2",
+            "@id": "http://example.com/classUnionMember2",
+            classUnionMember2Property: "test",
+            classUnionMemberCommonParentProperty: "test",
           },
         },
         {
-          type: "0-NonClass",
+          type: "0-ClassUnionMember1",
           value: {
-            $type: "NonClass",
-            "@id": "http://example.com/nonClass",
-            nonClassProperty: "test",
+            $type: "ClassUnionMember1",
+            "@id": "http://example.com/classUnionMember1",
+            classUnionMember1Property: "test",
+            classUnionMemberCommonParentProperty: "test",
           },
         },
       ]);

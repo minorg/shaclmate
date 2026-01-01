@@ -614,20 +614,26 @@ export const harnesses = {
   unionDiscriminants1: new ClassHarness(
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
-      optionalClassOrIriOrStringProperty: {
-        type: "0-NonClass",
-        value: new kitchenSink.NonClass({
-          $identifier: dataFactory.namedNode("http://example.com/nonClass"),
-          nonClassProperty: "test",
+      optionalClassOrClassOrStringProperty: {
+        type: "0-ClassUnionMember1",
+        value: new kitchenSink.ClassUnionMember1({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/classUnionMember1",
+          ),
+          classUnionMember1Property: "test",
+          classUnionMemberCommonParentProperty: "test",
         }),
       },
       optionalIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
       optionalIriOrStringProperty: dataFactory.namedNode("http://example.com"),
-      requiredClassOrIriOrStringProperty: {
-        type: "0-NonClass",
-        value: new kitchenSink.NonClass({
-          $identifier: dataFactory.namedNode("http://example.com/nonClass"),
-          nonClassProperty: "test",
+      requiredClassOrClassOrStringProperty: {
+        type: "0-ClassUnionMember1",
+        value: new kitchenSink.ClassUnionMember1({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/classUnionMember1",
+          ),
+          classUnionMember1Property: "test",
+          classUnionMemberCommonParentProperty: "test",
         }),
       },
       requiredIriOrLiteralProperty: dataFactory.namedNode("http://example.com"),
@@ -639,33 +645,48 @@ export const harnesses = {
   unionDiscriminants2Class: new ClassHarness(
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
-      optionalClassOrIriOrStringProperty: {
-        type: "1-(rdfjs.NamedNode)",
-        value: dataFactory.namedNode("http://example.com"),
+      optionalClassOrClassOrStringProperty: {
+        type: "1-ClassUnionMember2",
+        value: new kitchenSink.ClassUnionMember2({
+          $identifier: dataFactory.namedNode(
+            "http://example.com/classUnionMember2",
+          ),
+          classUnionMember2Property: "test",
+          classUnionMemberCommonParentProperty: "test",
+        }),
       },
       optionalIriOrLiteralProperty: dataFactory.literal("test"),
       optionalIriOrStringProperty: "test",
-      requiredClassOrIriOrStringProperty: {
+      requiredClassOrClassOrStringProperty: {
         type: "2-string",
         value: "test",
       },
       requiredIriOrLiteralProperty: dataFactory.literal("test"),
       requiredIriOrStringProperty: "test",
-      setClassOrIriOrStringProperty: [
+      setClassOrClassOrStringProperty: [
         // Opposite order
         {
           type: "2-string",
           value: "test",
         },
         {
-          type: "1-(rdfjs.NamedNode)",
-          value: dataFactory.namedNode("http://example.com"),
+          type: "1-ClassUnionMember2",
+          value: new kitchenSink.ClassUnionMember2({
+            $identifier: dataFactory.namedNode(
+              "http://example.com/classUnionMember2",
+            ),
+            classUnionMember2Property: "test",
+            classUnionMemberCommonParentProperty: "test",
+          }),
         },
         {
-          type: "0-NonClass",
-          value: new kitchenSink.NonClass({
-            $identifier: dataFactory.namedNode("http://example.com/nonClass"),
-            nonClassProperty: "test",
+          type: "0-ClassUnionMember1",
+          value: new kitchenSink.ClassUnionMember1({
+            $identifier: dataFactory.namedNode(
+              "http://example.com/classUnionMember1",
+            ),
+            classUnionMember1Property: "test",
+            classUnionMemberCommonParentProperty: "test",
           }),
         },
       ],

@@ -3498,14 +3498,14 @@
     },
     {
       "kind": "ObjectType",
-      "comment": "Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality.",
+      "comment": "Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality.",
       "shapeIdentifier": "<http://example.com/UnionDiscriminantsClass>",
       "properties": [
         {
-          "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+          "comment": "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/optionalClassOrIriOrStringProperty",
+          "path": "http://example.com/optionalClassOrClassOrStringProperty",
           "shapeIdentifier": "_:n3-334",
           "type": {
             "kind": "OptionType",
@@ -3515,8 +3515,14 @@
               "memberTypes": [
                 {
                   "kind": "ObjectType",
-                  "comment": "Node shape that isn't an rdfs:Class.",
-                  "shapeIdentifier": "<http://example.com/NonClass>",
+                  "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/ClassUnionMember1"
+                  },
+                  "parentObjectTypes": [
+                    "<http://example.com/ClassUnionMemberCommonParent>"
+                  ],
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
@@ -3525,13 +3531,38 @@
                       "BlankNode",
                       "NamedNode"
                     ]
-                  }
+                  },
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/ClassUnionMember1"
+                    }
+                  ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "NamedNode"
+                  "kind": "ObjectType",
+                  "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/ClassUnionMember2"
+                  },
+                  "parentObjectTypes": [
+                    "<http://example.com/ClassUnionMemberCommonParent>"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "identifierType": {
+                    "kind": "IdentifierType",
+                    "hasValue": [],
+                    "nodeKinds": [
+                      "BlankNode",
+                      "NamedNode"
+                    ]
+                  },
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/ClassUnionMember2"
+                    }
                   ]
                 },
                 {
@@ -3611,7 +3642,7 @@
           "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/requiredClassOrIriOrStringProperty",
+          "path": "http://example.com/requiredClassOrClassOrStringProperty",
           "shapeIdentifier": "_:n3-351",
           "type": {
             "kind": "UnionType",
@@ -3619,8 +3650,14 @@
             "memberTypes": [
               {
                 "kind": "ObjectType",
-                "comment": "Node shape that isn't an rdfs:Class.",
-                "shapeIdentifier": "<http://example.com/NonClass>",
+                "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
+                "fromRdfType": {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ClassUnionMember1"
+                },
+                "parentObjectTypes": [
+                  "<http://example.com/ClassUnionMemberCommonParent>"
+                ],
                 "identifierMintingStrategy": "blankNode",
                 "identifierType": {
                   "kind": "IdentifierType",
@@ -3629,13 +3666,38 @@
                     "BlankNode",
                     "NamedNode"
                   ]
-                }
+                },
+                "toRdfTypes": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/ClassUnionMember1"
+                  }
+                ]
               },
               {
-                "kind": "IdentifierType",
-                "hasValue": [],
-                "nodeKinds": [
-                  "NamedNode"
+                "kind": "ObjectType",
+                "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+                "fromRdfType": {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ClassUnionMember2"
+                },
+                "parentObjectTypes": [
+                  "<http://example.com/ClassUnionMemberCommonParent>"
+                ],
+                "identifierMintingStrategy": "blankNode",
+                "identifierType": {
+                  "kind": "IdentifierType",
+                  "hasValue": [],
+                  "nodeKinds": [
+                    "BlankNode",
+                    "NamedNode"
+                  ]
+                },
+                "toRdfTypes": [
+                  {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/ClassUnionMember2"
+                  }
                 ]
               },
               {
@@ -3708,7 +3770,7 @@
           "comment": "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/setClassOrIriOrStringProperty",
+          "path": "http://example.com/setClassOrClassOrStringProperty",
           "shapeIdentifier": "_:n3-368",
           "type": {
             "kind": "SetType",
@@ -3718,8 +3780,14 @@
               "memberTypes": [
                 {
                   "kind": "ObjectType",
-                  "comment": "Node shape that isn't an rdfs:Class.",
-                  "shapeIdentifier": "<http://example.com/NonClass>",
+                  "shapeIdentifier": "<http://example.com/ClassUnionMember1>",
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/ClassUnionMember1"
+                  },
+                  "parentObjectTypes": [
+                    "<http://example.com/ClassUnionMemberCommonParent>"
+                  ],
                   "identifierMintingStrategy": "blankNode",
                   "identifierType": {
                     "kind": "IdentifierType",
@@ -3728,13 +3796,38 @@
                       "BlankNode",
                       "NamedNode"
                     ]
-                  }
+                  },
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/ClassUnionMember1"
+                    }
+                  ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "NamedNode"
+                  "kind": "ObjectType",
+                  "shapeIdentifier": "<http://example.com/ClassUnionMember2>",
+                  "fromRdfType": {
+                    "termType": "NamedNode",
+                    "value": "http://example.com/ClassUnionMember2"
+                  },
+                  "parentObjectTypes": [
+                    "<http://example.com/ClassUnionMemberCommonParent>"
+                  ],
+                  "identifierMintingStrategy": "blankNode",
+                  "identifierType": {
+                    "kind": "IdentifierType",
+                    "hasValue": [],
+                    "nodeKinds": [
+                      "BlankNode",
+                      "NamedNode"
+                    ]
+                  },
+                  "toRdfTypes": [
+                    {
+                      "termType": "NamedNode",
+                      "value": "http://example.com/ClassUnionMember2"
+                    }
                   ]
                 },
                 {

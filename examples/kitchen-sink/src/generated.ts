@@ -147,6 +147,39 @@ export function $strictEquals<T extends bigint | boolean | number | string>(
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: rdfjs.NamedNode | rdfjs.Variable;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
@@ -249,38 +282,6 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
     right,
     left.getTime() === right.getTime(),
   );
-}
-/**
- * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
- */
-export function $sparqlInstancesOfPattern({
-  rdfType,
-  subject,
-}: {
-  rdfType: rdfjs.NamedNode | rdfjs.Variable;
-  subject: sparqljs.Triple["subject"];
-}): sparqljs.Pattern {
-  return {
-    triples: [
-      {
-        subject,
-        predicate: {
-          items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-        object: rdfType,
-      },
-    ],
-    type: "bgp",
-  };
 }
 function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every((z) => typeof z === "object");
@@ -439,7 +440,6 @@ export function $arrayIntersection<T>(
   }
   return [...intersection];
 }
-type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every((z) => typeof z === "boolean");
 }
@@ -2061,17 +2061,17 @@ export namespace UuidV4IriIdentifierClass {
   }
 }
 /**
- * Shape with sh:xone (union) properties with different discriminant types (synthetic, typeof, property) x cardinality.
+ * Shape with sh:xone (union) properties with different discriminant types (envelope, typeof, property) x cardinality.
  */
 export class UnionDiscriminantsClass {
   private _$identifier?: UnionDiscriminantsClass.$Identifier;
   readonly $type = "UnionDiscriminantsClass";
   /**
-   * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
+   * Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).
    */
-  readonly optionalClassOrIriOrStringProperty: purify.Maybe<
-    | { type: "0-NonClass"; value: NonClass }
-    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+  readonly optionalClassOrClassOrStringProperty: purify.Maybe<
+    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
     | { type: "2-string"; value: string }
   >;
   /**
@@ -2087,9 +2087,9 @@ export class UnionDiscriminantsClass {
   /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
-  readonly requiredClassOrIriOrStringProperty:
-    | { type: "0-NonClass"; value: NonClass }
-    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+  readonly requiredClassOrClassOrStringProperty:
+    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
     | { type: "2-string"; value: string };
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
@@ -2102,9 +2102,9 @@ export class UnionDiscriminantsClass {
   /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
-  readonly setClassOrIriOrStringProperty: readonly (
-    | { type: "0-NonClass"; value: NonClass }
-    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+  readonly setClassOrClassOrStringProperty: readonly (
+    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
     | { type: "2-string"; value: string }
   )[];
   /**
@@ -2121,15 +2121,15 @@ export class UnionDiscriminantsClass {
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly optionalClassOrIriOrStringProperty?:
+    readonly optionalClassOrClassOrStringProperty?:
       | (
-          | { type: "0-NonClass"; value: NonClass }
-          | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+          | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+          | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
           | { type: "2-string"; value: string }
         )
       | purify.Maybe<
-          | { type: "0-NonClass"; value: NonClass }
-          | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+          | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+          | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
           | { type: "2-string"; value: string }
         >;
     readonly optionalIriOrLiteralProperty?:
@@ -2139,15 +2139,15 @@ export class UnionDiscriminantsClass {
       | rdfjs.NamedNode
       | purify.Maybe<rdfjs.NamedNode | string>
       | string;
-    readonly requiredClassOrIriOrStringProperty:
-      | { type: "0-NonClass"; value: NonClass }
-      | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+    readonly requiredClassOrClassOrStringProperty:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+      | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
       | { type: "2-string"; value: string };
     readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
     readonly requiredIriOrStringProperty: rdfjs.NamedNode | string;
-    readonly setClassOrIriOrStringProperty?: readonly (
-      | { type: "0-NonClass"; value: NonClass }
-      | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+    readonly setClassOrClassOrStringProperty?: readonly (
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+      | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
       | { type: "2-string"; value: string }
     )[];
     readonly setIriOrLiteralProperty?: readonly (
@@ -2165,22 +2165,22 @@ export class UnionDiscriminantsClass {
       this._$identifier = parameters.$identifier satisfies never;
     }
 
-    if (purify.Maybe.isMaybe(parameters.optionalClassOrIriOrStringProperty)) {
-      this.optionalClassOrIriOrStringProperty =
-        parameters.optionalClassOrIriOrStringProperty;
+    if (purify.Maybe.isMaybe(parameters.optionalClassOrClassOrStringProperty)) {
+      this.optionalClassOrClassOrStringProperty =
+        parameters.optionalClassOrClassOrStringProperty;
     } else if (
-      typeof parameters.optionalClassOrIriOrStringProperty === "object"
+      typeof parameters.optionalClassOrClassOrStringProperty === "object"
     ) {
-      this.optionalClassOrIriOrStringProperty = purify.Maybe.of(
-        parameters.optionalClassOrIriOrStringProperty,
+      this.optionalClassOrClassOrStringProperty = purify.Maybe.of(
+        parameters.optionalClassOrClassOrStringProperty,
       );
     } else if (
-      typeof parameters.optionalClassOrIriOrStringProperty === "undefined"
+      typeof parameters.optionalClassOrClassOrStringProperty === "undefined"
     ) {
-      this.optionalClassOrIriOrStringProperty = purify.Maybe.empty();
+      this.optionalClassOrClassOrStringProperty = purify.Maybe.empty();
     } else {
-      this.optionalClassOrIriOrStringProperty =
-        parameters.optionalClassOrIriOrStringProperty satisfies never;
+      this.optionalClassOrClassOrStringProperty =
+        parameters.optionalClassOrClassOrStringProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters.optionalIriOrLiteralProperty)) {
@@ -2214,8 +2214,8 @@ export class UnionDiscriminantsClass {
         parameters.optionalIriOrStringProperty satisfies never;
     }
 
-    this.requiredClassOrIriOrStringProperty =
-      parameters.requiredClassOrIriOrStringProperty;
+    this.requiredClassOrClassOrStringProperty =
+      parameters.requiredClassOrClassOrStringProperty;
     this.requiredIriOrLiteralProperty = parameters.requiredIriOrLiteralProperty;
     if (typeof parameters.requiredIriOrStringProperty === "object") {
       this.requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
@@ -2226,14 +2226,14 @@ export class UnionDiscriminantsClass {
         parameters.requiredIriOrStringProperty satisfies never;
     }
 
-    if (typeof parameters.setClassOrIriOrStringProperty === "undefined") {
-      this.setClassOrIriOrStringProperty = [];
-    } else if (typeof parameters.setClassOrIriOrStringProperty === "object") {
-      this.setClassOrIriOrStringProperty =
-        parameters.setClassOrIriOrStringProperty;
+    if (typeof parameters.setClassOrClassOrStringProperty === "undefined") {
+      this.setClassOrClassOrStringProperty = [];
+    } else if (typeof parameters.setClassOrClassOrStringProperty === "object") {
+      this.setClassOrClassOrStringProperty =
+        parameters.setClassOrClassOrStringProperty;
     } else {
-      this.setClassOrIriOrStringProperty =
-        parameters.setClassOrIriOrStringProperty satisfies never;
+      this.setClassOrClassOrStringProperty =
+        parameters.setClassOrClassOrStringProperty satisfies never;
     }
 
     if (typeof parameters.setIriOrLiteralProperty === "undefined") {
@@ -2290,25 +2290,31 @@ export class UnionDiscriminantsClass {
             right,
             (
               left:
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string },
               right:
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string },
             ) => {
-              if (left.type === "0-NonClass" && right.type === "0-NonClass") {
+              if (
+                left.type === "0-ClassUnionMember1" &&
+                right.type === "0-ClassUnionMember1"
+              ) {
                 return ((left, right) => left.$equals(right))(
                   left.value,
                   right.value,
                 );
               }
               if (
-                left.type === "1-(rdfjs.NamedNode)" &&
-                right.type === "1-(rdfjs.NamedNode)"
+                left.type === "1-ClassUnionMember2" &&
+                right.type === "1-ClassUnionMember2"
               ) {
-                return $booleanEquals(left.value, right.value);
+                return ((left, right) => left.$equals(right))(
+                  left.value,
+                  right.value,
+                );
               }
               if (left.type === "2-string" && right.type === "2-string") {
                 return $strictEquals(left.value, right.value);
@@ -2327,12 +2333,12 @@ export class UnionDiscriminantsClass {
               });
             },
           ))(
-          this.optionalClassOrIriOrStringProperty,
-          other.optionalClassOrIriOrStringProperty,
+          this.optionalClassOrClassOrStringProperty,
+          other.optionalClassOrClassOrStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "optionalClassOrIriOrStringProperty",
+          propertyName: "optionalClassOrClassOrStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2421,25 +2427,31 @@ export class UnionDiscriminantsClass {
       .chain(() =>
         ((
           left:
-            | { type: "0-NonClass"; value: NonClass }
-            | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+            | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
             | { type: "2-string"; value: string },
           right:
-            | { type: "0-NonClass"; value: NonClass }
-            | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+            | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
             | { type: "2-string"; value: string },
         ) => {
-          if (left.type === "0-NonClass" && right.type === "0-NonClass") {
+          if (
+            left.type === "0-ClassUnionMember1" &&
+            right.type === "0-ClassUnionMember1"
+          ) {
             return ((left, right) => left.$equals(right))(
               left.value,
               right.value,
             );
           }
           if (
-            left.type === "1-(rdfjs.NamedNode)" &&
-            right.type === "1-(rdfjs.NamedNode)"
+            left.type === "1-ClassUnionMember2" &&
+            right.type === "1-ClassUnionMember2"
           ) {
-            return $booleanEquals(left.value, right.value);
+            return ((left, right) => left.$equals(right))(
+              left.value,
+              right.value,
+            );
           }
           if (left.type === "2-string" && right.type === "2-string") {
             return $strictEquals(left.value, right.value);
@@ -2457,12 +2469,12 @@ export class UnionDiscriminantsClass {
             type: "Property" as const,
           });
         })(
-          this.requiredClassOrIriOrStringProperty,
-          other.requiredClassOrIriOrStringProperty,
+          this.requiredClassOrClassOrStringProperty,
+          other.requiredClassOrClassOrStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "requiredClassOrIriOrStringProperty",
+          propertyName: "requiredClassOrClassOrStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2539,25 +2551,31 @@ export class UnionDiscriminantsClass {
             right,
             (
               left:
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string },
               right:
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string },
             ) => {
-              if (left.type === "0-NonClass" && right.type === "0-NonClass") {
+              if (
+                left.type === "0-ClassUnionMember1" &&
+                right.type === "0-ClassUnionMember1"
+              ) {
                 return ((left, right) => left.$equals(right))(
                   left.value,
                   right.value,
                 );
               }
               if (
-                left.type === "1-(rdfjs.NamedNode)" &&
-                right.type === "1-(rdfjs.NamedNode)"
+                left.type === "1-ClassUnionMember2" &&
+                right.type === "1-ClassUnionMember2"
               ) {
-                return $booleanEquals(left.value, right.value);
+                return ((left, right) => left.$equals(right))(
+                  left.value,
+                  right.value,
+                );
               }
               if (left.type === "2-string" && right.type === "2-string") {
                 return $strictEquals(left.value, right.value);
@@ -2576,12 +2594,12 @@ export class UnionDiscriminantsClass {
               });
             },
           ))(
-          this.setClassOrIriOrStringProperty,
-          other.setClassOrIriOrStringProperty,
+          this.setClassOrClassOrStringProperty,
+          other.setClassOrClassOrStringProperty,
         ).mapLeft((propertyValuesUnequal) => ({
           left: this,
           right: other,
-          propertyName: "setClassOrIriOrStringProperty",
+          propertyName: "setClassOrClassOrStringProperty",
           propertyValuesUnequal,
           type: "Property" as const,
         })),
@@ -2684,15 +2702,14 @@ export class UnionDiscriminantsClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    this.optionalClassOrIriOrStringProperty.ifJust((value0) => {
+    this.optionalClassOrClassOrStringProperty.ifJust((value0) => {
       switch (value0.type) {
-        case "0-NonClass": {
+        case "0-ClassUnionMember1": {
           value0.value.$hash(_hasher);
           break;
         }
-        case "1-(rdfjs.NamedNode)": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+        case "1-ClassUnionMember2": {
+          value0.value.$hash(_hasher);
           break;
         }
         case "2-string": {
@@ -2739,22 +2756,21 @@ export class UnionDiscriminantsClass {
           throw new Error("unrecognized type");
       }
     });
-    switch (this.requiredClassOrIriOrStringProperty.type) {
-      case "0-NonClass": {
-        this.requiredClassOrIriOrStringProperty.value.$hash(_hasher);
+    switch (this.requiredClassOrClassOrStringProperty.type) {
+      case "0-ClassUnionMember1": {
+        this.requiredClassOrClassOrStringProperty.value.$hash(_hasher);
         break;
       }
-      case "1-(rdfjs.NamedNode)": {
-        _hasher.update(this.requiredClassOrIriOrStringProperty.value.termType);
-        _hasher.update(this.requiredClassOrIriOrStringProperty.value.value);
+      case "1-ClassUnionMember2": {
+        this.requiredClassOrClassOrStringProperty.value.$hash(_hasher);
         break;
       }
       case "2-string": {
-        _hasher.update(this.requiredClassOrIriOrStringProperty.value);
+        _hasher.update(this.requiredClassOrClassOrStringProperty.value);
         break;
       }
       default:
-        this.requiredClassOrIriOrStringProperty satisfies never;
+        this.requiredClassOrClassOrStringProperty satisfies never;
         throw new Error("unrecognized type");
     }
 
@@ -2791,15 +2807,14 @@ export class UnionDiscriminantsClass {
         throw new Error("unrecognized type");
     }
 
-    for (const item0 of this.setClassOrIriOrStringProperty) {
+    for (const item0 of this.setClassOrClassOrStringProperty) {
       switch (item0.type) {
-        case "0-NonClass": {
+        case "0-ClassUnionMember1": {
           item0.value.$hash(_hasher);
           break;
         }
-        case "1-(rdfjs.NamedNode)": {
-          _hasher.update(item0.value.termType);
-          _hasher.update(item0.value.value);
+        case "1-ClassUnionMember2": {
+          item0.value.$hash(_hasher);
           break;
         }
         case "2-string": {
@@ -2860,18 +2875,18 @@ export class UnionDiscriminantsClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        optionalClassOrIriOrStringProperty:
-          this.optionalClassOrIriOrStringProperty
+        optionalClassOrClassOrStringProperty:
+          this.optionalClassOrClassOrStringProperty
             .map((item) =>
               item.type === "2-string"
                 ? { type: "2-string" as const, value: item.value }
-                : item.type === "1-(rdfjs.NamedNode)"
+                : item.type === "1-ClassUnionMember2"
                   ? {
-                      type: "1-(rdfjs.NamedNode)" as const,
-                      value: { "@id": item.value.value },
+                      type: "1-ClassUnionMember2" as const,
+                      value: item.value.$toJson(),
                     }
                   : {
-                      type: "0-NonClass" as const,
+                      type: "0-ClassUnionMember1" as const,
                       value: item.value.$toJson(),
                     },
             )
@@ -2898,24 +2913,23 @@ export class UnionDiscriminantsClass {
             typeof item === "string" ? item : { "@id": item.value },
           )
           .extract(),
-        requiredClassOrIriOrStringProperty:
-          this.requiredClassOrIriOrStringProperty.type === "2-string"
+        requiredClassOrClassOrStringProperty:
+          this.requiredClassOrClassOrStringProperty.type === "2-string"
             ? {
                 type: "2-string" as const,
-                value: this.requiredClassOrIriOrStringProperty.value,
+                value: this.requiredClassOrClassOrStringProperty.value,
               }
-            : this.requiredClassOrIriOrStringProperty.type ===
-                "1-(rdfjs.NamedNode)"
+            : this.requiredClassOrClassOrStringProperty.type ===
+                "1-ClassUnionMember2"
               ? {
-                  type: "1-(rdfjs.NamedNode)" as const,
-                  value: {
-                    "@id": this.requiredClassOrIriOrStringProperty.value.value,
-                  },
+                  type: "1-ClassUnionMember2" as const,
+                  value:
+                    this.requiredClassOrClassOrStringProperty.value.$toJson(),
                 }
               : {
-                  type: "0-NonClass" as const,
+                  type: "0-ClassUnionMember1" as const,
                   value:
-                    this.requiredClassOrIriOrStringProperty.value.$toJson(),
+                    this.requiredClassOrClassOrStringProperty.value.$toJson(),
                 },
         requiredIriOrLiteralProperty:
           this.requiredIriOrLiteralProperty.termType === "Literal"
@@ -2941,17 +2955,20 @@ export class UnionDiscriminantsClass {
           typeof this.requiredIriOrStringProperty === "string"
             ? this.requiredIriOrStringProperty
             : { "@id": this.requiredIriOrStringProperty.value },
-        setClassOrIriOrStringProperty: this.setClassOrIriOrStringProperty.map(
-          (item) =>
+        setClassOrClassOrStringProperty:
+          this.setClassOrClassOrStringProperty.map((item) =>
             item.type === "2-string"
               ? { type: "2-string" as const, value: item.value }
-              : item.type === "1-(rdfjs.NamedNode)"
+              : item.type === "1-ClassUnionMember2"
                 ? {
-                    type: "1-(rdfjs.NamedNode)" as const,
-                    value: { "@id": item.value.value },
+                    type: "1-ClassUnionMember2" as const,
+                    value: item.value.$toJson(),
                   }
-                : { type: "0-NonClass" as const, value: item.value.$toJson() },
-        ),
+                : {
+                    type: "0-ClassUnionMember1" as const,
+                    value: item.value.$toJson(),
+                  },
+          ),
         setIriOrLiteralProperty: this.setIriOrLiteralProperty.map((item) =>
           item.termType === "Literal"
             ? {
@@ -2990,26 +3007,22 @@ export class UnionDiscriminantsClass {
       mutateGraph,
     });
     resource.add(
-      UnionDiscriminantsClass.$properties.optionalClassOrIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.optionalClassOrClassOrStringProperty[
         "identifier"
       ],
-      ...this.optionalClassOrIriOrStringProperty.toList().flatMap((value) =>
+      ...this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         value.type === "2-string"
           ? ([value.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
-          : value.type === "1-(rdfjs.NamedNode)"
-            ? ([value.value] as readonly Parameters<
-                rdfjsResource.MutableResource["add"]
-              >[1][])
-            : ([
-                value.value.$toRdf({
-                  mutateGraph: mutateGraph,
-                  resourceSet: resourceSet,
-                }).identifier,
-              ] as readonly Parameters<
-                rdfjsResource.MutableResource["add"]
-              >[1][]),
+          : ([
+              value.value.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              }).identifier,
+            ] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][]),
       ),
     );
     resource.add(
@@ -3039,25 +3052,19 @@ export class UnionDiscriminantsClass {
         ),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.requiredClassOrClassOrStringProperty[
         "identifier"
       ],
-      ...(this.requiredClassOrIriOrStringProperty.type === "2-string"
+      ...(this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
-            this.requiredClassOrIriOrStringProperty.value,
+            this.requiredClassOrClassOrStringProperty.value,
           ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-        : this.requiredClassOrIriOrStringProperty.type === "1-(rdfjs.NamedNode)"
-          ? ([
-              this.requiredClassOrIriOrStringProperty.value,
-            ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
-          : ([
-              this.requiredClassOrIriOrStringProperty.value.$toRdf({
-                mutateGraph: mutateGraph,
-                resourceSet: resourceSet,
-              }).identifier,
-            ] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][])),
+        : ([
+            this.requiredClassOrClassOrStringProperty.value.$toRdf({
+              mutateGraph: mutateGraph,
+              resourceSet: resourceSet,
+            }).identifier,
+          ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])),
     );
     resource.add(
       UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
@@ -3076,26 +3083,22 @@ export class UnionDiscriminantsClass {
       >[1][]),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
+      UnionDiscriminantsClass.$properties.setClassOrClassOrStringProperty[
         "identifier"
       ],
-      ...this.setClassOrIriOrStringProperty.flatMap((item) =>
+      ...this.setClassOrClassOrStringProperty.flatMap((item) =>
         item.type === "2-string"
           ? ([item.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
-          : item.type === "1-(rdfjs.NamedNode)"
-            ? ([item.value] as readonly Parameters<
-                rdfjsResource.MutableResource["add"]
-              >[1][])
-            : ([
-                item.value.$toRdf({
-                  mutateGraph: mutateGraph,
-                  resourceSet: resourceSet,
-                }).identifier,
-              ] as readonly Parameters<
-                rdfjsResource.MutableResource["add"]
-              >[1][]),
+          : ([
+              item.value.$toRdf({
+                mutateGraph: mutateGraph,
+                resourceSet: resourceSet,
+              }).identifier,
+            ] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][]),
       ),
     );
     resource.add(
@@ -3182,9 +3185,9 @@ export namespace UnionDiscriminantsClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "UnionDiscriminantsClass";
-    readonly optionalClassOrIriOrStringProperty?:
-      | { type: "0-NonClass"; value: NonClass.$Json }
-      | { type: "1-(rdfjs.NamedNode)"; value: { readonly "@id": string } }
+    readonly optionalClassOrClassOrStringProperty?:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | { type: "1-ClassUnionMember2"; value: ClassUnionMember2.$Json }
       | { type: "2-string"; value: string };
     readonly optionalIriOrLiteralProperty?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
@@ -3195,9 +3198,9 @@ export namespace UnionDiscriminantsClass {
           readonly "@value": string;
         };
     readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
-    readonly requiredClassOrIriOrStringProperty:
-      | { type: "0-NonClass"; value: NonClass.$Json }
-      | { type: "1-(rdfjs.NamedNode)"; value: { readonly "@id": string } }
+    readonly requiredClassOrClassOrStringProperty:
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | { type: "1-ClassUnionMember2"; value: ClassUnionMember2.$Json }
       | { type: "2-string"; value: string };
     readonly requiredIriOrLiteralProperty:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
@@ -3208,9 +3211,9 @@ export namespace UnionDiscriminantsClass {
           readonly "@value": string;
         };
     readonly requiredIriOrStringProperty: { readonly "@id": string } | string;
-    readonly setClassOrIriOrStringProperty?: readonly (
-      | { type: "0-NonClass"; value: NonClass.$Json }
-      | { type: "1-(rdfjs.NamedNode)"; value: { readonly "@id": string } }
+    readonly setClassOrClassOrStringProperty?: readonly (
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
+      | { type: "1-ClassUnionMember2"; value: ClassUnionMember2.$Json }
       | { type: "2-string"; value: string }
     )[];
     readonly setIriOrLiteralProperty?: readonly (
@@ -3253,7 +3256,7 @@ export namespace UnionDiscriminantsClass {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/optionalClassOrIriOrStringProperty`,
+          scope: `${scopePrefix}/properties/optionalClassOrClassOrStringProperty`,
           type: "Control",
         },
         {
@@ -3265,7 +3268,7 @@ export namespace UnionDiscriminantsClass {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/requiredClassOrIriOrStringProperty`,
+          scope: `${scopePrefix}/properties/requiredClassOrClassOrStringProperty`,
           type: "Control",
         },
         {
@@ -3277,7 +3280,7 @@ export namespace UnionDiscriminantsClass {
           type: "Control",
         },
         {
-          scope: `${scopePrefix}/properties/setClassOrIriOrStringProperty`,
+          scope: `${scopePrefix}/properties/setClassOrClassOrStringProperty`,
           type: "Control",
         },
         {
@@ -3298,21 +3301,21 @@ export namespace UnionDiscriminantsClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("UnionDiscriminantsClass"),
-      optionalClassOrIriOrStringProperty: zod
+      optionalClassOrClassOrStringProperty: zod
         .discriminatedUnion("type", [
           zod.object({
-            type: zod.literal("0-NonClass"),
-            value: NonClass.$jsonZodSchema(),
+            type: zod.literal("0-ClassUnionMember1"),
+            value: ClassUnionMember1.$jsonZodSchema(),
           }),
           zod.object({
-            type: zod.literal("1-(rdfjs.NamedNode)"),
-            value: zod.object({ "@id": zod.string().min(1) }),
+            type: zod.literal("1-ClassUnionMember2"),
+            value: ClassUnionMember2.$jsonZodSchema(),
           }),
           zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
         .optional()
         .describe(
-          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+          "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
         ),
       optionalIriOrLiteralProperty: zod
         .discriminatedUnion("termType", [
@@ -3335,15 +3338,15 @@ export namespace UnionDiscriminantsClass {
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
         .optional()
         .describe("Union that can be discriminated by typeof."),
-      requiredClassOrIriOrStringProperty: zod
+      requiredClassOrClassOrStringProperty: zod
         .discriminatedUnion("type", [
           zod.object({
-            type: zod.literal("0-NonClass"),
-            value: NonClass.$jsonZodSchema(),
+            type: zod.literal("0-ClassUnionMember1"),
+            value: ClassUnionMember1.$jsonZodSchema(),
           }),
           zod.object({
-            type: zod.literal("1-(rdfjs.NamedNode)"),
-            value: zod.object({ "@id": zod.string().min(1) }),
+            type: zod.literal("1-ClassUnionMember2"),
+            value: ClassUnionMember2.$jsonZodSchema(),
           }),
           zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
@@ -3369,15 +3372,15 @@ export namespace UnionDiscriminantsClass {
       requiredIriOrStringProperty: zod
         .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
         .describe("Union that can be discriminated by typeof."),
-      setClassOrIriOrStringProperty: zod
+      setClassOrClassOrStringProperty: zod
         .discriminatedUnion("type", [
           zod.object({
-            type: zod.literal("0-NonClass"),
-            value: NonClass.$jsonZodSchema(),
+            type: zod.literal("0-ClassUnionMember1"),
+            value: ClassUnionMember1.$jsonZodSchema(),
           }),
           zod.object({
-            type: zod.literal("1-(rdfjs.NamedNode)"),
-            value: zod.object({ "@id": zod.string().min(1) }),
+            type: zod.literal("1-ClassUnionMember2"),
+            value: ClassUnionMember2.$jsonZodSchema(),
           }),
           zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
@@ -3413,9 +3416,9 @@ export namespace UnionDiscriminantsClass {
   }
 
   export const $properties = {
-    optionalClassOrIriOrStringProperty: {
+    optionalClassOrClassOrStringProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/optionalClassOrIriOrStringProperty",
+        "http://example.com/optionalClassOrClassOrStringProperty",
       ),
     },
     optionalIriOrLiteralProperty: {
@@ -3428,9 +3431,9 @@ export namespace UnionDiscriminantsClass {
         "http://example.com/optionalIriOrStringProperty",
       ),
     },
-    requiredClassOrIriOrStringProperty: {
+    requiredClassOrClassOrStringProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/requiredClassOrIriOrStringProperty",
+        "http://example.com/requiredClassOrClassOrStringProperty",
       ),
     },
     requiredIriOrLiteralProperty: {
@@ -3443,9 +3446,9 @@ export namespace UnionDiscriminantsClass {
         "http://example.com/requiredIriOrStringProperty",
       ),
     },
-    setClassOrIriOrStringProperty: {
+    setClassOrClassOrStringProperty: {
       identifier: dataFactory.namedNode(
-        "http://example.com/setClassOrIriOrStringProperty",
+        "http://example.com/setClassOrClassOrStringProperty",
       ),
     },
     setIriOrLiteralProperty: {
@@ -3464,24 +3467,24 @@ export namespace UnionDiscriminantsClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalClassOrIriOrStringProperty: purify.Maybe<
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      optionalClassOrClassOrStringProperty: purify.Maybe<
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string }
       >;
       optionalIriOrLiteralProperty: purify.Maybe<
         rdfjs.NamedNode | rdfjs.Literal
       >;
       optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
-      requiredClassOrIriOrStringProperty:
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      requiredClassOrClassOrStringProperty:
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string };
       requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
       requiredIriOrStringProperty: rdfjs.NamedNode | string;
-      setClassOrIriOrStringProperty: readonly (
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      setClassOrClassOrStringProperty: readonly (
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string }
       )[];
       setIriOrLiteralProperty: readonly (rdfjs.NamedNode | rdfjs.Literal)[];
@@ -3497,19 +3500,19 @@ export namespace UnionDiscriminantsClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const optionalClassOrIriOrStringProperty = purify.Maybe.fromNullable(
-      $jsonObject["optionalClassOrIriOrStringProperty"],
+    const optionalClassOrClassOrStringProperty = purify.Maybe.fromNullable(
+      $jsonObject["optionalClassOrClassOrStringProperty"],
     ).map((item) =>
       item.type === "2-string"
         ? { type: "2-string" as const, value: item.value }
-        : item.type === "1-(rdfjs.NamedNode)"
+        : item.type === "1-ClassUnionMember2"
           ? {
-              type: "1-(rdfjs.NamedNode)" as const,
-              value: dataFactory.namedNode(item.value["@id"]),
+              type: "1-ClassUnionMember2" as const,
+              value: ClassUnionMember2.$fromJson(item.value).unsafeCoerce(),
             }
           : {
-              type: "0-NonClass" as const,
-              value: NonClass.$fromJson(item.value).unsafeCoerce(),
+              type: "0-ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(item.value).unsafeCoerce(),
             },
     );
     const optionalIriOrLiteralProperty = purify.Maybe.fromNullable(
@@ -3531,24 +3534,24 @@ export namespace UnionDiscriminantsClass {
     ).map((item) =>
       typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
     );
-    const requiredClassOrIriOrStringProperty =
-      $jsonObject["requiredClassOrIriOrStringProperty"].type === "2-string"
+    const requiredClassOrClassOrStringProperty =
+      $jsonObject["requiredClassOrClassOrStringProperty"].type === "2-string"
         ? {
             type: "2-string" as const,
-            value: $jsonObject["requiredClassOrIriOrStringProperty"].value,
+            value: $jsonObject["requiredClassOrClassOrStringProperty"].value,
           }
-        : $jsonObject["requiredClassOrIriOrStringProperty"].type ===
-            "1-(rdfjs.NamedNode)"
+        : $jsonObject["requiredClassOrClassOrStringProperty"].type ===
+            "1-ClassUnionMember2"
           ? {
-              type: "1-(rdfjs.NamedNode)" as const,
-              value: dataFactory.namedNode(
-                $jsonObject["requiredClassOrIriOrStringProperty"].value["@id"],
-              ),
+              type: "1-ClassUnionMember2" as const,
+              value: ClassUnionMember2.$fromJson(
+                $jsonObject["requiredClassOrClassOrStringProperty"].value,
+              ).unsafeCoerce(),
             }
           : {
-              type: "0-NonClass" as const,
-              value: NonClass.$fromJson(
-                $jsonObject["requiredClassOrIriOrStringProperty"].value,
+              type: "0-ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(
+                $jsonObject["requiredClassOrClassOrStringProperty"].value,
               ).unsafeCoerce(),
             };
     const requiredIriOrLiteralProperty =
@@ -3574,19 +3577,19 @@ export namespace UnionDiscriminantsClass {
         : dataFactory.namedNode(
             $jsonObject["requiredIriOrStringProperty"]["@id"],
           );
-    const setClassOrIriOrStringProperty = $jsonObject[
-      "setClassOrIriOrStringProperty"
+    const setClassOrClassOrStringProperty = $jsonObject[
+      "setClassOrClassOrStringProperty"
     ].map((item) =>
       item.type === "2-string"
         ? { type: "2-string" as const, value: item.value }
-        : item.type === "1-(rdfjs.NamedNode)"
+        : item.type === "1-ClassUnionMember2"
           ? {
-              type: "1-(rdfjs.NamedNode)" as const,
-              value: dataFactory.namedNode(item.value["@id"]),
+              type: "1-ClassUnionMember2" as const,
+              value: ClassUnionMember2.$fromJson(item.value).unsafeCoerce(),
             }
           : {
-              type: "0-NonClass" as const,
-              value: NonClass.$fromJson(item.value).unsafeCoerce(),
+              type: "0-ClassUnionMember1" as const,
+              value: ClassUnionMember1.$fromJson(item.value).unsafeCoerce(),
             },
     );
     const setIriOrLiteralProperty = $jsonObject["setIriOrLiteralProperty"].map(
@@ -3608,13 +3611,13 @@ export namespace UnionDiscriminantsClass {
     );
     return purify.Either.of({
       $identifier,
-      optionalClassOrIriOrStringProperty,
+      optionalClassOrClassOrStringProperty,
       optionalIriOrLiteralProperty,
       optionalIriOrStringProperty,
-      requiredClassOrIriOrStringProperty,
+      requiredClassOrClassOrStringProperty,
       requiredIriOrLiteralProperty,
       requiredIriOrStringProperty,
-      setClassOrIriOrStringProperty,
+      setClassOrClassOrStringProperty,
       setIriOrLiteralProperty,
       setIriOrStringProperty,
     });
@@ -3630,24 +3633,24 @@ export namespace UnionDiscriminantsClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      optionalClassOrIriOrStringProperty: purify.Maybe<
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      optionalClassOrClassOrStringProperty: purify.Maybe<
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string }
       >;
       optionalIriOrLiteralProperty: purify.Maybe<
         rdfjs.NamedNode | rdfjs.Literal
       >;
       optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
-      requiredClassOrIriOrStringProperty:
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      requiredClassOrClassOrStringProperty:
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string };
       requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
       requiredIriOrStringProperty: rdfjs.NamedNode | string;
-      setClassOrIriOrStringProperty: readonly (
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      setClassOrClassOrStringProperty: readonly (
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string }
       )[];
       setIriOrLiteralProperty: readonly (rdfjs.NamedNode | rdfjs.Literal)[];
@@ -3656,11 +3659,11 @@ export namespace UnionDiscriminantsClass {
   > {
     const $identifier: UnionDiscriminantsClass.$Identifier =
       $parameters.resource.identifier;
-    const _optionalClassOrIriOrStringPropertyEither: purify.Either<
+    const _optionalClassOrClassOrStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string }
       >
     > = purify.Either.of<
@@ -3668,7 +3671,7 @@ export namespace UnionDiscriminantsClass {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $parameters.resource.values(
-        $properties.optionalClassOrIriOrStringProperty["identifier"],
+        $properties.optionalClassOrClassOrStringProperty["identifier"],
         { unique: true },
       ),
     )
@@ -3680,7 +3683,7 @@ export namespace UnionDiscriminantsClass {
               .chain((values) =>
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
-                    NonClass.$fromRdf(resource, {
+                    ClassUnionMember1.$fromRdf(resource, {
                       context: $parameters.context,
                       objectSet: $parameters.objectSet,
                       preferredLanguages: $parameters.preferredLanguages,
@@ -3691,16 +3694,22 @@ export namespace UnionDiscriminantsClass {
               .map((values) =>
                 values.map(
                   (value) =>
-                    ({ type: "0-NonClass" as const, value }) as
-                      | { type: "0-NonClass"; value: NonClass }
-                      | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    ({ type: "0-ClassUnionMember1" as const, value }) as
+                      | {
+                          type: "0-ClassUnionMember1";
+                          value: ClassUnionMember1;
+                        }
+                      | {
+                          type: "1-ClassUnionMember2";
+                          value: ClassUnionMember2;
+                        }
                       | { type: "2-string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string }
               >
             >
@@ -3708,23 +3717,36 @@ export namespace UnionDiscriminantsClass {
             .altLazy(
               () =>
                 valueAsValues
-                  .chain((values) => values.chainMap((value) => value.toIri()))
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toResource().chain((resource) =>
+                        ClassUnionMember2.$fromRdf(resource, {
+                          context: $parameters.context,
+                          objectSet: $parameters.objectSet,
+                          preferredLanguages: $parameters.preferredLanguages,
+                        }),
+                      ),
+                    ),
+                  )
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({ type: "1-(rdfjs.NamedNode)" as const, value }) as
-                          | { type: "0-NonClass"; value: NonClass }
+                        ({ type: "1-ClassUnionMember2" as const, value }) as
                           | {
-                              type: "1-(rdfjs.NamedNode)";
-                              value: rdfjs.NamedNode;
+                              type: "0-ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | {
+                              type: "1-ClassUnionMember2";
+                              value: ClassUnionMember2;
                             }
                           | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-NonClass"; value: NonClass }
-                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                     | { type: "2-string"; value: string }
                   >
                 >,
@@ -3782,7 +3804,7 @@ export namespace UnionDiscriminantsClass {
                             focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
-                                .optionalClassOrIriOrStringProperty[
+                                .optionalClassOrClassOrStringProperty[
                                 "identifier"
                               ],
                             term: literalValue,
@@ -3797,18 +3819,21 @@ export namespace UnionDiscriminantsClass {
                     values.map(
                       (value) =>
                         ({ type: "2-string" as const, value }) as
-                          | { type: "0-NonClass"; value: NonClass }
                           | {
-                              type: "1-(rdfjs.NamedNode)";
-                              value: rdfjs.NamedNode;
+                              type: "0-ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | {
+                              type: "1-ClassUnionMember2";
+                              value: ClassUnionMember2;
                             }
                           | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-NonClass"; value: NonClass }
-                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                     | { type: "2-string"; value: string }
                   >
                 >,
@@ -3821,25 +3846,25 @@ export namespace UnionDiscriminantsClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string }
               >
             >({
               focusResource: $parameters.resource,
               predicate:
                 UnionDiscriminantsClass.$properties
-                  .optionalClassOrIriOrStringProperty["identifier"],
+                  .optionalClassOrClassOrStringProperty["identifier"],
               value: purify.Maybe.empty(),
             }),
       )
       .chain((values) => values.head());
-    if (_optionalClassOrIriOrStringPropertyEither.isLeft()) {
-      return _optionalClassOrIriOrStringPropertyEither;
+    if (_optionalClassOrClassOrStringPropertyEither.isLeft()) {
+      return _optionalClassOrClassOrStringPropertyEither;
     }
 
-    const optionalClassOrIriOrStringProperty =
-      _optionalClassOrIriOrStringPropertyEither.unsafeCoerce();
+    const optionalClassOrClassOrStringProperty =
+      _optionalClassOrClassOrStringPropertyEither.unsafeCoerce();
     const _optionalIriOrLiteralPropertyEither: purify.Either<
       Error,
       purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
@@ -4065,17 +4090,17 @@ export namespace UnionDiscriminantsClass {
 
     const optionalIriOrStringProperty =
       _optionalIriOrStringPropertyEither.unsafeCoerce();
-    const _requiredClassOrIriOrStringPropertyEither: purify.Either<
+    const _requiredClassOrClassOrStringPropertyEither: purify.Either<
       Error,
-      | { type: "0-NonClass"; value: NonClass }
-      | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+      | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+      | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
       | { type: "2-string"; value: string }
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $parameters.resource.values(
-        $properties.requiredClassOrIriOrStringProperty["identifier"],
+        $properties.requiredClassOrClassOrStringProperty["identifier"],
         { unique: true },
       ),
     )
@@ -4087,7 +4112,7 @@ export namespace UnionDiscriminantsClass {
               .chain((values) =>
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
-                    NonClass.$fromRdf(resource, {
+                    ClassUnionMember1.$fromRdf(resource, {
                       context: $parameters.context,
                       objectSet: $parameters.objectSet,
                       preferredLanguages: $parameters.preferredLanguages,
@@ -4098,16 +4123,22 @@ export namespace UnionDiscriminantsClass {
               .map((values) =>
                 values.map(
                   (value) =>
-                    ({ type: "0-NonClass" as const, value }) as
-                      | { type: "0-NonClass"; value: NonClass }
-                      | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    ({ type: "0-ClassUnionMember1" as const, value }) as
+                      | {
+                          type: "0-ClassUnionMember1";
+                          value: ClassUnionMember1;
+                        }
+                      | {
+                          type: "1-ClassUnionMember2";
+                          value: ClassUnionMember2;
+                        }
                       | { type: "2-string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string }
               >
             >
@@ -4115,23 +4146,36 @@ export namespace UnionDiscriminantsClass {
             .altLazy(
               () =>
                 valueAsValues
-                  .chain((values) => values.chainMap((value) => value.toIri()))
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toResource().chain((resource) =>
+                        ClassUnionMember2.$fromRdf(resource, {
+                          context: $parameters.context,
+                          objectSet: $parameters.objectSet,
+                          preferredLanguages: $parameters.preferredLanguages,
+                        }),
+                      ),
+                    ),
+                  )
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({ type: "1-(rdfjs.NamedNode)" as const, value }) as
-                          | { type: "0-NonClass"; value: NonClass }
+                        ({ type: "1-ClassUnionMember2" as const, value }) as
                           | {
-                              type: "1-(rdfjs.NamedNode)";
-                              value: rdfjs.NamedNode;
+                              type: "0-ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | {
+                              type: "1-ClassUnionMember2";
+                              value: ClassUnionMember2;
                             }
                           | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-NonClass"; value: NonClass }
-                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                     | { type: "2-string"; value: string }
                   >
                 >,
@@ -4189,7 +4233,7 @@ export namespace UnionDiscriminantsClass {
                             focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
-                                .requiredClassOrIriOrStringProperty[
+                                .requiredClassOrClassOrStringProperty[
                                 "identifier"
                               ],
                             term: literalValue,
@@ -4204,18 +4248,21 @@ export namespace UnionDiscriminantsClass {
                     values.map(
                       (value) =>
                         ({ type: "2-string" as const, value }) as
-                          | { type: "0-NonClass"; value: NonClass }
                           | {
-                              type: "1-(rdfjs.NamedNode)";
-                              value: rdfjs.NamedNode;
+                              type: "0-ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | {
+                              type: "1-ClassUnionMember2";
+                              value: ClassUnionMember2;
                             }
                           | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-NonClass"; value: NonClass }
-                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                     | { type: "2-string"; value: string }
                   >
                 >,
@@ -4224,12 +4271,12 @@ export namespace UnionDiscriminantsClass {
         }),
       )
       .chain((values) => values.head());
-    if (_requiredClassOrIriOrStringPropertyEither.isLeft()) {
-      return _requiredClassOrIriOrStringPropertyEither;
+    if (_requiredClassOrClassOrStringPropertyEither.isLeft()) {
+      return _requiredClassOrClassOrStringPropertyEither;
     }
 
-    const requiredClassOrIriOrStringProperty =
-      _requiredClassOrIriOrStringPropertyEither.unsafeCoerce();
+    const requiredClassOrClassOrStringProperty =
+      _requiredClassOrClassOrStringPropertyEither.unsafeCoerce();
     const _requiredIriOrLiteralPropertyEither: purify.Either<
       Error,
       rdfjs.NamedNode | rdfjs.Literal
@@ -4428,11 +4475,11 @@ export namespace UnionDiscriminantsClass {
 
     const requiredIriOrStringProperty =
       _requiredIriOrStringPropertyEither.unsafeCoerce();
-    const _setClassOrIriOrStringPropertyEither: purify.Either<
+    const _setClassOrClassOrStringPropertyEither: purify.Either<
       Error,
       readonly (
-        | { type: "0-NonClass"; value: NonClass }
-        | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+        | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+        | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
         | { type: "2-string"; value: string }
       )[]
     > = purify.Either.of<
@@ -4440,7 +4487,7 @@ export namespace UnionDiscriminantsClass {
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
     >(
       $parameters.resource.values(
-        $properties.setClassOrIriOrStringProperty["identifier"],
+        $properties.setClassOrClassOrStringProperty["identifier"],
         { unique: true },
       ),
     )
@@ -4452,7 +4499,7 @@ export namespace UnionDiscriminantsClass {
               .chain((values) =>
                 values.chainMap((value) =>
                   value.toResource().chain((resource) =>
-                    NonClass.$fromRdf(resource, {
+                    ClassUnionMember1.$fromRdf(resource, {
                       context: $parameters.context,
                       objectSet: $parameters.objectSet,
                       preferredLanguages: $parameters.preferredLanguages,
@@ -4463,16 +4510,22 @@ export namespace UnionDiscriminantsClass {
               .map((values) =>
                 values.map(
                   (value) =>
-                    ({ type: "0-NonClass" as const, value }) as
-                      | { type: "0-NonClass"; value: NonClass }
-                      | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    ({ type: "0-ClassUnionMember1" as const, value }) as
+                      | {
+                          type: "0-ClassUnionMember1";
+                          value: ClassUnionMember1;
+                        }
+                      | {
+                          type: "1-ClassUnionMember2";
+                          value: ClassUnionMember2;
+                        }
                       | { type: "2-string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "0-NonClass"; value: NonClass }
-                | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                 | { type: "2-string"; value: string }
               >
             >
@@ -4480,23 +4533,36 @@ export namespace UnionDiscriminantsClass {
             .altLazy(
               () =>
                 valueAsValues
-                  .chain((values) => values.chainMap((value) => value.toIri()))
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toResource().chain((resource) =>
+                        ClassUnionMember2.$fromRdf(resource, {
+                          context: $parameters.context,
+                          objectSet: $parameters.objectSet,
+                          preferredLanguages: $parameters.preferredLanguages,
+                        }),
+                      ),
+                    ),
+                  )
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({ type: "1-(rdfjs.NamedNode)" as const, value }) as
-                          | { type: "0-NonClass"; value: NonClass }
+                        ({ type: "1-ClassUnionMember2" as const, value }) as
                           | {
-                              type: "1-(rdfjs.NamedNode)";
-                              value: rdfjs.NamedNode;
+                              type: "0-ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | {
+                              type: "1-ClassUnionMember2";
+                              value: ClassUnionMember2;
                             }
                           | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-NonClass"; value: NonClass }
-                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                     | { type: "2-string"; value: string }
                   >
                 >,
@@ -4554,7 +4620,7 @@ export namespace UnionDiscriminantsClass {
                             focusResource: $parameters.resource,
                             predicate:
                               UnionDiscriminantsClass.$properties
-                                .setClassOrIriOrStringProperty["identifier"],
+                                .setClassOrClassOrStringProperty["identifier"],
                             term: literalValue,
                           }),
                       ),
@@ -4567,18 +4633,21 @@ export namespace UnionDiscriminantsClass {
                     values.map(
                       (value) =>
                         ({ type: "2-string" as const, value }) as
-                          | { type: "0-NonClass"; value: NonClass }
                           | {
-                              type: "1-(rdfjs.NamedNode)";
-                              value: rdfjs.NamedNode;
+                              type: "0-ClassUnionMember1";
+                              value: ClassUnionMember1;
+                            }
+                          | {
+                              type: "1-ClassUnionMember2";
+                              value: ClassUnionMember2;
                             }
                           | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "0-NonClass"; value: NonClass }
-                    | { type: "1-(rdfjs.NamedNode)"; value: rdfjs.NamedNode }
+                    | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+                    | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
                     | { type: "2-string"; value: string }
                   >
                 >,
@@ -4591,19 +4660,19 @@ export namespace UnionDiscriminantsClass {
         rdfjsResource.Resource.Values.fromValue({
           focusResource: $parameters.resource,
           predicate:
-            UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
+            UnionDiscriminantsClass.$properties.setClassOrClassOrStringProperty[
               "identifier"
             ],
           value: valuesArray,
         }),
       )
       .chain((values) => values.head());
-    if (_setClassOrIriOrStringPropertyEither.isLeft()) {
-      return _setClassOrIriOrStringPropertyEither;
+    if (_setClassOrClassOrStringPropertyEither.isLeft()) {
+      return _setClassOrClassOrStringPropertyEither;
     }
 
-    const setClassOrIriOrStringProperty =
-      _setClassOrIriOrStringPropertyEither.unsafeCoerce();
+    const setClassOrClassOrStringProperty =
+      _setClassOrClassOrStringPropertyEither.unsafeCoerce();
     const _setIriOrLiteralPropertyEither: purify.Either<
       Error,
       readonly (rdfjs.NamedNode | rdfjs.Literal)[]
@@ -4825,13 +4894,13 @@ export namespace UnionDiscriminantsClass {
     const setIriOrStringProperty = _setIriOrStringPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
-      optionalClassOrIriOrStringProperty,
+      optionalClassOrClassOrStringProperty,
       optionalIriOrLiteralProperty,
       optionalIriOrStringProperty,
-      requiredClassOrIriOrStringProperty,
+      requiredClassOrClassOrStringProperty,
       requiredIriOrLiteralProperty,
       requiredIriOrStringProperty,
-      setClassOrIriOrStringProperty,
+      setClassOrClassOrStringProperty,
       setIriOrLiteralProperty,
       setIriOrStringProperty,
     });
@@ -4898,20 +4967,27 @@ export namespace UnionDiscriminantsClass {
         : "unionDiscriminantsClass");
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+        `${variablePrefix}OptionalClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.optionalClassOrIriOrStringProperty[
-          "identifier"
-        ],
+        UnionDiscriminantsClass.$properties
+          .optionalClassOrClassOrStringProperty["identifier"],
       subject,
     });
     triples.push(
-      ...NonClass.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
         subject: dataFactory.variable!(
-          `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+          `${variablePrefix}OptionalClassOrClassOrStringProperty`,
         ),
-        variablePrefix: `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+        variablePrefix: `${variablePrefix}OptionalClassOrClassOrStringProperty`,
+      }),
+    );
+    triples.push(
+      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(
+          `${variablePrefix}OptionalClassOrClassOrStringProperty`,
+        ),
+        variablePrefix: `${variablePrefix}OptionalClassOrClassOrStringProperty`,
       }),
     );
     triples.push({
@@ -4936,40 +5012,45 @@ export namespace UnionDiscriminantsClass {
     });
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+        `${variablePrefix}RequiredClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
-          "identifier"
-        ],
+        UnionDiscriminantsClass.$properties
+          .requiredClassOrClassOrStringProperty["identifier"],
       subject,
     });
     triples.push(
-      ...NonClass.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
         subject: dataFactory.variable!(
-          `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+          `${variablePrefix}RequiredClassOrClassOrStringProperty`,
         ),
-        variablePrefix: `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+        variablePrefix: `${variablePrefix}RequiredClassOrClassOrStringProperty`,
       }),
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+        `${variablePrefix}RequiredClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
-          "identifier"
-        ],
+        UnionDiscriminantsClass.$properties
+          .requiredClassOrClassOrStringProperty["identifier"],
       subject,
     });
+    triples.push(
+      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(
+          `${variablePrefix}RequiredClassOrClassOrStringProperty`,
+        ),
+        variablePrefix: `${variablePrefix}RequiredClassOrClassOrStringProperty`,
+      }),
+    );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+        `${variablePrefix}RequiredClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.requiredClassOrIriOrStringProperty[
-          "identifier"
-        ],
+        UnionDiscriminantsClass.$properties
+          .requiredClassOrClassOrStringProperty["identifier"],
       subject,
     });
     triples.push({
@@ -5014,20 +5095,28 @@ export namespace UnionDiscriminantsClass {
     });
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}SetClassOrIriOrStringProperty`,
+        `${variablePrefix}SetClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.setClassOrIriOrStringProperty[
+        UnionDiscriminantsClass.$properties.setClassOrClassOrStringProperty[
           "identifier"
         ],
       subject,
     });
     triples.push(
-      ...NonClass.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
         subject: dataFactory.variable!(
-          `${variablePrefix}SetClassOrIriOrStringProperty`,
+          `${variablePrefix}SetClassOrClassOrStringProperty`,
         ),
-        variablePrefix: `${variablePrefix}SetClassOrIriOrStringProperty`,
+        variablePrefix: `${variablePrefix}SetClassOrClassOrStringProperty`,
+      }),
+    );
+    triples.push(
+      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+        subject: dataFactory.variable!(
+          `${variablePrefix}SetClassOrClassOrStringProperty`,
+        ),
+        variablePrefix: `${variablePrefix}SetClassOrClassOrStringProperty`,
       }),
     );
     triples.push({
@@ -5075,22 +5164,22 @@ export namespace UnionDiscriminantsClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+                          `${variablePrefix}OptionalClassOrClassOrStringProperty`,
                         ),
                         predicate:
                           UnionDiscriminantsClass.$properties
-                            .optionalClassOrIriOrStringProperty["identifier"],
+                            .optionalClassOrClassOrStringProperty["identifier"],
                         subject,
                       },
                     ],
                     type: "bgp",
                   },
-                  ...NonClass.$sparqlWherePatterns({
+                  ...ClassUnionMember1.$sparqlWherePatterns({
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
-                      `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+                      `${variablePrefix}OptionalClassOrClassOrStringProperty`,
                     ),
-                    variablePrefix: `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+                    variablePrefix: `${variablePrefix}OptionalClassOrClassOrStringProperty`,
                   }),
                 ],
                 type: "group",
@@ -5101,16 +5190,23 @@ export namespace UnionDiscriminantsClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+                          `${variablePrefix}OptionalClassOrClassOrStringProperty`,
                         ),
                         predicate:
                           UnionDiscriminantsClass.$properties
-                            .optionalClassOrIriOrStringProperty["identifier"],
+                            .optionalClassOrClassOrStringProperty["identifier"],
                         subject,
                       },
                     ],
                     type: "bgp",
                   },
+                  ...ClassUnionMember2.$sparqlWherePatterns({
+                    preferredLanguages: parameters?.preferredLanguages,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}OptionalClassOrClassOrStringProperty`,
+                    ),
+                    variablePrefix: `${variablePrefix}OptionalClassOrClassOrStringProperty`,
+                  }),
                 ],
                 type: "group",
               },
@@ -5120,11 +5216,11 @@ export namespace UnionDiscriminantsClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+                          `${variablePrefix}OptionalClassOrClassOrStringProperty`,
                         ),
                         predicate:
                           UnionDiscriminantsClass.$properties
-                            .optionalClassOrIriOrStringProperty["identifier"],
+                            .optionalClassOrClassOrStringProperty["identifier"],
                         subject,
                       },
                     ],
@@ -5142,7 +5238,7 @@ export namespace UnionDiscriminantsClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${variablePrefix}OptionalClassOrIriOrStringProperty`,
+                                `${variablePrefix}OptionalClassOrClassOrStringProperty`,
                               ),
                             ],
                           },
@@ -5351,22 +5447,22 @@ export namespace UnionDiscriminantsClass {
                 triples: [
                   {
                     object: dataFactory.variable!(
-                      `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+                      `${variablePrefix}RequiredClassOrClassOrStringProperty`,
                     ),
                     predicate:
                       UnionDiscriminantsClass.$properties
-                        .requiredClassOrIriOrStringProperty["identifier"],
+                        .requiredClassOrClassOrStringProperty["identifier"],
                     subject,
                   },
                 ],
                 type: "bgp",
               },
-              ...NonClass.$sparqlWherePatterns({
+              ...ClassUnionMember1.$sparqlWherePatterns({
                 preferredLanguages: parameters?.preferredLanguages,
                 subject: dataFactory.variable!(
-                  `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+                  `${variablePrefix}RequiredClassOrClassOrStringProperty`,
                 ),
-                variablePrefix: `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+                variablePrefix: `${variablePrefix}RequiredClassOrClassOrStringProperty`,
               }),
             ],
             type: "group",
@@ -5377,16 +5473,23 @@ export namespace UnionDiscriminantsClass {
                 triples: [
                   {
                     object: dataFactory.variable!(
-                      `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+                      `${variablePrefix}RequiredClassOrClassOrStringProperty`,
                     ),
                     predicate:
                       UnionDiscriminantsClass.$properties
-                        .requiredClassOrIriOrStringProperty["identifier"],
+                        .requiredClassOrClassOrStringProperty["identifier"],
                     subject,
                   },
                 ],
                 type: "bgp",
               },
+              ...ClassUnionMember2.$sparqlWherePatterns({
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${variablePrefix}RequiredClassOrClassOrStringProperty`,
+                ),
+                variablePrefix: `${variablePrefix}RequiredClassOrClassOrStringProperty`,
+              }),
             ],
             type: "group",
           },
@@ -5396,11 +5499,11 @@ export namespace UnionDiscriminantsClass {
                 triples: [
                   {
                     object: dataFactory.variable!(
-                      `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+                      `${variablePrefix}RequiredClassOrClassOrStringProperty`,
                     ),
                     predicate:
                       UnionDiscriminantsClass.$properties
-                        .requiredClassOrIriOrStringProperty["identifier"],
+                        .requiredClassOrClassOrStringProperty["identifier"],
                     subject,
                   },
                 ],
@@ -5418,7 +5521,7 @@ export namespace UnionDiscriminantsClass {
                         operator: "lang",
                         args: [
                           dataFactory.variable!(
-                            `${variablePrefix}RequiredClassOrIriOrStringProperty`,
+                            `${variablePrefix}RequiredClassOrClassOrStringProperty`,
                           ),
                         ],
                       },
@@ -5616,22 +5719,22 @@ export namespace UnionDiscriminantsClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}SetClassOrIriOrStringProperty`,
+                          `${variablePrefix}SetClassOrClassOrStringProperty`,
                         ),
                         predicate:
                           UnionDiscriminantsClass.$properties
-                            .setClassOrIriOrStringProperty["identifier"],
+                            .setClassOrClassOrStringProperty["identifier"],
                         subject,
                       },
                     ],
                     type: "bgp",
                   },
-                  ...NonClass.$sparqlWherePatterns({
+                  ...ClassUnionMember1.$sparqlWherePatterns({
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
-                      `${variablePrefix}SetClassOrIriOrStringProperty`,
+                      `${variablePrefix}SetClassOrClassOrStringProperty`,
                     ),
-                    variablePrefix: `${variablePrefix}SetClassOrIriOrStringProperty`,
+                    variablePrefix: `${variablePrefix}SetClassOrClassOrStringProperty`,
                   }),
                 ],
                 type: "group",
@@ -5642,16 +5745,23 @@ export namespace UnionDiscriminantsClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}SetClassOrIriOrStringProperty`,
+                          `${variablePrefix}SetClassOrClassOrStringProperty`,
                         ),
                         predicate:
                           UnionDiscriminantsClass.$properties
-                            .setClassOrIriOrStringProperty["identifier"],
+                            .setClassOrClassOrStringProperty["identifier"],
                         subject,
                       },
                     ],
                     type: "bgp",
                   },
+                  ...ClassUnionMember2.$sparqlWherePatterns({
+                    preferredLanguages: parameters?.preferredLanguages,
+                    subject: dataFactory.variable!(
+                      `${variablePrefix}SetClassOrClassOrStringProperty`,
+                    ),
+                    variablePrefix: `${variablePrefix}SetClassOrClassOrStringProperty`,
+                  }),
                 ],
                 type: "group",
               },
@@ -5661,11 +5771,11 @@ export namespace UnionDiscriminantsClass {
                     triples: [
                       {
                         object: dataFactory.variable!(
-                          `${variablePrefix}SetClassOrIriOrStringProperty`,
+                          `${variablePrefix}SetClassOrClassOrStringProperty`,
                         ),
                         predicate:
                           UnionDiscriminantsClass.$properties
-                            .setClassOrIriOrStringProperty["identifier"],
+                            .setClassOrClassOrStringProperty["identifier"],
                         subject,
                       },
                     ],
@@ -5683,7 +5793,7 @@ export namespace UnionDiscriminantsClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${variablePrefix}SetClassOrIriOrStringProperty`,
+                                `${variablePrefix}SetClassOrClassOrStringProperty`,
                               ),
                             ],
                           },
