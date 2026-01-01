@@ -8,8 +8,7 @@ import { harnesses } from "./harnesses.js";
 describe("fromRdf", () => {
   let invalidLanguageInResource: Resource;
   let validLanguageInResource: Resource;
-  const validLanguageInLiteralLanguage = ["en", "fr"];
-  const validLanguageInStringLanguage = ["", "en", "fr"];
+  const validLanguageInLanguage = ["en", "fr"];
 
   beforeAll(() => {
     const languageInDataset = new N3.Store();
@@ -40,12 +39,7 @@ describe("fromRdf", () => {
 
         switch (property.identifier.value) {
           case "http://example.com/languageInLiteralProperty":
-            if (!validLanguageInLiteralLanguage.includes(language)) {
-              continue;
-            }
-            break;
-          case "http://example.com/languageInStringProperty":
-            if (!validLanguageInStringLanguage.includes(language)) {
+            if (!validLanguageInLanguage.includes(language)) {
               continue;
             }
             break;
@@ -223,12 +217,9 @@ describe("fromRdf", () => {
       validLanguageInResource,
     ).unsafeCoerce();
     expect(instance.languageInLiteralProperty).toHaveLength(
-      validLanguageInLiteralLanguage.length,
+      validLanguageInLanguage.length,
     );
-    expect(instance.languageInStringProperty).toHaveLength(
-      validLanguageInStringLanguage.length,
-    );
-    for (const language of validLanguageInLiteralLanguage) {
+    for (const language of validLanguageInLanguage) {
       expect(
         instance.languageInLiteralProperty.some(
           (literal) => literal.language === language,
@@ -253,10 +244,7 @@ describe("fromRdf", () => {
       },
     ).unsafeCoerce();
     expect(instance.languageInLiteralProperty).toHaveLength(
-      validLanguageInLiteralLanguage.length,
-    );
-    expect(instance.languageInStringProperty).toHaveLength(
-      validLanguageInStringLanguage.length,
+      validLanguageInLanguage.length,
     );
   });
 
@@ -272,8 +260,6 @@ describe("fromRdf", () => {
     expect(instance.languageInLiteralProperty[0].value).toStrictEqual(
       "envalue",
     );
-    expect(instance.languageInStringProperty).toHaveLength(1);
-    expect(instance.languageInStringProperty[0]).toStrictEqual("envalue");
   });
 
   it("preferredLanguages: ['']", ({ expect }) => {
@@ -296,9 +282,6 @@ describe("fromRdf", () => {
     expect(instance.languageInLiteralProperty[0].value).toStrictEqual(
       "envalue",
     );
-    expect(instance.languageInStringProperty).toHaveLength(2);
-    expect(instance.languageInStringProperty[0]).toStrictEqual("value");
-    expect(instance.languageInStringProperty[1]).toStrictEqual("envalue");
   });
 
   it("preferredLanguages: ['en', '']", ({ expect }) => {
@@ -313,9 +296,6 @@ describe("fromRdf", () => {
     expect(instance.languageInLiteralProperty[0].value).toStrictEqual(
       "envalue",
     );
-    expect(instance.languageInStringProperty).toHaveLength(2);
-    expect(instance.languageInStringProperty[0]).toStrictEqual("envalue");
-    expect(instance.languageInStringProperty[1]).toStrictEqual("value");
   });
 
   it("preferredLanguages: ['fr', 'en']", ({ expect }) => {
@@ -334,9 +314,6 @@ describe("fromRdf", () => {
     expect(instance.languageInLiteralProperty[1].value).toStrictEqual(
       "envalue",
     );
-    expect(instance.languageInStringProperty).toHaveLength(2);
-    expect(instance.languageInStringProperty[0]).toStrictEqual("frvalue");
-    expect(instance.languageInStringProperty[1]).toStrictEqual("envalue");
   });
 
   it("accept right identifier type (NamedNode)", ({ expect }) => {

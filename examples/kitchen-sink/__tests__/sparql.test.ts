@@ -9,8 +9,7 @@ import { quadsToTurtle } from "./quadsToTurtle.js";
 
 describe("sparql", () => {
   const languageInDataset = new oxigraph.Store();
-  const validLanguageInLiteralLanguage = ["en", "fr"];
-  const validLanguageInStringLanguage = ["", "en", "fr"];
+  const validLanguageInLanguage = ["en", "fr"];
 
   beforeAll(() => {
     const languageInSubject = oxigraph.blankNode();
@@ -112,10 +111,7 @@ describe("sparql", () => {
     const actualDataset = queryLanguageInDataset(
       kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString(),
     );
-    expect(actualDataset.size).toStrictEqual(
-      validLanguageInLiteralLanguage.length +
-        validLanguageInStringLanguage.length,
-    );
+    expect(actualDataset.size).toStrictEqual(validLanguageInLanguage.length);
   });
 
   it("preferredLanguages: []", ({ expect }) => {
@@ -124,10 +120,7 @@ describe("sparql", () => {
         preferredLanguages: [],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(
-      validLanguageInLiteralLanguage.length +
-        validLanguageInStringLanguage.length,
-    );
+    expect(actualDataset.size).toStrictEqual(validLanguageInLanguage.length);
   });
 
   it("preferredLanguages: ['en']", ({ expect }) => {
@@ -141,23 +134,6 @@ describe("sparql", () => {
     );
     for (const quad of actualDataset.match()) {
       expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
-    }
-  });
-
-  it("preferredlanguages: ['', 'en']", ({ expect }) => {
-    const actualDataset = queryLanguageInDataset(
-      kitchenSink.LanguageInPropertiesClass.$sparqlConstructQueryString({
-        preferredLanguages: ["", "en"],
-      }),
-    );
-    expect(actualDataset.size).toStrictEqual(
-      validLanguageInStringLanguage.length,
-    );
-    for (const quad of actualDataset.match()) {
-      expect((quad.object as oxigraph.Literal).value).toBeOneOf([
-        "envalue",
-        "value",
-      ]);
     }
   });
 });
