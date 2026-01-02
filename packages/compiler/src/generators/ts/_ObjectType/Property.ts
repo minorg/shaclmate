@@ -171,7 +171,7 @@ export abstract class Property<
    * Statements to hash this property using a hasher instance.
    */
   abstract hashStatements(
-    parameters: Parameters<AbstractType["hashStatements"]>[0],
+    parameters: Parameters<Type["hashStatements"]>[0],
   ): readonly string[];
 
   /**
@@ -198,7 +198,7 @@ export abstract class Property<
    * The generator deduplicates snippet declarations across all types before adding them to the source.
    */
   abstract snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): readonly string[];
 
   /**
@@ -231,7 +231,7 @@ export abstract class Property<
    */
   abstract toRdfStatements(parameters: {
     variables: Omit<
-      Parameters<AbstractType["toRdfExpression"]>[0]["variables"],
+      Parameters<Type["toRdfExpression"]>[0]["variables"],
       "predicate"
     >;
   }): readonly string[];

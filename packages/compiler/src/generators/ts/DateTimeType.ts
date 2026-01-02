@@ -4,7 +4,6 @@ import type { TsFeature } from "enums/TsFeature.js";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -59,21 +58,19 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<Type["fromJsonExpression"]>[0]): string {
     return `new Date(${variables.value})`;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toISOString());`];
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractType["jsonZodSchema"]
-  > {
+  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
     return `${variables.zod}.iso.datetime()`;
   }
 

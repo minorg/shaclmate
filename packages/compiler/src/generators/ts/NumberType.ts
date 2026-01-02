@@ -2,7 +2,6 @@ import type { NamedNode } from "@rdfjs/types";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TermType } from "./TermType.js";
@@ -52,9 +51,7 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractType["jsonZodSchema"]
-  > {
+  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
     switch (this.primitiveIn.length) {
       case 0:
         return `${variables.zod}.number()`;

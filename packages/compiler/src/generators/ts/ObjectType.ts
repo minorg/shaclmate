@@ -34,7 +34,7 @@ export class ObjectType extends AbstractDeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;

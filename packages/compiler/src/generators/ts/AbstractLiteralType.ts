@@ -1,6 +1,5 @@
 import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -66,7 +65,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0] & {
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
       ignoreLiteralLanguage?: boolean;
     },
   ): readonly string[] {

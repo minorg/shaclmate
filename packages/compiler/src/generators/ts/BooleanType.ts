@@ -1,7 +1,6 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -43,9 +42,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractType["jsonZodSchema"]
-  > {
+  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
     if (this.primitiveIn.length === 1) {
       return `${variables.zod}.literal(${this.primitiveIn[0]})`;
     }

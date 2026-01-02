@@ -22,7 +22,7 @@ export abstract class AbstractLazyObjectType<
     readonly rawName: string;
     readonly snippetDeclaration: string;
   };
-  override readonly discriminantProperty: AbstractType["discriminantProperty"] =
+  override readonly discriminantProperty: Type["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -69,7 +69,7 @@ export abstract class AbstractLazyObjectType<
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return this.partialType.hashStatements({
       depth: depth + 1,
       variables: {
@@ -80,19 +80,19 @@ export abstract class AbstractLazyObjectType<
   }
 
   override jsonName(
-    parameters?: Parameters<AbstractType["jsonName"]>[0],
+    parameters?: Parameters<Type["jsonName"]>[0],
   ): Type.JsonName {
     return this.partialType.jsonName(parameters);
   }
 
   override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
+    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
   ): Maybe<string> {
     return this.partialType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
-    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
+    parameters: Parameters<Type["jsonZodSchema"]>[0],
   ): string {
     return this.partialType.jsonZodSchema(parameters);
   }
@@ -102,7 +102,7 @@ export abstract class AbstractLazyObjectType<
   }
 
   override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): readonly string[] {
     return this.partialType
       .snippetDeclarations(parameters)
@@ -111,13 +111,13 @@ export abstract class AbstractLazyObjectType<
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     return this.partialType.sparqlConstructTemplateTriples(parameters);
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     return this.partialType.sparqlWherePatterns(parameters);
   }
@@ -149,7 +149,7 @@ export abstract class AbstractLazyObjectType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<Type["toJsonExpression"]>[0]): string {
     return this.partialType.toJsonExpression({
       variables: {
         value: `${variables.value}.${this.runtimeClass.partialPropertyName}`,
@@ -159,7 +159,7 @@ export abstract class AbstractLazyObjectType<
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+  }: Parameters<Type["toRdfExpression"]>[0]): string {
     return this.partialType.toRdfExpression({
       variables: {
         ...variables,

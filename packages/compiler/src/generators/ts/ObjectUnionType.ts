@@ -10,7 +10,6 @@ import { Memoize } from "typescript-memoize";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
-import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -31,7 +30,7 @@ import { tsComment } from "./tsComment.js";
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
 export class ObjectUnionType extends AbstractDeclaredType {
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
@@ -195,14 +194,14 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<Type["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
     return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<AbstractType["fromRdfExpression"]>[0]): string {
+  }: Parameters<Type["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
     return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ignoreRdfType: false, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
@@ -217,7 +216,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     switch (this.memberTypes[0].declarationType) {
       case "class":
         return [
@@ -268,7 +267,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   override sparqlConstructTemplateTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTemplateTriples"]>[0],
+    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -286,7 +285,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -306,7 +305,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<Type["toJsonExpression"]>[0]): string {
     switch (this.memberTypes[0].declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -317,7 +316,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+  }: Parameters<Type["toRdfExpression"]>[0]): string {
     const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
     switch (this.memberTypes[0].declarationType) {
       case "class":

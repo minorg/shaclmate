@@ -6,7 +6,6 @@ import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
-import type { AbstractLiteralType } from "./AbstractLiteralType.js";
 import type { AbstractType } from "./AbstractType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
@@ -26,6 +25,7 @@ import { SetType } from "./SetType.js";
 import { StringType } from "./StringType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
+import type { Type } from "./Type.js";
 import { tsName } from "./tsName.js";
 import { UnionType } from "./UnionType.js";
 
@@ -54,9 +54,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectOptionType(
-    astType: ast.LazyObjectOptionType,
-  ): AbstractType {
+  private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
     return new LazyObjectOptionType({
       comment: astType.comment,
       label: astType.label,
@@ -69,9 +67,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectSetType(
-    astType: ast.LazyObjectSetType,
-  ): AbstractType {
+  private createLazyObjectSetType(astType: ast.LazyObjectSetType): Type {
     return new LazyObjectSetType({
       comment: astType.comment,
       label: astType.label,
@@ -84,7 +80,7 @@ export class TypeFactory {
     });
   }
 
-  private createLazyObjectType(astType: ast.LazyObjectType): AbstractType {
+  private createLazyObjectType(astType: ast.LazyObjectType): Type {
     return new LazyObjectType({
       comment: astType.comment,
       label: astType.label,
@@ -111,7 +107,7 @@ export class TypeFactory {
     });
   }
 
-  private createLiteralType(astType: ast.LiteralType): AbstractLiteralType {
+  private createLiteralType(astType: ast.LiteralType): Type {
     // Look at sh:datatype as well as sh:defaultValue/sh:hasValue/sh:in term datatypes
     // If there's one common datatype than we can refine the type
     // Otherwise default to rdfjs.Literal

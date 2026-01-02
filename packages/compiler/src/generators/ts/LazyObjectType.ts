@@ -1,6 +1,5 @@
 import { Maybe } from "purify-ts";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
-import type { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
@@ -11,7 +10,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
   AbstractLazyObjectType.ObjectTypeConstraint
 > {
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
 
   constructor({
     partialType,
@@ -71,13 +70,13 @@ export class LazyObjectType extends AbstractLazyObjectType<
   }
 
   override fromJsonExpression(
-    parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
+    parameters: Parameters<Type["fromJsonExpression"]>[0],
   ): string {
     return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
   }
 
   override fromRdfExpression(
-    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
     return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
@@ -85,7 +84,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
     return `${variables.value}.resolve().then(either => either.unsafeCoerce())`;
   }
 }
