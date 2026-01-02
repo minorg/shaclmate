@@ -1,12 +1,11 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { Type } from "./Type.js";
 
 export class SetType<
-  ItemTypeT extends AbstractType,
+  ItemTypeT extends Type,
 > extends AbstractCollectionType<ItemTypeT> {
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly kind = "SetType";

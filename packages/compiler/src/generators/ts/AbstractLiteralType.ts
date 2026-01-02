@@ -2,6 +2,7 @@ import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { Type } from "./Type.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,

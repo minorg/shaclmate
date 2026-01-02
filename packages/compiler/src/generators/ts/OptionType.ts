@@ -8,7 +8,7 @@ import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-export class OptionType<ItemTypeT extends AbstractType> extends AbstractType {
+export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();

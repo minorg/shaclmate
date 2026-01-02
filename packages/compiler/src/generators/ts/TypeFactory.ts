@@ -6,7 +6,6 @@ import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
-import type { AbstractType } from "./AbstractType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
@@ -478,7 +477,7 @@ export class TypeFactory {
     });
   }
 
-  createType(astType: ast.Type): AbstractType {
+  createType(astType: ast.Type): Type {
     switch (astType.kind) {
       case "IdentifierType":
         return this.createIdentifierType(astType);

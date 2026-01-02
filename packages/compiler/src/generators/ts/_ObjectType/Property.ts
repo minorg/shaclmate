@@ -8,13 +8,11 @@ import {
   Scope,
 } from "ts-morph";
 import type { PropertyVisibility } from "../../../enums/index.js";
-import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
+import type { Type } from "../Type.js";
 
-export abstract class Property<
-  TypeT extends Pick<AbstractType, "mutable" | "name">,
-> {
+export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
    * Optional property to include in the parameters object of a class constructor.
    */

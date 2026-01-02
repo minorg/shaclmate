@@ -5,12 +5,12 @@ import {
   VariableDeclarationKind,
   type VariableStatementStructure,
 } from "ts-morph";
-import type { AbstractType } from "../AbstractType.js";
 import { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { Type } from "../Type.js";
 
 export function propertiesVariableStatement(
   this: ObjectUnionType,
@@ -19,7 +19,7 @@ export function propertiesVariableStatement(
     string,
     {
       memberTypesWithProperty: boolean[];
-      path: ObjectType.ShaclProperty<AbstractType>["path"];
+      path: ObjectType.ShaclProperty<Type>["path"];
     }
   > = {};
 

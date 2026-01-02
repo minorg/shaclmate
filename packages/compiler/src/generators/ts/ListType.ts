@@ -5,14 +5,13 @@ import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { Type } from "./Type.js";
 
 export class ListType<
-  ItemTypeT extends AbstractType,
+  ItemTypeT extends Type,
 > extends AbstractCollectionType<ItemTypeT> {
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
   private readonly identifierNodeKind: IdentifierNodeKind;

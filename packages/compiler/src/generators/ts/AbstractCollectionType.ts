@@ -24,7 +24,7 @@ function isTypeofString(
  * Abstract base class for ListType and SetType.
  */
 export abstract class AbstractCollectionType<
-  ItemTypeT extends AbstractType,
+  ItemTypeT extends Type,
 > extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
     Maybe.empty();

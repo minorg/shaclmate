@@ -11,7 +11,7 @@ class MemberType {
   private readonly delegate: Type;
   private readonly delegateIndex: number;
   private readonly discriminant: Discriminant;
-  private readonly universe: readonly AbstractType[];
+  private readonly universe: readonly Type[];
 
   constructor({
     delegate,
@@ -22,7 +22,7 @@ class MemberType {
     delegate: Type;
     delegateIndex: number;
     discriminant: Discriminant;
-    universe: readonly AbstractType[];
+    universe: readonly Type[];
   }) {
     this.delegate = delegate;
     this.delegateIndex = delegateIndex;
@@ -163,7 +163,7 @@ export class UnionType extends AbstractType {
     ...superParameters
   }: {
     memberDiscriminantValues: readonly string[];
-    memberTypes: readonly AbstractType[];
+    memberTypes: readonly Type[];
     name?: string;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
@@ -625,7 +625,7 @@ type TypeofDiscriminant = {
   kind: "typeof";
 };
 
-function inlineDiscriminantProperty(memberTypes: readonly AbstractType[]):
+function inlineDiscriminantProperty(memberTypes: readonly Type[]):
   | (Omit<Type.DiscriminantProperty, "descendantValues" | "ownValues"> & {
       descendantValues: string[];
       ownValues: string[];
