@@ -1,14 +1,13 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { Type } from "./Type.js";
 
 export class LiteralType extends AbstractLiteralType {
   @Memoize()
   override jsonName(
-    parameters?: Parameters<AbstractType["jsonName"]>[0],
+    parameters?: Parameters<Type["jsonName"]>[0],
   ): Type.JsonName {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "Literal"`
@@ -48,7 +47,7 @@ export class LiteralType extends AbstractLiteralType {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): readonly string[] {
     let snippetDeclarations = super.snippetDeclarations(parameters);
     const { features } = parameters;

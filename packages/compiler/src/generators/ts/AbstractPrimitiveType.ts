@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -38,25 +37,25 @@ export abstract class AbstractPrimitiveType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<Type["fromJsonExpression"]>[0]): string {
     return variables.value;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
     return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
   override snippetDeclarations({
     features,
-  }: Parameters<AbstractType["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.strictEquals);
@@ -75,7 +74,7 @@ export abstract class AbstractPrimitiveType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<Type["toJsonExpression"]>[0]): string {
     return variables.value;
   }
 }

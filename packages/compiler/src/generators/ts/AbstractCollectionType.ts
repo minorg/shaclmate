@@ -24,11 +24,11 @@ function isTypeofString(
  * Abstract base class for ListType and SetType.
  */
 export abstract class AbstractCollectionType<
-  ItemTypeT extends AbstractType,
+  ItemTypeT extends Type,
 > extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
     Maybe.empty();
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   protected readonly minCount: number;
   protected readonly _mutable: boolean;
@@ -171,7 +171,7 @@ export abstract class AbstractCollectionType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<Type["fromJsonExpression"]>[0]): string {
     let expression = variables.value;
     if (!this._mutable && this.minCount > 0) {
       expression = `purify.NonEmptyList.fromArray(${expression}).unsafeCoerce()`;
@@ -186,14 +186,14 @@ export abstract class AbstractCollectionType<
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
     return variables.value;
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [
       `for (const item${depth} of ${variables.value}) { ${this.itemType
         .hashStatements({
@@ -208,14 +208,14 @@ export abstract class AbstractCollectionType<
   }
 
   override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): ReturnType<AbstractType["jsonUiSchemaElement"]> {
+    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
+  ): ReturnType<Type["jsonUiSchemaElement"]> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
-    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
-  ): ReturnType<AbstractType["jsonZodSchema"]> {
+    parameters: Parameters<Type["jsonZodSchema"]>[0],
+  ): ReturnType<Type["jsonZodSchema"]> {
     let schema = `${this.itemType.jsonZodSchema(parameters)}.array()`;
     if (this.minCount > 0) {
       schema = `${schema}.nonempty().min(${this.minCount})`;
@@ -226,7 +226,7 @@ export abstract class AbstractCollectionType<
   }
 
   override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): readonly string[] {
     const snippetDeclarations: string[] = this.itemType
       .snippetDeclarations(parameters)
@@ -267,7 +267,7 @@ export abstract class AbstractCollectionType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<Type["toJsonExpression"]>[0]): string {
     return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
   }
 }

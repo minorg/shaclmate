@@ -4,7 +4,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { Type } from "./Type.js";
 
 /**
@@ -51,7 +50,7 @@ export class TermType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<Type["fromJsonExpression"]>[0]): string {
     return [...this.nodeKinds].reduce((expression, nodeKind) => {
       let valueToNodeKind: string;
       switch (nodeKind) {
@@ -74,16 +73,14 @@ export class TermType<
   }
 
   override graphqlResolveExpression(
-    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
+    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractType["jsonZodSchema"]
-  > {
+  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
     return `${variables.zod}.discriminatedUnion("termType", [${[
       ...this.nodeKinds,
     ]
@@ -103,7 +100,7 @@ export class TermType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<Type["toJsonExpression"]>[0]): string {
     return [...this.nodeKinds].reduce((expression, nodeKind) => {
       let valueToNodeKind: string;
       switch (nodeKind) {

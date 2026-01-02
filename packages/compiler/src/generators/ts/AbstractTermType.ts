@@ -29,12 +29,12 @@ export abstract class AbstractTermType<
 > extends AbstractType {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
-  override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
+  override readonly typeofs: Type["typeofs"] = NonEmptyList([
     "object" as const,
   ]);
 
@@ -130,7 +130,7 @@ export abstract class AbstractTermType<
   }
 
   override fromRdfExpression(
-    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
     // invariant(
     //   this.nodeKinds.has("Literal") &&
@@ -164,7 +164,7 @@ export abstract class AbstractTermType<
    */
   protected fromRdfExpressionChain({
     variables,
-  }: Parameters<AbstractType["fromRdfExpression"]>[0]): {
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
     defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
@@ -206,14 +206,14 @@ export abstract class AbstractTermType<
   }
 
   override graphqlResolveExpression(
-    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
+    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
   }
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
     return [
       `${variables.hasher}.update(${variables.value}.termType);`,
       `${variables.hasher}.update(${variables.value}.value);`,
@@ -226,7 +226,7 @@ export abstract class AbstractTermType<
 
   override snippetDeclarations({
     features,
-  }: Parameters<AbstractType["snippetDeclarations"]>[0]): readonly string[] {
+  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
     const snippetDeclarations: string[] = [];
     if (features.has("equals")) {
       snippetDeclarations.push(SnippetDeclarations.booleanEquals);
@@ -235,7 +235,7 @@ export abstract class AbstractTermType<
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
     switch (parameters.context) {
       case "object":
@@ -254,7 +254,7 @@ export abstract class AbstractTermType<
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+  }: Parameters<Type["toRdfExpression"]>[0]): string {
     return this.defaultValue
       .map(
         (defaultValue) =>

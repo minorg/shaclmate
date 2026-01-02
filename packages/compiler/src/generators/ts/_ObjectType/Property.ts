@@ -8,13 +8,11 @@ import {
   Scope,
 } from "ts-morph";
 import type { PropertyVisibility } from "../../../enums/index.js";
-import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
+import type { Type } from "../Type.js";
 
-export abstract class Property<
-  TypeT extends Pick<AbstractType, "mutable" | "name">,
-> {
+export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
@@ -171,7 +169,7 @@ export abstract class Property<
    * Statements to hash this property using a hasher instance.
    */
   abstract hashStatements(
-    parameters: Parameters<AbstractType["hashStatements"]>[0],
+    parameters: Parameters<Type["hashStatements"]>[0],
   ): readonly string[];
 
   /**
@@ -198,7 +196,7 @@ export abstract class Property<
    * The generator deduplicates snippet declarations across all types before adding them to the source.
    */
   abstract snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): readonly string[];
 
   /**
@@ -231,7 +229,7 @@ export abstract class Property<
    */
   abstract toRdfStatements(parameters: {
     variables: Omit<
-      Parameters<AbstractType["toRdfExpression"]>[0]["variables"],
+      Parameters<Type["toRdfExpression"]>[0]["variables"],
       "predicate"
     >;
   }): readonly string[];

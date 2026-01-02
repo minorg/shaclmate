@@ -16,7 +16,6 @@ import type {
 } from "../../enums/index.js";
 import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
-import type { AbstractType } from "./AbstractType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -34,7 +33,7 @@ export class ObjectType extends AbstractDeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
@@ -298,7 +297,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<AbstractType>[] {
+  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<Type>[] {
     return this.properties.filter(
       (property) => property instanceof _ObjectType.ShaclProperty,
     );
@@ -567,7 +566,7 @@ export namespace ObjectType {
   export const Property = _ObjectType.Property;
   export type Property = _ObjectType.Property<any>;
   export const ShaclProperty = _ObjectType.ShaclProperty;
-  export type ShaclProperty<TypeT extends AbstractType> =
+  export type ShaclProperty<TypeT extends Type> =
     _ObjectType.ShaclProperty<TypeT>;
   export const TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
   export type TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;

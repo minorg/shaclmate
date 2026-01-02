@@ -9,7 +9,6 @@ import {
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import type { AbstractType } from "./AbstractType.js";
 import { Type } from "./Type.js";
 
 export class IdentifierType extends AbstractTermType<
@@ -102,7 +101,7 @@ export class IdentifierType extends AbstractTermType<
 
   @Memoize()
   override jsonName(
-    parameters?: Parameters<AbstractType["jsonName"]>[0],
+    parameters?: Parameters<Type["jsonName"]>[0],
   ): Type.JsonName {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "BlankNode" | "NamedNode"`
@@ -199,7 +198,7 @@ export class IdentifierType extends AbstractTermType<
 
   override graphqlResolveExpression({
     variables: { value },
-  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
     return `rdfjsResource.Resource.Identifier.toString(${value})`;
   }
 
