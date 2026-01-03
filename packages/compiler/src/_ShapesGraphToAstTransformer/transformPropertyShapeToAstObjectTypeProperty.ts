@@ -54,69 +54,73 @@ function transformPropertyShapeToAstType(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
 ): Either<Error, ast.Type> {
-  const itemTypeEither = this.transformShapeToAstType(
-    propertyShape,
-    new ShapeStack(),
-  );
-  if (itemTypeEither.isLeft()) {
-    return itemTypeEither;
-  }
-  const itemType = itemTypeEither.unsafeCoerce();
-
-  let maxCount = propertyShape.constraints.maxCount.orDefault(
-    Number.MAX_SAFE_INTEGER,
-  );
-  let minCount = propertyShape.constraints.minCount.orDefault(0);
-  if (minCount < 0) {
-    minCount = 0;
-  }
-  if (propertyShape.constraints.hasValues.length > minCount) {
-    minCount = propertyShape.constraints.hasValues.length;
-  }
-  if (maxCount < minCount) {
-    maxCount = minCount;
+  if (
+    propertyShape.path.kind === "PredicatePath" &&
+    propertyShape.path.iri.value.endsWith("optionalIriOrLiteralProperty")
+  ) {
+    console.log("here");
   }
 
-  if (propertyShape.defaultValue.isJust()) {
-    if (minCount > 0) {
-      return Left(
-        new Error(`${propertyShape}: has sh:minCount > 0 and sh:defaultValue`),
+  return this.transformShapeToAstType(propertyShape, new ShapeStack()).chain(
+    (itemType) => {
+      let maxCount = propertyShape.constraints.maxCount.orDefault(
+        Number.MAX_SAFE_INTEGER,
       );
-    }
+      let minCount = propertyShape.constraints.minCount.orDefault(0);
+      if (minCount < 0) {
+        minCount = 0;
+      }
+      if (propertyShape.constraints.hasValues.length > minCount) {
+        minCount = propertyShape.constraints.hasValues.length;
+      }
+      if (maxCount < minCount) {
+        maxCount = minCount;
+      }
 
-    if (maxCount > 1) {
-      return Left(
-        new Error(
-          `${propertyShape}: sets with sh:defaultValue are currently unsupported`,
-        ),
+      if (propertyShape.defaultValue.isJust()) {
+        if (minCount > 0) {
+          return Left(
+            new Error(
+              `${propertyShape}: has sh:minCount > 0 and sh:defaultValue`,
+            ),
+          );
+        }
+
+        if (maxCount > 1) {
+          return Left(
+            new Error(
+              `${propertyShape}: sets with sh:defaultValue are currently unsupported`,
+            ),
+          );
+        }
+
+        // If a property shape has sh:defaultValue, sh:minCount = 0, and sh:maxCount = 1,
+        // treat its type as required. The generated type will fill in the sh:defaultValue on
+        // construction/deserialization.
+
+        return Either.of(itemType);
+      }
+
+      if (minCount === 0 && maxCount === 1) {
+        return Either.of(
+          new ast.OptionType({
+            itemType,
+          }),
+        );
+      }
+
+      if (minCount === 1 && maxCount === 1) {
+        return Either.of(itemType);
+      }
+
+      return Either.of(
+        new ast.SetType({
+          itemType,
+          minCount,
+          mutable: propertyShape.mutable.orDefault(false),
+        }),
       );
-    }
-
-    // If a property shape has sh:defaultValue, sh:minCount = 0, and sh:maxCount = 1,
-    // treat its type as required. The generated type will fill in the sh:defaultValue on
-    // construction/deserialization.
-
-    return Either.of(itemType);
-  }
-
-  if (minCount === 0 && maxCount === 1) {
-    return Either.of(
-      new ast.OptionType({
-        itemType,
-      }),
-    );
-  }
-
-  if (minCount === 1 && maxCount === 1) {
-    return Either.of(itemType);
-  }
-
-  return Either.of(
-    new ast.SetType({
-      itemType,
-      minCount,
-      mutable: propertyShape.mutable.orDefault(false),
-    }),
+    },
   );
 }
 

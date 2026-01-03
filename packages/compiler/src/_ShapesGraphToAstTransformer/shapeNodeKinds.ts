@@ -5,35 +5,39 @@ import * as input from "../input/index.js";
 function nodeShapeNodeKinds(
   nodeShape: input.NodeShape,
 ): Either<Error, ReadonlySet<NodeKind>> {
-  return nodeShape.parentNodeShapes
-    .map((parentNodeShapes) =>
-      parentNodeShapes.map((parentNodeShape) => [...parentNodeShape.nodeKinds]),
-    )
-    .map((_) => new Set(_.flat()))
-    .chain((parentNodeKinds) => {
-      if (parentNodeKinds.size > 0) {
-        if (nodeShape.nodeKinds.size === 0) {
-          return Either.of(parentNodeKinds);
-        }
+  const thisNodeKinds = nodeShape.constraints.nodeKinds;
 
-        // Check that thisNodeKinds doesn't conflict with parent node kinds
-        for (const thisNodeKind of nodeShape.nodeKinds) {
-          if (!parentNodeKinds.has(thisNodeKind)) {
-            throw new Error(
-              `${nodeShape} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
-            );
-          }
-        }
+  return nodeShape.parentNodeShapes.chain((parentNodeShapes) => {
+    const parentNodeKinds = new Set<NodeKind>();
+    for (const parentNodeShape of parentNodeShapes) {
+      for (const parentNodeKind of parentNodeShape.constraints.nodeKinds) {
+        parentNodeKinds.add(parentNodeKind);
+      }
+    }
+
+    if (parentNodeKinds.size > 0) {
+      if (thisNodeKinds.size === 0) {
+        return Either.of(parentNodeKinds);
       }
 
-      return Either.of(nodeShape.nodeKinds);
-    });
+      // Check that thisNodeKinds doesn't conflict with parent node kinds
+      for (const thisNodeKind of thisNodeKinds) {
+        if (!parentNodeKinds.has(thisNodeKind)) {
+          throw new Error(
+            `${nodeShape} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
+          );
+        }
+      }
+    }
+
+    return Either.of(thisNodeKinds);
+  });
 }
 
 function propertyShapeNodeKinds(
   propertyShape: input.PropertyShape,
 ): Either<Error, ReadonlySet<NodeKind>> {
-  return Either.of(propertyShape.constraints.nodeKinds.orDefault(new Set([])));
+  return Either.of(propertyShape.constraints.nodeKinds);
 }
 
 export function shapeNodeKinds(

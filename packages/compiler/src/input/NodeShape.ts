@@ -1,8 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import {
-  type IdentifierNodeKind,
-  NodeShape as ShaclCoreNodeShape,
-} from "@shaclmate/shacl-ast";
+import { NodeShape as ShaclCoreNodeShape } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, List, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
@@ -155,15 +152,6 @@ export class NodeShape extends ShaclCoreNodeShape<
 
   get mutable(): Maybe<boolean> {
     return this.generatedShaclmateNodeShape.mutable;
-  }
-
-  @Memoize()
-  get nodeKinds(): ReadonlySet<IdentifierNodeKind> {
-    return new Set<IdentifierNodeKind>(
-      [...this.constraints.nodeKinds.orDefault(new Set())].filter(
-        (nodeKind) => nodeKind !== "Literal",
-      ) as IdentifierNodeKind[],
-    );
   }
 
   @Memoize()

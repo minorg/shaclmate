@@ -155,34 +155,36 @@ export namespace Shape {
     }
 
     @Memoize()
-    get nodeKinds(): Maybe<ReadonlySet<NodeKind>> {
-      return this.generatedShaclCoreShape.nodeKind.chain((iri) => {
-        const nodeKinds = new Set<NodeKind>();
-        switch (iri.value) {
-          case "http://www.w3.org/ns/shacl#BlankNode":
-            nodeKinds.add("BlankNode");
-            break;
-          case "http://www.w3.org/ns/shacl#BlankNodeOrIRI":
-            nodeKinds.add("BlankNode");
-            nodeKinds.add("NamedNode");
-            break;
-          case "http://www.w3.org/ns/shacl#BlankNodeOrLiteral":
-            nodeKinds.add("BlankNode");
-            nodeKinds.add("Literal");
-            break;
-          case "http://www.w3.org/ns/shacl#IRI":
-            nodeKinds.add("NamedNode");
-            break;
-          case "http://www.w3.org/ns/shacl#IRIOrLiteral":
-            nodeKinds.add("Literal");
-            nodeKinds.add("NamedNode");
-            break;
-          case "http://www.w3.org/ns/shacl#Literal":
-            nodeKinds.add("Literal");
-            break;
-        }
-        return nodeKinds.size > 0 ? Maybe.of(nodeKinds) : Maybe.empty();
-      });
+    get nodeKinds(): ReadonlySet<NodeKind> {
+      return this.generatedShaclCoreShape.nodeKind
+        .map((iri) => {
+          const nodeKinds = new Set<NodeKind>();
+          switch (iri.value) {
+            case "http://www.w3.org/ns/shacl#BlankNode":
+              nodeKinds.add("BlankNode");
+              break;
+            case "http://www.w3.org/ns/shacl#BlankNodeOrIRI":
+              nodeKinds.add("BlankNode");
+              nodeKinds.add("NamedNode");
+              break;
+            case "http://www.w3.org/ns/shacl#BlankNodeOrLiteral":
+              nodeKinds.add("BlankNode");
+              nodeKinds.add("Literal");
+              break;
+            case "http://www.w3.org/ns/shacl#IRI":
+              nodeKinds.add("NamedNode");
+              break;
+            case "http://www.w3.org/ns/shacl#IRIOrLiteral":
+              nodeKinds.add("Literal");
+              nodeKinds.add("NamedNode");
+              break;
+            case "http://www.w3.org/ns/shacl#Literal":
+              nodeKinds.add("Literal");
+              break;
+          }
+          return nodeKinds;
+        })
+        .orDefault(new Set([]));
     }
 
     @Memoize()
