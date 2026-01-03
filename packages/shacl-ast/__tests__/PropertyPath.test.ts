@@ -1,4 +1,3 @@
-import type { PropertyPath } from "@shaclmate/shacl-ast";
 import { DataFactory } from "n3";
 import { invariant } from "ts-invariant";
 import { describe, it } from "vitest";
@@ -13,8 +12,8 @@ describe("PropertyPath", () => {
       .unsafeCoerce();
   }
 
-  function propertyPath(kind: PropertyPath["kind"]) {
-    return propertyShape(`${kind}PropertyShape`).path;
+  function propertyPath(name: string) {
+    return propertyShape(`${name}PropertyShape`).path;
   }
 
   it("alternative path", ({ expect }) => {
@@ -25,6 +24,20 @@ describe("PropertyPath", () => {
       const member = propertyPath_.members[memberI];
       invariant(member.kind === "PredicatePath");
       expect(member.iri.value).toStrictEqual(
+        `http://example.com/predicate${memberI + 1}`,
+      );
+    }
+  });
+
+  it("alternative inverse path", ({ expect }) => {
+    const propertyPath_ = propertyPath("AlternativeInversePath");
+    invariant(propertyPath_.kind === "AlternativePath");
+    expect(propertyPath_.members).toHaveLength(2);
+    for (let memberI = 0; memberI < 2; memberI++) {
+      const member = propertyPath_.members[memberI];
+      invariant(member.kind === "InversePath");
+      invariant(member.path.kind === "PredicatePath");
+      expect(member.path.iri.value).toStrictEqual(
         `http://example.com/predicate${memberI + 1}`,
       );
     }

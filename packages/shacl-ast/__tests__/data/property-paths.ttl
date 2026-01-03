@@ -5,6 +5,10 @@
     a sh:PropertyShape ;
     sh:path [ sh:alternativePath ( :predicate1 :predicate2 ) ] .
 
+:AlternativeInversePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:alternativePath ( [ sh:inversePath :predicate1 ] [ sh:inversePath :predicate2 ] ) ] .
+
 :InversePathPropertyShape 
     a sh:PropertyShape ;
     sh:path [ sh:inversePath :predicate ] .
