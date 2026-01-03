@@ -1,7 +1,7 @@
 import type {} from "@rdfjs/types";
-import type { NodeKind } from "@shaclmate/shacl-ast";
 import type { Either } from "purify-ts";
 import * as ast from "../ast/index.js";
+import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
@@ -18,19 +18,17 @@ export function transformShapeToAstTermType(
 ): Either<Error, ast.TermType> {
   shapeStack.push(shape);
   try {
-    const nodeKinds = shapeNodeKinds(shape);
-
-    return transformShapeToAstAbstractTypeProperties(shape).map(
-      (astAbstractTypeProperties) =>
+    return Eithers.chain2(
+      transformShapeToAstAbstractTypeProperties(shape),
+      shapeNodeKinds(shape),
+    ).map(
+      ([astAbstractTypeProperties, nodeKinds]) =>
         new ast.TermType({
           ...astAbstractTypeProperties,
           defaultValue: shapeStack.defaultValue,
           hasValues: shapeStack.constraints.hasValues,
           in_: shapeStack.constraints.in_,
-          nodeKinds:
-            nodeKinds.size > 0
-              ? nodeKinds
-              : new Set<NodeKind>(["BlankNode", "NamedNode", "Literal"]),
+          nodeKinds,
         }),
     );
   } finally {

@@ -1,3 +1,4 @@
+import { shapeNodeKinds } from "_ShapesGraphToAstTransformer/shapeNodeKinds.js";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
@@ -10,6 +11,7 @@ import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import { logger } from "../logger.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
+import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
@@ -47,8 +49,8 @@ function transformNodeShapeToAstListType(
   invariant(nodeShape.isList);
 
   return Eithers.chain3(
-    nodeShape.identifierMintingStrategy,
-    nodeShape.nodeKinds,
+    nodeShapeIdentifierMintingStrategy(nodeShape),
+    shapeNodeKinds(nodeShape),
     nodeShape.constraints.xone,
   ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
     // Put a placeholder in the cache to deal with cyclic references
@@ -291,8 +293,8 @@ export function transformNodeShapeToAstType(
     nodeShape.descendantNodeShapes,
     nodeShape.parentNodeShapes,
     nodeShape.constraints.and,
-    nodeShape.identifierMintingStrategy,
-    nodeShape.nodeKinds,
+    nodeShapeIdentifierMintingStrategy(nodeShape),
+    shapeNodeKinds(nodeShape),
     nodeShape.constraints.properties,
     nodeShape.tsFeatures,
     nodeShape.tsObjectDeclarationType,

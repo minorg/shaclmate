@@ -4,7 +4,7 @@ import {
   NodeShape as ShaclCoreNodeShape,
 } from "@shaclmate/shacl-ast";
 
-import { Either, Left, List, Maybe } from "purify-ts";
+import { Either, List, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type {
   IdentifierMintingStrategy,
@@ -33,7 +33,6 @@ export class NodeShape extends ShaclCoreNodeShape<
   private readonly descendantClassIris: readonly NamedNode[];
   private readonly generatedShaclmateNodeShape: generated.ShaclmateNodeShape;
   private readonly parentClassIris: readonly NamedNode[];
-  readonly #identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
 
   readonly isClass: boolean;
   readonly isList: boolean;
@@ -62,20 +61,6 @@ export class NodeShape extends ShaclCoreNodeShape<
     this.childClassIris = childClassIris;
     this.descendantClassIris = descendantClassIris;
     this.generatedShaclmateNodeShape = generatedShaclmateNodeShape;
-    this.#identifierMintingStrategy =
-      generatedShaclmateNodeShape.identifierMintingStrategy.map((iri) => {
-        switch (iri.value) {
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
-            return "blankNode";
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
-            return "sha256";
-          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
-            return "uuidv4";
-          default:
-            iri.value satisfies never;
-            throw new RangeError(iri.value);
-        }
-      });
     this.isClass = isClass;
     this.isList = isList;
     this.parentClassIris = parentClassIris;
@@ -145,30 +130,22 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   @Memoize()
-  get identifierMintingStrategy(): Either<
-    Error,
-    Maybe<IdentifierMintingStrategy>
-  > {
-    if (this.#identifierMintingStrategy.isJust()) {
-      return Either.of(this.#identifierMintingStrategy);
-    }
-
-    return this.ancestorNodeShapes.chain((ancestorNodeShapes) => {
-      for (const ancestorNodeShape of ancestorNodeShapes) {
-        if (ancestorNodeShape.#identifierMintingStrategy.isJust()) {
-          return Either.of(
-            ancestorNodeShape.#identifierMintingStrategy as Maybe<IdentifierMintingStrategy>,
-          );
+  get identifierMintingStrategy(): Maybe<IdentifierMintingStrategy> {
+    return this.generatedShaclmateNodeShape.identifierMintingStrategy.map(
+      (iri) => {
+        switch (iri.value) {
+          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_BlankNode":
+            return "blankNode";
+          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_SHA256":
+            return "sha256";
+          case "http://purl.org/shaclmate/ontology#_IdentifierMintingStrategy_UUIDv4":
+            return "uuidv4";
+          default:
+            iri.value satisfies never;
+            throw new RangeError(iri.value);
         }
-      }
-
-      return this.nodeKinds.map((nodeKinds) => {
-        if (nodeKinds.has("BlankNode")) {
-          return Maybe.of("blankNode");
-        }
-        return Maybe.empty();
-      });
-    });
+      },
+    );
   }
 
   get label(): Maybe<string> {
@@ -180,51 +157,12 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   @Memoize()
-  get nodeKinds(): Either<Error, ReadonlySet<IdentifierNodeKind>> {
-    const thisNodeKinds = new Set<IdentifierNodeKind>(
+  get nodeKinds(): ReadonlySet<IdentifierNodeKind> {
+    return new Set<IdentifierNodeKind>(
       [...this.constraints.nodeKinds.orDefault(new Set())].filter(
         (nodeKind) => nodeKind !== "Literal",
       ) as IdentifierNodeKind[],
     );
-
-    if (this.identifierIn.length > 0) {
-      if (thisNodeKinds.has("BlankNode")) {
-        return Left(
-          new Error(`${this} specifies sh:in but also allows blank nodes`),
-        );
-      }
-      thisNodeKinds.add("NamedNode");
-    }
-
-    const parentNodeKinds = this.parentNodeShapes.chain((parentNodeShapes) =>
-      Either.sequence(
-        parentNodeShapes.map((parentNodeShape) =>
-          parentNodeShape.nodeKinds.map((_) => [..._]),
-        ),
-      ).map((_) => new Set(_.flat())),
-    );
-
-    return parentNodeKinds.chain((parentNodeKinds) => {
-      if (thisNodeKinds.size === 0) {
-        if (parentNodeKinds.size > 0) {
-          return Either.of(parentNodeKinds);
-        }
-
-        // The default
-        return Either.of(new Set(["BlankNode", "NamedNode"]));
-      }
-
-      // Check that thisNodeKinds doesn't conflict with parent node kinds
-      for (const thisNodeKind of thisNodeKinds) {
-        if (!parentNodeKinds.has(thisNodeKind)) {
-          throw new Error(
-            `${this} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
-          );
-        }
-      }
-
-      return Either.of(thisNodeKinds);
-    });
   }
 
   @Memoize()
