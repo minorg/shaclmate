@@ -67,3 +67,15 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
     });
   }
 });
+
+describe("ShapesGraphToAstTransformer: error cases", () => {
+  it("incompatible node shape identifiers", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.incompatibleNodeShapeIdentifiers,
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes("undefined shape");
+  });
+});

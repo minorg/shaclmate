@@ -58,6 +58,17 @@ class TestData {
   }
 
   @Memoize()
+  get incompatibleNodeShapeIdentifiers() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "data",
+        "incompatible-node-shape-identifiers.ttl",
+      ),
+    );
+  }
+
+  @Memoize()
   get kitchenSink() {
     return parseShapesGraph(
       path.join(
