@@ -1,6 +1,7 @@
 import type * as rdfjs from "@rdfjs/types";
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { Maybe } from "purify-ts";
+import { Either, Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 import type { NodeKind } from "./NodeKind.js";
 import type { OntologyLike } from "./OntologyLike.js";
@@ -43,12 +44,15 @@ export abstract class Shape<
     return this.generatedShaclCoreShape.$identifier;
   }
 
-  get isDefinedBy(): Maybe<OntologyT> {
+  @Memoize()
+  get isDefinedBy(): Either<Error, Maybe<OntologyT>> {
     if (this.generatedShaclCoreShape.isDefinedBy.isJust()) {
       // If there's an rdfs:isDefinedBy statement on the shape then don't fall back to anything else
-      return this.shapesGraph.ontologyByIdentifier(
-        this.generatedShaclCoreShape.isDefinedBy.unsafeCoerce(),
-      );
+      return this.shapesGraph
+        .ontologyByIdentifier(
+          this.generatedShaclCoreShape.isDefinedBy.unsafeCoerce(),
+        )
+        .map(Maybe.of);
     }
 
     // No rdfs:isDefinedBy statement on the shape
@@ -56,7 +60,7 @@ export abstract class Shape<
     const ontologies = this.shapesGraph.ontologies;
     if (ontologies.length === 1) {
       // If there's a single ontology in the shapes graph, consider the shape a part of the ontology
-      return Maybe.of(ontologies[0]);
+      return Either.of(Maybe.of(ontologies[0]));
     }
 
     if (this.identifier.termType === "NamedNode") {
@@ -67,11 +71,11 @@ export abstract class Shape<
       );
       if (prefixOntologies.length === 1) {
         // If there's a single ontology whose IRI is a prefix of this shape's IRI, consider the shape a part of the ontology
-        return Maybe.of(prefixOntologies[0]);
+        return Either.of(Maybe.of(prefixOntologies[0]));
       }
     }
 
-    return Maybe.empty();
+    return Either.of(Maybe.empty());
   }
 
   get labels(): readonly string[] {
@@ -101,7 +105,8 @@ export namespace Shape {
       >,
     ) {}
 
-    get and(): readonly ShapeT[] {
+    @Memoize()
+    get and(): Either<Error, readonly ShapeT[]> {
       return this.shapeListTakingConstraint(this.generatedShaclCoreShape.and);
     }
 
@@ -149,6 +154,7 @@ export namespace Shape {
       return this.generatedShaclCoreShape.minInclusive;
     }
 
+    @Memoize()
     get nodeKinds(): Maybe<ReadonlySet<NodeKind>> {
       return this.generatedShaclCoreShape.nodeKind.chain((iri) => {
         const nodeKinds = new Set<NodeKind>();
@@ -179,32 +185,42 @@ export namespace Shape {
       });
     }
 
-    get nodes(): readonly NodeShapeT[] {
-      return this.generatedShaclCoreShape.nodes.flatMap((identifier) =>
-        this.shapesGraph.nodeShapeByIdentifier(identifier).toList(),
+    @Memoize()
+    get nodes(): Either<Error, readonly NodeShapeT[]> {
+      return Either.sequence(
+        this.generatedShaclCoreShape.nodes.map((identifier) =>
+          this.shapesGraph.nodeShapeByIdentifier(identifier),
+        ),
       );
     }
 
-    get not(): readonly ShapeT[] {
-      return this.generatedShaclCoreShape.not.flatMap((identifier) =>
-        this.shapesGraph.shapeByIdentifier(identifier).toList(),
+    @Memoize()
+    get not(): Either<Error, readonly ShapeT[]> {
+      return Either.sequence(
+        this.generatedShaclCoreShape.not.map((identifier) =>
+          this.shapesGraph.shapeByIdentifier(identifier),
+        ),
       );
     }
 
-    get or(): readonly ShapeT[] {
+    @Memoize()
+    get or(): Either<Error, readonly ShapeT[]> {
       return this.shapeListTakingConstraint(this.generatedShaclCoreShape.or);
     }
 
-    get xone(): readonly ShapeT[] {
+    @Memoize()
+    get xone(): Either<Error, readonly ShapeT[]> {
       return this.shapeListTakingConstraint(this.generatedShaclCoreShape.xone);
     }
 
     private shapeListTakingConstraint(
       identifiers: readonly (readonly (rdfjs.BlankNode | rdfjs.NamedNode)[])[],
-    ): readonly ShapeT[] {
-      return identifiers.flatMap((identifiers) =>
-        identifiers.flatMap((identifier) =>
-          this.shapesGraph.shapeByIdentifier(identifier).toList(),
+    ): Either<Error, readonly ShapeT[]> {
+      return Either.sequence(
+        identifiers.flatMap((identifiers) =>
+          identifiers.map((identifier) =>
+            this.shapesGraph.shapeByIdentifier(identifier),
+          ),
         ),
       );
     }

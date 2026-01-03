@@ -1,4 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+import { Resource } from "rdfjs-resource";
+import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 
 export class PropertyGroup {
@@ -14,5 +16,10 @@ export class PropertyGroup {
 
   get labels(): readonly string[] {
     return this.delegate.labels;
+  }
+
+  @Memoize()
+  toString(): string {
+    return `PropertyGroup(identifier=${Resource.Identifier.toString(this.identifier)})`;
   }
 }

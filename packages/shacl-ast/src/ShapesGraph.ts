@@ -8,7 +8,7 @@ import type {
   Term,
 } from "@rdfjs/types";
 import { owl, sh } from "@tpluscode/rdf-ns-builders";
-import { Either, Maybe } from "purify-ts";
+import { Either, Left } from "purify-ts";
 import { Resource, ResourceSet } from "rdfjs-resource";
 import { Memoize } from "typescript-memoize";
 import * as generated from "./generated.js";
@@ -61,9 +61,16 @@ export class ShapesGraph<
   }
 
   nodeShapeByIdentifier(
-    nodeShapeNode: BlankNode | NamedNode,
-  ): Maybe<NodeShapeT> {
-    return Maybe.fromNullable(this.nodeShapesByIdentifier.get(nodeShapeNode));
+    identifier: BlankNode | NamedNode,
+  ): Either<Error, NodeShapeT> {
+    const nodeShape = this.nodeShapesByIdentifier.get(identifier);
+    return nodeShape
+      ? Either.of(nodeShape)
+      : Left(
+          new Error(
+            `no such node shape ${Resource.Identifier.toString(identifier)}`,
+          ),
+        );
   }
 
   @Memoize()
@@ -71,14 +78,30 @@ export class ShapesGraph<
     return [...this.ontologiesByIdentifier.values()];
   }
 
-  ontologyByIdentifier(identifier: BlankNode | NamedNode): Maybe<OntologyT> {
-    return Maybe.fromNullable(this.ontologiesByIdentifier.get(identifier));
+  ontologyByIdentifier(
+    identifier: BlankNode | NamedNode,
+  ): Either<Error, OntologyT> {
+    const ontology = this.ontologiesByIdentifier.get(identifier);
+    return ontology
+      ? Either.of(ontology)
+      : Left(
+          new Error(
+            `no such ontology ${Resource.Identifier.toString(identifier)}`,
+          ),
+        );
   }
 
   propertyGroupByIdentifier(
     identifier: BlankNode | NamedNode,
-  ): Maybe<PropertyGroupT> {
-    return Maybe.fromNullable(this.propertyGroupsByIdentifier.get(identifier));
+  ): Either<Error, PropertyGroupT> {
+    const propertyGroup = this.propertyGroupsByIdentifier.get(identifier);
+    return propertyGroup
+      ? Either.of(propertyGroup)
+      : Left(
+          new Error(
+            `no such property group ${Resource.Identifier.toString(identifier)}`,
+          ),
+        );
   }
 
   @Memoize()
@@ -88,8 +111,15 @@ export class ShapesGraph<
 
   propertyShapeByIdentifier(
     identifier: BlankNode | NamedNode,
-  ): Maybe<PropertyShapeT> {
-    return Maybe.fromNullable(this.propertyShapesByIdentifier.get(identifier));
+  ): Either<Error, PropertyShapeT> {
+    const propertyShape = this.propertyShapesByIdentifier.get(identifier);
+    return propertyShape
+      ? Either.of(propertyShape)
+      : Left(
+          new Error(
+            `no such property shape ${Resource.Identifier.toString(identifier)}`,
+          ),
+        );
   }
 
   @Memoize()
@@ -97,12 +127,10 @@ export class ShapesGraph<
     return [...this.propertyShapesByIdentifier.values()];
   }
 
-  shapeByIdentifier(identifier: BlankNode | NamedNode): Maybe<ShapeT> {
-    const nodeShape = this.nodeShapeByIdentifier(identifier);
-    if (nodeShape.isJust()) {
-      return nodeShape;
-    }
-    return this.propertyShapeByIdentifier(identifier);
+  shapeByIdentifier(identifier: BlankNode | NamedNode): Either<Error, ShapeT> {
+    return (
+      this.nodeShapeByIdentifier(identifier) as Either<Error, ShapeT>
+    ).alt(this.propertyShapeByIdentifier(identifier));
   }
 }
 

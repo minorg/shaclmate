@@ -1,5 +1,7 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
-import type { Maybe } from "purify-ts";
+import { Either, type Maybe } from "purify-ts";
+import { Resource } from "rdfjs-resource";
+import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 import type { OntologyLike } from "./OntologyLike.js";
 import type { PropertyPath } from "./PropertyPath.js";
@@ -49,9 +51,12 @@ export class PropertyShape<
     return this.generatedShaclCorePropertyShape.descriptions;
   }
 
-  get groups(): readonly PropertyGroupT[] {
-    return this.generatedShaclCorePropertyShape.groups.flatMap((identifier) =>
-      this.shapesGraph.propertyGroupByIdentifier(identifier).toList(),
+  @Memoize()
+  get groups(): Either<Error, readonly PropertyGroupT[]> {
+    return Either.sequence(
+      this.generatedShaclCorePropertyShape.groups.map((identifier) =>
+        this.shapesGraph.propertyGroupByIdentifier(identifier),
+      ),
     );
   }
 
@@ -67,8 +72,11 @@ export class PropertyShape<
     return this.generatedShaclCorePropertyShape.path;
   }
 
+  @Memoize()
   override toString(): string {
-    const keyValues: string[] = [`node=${this.identifier.value}`];
+    const keyValues: string[] = [
+      `identifier=${Resource.Identifier.toString(this.identifier)}`,
+    ];
     const path = this.path;
     if (path.kind === "PredicatePath") {
       keyValues.push(`path=${path.iri.value}`);
