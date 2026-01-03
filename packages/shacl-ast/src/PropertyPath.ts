@@ -1,5 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import { rdf, sh } from "@tpluscode/rdf-ns-builders";
+import { sh } from "@tpluscode/rdf-ns-builders";
 
 import { Either, Left } from "purify-ts";
 import { Resource } from "rdfjs-resource";
@@ -67,18 +67,14 @@ export namespace PropertyPath {
     // The other property path types are BlankNodes
 
     const getPropertyPathList = (
-      listResource: Resource,
+      list: Either<Error, readonly Resource.TermValue[]>,
     ): Either<Error, readonly PropertyPath[]> => {
-      return listResource.toList().chain((values) => {
+      return list.chain((values) => {
         const members: PropertyPath[] = [];
         for (const value of values) {
           const memberResource = value.toResource().toMaybe();
           if (memberResource.isNothing()) {
-            return Left(
-              new Error(
-                `non-identifier in property path list ${Resource.Identifier.toString(listResource.identifier)}`,
-              ),
-            );
+            return Left(new Error("non-identifier in property path list"));
           }
           const member = PropertyPath.$fromRdf(memberResource.unsafeCoerce());
           if (member.isLeft()) {
@@ -89,6 +85,18 @@ export namespace PropertyPath {
         return Either.of(members);
       });
     };
+
+    // Sequence path
+    // sh:path ( ex:parent ex:firstName )
+    {
+      const list = resource.toList();
+      if (list.isRight()) {
+        return getPropertyPathList(list).map((members) => ({
+          kind: "SequencePath",
+          members,
+        }));
+      }
+    }
 
     for (const quad of resource.dataset.match(
       resource.identifier,
@@ -115,7 +123,7 @@ export namespace PropertyPath {
       // Alternative path
       // sh:path: [ sh:alternativePath ( ex:father ex:mother  ) ]
       if (quad.predicate.equals(sh.alternativePath)) {
-        return getPropertyPathList(objectResource).map((members) => ({
+        return getPropertyPathList(objectResource.toList()).map((members) => ({
           kind: "AlternativePath",
           members,
         }));
@@ -135,15 +143,6 @@ export namespace PropertyPath {
         return PropertyPath.$fromRdf(objectResource).map((path) => ({
           kind: "OneOrMorePath",
           path,
-        }));
-      }
-
-      // Sequence path
-      // sh:path ( ex:parent ex:firstName )
-      if (quad.predicate.equals(rdf.first)) {
-        return getPropertyPathList(objectResource).map((members) => ({
-          kind: "SequencePath",
-          members,
         }));
       }
 
