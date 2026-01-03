@@ -96,6 +96,7 @@ export class NodeShape extends ShaclCoreNodeShape<
     return List.head(this.comments);
   }
 
+  @Memoize()
   get descendantNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
       this.isClass
@@ -206,14 +207,8 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   @Memoize()
-  get tsFeatures(): Either<Error, Maybe<ReadonlySet<TsFeature>>> {
-    return Either.of<Error, Maybe<ReadonlySet<TsFeature>>>(
-      tsFeatures(this.generatedShaclmateNodeShape),
-    ).altLazy(() =>
-      this.isDefinedBy.map((ontology) =>
-        ontology.chain((ontology) => ontology.tsFeatures),
-      ),
-    );
+  get tsFeatures(): Maybe<ReadonlySet<TsFeature>> {
+    return tsFeatures(this.generatedShaclmateNodeShape);
   }
 
   get tsImports(): readonly string[] {
@@ -221,9 +216,9 @@ export class NodeShape extends ShaclCoreNodeShape<
   }
 
   @Memoize()
-  get tsObjectDeclarationType(): Either<Error, Maybe<TsObjectDeclarationType>> {
-    return Either.of<Error, Maybe<TsObjectDeclarationType>>(
-      this.generatedShaclmateNodeShape.tsObjectDeclarationType.map((iri) => {
+  get tsObjectDeclarationType(): Maybe<TsObjectDeclarationType> {
+    return this.generatedShaclmateNodeShape.tsObjectDeclarationType.map(
+      (iri) => {
         switch (iri.value) {
           case "http://purl.org/shaclmate/ontology#_TsObjectDeclarationType_Class":
             return "class";
@@ -232,11 +227,7 @@ export class NodeShape extends ShaclCoreNodeShape<
           default:
             throw new RangeError(iri.value);
         }
-      }),
-    ).altLazy(() =>
-      this.isDefinedBy.map((ontology) =>
-        ontology.chain((ontology) => ontology.tsObjectDeclarationType),
-      ),
+      },
     );
   }
 }

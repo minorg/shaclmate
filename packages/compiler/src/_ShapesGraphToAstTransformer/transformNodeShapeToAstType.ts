@@ -1,5 +1,6 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
+import type { TsObjectDeclarationType } from "enums/TsObjectDeclarationType.js";
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -11,6 +12,7 @@ import { logger } from "../logger.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
+import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 const listPropertiesObjectType = new ast.ObjectType({
@@ -200,7 +202,7 @@ export function transformNodeShapeToAstObjectCompoundType(
 ): Either<Error, ast.ObjectIntersectionType | ast.ObjectUnionType> {
   return Eithers.chain3(
     nodeShape.constraints.and,
-    nodeShape.tsFeatures,
+    nodeShapeTsFeatures(nodeShape),
     nodeShape.constraints.xone,
   ).chain(([andShapes, tsFeatures, xoneShapes]) => {
     let compoundTypeShapes: readonly input.Shape[];
@@ -296,8 +298,14 @@ export function transformNodeShapeToAstType(
     nodeShapeIdentifierMintingStrategy(nodeShape),
     shapeNodeKinds(nodeShape),
     nodeShape.constraints.properties,
-    nodeShape.tsFeatures,
-    nodeShape.tsObjectDeclarationType,
+    nodeShapeTsFeatures(nodeShape),
+    Either.of<Error, Maybe<TsObjectDeclarationType>>(
+      nodeShape.tsObjectDeclarationType,
+    ).altLazy(() =>
+      nodeShape.isDefinedBy.map((ontology) =>
+        ontology.chain((ontology) => ontology.tsObjectDeclarationType),
+      ),
+    ),
     nodeShape.constraints.xone,
   ).chain<Error, NodeShapeAstType>(
     ([
