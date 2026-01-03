@@ -16,8 +16,10 @@ describe("NodeShape", () => {
 
   it("constraints: should have properties", ({ expect }) => {
     expect(
-      shapesGraph.nodeShapeByIdentifier(schema.Person).unsafeCoerce()
-        .constraints.properties,
+      shapesGraph
+        .nodeShapeByIdentifier(schema.Person)
+        .unsafeCoerce()
+        .constraints.properties.unsafeCoerce(),
     ).toHaveLength(9);
   });
 
