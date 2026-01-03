@@ -3,7 +3,7 @@ import {
   type IdentifierNodeKind,
   NodeShape as ShaclCoreNodeShape,
 } from "@shaclmate/shacl-ast";
-
+import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Either, List, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import type {
@@ -74,9 +74,9 @@ export class NodeShape extends ShaclCoreNodeShape<
   get ancestorNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
       this.isClass
-        ? this.ancestorClassIris.map((classIri) =>
-            this.shapesGraph.nodeShapeByIdentifier(classIri),
-          )
+        ? this.ancestorClassIris
+            .filter((classIri) => !classIri.equals(rdf.List))
+            .map((classIri) => this.shapesGraph.nodeShapeByIdentifier(classIri))
         : [],
     );
   }
@@ -169,9 +169,9 @@ export class NodeShape extends ShaclCoreNodeShape<
   get parentNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
       this.isClass
-        ? this.parentClassIris.map((classIri) =>
-            this.shapesGraph.nodeShapeByIdentifier(classIri),
-          )
+        ? this.parentClassIris
+            .filter((classIri) => !classIri.equals(rdf.List))
+            .map((classIri) => this.shapesGraph.nodeShapeByIdentifier(classIri))
         : [],
     );
   }

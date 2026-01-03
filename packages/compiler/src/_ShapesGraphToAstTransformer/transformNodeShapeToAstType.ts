@@ -1,4 +1,3 @@
-import { shapeNodeKinds } from "_ShapesGraphToAstTransformer/shapeNodeKinds.js";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
@@ -12,6 +11,7 @@ import { logger } from "../logger.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
+import { shapeNodeKinds } from "./shapeNodeKinds.js";
 
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
