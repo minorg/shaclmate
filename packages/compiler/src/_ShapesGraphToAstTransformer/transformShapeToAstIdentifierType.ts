@@ -1,6 +1,6 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
-import { Either, Left } from "purify-ts";
+import { type Either, Left } from "purify-ts";
 import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -36,14 +36,15 @@ export function transformShapeToAstIdentifierType(
       identifierIn.length > 0 ||
       (nodeKinds.size > 0 && nodeKinds.size <= 2 && !nodeKinds.has("Literal"))
     ) {
-      return Either.of(
-        new ast.IdentifierType({
-          ...transformShapeToAstAbstractTypeProperties(shape),
-          defaultValue: identifierDefaultValue,
-          hasValues: identifierHasValues,
-          in_: identifierIn,
-          nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
-        }),
+      return transformShapeToAstAbstractTypeProperties(shape).map(
+        (astAbstractTypeProperties) =>
+          new ast.IdentifierType({
+            ...astAbstractTypeProperties,
+            defaultValue: identifierDefaultValue,
+            hasValues: identifierHasValues,
+            in_: identifierIn,
+            nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
+          }),
       );
     }
 
