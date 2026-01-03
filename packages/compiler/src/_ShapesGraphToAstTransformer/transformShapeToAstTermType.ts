@@ -4,8 +4,8 @@ import { Either } from "purify-ts";
 import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**
@@ -18,7 +18,7 @@ export function transformShapeToAstTermType(
 ): Either<Error, ast.TermType> {
   shapeStack.push(shape);
   try {
-    const nodeKinds = propertyShapeNodeKinds(shape);
+    const nodeKinds = shapeNodeKinds(shape);
 
     return Either.of(
       new ast.TermType({

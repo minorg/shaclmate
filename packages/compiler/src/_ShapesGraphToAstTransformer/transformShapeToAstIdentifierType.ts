@@ -4,8 +4,8 @@ import { Either, Left } from "purify-ts";
 import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import { propertyShapeNodeKinds } from "./propertyShapeNodeKinds.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
 
 /**
@@ -28,7 +28,7 @@ export function transformShapeToAstIdentifierType(
     const identifierIn = shapeStack.constraints.in_.filter(
       (term) => term.termType === "NamedNode",
     );
-    const nodeKinds = propertyShapeNodeKinds(shape);
+    const nodeKinds = shapeNodeKinds(shape);
 
     if (
       identifierHasValues.length > 0 ||

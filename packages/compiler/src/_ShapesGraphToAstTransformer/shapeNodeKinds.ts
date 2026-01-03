@@ -1,9 +1,7 @@
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import * as input from "../input/index.js";
 
-export function propertyShapeNodeKinds(
-  shape: input.Shape,
-): ReadonlySet<NodeKind> {
+export function shapeNodeKinds(shape: input.Shape): ReadonlySet<NodeKind> {
   const nodeKinds = new Set<NodeKind>([
     ...shape.constraints.nodeKinds.orDefault(new Set()),
   ]);
