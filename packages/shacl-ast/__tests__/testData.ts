@@ -46,6 +46,16 @@ class TestData {
   }
 
   @Memoize()
+  get propertyPaths() {
+    return {
+      shapesGraph: parseShapesGraph(
+        path.join(thisDirectoryPath, "data", "property-paths.ttl"),
+        { ignoreUndefinedShapes: true },
+      ),
+    };
+  }
+
+  @Memoize()
   get schema() {
     return {
       shapesGraph: parseShapesGraph(

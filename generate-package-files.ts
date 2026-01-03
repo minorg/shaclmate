@@ -58,9 +58,10 @@ const externalDependencyVersions = {
   "rdfjs-resource": { "rdfjs-resource": "1.0.25" },
   rimraf: { rimraf: "^6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
-  uuid: { uuid: "^9.0.1" },
+  "ts-invariant": { "ts-invariant": "^0.10.3" },
   typescript: { typescript: "5.8.2" },
   "typescript-memoize": { "typescript-memoize": "^1.1.1" },
+  uuid: { uuid: "^9.0.1" },
   zod: {
     zod: "^4.1.12",
   },
@@ -119,6 +120,11 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["typescript-memoize"],
       },
     },
+    devDependencies: {
+      external: {
+        ...externalDependencyVersions["ts-invariant"],
+      },
+    },
     directory: "packages",
     linkableDependencies: ["rdfjs-resource"],
     name: "shacl-ast",
@@ -146,7 +152,7 @@ const packages: readonly Package[] = [
         ...externalDependencyVersions["rdfjs-resource"],
         "reserved-identifiers": "^1.0.0",
         toposort: "2.0.2",
-        "ts-invariant": "^0.10.3",
+        ...externalDependencyVersions["ts-invariant"],
         "ts-morph": "^26.0.0",
         "typescript-memoize": "^1.1.1",
       },
