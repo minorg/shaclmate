@@ -1,0 +1,34 @@
+@prefix : <http://example.com/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+:AlternativePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:alternativePath ( :predicate1 :predicate2 ) ] .
+
+:AlternativeInversePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:alternativePath ( [ sh:inversePath :predicate1 ] [ sh:inversePath :predicate2 ] ) ] .
+
+:InversePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:inversePath :predicate ] .
+
+:OneOrMorePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:oneOrMorePath :predicate ] .
+
+:PredicatePathPropertyShape
+    a sh:PropertyShape ;
+    sh:path :predicate .
+
+:SequencePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path ( :predicate1 :predicate2 ) .
+
+:ZeroOrMorePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:zeroOrMorePath :predicate ] .
+
+:ZeroOrOnePathPropertyShape 
+    a sh:PropertyShape ;
+    sh:path [ sh:zeroOrOnePath :predicate ] .
