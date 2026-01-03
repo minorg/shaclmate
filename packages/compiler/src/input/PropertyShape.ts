@@ -1,5 +1,6 @@
 import { PropertyShape as ShaclCorePropertyShape } from "@shaclmate/shacl-ast";
-import { List, Maybe } from "purify-ts";
+import { Either, List, Maybe } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import type { PropertyVisibility } from "../enums/index.js";
 import type * as generated from "./generated.js";
 import type {
@@ -47,10 +48,14 @@ export class PropertyShape extends ShaclCorePropertyShape<
     return this.generatedShaclmatePropertyShape.mutable;
   }
 
-  get partial(): Maybe<NodeShape> {
-    return this.generatedShaclmatePropertyShape.partial.chain((identifier) =>
-      this.shapesGraph.nodeShapeByIdentifier(identifier),
-    );
+  @Memoize()
+  get partial(): Either<Error, Maybe<NodeShape>> {
+    const identifier = this.generatedShaclmatePropertyShape.partial.extract();
+    return identifier
+      ? this.shapesGraph
+          .nodeShapeByIdentifier(identifier)
+          .map((_) => Maybe.of(_))
+      : Either.of(Maybe.empty());
   }
 
   get name(): Maybe<string> {
@@ -61,6 +66,7 @@ export class PropertyShape extends ShaclCorePropertyShape<
     return this.generatedShaclmatePropertyShape.name;
   }
 
+  @Memoize()
   get visibility(): PropertyVisibility {
     return this.generatedShaclmatePropertyShape.visibility
       .map((iri) => {
