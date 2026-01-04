@@ -55,7 +55,7 @@ const externalDependencyVersions = {
   "purify-ts": { "purify-ts": "^2.1.0" },
   "rdf-literal": { "rdf-literal": "^1.3.2" },
   "rdf-validate-shacl": { "rdf-validate-shacl": "0.5.8" },
-  "rdfjs-resource": { "rdfjs-resource": "1.0.25" },
+  "rdfjs-resource": { "rdfjs-resource": "1.0.26" },
   rimraf: { rimraf: "^6.0.1" },
   sparqljs: { sparqljs: "3.7.3" },
   "ts-invariant": { "ts-invariant": "^0.10.3" },
