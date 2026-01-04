@@ -32,13 +32,13 @@ export class TermType<
     );
   }
 
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName(
+  override jsonType(): Type.JsonType {
+    return new Type.JsonType(
       `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
         .filter((nodeKind) => nodeKind !== "Literal")
         .map((nodeKind) => `"${nodeKind}"`)

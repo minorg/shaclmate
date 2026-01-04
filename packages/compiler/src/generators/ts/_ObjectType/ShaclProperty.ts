@@ -140,7 +140,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
       description: this.comment.map(JSON.stringify),
       name: this.name,
       resolve: `(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
-      type: this.type.graphqlName.toString(),
+      type: this.type.graphqlType.name,
     });
   }
 
@@ -154,12 +154,12 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
-    const typeJsonName = this.type.jsonName();
+    const typeJsonType = this.type.jsonType();
     return Maybe.of({
-      hasQuestionToken: typeJsonName.optional,
+      hasQuestionToken: typeJsonType.optional,
       isReadonly: true,
       name: this.name,
-      type: typeJsonName.requiredName,
+      type: typeJsonType.requiredName,
     });
   }
 

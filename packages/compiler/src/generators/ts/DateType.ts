@@ -10,8 +10,8 @@ export class DateType extends DateTimeType {
   override readonly kind = "DateType";
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphqlScalars.Date");
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType("graphqlScalars.Date");
   }
 
   override jsonZodSchema({

@@ -43,13 +43,13 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphqlScalars.DateTime");
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType("graphqlScalars.DateTime");
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName("string");
+  override jsonType(): Type.JsonType {
+    return new Type.JsonType("string");
   }
 
   override get name(): string {

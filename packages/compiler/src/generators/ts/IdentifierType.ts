@@ -93,8 +93,8 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLString");
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -108,9 +108,9 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
-  override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
+  override jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "BlankNode" | "NamedNode"`
       : "";
@@ -118,12 +118,12 @@ export class IdentifierType extends AbstractTermType<
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new Type.JsonName(
+      return new Type.JsonType(
         `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
       );
     }
 
-    return new Type.JsonName(
+    return new Type.JsonType(
       `{ readonly "@id": string${discriminantProperty} }`,
     );
   }

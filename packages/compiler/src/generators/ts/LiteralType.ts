@@ -6,13 +6,13 @@ import { Type } from "./Type.js";
 
 export class LiteralType extends AbstractLiteralType {
   @Memoize()
-  override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
+  override jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "Literal"`
       : "";
-    return new Type.JsonName(
+    return new Type.JsonType(
       `{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
   }

@@ -4,7 +4,7 @@ import { Type } from "./Type.js";
 
 export class FloatType extends NumberType {
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLFloat");
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType("graphql.GraphQLFloat");
   }
 }

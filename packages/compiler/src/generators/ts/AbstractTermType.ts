@@ -118,7 +118,7 @@ export abstract class AbstractTermType<
     });
   }
 
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
   }
 

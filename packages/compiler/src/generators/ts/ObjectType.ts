@@ -239,8 +239,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName(
+  get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -260,8 +260,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName(
+  override jsonType(): Type.JsonType {
+    return new Type.JsonType(
       `${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );
   }

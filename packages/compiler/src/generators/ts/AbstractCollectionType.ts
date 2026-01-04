@@ -148,9 +148,9 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName(
-      `new graphql.GraphQLList(${this.itemType.graphqlName})`,
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType(
+      `new graphql.GraphQLList(${this.itemType.graphqlType.name})`,
     );
   }
 

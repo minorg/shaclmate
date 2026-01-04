@@ -69,20 +69,20 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    invariant(!this.itemType.graphqlName.nullable);
-    return new Type.GraphqlName(this.itemType.graphqlName.toString(), {
+  override get graphqlType(): Type.GraphqlType {
+    invariant(!this.itemType.graphqlType.nullable);
+    return new Type.GraphqlType(this.itemType.graphqlType.name, {
       nullable: true,
     });
   }
 
   @Memoize()
-  override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
-    const itemTypeJsonName = this.itemType.jsonName(parameters);
-    invariant(!itemTypeJsonName.optional);
-    return new Type.JsonName(itemTypeJsonName.toString(), {
+  override jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType {
+    const itemTypeJsonType = this.itemType.jsonType(parameters);
+    invariant(!itemTypeJsonType.optional);
+    return new Type.JsonType(itemTypeJsonType.name, {
       optional: true,
     });
   }

@@ -26,7 +26,7 @@ export abstract class AbstractType implements Type {
   abstract readonly conversions: readonly Type.Conversion[];
   abstract readonly discriminantProperty: Maybe<Type.DiscriminantProperty>;
   abstract readonly equalsFunction: string;
-  abstract readonly graphqlName: Type.GraphqlName;
+  abstract readonly graphqlType: Type.GraphqlType;
   abstract readonly mutable: boolean;
   abstract readonly name: string;
   abstract readonly typeofs: NonEmptyList<
@@ -75,9 +75,9 @@ export abstract class AbstractType implements Type {
     };
   }): readonly string[];
 
-  abstract jsonName(parameters?: {
+  abstract jsonType(parameters?: {
     includeDiscriminantProperty?: boolean;
-  }): Type.JsonName;
+  }): Type.JsonType;
 
   abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: string };

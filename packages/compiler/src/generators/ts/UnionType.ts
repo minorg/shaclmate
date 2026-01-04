@@ -97,8 +97,8 @@ class MemberType {
     return this.delegate.fromRdfExpression(parameters);
   }
 
-  jsonName(parameters?: Parameters<Type["jsonName"]>[0]) {
-    return this.delegate.jsonName(parameters);
+  jsonType(parameters?: Parameters<Type["jsonType"]>[0]) {
+    return this.delegate.jsonType(parameters);
   }
 
   hashStatements(parameters: Parameters<Type["hashStatements"]>[0]) {
@@ -283,26 +283,27 @@ ${this.memberTypes
 }`;
   }
 
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
+  override jsonType(): Type.JsonType {
     switch (this.discriminant.kind) {
       case "envelope":
-        return new Type.JsonName(
-          `(${this.memberTypes.map((memberType) => `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonName()} }`).join(" | ")})`,
+        return new Type.JsonType(
+          `(${this.memberTypes.map((memberType) => `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonType().name} }`).join(" | ")})`,
         );
       case "inline":
       case "typeof":
-        return new Type.JsonName(
+        return new Type.JsonType(
           this.memberTypes
-            .map((memberType) =>
-              memberType.jsonName({
-                includeDiscriminantProperty:
-                  this.discriminant.kind === "inline",
-              }),
+            .map(
+              (memberType) =>
+                memberType.jsonType({
+                  includeDiscriminantProperty:
+                    this.discriminant.kind === "inline",
+                }).name,
             )
             .join(" | "),
         );

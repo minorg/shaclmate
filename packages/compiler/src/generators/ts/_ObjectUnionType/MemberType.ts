@@ -69,8 +69,8 @@ export class MemberType {
     return this.delegate.fromRdfTypeVariable;
   }
 
-  get graphqlName() {
-    return this.delegate.graphqlName;
+  get graphqlType() {
+    return this.delegate.graphqlType;
   }
 
   get identifierTypeAlias() {
@@ -105,8 +105,8 @@ export class MemberType {
     return this.delegate.toRdfjsResourceType;
   }
 
-  jsonName() {
-    return this.delegate.jsonName();
+  jsonType() {
+    return this.delegate.jsonType();
   }
 
   jsonZodSchema(
