@@ -28,6 +28,21 @@ export const harnesses = {
     }),
     kitchenSink.BlankNodeOrIriIdentifierClass,
   ),
+  blankNodeIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeIdentifierClass(),
+    kitchenSink.BlankNodeIdentifierClass,
+  ),
+  blankNodeIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
+    {
+      $identifier: dataFactory.blankNode(),
+      $type: "BlankNodeIdentifierInterface",
+    },
+    kitchenSink.BlankNodeIdentifierInterface,
+  ),
+  blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
+    kitchenSink.BlankNodeIdentifierInterface.$create(),
+    kitchenSink.BlankNodeIdentifierInterface,
+  ),
   blankNodeOrIriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
     new kitchenSink.BlankNodeOrIriIdentifierClass(),
     kitchenSink.BlankNodeOrIriIdentifierClass,
