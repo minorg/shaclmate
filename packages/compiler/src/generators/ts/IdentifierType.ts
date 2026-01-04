@@ -19,16 +19,19 @@ export class IdentifierType extends AbstractTermType<
 
   @Memoize()
   override get conversions(): readonly Type.Conversion[] {
-    return super.conversions.concat([
-      {
+    const conversions = super.conversions.concat();
+    if (this.nodeKinds.has("NamedNode")) {
+      conversions.push({
         conversionExpression: (value) => `dataFactory.namedNode(${value})`,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
         sourceTypeName:
           this.in_.length > 0
             ? this.in_.map((iri) => `"${iri.value}"`).join(" | ")
             : "string",
-      },
-    ]);
+      });
+    } else if (this.isBlankNodeKind) {
+    }
+    return conversions;
   }
 
   @Memoize()
@@ -187,7 +190,7 @@ export class IdentifierType extends AbstractTermType<
         valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of${eitherTypeParameters}(iri as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
       }
     } else {
-      throw new Error("not implemented");
+      valueToExpression = "value.toBlankNode()";
     }
 
     return {
