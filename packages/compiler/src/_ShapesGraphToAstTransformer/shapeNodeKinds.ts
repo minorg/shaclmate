@@ -35,8 +35,10 @@ function nodeShapeNodeKinds(
       // Check that thisNodeKinds doesn't conflict with parent node kinds
       for (const thisNodeKind of thisNodeKinds) {
         if (!parentNodeKinds.has(thisNodeKind)) {
-          throw new Error(
-            `${nodeShape} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
+          return Left(
+            new Error(
+              `${nodeShape} has a nodeKind ${thisNodeKind} that is not in its parent's node kinds`,
+            ),
           );
         }
       }

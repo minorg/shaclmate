@@ -5,15 +5,18 @@ import type { PrefixMapInit } from "@rdfjs/prefix-map/PrefixMap.js";
 import PrefixMap from "@rdfjs/prefix-map/PrefixMap.js";
 import { ShapesGraph } from "@shaclmate/compiler";
 import { DataFactory, Parser, Store } from "n3";
-import { Maybe } from "purify-ts";
+import { type Either, Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 
 const thisDirectoryPath = path.dirname(fileURLToPath(import.meta.url));
 
-function parseShapesGraph(filePath: string): {
-  iriPrefixMap: PrefixMap;
-  shapesGraph: ShapesGraph;
-} {
+function parseShapesGraph(filePath: string): Either<
+  Error,
+  {
+    iriPrefixMap: PrefixMap;
+    shapesGraph: ShapesGraph;
+  }
+> {
   const parser = new Parser({ format: "Turtle" });
   const dataset = new Store();
   const iriPrefixes: PrefixMapInit = [];
@@ -41,10 +44,10 @@ function parseShapesGraph(filePath: string): {
     ),
   );
 
-  return {
+  return ShapesGraph.create({ dataset }).map((shapesGraph) => ({
     iriPrefixMap: new PrefixMap(iriPrefixes, { factory: DataFactory }),
-    shapesGraph: ShapesGraph.create({ dataset }).unsafeCoerce(),
-  };
+    shapesGraph,
+  }));
 }
 
 class TestData {

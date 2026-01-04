@@ -7,7 +7,6 @@ import { CurieFactory } from "./_ShapesGraphToAstTransformer/CurieFactory.js";
 import * as _ShapesGraphToAstTransformer from "./_ShapesGraphToAstTransformer/index.js";
 import type * as ast from "./ast/index.js";
 import type * as input from "./input/index.js";
-import { logger } from "./logger.js";
 
 export class ShapesGraphToAstTransformer {
   // Members are protected so they're accessible to the bound functions
@@ -63,8 +62,7 @@ export class ShapesGraphToAstTransformer {
       const nodeShapeAstTypeEither =
         this.transformNodeShapeToAstType(nodeShape);
       if (nodeShapeAstTypeEither.isLeft()) {
-        logger.warn((nodeShapeAstTypeEither.extract() as Error).message);
-        continue;
+        return nodeShapeAstTypeEither;
       }
       const nodeShapeAstType = nodeShapeAstTypeEither.unsafeCoerce();
 
