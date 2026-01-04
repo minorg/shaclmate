@@ -9,12 +9,12 @@ describe("identifier", () => {
     expect,
   }) => {
     expect(
-      harnesses.blankNodeIdentifierClassWithoutExplicitIdentifier.instance
+      harnesses.blankNodeOrIriIdentifierClassWithoutExplicitIdentifier.instance
         .$identifier.termType,
     ).toStrictEqual("BlankNode");
     expect(
-      harnesses.blankNodeIdentifierInterfaceWithoutExplicitIdentifier.instance
-        .$identifier.termType,
+      harnesses.blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier
+        .instance.$identifier.termType,
     ).toStrictEqual("BlankNode");
   });
 

@@ -81,13 +81,13 @@
     {
       "kind": "ObjectType",
       "comment": "Node shape that can have a blank node or IRI as an identifier",
-      "shapeIdentifier": "<http://example.com/BlankNodeIdentifierClass>",
+      "shapeIdentifier": "<http://example.com/BlankNodeOrIriIdentifierClass>",
       "properties": []
     },
     {
       "kind": "ObjectType",
       "comment": "Node shape that can have a blank node or IRI as an identifier",
-      "shapeIdentifier": "<http://example.com/BlankNodeIdentifierInterface>",
+      "shapeIdentifier": "<http://example.com/BlankNodeOrIriIdentifierInterface>",
       "properties": []
     },
     {

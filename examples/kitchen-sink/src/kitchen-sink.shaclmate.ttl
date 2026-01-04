@@ -65,11 +65,11 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     rdfs:comment "Base interface for other node shapes. Put the base interface with properties above the base interface without." ;
     rdfs:subClassOf :BaseInterfaceWithProperties .
 
-:BlankNodeIdentifierClass
+:BlankNodeOrIriIdentifierClass
     a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
 
-:BlankNodeIdentifierInterface
+:BlankNodeOrIriIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .

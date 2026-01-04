@@ -22,27 +22,28 @@ const permute = <T>(arr: T[]): T[][] =>
       );
 
 export const harnesses = {
-  blankNodeIdentifierClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankNodeIdentifierClass({
+  blankNodeOrIriIdentifierClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeOrIriIdentifierClass({
       $identifier: dataFactory.blankNode(),
     }),
-    kitchenSink.BlankNodeIdentifierClass,
+    kitchenSink.BlankNodeOrIriIdentifierClass,
   ),
-  blankNodeIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankNodeIdentifierClass(),
-    kitchenSink.BlankNodeIdentifierClass,
+  blankNodeOrIriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeOrIriIdentifierClass(),
+    kitchenSink.BlankNodeOrIriIdentifierClass,
   ),
-  blankNodeIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
+  blankNodeOrIriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
     {
       $identifier: dataFactory.blankNode(),
-      $type: "BlankNodeIdentifierInterface",
+      $type: "BlankNodeOrIriIdentifierInterface",
     },
-    kitchenSink.BlankNodeIdentifierInterface,
+    kitchenSink.BlankNodeOrIriIdentifierInterface,
   ),
-  blankNodeIdentifierInterfaceWithoutExplicitIdentifier: new InterfaceHarness(
-    kitchenSink.BlankNodeIdentifierInterface.$create(),
-    kitchenSink.BlankNodeIdentifierInterface,
-  ),
+  blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier:
+    new InterfaceHarness(
+      kitchenSink.BlankNodeOrIriIdentifierInterface.$create(),
+      kitchenSink.BlankNodeOrIriIdentifierInterface,
+    ),
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,
