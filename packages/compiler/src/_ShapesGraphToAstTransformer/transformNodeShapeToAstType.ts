@@ -354,18 +354,6 @@ export function transformNodeShapeToAstType(
         }
       });
 
-      const identifierIn = nodeShape.constraints.in_.filter(
-        (term) => term.termType === "NamedNode",
-      );
-
-      if (identifierMintingStrategy.isJust() && identifierIn.length > 0) {
-        logger.debug(
-          "%s cannot have an identifier minting strategy AND sh:in",
-          nodeShape,
-        );
-        identifierMintingStrategy = Maybe.empty();
-      }
-
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
@@ -381,7 +369,7 @@ export function transformNodeShapeToAstType(
           comment: Maybe.empty(),
           defaultValue: Maybe.empty(),
           hasValues: [],
-          in_: identifierIn,
+          in_: nodeShape.identifierIn,
           label: Maybe.empty(),
           nodeKinds,
         }),

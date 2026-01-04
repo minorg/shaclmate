@@ -54,12 +54,11 @@ function transformPropertyShapeToAstType(
   this: ShapesGraphToAstTransformer,
   propertyShape: input.PropertyShape,
 ): Either<Error, ast.Type> {
-  if (
-    propertyShape.path.kind === "PredicatePath" &&
-    propertyShape.path.iri.value.endsWith("optionalIriOrLiteralProperty")
-  ) {
-    console.log("here");
-  }
+  // if (
+  //   propertyShape.path.kind === "PredicatePath" &&
+  //   propertyShape.path.iri.value.endsWith("optionalIriOrLiteralProperty")
+  // ) {
+  // }
 
   return this.transformShapeToAstType(propertyShape, new ShapeStack()).chain(
     (itemType) => {

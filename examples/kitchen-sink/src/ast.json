@@ -435,20 +435,20 @@
               ],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -470,20 +470,20 @@
               ],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#dateTime"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -505,20 +505,20 @@
               ],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -540,20 +540,20 @@
               ],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#date"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -1137,29 +1137,29 @@
               "memberDiscriminantValues": [],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#boolean"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#decimal"
+                  },
+                  "hasValue": []
                 },
                 {
-                  "kind": "IdentifierType",
+                  "kind": "LiteralType",
                   "comment": "String must be last since the date-time is also serialized as a string in JSON.",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3547,12 +3547,12 @@
                   ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3579,12 +3579,8 @@
                   ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "hasValue": []
                 }
               ]
             }
@@ -3611,12 +3607,12 @@
                   ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3686,12 +3682,12 @@
                 ]
               },
               {
-                "kind": "IdentifierType",
-                "hasValue": [],
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
+                "kind": "LiteralType",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hasValue": []
               }
             ]
           },
@@ -3715,12 +3711,8 @@
                 ]
               },
               {
-                "kind": "IdentifierType",
-                "hasValue": [],
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
+                "kind": "LiteralType",
+                "hasValue": []
               }
             ]
           },
@@ -3744,12 +3736,12 @@
                 ]
               },
               {
-                "kind": "IdentifierType",
-                "hasValue": [],
-                "nodeKinds": [
-                  "BlankNode",
-                  "NamedNode"
-                ]
+                "kind": "LiteralType",
+                "datatype": {
+                  "termType": "NamedNode",
+                  "value": "http://www.w3.org/2001/XMLSchema#string"
+                },
+                "hasValue": []
               }
             ]
           },
@@ -3820,12 +3812,12 @@
                   ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }
@@ -3852,12 +3844,8 @@
                   ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "hasValue": []
                 }
               ]
             }
@@ -3884,12 +3872,12 @@
                   ]
                 },
                 {
-                  "kind": "IdentifierType",
-                  "hasValue": [],
-                  "nodeKinds": [
-                    "BlankNode",
-                    "NamedNode"
-                  ]
+                  "kind": "LiteralType",
+                  "datatype": {
+                    "termType": "NamedNode",
+                    "value": "http://www.w3.org/2001/XMLSchema#string"
+                  },
+                  "hasValue": []
                 }
               ]
             }

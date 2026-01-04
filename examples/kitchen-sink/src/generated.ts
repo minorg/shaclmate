@@ -1594,70 +1594,52 @@ export class UnionDiscriminantsClass {
   readonly optionalClassOrClassOrStringProperty: purify.Maybe<
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-    | {
-        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-        value: rdfjs.BlankNode | rdfjs.NamedNode;
-      }
+    | { type: "2-string"; value: string }
   >;
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly optionalIriOrLiteralProperty: purify.Maybe<
-    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
+    rdfjs.NamedNode | rdfjs.Literal
   >;
   /**
    * Union that can be discriminated by typeof.
    */
-  readonly optionalIriOrStringProperty: purify.Maybe<
-    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-  >;
+  readonly optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
   /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly requiredClassOrClassOrStringProperty:
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-    | {
-        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-        value: rdfjs.BlankNode | rdfjs.NamedNode;
-      };
+    | { type: "2-string"; value: string };
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
    */
-  readonly requiredIriOrLiteralProperty:
-    | rdfjs.NamedNode
-    | (rdfjs.BlankNode | rdfjs.NamedNode);
+  readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
   /**
    * Union that can be discriminated by typeof.
    */
-  readonly requiredIriOrStringProperty:
-    | rdfjs.NamedNode
-    | (rdfjs.BlankNode | rdfjs.NamedNode);
+  readonly requiredIriOrStringProperty: rdfjs.NamedNode | string;
   /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
    */
   readonly setClassOrClassOrStringProperty: readonly (
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-    | {
-        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-        value: rdfjs.BlankNode | rdfjs.NamedNode;
-      }
+    | { type: "2-string"; value: string }
   )[];
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
    */
   readonly setIriOrLiteralProperty: readonly (
     | rdfjs.NamedNode
-    | (rdfjs.BlankNode | rdfjs.NamedNode)
+    | rdfjs.Literal
   )[];
   /**
    * Union that can be discriminated by typeof.
    */
-  readonly setIriOrStringProperty: readonly (
-    | rdfjs.NamedNode
-    | (rdfjs.BlankNode | rdfjs.NamedNode)
-  )[];
+  readonly setIriOrStringProperty: readonly (rdfjs.NamedNode | string)[];
 
   constructor(parameters: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
@@ -1665,54 +1647,36 @@ export class UnionDiscriminantsClass {
       | (
           | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
           | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-          | {
-              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-              value: rdfjs.BlankNode | rdfjs.NamedNode;
-            }
+          | { type: "2-string"; value: string }
         )
       | purify.Maybe<
           | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
           | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-          | {
-              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-              value: rdfjs.BlankNode | rdfjs.NamedNode;
-            }
+          | { type: "2-string"; value: string }
         >;
     readonly optionalIriOrLiteralProperty?:
-      | (rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode))
-      | purify.Maybe<rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)>;
+      | (rdfjs.NamedNode | rdfjs.Literal)
+      | purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>;
     readonly optionalIriOrStringProperty?:
-      | (rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode))
-      | purify.Maybe<rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)>;
+      | rdfjs.NamedNode
+      | purify.Maybe<rdfjs.NamedNode | string>
+      | string;
     readonly requiredClassOrClassOrStringProperty:
       | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
       | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-      | {
-          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-          value: rdfjs.BlankNode | rdfjs.NamedNode;
-        };
-    readonly requiredIriOrLiteralProperty:
-      | rdfjs.NamedNode
-      | (rdfjs.BlankNode | rdfjs.NamedNode);
-    readonly requiredIriOrStringProperty:
-      | rdfjs.NamedNode
-      | (rdfjs.BlankNode | rdfjs.NamedNode);
+      | { type: "2-string"; value: string };
+    readonly requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+    readonly requiredIriOrStringProperty: rdfjs.NamedNode | string;
     readonly setClassOrClassOrStringProperty?: readonly (
       | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
       | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-      | {
-          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-          value: rdfjs.BlankNode | rdfjs.NamedNode;
-        }
+      | { type: "2-string"; value: string }
     )[];
     readonly setIriOrLiteralProperty?: readonly (
       | rdfjs.NamedNode
-      | (rdfjs.BlankNode | rdfjs.NamedNode)
+      | rdfjs.Literal
     )[];
-    readonly setIriOrStringProperty?: readonly (
-      | rdfjs.NamedNode
-      | (rdfjs.BlankNode | rdfjs.NamedNode)
-    )[];
+    readonly setIriOrStringProperty?: readonly (rdfjs.NamedNode | string)[];
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -1761,6 +1725,10 @@ export class UnionDiscriminantsClass {
       this.optionalIriOrStringProperty = purify.Maybe.of(
         parameters.optionalIriOrStringProperty,
       );
+    } else if (typeof parameters.optionalIriOrStringProperty === "string") {
+      this.optionalIriOrStringProperty = purify.Maybe.of(
+        parameters.optionalIriOrStringProperty,
+      );
     } else if (typeof parameters.optionalIriOrStringProperty === "undefined") {
       this.optionalIriOrStringProperty = purify.Maybe.empty();
     } else {
@@ -1771,7 +1739,15 @@ export class UnionDiscriminantsClass {
     this.requiredClassOrClassOrStringProperty =
       parameters.requiredClassOrClassOrStringProperty;
     this.requiredIriOrLiteralProperty = parameters.requiredIriOrLiteralProperty;
-    this.requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
+    if (typeof parameters.requiredIriOrStringProperty === "object") {
+      this.requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
+    } else if (typeof parameters.requiredIriOrStringProperty === "string") {
+      this.requiredIriOrStringProperty = parameters.requiredIriOrStringProperty;
+    } else {
+      this.requiredIriOrStringProperty =
+        parameters.requiredIriOrStringProperty satisfies never;
+    }
+
     if (typeof parameters.setClassOrClassOrStringProperty === "undefined") {
       this.setClassOrClassOrStringProperty = [];
     } else if (typeof parameters.setClassOrClassOrStringProperty === "object") {
@@ -1838,17 +1814,11 @@ export class UnionDiscriminantsClass {
               left:
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  },
+                | { type: "2-string"; value: string },
               right:
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  },
+                | { type: "2-string"; value: string },
             ) => {
               if (
                 left.type === "0-ClassUnionMember1" &&
@@ -1868,11 +1838,8 @@ export class UnionDiscriminantsClass {
                   right.value,
                 );
               }
-              if (
-                left.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)" &&
-                right.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-              ) {
-                return $booleanEquals(left.value, right.value);
+              if (left.type === "2-string" && right.type === "2-string") {
+                return $strictEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -1904,8 +1871,8 @@ export class UnionDiscriminantsClass {
             left,
             right,
             (
-              left: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-              right: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
+              left: rdfjs.NamedNode | rdfjs.Literal,
+              right: rdfjs.NamedNode | rdfjs.Literal,
             ) => {
               if (
                 left.termType === "NamedNode" &&
@@ -1913,16 +1880,7 @@ export class UnionDiscriminantsClass {
               ) {
                 return $booleanEquals(left, right);
               }
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
+              if (left.termType === "Literal" && right.termType === "Literal") {
                 return $booleanEquals(left, right);
               }
 
@@ -1955,26 +1913,14 @@ export class UnionDiscriminantsClass {
             left,
             right,
             (
-              left: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-              right: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
+              left: rdfjs.NamedNode | string,
+              right: rdfjs.NamedNode | string,
             ) => {
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
+              if (typeof left === "object" && typeof right === "object") {
                 return $booleanEquals(left, right);
               }
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
-                return $booleanEquals(left, right);
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
               }
 
               return purify.Left({
@@ -2005,17 +1951,11 @@ export class UnionDiscriminantsClass {
           left:
             | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
             | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-            | {
-                type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                value: rdfjs.BlankNode | rdfjs.NamedNode;
-              },
+            | { type: "2-string"; value: string },
           right:
             | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
             | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-            | {
-                type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                value: rdfjs.BlankNode | rdfjs.NamedNode;
-              },
+            | { type: "2-string"; value: string },
         ) => {
           if (
             left.type === "0-ClassUnionMember1" &&
@@ -2035,11 +1975,8 @@ export class UnionDiscriminantsClass {
               right.value,
             );
           }
-          if (
-            left.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)" &&
-            right.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-          ) {
-            return $booleanEquals(left.value, right.value);
+          if (left.type === "2-string" && right.type === "2-string") {
+            return $strictEquals(left.value, right.value);
           }
 
           return purify.Left({
@@ -2066,16 +2003,13 @@ export class UnionDiscriminantsClass {
       )
       .chain(() =>
         ((
-          left: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-          right: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
+          left: rdfjs.NamedNode | rdfjs.Literal,
+          right: rdfjs.NamedNode | rdfjs.Literal,
         ) => {
           if (left.termType === "NamedNode" && right.termType === "NamedNode") {
             return $booleanEquals(left, right);
           }
-          if (left.termType === "BlankNode" && right.termType === "BlankNode") {
-            return $booleanEquals(left, right);
-          }
-          if (left.termType === "NamedNode" && right.termType === "NamedNode") {
+          if (left.termType === "Literal" && right.termType === "Literal") {
             return $booleanEquals(left, right);
           }
 
@@ -2102,18 +2036,12 @@ export class UnionDiscriminantsClass {
         })),
       )
       .chain(() =>
-        ((
-          left: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-          right: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-        ) => {
-          if (left.termType === "NamedNode" && right.termType === "NamedNode") {
+        ((left: rdfjs.NamedNode | string, right: rdfjs.NamedNode | string) => {
+          if (typeof left === "object" && typeof right === "object") {
             return $booleanEquals(left, right);
           }
-          if (left.termType === "BlankNode" && right.termType === "BlankNode") {
-            return $booleanEquals(left, right);
-          }
-          if (left.termType === "NamedNode" && right.termType === "NamedNode") {
-            return $booleanEquals(left, right);
+          if (typeof left === "string" && typeof right === "string") {
+            return $strictEquals(left, right);
           }
 
           return purify.Left({
@@ -2147,17 +2075,11 @@ export class UnionDiscriminantsClass {
               left:
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  },
+                | { type: "2-string"; value: string },
               right:
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  },
+                | { type: "2-string"; value: string },
             ) => {
               if (
                 left.type === "0-ClassUnionMember1" &&
@@ -2177,11 +2099,8 @@ export class UnionDiscriminantsClass {
                   right.value,
                 );
               }
-              if (
-                left.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)" &&
-                right.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-              ) {
-                return $booleanEquals(left.value, right.value);
+              if (left.type === "2-string" && right.type === "2-string") {
+                return $strictEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -2213,8 +2132,8 @@ export class UnionDiscriminantsClass {
             left,
             right,
             (
-              left: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-              right: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
+              left: rdfjs.NamedNode | rdfjs.Literal,
+              right: rdfjs.NamedNode | rdfjs.Literal,
             ) => {
               if (
                 left.termType === "NamedNode" &&
@@ -2222,16 +2141,7 @@ export class UnionDiscriminantsClass {
               ) {
                 return $booleanEquals(left, right);
               }
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
+              if (left.termType === "Literal" && right.termType === "Literal") {
                 return $booleanEquals(left, right);
               }
 
@@ -2264,26 +2174,14 @@ export class UnionDiscriminantsClass {
             left,
             right,
             (
-              left: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
-              right: rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode),
+              left: rdfjs.NamedNode | string,
+              right: rdfjs.NamedNode | string,
             ) => {
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
+              if (typeof left === "object" && typeof right === "object") {
                 return $booleanEquals(left, right);
               }
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
-                return $booleanEquals(left, right);
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
               }
 
               return purify.Left({
@@ -2336,9 +2234,8 @@ export class UnionDiscriminantsClass {
           value0.value.$hash(_hasher);
           break;
         }
-        case "2-(rdfjs.BlankNode | rdfjs.NamedNode)": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+        case "2-string": {
+          _hasher.update(value0.value);
           break;
         }
         default:
@@ -2353,8 +2250,9 @@ export class UnionDiscriminantsClass {
           _hasher.update(value0.value);
           break;
         }
-        case "BlankNode":
-        case "NamedNode": {
+        case "Literal": {
+          _hasher.update(value0.datatype.value);
+          _hasher.update(value0.language);
           _hasher.update(value0.termType);
           _hasher.update(value0.value);
           break;
@@ -2365,16 +2263,14 @@ export class UnionDiscriminantsClass {
       }
     });
     this.optionalIriOrStringProperty.ifJust((value0) => {
-      switch (value0.termType) {
-        case "NamedNode": {
+      switch (typeof value0) {
+        case "object": {
           _hasher.update(value0.termType);
           _hasher.update(value0.value);
           break;
         }
-        case "BlankNode":
-        case "NamedNode": {
-          _hasher.update(value0.termType);
-          _hasher.update(value0.value);
+        case "string": {
+          _hasher.update(value0);
           break;
         }
         default:
@@ -2391,11 +2287,8 @@ export class UnionDiscriminantsClass {
         this.requiredClassOrClassOrStringProperty.value.$hash(_hasher);
         break;
       }
-      case "2-(rdfjs.BlankNode | rdfjs.NamedNode)": {
-        _hasher.update(
-          this.requiredClassOrClassOrStringProperty.value.termType,
-        );
-        _hasher.update(this.requiredClassOrClassOrStringProperty.value.value);
+      case "2-string": {
+        _hasher.update(this.requiredClassOrClassOrStringProperty.value);
         break;
       }
       default:
@@ -2409,8 +2302,9 @@ export class UnionDiscriminantsClass {
         _hasher.update(this.requiredIriOrLiteralProperty.value);
         break;
       }
-      case "BlankNode":
-      case "NamedNode": {
+      case "Literal": {
+        _hasher.update(this.requiredIriOrLiteralProperty.datatype.value);
+        _hasher.update(this.requiredIriOrLiteralProperty.language);
         _hasher.update(this.requiredIriOrLiteralProperty.termType);
         _hasher.update(this.requiredIriOrLiteralProperty.value);
         break;
@@ -2420,16 +2314,14 @@ export class UnionDiscriminantsClass {
         throw new Error("unrecognized type");
     }
 
-    switch (this.requiredIriOrStringProperty.termType) {
-      case "NamedNode": {
+    switch (typeof this.requiredIriOrStringProperty) {
+      case "object": {
         _hasher.update(this.requiredIriOrStringProperty.termType);
         _hasher.update(this.requiredIriOrStringProperty.value);
         break;
       }
-      case "BlankNode":
-      case "NamedNode": {
-        _hasher.update(this.requiredIriOrStringProperty.termType);
-        _hasher.update(this.requiredIriOrStringProperty.value);
+      case "string": {
+        _hasher.update(this.requiredIriOrStringProperty);
         break;
       }
       default:
@@ -2447,9 +2339,8 @@ export class UnionDiscriminantsClass {
           item0.value.$hash(_hasher);
           break;
         }
-        case "2-(rdfjs.BlankNode | rdfjs.NamedNode)": {
-          _hasher.update(item0.value.termType);
-          _hasher.update(item0.value.value);
+        case "2-string": {
+          _hasher.update(item0.value);
           break;
         }
         default:
@@ -2465,8 +2356,9 @@ export class UnionDiscriminantsClass {
           _hasher.update(item0.value);
           break;
         }
-        case "BlankNode":
-        case "NamedNode": {
+        case "Literal": {
+          _hasher.update(item0.datatype.value);
+          _hasher.update(item0.language);
           _hasher.update(item0.termType);
           _hasher.update(item0.value);
           break;
@@ -2478,16 +2370,14 @@ export class UnionDiscriminantsClass {
     }
 
     for (const item0 of this.setIriOrStringProperty) {
-      switch (item0.termType) {
-        case "NamedNode": {
+      switch (typeof item0) {
+        case "object": {
           _hasher.update(item0.termType);
           _hasher.update(item0.value);
           break;
         }
-        case "BlankNode":
-        case "NamedNode": {
-          _hasher.update(item0.termType);
-          _hasher.update(item0.value);
+        case "string": {
+          _hasher.update(item0);
           break;
         }
         default:
@@ -2510,14 +2400,8 @@ export class UnionDiscriminantsClass {
         optionalClassOrClassOrStringProperty:
           this.optionalClassOrClassOrStringProperty
             .map((item) =>
-              item.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-                ? {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-                    value:
-                      item.value.termType === "BlankNode"
-                        ? { "@id": `_:${item.value.value}` }
-                        : { "@id": item.value.value },
-                  }
+              item.type === "2-string"
+                ? { type: "2-string" as const, value: item.value }
                 : item.type === "1-ClassUnionMember2"
                   ? {
                       type: "1-ClassUnionMember2" as const,
@@ -2531,49 +2415,31 @@ export class UnionDiscriminantsClass {
             .extract(),
         optionalIriOrLiteralProperty: this.optionalIriOrLiteralProperty
           .map((item) =>
-            item.termType === "BlankNode" || item.termType === "NamedNode"
-              ? item.termType === "BlankNode"
-                ? {
-                    "@id": `_:${item.value}`,
-                    termType: item.termType as "BlankNode" | "NamedNode",
-                  }
-                : {
-                    "@id": item.value,
-                    termType: item.termType as "BlankNode" | "NamedNode",
-                  }
+            item.termType === "Literal"
+              ? {
+                  "@language":
+                    item.language.length > 0 ? item.language : undefined,
+                  termType: "Literal" as const,
+                  "@type":
+                    item.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? item.datatype.value
+                      : undefined,
+                  "@value": item.value,
+                }
               : { "@id": item.value, termType: item.termType as "NamedNode" },
           )
           .extract(),
         optionalIriOrStringProperty: this.optionalIriOrStringProperty
           .map((item) =>
-            item.termType === "BlankNode" || item.termType === "NamedNode"
-              ? item.termType === "BlankNode"
-                ? {
-                    "@id": `_:${item.value}`,
-                    termType: item.termType as "BlankNode" | "NamedNode",
-                  }
-                : {
-                    "@id": item.value,
-                    termType: item.termType as "BlankNode" | "NamedNode",
-                  }
-              : { "@id": item.value, termType: item.termType as "NamedNode" },
+            typeof item === "string" ? item : { "@id": item.value },
           )
           .extract(),
         requiredClassOrClassOrStringProperty:
-          this.requiredClassOrClassOrStringProperty.type ===
-          "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
+          this.requiredClassOrClassOrStringProperty.type === "2-string"
             ? {
-                type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-                value:
-                  this.requiredClassOrClassOrStringProperty.value.termType ===
-                  "BlankNode"
-                    ? {
-                        "@id": `_:${this.requiredClassOrClassOrStringProperty.value.value}`,
-                      }
-                    : {
-                        "@id":
-                          this.requiredClassOrClassOrStringProperty.value.value,
-                      },
+                type: "2-string" as const,
+                value: this.requiredClassOrClassOrStringProperty.value,
               }
             : this.requiredClassOrClassOrStringProperty.type ===
                 "1-ClassUnionMember2"
@@ -2588,57 +2454,33 @@ export class UnionDiscriminantsClass {
                     this.requiredClassOrClassOrStringProperty.value.$toJson(),
                 },
         requiredIriOrLiteralProperty:
-          this.requiredIriOrLiteralProperty.termType === "BlankNode" ||
-          this.requiredIriOrLiteralProperty.termType === "NamedNode"
-            ? this.requiredIriOrLiteralProperty.termType === "BlankNode"
-              ? {
-                  "@id": `_:${this.requiredIriOrLiteralProperty.value}`,
-                  termType: this.requiredIriOrLiteralProperty.termType as
-                    | "BlankNode"
-                    | "NamedNode",
-                }
-              : {
-                  "@id": this.requiredIriOrLiteralProperty.value,
-                  termType: this.requiredIriOrLiteralProperty.termType as
-                    | "BlankNode"
-                    | "NamedNode",
-                }
+          this.requiredIriOrLiteralProperty.termType === "Literal"
+            ? {
+                "@language":
+                  this.requiredIriOrLiteralProperty.language.length > 0
+                    ? this.requiredIriOrLiteralProperty.language
+                    : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  this.requiredIriOrLiteralProperty.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? this.requiredIriOrLiteralProperty.datatype.value
+                    : undefined,
+                "@value": this.requiredIriOrLiteralProperty.value,
+              }
             : {
                 "@id": this.requiredIriOrLiteralProperty.value,
                 termType: this.requiredIriOrLiteralProperty
                   .termType as "NamedNode",
               },
         requiredIriOrStringProperty:
-          this.requiredIriOrStringProperty.termType === "BlankNode" ||
-          this.requiredIriOrStringProperty.termType === "NamedNode"
-            ? this.requiredIriOrStringProperty.termType === "BlankNode"
-              ? {
-                  "@id": `_:${this.requiredIriOrStringProperty.value}`,
-                  termType: this.requiredIriOrStringProperty.termType as
-                    | "BlankNode"
-                    | "NamedNode",
-                }
-              : {
-                  "@id": this.requiredIriOrStringProperty.value,
-                  termType: this.requiredIriOrStringProperty.termType as
-                    | "BlankNode"
-                    | "NamedNode",
-                }
-            : {
-                "@id": this.requiredIriOrStringProperty.value,
-                termType: this.requiredIriOrStringProperty
-                  .termType as "NamedNode",
-              },
+          typeof this.requiredIriOrStringProperty === "string"
+            ? this.requiredIriOrStringProperty
+            : { "@id": this.requiredIriOrStringProperty.value },
         setClassOrClassOrStringProperty:
           this.setClassOrClassOrStringProperty.map((item) =>
-            item.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-              ? {
-                  type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
-                }
+            item.type === "2-string"
+              ? { type: "2-string" as const, value: item.value }
               : item.type === "1-ClassUnionMember2"
                 ? {
                     type: "1-ClassUnionMember2" as const,
@@ -2650,30 +2492,22 @@ export class UnionDiscriminantsClass {
                   },
           ),
         setIriOrLiteralProperty: this.setIriOrLiteralProperty.map((item) =>
-          item.termType === "BlankNode" || item.termType === "NamedNode"
-            ? item.termType === "BlankNode"
-              ? {
-                  "@id": `_:${item.value}`,
-                  termType: item.termType as "BlankNode" | "NamedNode",
-                }
-              : {
-                  "@id": item.value,
-                  termType: item.termType as "BlankNode" | "NamedNode",
-                }
+          item.termType === "Literal"
+            ? {
+                "@language":
+                  item.language.length > 0 ? item.language : undefined,
+                termType: "Literal" as const,
+                "@type":
+                  item.datatype.value !==
+                  "http://www.w3.org/2001/XMLSchema#string"
+                    ? item.datatype.value
+                    : undefined,
+                "@value": item.value,
+              }
             : { "@id": item.value, termType: item.termType as "NamedNode" },
         ),
         setIriOrStringProperty: this.setIriOrStringProperty.map((item) =>
-          item.termType === "BlankNode" || item.termType === "NamedNode"
-            ? item.termType === "BlankNode"
-              ? {
-                  "@id": `_:${item.value}`,
-                  termType: item.termType as "BlankNode" | "NamedNode",
-                }
-              : {
-                  "@id": item.value,
-                  termType: item.termType as "BlankNode" | "NamedNode",
-                }
-            : { "@id": item.value, termType: item.termType as "NamedNode" },
+          typeof item === "string" ? item : { "@id": item.value },
         ),
       } satisfies UnionDiscriminantsClass.$Json),
     );
@@ -2699,7 +2533,7 @@ export class UnionDiscriminantsClass {
         "identifier"
       ],
       ...this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
-        value.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
+        value.type === "2-string"
           ? ([value.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
@@ -2743,8 +2577,7 @@ export class UnionDiscriminantsClass {
       UnionDiscriminantsClass.$properties.requiredClassOrClassOrStringProperty[
         "identifier"
       ],
-      ...(this.requiredClassOrClassOrStringProperty.type ===
-      "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
+      ...(this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
             this.requiredClassOrClassOrStringProperty.value,
           ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
@@ -2776,7 +2609,7 @@ export class UnionDiscriminantsClass {
         "identifier"
       ],
       ...this.setClassOrClassOrStringProperty.flatMap((item) =>
-        item.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
+        item.type === "2-string"
           ? ([item.value] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
@@ -2877,56 +2710,46 @@ export namespace UnionDiscriminantsClass {
     readonly optionalClassOrClassOrStringProperty?:
       | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
       | { type: "1-ClassUnionMember2"; value: ClassUnionMember2.$Json }
-      | {
-          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-          value: { readonly "@id": string };
-        };
+      | { type: "2-string"; value: string };
     readonly optionalIriOrLiteralProperty?:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
-          readonly "@id": string;
-          readonly termType: "BlankNode" | "NamedNode";
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
         };
-    readonly optionalIriOrStringProperty?:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@id": string;
-          readonly termType: "BlankNode" | "NamedNode";
-        };
+    readonly optionalIriOrStringProperty?: { readonly "@id": string } | string;
     readonly requiredClassOrClassOrStringProperty:
       | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
       | { type: "1-ClassUnionMember2"; value: ClassUnionMember2.$Json }
-      | {
-          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-          value: { readonly "@id": string };
-        };
+      | { type: "2-string"; value: string };
     readonly requiredIriOrLiteralProperty:
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
       | {
-          readonly "@id": string;
-          readonly termType: "BlankNode" | "NamedNode";
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
         };
-    readonly requiredIriOrStringProperty:
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | {
-          readonly "@id": string;
-          readonly termType: "BlankNode" | "NamedNode";
-        };
+    readonly requiredIriOrStringProperty: { readonly "@id": string } | string;
     readonly setClassOrClassOrStringProperty?: readonly (
       | { type: "0-ClassUnionMember1"; value: ClassUnionMember1.$Json }
       | { type: "1-ClassUnionMember2"; value: ClassUnionMember2.$Json }
-      | {
-          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-          value: { readonly "@id": string };
-        }
+      | { type: "2-string"; value: string }
     )[];
     readonly setIriOrLiteralProperty?: readonly (
       | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | {
+          readonly "@language"?: string;
+          readonly termType: "Literal";
+          readonly "@type"?: string;
+          readonly "@value": string;
+        }
     )[];
     readonly setIriOrStringProperty?: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
+      | { readonly "@id": string }
+      | string
     )[];
   };
 
@@ -3010,10 +2833,7 @@ export namespace UnionDiscriminantsClass {
             type: zod.literal("1-ClassUnionMember2"),
             value: ClassUnionMember2.$jsonZodSchema(),
           }),
-          zod.object({
-            type: zod.literal("2-(rdfjs.BlankNode | rdfjs.NamedNode)"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
         .optional()
         .describe(
@@ -3026,8 +2846,10 @@ export namespace UnionDiscriminantsClass {
             termType: zod.literal("NamedNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
+            "@language": zod.string().optional(),
+            termType: zod.literal("Literal"),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
           }),
         ])
         .optional()
@@ -3035,16 +2857,7 @@ export namespace UnionDiscriminantsClass {
           "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       optionalIriOrStringProperty: zod
-        .discriminatedUnion("termType", [
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
-          }),
-        ])
+        .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
         .optional()
         .describe("Union that can be discriminated by typeof."),
       requiredClassOrClassOrStringProperty: zod
@@ -3057,10 +2870,7 @@ export namespace UnionDiscriminantsClass {
             type: zod.literal("1-ClassUnionMember2"),
             value: ClassUnionMember2.$jsonZodSchema(),
           }),
-          zod.object({
-            type: zod.literal("2-(rdfjs.BlankNode | rdfjs.NamedNode)"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
         .describe(
           "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
@@ -3072,24 +2882,17 @@ export namespace UnionDiscriminantsClass {
             termType: zod.literal("NamedNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
+            "@language": zod.string().optional(),
+            termType: zod.literal("Literal"),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
           }),
         ])
         .describe(
           "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       requiredIriOrStringProperty: zod
-        .discriminatedUnion("termType", [
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
-          }),
-        ])
+        .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
         .describe("Union that can be discriminated by typeof."),
       setClassOrClassOrStringProperty: zod
         .discriminatedUnion("type", [
@@ -3101,10 +2904,7 @@ export namespace UnionDiscriminantsClass {
             type: zod.literal("1-ClassUnionMember2"),
             value: ClassUnionMember2.$jsonZodSchema(),
           }),
-          zod.object({
-            type: zod.literal("2-(rdfjs.BlankNode | rdfjs.NamedNode)"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("2-string"), value: zod.string() }),
         ])
         .array()
         .default(() => [])
@@ -3118,8 +2918,10 @@ export namespace UnionDiscriminantsClass {
             termType: zod.literal("NamedNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
+            "@language": zod.string().optional(),
+            termType: zod.literal("Literal"),
+            "@type": zod.string().optional(),
+            "@value": zod.string(),
           }),
         ])
         .array()
@@ -3128,16 +2930,7 @@ export namespace UnionDiscriminantsClass {
           "Union that can be discriminated by an inline discriminant property (termType).",
         ),
       setIriOrStringProperty: zod
-        .discriminatedUnion("termType", [
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
-          }),
-        ])
+        .union([zod.object({ "@id": zod.string().min(1) }), zod.string()])
         .array()
         .default(() => [])
         .describe("Union that can be discriminated by typeof."),
@@ -3199,46 +2992,25 @@ export namespace UnionDiscriminantsClass {
       optionalClassOrClassOrStringProperty: purify.Maybe<
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          }
+        | { type: "2-string"; value: string }
       >;
       optionalIriOrLiteralProperty: purify.Maybe<
-        rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
+        rdfjs.NamedNode | rdfjs.Literal
       >;
-      optionalIriOrStringProperty: purify.Maybe<
-        rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-      >;
+      optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
       requiredClassOrClassOrStringProperty:
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          };
-      requiredIriOrLiteralProperty:
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode);
-      requiredIriOrStringProperty:
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode);
+        | { type: "2-string"; value: string };
+      requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+      requiredIriOrStringProperty: rdfjs.NamedNode | string;
       setClassOrClassOrStringProperty: readonly (
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          }
+        | { type: "2-string"; value: string }
       )[];
-      setIriOrLiteralProperty: readonly (
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[];
-      setIriOrStringProperty: readonly (
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[];
+      setIriOrLiteralProperty: readonly (rdfjs.NamedNode | rdfjs.Literal)[];
+      setIriOrStringProperty: readonly (rdfjs.NamedNode | string)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -3253,13 +3025,8 @@ export namespace UnionDiscriminantsClass {
     const optionalClassOrClassOrStringProperty = purify.Maybe.fromNullable(
       $jsonObject["optionalClassOrClassOrStringProperty"],
     ).map((item) =>
-      item.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-        ? {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          }
+      item.type === "2-string"
+        ? { type: "2-string" as const, value: item.value }
         : item.type === "1-ClassUnionMember2"
           ? {
               type: "1-ClassUnionMember2" as const,
@@ -3273,39 +3040,27 @@ export namespace UnionDiscriminantsClass {
     const optionalIriOrLiteralProperty = purify.Maybe.fromNullable(
       $jsonObject["optionalIriOrLiteralProperty"],
     ).map((item) =>
-      item.termType === "BlankNode" || item.termType === "NamedNode"
-        ? item["@id"].startsWith("_:")
-          ? dataFactory.blankNode(item["@id"].substring(2))
-          : dataFactory.namedNode(item["@id"])
+      item.termType === "Literal"
+        ? dataFactory.literal(
+            item["@value"],
+            typeof item["@language"] !== "undefined"
+              ? item["@language"]
+              : typeof item["@type"] !== "undefined"
+                ? dataFactory.namedNode(item["@type"])
+                : undefined,
+          )
         : dataFactory.namedNode(item["@id"]),
     );
     const optionalIriOrStringProperty = purify.Maybe.fromNullable(
       $jsonObject["optionalIriOrStringProperty"],
     ).map((item) =>
-      item.termType === "BlankNode" || item.termType === "NamedNode"
-        ? item["@id"].startsWith("_:")
-          ? dataFactory.blankNode(item["@id"].substring(2))
-          : dataFactory.namedNode(item["@id"])
-        : dataFactory.namedNode(item["@id"]),
+      typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
     );
     const requiredClassOrClassOrStringProperty =
-      $jsonObject["requiredClassOrClassOrStringProperty"].type ===
-      "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
+      $jsonObject["requiredClassOrClassOrStringProperty"].type === "2-string"
         ? {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-            value: $jsonObject["requiredClassOrClassOrStringProperty"].value[
-              "@id"
-            ].startsWith("_:")
-              ? dataFactory.blankNode(
-                  $jsonObject["requiredClassOrClassOrStringProperty"].value[
-                    "@id"
-                  ].substring(2),
-                )
-              : dataFactory.namedNode(
-                  $jsonObject["requiredClassOrClassOrStringProperty"].value[
-                    "@id"
-                  ],
-                ),
+            type: "2-string" as const,
+            value: $jsonObject["requiredClassOrClassOrStringProperty"].value,
           }
         : $jsonObject["requiredClassOrClassOrStringProperty"].type ===
             "1-ClassUnionMember2"
@@ -3322,41 +3077,33 @@ export namespace UnionDiscriminantsClass {
               ).unsafeCoerce(),
             };
     const requiredIriOrLiteralProperty =
-      $jsonObject["requiredIriOrLiteralProperty"].termType === "BlankNode" ||
-      $jsonObject["requiredIriOrLiteralProperty"].termType === "NamedNode"
-        ? $jsonObject["requiredIriOrLiteralProperty"]["@id"].startsWith("_:")
-          ? dataFactory.blankNode(
-              $jsonObject["requiredIriOrLiteralProperty"]["@id"].substring(2),
-            )
-          : dataFactory.namedNode(
-              $jsonObject["requiredIriOrLiteralProperty"]["@id"],
-            )
+      $jsonObject["requiredIriOrLiteralProperty"].termType === "Literal"
+        ? dataFactory.literal(
+            $jsonObject["requiredIriOrLiteralProperty"]["@value"],
+            typeof $jsonObject["requiredIriOrLiteralProperty"]["@language"] !==
+              "undefined"
+              ? $jsonObject["requiredIriOrLiteralProperty"]["@language"]
+              : typeof $jsonObject["requiredIriOrLiteralProperty"]["@type"] !==
+                  "undefined"
+                ? dataFactory.namedNode(
+                    $jsonObject["requiredIriOrLiteralProperty"]["@type"],
+                  )
+                : undefined,
+          )
         : dataFactory.namedNode(
             $jsonObject["requiredIriOrLiteralProperty"]["@id"],
           );
     const requiredIriOrStringProperty =
-      $jsonObject["requiredIriOrStringProperty"].termType === "BlankNode" ||
-      $jsonObject["requiredIriOrStringProperty"].termType === "NamedNode"
-        ? $jsonObject["requiredIriOrStringProperty"]["@id"].startsWith("_:")
-          ? dataFactory.blankNode(
-              $jsonObject["requiredIriOrStringProperty"]["@id"].substring(2),
-            )
-          : dataFactory.namedNode(
-              $jsonObject["requiredIriOrStringProperty"]["@id"],
-            )
+      typeof $jsonObject["requiredIriOrStringProperty"] === "string"
+        ? $jsonObject["requiredIriOrStringProperty"]
         : dataFactory.namedNode(
             $jsonObject["requiredIriOrStringProperty"]["@id"],
           );
     const setClassOrClassOrStringProperty = $jsonObject[
       "setClassOrClassOrStringProperty"
     ].map((item) =>
-      item.type === "2-(rdfjs.BlankNode | rdfjs.NamedNode)"
-        ? {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          }
+      item.type === "2-string"
+        ? { type: "2-string" as const, value: item.value }
         : item.type === "1-ClassUnionMember2"
           ? {
               type: "1-ClassUnionMember2" as const,
@@ -3369,19 +3116,20 @@ export namespace UnionDiscriminantsClass {
     );
     const setIriOrLiteralProperty = $jsonObject["setIriOrLiteralProperty"].map(
       (item) =>
-        item.termType === "BlankNode" || item.termType === "NamedNode"
-          ? item["@id"].startsWith("_:")
-            ? dataFactory.blankNode(item["@id"].substring(2))
-            : dataFactory.namedNode(item["@id"])
+        item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
           : dataFactory.namedNode(item["@id"]),
     );
     const setIriOrStringProperty = $jsonObject["setIriOrStringProperty"].map(
       (item) =>
-        item.termType === "BlankNode" || item.termType === "NamedNode"
-          ? item["@id"].startsWith("_:")
-            ? dataFactory.blankNode(item["@id"].substring(2))
-            : dataFactory.namedNode(item["@id"])
-          : dataFactory.namedNode(item["@id"]),
+        typeof item === "string" ? item : dataFactory.namedNode(item["@id"]),
     );
     return purify.Either.of({
       $identifier,
@@ -3410,46 +3158,25 @@ export namespace UnionDiscriminantsClass {
       optionalClassOrClassOrStringProperty: purify.Maybe<
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          }
+        | { type: "2-string"; value: string }
       >;
       optionalIriOrLiteralProperty: purify.Maybe<
-        rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
+        rdfjs.NamedNode | rdfjs.Literal
       >;
-      optionalIriOrStringProperty: purify.Maybe<
-        rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-      >;
+      optionalIriOrStringProperty: purify.Maybe<rdfjs.NamedNode | string>;
       requiredClassOrClassOrStringProperty:
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          };
-      requiredIriOrLiteralProperty:
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode);
-      requiredIriOrStringProperty:
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode);
+        | { type: "2-string"; value: string };
+      requiredIriOrLiteralProperty: rdfjs.NamedNode | rdfjs.Literal;
+      requiredIriOrStringProperty: rdfjs.NamedNode | string;
       setClassOrClassOrStringProperty: readonly (
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          }
+        | { type: "2-string"; value: string }
       )[];
-      setIriOrLiteralProperty: readonly (
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[];
-      setIriOrStringProperty: readonly (
-        | rdfjs.NamedNode
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[];
+      setIriOrLiteralProperty: readonly (rdfjs.NamedNode | rdfjs.Literal)[];
+      setIriOrStringProperty: readonly (rdfjs.NamedNode | string)[];
     }
   > {
     const $identifier: UnionDiscriminantsClass.$Identifier =
@@ -3459,10 +3186,7 @@ export namespace UnionDiscriminantsClass {
       purify.Maybe<
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          }
+        | { type: "2-string"; value: string }
       >
     > = purify.Either.of<
       Error,
@@ -3501,20 +3225,14 @@ export namespace UnionDiscriminantsClass {
                           type: "1-ClassUnionMember2";
                           value: ClassUnionMember2;
                         }
-                      | {
-                          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "2-string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  }
+                | { type: "2-string"; value: string }
               >
             >
           )
@@ -3544,36 +3262,85 @@ export namespace UnionDiscriminantsClass {
                               type: "1-ClassUnionMember2";
                               value: ClassUnionMember2;
                             }
-                          | {
-                              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
                     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                    | {
-                        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "2-string"; value: string }
                   >
                 >,
             )
             .altLazy(
               () =>
                 valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .optionalClassOrClassOrStringProperty[
+                                "identifier"
+                              ],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
                   .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
+                    values.chainMap((value) => value.toString()),
                   )
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({
-                          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-                          value,
-                        }) as
+                        ({ type: "2-string" as const, value }) as
                           | {
                               type: "0-ClassUnionMember1";
                               value: ClassUnionMember1;
@@ -3582,20 +3349,14 @@ export namespace UnionDiscriminantsClass {
                               type: "1-ClassUnionMember2";
                               value: ClassUnionMember2;
                             }
-                          | {
-                              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
                     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                    | {
-                        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "2-string"; value: string }
                   >
                 >,
             )
@@ -3609,10 +3370,7 @@ export namespace UnionDiscriminantsClass {
               purify.Maybe<
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  }
+                | { type: "2-string"; value: string }
               >
             >({
               focusResource: $parameters.resource,
@@ -3631,7 +3389,7 @@ export namespace UnionDiscriminantsClass {
       _optionalClassOrClassOrStringPropertyEither.unsafeCoerce();
     const _optionalIriOrLiteralPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)>
+      purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -3649,20 +3407,73 @@ export namespace UnionDiscriminantsClass {
               values.chainMap((value) => value.toIri()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .optionalIriOrLiteralProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
                 >,
             )
             .chain((values) => values.head());
@@ -3672,9 +3483,7 @@ export namespace UnionDiscriminantsClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              purify.Maybe<rdfjs.NamedNode | rdfjs.Literal>
             >({
               focusResource: $parameters.resource,
               predicate:
@@ -3692,7 +3501,7 @@ export namespace UnionDiscriminantsClass {
       _optionalIriOrLiteralPropertyEither.unsafeCoerce();
     const _optionalIriOrStringPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)>
+      purify.Maybe<rdfjs.NamedNode | string>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -3710,20 +3519,73 @@ export namespace UnionDiscriminantsClass {
               values.chainMap((value) => value.toIri()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .optionalIriOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
                 >,
             )
             .chain((values) => values.head());
@@ -3733,9 +3595,7 @@ export namespace UnionDiscriminantsClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              purify.Maybe<rdfjs.NamedNode | string>
             >({
               focusResource: $parameters.resource,
               predicate:
@@ -3756,10 +3616,7 @@ export namespace UnionDiscriminantsClass {
       Error,
       | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
       | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-      | {
-          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-          value: rdfjs.BlankNode | rdfjs.NamedNode;
-        }
+      | { type: "2-string"; value: string }
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -3797,20 +3654,14 @@ export namespace UnionDiscriminantsClass {
                           type: "1-ClassUnionMember2";
                           value: ClassUnionMember2;
                         }
-                      | {
-                          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "2-string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  }
+                | { type: "2-string"; value: string }
               >
             >
           )
@@ -3840,36 +3691,85 @@ export namespace UnionDiscriminantsClass {
                               type: "1-ClassUnionMember2";
                               value: ClassUnionMember2;
                             }
-                          | {
-                              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
                     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                    | {
-                        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "2-string"; value: string }
                   >
                 >,
             )
             .altLazy(
               () =>
                 valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .requiredClassOrClassOrStringProperty[
+                                "identifier"
+                              ],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
                   .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
+                    values.chainMap((value) => value.toString()),
                   )
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({
-                          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-                          value,
-                        }) as
+                        ({ type: "2-string" as const, value }) as
                           | {
                               type: "0-ClassUnionMember1";
                               value: ClassUnionMember1;
@@ -3878,20 +3778,14 @@ export namespace UnionDiscriminantsClass {
                               type: "1-ClassUnionMember2";
                               value: ClassUnionMember2;
                             }
-                          | {
-                              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
                     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                    | {
-                        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "2-string"; value: string }
                   >
                 >,
             )
@@ -3907,7 +3801,7 @@ export namespace UnionDiscriminantsClass {
       _requiredClassOrClassOrStringPropertyEither.unsafeCoerce();
     const _requiredIriOrLiteralPropertyEither: purify.Either<
       Error,
-      rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
+      rdfjs.NamedNode | rdfjs.Literal
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -3925,20 +3819,73 @@ export namespace UnionDiscriminantsClass {
               values.chainMap((value) => value.toIri()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .requiredIriOrLiteralProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
                 >,
             )
             .chain((values) => values.head());
@@ -3953,7 +3900,7 @@ export namespace UnionDiscriminantsClass {
       _requiredIriOrLiteralPropertyEither.unsafeCoerce();
     const _requiredIriOrStringPropertyEither: purify.Either<
       Error,
-      rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
+      rdfjs.NamedNode | string
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -3971,20 +3918,73 @@ export namespace UnionDiscriminantsClass {
               values.chainMap((value) => value.toIri()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .requiredIriOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
                 >,
             )
             .chain((values) => values.head());
@@ -4002,10 +4002,7 @@ export namespace UnionDiscriminantsClass {
       readonly (
         | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
         | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-        | {
-            type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-            value: rdfjs.BlankNode | rdfjs.NamedNode;
-          }
+        | { type: "2-string"; value: string }
       )[]
     > = purify.Either.of<
       Error,
@@ -4044,20 +4041,14 @@ export namespace UnionDiscriminantsClass {
                           type: "1-ClassUnionMember2";
                           value: ClassUnionMember2;
                         }
-                      | {
-                          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "2-string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
                 | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                 | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                | {
-                    type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  }
+                | { type: "2-string"; value: string }
               >
             >
           )
@@ -4087,36 +4078,83 @@ export namespace UnionDiscriminantsClass {
                               type: "1-ClassUnionMember2";
                               value: ClassUnionMember2;
                             }
-                          | {
-                              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
                     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                    | {
-                        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "2-string"; value: string }
                   >
                 >,
             )
             .altLazy(
               () =>
                 valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .setClassOrClassOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
                   .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
+                    values.chainMap((value) => value.toString()),
                   )
                   .map((values) =>
                     values.map(
                       (value) =>
-                        ({
-                          type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)" as const,
-                          value,
-                        }) as
+                        ({ type: "2-string" as const, value }) as
                           | {
                               type: "0-ClassUnionMember1";
                               value: ClassUnionMember1;
@@ -4125,20 +4163,14 @@ export namespace UnionDiscriminantsClass {
                               type: "1-ClassUnionMember2";
                               value: ClassUnionMember2;
                             }
-                          | {
-                              type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "2-string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
                     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
                     | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
-                    | {
-                        type: "2-(rdfjs.BlankNode | rdfjs.NamedNode)";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "2-string"; value: string }
                   >
                 >,
             )
@@ -4165,7 +4197,7 @@ export namespace UnionDiscriminantsClass {
       _setClassOrClassOrStringPropertyEither.unsafeCoerce();
     const _setIriOrLiteralPropertyEither: purify.Either<
       Error,
-      readonly (rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode))[]
+      readonly (rdfjs.NamedNode | rdfjs.Literal)[]
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -4183,20 +4215,73 @@ export namespace UnionDiscriminantsClass {
               values.chainMap((value) => value.toIri()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .setIriOrLiteralProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | rdfjs.Literal>
                 >,
             )
             .chain((values) => values.head());
@@ -4222,7 +4307,7 @@ export namespace UnionDiscriminantsClass {
       _setIriOrLiteralPropertyEither.unsafeCoerce();
     const _setIriOrStringPropertyEither: purify.Either<
       Error,
-      readonly (rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode))[]
+      readonly (rdfjs.NamedNode | string)[]
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -4240,20 +4325,73 @@ export namespace UnionDiscriminantsClass {
               values.chainMap((value) => value.toIri()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
             >
           )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              UnionDiscriminantsClass.$properties
+                                .setIriOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    rdfjs.NamedNode | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<rdfjs.NamedNode | string>
                 >,
             )
             .chain((values) => values.head());
@@ -21754,19 +21892,11 @@ export namespace LanguageInPropertiesClass {
 export class JsPrimitiveUnionPropertyClass {
   private _$identifier?: JsPrimitiveUnionPropertyClass.$Identifier;
   readonly $type = "JsPrimitiveUnionPropertyClass";
-  readonly jsPrimitiveUnionProperty: readonly (
-    | (rdfjs.BlankNode | rdfjs.NamedNode)
-    | (rdfjs.BlankNode | rdfjs.NamedNode)
-    | (rdfjs.BlankNode | rdfjs.NamedNode)
-  )[];
+  readonly jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly jsPrimitiveUnionProperty?: readonly (
-      | (rdfjs.BlankNode | rdfjs.NamedNode)
-      | (rdfjs.BlankNode | rdfjs.NamedNode)
-      | (rdfjs.BlankNode | rdfjs.NamedNode)
-    )[];
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -21821,50 +21951,17 @@ export class JsPrimitiveUnionPropertyClass {
             left,
             right,
             (
-              left:
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-                | (rdfjs.BlankNode | rdfjs.NamedNode),
-              right:
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-                | (rdfjs.BlankNode | rdfjs.NamedNode),
+              left: boolean | number | string,
+              right: boolean | number | string,
             ) => {
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
+              if (typeof left === "boolean" && typeof right === "boolean") {
+                return $strictEquals(left, right);
               }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
-                return $booleanEquals(left, right);
+              if (typeof left === "number" && typeof right === "number") {
+                return $strictEquals(left, right);
               }
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "BlankNode" &&
-                right.termType === "BlankNode"
-              ) {
-                return $booleanEquals(left, right);
-              }
-              if (
-                left.termType === "NamedNode" &&
-                right.termType === "NamedNode"
-              ) {
-                return $booleanEquals(left, right);
+              if (typeof left === "string" && typeof right === "string") {
+                return $strictEquals(left, right);
               }
 
               return purify.Left({
@@ -21909,23 +22006,17 @@ export class JsPrimitiveUnionPropertyClass {
     },
   >(_hasher: HasherT): HasherT {
     for (const item0 of this.jsPrimitiveUnionProperty) {
-      switch (item0.termType) {
-        case "BlankNode":
-        case "NamedNode": {
-          _hasher.update(item0.termType);
-          _hasher.update(item0.value);
+      switch (typeof item0) {
+        case "boolean": {
+          _hasher.update(item0.toString());
           break;
         }
-        case "BlankNode":
-        case "NamedNode": {
-          _hasher.update(item0.termType);
-          _hasher.update(item0.value);
+        case "number": {
+          _hasher.update(item0.toString());
           break;
         }
-        case "BlankNode":
-        case "NamedNode": {
-          _hasher.update(item0.termType);
-          _hasher.update(item0.value);
+        case "string": {
+          _hasher.update(item0);
           break;
         }
         default:
@@ -21945,16 +22036,8 @@ export class JsPrimitiveUnionPropertyClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map((item) =>
-          item.termType === "BlankNode"
-            ? {
-                "@id": `_:${item.value}`,
-                termType: item.termType as "BlankNode" | "NamedNode",
-              }
-            : {
-                "@id": item.value,
-                termType: item.termType as "BlankNode" | "NamedNode",
-              },
+        jsPrimitiveUnionProperty: this.jsPrimitiveUnionProperty.map(
+          (item) => item,
         ),
       } satisfies JsPrimitiveUnionPropertyClass.$Json),
     );
@@ -21979,11 +22062,23 @@ export class JsPrimitiveUnionPropertyClass {
       JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
         "identifier"
       ],
-      ...this.jsPrimitiveUnionProperty.flatMap(
-        (item) =>
-          [item] as readonly Parameters<
-            rdfjsResource.MutableResource["add"]
-          >[1][],
+      ...this.jsPrimitiveUnionProperty.flatMap((item) =>
+        typeof item === "string"
+          ? ([item] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][])
+          : typeof item === "number"
+            ? ([
+                dataFactory.literal(
+                  item.toString(10),
+                  $RdfVocabularies.xsd.decimal,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([item] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
       ),
     );
     return resource;
@@ -22052,11 +22147,7 @@ export namespace JsPrimitiveUnionPropertyClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "JsPrimitiveUnionPropertyClass";
-    readonly jsPrimitiveUnionProperty?: readonly (
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-      | { readonly "@id": string; readonly termType: "BlankNode" | "NamedNode" }
-    )[];
+    readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
   };
 
   export function $jsonSchema() {
@@ -22098,20 +22189,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       "@id": zod.string().min(1),
       $type: zod.literal("JsPrimitiveUnionPropertyClass"),
       jsPrimitiveUnionProperty: zod
-        .discriminatedUnion("termType", [
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
-          }),
-          zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.enum(["BlankNode", "NamedNode"]),
-          }),
-        ])
+        .union([zod.boolean(), zod.number(), zod.string()])
         .array()
         .default(() => []),
     }) satisfies zod.ZodType<$Json>;
@@ -22129,11 +22207,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      jsPrimitiveUnionProperty: readonly (
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[];
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -22145,13 +22219,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const jsPrimitiveUnionProperty = $jsonObject[
-      "jsPrimitiveUnionProperty"
-    ].map((item) =>
-      item["@id"].startsWith("_:")
-        ? dataFactory.blankNode(item["@id"].substring(2))
-        : dataFactory.namedNode(item["@id"]),
-    );
+    const jsPrimitiveUnionProperty = $jsonObject["jsPrimitiveUnionProperty"];
     return purify.Either.of({ $identifier, jsPrimitiveUnionProperty });
   }
 
@@ -22165,22 +22233,14 @@ export namespace JsPrimitiveUnionPropertyClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      jsPrimitiveUnionProperty: readonly (
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[];
+      jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
     }
   > {
     const $identifier: JsPrimitiveUnionPropertyClass.$Identifier =
       $parameters.resource.identifier;
     const _jsPrimitiveUnionPropertyEither: purify.Either<
       Error,
-      readonly (
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-        | (rdfjs.BlankNode | rdfjs.NamedNode)
-      )[]
+      readonly (boolean | number | string)[]
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -22195,40 +22255,85 @@ export namespace JsPrimitiveUnionPropertyClass {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
             valueAsValues.chain((values) =>
-              values.chainMap((value) => value.toIdentifier()),
+              values.chainMap((value) => value.toBoolean()),
             ) as purify.Either<
               Error,
-              rdfjsResource.Resource.Values<
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-                | (rdfjs.BlankNode | rdfjs.NamedNode)
-              >
+              rdfjsResource.Resource.Values<boolean | number | string>
             >
           )
             .altLazy(
               () =>
                 valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
+                  values.chainMap((value) => value.toNumber()),
                 ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    | (rdfjs.BlankNode | rdfjs.NamedNode)
-                    | (rdfjs.BlankNode | rdfjs.NamedNode)
-                    | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<boolean | number | string>
                 >,
             )
             .altLazy(
               () =>
-                valueAsValues.chain((values) =>
-                  values.chainMap((value) => value.toIdentifier()),
-                ) as purify.Either<
+                valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              JsPrimitiveUnionPropertyClass.$properties
+                                .jsPrimitiveUnionProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  ) as purify.Either<
                   Error,
-                  rdfjsResource.Resource.Values<
-                    | (rdfjs.BlankNode | rdfjs.NamedNode)
-                    | (rdfjs.BlankNode | rdfjs.NamedNode)
-                    | (rdfjs.BlankNode | rdfjs.NamedNode)
-                  >
+                  rdfjsResource.Resource.Values<boolean | number | string>
                 >,
             )
             .chain((values) => values.head());
@@ -30653,59 +30758,39 @@ export class DateUnionPropertiesClass {
   private _$identifier?: DateUnionPropertiesClass.$Identifier;
   readonly $type = "DateUnionPropertiesClass";
   readonly dateOrDateTimeProperty: purify.Maybe<
-    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-    | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+    { type: "date"; value: Date } | { type: "dateTime"; value: Date }
   >;
   readonly dateOrStringProperty: purify.Maybe<
-    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-    | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+    { type: "date"; value: Date } | { type: "string"; value: string }
   >;
   readonly dateTimeOrDateProperty: purify.Maybe<
-    | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+    { type: "dateTime"; value: Date } | { type: "date"; value: Date }
   >;
   readonly stringOrDateProperty: purify.Maybe<
-    | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+    { type: "string"; value: string } | { type: "date"; value: Date }
   >;
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly dateOrDateTimeProperty?:
-      | (
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        )
+      | ({ type: "date"; value: Date } | { type: "dateTime"; value: Date })
       | purify.Maybe<
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date }
         >;
     readonly dateOrStringProperty?:
-      | (
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        )
+      | ({ type: "date"; value: Date } | { type: "string"; value: string })
       | purify.Maybe<
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+          { type: "date"; value: Date } | { type: "string"; value: string }
         >;
     readonly dateTimeOrDateProperty?:
-      | (
-          | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        )
+      | ({ type: "dateTime"; value: Date } | { type: "date"; value: Date })
       | purify.Maybe<
-          | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date }
         >;
     readonly stringOrDateProperty?:
-      | (
-          | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        )
+      | ({ type: "string"; value: string } | { type: "date"; value: Date })
       | purify.Maybe<
-          | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-          | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+          { type: "string"; value: string } | { type: "date"; value: Date }
         >;
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -30805,23 +30890,17 @@ export class DateUnionPropertiesClass {
             right,
             (
               left:
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | {
-                    type: "dateTime";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  },
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
               right:
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | {
-                    type: "dateTime";
-                    value: rdfjs.BlankNode | rdfjs.NamedNode;
-                  },
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date },
             ) => {
               if (left.type === "date" && right.type === "date") {
-                return $booleanEquals(left.value, right.value);
+                return $dateEquals(left.value, right.value);
               }
               if (left.type === "dateTime" && right.type === "dateTime") {
-                return $booleanEquals(left.value, right.value);
+                return $dateEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -30853,17 +30932,17 @@ export class DateUnionPropertiesClass {
             right,
             (
               left:
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode },
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string },
               right:
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode },
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string },
             ) => {
               if (left.type === "date" && right.type === "date") {
-                return $booleanEquals(left.value, right.value);
+                return $dateEquals(left.value, right.value);
               }
               if (left.type === "string" && right.type === "string") {
-                return $booleanEquals(left.value, right.value);
+                return $strictEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -30895,17 +30974,17 @@ export class DateUnionPropertiesClass {
             right,
             (
               left:
-                | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode },
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
               right:
-                | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode },
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date },
             ) => {
               if (left.type === "dateTime" && right.type === "dateTime") {
-                return $booleanEquals(left.value, right.value);
+                return $dateEquals(left.value, right.value);
               }
               if (left.type === "date" && right.type === "date") {
-                return $booleanEquals(left.value, right.value);
+                return $dateEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -30937,17 +31016,17 @@ export class DateUnionPropertiesClass {
             right,
             (
               left:
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode },
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date },
               right:
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode },
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date },
             ) => {
               if (left.type === "string" && right.type === "string") {
-                return $booleanEquals(left.value, right.value);
+                return $strictEquals(left.value, right.value);
               }
               if (left.type === "date" && right.type === "date") {
-                return $booleanEquals(left.value, right.value);
+                return $dateEquals(left.value, right.value);
               }
 
               return purify.Left({
@@ -30993,13 +31072,11 @@ export class DateUnionPropertiesClass {
     this.dateOrDateTimeProperty.ifJust((value0) => {
       switch (value0.type) {
         case "date": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value.toISOString());
           break;
         }
         case "dateTime": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value.toISOString());
           break;
         }
         default:
@@ -31010,13 +31087,11 @@ export class DateUnionPropertiesClass {
     this.dateOrStringProperty.ifJust((value0) => {
       switch (value0.type) {
         case "date": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value.toISOString());
           break;
         }
         case "string": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value);
           break;
         }
         default:
@@ -31027,13 +31102,11 @@ export class DateUnionPropertiesClass {
     this.dateTimeOrDateProperty.ifJust((value0) => {
       switch (value0.type) {
         case "dateTime": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value.toISOString());
           break;
         }
         case "date": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value.toISOString());
           break;
         }
         default:
@@ -31044,13 +31117,11 @@ export class DateUnionPropertiesClass {
     this.stringOrDateProperty.ifJust((value0) => {
       switch (value0.type) {
         case "string": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value);
           break;
         }
         case "date": {
-          _hasher.update(value0.value.termType);
-          _hasher.update(value0.value.value);
+          _hasher.update(value0.value.toISOString());
           break;
         }
         default:
@@ -31072,38 +31143,20 @@ export class DateUnionPropertiesClass {
         dateOrDateTimeProperty: this.dateOrDateTimeProperty
           .map((item) =>
             item.type === "dateTime"
-              ? {
-                  type: "dateTime" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
-                }
+              ? { type: "dateTime" as const, value: item.value.toISOString() }
               : {
                   type: "date" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
+                  value: item.value.toISOString().replace(/T.*$/, ""),
                 },
           )
           .extract(),
         dateOrStringProperty: this.dateOrStringProperty
           .map((item) =>
             item.type === "string"
-              ? {
-                  type: "string" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
-                }
+              ? { type: "string" as const, value: item.value }
               : {
                   type: "date" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
+                  value: item.value.toISOString().replace(/T.*$/, ""),
                 },
           )
           .extract(),
@@ -31112,18 +31165,9 @@ export class DateUnionPropertiesClass {
             item.type === "date"
               ? {
                   type: "date" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
+                  value: item.value.toISOString().replace(/T.*$/, ""),
                 }
-              : {
-                  type: "dateTime" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
-                },
+              : { type: "dateTime" as const, value: item.value.toISOString() },
           )
           .extract(),
         stringOrDateProperty: this.stringOrDateProperty
@@ -31131,18 +31175,9 @@ export class DateUnionPropertiesClass {
             item.type === "date"
               ? {
                   type: "date" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
+                  value: item.value.toISOString().replace(/T.*$/, ""),
                 }
-              : {
-                  type: "string" as const,
-                  value:
-                    item.value.termType === "BlankNode"
-                      ? { "@id": `_:${item.value.value}` }
-                      : { "@id": item.value.value },
-                },
+              : { type: "string" as const, value: item.value },
           )
           .extract(),
       } satisfies DateUnionPropertiesClass.$Json),
@@ -31168,44 +31203,86 @@ export class DateUnionPropertiesClass {
       DateUnionPropertiesClass.$properties.dateOrDateTimeProperty["identifier"],
       ...this.dateOrDateTimeProperty
         .toList()
-        .flatMap(
-          (value) =>
-            [value.value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][],
+        .flatMap((value) =>
+          value.type === "dateTime"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString(),
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
         ),
     );
     resource.add(
       DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
       ...this.dateOrStringProperty
         .toList()
-        .flatMap(
-          (value) =>
-            [value.value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][],
+        .flatMap((value) =>
+          value.type === "string"
+            ? ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
         ),
     );
     resource.add(
       DateUnionPropertiesClass.$properties.dateTimeOrDateProperty["identifier"],
       ...this.dateTimeOrDateProperty
         .toList()
-        .flatMap(
-          (value) =>
-            [value.value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][],
+        .flatMap((value) =>
+          value.type === "date"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([
+                dataFactory.literal(
+                  value.value.toISOString(),
+                  $RdfVocabularies.xsd.dateTime,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
         ),
     );
     resource.add(
       DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
       ...this.stringOrDateProperty
         .toList()
-        .flatMap(
-          (value) =>
-            [value.value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][],
+        .flatMap((value) =>
+          value.type === "date"
+            ? ([
+                dataFactory.literal(
+                  value.value.toISOString().replace(/T.*$/, ""),
+                  $RdfVocabularies.xsd.date,
+                ),
+              ] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([value.value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
         ),
     );
     return resource;
@@ -31275,17 +31352,17 @@ export namespace DateUnionPropertiesClass {
     readonly "@id": string;
     readonly $type: "DateUnionPropertiesClass";
     readonly dateOrDateTimeProperty?:
-      | { type: "date"; value: { readonly "@id": string } }
-      | { type: "dateTime"; value: { readonly "@id": string } };
+      | { type: "date"; value: string }
+      | { type: "dateTime"; value: string };
     readonly dateOrStringProperty?:
-      | { type: "date"; value: { readonly "@id": string } }
-      | { type: "string"; value: { readonly "@id": string } };
+      | { type: "date"; value: string }
+      | { type: "string"; value: string };
     readonly dateTimeOrDateProperty?:
-      | { type: "dateTime"; value: { readonly "@id": string } }
-      | { type: "date"; value: { readonly "@id": string } };
+      | { type: "dateTime"; value: string }
+      | { type: "date"; value: string };
     readonly stringOrDateProperty?:
-      | { type: "string"; value: { readonly "@id": string } }
-      | { type: "date"; value: { readonly "@id": string } };
+      | { type: "string"; value: string }
+      | { type: "date"; value: string };
   };
 
   export function $jsonSchema() {
@@ -31340,50 +31417,32 @@ export namespace DateUnionPropertiesClass {
       $type: zod.literal("DateUnionPropertiesClass"),
       dateOrDateTimeProperty: zod
         .discriminatedUnion("type", [
-          zod.object({
-            type: zod.literal("date"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
           zod.object({
             type: zod.literal("dateTime"),
-            value: zod.object({ "@id": zod.string().min(1) }),
+            value: zod.iso.datetime(),
           }),
         ])
         .optional(),
       dateOrStringProperty: zod
         .discriminatedUnion("type", [
-          zod.object({
-            type: zod.literal("date"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
-          zod.object({
-            type: zod.literal("string"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
+          zod.object({ type: zod.literal("string"), value: zod.string() }),
         ])
         .optional(),
       dateTimeOrDateProperty: zod
         .discriminatedUnion("type", [
           zod.object({
             type: zod.literal("dateTime"),
-            value: zod.object({ "@id": zod.string().min(1) }),
+            value: zod.iso.datetime(),
           }),
-          zod.object({
-            type: zod.literal("date"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
         ])
         .optional(),
       stringOrDateProperty: zod
         .discriminatedUnion("type", [
-          zod.object({
-            type: zod.literal("string"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
-          zod.object({
-            type: zod.literal("date"),
-            value: zod.object({ "@id": zod.string().min(1) }),
-          }),
+          zod.object({ type: zod.literal("string"), value: zod.string() }),
+          zod.object({ type: zod.literal("date"), value: zod.iso.date() }),
         ])
         .optional(),
     }) satisfies zod.ZodType<$Json>;
@@ -31417,20 +31476,16 @@ export namespace DateUnionPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       dateOrDateTimeProperty: purify.Maybe<
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       >;
       dateOrStringProperty: purify.Maybe<
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "date"; value: Date } | { type: "string"; value: string }
       >;
       dateTimeOrDateProperty: purify.Maybe<
-        | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       >;
       stringOrDateProperty: purify.Maybe<
-        | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "string"; value: string } | { type: "date"; value: Date }
       >;
     }
   > {
@@ -31447,69 +31502,29 @@ export namespace DateUnionPropertiesClass {
       $jsonObject["dateOrDateTimeProperty"],
     ).map((item) =>
       item.type === "dateTime"
-        ? {
-            type: "dateTime" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          }
-        : {
-            type: "date" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          },
+        ? { type: "dateTime" as const, value: new Date(item.value) }
+        : { type: "date" as const, value: new Date(item.value) },
     );
     const dateOrStringProperty = purify.Maybe.fromNullable(
       $jsonObject["dateOrStringProperty"],
     ).map((item) =>
       item.type === "string"
-        ? {
-            type: "string" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          }
-        : {
-            type: "date" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          },
+        ? { type: "string" as const, value: item.value }
+        : { type: "date" as const, value: new Date(item.value) },
     );
     const dateTimeOrDateProperty = purify.Maybe.fromNullable(
       $jsonObject["dateTimeOrDateProperty"],
     ).map((item) =>
       item.type === "date"
-        ? {
-            type: "date" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          }
-        : {
-            type: "dateTime" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          },
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "dateTime" as const, value: new Date(item.value) },
     );
     const stringOrDateProperty = purify.Maybe.fromNullable(
       $jsonObject["stringOrDateProperty"],
     ).map((item) =>
       item.type === "date"
-        ? {
-            type: "date" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          }
-        : {
-            type: "string" as const,
-            value: item.value["@id"].startsWith("_:")
-              ? dataFactory.blankNode(item.value["@id"].substring(2))
-              : dataFactory.namedNode(item.value["@id"]),
-          },
+        ? { type: "date" as const, value: new Date(item.value) }
+        : { type: "string" as const, value: item.value },
     );
     return purify.Either.of({
       $identifier,
@@ -31531,20 +31546,16 @@ export namespace DateUnionPropertiesClass {
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
       dateOrDateTimeProperty: purify.Maybe<
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       >;
       dateOrStringProperty: purify.Maybe<
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "date"; value: Date } | { type: "string"; value: string }
       >;
       dateTimeOrDateProperty: purify.Maybe<
-        | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       >;
       stringOrDateProperty: purify.Maybe<
-        | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "string"; value: string } | { type: "date"; value: Date }
       >;
     }
   > {
@@ -31553,8 +31564,7 @@ export namespace DateUnionPropertiesClass {
     const _dateOrDateTimePropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "date"; value: Date } | { type: "dateTime"; value: Date }
       >
     > = purify.Either.of<
       Error,
@@ -31570,57 +31580,38 @@ export namespace DateUnionPropertiesClass {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
             valueAsValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
+              .chain((values) => values.chainMap((value) => value.toDate()))
               .map((values) =>
                 values.map(
                   (value) =>
                     ({ type: "date" as const, value }) as
-                      | {
-                          type: "date";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        }
-                      | {
-                          type: "dateTime";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "date"; value: Date }
+                      | { type: "dateTime"; value: Date },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date }
               >
             >
           )
             .altLazy(
               () =>
                 valueAsValues
-                  .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  )
+                  .chain((values) => values.chainMap((value) => value.toDate()))
                   .map((values) =>
                     values.map(
                       (value) =>
                         ({ type: "dateTime" as const, value }) as
-                          | {
-                              type: "date";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            }
-                          | {
-                              type: "dateTime";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "date"; value: Date }
+                          | { type: "dateTime"; value: Date },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                    | {
-                        type: "dateTime";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date }
                   >
                 >,
             )
@@ -31632,8 +31623,8 @@ export namespace DateUnionPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "date"; value: Date }
+                | { type: "dateTime"; value: Date }
               >
             >({
               focusResource: $parameters.resource,
@@ -31653,8 +31644,7 @@ export namespace DateUnionPropertiesClass {
     const _dateOrStringPropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "date"; value: Date } | { type: "string"; value: string }
       >
     > = purify.Either.of<
       Error,
@@ -31670,57 +31660,96 @@ export namespace DateUnionPropertiesClass {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
             valueAsValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
+              .chain((values) => values.chainMap((value) => value.toDate()))
               .map((values) =>
                 values.map(
                   (value) =>
                     ({ type: "date" as const, value }) as
-                      | {
-                          type: "date";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        }
-                      | {
-                          type: "string";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "date"; value: Date }
+                      | { type: "string"; value: string },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string }
               >
             >
           )
             .altLazy(
               () =>
                 valueAsValues
+                  .chain((values) => {
+                    if (
+                      !$parameters.preferredLanguages ||
+                      $parameters.preferredLanguages.length === 0
+                    ) {
+                      return purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(values);
+                    }
+
+                    const literalValuesEither = values.chainMap((value) =>
+                      value.toLiteral(),
+                    );
+                    if (literalValuesEither.isLeft()) {
+                      return literalValuesEither;
+                    }
+                    const literalValues = literalValuesEither.unsafeCoerce();
+
+                    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                    // Within a preferredLanguage the literals may be in any order.
+                    let filteredLiteralValues:
+                      | rdfjsResource.Resource.Values<rdfjs.Literal>
+                      | undefined;
+                    for (const preferredLanguage of $parameters.preferredLanguages) {
+                      if (!filteredLiteralValues) {
+                        filteredLiteralValues = literalValues.filter(
+                          (value) => value.language === preferredLanguage,
+                        );
+                      } else {
+                        filteredLiteralValues = filteredLiteralValues.concat(
+                          ...literalValues
+                            .filter(
+                              (value) => value.language === preferredLanguage,
+                            )
+                            .toArray(),
+                        );
+                      }
+                    }
+
+                    return purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      filteredLiteralValues!.map(
+                        (literalValue) =>
+                          new rdfjsResource.Resource.TermValue({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              DateUnionPropertiesClass.$properties
+                                .dateOrStringProperty["identifier"],
+                            term: literalValue,
+                          }),
+                      ),
+                    );
+                  })
                   .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
+                    values.chainMap((value) => value.toString()),
                   )
                   .map((values) =>
                     values.map(
                       (value) =>
                         ({ type: "string" as const, value }) as
-                          | {
-                              type: "date";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            }
-                          | {
-                              type: "string";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "date"; value: Date }
+                          | { type: "string"; value: string },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                    | {
-                        type: "string";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
+                    | { type: "date"; value: Date }
+                    | { type: "string"; value: string }
                   >
                 >,
             )
@@ -31732,8 +31761,8 @@ export namespace DateUnionPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "date"; value: Date }
+                | { type: "string"; value: string }
               >
             >({
               focusResource: $parameters.resource,
@@ -31753,8 +31782,7 @@ export namespace DateUnionPropertiesClass {
     const _dateTimeOrDatePropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "dateTime"; value: Date } | { type: "date"; value: Date }
       >
     > = purify.Either.of<
       Error,
@@ -31770,57 +31798,38 @@ export namespace DateUnionPropertiesClass {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
             valueAsValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
+              .chain((values) => values.chainMap((value) => value.toDate()))
               .map((values) =>
                 values.map(
                   (value) =>
                     ({ type: "dateTime" as const, value }) as
-                      | {
-                          type: "dateTime";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        }
-                      | {
-                          type: "date";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "dateTime"; value: Date }
+                      | { type: "date"; value: Date },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date }
               >
             >
           )
             .altLazy(
               () =>
                 valueAsValues
-                  .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  )
+                  .chain((values) => values.chainMap((value) => value.toDate()))
                   .map((values) =>
                     values.map(
                       (value) =>
                         ({ type: "date" as const, value }) as
-                          | {
-                              type: "dateTime";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            }
-                          | {
-                              type: "date";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "dateTime"; value: Date }
+                          | { type: "date"; value: Date },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | {
-                        type: "dateTime";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
-                    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                    | { type: "dateTime"; value: Date }
+                    | { type: "date"; value: Date }
                   >
                 >,
             )
@@ -31832,8 +31841,8 @@ export namespace DateUnionPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "dateTime"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "dateTime"; value: Date }
+                | { type: "date"; value: Date }
               >
             >({
               focusResource: $parameters.resource,
@@ -31853,8 +31862,7 @@ export namespace DateUnionPropertiesClass {
     const _stringOrDatePropertyEither: purify.Either<
       Error,
       purify.Maybe<
-        | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-        | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+        { type: "string"; value: string } | { type: "date"; value: Date }
       >
     > = purify.Either.of<
       Error,
@@ -31870,57 +31878,92 @@ export namespace DateUnionPropertiesClass {
           const valueAsValues = purify.Either.of(value.toValues());
           return (
             valueAsValues
-              .chain((values) =>
-                values.chainMap((value) => value.toIdentifier()),
-              )
+              .chain((values) => {
+                if (
+                  !$parameters.preferredLanguages ||
+                  $parameters.preferredLanguages.length === 0
+                ) {
+                  return purify.Either.of<
+                    Error,
+                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                  >(values);
+                }
+
+                const literalValuesEither = values.chainMap((value) =>
+                  value.toLiteral(),
+                );
+                if (literalValuesEither.isLeft()) {
+                  return literalValuesEither;
+                }
+                const literalValues = literalValuesEither.unsafeCoerce();
+
+                // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+                // Within a preferredLanguage the literals may be in any order.
+                let filteredLiteralValues:
+                  | rdfjsResource.Resource.Values<rdfjs.Literal>
+                  | undefined;
+                for (const preferredLanguage of $parameters.preferredLanguages) {
+                  if (!filteredLiteralValues) {
+                    filteredLiteralValues = literalValues.filter(
+                      (value) => value.language === preferredLanguage,
+                    );
+                  } else {
+                    filteredLiteralValues = filteredLiteralValues.concat(
+                      ...literalValues
+                        .filter((value) => value.language === preferredLanguage)
+                        .toArray(),
+                    );
+                  }
+                }
+
+                return purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  filteredLiteralValues!.map(
+                    (literalValue) =>
+                      new rdfjsResource.Resource.TermValue({
+                        focusResource: $parameters.resource,
+                        predicate:
+                          DateUnionPropertiesClass.$properties
+                            .stringOrDateProperty["identifier"],
+                        term: literalValue,
+                      }),
+                  ),
+                );
+              })
+              .chain((values) => values.chainMap((value) => value.toString()))
               .map((values) =>
                 values.map(
                   (value) =>
                     ({ type: "string" as const, value }) as
-                      | {
-                          type: "string";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        }
-                      | {
-                          type: "date";
-                          value: rdfjs.BlankNode | rdfjs.NamedNode;
-                        },
+                      | { type: "string"; value: string }
+                      | { type: "date"; value: Date },
                 ),
               ) as purify.Either<
               Error,
               rdfjsResource.Resource.Values<
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date }
               >
             >
           )
             .altLazy(
               () =>
                 valueAsValues
-                  .chain((values) =>
-                    values.chainMap((value) => value.toIdentifier()),
-                  )
+                  .chain((values) => values.chainMap((value) => value.toDate()))
                   .map((values) =>
                     values.map(
                       (value) =>
                         ({ type: "date" as const, value }) as
-                          | {
-                              type: "string";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            }
-                          | {
-                              type: "date";
-                              value: rdfjs.BlankNode | rdfjs.NamedNode;
-                            },
+                          | { type: "string"; value: string }
+                          | { type: "date"; value: Date },
                     ),
                   ) as purify.Either<
                   Error,
                   rdfjsResource.Resource.Values<
-                    | {
-                        type: "string";
-                        value: rdfjs.BlankNode | rdfjs.NamedNode;
-                      }
-                    | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                    | { type: "string"; value: string }
+                    | { type: "date"; value: Date }
                   >
                 >,
             )
@@ -31932,8 +31975,8 @@ export namespace DateUnionPropertiesClass {
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
               purify.Maybe<
-                | { type: "string"; value: rdfjs.BlankNode | rdfjs.NamedNode }
-                | { type: "date"; value: rdfjs.BlankNode | rdfjs.NamedNode }
+                | { type: "string"; value: string }
+                | { type: "date"; value: Date }
               >
             >({
               focusResource: $parameters.resource,
