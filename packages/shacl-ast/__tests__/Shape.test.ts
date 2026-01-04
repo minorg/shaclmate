@@ -14,15 +14,15 @@ describe("Shape", () => {
     const nodeShape = shapesGraph
       .nodeShapeByIdentifier(nodeShapeIdentifier)
       .unsafeCoerce();
-    const propertyShape = nodeShape.constraints.properties.find(
-      (propertyShape) => {
+    const propertyShape = nodeShape.constraints.properties
+      .unsafeCoerce()
+      .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
           propertyShapePath.kind === "PredicatePath" &&
           propertyShapePath.iri.equals(path)
         );
-      },
-    );
+      });
     expect(propertyShape).toBeDefined();
     return propertyShape!;
   };
@@ -44,7 +44,9 @@ describe("Shape", () => {
         ),
       )
       .unsafeCoerce();
-    const schemaShaclOntology = schemaShaclNodeShape.isDefinedBy.unsafeCoerce();
+    const schemaShaclOntology = schemaShaclNodeShape.isDefinedBy
+      .unsafeCoerce()
+      .unsafeCoerce();
     expect(schemaShaclOntology.identifier.value).toStrictEqual(
       "http://topbraid.org/examples/schemashacl",
     );
@@ -52,7 +54,9 @@ describe("Shape", () => {
     const dashNodeShape = shapesGraph
       .nodeShapeByIdentifier(dash.ScriptAPIShape)
       .unsafeCoerce();
-    const dashOntology = dashNodeShape.isDefinedBy.unsafeCoerce();
+    const dashOntology = dashNodeShape.isDefinedBy
+      .unsafeCoerce()
+      .unsafeCoerce();
     expect(dashOntology.identifier.value).toStrictEqual(
       "http://datashapes.org/dash",
     );
@@ -171,16 +175,16 @@ describe("Shape", () => {
   });
 
   it("constraints: should have an sh:node", ({ expect }) => {
-    const nodeShapes = findPropertyShape(schema.Vehicle, schema.fuelConsumption)
-      .constraints.nodes;
+    const nodeShapes = findPropertyShape(
+      schema.Vehicle,
+      schema.fuelConsumption,
+    ).constraints.nodes.unsafeCoerce();
     expect(nodeShapes).toHaveLength(1);
   });
 
   it("constraints: should have an sh:nodeKind", ({ expect }) => {
-    const nodeKinds = findPropertyShape(
-      schema.Person,
-      schema.parent,
-    ).constraints.nodeKinds.orDefault(new Set());
+    const nodeKinds = findPropertyShape(schema.Person, schema.parent)
+      .constraints.nodeKinds;
     expect(nodeKinds.size).toStrictEqual(1);
     expect(nodeKinds.has("NamedNode")).toStrictEqual(true);
   });
@@ -192,7 +196,7 @@ describe("Shape", () => {
       schema.DatedMoneySpecification,
       schema.endDate,
     );
-    const or = propertyShape.constraints.or;
+    const or = propertyShape.constraints.or.unsafeCoerce();
     expect(or).toHaveLength(2);
     expect(
       or.some((propertyShape) =>

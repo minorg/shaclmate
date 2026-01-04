@@ -1,4 +1,6 @@
-import type { Maybe } from "purify-ts";
+import { Either, type Maybe } from "purify-ts";
+import { Resource } from "rdfjs-resource";
+import { Memoize } from "typescript-memoize";
 import type * as generated from "./generated.js";
 import type { OntologyLike } from "./OntologyLike.js";
 import { Shape } from "./Shape.js";
@@ -36,8 +38,9 @@ export class NodeShape<
     );
   }
 
+  @Memoize()
   override toString(): string {
-    return `NodeShape(node=${this.identifier.value})`;
+    return `NodeShape(identifier=${Resource.Identifier.toString(this.identifier)})`;
   }
 }
 
@@ -75,9 +78,12 @@ export namespace NodeShape {
       return this.generatedShaclCoreNodeShape.closed;
     }
 
-    get properties(): readonly PropertyShapeT[] {
-      return this.generatedShaclCoreNodeShape.properties.flatMap((identifier) =>
-        this.shapesGraph.propertyShapeByIdentifier(identifier).toList(),
+    @Memoize()
+    get properties(): Either<Error, readonly PropertyShapeT[]> {
+      return Either.sequence(
+        this.generatedShaclCoreNodeShape.properties.map((identifier) =>
+          this.shapesGraph.propertyShapeByIdentifier(identifier),
+        ),
       );
     }
   }

@@ -18,13 +18,13 @@ function generate(parameters: {
 
 describe("TsGenerator", () => {
   it("should generate from the kitchen sink shapes graph", ({ expect }) => {
-    const ts = generate(testData.kitchenSink);
+    const ts = generate(testData.kitchenSink.unsafeCoerce());
     expect(ts).not.toHaveLength(0);
   }, 60000);
 
   testData.skos.ifJust((parameters) => {
     it("should generate from a SKOS shapes graph", ({ expect }) => {
-      const ts = generate(parameters);
+      const ts = generate(parameters.unsafeCoerce());
       expect(ts).not.toHaveLength(0);
     });
   });
@@ -33,7 +33,7 @@ describe("TsGenerator", () => {
     it("should generate from an external project shapes graph", ({
       expect,
     }) => {
-      const ts = generate(parameters);
+      const ts = generate(parameters.unsafeCoerce());
       expect(ts).not.toHaveLength(0);
     });
   });

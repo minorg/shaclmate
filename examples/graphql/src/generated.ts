@@ -596,7 +596,11 @@ export class UnionMember1 {
 
     resource.add(
       UnionMember1.$properties.optionalNumberProperty["identifier"],
-      ...this.optionalNumberProperty.toList(),
+      ...this.optionalNumberProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.decimal),
+        ]),
     );
     return resource;
   }
@@ -852,7 +856,11 @@ export class Nested {
 
     resource.add(
       UnionMember1.$properties.optionalNumberProperty["identifier"],
-      ...this.optionalNumberProperty.toList(),
+      ...this.optionalNumberProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(10), $RdfVocabularies.xsd.decimal),
+        ]),
     );
     resource.add(
       UnionMember2.$properties.optionalStringProperty["identifier"],

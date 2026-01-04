@@ -1,0 +1,12 @@
+@prefix : <http://example.com/> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+:IriNodeShape
+    a rdfs:Class, sh:NodeShape ;
+    sh:nodeKind sh:IRI .
+
+:IriOrBlankNodeShape
+    a rdfs:Class, sh:NodeShape ;
+    rdfs:subClassOf :IriNodeShape ;
+    sh:nodeKind sh:BlankNodeOrIRI .

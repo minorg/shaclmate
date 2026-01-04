@@ -17,11 +17,11 @@ export class Compiler {
   }
 
   compile(shapesGraph: ShapesGraph): Either<Error, string> {
-    const astEither = new ShapesGraphToAstTransformer({
+    return new ShapesGraphToAstTransformer({
       iriPrefixMap: this.iriPrefixMap,
       shapesGraph,
-    }).transform();
-
-    return astEither.map((ast) => this.generator.generate(ast));
+    })
+      .transform()
+      .map((ast) => this.generator.generate(ast));
   }
 }

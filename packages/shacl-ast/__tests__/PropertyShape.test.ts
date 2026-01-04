@@ -21,15 +21,15 @@ describe("PropertyShape", () => {
     const nodeShape = shapesGraph
       .nodeShapeByIdentifier(nodeShapeIdentifier)
       .unsafeCoerce();
-    const propertyShape = nodeShape.constraints.properties.find(
-      (propertyShape) => {
+    const propertyShape = nodeShape.constraints.properties
+      .unsafeCoerce()
+      .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
           propertyShapePath.kind === "PredicatePath" &&
           propertyShapePath.iri.equals(path)
         );
-      },
-    );
+      });
     expect(propertyShape).toBeDefined();
     return propertyShape!;
   };
@@ -40,7 +40,7 @@ describe("PropertyShape", () => {
     const groups = findPropertyShape(
       dash.ScriptAPIShape,
       dash.generateClass,
-    ).groups;
+    ).groups.unsafeCoerce();
     expect(groups).toHaveLength(1);
     expect(
       groups[0].identifier.equals(dash.ScriptAPIGenerationRules),
@@ -71,7 +71,7 @@ describe("PropertyShape", () => {
     const nodeShape = shapesGraph
       .nodeShapeByIdentifier(schema.Person)
       .unsafeCoerce();
-    for (const propertyShape of nodeShape.constraints.properties) {
+    for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
       if (propertyShape.path.kind !== "InversePath") {
         continue;
       }
@@ -88,7 +88,7 @@ describe("PropertyShape", () => {
     const nodeShape = shapesGraph
       .nodeShapeByIdentifier(dash.ListShape)
       .unsafeCoerce();
-    for (const propertyShape of nodeShape.constraints.properties) {
+    for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
       if (propertyShape.path.kind !== "ZeroOrMorePath") {
         continue;
       }

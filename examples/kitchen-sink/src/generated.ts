@@ -6020,7 +6020,7 @@ export class TermPropertiesClass {
   readonly numberTermProperty: purify.Maybe<number>;
   readonly stringTermProperty: purify.Maybe<string>;
   readonly termProperty: purify.Maybe<
-    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+    rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
   >;
 
   constructor(parameters?: {
@@ -6042,11 +6042,11 @@ export class TermPropertiesClass {
     readonly numberTermProperty?: number | purify.Maybe<number>;
     readonly stringTermProperty?: purify.Maybe<string> | string;
     readonly termProperty?:
-      | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+      | (rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode)
       | Date
       | boolean
       | number
-      | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      | purify.Maybe<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
       | string;
   }) {
     if (typeof parameters?.$identifier === "object") {
@@ -6426,20 +6426,20 @@ export class TermPropertiesClass {
           .extract(),
         termProperty: this.termProperty
           .map((item) =>
-            item.termType === "Literal"
-              ? {
-                  "@language":
-                    item.language.length > 0 ? item.language : undefined,
-                  "@type":
-                    item.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? item.datatype.value
-                      : undefined,
-                  "@value": item.value,
-                  termType: "Literal" as const,
-                }
-              : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
+            item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : item.termType === "Literal"
+                ? {
+                    "@language":
+                      item.language.length > 0 ? item.language : undefined,
+                    "@type":
+                      item.datatype.value !==
+                      "http://www.w3.org/2001/XMLSchema#string"
+                        ? item.datatype.value
+                        : undefined,
+                    "@value": item.value,
+                    termType: "Literal" as const,
+                  }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
@@ -6679,14 +6679,14 @@ export namespace TermPropertiesClass {
             termType: zod.literal("BlankNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
             "@language": zod.string().optional(),
             "@type": zod.string().optional(),
             "@value": zod.string(),
             termType: zod.literal("Literal"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
           }),
         ])
         .optional(),
@@ -6742,7 +6742,7 @@ export namespace TermPropertiesClass {
       numberTermProperty: purify.Maybe<number>;
       stringTermProperty: purify.Maybe<string>;
       termProperty: purify.Maybe<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
       >;
     }
   > {
@@ -6788,17 +6788,17 @@ export namespace TermPropertiesClass {
     const termProperty = purify.Maybe.fromNullable(
       $jsonObject["termProperty"],
     ).map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            typeof item["@language"] !== "undefined"
-              ? item["@language"]
-              : typeof item["@type"] !== "undefined"
-                ? dataFactory.namedNode(item["@type"])
-                : undefined,
-          )
-        : item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
+      item.termType === "NamedNode"
+        ? dataFactory.namedNode(item["@id"])
+        : item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return purify.Either.of({
@@ -6832,7 +6832,7 @@ export namespace TermPropertiesClass {
       numberTermProperty: purify.Maybe<number>;
       stringTermProperty: purify.Maybe<string>;
       termProperty: purify.Maybe<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
       >;
     }
   > {
@@ -7165,7 +7165,7 @@ export namespace TermPropertiesClass {
     const stringTermProperty = _stringTermPropertyEither.unsafeCoerce();
     const _termPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      purify.Maybe<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -7186,7 +7186,7 @@ export namespace TermPropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+              purify.Maybe<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
             >({
               focusResource: $parameters.resource,
               predicate:
@@ -44226,19 +44226,19 @@ export class ConvertibleTypePropertiesClass {
   readonly convertibleLiteralProperty: rdfjs.Literal;
   readonly convertibleLiteralSetProperty: readonly rdfjs.Literal[];
   readonly convertibleTermNonEmptySetProperty: purify.NonEmptyList<
-    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+    rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
   >;
   readonly convertibleTermOptionProperty: purify.Maybe<
-    rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+    rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
   >;
   readonly convertibleTermProperty:
     | rdfjs.BlankNode
-    | rdfjs.NamedNode
-    | rdfjs.Literal;
+    | rdfjs.Literal
+    | rdfjs.NamedNode;
   readonly convertibleTermSetProperty: readonly (
     | rdfjs.BlankNode
-    | rdfjs.NamedNode
     | rdfjs.Literal
+    | rdfjs.NamedNode
   )[];
 
   constructor(parameters: {
@@ -44272,23 +44272,23 @@ export class ConvertibleTypePropertiesClass {
       | readonly number[]
       | readonly string[];
     readonly convertibleTermNonEmptySetProperty: purify.NonEmptyList<
-      rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
     >;
     readonly convertibleTermOptionProperty?:
-      | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+      | (rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode)
       | Date
       | boolean
       | number
-      | purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      | purify.Maybe<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
       | string;
     readonly convertibleTermProperty:
-      | (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)
+      | (rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode)
       | Date
       | boolean
       | number
       | string;
     readonly convertibleTermSetProperty?:
-      | readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      | readonly (rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode)[]
       | readonly boolean[]
       | readonly number[]
       | readonly string[];
@@ -44873,60 +44873,60 @@ export class ConvertibleTypePropertiesClass {
         ),
         convertibleTermNonEmptySetProperty:
           this.convertibleTermNonEmptySetProperty.map((item) =>
-            item.termType === "Literal"
-              ? {
-                  "@language":
-                    item.language.length > 0 ? item.language : undefined,
-                  "@type":
-                    item.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? item.datatype.value
-                      : undefined,
-                  "@value": item.value,
-                  termType: "Literal" as const,
-                }
-              : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
+            item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : item.termType === "Literal"
+                ? {
+                    "@language":
+                      item.language.length > 0 ? item.language : undefined,
+                    "@type":
+                      item.datatype.value !==
+                      "http://www.w3.org/2001/XMLSchema#string"
+                        ? item.datatype.value
+                        : undefined,
+                    "@value": item.value,
+                    termType: "Literal" as const,
+                  }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           ),
         convertibleTermOptionProperty: this.convertibleTermOptionProperty
           .map((item) =>
-            item.termType === "Literal"
-              ? {
-                  "@language":
-                    item.language.length > 0 ? item.language : undefined,
-                  "@type":
-                    item.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? item.datatype.value
-                      : undefined,
-                  "@value": item.value,
-                  termType: "Literal" as const,
-                }
-              : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
+            item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : item.termType === "Literal"
+                ? {
+                    "@language":
+                      item.language.length > 0 ? item.language : undefined,
+                    "@type":
+                      item.datatype.value !==
+                      "http://www.w3.org/2001/XMLSchema#string"
+                        ? item.datatype.value
+                        : undefined,
+                    "@value": item.value,
+                    termType: "Literal" as const,
+                  }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
           )
           .extract(),
         convertibleTermProperty:
-          this.convertibleTermProperty.termType === "Literal"
+          this.convertibleTermProperty.termType === "NamedNode"
             ? {
-                "@language":
-                  this.convertibleTermProperty.language.length > 0
-                    ? this.convertibleTermProperty.language
-                    : undefined,
-                "@type":
-                  this.convertibleTermProperty.datatype.value !==
-                  "http://www.w3.org/2001/XMLSchema#string"
-                    ? this.convertibleTermProperty.datatype.value
-                    : undefined,
-                "@value": this.convertibleTermProperty.value,
-                termType: "Literal" as const,
+                "@id": this.convertibleTermProperty.value,
+                termType: "NamedNode" as const,
               }
-            : this.convertibleTermProperty.termType === "NamedNode"
+            : this.convertibleTermProperty.termType === "Literal"
               ? {
-                  "@id": this.convertibleTermProperty.value,
-                  termType: "NamedNode" as const,
+                  "@language":
+                    this.convertibleTermProperty.language.length > 0
+                      ? this.convertibleTermProperty.language
+                      : undefined,
+                  "@type":
+                    this.convertibleTermProperty.datatype.value !==
+                    "http://www.w3.org/2001/XMLSchema#string"
+                      ? this.convertibleTermProperty.datatype.value
+                      : undefined,
+                  "@value": this.convertibleTermProperty.value,
+                  termType: "Literal" as const,
                 }
               : {
                   "@id": `_:${this.convertibleTermProperty.value}`,
@@ -44934,20 +44934,20 @@ export class ConvertibleTypePropertiesClass {
                 },
         convertibleTermSetProperty: this.convertibleTermSetProperty.map(
           (item) =>
-            item.termType === "Literal"
-              ? {
-                  "@language":
-                    item.language.length > 0 ? item.language : undefined,
-                  "@type":
-                    item.datatype.value !==
-                    "http://www.w3.org/2001/XMLSchema#string"
-                      ? item.datatype.value
-                      : undefined,
-                  "@value": item.value,
-                  termType: "Literal" as const,
-                }
-              : item.termType === "NamedNode"
-                ? { "@id": item.value, termType: "NamedNode" as const }
+            item.termType === "NamedNode"
+              ? { "@id": item.value, termType: "NamedNode" as const }
+              : item.termType === "Literal"
+                ? {
+                    "@language":
+                      item.language.length > 0 ? item.language : undefined,
+                    "@type":
+                      item.datatype.value !==
+                      "http://www.w3.org/2001/XMLSchema#string"
+                        ? item.datatype.value
+                        : undefined,
+                    "@value": item.value,
+                    termType: "Literal" as const,
+                  }
                 : { "@id": `_:${item.value}`, termType: "BlankNode" as const },
         ),
       } satisfies ConvertibleTypePropertiesClass.$Json),
@@ -45309,14 +45309,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: zod.literal("BlankNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
             "@language": zod.string().optional(),
             "@type": zod.string().optional(),
             "@value": zod.string(),
             termType: zod.literal("Literal"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
           }),
         ])
         .array()
@@ -45329,14 +45329,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: zod.literal("BlankNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
             "@language": zod.string().optional(),
             "@type": zod.string().optional(),
             "@value": zod.string(),
             termType: zod.literal("Literal"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
           }),
         ])
         .optional(),
@@ -45346,14 +45346,14 @@ export namespace ConvertibleTypePropertiesClass {
           termType: zod.literal("BlankNode"),
         }),
         zod.object({
-          "@id": zod.string().min(1),
-          termType: zod.literal("NamedNode"),
-        }),
-        zod.object({
           "@language": zod.string().optional(),
           "@type": zod.string().optional(),
           "@value": zod.string(),
           termType: zod.literal("Literal"),
+        }),
+        zod.object({
+          "@id": zod.string().min(1),
+          termType: zod.literal("NamedNode"),
         }),
       ]),
       convertibleTermSetProperty: zod
@@ -45363,14 +45363,14 @@ export namespace ConvertibleTypePropertiesClass {
             termType: zod.literal("BlankNode"),
           }),
           zod.object({
-            "@id": zod.string().min(1),
-            termType: zod.literal("NamedNode"),
-          }),
-          zod.object({
             "@language": zod.string().optional(),
             "@type": zod.string().optional(),
             "@value": zod.string(),
             termType: zod.literal("Literal"),
+          }),
+          zod.object({
+            "@id": zod.string().min(1),
+            termType: zod.literal("NamedNode"),
           }),
         ])
         .array()
@@ -45454,19 +45454,19 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleLiteralProperty: rdfjs.Literal;
       convertibleLiteralSetProperty: readonly rdfjs.Literal[];
       convertibleTermNonEmptySetProperty: purify.NonEmptyList<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
       >;
       convertibleTermOptionProperty: purify.Maybe<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
       >;
       convertibleTermProperty:
         | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal;
+        | rdfjs.Literal
+        | rdfjs.NamedNode;
       convertibleTermSetProperty: readonly (
         | rdfjs.BlankNode
-        | rdfjs.NamedNode
         | rdfjs.Literal
+        | rdfjs.NamedNode
       )[];
     }
   > {
@@ -45548,7 +45548,25 @@ export namespace ConvertibleTypePropertiesClass {
     )
       .unsafeCoerce()
       .map((item) =>
-        item.termType === "Literal"
+        item.termType === "NamedNode"
+          ? dataFactory.namedNode(item["@id"])
+          : item.termType === "Literal"
+            ? dataFactory.literal(
+                item["@value"],
+                typeof item["@language"] !== "undefined"
+                  ? item["@language"]
+                  : typeof item["@type"] !== "undefined"
+                    ? dataFactory.namedNode(item["@type"])
+                    : undefined,
+              )
+            : dataFactory.blankNode(item["@id"].substring(2)),
+      );
+    const convertibleTermOptionProperty = purify.Maybe.fromNullable(
+      $jsonObject["convertibleTermOptionProperty"],
+    ).map((item) =>
+      item.termType === "NamedNode"
+        ? dataFactory.namedNode(item["@id"])
+        : item.termType === "Literal"
           ? dataFactory.literal(
               item["@value"],
               typeof item["@language"] !== "undefined"
@@ -45557,59 +45575,41 @@ export namespace ConvertibleTypePropertiesClass {
                   ? dataFactory.namedNode(item["@type"])
                   : undefined,
             )
-          : item.termType === "NamedNode"
-            ? dataFactory.namedNode(item["@id"])
-            : dataFactory.blankNode(item["@id"].substring(2)),
-      );
-    const convertibleTermOptionProperty = purify.Maybe.fromNullable(
-      $jsonObject["convertibleTermOptionProperty"],
-    ).map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            typeof item["@language"] !== "undefined"
-              ? item["@language"]
-              : typeof item["@type"] !== "undefined"
-                ? dataFactory.namedNode(item["@type"])
-                : undefined,
-          )
-        : item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     const convertibleTermProperty =
-      $jsonObject["convertibleTermProperty"].termType === "Literal"
-        ? dataFactory.literal(
-            $jsonObject["convertibleTermProperty"]["@value"],
-            typeof $jsonObject["convertibleTermProperty"]["@language"] !==
-              "undefined"
-              ? $jsonObject["convertibleTermProperty"]["@language"]
-              : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
-                  "undefined"
-                ? dataFactory.namedNode(
-                    $jsonObject["convertibleTermProperty"]["@type"],
-                  )
-                : undefined,
-          )
-        : $jsonObject["convertibleTermProperty"].termType === "NamedNode"
-          ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
+      $jsonObject["convertibleTermProperty"].termType === "NamedNode"
+        ? dataFactory.namedNode($jsonObject["convertibleTermProperty"]["@id"])
+        : $jsonObject["convertibleTermProperty"].termType === "Literal"
+          ? dataFactory.literal(
+              $jsonObject["convertibleTermProperty"]["@value"],
+              typeof $jsonObject["convertibleTermProperty"]["@language"] !==
+                "undefined"
+                ? $jsonObject["convertibleTermProperty"]["@language"]
+                : typeof $jsonObject["convertibleTermProperty"]["@type"] !==
+                    "undefined"
+                  ? dataFactory.namedNode(
+                      $jsonObject["convertibleTermProperty"]["@type"],
+                    )
+                  : undefined,
+            )
           : dataFactory.blankNode(
               $jsonObject["convertibleTermProperty"]["@id"].substring(2),
             );
     const convertibleTermSetProperty = $jsonObject[
       "convertibleTermSetProperty"
     ].map((item) =>
-      item.termType === "Literal"
-        ? dataFactory.literal(
-            item["@value"],
-            typeof item["@language"] !== "undefined"
-              ? item["@language"]
-              : typeof item["@type"] !== "undefined"
-                ? dataFactory.namedNode(item["@type"])
-                : undefined,
-          )
-        : item.termType === "NamedNode"
-          ? dataFactory.namedNode(item["@id"])
+      item.termType === "NamedNode"
+        ? dataFactory.namedNode(item["@id"])
+        : item.termType === "Literal"
+          ? dataFactory.literal(
+              item["@value"],
+              typeof item["@language"] !== "undefined"
+                ? item["@language"]
+                : typeof item["@type"] !== "undefined"
+                  ? dataFactory.namedNode(item["@type"])
+                  : undefined,
+            )
           : dataFactory.blankNode(item["@id"].substring(2)),
     );
     return purify.Either.of({
@@ -45648,19 +45648,19 @@ export namespace ConvertibleTypePropertiesClass {
       convertibleLiteralProperty: rdfjs.Literal;
       convertibleLiteralSetProperty: readonly rdfjs.Literal[];
       convertibleTermNonEmptySetProperty: purify.NonEmptyList<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
       >;
       convertibleTermOptionProperty: purify.Maybe<
-        rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+        rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
       >;
       convertibleTermProperty:
         | rdfjs.BlankNode
-        | rdfjs.NamedNode
-        | rdfjs.Literal;
+        | rdfjs.Literal
+        | rdfjs.NamedNode;
       convertibleTermSetProperty: readonly (
         | rdfjs.BlankNode
-        | rdfjs.NamedNode
         | rdfjs.Literal
+        | rdfjs.NamedNode
       )[];
     }
   > {
@@ -46150,7 +46150,7 @@ export namespace ConvertibleTypePropertiesClass {
       _convertibleLiteralSetPropertyEither.unsafeCoerce();
     const _convertibleTermNonEmptySetPropertyEither: purify.Either<
       Error,
-      purify.NonEmptyList<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      purify.NonEmptyList<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46193,7 +46193,7 @@ export namespace ConvertibleTypePropertiesClass {
       _convertibleTermNonEmptySetPropertyEither.unsafeCoerce();
     const _convertibleTermOptionPropertyEither: purify.Either<
       Error,
-      purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+      purify.Maybe<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46215,7 +46215,7 @@ export namespace ConvertibleTypePropertiesClass {
         values.length > 0
           ? values.map((value) => purify.Maybe.of(value))
           : rdfjsResource.Resource.Values.fromValue<
-              purify.Maybe<rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal>
+              purify.Maybe<rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>
             >({
               focusResource: $parameters.resource,
               predicate:
@@ -46233,7 +46233,7 @@ export namespace ConvertibleTypePropertiesClass {
       _convertibleTermOptionPropertyEither.unsafeCoerce();
     const _convertibleTermPropertyEither: purify.Either<
       Error,
-      rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal
+      rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
@@ -46260,7 +46260,7 @@ export namespace ConvertibleTypePropertiesClass {
       _convertibleTermPropertyEither.unsafeCoerce();
     const _convertibleTermSetPropertyEither: purify.Either<
       Error,
-      readonly (rdfjs.BlankNode | rdfjs.NamedNode | rdfjs.Literal)[]
+      readonly (rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode)[]
     > = purify.Either.of<
       Error,
       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>

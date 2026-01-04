@@ -9,7 +9,7 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
   const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> = {};
 
   beforeAll(() => {
-    ast = new ShapesGraphToAstTransformer(testData.kitchenSink)
+    ast = new ShapesGraphToAstTransformer(testData.kitchenSink.unsafeCoerce())
       .transform()
       .unsafeCoerce();
     for (const astObjectType of ast.objectTypes) {
@@ -66,4 +66,16 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
       expect(recursiveProperty!.recursive).toStrictEqual(true);
     });
   }
+});
+
+describe("ShapesGraphToAstTransformer: error cases", () => {
+  it("incompatible node shape identifiers", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes("not in its parent's");
+  });
 });
