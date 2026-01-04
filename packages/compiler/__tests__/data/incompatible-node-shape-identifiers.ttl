@@ -6,7 +6,7 @@
     a rdfs:Class, sh:NodeShape ;
     sh:nodeKind sh:IRI .
 
-:IriOrBlankNodeShape
+:BlankOrIriNodeShape
     a rdfs:Class, sh:NodeShape ;
     rdfs:subClassOf :IriNodeShape ;
     sh:nodeKind sh:BlankNodeOrIRI .
