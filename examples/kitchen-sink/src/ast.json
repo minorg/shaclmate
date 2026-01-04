@@ -80,6 +80,18 @@
     },
     {
       "kind": "ObjectType",
+      "comment": "Node shape that can only have a blank node as an identifier",
+      "shapeIdentifier": "<http://example.com/BlankNodeIdentifierClass>",
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
+      "comment": "Node shape that can only have a blank node as an identifier",
+      "shapeIdentifier": "<http://example.com/BlankNodeIdentifierInterface>",
+      "properties": []
+    },
+    {
+      "kind": "ObjectType",
       "comment": "Node shape that can have a blank node or IRI as an identifier",
       "shapeIdentifier": "<http://example.com/BlankNodeOrIriIdentifierClass>",
       "properties": []
@@ -3344,8 +3356,25 @@
         {
           "mutable": false,
           "order": 0,
-          "path": "http://example.com/booleanTermProperty",
+          "path": "http://example.com/blankNodeTermProperty",
           "shapeIdentifier": "_:n3-322",
+          "type": {
+            "kind": "OptionType",
+            "itemType": {
+              "kind": "IdentifierType",
+              "hasValue": [],
+              "nodeKinds": [
+                "BlankNode"
+              ]
+            }
+          },
+          "visibility": "public"
+        },
+        {
+          "mutable": false,
+          "order": 0,
+          "path": "http://example.com/booleanTermProperty",
+          "shapeIdentifier": "_:n3-323",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3363,7 +3392,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTermProperty",
-          "shapeIdentifier": "_:n3-323",
+          "shapeIdentifier": "_:n3-324",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3381,7 +3410,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/dateTimeTermProperty",
-          "shapeIdentifier": "_:n3-324",
+          "shapeIdentifier": "_:n3-325",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3399,7 +3428,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/iriTermProperty",
-          "shapeIdentifier": "_:n3-325",
+          "shapeIdentifier": "_:n3-326",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3416,7 +3445,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/literalTermProperty",
-          "shapeIdentifier": "_:n3-326",
+          "shapeIdentifier": "_:n3-327",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3430,7 +3459,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/numberTermProperty",
-          "shapeIdentifier": "_:n3-327",
+          "shapeIdentifier": "_:n3-328",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3448,7 +3477,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/stringTermProperty",
-          "shapeIdentifier": "_:n3-328",
+          "shapeIdentifier": "_:n3-329",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3466,7 +3495,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/termProperty",
-          "shapeIdentifier": "_:n3-329",
+          "shapeIdentifier": "_:n3-330",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3487,7 +3516,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalClassOrClassOrStringProperty",
-          "shapeIdentifier": "_:n3-330",
+          "shapeIdentifier": "_:n3-331",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3564,7 +3593,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-337",
+          "shapeIdentifier": "_:n3-338",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3592,7 +3621,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/optionalIriOrStringProperty",
-          "shapeIdentifier": "_:n3-342",
+          "shapeIdentifier": "_:n3-343",
           "type": {
             "kind": "OptionType",
             "itemType": {
@@ -3624,7 +3653,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredClassOrClassOrStringProperty",
-          "shapeIdentifier": "_:n3-347",
+          "shapeIdentifier": "_:n3-348",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -3698,7 +3727,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-354",
+          "shapeIdentifier": "_:n3-355",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -3723,7 +3752,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/requiredIriOrStringProperty",
-          "shapeIdentifier": "_:n3-359",
+          "shapeIdentifier": "_:n3-360",
           "type": {
             "kind": "UnionType",
             "memberDiscriminantValues": [],
@@ -3752,7 +3781,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setClassOrClassOrStringProperty",
-          "shapeIdentifier": "_:n3-364",
+          "shapeIdentifier": "_:n3-365",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -3829,7 +3858,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrLiteralProperty",
-          "shapeIdentifier": "_:n3-371",
+          "shapeIdentifier": "_:n3-372",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -3857,7 +3886,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/setIriOrStringProperty",
-          "shapeIdentifier": "_:n3-376",
+          "shapeIdentifier": "_:n3-377",
           "type": {
             "kind": "SetType",
             "itemType": {
@@ -3895,7 +3924,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
-          "shapeIdentifier": "_:n3-381",
+          "shapeIdentifier": "_:n3-382",
           "type": {
             "kind": "LiteralType",
             "datatype": {
@@ -3917,7 +3946,7 @@
           "mutable": false,
           "order": 0,
           "path": "http://example.com/uuidV4IriProperty",
-          "shapeIdentifier": "_:n3-382",
+          "shapeIdentifier": "_:n3-383",
           "type": {
             "kind": "LiteralType",
             "datatype": {
