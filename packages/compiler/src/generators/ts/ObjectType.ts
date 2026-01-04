@@ -239,8 +239,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName(
+  get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }

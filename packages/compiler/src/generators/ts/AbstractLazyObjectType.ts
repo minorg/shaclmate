@@ -62,8 +62,8 @@ export abstract class AbstractLazyObjectType<
     return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
-  override get graphqlName(): Type.GraphqlName {
-    return this.resolvedType.graphqlName;
+  override get graphqlType(): Type.GraphqlType {
+    return this.resolvedType.graphqlType;
   }
 
   override hashStatements({

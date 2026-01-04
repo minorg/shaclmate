@@ -28,8 +28,8 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLString");
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType("graphql.GraphQLString");
   }
 
   @Memoize()

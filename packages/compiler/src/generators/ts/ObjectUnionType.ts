@@ -145,8 +145,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName(
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }

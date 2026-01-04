@@ -1,4 +1,5 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
+import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { Import } from "./Import.js";
 
@@ -27,7 +28,7 @@ export interface Type {
   /**
    * GraphQL-compatible version of the type.
    */
-  readonly graphqlName: Type.GraphqlName;
+  readonly graphqlType: Type.GraphqlType;
 
   /**
    * Label from rdfs:label.
@@ -278,7 +279,7 @@ export namespace Type {
     readonly descendantValues: readonly string[];
   }
 
-  export class GraphqlName {
+  export class GraphqlType {
     /**
      * Is the type nullable in GraphQL?
      */
@@ -294,7 +295,8 @@ export namespace Type {
       this.nullableName = nullableName;
     }
 
-    toString(): string {
+    @Memoize()
+    get name(): string {
       return this.nullable
         ? this.nullableName
         : `new graphql.GraphQLNonNull(${this.nullableName})`;

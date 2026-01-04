@@ -69,9 +69,9 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
-  override get graphqlName(): Type.GraphqlName {
-    invariant(!this.itemType.graphqlName.nullable);
-    return new Type.GraphqlName(this.itemType.graphqlName.toString(), {
+  override get graphqlType(): Type.GraphqlType {
+    invariant(!this.itemType.graphqlType.nullable);
+    return new Type.GraphqlType(this.itemType.graphqlType.name, {
       nullable: true,
     });
   }

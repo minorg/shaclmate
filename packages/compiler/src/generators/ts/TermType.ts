@@ -32,7 +32,7 @@ export class TermType<
     );
   }
 
-  override get graphqlName(): Type.GraphqlName {
+  override get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
   }
 

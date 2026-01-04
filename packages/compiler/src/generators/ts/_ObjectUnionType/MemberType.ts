@@ -69,8 +69,8 @@ export class MemberType {
     return this.delegate.fromRdfTypeVariable;
   }
 
-  get graphqlName() {
-    return this.delegate.graphqlName;
+  get graphqlType() {
+    return this.delegate.graphqlType;
   }
 
   get identifierTypeAlias() {

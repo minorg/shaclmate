@@ -28,8 +28,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return conversions;
   }
 
-  override get graphqlName(): Type.GraphqlName {
-    return new Type.GraphqlName("graphql.GraphQLBoolean");
+  override get graphqlType(): Type.GraphqlType {
+    return new Type.GraphqlType("graphql.GraphQLBoolean");
   }
 
   @Memoize()

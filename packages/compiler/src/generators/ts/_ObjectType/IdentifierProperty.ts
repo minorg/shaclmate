@@ -228,7 +228,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
       resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
-      type: this.type.graphqlName.toString(),
+      type: this.type.graphqlType.name,
     });
   }
 

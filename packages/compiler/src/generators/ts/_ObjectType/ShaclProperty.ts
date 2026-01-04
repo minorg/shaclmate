@@ -140,7 +140,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
       description: this.comment.map(JSON.stringify),
       name: this.name,
       resolve: `(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
-      type: this.type.graphqlName.toString(),
+      type: this.type.graphqlType.name,
     });
   }
 
