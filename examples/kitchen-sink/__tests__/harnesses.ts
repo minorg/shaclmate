@@ -614,6 +614,7 @@ export const harnesses = {
   ),
   termPropertiesClass: new ClassHarness(
     new kitchenSink.TermPropertiesClass({
+      blankNodeTermProperty: dataFactory.blankNode(),
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
       dateTimeTermProperty: new Date(1523268000000),
