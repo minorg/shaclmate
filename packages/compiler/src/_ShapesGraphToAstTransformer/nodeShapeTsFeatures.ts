@@ -5,11 +5,11 @@ import type * as input from "../input/index.js";
 export function nodeShapeTsFeatures(
   nodeShape: input.NodeShape,
 ): Either<Error, Maybe<ReadonlySet<TsFeature>>> {
-  return Either.of<Error, Maybe<ReadonlySet<TsFeature>>>(
-    nodeShape.tsFeatures,
-  ).altLazy(() =>
-    nodeShape.isDefinedBy.map((ontology) =>
-      ontology.chain((ontology) => ontology.tsFeatures),
-    ),
+  if (nodeShape.tsFeatures.isJust()) {
+    return Either.of(nodeShape.tsFeatures);
+  }
+
+  return nodeShape.isDefinedBy.map((ontology) =>
+    ontology.chain((ontology) => ontology.tsFeatures),
   );
 }

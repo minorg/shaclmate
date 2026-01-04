@@ -183,10 +183,8 @@ describe("Shape", () => {
   });
 
   it("constraints: should have an sh:nodeKind", ({ expect }) => {
-    const nodeKinds = findPropertyShape(
-      schema.Person,
-      schema.parent,
-    ).constraints.nodeKinds.orDefault(new Set());
+    const nodeKinds = findPropertyShape(schema.Person, schema.parent)
+      .constraints.nodeKinds;
     expect(nodeKinds.size).toStrictEqual(1);
     expect(nodeKinds.has("NamedNode")).toStrictEqual(true);
   });

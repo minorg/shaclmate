@@ -12,6 +12,7 @@ export class Ontology extends OwlOntology {
     super(generatedShaclmateOntology);
   }
 
+  @Memoize()
   get tsFeatures(): Maybe<ReadonlySet<TsFeature>> {
     return tsFeatures(this.generatedShaclmateOntology);
   }
