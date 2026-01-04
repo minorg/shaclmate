@@ -1503,7 +1503,12 @@ export namespace FormNodeShape {
     );
     resource.add(
       FormNodeShape.$properties.requiredIntegerProperty["identifier"],
-      ...[_formNodeShape.requiredIntegerProperty],
+      ...[
+        dataFactory.literal(
+          _formNodeShape.requiredIntegerProperty.toString(10),
+          $RdfVocabularies.xsd.integer,
+        ),
+      ],
     );
     resource.add(
       FormNodeShape.$properties.requiredStringProperty["identifier"],

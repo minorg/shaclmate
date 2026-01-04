@@ -1,7 +1,6 @@
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
-import type { TsObjectDeclarationType } from "enums/TsObjectDeclarationType.js";
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -305,13 +304,11 @@ export function transformNodeShapeToAstType(
     shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
     nodeShape.constraints.properties,
     nodeShapeTsFeatures(nodeShape),
-    Either.of<Error, Maybe<TsObjectDeclarationType>>(
-      nodeShape.tsObjectDeclarationType,
-    ).altLazy(() =>
-      nodeShape.isDefinedBy.map((ontology) =>
-        ontology.chain((ontology) => ontology.tsObjectDeclarationType),
-      ),
-    ),
+    nodeShape.tsObjectDeclarationType.isJust()
+      ? Either.of(nodeShape.tsObjectDeclarationType)
+      : nodeShape.isDefinedBy.map((ontology) =>
+          ontology.chain((ontology) => ontology.tsObjectDeclarationType),
+        ),
     nodeShape.constraints.xone,
   ).chain<Error, NodeShapeAstType>(
     ([
