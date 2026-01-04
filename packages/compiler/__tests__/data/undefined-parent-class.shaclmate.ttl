@@ -3,6 +3,6 @@
 @prefix sh: <http://www.w3.org/ns/shacl#> .
 
 :NodeShape
-    a sh:NodeShape ;
+    a rdfs:Class, sh:NodeShape ;
     rdfs:comment "Node shape that references an undefined parent node shape" ;
     rdfs:subClassOf :UndefinedShape .

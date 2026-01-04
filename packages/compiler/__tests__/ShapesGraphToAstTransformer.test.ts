@@ -87,6 +87,6 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
       .extract();
     expect(error).toBeInstanceOf(Error);
     invariant(error instanceof Error);
-    expect(error.message).includes("not in its parent's");
+    expect(error.message).includes("no such node shape");
   });
 });
