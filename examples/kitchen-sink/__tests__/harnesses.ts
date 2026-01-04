@@ -22,11 +22,11 @@ const permute = <T>(arr: T[]): T[][] =>
       );
 
 export const harnesses = {
-  blankNodeIdentifierClassWithExplicitIdentifier: new ClassHarness(
-    new kitchenSink.BlankNodeIdentifierClass({
+  blankNodeOrIriIdentifierClassWithExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeOrIriIdentifierClass({
       $identifier: dataFactory.blankNode(),
     }),
-    kitchenSink.BlankNodeIdentifierClass,
+    kitchenSink.BlankNodeOrIriIdentifierClass,
   ),
   blankNodeIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
     new kitchenSink.BlankNodeIdentifierClass(),
@@ -43,6 +43,22 @@ export const harnesses = {
     kitchenSink.BlankNodeIdentifierInterface.$create(),
     kitchenSink.BlankNodeIdentifierInterface,
   ),
+  blankNodeOrIriIdentifierClassWithoutExplicitIdentifier: new ClassHarness(
+    new kitchenSink.BlankNodeOrIriIdentifierClass(),
+    kitchenSink.BlankNodeOrIriIdentifierClass,
+  ),
+  blankNodeOrIriIdentifierInterfaceWithExplicitIdentifier: new InterfaceHarness(
+    {
+      $identifier: dataFactory.blankNode(),
+      $type: "BlankNodeOrIriIdentifierInterface",
+    },
+    kitchenSink.BlankNodeOrIriIdentifierInterface,
+  ),
+  blankNodeOrIriIdentifierInterfaceWithoutExplicitIdentifier:
+    new InterfaceHarness(
+      kitchenSink.BlankNodeOrIriIdentifierInterface.$create(),
+      kitchenSink.BlankNodeOrIriIdentifierInterface,
+    ),
   classUnionMember1: new ClassUnionHarness(
     new kitchenSink.ClassUnionMember1({
       $identifier,
@@ -598,6 +614,7 @@ export const harnesses = {
   ),
   termPropertiesClass: new ClassHarness(
     new kitchenSink.TermPropertiesClass({
+      blankNodeTermProperty: dataFactory.blankNode(),
       booleanTermProperty: true,
       dateTermProperty: new Date("2025-03-06"),
       dateTimeTermProperty: new Date(1523268000000),

@@ -6,15 +6,17 @@ import type { $ObjectSet } from "../src/index.js";
 import * as kitchenSink from "../src/index.js";
 
 const testData = {
-  blankNodeIdentifierClasses: [...new Array(4)].map(
+  blankNodeOrIriIdentifierClasses: [...new Array(4)].map(
     (_, i) =>
-      new kitchenSink.BlankNodeIdentifierClass({
+      new kitchenSink.BlankNodeOrIriIdentifierClass({
         $identifier:
           i % 2 === 0
             ? N3.DataFactory.blankNode()
-            : N3.DataFactory.namedNode(`http://example.com/blankClass${i}`),
+            : N3.DataFactory.namedNode(
+                `http://example.com/blankNodeOrIriIdentifierClass${i}`,
+              ),
       }),
-  ) satisfies readonly kitchenSink.BlankNodeIdentifierClass[],
+  ) satisfies readonly kitchenSink.BlankNodeOrIriIdentifierClass[],
 
   classUnions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
@@ -126,7 +128,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
       dataFactory: N3.DataFactory,
       dataset,
     });
-    for (const object of testData.blankNodeIdentifierClasses) {
+    for (const object of testData.blankNodeOrIriIdentifierClasses) {
       object.$toRdf({ resourceSet, mutateGraph });
     }
     for (const object of testData.classUnions) {
@@ -347,7 +349,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
 
     {
       const actualObjects = (
-        await objectSet.blankNodeIdentifierClasses()
+        await objectSet.blankNodeOrIriIdentifierClasses()
       ).unsafeCoerce();
       expect(actualObjects).toHaveLength(4);
       expect(
@@ -359,7 +361,7 @@ export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
 
     {
       const actualObjects = (
-        await objectSet.blankNodeIdentifierClasses({
+        await objectSet.blankNodeOrIriIdentifierClasses({
           where: { identifierType: "NamedNode", type: "type" },
         })
       ).unsafeCoerce();

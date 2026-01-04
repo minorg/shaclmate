@@ -152,6 +152,9 @@ export class AstJsonGenerator implements Generator {
         objectTypes: ast.objectTypes.map((objectType) => ({
           kind: objectType.kind,
           comment: objectType.comment.extract(),
+          identifierMintingStrategy:
+            objectType.identifierMintingStrategy.extract(),
+          identifierType: typeToJson(objectType.identifierType),
           label: objectType.label.extract(),
           name: objectType.name.extract(),
           shapeIdentifier: Resource.Identifier.toString(

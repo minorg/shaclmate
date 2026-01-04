@@ -12,7 +12,7 @@
     "@types/n3": "^1.26.0",
     "n3": "^1.26.0",
     "purify-ts": "^2.1.0",
-    "rdfjs-resource": "1.0.25",
+    "rdfjs-resource": "1.0.26",
     "zod": "^4.1.12"
   },
   "devDependencies": {

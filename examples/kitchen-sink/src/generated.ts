@@ -6012,6 +6012,7 @@ export namespace UnionDiscriminantsClass {
 export class TermPropertiesClass {
   private _$identifier?: TermPropertiesClass.$Identifier;
   readonly $type = "TermPropertiesClass";
+  readonly blankNodeTermProperty: purify.Maybe<rdfjs.BlankNode>;
   readonly booleanTermProperty: purify.Maybe<boolean>;
   readonly dateTermProperty: purify.Maybe<Date>;
   readonly dateTimeTermProperty: purify.Maybe<Date>;
@@ -6025,6 +6026,9 @@ export class TermPropertiesClass {
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly blankNodeTermProperty?:
+      | rdfjs.BlankNode
+      | purify.Maybe<rdfjs.BlankNode>;
     readonly booleanTermProperty?: boolean | purify.Maybe<boolean>;
     readonly dateTermProperty?: Date | purify.Maybe<Date>;
     readonly dateTimeTermProperty?: Date | purify.Maybe<Date>;
@@ -6056,6 +6060,19 @@ export class TermPropertiesClass {
     } else if (typeof parameters?.$identifier === "undefined") {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
+    }
+
+    if (purify.Maybe.isMaybe(parameters?.blankNodeTermProperty)) {
+      this.blankNodeTermProperty = parameters?.blankNodeTermProperty;
+    } else if (typeof parameters?.blankNodeTermProperty === "object") {
+      this.blankNodeTermProperty = purify.Maybe.of(
+        parameters?.blankNodeTermProperty,
+      );
+    } else if (typeof parameters?.blankNodeTermProperty === "undefined") {
+      this.blankNodeTermProperty = purify.Maybe.empty();
+    } else {
+      this.blankNodeTermProperty =
+        parameters?.blankNodeTermProperty satisfies never;
     }
 
     if (purify.Maybe.isMaybe(parameters?.booleanTermProperty)) {
@@ -6243,6 +6260,18 @@ export class TermPropertiesClass {
         ),
       )
       .chain(() =>
+        ((left, right) => $maybeEquals(left, right, $booleanEquals))(
+          this.blankNodeTermProperty,
+          other.blankNodeTermProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "blankNodeTermProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      )
+      .chain(() =>
         ((left, right) => $maybeEquals(left, right, $strictEquals))(
           this.booleanTermProperty,
           other.booleanTermProperty,
@@ -6356,6 +6385,10 @@ export class TermPropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
+    this.blankNodeTermProperty.ifJust((value0) => {
+      _hasher.update(value0.termType);
+      _hasher.update(value0.value);
+    });
     this.booleanTermProperty.ifJust((value0) => {
       _hasher.update(value0.toString());
     });
@@ -6396,6 +6429,9 @@ export class TermPropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
+        blankNodeTermProperty: this.blankNodeTermProperty
+          .map((item) => ({ "@id": `_:${item.value}` }))
+          .extract(),
         booleanTermProperty: this.booleanTermProperty
           .map((item) => item)
           .extract(),
@@ -6462,6 +6498,10 @@ export class TermPropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    resource.add(
+      TermPropertiesClass.$properties.blankNodeTermProperty["identifier"],
+      ...this.blankNodeTermProperty.toList(),
+    );
     resource.add(
       TermPropertiesClass.$properties.booleanTermProperty["identifier"],
       ...this.booleanTermProperty.toList(),
@@ -6578,6 +6618,7 @@ export namespace TermPropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "TermPropertiesClass";
+    readonly blankNodeTermProperty?: { readonly "@id": string };
     readonly booleanTermProperty?: boolean;
     readonly dateTermProperty?: string;
     readonly dateTimeTermProperty?: string;
@@ -6624,6 +6665,10 @@ export namespace TermPropertiesClass {
           type: "Control",
         },
         {
+          scope: `${scopePrefix}/properties/blankNodeTermProperty`,
+          type: "Control",
+        },
+        {
           scope: `${scopePrefix}/properties/booleanTermProperty`,
           type: "Control",
         },
@@ -6659,6 +6704,9 @@ export namespace TermPropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("TermPropertiesClass"),
+      blankNodeTermProperty: zod
+        .object({ "@id": zod.string().min(1) })
+        .optional(),
       booleanTermProperty: zod.boolean().optional(),
       dateTermProperty: zod.iso.date().optional(),
       dateTimeTermProperty: zod.iso.datetime().optional(),
@@ -6694,6 +6742,11 @@ export namespace TermPropertiesClass {
   }
 
   export const $properties = {
+    blankNodeTermProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/blankNodeTermProperty",
+      ),
+    },
     booleanTermProperty: {
       identifier: dataFactory.namedNode(
         "http://example.com/booleanTermProperty",
@@ -6734,6 +6787,7 @@ export namespace TermPropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      blankNodeTermProperty: purify.Maybe<rdfjs.BlankNode>;
       booleanTermProperty: purify.Maybe<boolean>;
       dateTermProperty: purify.Maybe<Date>;
       dateTimeTermProperty: purify.Maybe<Date>;
@@ -6755,6 +6809,9 @@ export namespace TermPropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
+    const blankNodeTermProperty = purify.Maybe.fromNullable(
+      $jsonObject["blankNodeTermProperty"],
+    ).map((item) => dataFactory.blankNode(item["@id"].substring(2)));
     const booleanTermProperty = purify.Maybe.fromNullable(
       $jsonObject["booleanTermProperty"],
     );
@@ -6803,6 +6860,7 @@ export namespace TermPropertiesClass {
     );
     return purify.Either.of({
       $identifier,
+      blankNodeTermProperty,
       booleanTermProperty,
       dateTermProperty,
       dateTimeTermProperty,
@@ -6824,6 +6882,7 @@ export namespace TermPropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      blankNodeTermProperty: purify.Maybe<rdfjs.BlankNode>;
       booleanTermProperty: purify.Maybe<boolean>;
       dateTermProperty: purify.Maybe<Date>;
       dateTimeTermProperty: purify.Maybe<Date>;
@@ -6838,6 +6897,39 @@ export namespace TermPropertiesClass {
   > {
     const $identifier: TermPropertiesClass.$Identifier =
       $parameters.resource.identifier;
+    const _blankNodeTermPropertyEither: purify.Either<
+      Error,
+      purify.Maybe<rdfjs.BlankNode>
+    > = purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(
+      $parameters.resource.values(
+        $properties.blankNodeTermProperty["identifier"],
+        { unique: true },
+      ),
+    )
+      .chain((values) => values.chainMap((value) => value.toBlankNode()))
+      .map((values) =>
+        values.length > 0
+          ? values.map((value) => purify.Maybe.of(value))
+          : rdfjsResource.Resource.Values.fromValue<
+              purify.Maybe<rdfjs.BlankNode>
+            >({
+              focusResource: $parameters.resource,
+              predicate:
+                TermPropertiesClass.$properties.blankNodeTermProperty[
+                  "identifier"
+                ],
+              value: purify.Maybe.empty(),
+            }),
+      )
+      .chain((values) => values.head());
+    if (_blankNodeTermPropertyEither.isLeft()) {
+      return _blankNodeTermPropertyEither;
+    }
+
+    const blankNodeTermProperty = _blankNodeTermPropertyEither.unsafeCoerce();
     const _booleanTermPropertyEither: purify.Either<
       Error,
       purify.Maybe<boolean>
@@ -7202,6 +7294,7 @@ export namespace TermPropertiesClass {
     const termProperty = _termPropertyEither.unsafeCoerce();
     return purify.Either.of({
       $identifier,
+      blankNodeTermProperty,
       booleanTermProperty,
       dateTermProperty,
       dateTimeTermProperty,
@@ -7271,6 +7364,12 @@ export namespace TermPropertiesClass {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "termPropertiesClass");
     triples.push({
+      object: dataFactory.variable!(`${variablePrefix}BlankNodeTermProperty`),
+      predicate:
+        TermPropertiesClass.$properties.blankNodeTermProperty["identifier"],
+      subject,
+    });
+    triples.push({
       object: dataFactory.variable!(`${variablePrefix}BooleanTermProperty`),
       predicate:
         TermPropertiesClass.$properties.booleanTermProperty["identifier"],
@@ -7332,6 +7431,26 @@ export namespace TermPropertiesClass {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "termPropertiesClass");
     const propertyPatterns: readonly sparqljs.Pattern[] = [
+      {
+        patterns: [
+          {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}BlankNodeTermProperty`,
+                ),
+                predicate:
+                  TermPropertiesClass.$properties.blankNodeTermProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        type: "optional",
+      },
       {
         patterns: [
           {
@@ -52931,6 +53050,734 @@ export namespace ClassUnionMember1 {
 /**
  * Node shape that can have a blank node or IRI as an identifier
  */
+export interface BlankNodeOrIriIdentifierInterface {
+  readonly $identifier: BlankNodeOrIriIdentifierInterface.$Identifier;
+  readonly $type: "BlankNodeOrIriIdentifierInterface";
+}
+
+export namespace BlankNodeOrIriIdentifierInterface {
+  export function $create(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+  }): BlankNodeOrIriIdentifierInterface {
+    let $identifier: BlankNodeOrIriIdentifierInterface.$Identifier;
+    if (typeof parameters?.$identifier === "object") {
+      $identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters?.$identifier satisfies never;
+    }
+
+    const $type = "BlankNodeOrIriIdentifierInterface" as const;
+    return { $identifier, $type };
+  }
+
+  export function $equals(
+    left: BlankNodeOrIriIdentifierInterface,
+    right: BlankNodeOrIriIdentifierInterface,
+  ): $EqualsResult {
+    return $booleanEquals(left.$identifier, right.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: left,
+        right: right,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(left.$type, right.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: left,
+            right: right,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BlankNodeOrIriIdentifierInterface> {
+    return $propertiesFromJson(json);
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      context?: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, BlankNodeOrIriIdentifierInterface> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return BlankNodeOrIriIdentifierInterface.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    });
+  }
+
+  export function $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    _hasher.update(_blankNodeOrIriIdentifierInterface.$identifier.value);
+    _hasher.update(_blankNodeOrIriIdentifierInterface.$type);
+    BlankNodeOrIriIdentifierInterface.$hashShaclProperties(
+      _blankNodeOrIriIdentifierInterface,
+      _hasher,
+    );
+    return _hasher;
+  }
+
+  export function $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+    _hasher: HasherT,
+  ): HasherT {
+    return _hasher;
+  }
+
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeOrIriIdentifierInterface";
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "BlankNodeOrIriIdentifierInterface" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+      ],
+      label: "BlankNodeOrIriIdentifierInterface",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("BlankNodeOrIriIdentifierInterface"),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {};
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "BlankNodeOrIriIdentifierInterface";
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const $type = "BlankNodeOrIriIdentifierInterface" as const;
+    return purify.Either.of({ $identifier, $type });
+  }
+
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      $type: "BlankNodeOrIriIdentifierInterface";
+    }
+  > {
+    const $identifier: BlankNodeOrIriIdentifierInterface.$Identifier =
+      $parameters.resource.identifier;
+    const $type = "BlankNodeOrIriIdentifierInterface" as const;
+    return purify.Either.of({ $identifier, $type });
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BlankNodeOrIriIdentifierInterface.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BlankNodeOrIriIdentifierInterface.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(_parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    return [];
+  }
+
+  export function $sparqlWherePatterns(_parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    return [];
+  }
+
+  export function $toJson(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+  ): BlankNodeOrIriIdentifierInterface.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          _blankNodeOrIriIdentifierInterface.$identifier.termType ===
+          "BlankNode"
+            ? `_:${_blankNodeOrIriIdentifierInterface.$identifier.value}`
+            : _blankNodeOrIriIdentifierInterface.$identifier.value,
+        $type: _blankNodeOrIriIdentifierInterface.$type,
+      } satisfies BlankNodeOrIriIdentifierInterface.$Json),
+    );
+  }
+
+  export function $toRdf(
+    _blankNodeOrIriIdentifierInterface: BlankNodeOrIriIdentifierInterface,
+    options?: {
+      ignoreRdfType?: boolean;
+      mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+      resourceSet?: rdfjsResource.MutableResourceSet;
+    },
+  ): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(
+      _blankNodeOrIriIdentifierInterface.$identifier,
+      { mutateGraph },
+    );
+    return resource;
+  }
+}
+/**
+ * Node shape that can have a blank node or IRI as an identifier
+ */
+export class BlankNodeOrIriIdentifierClass {
+  private _$identifier?: BlankNodeOrIriIdentifierClass.$Identifier;
+  readonly $type = "BlankNodeOrIriIdentifierClass";
+
+  constructor(parameters?: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+  }) {
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
+  }
+
+  get $identifier(): BlankNodeOrIriIdentifierClass.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: BlankNodeOrIriIdentifierClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    return _hasher;
+  }
+
+  $toJson(): BlankNodeOrIriIdentifierClass.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+      } satisfies BlankNodeOrIriIdentifierClass.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/BlankNodeOrIriIdentifierClass",
+        ),
+      );
+    }
+
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace BlankNodeOrIriIdentifierClass {
+  export function $fromJson(
+    json: unknown,
+  ): purify.Either<zod.ZodError, BlankNodeOrIriIdentifierClass> {
+    return $propertiesFromJson(json).map(
+      (properties) => new BlankNodeOrIriIdentifierClass(properties),
+    );
+  }
+
+  export function $fromRdf(
+    resource: rdfjsResource.Resource,
+    options?: {
+      context?: any;
+      ignoreRdfType?: boolean;
+      objectSet?: $ObjectSet;
+      preferredLanguages?: readonly string[];
+    },
+  ): purify.Either<Error, BlankNodeOrIriIdentifierClass> {
+    let {
+      context,
+      ignoreRdfType = false,
+      objectSet,
+      preferredLanguages,
+    } = options ?? {};
+    if (!objectSet) {
+      objectSet = new $RdfjsDatasetObjectSet({ dataset: resource.dataset });
+    }
+
+    return BlankNodeOrIriIdentifierClass.$propertiesFromRdf({
+      context,
+      ignoreRdfType,
+      objectSet,
+      preferredLanguages,
+      resource,
+    }).map((properties) => new BlankNodeOrIriIdentifierClass(properties));
+  }
+
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeOrIriIdentifierClass",
+  );
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "BlankNodeOrIriIdentifierClass";
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "BlankNodeOrIriIdentifierClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+      ],
+      label: "BlankNodeOrIriIdentifierClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("BlankNodeOrIriIdentifierClass"),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {};
+
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
+    zod.ZodError,
+    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    return purify.Either.of({ $identifier });
+  }
+
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
+    if (!$parameters.ignoreRdfType) {
+      const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
+        .value($RdfVocabularies.rdf.type)
+        .chain((actualRdfType) => actualRdfType.toIri())
+        .chain((actualRdfType) => {
+          // Check the expected type and its known subtypes
+          switch (actualRdfType.value) {
+            case "http://example.com/BlankNodeOrIriIdentifierClass":
+              return purify.Either.of(true);
+          }
+
+          // Check arbitrary rdfs:subClassOf's of the expected type
+          if (
+            $parameters.resource.isInstanceOf(
+              BlankNodeOrIriIdentifierClass.$fromRdfType,
+            )
+          ) {
+            return purify.Either.of(true);
+          }
+
+          return purify.Left(
+            new Error(
+              `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifierClass)`,
+            ),
+          );
+        });
+      if ($rdfTypeCheck.isLeft()) {
+        return $rdfTypeCheck;
+      }
+    }
+
+    const $identifier: BlankNodeOrIriIdentifierClass.$Identifier =
+      $parameters.resource.identifier;
+    return purify.Either.of({ $identifier });
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } =
+      parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        BlankNodeOrIriIdentifierClass.$sparqlConstructTemplateTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+          ignoreRdfType,
+          preferredLanguages,
+          subject,
+        }),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      BlankNodeOrIriIdentifierClass.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTemplateTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("blankNodeOrIriIdentifierClass");
+    const triples: sparqljs.Triple[] = [];
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "blankNodeOrIriIdentifierClass");
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(`${variablePrefix}RdfType`),
+        },
+        {
+          subject: dataFactory.variable!(`${variablePrefix}RdfType`),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+        },
+      );
+    }
+
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const optionalPatterns: sparqljs.OptionalPattern[] = [];
+    const requiredPatterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("blankNodeOrIriIdentifierClass");
+    const variablePrefix =
+      parameters?.variablePrefix ??
+      (subject.termType === "Variable"
+        ? subject.value
+        : "blankNodeOrIriIdentifierClass");
+    const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
+    if (!parameters?.ignoreRdfType) {
+      requiredPatterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: BlankNodeOrIriIdentifierClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+      );
+      optionalPatterns.push({
+        patterns: [
+          {
+            triples: [
+              {
+                subject: rdfTypeVariable,
+                predicate: {
+                  items: [$RdfVocabularies.rdfs.subClassOf],
+                  pathType: "+" as const,
+                  type: "path" as const,
+                },
+                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
+              },
+            ],
+            type: "bgp" as const,
+          },
+        ],
+        type: "optional" as const,
+      });
+    }
+
+    return requiredPatterns.concat(optionalPatterns);
+  }
+}
+/**
+ * Node shape that can only have a blank node as an identifier
+ */
 export interface BlankNodeIdentifierInterface {
   readonly $identifier: BlankNodeIdentifierInterface.$Identifier;
   readonly $type: "BlankNodeIdentifierInterface";
@@ -52938,13 +53785,11 @@ export interface BlankNodeIdentifierInterface {
 
 export namespace BlankNodeIdentifierInterface {
   export function $create(parameters?: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly $identifier?: rdfjs.BlankNode;
   }): BlankNodeIdentifierInterface {
     let $identifier: BlankNodeIdentifierInterface.$Identifier;
     if (typeof parameters?.$identifier === "object") {
       $identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      $identifier = dataFactory.namedNode(parameters?.$identifier);
     } else if (typeof parameters?.$identifier === "undefined") {
       $identifier = dataFactory.blankNode();
     } else {
@@ -53042,18 +53887,18 @@ export namespace BlankNodeIdentifierInterface {
     return _hasher;
   }
 
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type $Identifier = rdfjs.BlankNode;
 
   export namespace $Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+    ): purify.Either<Error, rdfjs.BlankNode> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory,
           identifier,
         }),
-      );
+      ) as purify.Either<Error, rdfjs.BlankNode>;
     }
 
     export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -53104,12 +53949,11 @@ export namespace BlankNodeIdentifierInterface {
 
   export const $properties = {};
 
-  export function $propertiesFromJson(_json: unknown): purify.Either<
+  export function $propertiesFromJson(
+    _json: unknown,
+  ): purify.Either<
     zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "BlankNodeIdentifierInterface";
-    }
+    { $identifier: rdfjs.BlankNode; $type: "BlankNodeIdentifierInterface" }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
     if (!$jsonSafeParseResult.success) {
@@ -53117,9 +53961,7 @@ export namespace BlankNodeIdentifierInterface {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    const $identifier = dataFactory.blankNode($jsonObject["@id"].substring(2));
     const $type = "BlankNodeIdentifierInterface" as const;
     return purify.Either.of({ $identifier, $type });
   }
@@ -53132,11 +53974,19 @@ export namespace BlankNodeIdentifierInterface {
     resource: rdfjsResource.Resource;
   }): purify.Either<
     Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      $type: "BlankNodeIdentifierInterface";
-    }
+    { $identifier: rdfjs.BlankNode; $type: "BlankNodeIdentifierInterface" }
   > {
+    if ($parameters.resource.identifier.termType !== "BlankNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedTermValueError({
+          actualValue: $parameters.resource.identifier,
+          expectedValueType: "(rdfjs.BlankNode)",
+          focusResource: $parameters.resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
     const $identifier: BlankNodeIdentifierInterface.$Identifier =
       $parameters.resource.identifier;
     const $type = "BlankNodeIdentifierInterface" as const;
@@ -53211,10 +54061,7 @@ export namespace BlankNodeIdentifierInterface {
   ): BlankNodeIdentifierInterface.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id":
-          _blankNodeIdentifierInterface.$identifier.termType === "BlankNode"
-            ? `_:${_blankNodeIdentifierInterface.$identifier.value}`
-            : _blankNodeIdentifierInterface.$identifier.value,
+        "@id": `_:${_blankNodeIdentifierInterface.$identifier.value}`,
         $type: _blankNodeIdentifierInterface.$type,
       } satisfies BlankNodeIdentifierInterface.$Json),
     );
@@ -53243,19 +54090,15 @@ export namespace BlankNodeIdentifierInterface {
   }
 }
 /**
- * Node shape that can have a blank node or IRI as an identifier
+ * Node shape that can only have a blank node as an identifier
  */
 export class BlankNodeIdentifierClass {
   private _$identifier?: BlankNodeIdentifierClass.$Identifier;
   readonly $type = "BlankNodeIdentifierClass";
 
-  constructor(parameters?: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-  }) {
+  constructor(parameters?: { readonly $identifier?: rdfjs.BlankNode }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
-    } else if (typeof parameters?.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters?.$identifier);
     } else if (typeof parameters?.$identifier === "undefined") {
     } else {
       this._$identifier = parameters?.$identifier satisfies never;
@@ -53265,6 +54108,12 @@ export class BlankNodeIdentifierClass {
   get $identifier(): BlankNodeIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
+    }
+
+    if (this._$identifier.termType !== "BlankNode") {
+      throw new Error(
+        `expected identifier to be BlankNode, not ${this._$identifier.termType}`,
+      );
     }
 
     return this._$identifier;
@@ -53314,10 +54163,7 @@ export class BlankNodeIdentifierClass {
   $toJson(): BlankNodeIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
+        "@id": `_:${this.$identifier.value}`,
         $type: this.$type,
       } satisfies BlankNodeIdentifierClass.$Json),
     );
@@ -53396,18 +54242,18 @@ export namespace BlankNodeIdentifierClass {
   export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
     "http://example.com/BlankNodeIdentifierClass",
   );
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+  export type $Identifier = rdfjs.BlankNode;
 
   export namespace $Identifier {
     export function fromString(
       identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+    ): purify.Either<Error, rdfjs.BlankNode> {
       return purify.Either.encase(() =>
         rdfjsResource.Resource.Identifier.fromString({
           dataFactory,
           identifier,
         }),
-      );
+      ) as purify.Either<Error, rdfjs.BlankNode>;
     }
 
     export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
@@ -53460,19 +54306,14 @@ export namespace BlankNodeIdentifierClass {
 
   export function $propertiesFromJson(
     _json: unknown,
-  ): purify.Either<
-    zod.ZodError,
-    { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }
-  > {
+  ): purify.Either<zod.ZodError, { $identifier: rdfjs.BlankNode }> {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
     if (!$jsonSafeParseResult.success) {
       return purify.Left($jsonSafeParseResult.error);
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
+    const $identifier = dataFactory.blankNode($jsonObject["@id"].substring(2));
     return purify.Either.of({ $identifier });
   }
 
@@ -53482,7 +54323,7 @@ export namespace BlankNodeIdentifierClass {
     objectSet: $ObjectSet;
     preferredLanguages?: readonly string[];
     resource: rdfjsResource.Resource;
-  }): purify.Either<Error, { $identifier: rdfjs.BlankNode | rdfjs.NamedNode }> {
+  }): purify.Either<Error, { $identifier: rdfjs.BlankNode }> {
     if (!$parameters.ignoreRdfType) {
       const $rdfTypeCheck: purify.Either<Error, true> = $parameters.resource
         .value($RdfVocabularies.rdf.type)
@@ -53512,6 +54353,17 @@ export namespace BlankNodeIdentifierClass {
       if ($rdfTypeCheck.isLeft()) {
         return $rdfTypeCheck;
       }
+    }
+
+    if ($parameters.resource.identifier.termType !== "BlankNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedTermValueError({
+          actualValue: $parameters.resource.identifier,
+          expectedValueType: "(rdfjs.BlankNode)",
+          focusResource: $parameters.resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
     }
 
     const $identifier: BlankNodeIdentifierClass.$Identifier =
@@ -56665,6 +57517,45 @@ export interface $ObjectSet {
       "where"
     >,
   ): Promise<purify.Either<Error, number>>;
+  blankNodeOrIriIdentifierClass(
+    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierClass>>;
+  blankNodeOrIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]>
+  >;
+  blankNodeOrIriIdentifierClasses(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>>;
+  blankNodeOrIriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
+  blankNodeOrIriIdentifierInterface(
+    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierInterface>>;
+  blankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
+    >
+  >;
+  blankNodeOrIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>
+  >;
+  blankNodeOrIriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>>;
   classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, ClassUnionMember1>>;
@@ -57897,6 +58788,69 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.blankNodeIdentifierInterfacesCount(query);
+  }
+
+  blankNodeOrIriIdentifierClass(
+    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierClass>> {
+    return this.$delegate.blankNodeOrIriIdentifierClass(identifier);
+  }
+
+  blankNodeOrIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]>
+  > {
+    return this.$delegate.blankNodeOrIriIdentifierClassIdentifiers(query);
+  }
+
+  blankNodeOrIriIdentifierClasses(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
+    return this.$delegate.blankNodeOrIriIdentifierClasses(query);
+  }
+
+  blankNodeOrIriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.blankNodeOrIriIdentifierClassesCount(query);
+  }
+
+  blankNodeOrIriIdentifierInterface(
+    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierInterface>> {
+    return this.$delegate.blankNodeOrIriIdentifierInterface(identifier);
+  }
+
+  blankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
+    >
+  > {
+    return this.$delegate.blankNodeOrIriIdentifierInterfaceIdentifiers(query);
+  }
+
+  blankNodeOrIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>
+  > {
+    return this.$delegate.blankNodeOrIriIdentifierInterfaces(query);
+  }
+
+  blankNodeOrIriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$delegate.blankNodeOrIriIdentifierInterfacesCount(query);
   }
 
   classUnionMember1(
@@ -60220,6 +61174,199 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeIdentifierInterface.$Identifier
     >(
       [{ $fromRdf: BlankNodeIdentifierInterface.$fromRdf, $fromRdfTypes: [] }],
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierClass(
+    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierClass>> {
+    return this.blankNodeOrIriIdentifierClassSync(identifier);
+  }
+
+  blankNodeOrIriIdentifierClassSync(
+    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+  ): purify.Either<Error, BlankNodeOrIriIdentifierClass> {
+    return this.blankNodeOrIriIdentifierClassesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async blankNodeOrIriIdentifierClassIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]>
+  > {
+    return this.blankNodeOrIriIdentifierClassIdentifiersSync(query);
+  }
+
+  blankNodeOrIriIdentifierClassIdentifiersSync(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly BlankNodeOrIriIdentifierClass.$Identifier[]
+  > {
+    return this.$objectIdentifiersSync<
+      BlankNodeOrIriIdentifierClass,
+      BlankNodeOrIriIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierClasses(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
+    return this.blankNodeOrIriIdentifierClassesSync(query);
+  }
+
+  blankNodeOrIriIdentifierClassesSync(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]> {
+    return this.$objectsSync<
+      BlankNodeOrIriIdentifierClass,
+      BlankNodeOrIriIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierClassesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.blankNodeOrIriIdentifierClassesCountSync(query);
+  }
+
+  blankNodeOrIriIdentifierClassesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      BlankNodeOrIriIdentifierClass,
+      BlankNodeOrIriIdentifierClass.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
+          $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierInterface(
+    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierInterface>> {
+    return this.blankNodeOrIriIdentifierInterfaceSync(identifier);
+  }
+
+  blankNodeOrIriIdentifierInterfaceSync(
+    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, BlankNodeOrIriIdentifierInterface> {
+    return this.blankNodeOrIriIdentifierInterfacesSync({
+      where: { identifiers: [identifier], type: "identifiers" },
+    }).map((objects) => objects[0]);
+  }
+
+  async blankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
+    >
+  > {
+    return this.blankNodeOrIriIdentifierInterfaceIdentifiersSync(query);
+  }
+
+  blankNodeOrIriIdentifierInterfaceIdentifiersSync(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): purify.Either<
+    Error,
+    readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
+  > {
+    return this.$objectIdentifiersSync<
+      BlankNodeOrIriIdentifierInterface,
+      BlankNodeOrIriIdentifierInterface.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierInterfaces(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>
+  > {
+    return this.blankNodeOrIriIdentifierInterfacesSync(query);
+  }
+
+  blankNodeOrIriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]> {
+    return this.$objectsSync<
+      BlankNodeOrIriIdentifierInterface,
+      BlankNodeOrIriIdentifierInterface.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierInterfacesCount(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.blankNodeOrIriIdentifierInterfacesCountSync(query);
+  }
+
+  blankNodeOrIriIdentifierInterfacesCountSync(
+    query?: Pick<
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): purify.Either<Error, number> {
+    return this.$objectsCountSync<
+      BlankNodeOrIriIdentifierInterface,
+      BlankNodeOrIriIdentifierInterface.$Identifier
+    >(
+      [
+        {
+          $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
       query,
     );
   }
@@ -66310,6 +67457,95 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BlankNodeIdentifierInterface.$Identifier>(
       BlankNodeIdentifierInterface,
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierClass(
+    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierClass>> {
+    return (
+      await this.blankNodeOrIriIdentifierClasses({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async blankNodeOrIriIdentifierClassIdentifiers(
+    query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]>
+  > {
+    return this.$objectIdentifiers<BlankNodeOrIriIdentifierClass.$Identifier>(
+      BlankNodeOrIriIdentifierClass,
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierClasses(
+    query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+  ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
+    return this.$objects<
+      BlankNodeOrIriIdentifierClass,
+      BlankNodeOrIriIdentifierClass.$Identifier
+    >(BlankNodeOrIriIdentifierClass, query);
+  }
+
+  async blankNodeOrIriIdentifierClassesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<BlankNodeOrIriIdentifierClass.$Identifier>(
+      BlankNodeOrIriIdentifierClass,
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierInterface(
+    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+  ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierInterface>> {
+    return (
+      await this.blankNodeOrIriIdentifierInterfaces({
+        where: { identifiers: [identifier], type: "identifiers" },
+      })
+    ).map((objects) => objects[0]);
+  }
+
+  async blankNodeOrIriIdentifierInterfaceIdentifiers(
+    query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<
+      Error,
+      readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
+    >
+  > {
+    return this.$objectIdentifiers<BlankNodeOrIriIdentifierInterface.$Identifier>(
+      BlankNodeOrIriIdentifierInterface,
+      query,
+    );
+  }
+
+  async blankNodeOrIriIdentifierInterfaces(
+    query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+  ): Promise<
+    purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>
+  > {
+    return this.$objects<
+      BlankNodeOrIriIdentifierInterface,
+      BlankNodeOrIriIdentifierInterface.$Identifier
+    >(BlankNodeOrIriIdentifierInterface, query);
+  }
+
+  async blankNodeOrIriIdentifierInterfacesCount(
+    query?: Pick<
+      $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
+      "where"
+    >,
+  ): Promise<purify.Either<Error, number>> {
+    return this.$objectsCount<BlankNodeOrIriIdentifierInterface.$Identifier>(
+      BlankNodeOrIriIdentifierInterface,
       query,
     );
   }

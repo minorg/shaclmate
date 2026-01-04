@@ -67,9 +67,20 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :BlankNodeIdentifierClass
     a owl:Class, sh:NodeShape ;
-    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+    rdfs:comment "Node shape that can only have a blank node as an identifier" ;
+    sh:nodeKind sh:BlankNode .
 
 :BlankNodeIdentifierInterface
+    shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
+    a sh:NodeShape ;
+    rdfs:comment "Node shape that can only have a blank node as an identifier" ;
+    sh:nodeKind sh:BlankNode .
+
+:BlankNodeOrIriIdentifierClass
+    a owl:Class, sh:NodeShape ;
+    rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
+
+:BlankNodeOrIriIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
     a sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
@@ -1139,6 +1150,10 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     a sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
+        sh:maxCount 1 ;
+        sh:nodeKind sh:BlankNode ;
+        sh:path :blankNodeTermProperty
+    ], [
         sh:datatype xsd:boolean ;
         sh:maxCount 1 ;
         sh:path :booleanTermProperty
