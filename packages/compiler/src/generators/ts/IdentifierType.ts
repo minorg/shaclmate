@@ -98,6 +98,11 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
+  get isBlankNodeKind(): boolean {
+    return this.nodeKinds.size === 1 && this.nodeKinds.has("BlankNode");
+  }
+
+  @Memoize()
   get isNamedNodeKind(): boolean {
     return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
   }

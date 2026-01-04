@@ -53976,6 +53976,17 @@ export namespace BlankNodeIdentifierInterface {
     Error,
     { $identifier: rdfjs.BlankNode; $type: "BlankNodeIdentifierInterface" }
   > {
+    if ($parameters.resource.identifier.termType !== "BlankNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedTermValueError({
+          actualValue: $parameters.resource.identifier,
+          expectedValueType: "(rdfjs.BlankNode)",
+          focusResource: $parameters.resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
+    }
+
     const $identifier: BlankNodeIdentifierInterface.$Identifier =
       $parameters.resource.identifier;
     const $type = "BlankNodeIdentifierInterface" as const;
@@ -54342,6 +54353,17 @@ export namespace BlankNodeIdentifierClass {
       if ($rdfTypeCheck.isLeft()) {
         return $rdfTypeCheck;
       }
+    }
+
+    if ($parameters.resource.identifier.termType !== "BlankNode") {
+      return purify.Left(
+        new rdfjsResource.Resource.MistypedTermValueError({
+          actualValue: $parameters.resource.identifier,
+          expectedValueType: "(rdfjs.BlankNode)",
+          focusResource: $parameters.resource,
+          predicate: $RdfVocabularies.rdf.subject,
+        }),
+      );
     }
 
     const $identifier: BlankNodeIdentifierClass.$Identifier =

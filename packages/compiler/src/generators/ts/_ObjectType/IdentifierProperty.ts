@@ -349,9 +349,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
     }
 
     const statements: string[] = [];
-    if (this.type.isNamedNodeKind) {
+    if (this.type.isBlankNodeKind || this.type.isNamedNodeKind) {
       statements.push(
-        `if (${variables.resource}.identifier.termType !== "NamedNode") { return purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} })); }`,
+        `if (${variables.resource}.identifier.termType !== "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}") { return purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} })); }`,
       );
     }
     statements.push(
