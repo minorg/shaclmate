@@ -62,6 +62,10 @@ export abstract class AbstractLazyObjectType<
     return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
+  override get filterType(): Type.CompositeFilterType {
+    return this.partialType.filterType;
+  }
+
   override get graphqlType(): Type.GraphqlType {
     return this.resolvedType.graphqlType;
   }
