@@ -106,6 +106,17 @@ class TestData {
       .filter((filePath) => fs.existsSync(filePath))
       .map(parseShapesGraph);
   }
+
+  @Memoize()
+  get undefinedParentClass() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "data",
+        "undefined-parent-class.shaclmate.ttl",
+      ),
+    );
+  }
 }
 
 export const testData = new TestData();
