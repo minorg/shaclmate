@@ -33,11 +33,13 @@ export function nodeShapeIdentifierMintingStrategy(
       }
     }
 
-    return shapeNodeKinds(nodeShape).map((nodeKinds) => {
-      if (nodeKinds.orDefault(defaultNodeShapeNodeKinds).has("BlankNode")) {
-        return Maybe.of("blankNode");
-      }
-      return Maybe.empty();
-    });
+    return shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }).map(
+      (nodeKinds) => {
+        if (nodeKinds.has("BlankNode")) {
+          return Maybe.of("blankNode");
+        }
+        return Maybe.empty();
+      },
+    );
   });
 }

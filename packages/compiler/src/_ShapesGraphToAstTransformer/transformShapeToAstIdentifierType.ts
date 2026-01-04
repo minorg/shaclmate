@@ -29,31 +29,27 @@ export function transformShapeToAstIdentifierType(
       (term) => term.termType === "NamedNode",
     );
 
-    return shapeNodeKinds(shape)
-      .map((nodeKinds) => nodeKinds.orDefault(new Set()))
-      .chain((nodeKinds) => {
-        if (
-          identifierHasValues.length > 0 ||
-          identifierDefaultValue.isJust() ||
-          identifierIn.length > 0 ||
-          (nodeKinds.size > 0 &&
-            nodeKinds.size <= 2 &&
-            !nodeKinds.has("Literal"))
-        ) {
-          return transformShapeToAstAbstractTypeProperties(shape).map(
-            (astAbstractTypeProperties) =>
-              new ast.IdentifierType({
-                ...astAbstractTypeProperties,
-                defaultValue: identifierDefaultValue,
-                hasValues: identifierHasValues,
-                in_: identifierIn,
-                nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
-              }),
-          );
-        }
+    return shapeNodeKinds(shape).chain((nodeKinds) => {
+      if (
+        identifierHasValues.length > 0 ||
+        identifierDefaultValue.isJust() ||
+        identifierIn.length > 0 ||
+        (nodeKinds.size > 0 && nodeKinds.size <= 2 && !nodeKinds.has("Literal"))
+      ) {
+        return transformShapeToAstAbstractTypeProperties(shape).map(
+          (astAbstractTypeProperties) =>
+            new ast.IdentifierType({
+              ...astAbstractTypeProperties,
+              defaultValue: identifierDefaultValue,
+              hasValues: identifierHasValues,
+              in_: identifierIn,
+              nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
+            }),
+        );
+      }
 
-        return Left(new Error(`unable to transform ${shape} into an AST type`));
-      });
+      return Left(new Error(`unable to transform ${shape} into an AST type`));
+    });
   } finally {
     shapeStack.pop(shape);
   }

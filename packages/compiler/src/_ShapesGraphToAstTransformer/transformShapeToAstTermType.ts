@@ -1,5 +1,5 @@
 import type {} from "@rdfjs/types";
-import type { Either } from "purify-ts";
+import { Either, Left } from "purify-ts";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
@@ -22,9 +22,8 @@ export function transformShapeToAstTermType(
       transformShapeToAstAbstractTypeProperties(shape),
       shapeNodeKinds(shape),
     ).chain(([astAbstractTypeProperties, nodeKinds]) =>
-      nodeKinds
-        .map(
-          (nodeKinds) =>
+      nodeKinds.size > 0
+        ? Either.of(
             new ast.TermType({
               ...astAbstractTypeProperties,
               defaultValue: shapeStack.defaultValue,
@@ -32,8 +31,8 @@ export function transformShapeToAstTermType(
               in_: shapeStack.constraints.in_,
               nodeKinds,
             }),
-        )
-        .toEither(new Error(`${shape} has no nodeKinds`)),
+          )
+        : Left(new Error(`${shape} has no nodeKinds`)),
     );
   } finally {
     shapeStack.pop(shape);

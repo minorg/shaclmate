@@ -58,9 +58,7 @@ function transformNodeShapeToAstListType(
 
   return Eithers.chain3(
     nodeShapeIdentifierMintingStrategy(nodeShape),
-    shapeNodeKinds(nodeShape).map((nodeKinds) =>
-      nodeKinds.orDefault(defaultNodeShapeNodeKinds),
-    ),
+    shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
     nodeShape.constraints.xone,
   ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
     // Put a placeholder in the cache to deal with cyclic references
@@ -304,9 +302,7 @@ export function transformNodeShapeToAstType(
     nodeShape.parentNodeShapes,
     nodeShape.constraints.and,
     nodeShapeIdentifierMintingStrategy(nodeShape),
-    shapeNodeKinds(nodeShape).map((nodeKinds) =>
-      nodeKinds.orDefault(defaultNodeShapeNodeKinds),
-    ),
+    shapeNodeKinds(nodeShape, { defaultNodeShapeNodeKinds }),
     nodeShape.constraints.properties,
     nodeShapeTsFeatures(nodeShape),
     Either.of<Error, Maybe<TsObjectDeclarationType>>(
