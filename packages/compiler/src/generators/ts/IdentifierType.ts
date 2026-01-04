@@ -35,6 +35,20 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    const stringFilterType = new Type.ScalarFilterType({
+      graphqlName: "graphql.GraphQLString",
+      name: "string",
+    });
+    return new Type.CompositeFilterType({
+      properties: {
+        type: stringFilterType,
+        value: stringFilterType,
+      },
+    });
+  }
+
+  @Memoize()
   get fromStringFunctionDeclaration(): FunctionDeclarationStructure {
     if (
       this.nodeKinds.has("BlankNode") &&

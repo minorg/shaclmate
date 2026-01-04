@@ -232,6 +232,18 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    return new Type.CompositeFilterType({
+      properties: {
+        properties: new Type.ScalarFilterType({
+          graphqlName: this.graphqlType.name,
+          name: `${this.staticModuleName}.Filter`,
+        }),
+      },
+    });
+  }
+
+  @Memoize()
   get fromRdfTypeVariable(): Maybe<string> {
     return this.fromRdfType.map(
       () => `${this.staticModuleName}.${syntheticNamePrefix}fromRdfType`,
