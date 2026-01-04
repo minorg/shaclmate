@@ -130,9 +130,9 @@ export interface Type {
   /**
    * JSON-compatible version of the type.
    */
-  jsonName(parameters?: {
+  jsonType(parameters?: {
     includeDiscriminantProperty?: boolean;
-  }): Type.JsonName;
+  }): Type.JsonType;
 
   /**
    * Element object for a JSON Forms UI schema.
@@ -303,7 +303,7 @@ export namespace Type {
     }
   }
 
-  export class JsonName {
+  export class JsonType {
     /**
      * Is the type optional in JSON? Equivalent to ? in TypeScript or | undefined.
      */
@@ -324,7 +324,8 @@ export namespace Type {
       this.requiredName = requiredName;
     }
 
-    toString(): string {
+    @Memoize()
+    get name(): string {
       return this.optional
         ? `(${this.requiredName}) | undefined`
         : this.requiredName;

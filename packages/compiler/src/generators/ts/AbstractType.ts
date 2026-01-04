@@ -75,9 +75,9 @@ export abstract class AbstractType implements Type {
     };
   }): readonly string[];
 
-  abstract jsonName(parameters?: {
+  abstract jsonType(parameters?: {
     includeDiscriminantProperty?: boolean;
-  }): Type.JsonName;
+  }): Type.JsonType;
 
   abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: string };

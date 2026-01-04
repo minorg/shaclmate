@@ -260,8 +260,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName(
+  override jsonType(): Type.JsonType {
+    return new Type.JsonType(
       `${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );
   }

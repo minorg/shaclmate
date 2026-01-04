@@ -157,9 +157,11 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName(
-      this.memberTypes.map((memberType) => memberType.jsonName()).join(" | "),
+  override jsonType(): Type.JsonType {
+    return new Type.JsonType(
+      this.memberTypes
+        .map((memberType) => memberType.jsonType().name)
+        .join(" | "),
     );
   }
 

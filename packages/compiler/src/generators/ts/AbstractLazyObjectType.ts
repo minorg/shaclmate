@@ -79,10 +79,10 @@ export abstract class AbstractLazyObjectType<
     });
   }
 
-  override jsonName(
-    parameters?: Parameters<Type["jsonName"]>[0],
-  ): Type.JsonName {
-    return this.partialType.jsonName(parameters);
+  override jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType {
+    return this.partialType.jsonType(parameters);
   }
 
   override jsonUiSchemaElement(

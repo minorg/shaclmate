@@ -54,7 +54,7 @@ function jsonTypeAliasDeclaration(
     kind: StructureKind.TypeAlias,
     name: `${syntheticNamePrefix}Json`,
     type: this.memberTypes
-      .map((memberType) => memberType.jsonName())
+      .map((memberType) => memberType.jsonType().name)
       .join(" | "),
   };
 }
@@ -100,7 +100,7 @@ function toJsonFunctionDeclaration(
         type: this.name,
       },
     ],
-    returnType: this.jsonName().toString(),
+    returnType: this.jsonType().name,
     statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
   };
 }

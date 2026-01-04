@@ -105,8 +105,8 @@ export class MemberType {
     return this.delegate.toRdfjsResourceType;
   }
 
-  jsonName() {
-    return this.delegate.jsonName();
+  jsonType() {
+    return this.delegate.jsonType();
   }
 
   jsonZodSchema(

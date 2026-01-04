@@ -11,12 +11,12 @@ export class SetType<
   readonly kind = "SetType";
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    const name = `readonly (${this.itemType.jsonName()})[]`;
+  override jsonType(): Type.JsonType {
+    const name = `readonly (${this.itemType.jsonType().name})[]`;
     if (this.minCount === 0) {
-      return new Type.JsonName(name, { optional: true });
+      return new Type.JsonType(name, { optional: true });
     }
-    return new Type.JsonName(name);
+    return new Type.JsonType(name);
   }
 
   override fromRdfExpression(

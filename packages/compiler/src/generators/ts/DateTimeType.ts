@@ -48,8 +48,8 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   }
 
   @Memoize()
-  override jsonName(): Type.JsonName {
-    return new Type.JsonName("string");
+  override jsonType(): Type.JsonType {
+    return new Type.JsonType("string");
   }
 
   override get name(): string {
