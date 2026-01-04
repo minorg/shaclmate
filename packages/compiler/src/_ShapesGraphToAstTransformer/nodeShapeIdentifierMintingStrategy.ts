@@ -20,7 +20,7 @@ export function nodeShapeIdentifierMintingStrategy(
     }
 
     return shapeNodeKinds(nodeShape).map((nodeKinds) => {
-      if (nodeKinds.has("BlankNode")) {
+      if (nodeKinds.orDefault(new Set([])).has("BlankNode")) {
         return Maybe.of("blankNode");
       }
       return Maybe.empty();

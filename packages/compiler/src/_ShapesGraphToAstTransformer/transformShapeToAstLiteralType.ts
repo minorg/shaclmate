@@ -27,41 +27,45 @@ export function transformShapeToAstLiteralType(
       (term) => term.termType === "Literal",
     ) as readonly Literal[];
 
-    return shapeNodeKinds(shape).chain((nodeKinds) => {
-      if (
-        [
-          // Treat any shape with the constraints in the list as a literal type
-          shape.constraints.datatype,
-          shape.constraints.maxExclusive,
-          shape.constraints.maxInclusive,
-          shape.constraints.minExclusive,
-          shape.constraints.minInclusive,
-        ].some((constraint) => constraint.isJust()) ||
-        shape.constraints.languageIn.length > 0 ||
-        literalDefaultValue.isJust() ||
-        literalHasValues.length > 0 ||
-        literalIn.length > 0 ||
-        // Treat any shape with a single sh:nodeKind of sh:Literal as a literal type
-        (nodeKinds.size === 1 && nodeKinds.has("Literal"))
-      )
-        return transformShapeToAstAbstractTypeProperties(shape).map(
-          (astAbstractTypeProperties) =>
-            new ast.LiteralType({
-              ...astAbstractTypeProperties,
-              datatype: shape.constraints.datatype,
-              defaultValue: literalDefaultValue,
-              hasValues: literalHasValues,
-              in_: literalIn,
-              languageIn: [...new Set(shape.constraints.languageIn)],
-              maxExclusive: shape.constraints.maxExclusive,
-              maxInclusive: shape.constraints.maxInclusive,
-              minExclusive: shape.constraints.minExclusive,
-              minInclusive: shape.constraints.minInclusive,
-            }),
-        );
+    return shapeNodeKinds(shape)
+      .map((nodeKinds) => nodeKinds.orDefault(new Set()))
+      .chain((nodeKinds) => {
+        if (
+          [
+            // Treat any shape with the constraints in the list as a literal type
+            shape.constraints.datatype,
+            shape.constraints.maxExclusive,
+            shape.constraints.maxInclusive,
+            shape.constraints.minExclusive,
+            shape.constraints.minInclusive,
+          ].some((constraint) => constraint.isJust()) ||
+          shape.constraints.languageIn.length > 0 ||
+          literalDefaultValue.isJust() ||
+          literalHasValues.length > 0 ||
+          literalIn.length > 0 ||
+          // Treat any shape with a single sh:nodeKind of sh:Literal as a literal type
+          (nodeKinds.size === 1 && nodeKinds.has("Literal"))
+        )
+          return transformShapeToAstAbstractTypeProperties(shape).map(
+            (astAbstractTypeProperties) =>
+              new ast.LiteralType({
+                ...astAbstractTypeProperties,
+                datatype: shape.constraints.datatype,
+                defaultValue: literalDefaultValue,
+                hasValues: literalHasValues,
+                in_: literalIn,
+                languageIn: [...new Set(shape.constraints.languageIn)],
+                maxExclusive: shape.constraints.maxExclusive,
+                maxInclusive: shape.constraints.maxInclusive,
+                minExclusive: shape.constraints.minExclusive,
+                minInclusive: shape.constraints.minInclusive,
+              }),
+          );
 
-      return Left(new Error(`unable to transform ${shape} into an AST type`));
-    });
+        return Left(
+          new Error(`unable to transform ${shape} into an AST Literal type`),
+        );
+      });
   } finally {
     shapeStack.pop(shape);
   }

@@ -1,3 +1,4 @@
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import type { TsObjectDeclarationType } from "enums/TsObjectDeclarationType.js";
@@ -14,6 +15,11 @@ import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
+
+const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
+  "BlankNode",
+  "NamedNode",
+]);
 
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
@@ -52,7 +58,9 @@ function transformNodeShapeToAstListType(
 
   return Eithers.chain3(
     nodeShapeIdentifierMintingStrategy(nodeShape),
-    shapeNodeKinds(nodeShape),
+    shapeNodeKinds(nodeShape).map((nodeKinds) =>
+      nodeKinds.orDefault(defaultNodeShapeNodeKinds),
+    ),
     nodeShape.constraints.xone,
   ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
     // Put a placeholder in the cache to deal with cyclic references
@@ -296,7 +304,9 @@ export function transformNodeShapeToAstType(
     nodeShape.parentNodeShapes,
     nodeShape.constraints.and,
     nodeShapeIdentifierMintingStrategy(nodeShape),
-    shapeNodeKinds(nodeShape),
+    shapeNodeKinds(nodeShape).map((nodeKinds) =>
+      nodeKinds.orDefault(defaultNodeShapeNodeKinds),
+    ),
     nodeShape.constraints.properties,
     nodeShapeTsFeatures(nodeShape),
     Either.of<Error, Maybe<TsObjectDeclarationType>>(

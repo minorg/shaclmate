@@ -1,6 +1,16 @@
 import type { NodeKind } from "@shaclmate/shacl-ast";
-import { Either, Left } from "purify-ts";
+import { Either, Left, Maybe } from "purify-ts";
 import * as input from "../input/index.js";
+
+const defaultNodeShapeNodeKinds: Either<
+  Error,
+  Maybe<ReadonlySet<NodeKind>>
+> = Either.of(Maybe.empty());
+
+const defaultPropertyShapeNodeKinds: Either<
+  Error,
+  Maybe<ReadonlySet<NodeKind>>
+> = Either.of(Maybe.of(new Set(["BlankNode", "Literal", "NamedNode"])));
 
 function nodeShapeNodeKinds(
   nodeShape: input.NodeShape,
@@ -42,7 +52,7 @@ function propertyShapeNodeKinds(
 
 export function shapeNodeKinds(
   shape: input.Shape,
-): Either<Error, ReadonlySet<NodeKind>> {
+): Either<Error, Maybe<ReadonlySet<NodeKind>>> {
   return (
     shape instanceof input.NodeShape
       ? nodeShapeNodeKinds(shape)
@@ -92,14 +102,14 @@ export function shapeNodeKinds(
     }
 
     if (explicitNodeKinds.size > 0) {
-      return Either.of(explicitNodeKinds);
+      return Either.of(Maybe.of(explicitNodeKinds));
     }
     if (implicitNodeKinds.size > 0) {
-      return Either.of(implicitNodeKinds);
+      return Either.of(Maybe.of(implicitNodeKinds));
     }
     if (shape instanceof input.NodeShape) {
-      return Either.of(new Set(["BlankNode", "NamedNode"]));
+      return defaultNodeShapeNodeKinds;
     }
-    return Either.of(new Set(["BlankNode", "Literal", "NamedNode"]));
+    return defaultPropertyShapeNodeKinds;
   });
 }

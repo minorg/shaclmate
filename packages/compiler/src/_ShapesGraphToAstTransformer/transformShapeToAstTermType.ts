@@ -21,15 +21,19 @@ export function transformShapeToAstTermType(
     return Eithers.chain2(
       transformShapeToAstAbstractTypeProperties(shape),
       shapeNodeKinds(shape),
-    ).map(
-      ([astAbstractTypeProperties, nodeKinds]) =>
-        new ast.TermType({
-          ...astAbstractTypeProperties,
-          defaultValue: shapeStack.defaultValue,
-          hasValues: shapeStack.constraints.hasValues,
-          in_: shapeStack.constraints.in_,
-          nodeKinds,
-        }),
+    ).chain(([astAbstractTypeProperties, nodeKinds]) =>
+      nodeKinds
+        .map(
+          (nodeKinds) =>
+            new ast.TermType({
+              ...astAbstractTypeProperties,
+              defaultValue: shapeStack.defaultValue,
+              hasValues: shapeStack.constraints.hasValues,
+              in_: shapeStack.constraints.in_,
+              nodeKinds,
+            }),
+        )
+        .toEither(new Error(`${shape} has no nodeKinds`)),
     );
   } finally {
     shapeStack.pop(shape);
