@@ -78,4 +78,15 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
     expect(error).toBeInstanceOf(Error);
     expect((error as Error).message).includes("not in its parent's");
   });
+
+  it("undefined parent class", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.undefinedParentClass.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    invariant(error instanceof Error);
+    expect(error.message).includes("no such node shape");
+  });
 });
