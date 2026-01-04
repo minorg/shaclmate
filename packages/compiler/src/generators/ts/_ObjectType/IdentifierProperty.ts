@@ -266,16 +266,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
         if (propertyDeclaration === null) {
           return [];
         }
-        if (typeConversions.length === 1) {
-          return [`this.${propertyDeclaration.name} = ${variables.parameter};`];
-        }
         lhs = `this.${propertyDeclaration.name}`;
         break;
       }
       case "interface":
-        if (typeConversions.length === 1) {
-          return [`const ${this.name} = ${variables.parameter};`];
-        }
         lhs = this.name;
         statements.push(`let ${this.name}: ${this.typeAlias};`);
         break;

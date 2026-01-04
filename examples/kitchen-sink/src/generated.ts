@@ -53787,7 +53787,15 @@ export namespace BlankNodeIdentifierInterface {
   export function $create(parameters?: {
     readonly $identifier?: rdfjs.BlankNode;
   }): BlankNodeIdentifierInterface {
-    const $identifier = parameters?.$identifier;
+    let $identifier: BlankNodeIdentifierInterface.$Identifier;
+    if (typeof parameters?.$identifier === "object") {
+      $identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "undefined") {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters?.$identifier satisfies never;
+    }
+
     const $type = "BlankNodeIdentifierInterface" as const;
     return { $identifier, $type };
   }
@@ -54078,7 +54086,12 @@ export class BlankNodeIdentifierClass {
   readonly $type = "BlankNodeIdentifierClass";
 
   constructor(parameters?: { readonly $identifier?: rdfjs.BlankNode }) {
-    this._$identifier = parameters?.$identifier;
+    if (typeof parameters?.$identifier === "object") {
+      this._$identifier = parameters?.$identifier;
+    } else if (typeof parameters?.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters?.$identifier satisfies never;
+    }
   }
 
   get $identifier(): BlankNodeIdentifierClass.$Identifier {
