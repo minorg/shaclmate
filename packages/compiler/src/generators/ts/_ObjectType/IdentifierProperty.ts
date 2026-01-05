@@ -24,8 +24,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
 
-  override readonly filterProperty: Property<IdentifierType>["filterProperty"] =
-    Maybe.empty();
   readonly equalsFunction = Maybe.of(`${syntheticNamePrefix}booleanEquals`);
   readonly mutable = false;
   readonly recursive = false;
@@ -103,6 +101,14 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
 
     return imports;
+  }
+
+  @Memoize()
+  override get filterProperty() {
+    return Maybe.of({
+      name: this.name,
+      type: this.type.filterType,
+    });
   }
 
   override get getAccessorDeclaration(): Maybe<

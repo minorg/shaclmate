@@ -534,7 +534,9 @@ export class $NamedDefaultPartial {
 }
 
 export namespace $NamedDefaultPartial {
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -832,7 +834,9 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -1097,6 +1101,7 @@ export namespace UuidV4IriIdentifierInterface {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly uuidV4IriProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -1703,6 +1708,7 @@ export class UuidV4IriIdentifierClass {
 
 export namespace UuidV4IriIdentifierClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly uuidV4IriProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -3149,6 +3155,7 @@ export class UnionDiscriminantsClass {
 
 export namespace UnionDiscriminantsClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly optionalClassOrClassOrStringProperty?: { readonly null?: boolean };
     readonly optionalIriOrLiteralProperty?: { readonly null?: boolean };
     readonly optionalIriOrStringProperty?: { readonly null?: boolean };
@@ -6600,6 +6607,7 @@ export class TermPropertiesClass {
 
 export namespace TermPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly blankNodeTermProperty?: {
       readonly item?: { readonly type?: string; readonly value?: string };
       readonly null?: boolean;
@@ -7944,6 +7952,7 @@ export class Sha256IriIdentifierClass {
 
 export namespace Sha256IriIdentifierClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly sha256IriProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -8477,6 +8486,7 @@ export class RecursiveClassUnionMember2 {
 
 export namespace RecursiveClassUnionMember2 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly recursiveClassUnionMember2Property?: {
       readonly item?: RecursiveClassUnion.$Filter;
       readonly null?: boolean;
@@ -8909,6 +8919,7 @@ export class RecursiveClassUnionMember1 {
 
 export namespace RecursiveClassUnionMember1 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly recursiveClassUnionMember1Property?: {
       readonly item?: RecursiveClassUnion.$Filter;
       readonly null?: boolean;
@@ -9352,6 +9363,7 @@ export class PropertyVisibilitiesClass {
 
 export namespace PropertyVisibilitiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly privateProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -10249,6 +10261,7 @@ export class PropertyCardinalitiesClass {
 
 export namespace PropertyCardinalitiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly emptyStringSetProperty?: {
       readonly items?: {
         readonly maxLength?: number;
@@ -11241,6 +11254,7 @@ export namespace PartialInterfaceUnionMember2 {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -11869,6 +11883,7 @@ export namespace PartialInterfaceUnionMember1 {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -12568,6 +12583,7 @@ export class PartialClassUnionMember2 {
 
 export namespace PartialClassUnionMember2 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -13172,6 +13188,7 @@ export class PartialClassUnionMember1 {
 
 export namespace PartialClassUnionMember1 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -13806,6 +13823,7 @@ export class OrderedPropertiesClass {
 
 export namespace OrderedPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly orderedPropertyC?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -14589,6 +14607,7 @@ export class NonClass {
 
 export namespace NonClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly nonClassProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -15066,6 +15085,7 @@ export class NoRdfTypeClassUnionMember2 {
 
 export namespace NoRdfTypeClassUnionMember2 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly noRdfTypeClassUnionMember2Property?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -15582,6 +15602,7 @@ export class NoRdfTypeClassUnionMember1 {
 
 export namespace NoRdfTypeClassUnionMember1 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly noRdfTypeClassUnionMember1Property?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -16264,6 +16285,7 @@ export class MutablePropertiesClass {
 
 export namespace MutablePropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly mutableListProperty?: {
       readonly item?: {
         readonly items?: {
@@ -17517,6 +17539,7 @@ export class ListPropertiesClass {
 
 export namespace ListPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly iriListProperty?: {
       readonly item?: {
         readonly items?: { readonly type?: string; readonly value?: string };
@@ -18573,6 +18596,7 @@ export namespace PartialInterface {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -19991,6 +20015,7 @@ export namespace LazyPropertiesInterface {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly optionalLazyToResolvedInterfaceProperty?: {
       readonly item?: $DefaultPartial.$Filter;
       readonly null?: boolean;
@@ -22146,6 +22171,7 @@ export class PartialClass {
 
 export namespace PartialClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -23637,6 +23663,7 @@ export class LazyPropertiesClass {
 
 export namespace LazyPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly optionalLazyToResolvedClassProperty?: {
       readonly item?: $DefaultPartial.$Filter;
       readonly null?: boolean;
@@ -25436,6 +25463,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -26027,6 +26055,7 @@ export class LazilyResolvedIriIdentifierClass {
 
 export namespace LazilyResolvedIriIdentifierClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -26481,6 +26510,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -27110,6 +27140,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -27810,6 +27841,7 @@ export class LazilyResolvedClassUnionMember2 {
 
 export namespace LazilyResolvedClassUnionMember2 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -28414,6 +28446,7 @@ export class LazilyResolvedClassUnionMember1 {
 
 export namespace LazilyResolvedClassUnionMember1 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -28950,6 +28983,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -29663,6 +29697,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly lazilyResolvedStringProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -30283,6 +30318,7 @@ export class LanguageInPropertiesClass {
 
 export namespace LanguageInPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly languageInLiteralProperty?: {
       readonly items?: {
         readonly datatype?: string;
@@ -30944,6 +30980,7 @@ export class JsPrimitiveUnionPropertyClass {
 
 export namespace JsPrimitiveUnionPropertyClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly jsPrimitiveUnionProperty?: {
       readonly maxCount?: number;
       readonly minCount?: number;
@@ -31475,7 +31512,9 @@ export namespace IriIdentifierInterface {
       );
   }
 
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -31836,7 +31875,9 @@ export class IriIdentifierClass {
 }
 
 export namespace IriIdentifierClass {
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -32104,6 +32145,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly interfaceUnionMemberCommonParentProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -33857,6 +33899,7 @@ export namespace Interface {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly interfaceProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -34422,6 +34465,7 @@ export class IndirectRecursiveHelperClass {
 
 export namespace IndirectRecursiveHelperClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly indirectRecursiveProperty?: {
       readonly item?: IndirectRecursiveClass.$Filter;
       readonly null?: boolean;
@@ -34846,6 +34890,7 @@ export class IndirectRecursiveClass {
 
 export namespace IndirectRecursiveClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly indirectRecursiveHelperProperty?: {
       readonly item?: IndirectRecursiveHelperClass.$Filter;
       readonly null?: boolean;
@@ -35429,6 +35474,7 @@ export class InPropertiesClass {
 
 export namespace InPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly inBooleansProperty?: {
       readonly item?: { readonly value?: boolean };
       readonly null?: boolean;
@@ -36422,6 +36468,7 @@ export class InIdentifierClass {
 
 export namespace InIdentifierClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly inIdentifierProperty?: {
       readonly item?: {
         readonly maxLength?: number;
@@ -37016,6 +37063,7 @@ export abstract class IdentifierOverride1Class {
 
 export namespace IdentifierOverride1ClassStatic {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly identifierOverrideProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -39024,6 +39072,7 @@ export class HasValuePropertiesClass {
 
 export namespace HasValuePropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly hasIriValueProperty?: {
       readonly type?: string;
       readonly value?: string;
@@ -39637,6 +39686,7 @@ export class FlattenClassUnionMember3 {
 
 export namespace FlattenClassUnionMember3 {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly flattenClassUnionMember3Property?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -40257,6 +40307,7 @@ export class ExternClassPropertyClass {
 
 export namespace ExternClassPropertyClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly externClassProperty?: {
       readonly item?: ExternClass.$Filter;
       readonly null?: boolean;
@@ -40723,6 +40774,7 @@ export class ExplicitRdfTypeClass {
 
 export namespace ExplicitRdfTypeClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly explicitRdfTypeProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -41330,6 +41382,7 @@ export class ExplicitFromToRdfTypesClass {
 
 export namespace ExplicitFromToRdfTypesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly explicitFromToRdfTypesProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -41949,6 +42002,7 @@ export class DirectRecursiveClass {
 
 export namespace DirectRecursiveClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly directRecursiveProperty?: {
       readonly item?: DirectRecursiveClass.$Filter;
       readonly null?: boolean;
@@ -42572,6 +42626,7 @@ export class DefaultValuePropertiesClass {
 
 export namespace DefaultValuePropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly dateDefaultValueProperty?: {
       readonly maxExclusive?: Date;
       readonly maxInclusive?: Date;
@@ -43927,6 +43982,7 @@ export class DateUnionPropertiesClass {
 
 export namespace DateUnionPropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly dateOrDateTimeProperty?: { readonly null?: boolean };
     readonly dateOrStringProperty?: { readonly null?: boolean };
     readonly dateTimeOrDateProperty?: { readonly null?: boolean };
@@ -45869,6 +45925,7 @@ export class ConvertibleTypePropertiesClass {
 
 export namespace ConvertibleTypePropertiesClass {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly convertibleIriNonEmptySetProperty?: {
       readonly items?: { readonly type?: string; readonly value?: string };
       readonly maxCount?: number;
@@ -47866,6 +47923,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
   }
 
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly baseInterfaceWithPropertiesProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -50384,6 +50442,7 @@ export abstract class AbstractBaseClassWithProperties {
 
 export namespace AbstractBaseClassWithPropertiesStatic {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly abstractBaseClassWithPropertiesProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -52357,6 +52416,7 @@ export abstract class ClassUnionMemberCommonParent {
 
 export namespace ClassUnionMemberCommonParentStatic {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly classUnionMemberCommonParentProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
@@ -53935,7 +53995,9 @@ export namespace BlankNodeOrIriIdentifierInterface {
       );
   }
 
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -54315,7 +54377,9 @@ export class BlankNodeOrIriIdentifierClass {
 }
 
 export namespace BlankNodeOrIriIdentifierClass {
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -54665,7 +54729,9 @@ export namespace BlankNodeIdentifierInterface {
       );
   }
 
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -55045,7 +55111,9 @@ export class BlankNodeIdentifierClass {
 }
 
 export namespace BlankNodeIdentifierClass {
-  export type $Filter = object;
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -55480,6 +55548,7 @@ export abstract class AbstractBaseClassForExternClass {
 
 export namespace AbstractBaseClassForExternClassStatic {
   export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly abstractBaseClassForExternClassProperty?: {
       readonly maxLength?: number;
       readonly minLength?: number;
