@@ -3156,18 +3156,126 @@ export class UnionDiscriminantsClass {
 export namespace UnionDiscriminantsClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalClassOrClassOrStringProperty?: { readonly null?: boolean };
-    readonly optionalIriOrLiteralProperty?: { readonly null?: boolean };
-    readonly optionalIriOrStringProperty?: { readonly null?: boolean };
+    readonly optionalClassOrClassOrStringProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+          readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+          readonly "2-string"?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly optionalIriOrLiteralProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly NamedNode?: {
+            readonly type?: string;
+            readonly value?: string;
+          };
+          readonly Literal?: {
+            readonly datatype?: string;
+            readonly language?: string;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly optionalIriOrStringProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly object?: { readonly type?: string; readonly value?: string };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly requiredClassOrClassOrStringProperty?: {
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
+        };
+      };
+    };
+    readonly requiredIriOrLiteralProperty?: {
+      readonly on?: {
+        readonly NamedNode?: {
+          readonly type?: string;
+          readonly value?: string;
+        };
+        readonly Literal?: {
+          readonly datatype?: string;
+          readonly language?: string;
+          readonly value?: string;
+        };
+      };
+    };
+    readonly requiredIriOrStringProperty?: {
+      readonly on?: {
+        readonly object?: { readonly type?: string; readonly value?: string };
+        readonly string?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
+        };
+      };
+    };
     readonly setClassOrClassOrStringProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+          readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+          readonly "2-string"?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
       readonly maxCount?: number;
       readonly minCount?: number;
     };
     readonly setIriOrLiteralProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly NamedNode?: {
+            readonly type?: string;
+            readonly value?: string;
+          };
+          readonly Literal?: {
+            readonly datatype?: string;
+            readonly language?: string;
+            readonly value?: string;
+          };
+        };
+      };
       readonly maxCount?: number;
       readonly minCount?: number;
     };
     readonly setIriOrStringProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly object?: { readonly type?: string; readonly value?: string };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
       readonly maxCount?: number;
       readonly minCount?: number;
     };
@@ -30982,6 +31090,23 @@ export namespace JsPrimitiveUnionPropertyClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly jsPrimitiveUnionProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly boolean?: { readonly value?: boolean };
+          readonly number?: {
+            readonly maxExclusive?: number;
+            readonly maxInclusive?: number;
+            readonly minExclusive?: number;
+            readonly minInclusive?: number;
+            readonly value?: number;
+          };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
       readonly maxCount?: number;
       readonly minCount?: number;
     };
@@ -43983,10 +44108,86 @@ export class DateUnionPropertiesClass {
 export namespace DateUnionPropertiesClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly dateOrDateTimeProperty?: { readonly null?: boolean };
-    readonly dateOrStringProperty?: { readonly null?: boolean };
-    readonly dateTimeOrDateProperty?: { readonly null?: boolean };
-    readonly stringOrDateProperty?: { readonly null?: boolean };
+    readonly dateOrDateTimeProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+          readonly dateTime?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly dateOrStringProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly dateTimeOrDateProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly dateTime?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly stringOrDateProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
   };
 
   export function $fromJson(

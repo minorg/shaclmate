@@ -13,7 +13,7 @@ function filterTypeToString(filterType: Type.FilterType): Maybe<string> {
       filterTypeToString(propertyFilterType).ifJust(
         (propertyFilterTypeString) => {
           propertyStrings.push(
-            `readonly ${propertyName}?: ${propertyFilterTypeString};`,
+            `readonly "${propertyName}"?: ${propertyFilterTypeString};`,
           );
         },
       );
