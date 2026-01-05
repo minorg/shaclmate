@@ -165,6 +165,7 @@ export class ObjectType extends AbstractDeclaredType {
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.filterTypeDeclaration.bind(this)().toList(),
       ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
@@ -234,7 +235,7 @@ export class ObjectType extends AbstractDeclaredType {
   @Memoize()
   get filterType(): Type.CompositeFilterTypeReference {
     return new Type.CompositeFilterTypeReference(
-      `${this.staticModuleName}.Filter`,
+      `${this.staticModuleName}.${syntheticNamePrefix}Filter`,
     );
   }
 

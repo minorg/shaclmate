@@ -147,7 +147,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   @Memoize()
   get filterType(): Type.CompositeFilterTypeReference {
     return new Type.CompositeFilterTypeReference(
-      `${this.staticModuleName}.Filter`,
+      `${this.staticModuleName}.${syntheticNamePrefix}Filter`,
     );
   }
 

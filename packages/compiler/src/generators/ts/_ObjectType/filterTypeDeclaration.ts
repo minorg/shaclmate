@@ -4,15 +4,29 @@ import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Type } from "../Type.js";
 
-function filterTypeToString(filterType: Type.FilterType): string {
+function filterTypeToString(filterType: Type.FilterType): Maybe<string> {
   if (filterType instanceof Type.CompositeFilterType) {
-    return `{ ${Object.entries(filterType.properties).map(([name, filterType]) => `readonly ${name}?: ${filterTypeToString(filterType)}`)} }`;
+    const propertyStrings: string[] = [];
+    for (const [propertyName, propertyFilterType] of Object.entries(
+      filterType.properties,
+    )) {
+      filterTypeToString(propertyFilterType).ifJust(
+        (propertyFilterTypeString) => {
+          propertyStrings.push(
+            `readonly ${propertyName}?: ${propertyFilterTypeString};`,
+          );
+        },
+      );
+    }
+    return propertyStrings.length > 0
+      ? Maybe.of(`{ ${propertyStrings.join(" ")} }`)
+      : Maybe.empty();
   }
   if (filterType instanceof Type.CompositeFilterTypeReference) {
-    return filterType.reference;
+    return Maybe.of(filterType.reference);
   }
   if (filterType instanceof Type.ScalarFilterType) {
-    return filterType.name;
+    return Maybe.of(filterType.name);
   }
   filterType satisfies never;
   throw new Error("unsupported");
@@ -36,8 +50,10 @@ export function filterTypeDeclaration(
         combinedProperties[name] = type;
       });
     }
-    members.push(
-      filterTypeToString(new Type.CompositeFilterType(combinedProperties)),
+    filterTypeToString(new Type.CompositeFilterType(combinedProperties)).ifJust(
+      (member) => {
+        members.push(member);
+      },
     );
   }
   for (const parentObjectType of this.parentObjectTypes) {
