@@ -26,6 +26,13 @@ export interface Type {
   readonly equalsFunction: string;
 
   /**
+   * Type of another type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
+   */
+  readonly filterType:
+    | Type.CompositeFilterType
+    | Type.CompositeFilterTypeReference;
+
+  /**
    * GraphQL-compatible version of the type.
    */
   readonly graphqlType: Type.GraphqlType;
@@ -278,6 +285,23 @@ export namespace Type {
     readonly ownValues: readonly string[];
     readonly descendantValues: readonly string[];
   }
+
+  export class CompositeFilterType {
+    constructor(readonly properties: Readonly<Record<string, FilterType>>) {}
+  }
+
+  export class CompositeFilterTypeReference {
+    constructor(readonly reference: string) {}
+  }
+
+  export class ScalarFilterType {
+    constructor(readonly name: string) {}
+  }
+
+  export type FilterType =
+    | CompositeFilterType
+    | CompositeFilterTypeReference
+    | ScalarFilterType;
 
   export class GraphqlType {
     /**

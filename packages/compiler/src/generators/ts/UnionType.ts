@@ -77,6 +77,10 @@ class MemberType {
     return this.delegate.equalsFunction;
   }
 
+  get filterType() {
+    return this.delegate.filterType;
+  }
+
   get mutable() {
     return this.delegate.mutable;
   }
@@ -283,8 +287,23 @@ ${this.memberTypes
 }`;
   }
 
+  @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    return new Type.CompositeFilterType({
+      on: new Type.CompositeFilterType(
+        this.memberTypes.reduce(
+          (acc, memberType) => {
+            acc[memberType.discriminantValues[0]] = memberType.filterType;
+            return acc;
+          },
+          {} as Record<string, Type["filterType"]>,
+        ),
+      ),
+    });
+  }
+
   override get graphqlType(): Type.GraphqlType {
-    throw new Error("not implemented");
+    throw new Error("GraphQL doesn't support scalar unions");
   }
 
   @Memoize()

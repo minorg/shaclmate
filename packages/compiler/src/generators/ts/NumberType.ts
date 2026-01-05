@@ -5,7 +5,7 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { TermType } from "./TermType.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
@@ -39,6 +39,18 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
       });
     });
     return conversions;
+  }
+
+  @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    const numberFilterType = new Type.ScalarFilterType("number");
+    return new Type.CompositeFilterType({
+      maxExclusive: numberFilterType,
+      maxInclusive: numberFilterType,
+      minExclusive: numberFilterType,
+      minInclusive: numberFilterType,
+      value: numberFilterType,
+    });
   }
 
   @Memoize()

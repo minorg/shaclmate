@@ -28,6 +28,16 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    const intFilterType = new Type.ScalarFilterType("number");
+    return new Type.CompositeFilterType({
+      maxLength: intFilterType,
+      minLength: intFilterType,
+      value: new Type.ScalarFilterType("string"),
+    });
+  }
+
+  @Memoize()
   override get graphqlType(): Type.GraphqlType {
     return new Type.GraphqlType("graphql.GraphQLString");
   }

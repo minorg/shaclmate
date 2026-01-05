@@ -20,6 +20,8 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   private readonly own: boolean;
 
   override readonly declarationImports: readonly Import[] = [];
+  override readonly filterProperty: Property<StringType>["filterProperty"] =
+    Maybe.empty();
   override readonly graphqlField: Property<StringType>["graphqlField"] =
     Maybe.empty();
   override readonly propertySignature: Maybe<

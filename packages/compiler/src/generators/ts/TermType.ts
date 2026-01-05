@@ -32,6 +32,15 @@ export class TermType<
     );
   }
 
+  @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    const stringFilterType = new Type.ScalarFilterType("string");
+    return new Type.CompositeFilterType({
+      type: stringFilterType,
+      value: stringFilterType,
+    });
+  }
+
   override get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
   }

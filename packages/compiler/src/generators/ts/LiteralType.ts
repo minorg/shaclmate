@@ -6,6 +6,16 @@ import { Type } from "./Type.js";
 
 export class LiteralType extends AbstractLiteralType {
   @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    const stringFilterType = new Type.ScalarFilterType("string");
+    return new Type.CompositeFilterType({
+      datatype: stringFilterType,
+      language: stringFilterType,
+      value: stringFilterType,
+    });
+  }
+
+  @Memoize()
   override jsonType(
     parameters?: Parameters<Type["jsonType"]>[0],
   ): Type.JsonType {

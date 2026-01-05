@@ -43,6 +43,18 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   }
 
   @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    const dateFilterType = new Type.ScalarFilterType(this.name);
+    return new Type.CompositeFilterType({
+      maxExclusive: dateFilterType,
+      maxInclusive: dateFilterType,
+      minExclusive: dateFilterType,
+      minInclusive: dateFilterType,
+      value: dateFilterType,
+    });
+  }
+
+  @Memoize()
   override get graphqlType(): Type.GraphqlType {
     return new Type.GraphqlType("graphqlScalars.DateTime");
   }

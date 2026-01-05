@@ -83,6 +83,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
     const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
+      _ObjectUnionType.filterTypeDeclaration.bind(this)(),
       ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
@@ -142,6 +143,13 @@ export class ObjectUnionType extends AbstractDeclaredType {
   @Memoize()
   override get equalsFunction(): string {
     return `${this.staticModuleName}.${syntheticNamePrefix}equals`;
+  }
+
+  @Memoize()
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${this.staticModuleName}.${syntheticNamePrefix}Filter`,
+    );
   }
 
   @Memoize()

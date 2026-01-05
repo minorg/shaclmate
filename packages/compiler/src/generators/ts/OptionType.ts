@@ -69,6 +69,14 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    return new Type.CompositeFilterType({
+      item: this.itemType.filterType,
+      null: new Type.ScalarFilterType("boolean"),
+    });
+  }
+
+  @Memoize()
   override get graphqlType(): Type.GraphqlType {
     invariant(!this.itemType.graphqlType.nullable);
     return new Type.GraphqlType(this.itemType.graphqlType.name, {

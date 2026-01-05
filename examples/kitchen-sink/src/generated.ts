@@ -534,6 +534,10 @@ export class $NamedDefaultPartial {
 }
 
 export namespace $NamedDefaultPartial {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, $NamedDefaultPartial> {
@@ -830,6 +834,10 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, $DefaultPartial> {
@@ -1091,6 +1099,15 @@ export namespace UuidV4IriIdentifierInterface {
         ),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly uuidV4IriProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -1690,6 +1707,15 @@ export class UuidV4IriIdentifierClass {
 }
 
 export namespace UuidV4IriIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly uuidV4IriProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, UuidV4IriIdentifierClass> {
@@ -3128,6 +3154,133 @@ export class UnionDiscriminantsClass {
 }
 
 export namespace UnionDiscriminantsClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly optionalClassOrClassOrStringProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+          readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+          readonly "2-string"?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly optionalIriOrLiteralProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly NamedNode?: {
+            readonly type?: string;
+            readonly value?: string;
+          };
+          readonly Literal?: {
+            readonly datatype?: string;
+            readonly language?: string;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly optionalIriOrStringProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly object?: { readonly type?: string; readonly value?: string };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly requiredClassOrClassOrStringProperty?: {
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
+        };
+      };
+    };
+    readonly requiredIriOrLiteralProperty?: {
+      readonly on?: {
+        readonly NamedNode?: {
+          readonly type?: string;
+          readonly value?: string;
+        };
+        readonly Literal?: {
+          readonly datatype?: string;
+          readonly language?: string;
+          readonly value?: string;
+        };
+      };
+    };
+    readonly requiredIriOrStringProperty?: {
+      readonly on?: {
+        readonly object?: { readonly type?: string; readonly value?: string };
+        readonly string?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
+        };
+      };
+    };
+    readonly setClassOrClassOrStringProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+          readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+          readonly "2-string"?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly setIriOrLiteralProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly NamedNode?: {
+            readonly type?: string;
+            readonly value?: string;
+          };
+          readonly Literal?: {
+            readonly datatype?: string;
+            readonly language?: string;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly setIriOrStringProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly object?: { readonly type?: string; readonly value?: string };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, UnionDiscriminantsClass> {
@@ -6561,6 +6714,72 @@ export class TermPropertiesClass {
 }
 
 export namespace TermPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly blankNodeTermProperty?: {
+      readonly item?: { readonly type?: string; readonly value?: string };
+      readonly null?: boolean;
+    };
+    readonly booleanTermProperty?: {
+      readonly item?: { readonly value?: boolean };
+      readonly null?: boolean;
+    };
+    readonly dateTermProperty?: {
+      readonly item?: {
+        readonly maxExclusive?: Date;
+        readonly maxInclusive?: Date;
+        readonly minExclusive?: Date;
+        readonly minInclusive?: Date;
+        readonly value?: Date;
+      };
+      readonly null?: boolean;
+    };
+    readonly dateTimeTermProperty?: {
+      readonly item?: {
+        readonly maxExclusive?: Date;
+        readonly maxInclusive?: Date;
+        readonly minExclusive?: Date;
+        readonly minInclusive?: Date;
+        readonly value?: Date;
+      };
+      readonly null?: boolean;
+    };
+    readonly iriTermProperty?: {
+      readonly item?: { readonly type?: string; readonly value?: string };
+      readonly null?: boolean;
+    };
+    readonly literalTermProperty?: {
+      readonly item?: {
+        readonly datatype?: string;
+        readonly language?: string;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+    readonly numberTermProperty?: {
+      readonly item?: {
+        readonly maxExclusive?: number;
+        readonly maxInclusive?: number;
+        readonly minExclusive?: number;
+        readonly minInclusive?: number;
+        readonly value?: number;
+      };
+      readonly null?: boolean;
+    };
+    readonly stringTermProperty?: {
+      readonly item?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+    readonly termProperty?: {
+      readonly item?: { readonly type?: string; readonly value?: string };
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, TermPropertiesClass> {
@@ -7840,6 +8059,15 @@ export class Sha256IriIdentifierClass {
 }
 
 export namespace Sha256IriIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly sha256IriProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Sha256IriIdentifierClass> {
@@ -8365,6 +8593,14 @@ export class RecursiveClassUnionMember2 {
 }
 
 export namespace RecursiveClassUnionMember2 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly recursiveClassUnionMember2Property?: {
+      readonly item?: RecursiveClassUnion.$Filter;
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RecursiveClassUnionMember2> {
@@ -8790,6 +9026,14 @@ export class RecursiveClassUnionMember1 {
 }
 
 export namespace RecursiveClassUnionMember1 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly recursiveClassUnionMember1Property?: {
+      readonly item?: RecursiveClassUnion.$Filter;
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, RecursiveClassUnionMember1> {
@@ -9226,6 +9470,25 @@ export class PropertyVisibilitiesClass {
 }
 
 export namespace PropertyVisibilitiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly privateProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+    readonly protectedProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+    readonly publicProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PropertyVisibilitiesClass> {
@@ -10105,6 +10368,41 @@ export class PropertyCardinalitiesClass {
 }
 
 export namespace PropertyCardinalitiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly emptyStringSetProperty?: {
+      readonly items?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly nonEmptyStringSetProperty?: {
+      readonly items?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly optionalStringProperty?: {
+      readonly item?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+    readonly requiredStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PropertyCardinalitiesClass> {
@@ -11063,6 +11361,15 @@ export namespace PartialInterfaceUnionMember2 {
       );
   }
 
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialInterfaceUnionMember2> {
@@ -11682,6 +11989,15 @@ export namespace PartialInterfaceUnionMember1 {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -12374,6 +12690,15 @@ export class PartialClassUnionMember2 {
 }
 
 export namespace PartialClassUnionMember2 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialClassUnionMember2> {
@@ -12970,6 +13295,15 @@ export class PartialClassUnionMember1 {
 }
 
 export namespace PartialClassUnionMember1 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialClassUnionMember1> {
@@ -13596,6 +13930,25 @@ export class OrderedPropertiesClass {
 }
 
 export namespace OrderedPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly orderedPropertyC?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+    readonly orderedPropertyB?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+    readonly orderedPropertyA?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, OrderedPropertiesClass> {
@@ -14361,6 +14714,15 @@ export class NonClass {
 }
 
 export namespace NonClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly nonClassProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, NonClass> {
@@ -14830,6 +15192,15 @@ export class NoRdfTypeClassUnionMember2 {
 }
 
 export namespace NoRdfTypeClassUnionMember2 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly noRdfTypeClassUnionMember2Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, NoRdfTypeClassUnionMember2> {
@@ -15338,6 +15709,15 @@ export class NoRdfTypeClassUnionMember1 {
 }
 
 export namespace NoRdfTypeClassUnionMember1 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly noRdfTypeClassUnionMember1Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, NoRdfTypeClassUnionMember1> {
@@ -16012,6 +16392,39 @@ export class MutablePropertiesClass {
 }
 
 export namespace MutablePropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly mutableListProperty?: {
+      readonly item?: {
+        readonly items?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
+        };
+        readonly maxCount?: number;
+        readonly minCount?: number;
+      };
+      readonly null?: boolean;
+    };
+    readonly mutableSetProperty?: {
+      readonly items?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly mutableStringProperty?: {
+      readonly item?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, MutablePropertiesClass> {
@@ -17233,6 +17646,38 @@ export class ListPropertiesClass {
 }
 
 export namespace ListPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly iriListProperty?: {
+      readonly item?: {
+        readonly items?: { readonly type?: string; readonly value?: string };
+        readonly maxCount?: number;
+        readonly minCount?: number;
+      };
+      readonly null?: boolean;
+    };
+    readonly objectListProperty?: {
+      readonly item?: {
+        readonly items?: NonClass.$Filter;
+        readonly maxCount?: number;
+        readonly minCount?: number;
+      };
+      readonly null?: boolean;
+    };
+    readonly stringListProperty?: {
+      readonly item?: {
+        readonly items?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
+        };
+        readonly maxCount?: number;
+        readonly minCount?: number;
+      };
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ListPropertiesClass> {
@@ -18257,6 +18702,15 @@ export namespace PartialInterface {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -19667,6 +20121,46 @@ export namespace LazyPropertiesInterface {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly optionalLazyToResolvedInterfaceProperty?: {
+      readonly item?: $DefaultPartial.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalLazyToResolvedInterfaceUnionProperty?: {
+      readonly item?: $DefaultPartial.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: {
+      readonly item?: $NamedDefaultPartial.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: {
+      readonly item?: PartialInterface.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: {
+      readonly item?: PartialInterface.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: {
+      readonly item?: PartialInterfaceUnion.$Filter;
+      readonly null?: boolean;
+    };
+    readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
+    readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
+    readonly setLazyToResolvedInterfaceProperty?: {
+      readonly items?: $DefaultPartial.$Filter;
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: {
+      readonly items?: PartialInterface.$Filter;
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -21784,6 +22278,15 @@ export class PartialClass {
 }
 
 export namespace PartialClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialClass> {
@@ -23267,6 +23770,46 @@ export class LazyPropertiesClass {
 }
 
 export namespace LazyPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly optionalLazyToResolvedClassProperty?: {
+      readonly item?: $DefaultPartial.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalLazyToResolvedClassUnionProperty?: {
+      readonly item?: $DefaultPartial.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: {
+      readonly item?: $NamedDefaultPartial.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalPartialClassToResolvedClassProperty?: {
+      readonly item?: PartialClass.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalPartialClassToResolvedClassUnionProperty?: {
+      readonly item?: PartialClass.$Filter;
+      readonly null?: boolean;
+    };
+    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: {
+      readonly item?: PartialClassUnion.$Filter;
+      readonly null?: boolean;
+    };
+    readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
+    readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
+    readonly setLazyToResolvedClassProperty?: {
+      readonly items?: $DefaultPartial.$Filter;
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly setPartialClassToResolvedClassProperty?: {
+      readonly items?: PartialClass.$Filter;
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazyPropertiesClass> {
@@ -25027,6 +25570,15 @@ export namespace LazilyResolvedIriIdentifierInterface {
       );
   }
 
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazilyResolvedIriIdentifierInterface> {
@@ -25610,6 +26162,15 @@ export class LazilyResolvedIriIdentifierClass {
 }
 
 export namespace LazilyResolvedIriIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazilyResolvedIriIdentifierClass> {
@@ -26055,6 +26616,15 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -26676,6 +27246,15 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -27369,6 +27948,15 @@ export class LazilyResolvedClassUnionMember2 {
 }
 
 export namespace LazilyResolvedClassUnionMember2 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazilyResolvedClassUnionMember2> {
@@ -27965,6 +28553,15 @@ export class LazilyResolvedClassUnionMember1 {
 }
 
 export namespace LazilyResolvedClassUnionMember1 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazilyResolvedClassUnionMember1> {
@@ -28492,6 +29089,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -29198,6 +29804,15 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 }
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly lazilyResolvedStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LazilyResolvedBlankNodeOrIriIdentifierClass> {
@@ -29810,6 +30425,19 @@ export class LanguageInPropertiesClass {
 }
 
 export namespace LanguageInPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly languageInLiteralProperty?: {
+      readonly items?: {
+        readonly datatype?: string;
+        readonly language?: string;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, LanguageInPropertiesClass> {
@@ -30459,6 +31087,31 @@ export class JsPrimitiveUnionPropertyClass {
 }
 
 export namespace JsPrimitiveUnionPropertyClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly jsPrimitiveUnionProperty?: {
+      readonly items?: {
+        readonly on?: {
+          readonly boolean?: { readonly value?: boolean };
+          readonly number?: {
+            readonly maxExclusive?: number;
+            readonly maxInclusive?: number;
+            readonly minExclusive?: number;
+            readonly minInclusive?: number;
+            readonly value?: number;
+          };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, JsPrimitiveUnionPropertyClass> {
@@ -30984,6 +31637,10 @@ export namespace IriIdentifierInterface {
       );
   }
 
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IriIdentifierInterface> {
@@ -31343,6 +32000,10 @@ export class IriIdentifierClass {
 }
 
 export namespace IriIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IriIdentifierClass> {
@@ -31607,6 +32268,15 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly interfaceUnionMemberCommonParentProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $hash<
     HasherT extends {
@@ -32082,6 +32752,14 @@ export namespace InterfaceUnionMember2 {
         })),
     );
   }
+
+  export type $Filter = {
+    readonly interfaceUnionMember2Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & InterfaceUnionMemberCommonParentStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -32705,6 +33383,14 @@ export namespace InterfaceUnionMember1 {
         })),
     );
   }
+
+  export type $Filter = {
+    readonly interfaceUnionMember1Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & InterfaceUnionMemberCommonParentStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -33337,6 +34023,15 @@ export namespace Interface {
       );
   }
 
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly interfaceProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, Interface> {
@@ -33894,6 +34589,14 @@ export class IndirectRecursiveHelperClass {
 }
 
 export namespace IndirectRecursiveHelperClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly indirectRecursiveProperty?: {
+      readonly item?: IndirectRecursiveClass.$Filter;
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IndirectRecursiveHelperClass> {
@@ -34311,6 +35014,14 @@ export class IndirectRecursiveClass {
 }
 
 export namespace IndirectRecursiveClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly indirectRecursiveHelperProperty?: {
+      readonly item?: IndirectRecursiveHelperClass.$Filter;
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IndirectRecursiveClass> {
@@ -34887,6 +35598,46 @@ export class InPropertiesClass {
 }
 
 export namespace InPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly inBooleansProperty?: {
+      readonly item?: { readonly value?: boolean };
+      readonly null?: boolean;
+    };
+    readonly inDateTimesProperty?: {
+      readonly item?: {
+        readonly maxExclusive?: Date;
+        readonly maxInclusive?: Date;
+        readonly minExclusive?: Date;
+        readonly minInclusive?: Date;
+        readonly value?: Date;
+      };
+      readonly null?: boolean;
+    };
+    readonly inIrisProperty?: {
+      readonly item?: { readonly type?: string; readonly value?: string };
+      readonly null?: boolean;
+    };
+    readonly inNumbersProperty?: {
+      readonly item?: {
+        readonly maxExclusive?: number;
+        readonly maxInclusive?: number;
+        readonly minExclusive?: number;
+        readonly minInclusive?: number;
+        readonly value?: number;
+      };
+      readonly null?: boolean;
+    };
+    readonly inStringsProperty?: {
+      readonly item?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InPropertiesClass> {
@@ -35841,6 +36592,18 @@ export class InIdentifierClass {
 }
 
 export namespace InIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly inIdentifierProperty?: {
+      readonly item?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InIdentifierClass> {
@@ -36424,6 +37187,14 @@ export abstract class IdentifierOverride1Class {
 }
 
 export namespace IdentifierOverride1ClassStatic {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly identifierOverrideProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -36819,6 +37590,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
 }
 
 export namespace IdentifierOverride2ClassStatic {
+  export type $Filter = IdentifierOverride1ClassStatic.$Filter;
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -37099,6 +37871,8 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
 }
 
 export namespace IdentifierOverride3ClassStatic {
+  export type $Filter = IdentifierOverride2ClassStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IdentifierOverride3Class> {
@@ -37521,6 +38295,8 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
 }
 
 export namespace IdentifierOverride4ClassStatic {
+  export type $Filter = IdentifierOverride3ClassStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IdentifierOverride4Class> {
@@ -37936,6 +38712,8 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
 }
 
 export namespace IdentifierOverride5Class {
+  export type $Filter = IdentifierOverride4ClassStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, IdentifierOverride5Class> {
@@ -38418,6 +39196,19 @@ export class HasValuePropertiesClass {
 }
 
 export namespace HasValuePropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly hasIriValueProperty?: {
+      readonly type?: string;
+      readonly value?: string;
+    };
+    readonly hasLiteralValueProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, HasValuePropertiesClass> {
@@ -39019,6 +39810,15 @@ export class FlattenClassUnionMember3 {
 }
 
 export namespace FlattenClassUnionMember3 {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly flattenClassUnionMember3Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, FlattenClassUnionMember3> {
@@ -39631,6 +40431,14 @@ export class ExternClassPropertyClass {
 }
 
 export namespace ExternClassPropertyClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly externClassProperty?: {
+      readonly item?: ExternClass.$Filter;
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ExternClassPropertyClass> {
@@ -40090,6 +40898,15 @@ export class ExplicitRdfTypeClass {
 }
 
 export namespace ExplicitRdfTypeClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly explicitRdfTypeProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ExplicitRdfTypeClass> {
@@ -40689,6 +41506,15 @@ export class ExplicitFromToRdfTypesClass {
 }
 
 export namespace ExplicitFromToRdfTypesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly explicitFromToRdfTypesProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ExplicitFromToRdfTypesClass> {
@@ -41300,6 +42126,14 @@ export class DirectRecursiveClass {
 }
 
 export namespace DirectRecursiveClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly directRecursiveProperty?: {
+      readonly item?: DirectRecursiveClass.$Filter;
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, DirectRecursiveClass> {
@@ -41916,6 +42750,38 @@ export class DefaultValuePropertiesClass {
 }
 
 export namespace DefaultValuePropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly dateDefaultValueProperty?: {
+      readonly maxExclusive?: Date;
+      readonly maxInclusive?: Date;
+      readonly minExclusive?: Date;
+      readonly minInclusive?: Date;
+      readonly value?: Date;
+    };
+    readonly dateTimeDefaultValueProperty?: {
+      readonly maxExclusive?: Date;
+      readonly maxInclusive?: Date;
+      readonly minExclusive?: Date;
+      readonly minInclusive?: Date;
+      readonly value?: Date;
+    };
+    readonly falseBooleanDefaultValueProperty?: { readonly value?: boolean };
+    readonly numberDefaultValueProperty?: {
+      readonly maxExclusive?: number;
+      readonly maxInclusive?: number;
+      readonly minExclusive?: number;
+      readonly minInclusive?: number;
+      readonly value?: number;
+    };
+    readonly stringDefaultValueProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+    readonly trueBooleanDefaultValueProperty?: { readonly value?: boolean };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, DefaultValuePropertiesClass> {
@@ -43240,6 +44106,90 @@ export class DateUnionPropertiesClass {
 }
 
 export namespace DateUnionPropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly dateOrDateTimeProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+          readonly dateTime?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly dateOrStringProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly dateTimeOrDateProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly dateTime?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+    readonly stringOrDateProperty?: {
+      readonly item?: {
+        readonly on?: {
+          readonly string?: {
+            readonly maxLength?: number;
+            readonly minLength?: number;
+            readonly value?: string;
+          };
+          readonly date?: {
+            readonly maxExclusive?: Date;
+            readonly maxInclusive?: Date;
+            readonly minExclusive?: Date;
+            readonly minInclusive?: Date;
+            readonly value?: Date;
+          };
+        };
+      };
+      readonly null?: boolean;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, DateUnionPropertiesClass> {
@@ -45175,6 +46125,77 @@ export class ConvertibleTypePropertiesClass {
 }
 
 export namespace ConvertibleTypePropertiesClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly convertibleIriNonEmptySetProperty?: {
+      readonly items?: { readonly type?: string; readonly value?: string };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly convertibleIriOptionProperty?: {
+      readonly item?: { readonly type?: string; readonly value?: string };
+      readonly null?: boolean;
+    };
+    readonly convertibleIriProperty?: {
+      readonly type?: string;
+      readonly value?: string;
+    };
+    readonly convertibleIriSetProperty?: {
+      readonly items?: { readonly type?: string; readonly value?: string };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly convertibleLiteralNonEmptySetProperty?: {
+      readonly items?: {
+        readonly datatype?: string;
+        readonly language?: string;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly convertibleLiteralOptionProperty?: {
+      readonly item?: {
+        readonly datatype?: string;
+        readonly language?: string;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+    readonly convertibleLiteralProperty?: {
+      readonly datatype?: string;
+      readonly language?: string;
+      readonly value?: string;
+    };
+    readonly convertibleLiteralSetProperty?: {
+      readonly items?: {
+        readonly datatype?: string;
+        readonly language?: string;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly convertibleTermNonEmptySetProperty?: {
+      readonly items?: { readonly type?: string; readonly value?: string };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly convertibleTermOptionProperty?: {
+      readonly item?: { readonly type?: string; readonly value?: string };
+      readonly null?: boolean;
+    };
+    readonly convertibleTermProperty?: {
+      readonly type?: string;
+      readonly value?: string;
+    };
+    readonly convertibleTermSetProperty?: {
+      readonly items?: { readonly type?: string; readonly value?: string };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConvertibleTypePropertiesClass> {
@@ -47102,6 +48123,15 @@ export namespace BaseInterfaceWithPropertiesStatic {
       );
   }
 
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly baseInterfaceWithPropertiesProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithProperties> {
@@ -47737,6 +48767,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return BaseInterfaceWithPropertiesStatic.$equals(left, right);
   }
 
+  export type $Filter = BaseInterfaceWithPropertiesStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BaseInterfaceWithoutProperties> {
@@ -48218,6 +49250,14 @@ export namespace ConcreteParentInterfaceStatic {
       })),
     );
   }
+
+  export type $Filter = {
+    readonly concreteParentInterfaceProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & BaseInterfaceWithoutPropertiesStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -48863,6 +49903,14 @@ export namespace ConcreteChildInterface {
       })),
     );
   }
+
+  export type $Filter = {
+    readonly concreteChildInterfaceProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & ConcreteParentInterfaceStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -49594,6 +50642,14 @@ export abstract class AbstractBaseClassWithProperties {
 }
 
 export namespace AbstractBaseClassWithPropertiesStatic {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly abstractBaseClassWithPropertiesProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -49997,6 +51053,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 }
 
 export namespace AbstractBaseClassWithoutPropertiesStatic {
+  export type $Filter = AbstractBaseClassWithPropertiesStatic.$Filter;
   export type $Identifier = AbstractBaseClassWithPropertiesStatic.$Identifier;
   export const $Identifier = AbstractBaseClassWithPropertiesStatic.$Identifier;
   export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
@@ -50319,6 +51376,14 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 }
 
 export namespace ConcreteParentClassStatic {
+  export type $Filter = {
+    readonly concreteParentClassProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteParentClass> {
@@ -50935,6 +52000,14 @@ export class ConcreteChildClass extends ConcreteParentClass {
 }
 
 export namespace ConcreteChildClass {
+  export type $Filter = {
+    readonly concreteChildClassProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & ConcreteParentClassStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ConcreteChildClass> {
@@ -51543,6 +52616,14 @@ export abstract class ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMemberCommonParentStatic {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly classUnionMemberCommonParentProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -51990,6 +53071,14 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember2 {
+  export type $Filter = {
+    readonly classUnionMember2Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & ClassUnionMemberCommonParentStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ClassUnionMember2> {
@@ -52570,6 +53659,14 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember1 {
+  export type $Filter = {
+    readonly classUnionMember1Property?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  } & ClassUnionMemberCommonParentStatic.$Filter;
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ClassUnionMember1> {
@@ -53099,6 +54196,10 @@ export namespace BlankNodeOrIriIdentifierInterface {
       );
   }
 
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BlankNodeOrIriIdentifierInterface> {
@@ -53477,6 +54578,10 @@ export class BlankNodeOrIriIdentifierClass {
 }
 
 export namespace BlankNodeOrIriIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BlankNodeOrIriIdentifierClass> {
@@ -53824,6 +54929,10 @@ export namespace BlankNodeIdentifierInterface {
         ),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -54203,6 +55312,10 @@ export class BlankNodeIdentifierClass {
 }
 
 export namespace BlankNodeIdentifierClass {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, BlankNodeIdentifierClass> {
@@ -54635,6 +55748,14 @@ export abstract class AbstractBaseClassForExternClass {
 }
 
 export namespace AbstractBaseClassForExternClassStatic {
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly abstractBaseClassForExternClassProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -54999,6 +56120,13 @@ export namespace ClassUnion {
     });
   }
 
+  export type $Filter = {
+    readonly on?: {
+      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, ClassUnion> {
@@ -55266,6 +56394,14 @@ export namespace FlattenClassUnion {
       }
     });
   }
+
+  export type $Filter = {
+    readonly on?: {
+      readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
+      readonly ClassUnionMember2?: ClassUnionMember2.$Filter;
+      readonly FlattenClassUnionMember3?: FlattenClassUnionMember3.$Filter;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -55569,6 +56705,13 @@ export namespace InterfaceUnion {
     });
   }
 
+  export type $Filter = {
+    readonly on?: {
+      readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
+      readonly InterfaceUnionMember2?: InterfaceUnionMember2.$Filter;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, InterfaceUnion> {
@@ -55840,6 +56983,13 @@ export namespace LazilyResolvedClassUnion {
       }
     });
   }
+
+  export type $Filter = {
+    readonly on?: {
+      readonly LazilyResolvedClassUnionMember1?: LazilyResolvedClassUnionMember1.$Filter;
+      readonly LazilyResolvedClassUnionMember2?: LazilyResolvedClassUnionMember2.$Filter;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -56117,6 +57267,13 @@ export namespace LazilyResolvedInterfaceUnion {
       }
     });
   }
+
+  export type $Filter = {
+    readonly on?: {
+      readonly LazilyResolvedInterfaceUnionMember1?: LazilyResolvedInterfaceUnionMember1.$Filter;
+      readonly LazilyResolvedInterfaceUnionMember2?: LazilyResolvedInterfaceUnionMember2.$Filter;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -56405,6 +57562,13 @@ export namespace PartialClassUnion {
     });
   }
 
+  export type $Filter = {
+    readonly on?: {
+      readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
+      readonly PartialClassUnionMember2?: PartialClassUnionMember2.$Filter;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, PartialClassUnion> {
@@ -56672,6 +57836,13 @@ export namespace PartialInterfaceUnion {
       }
     });
   }
+
+  export type $Filter = {
+    readonly on?: {
+      readonly PartialInterfaceUnionMember1?: PartialInterfaceUnionMember1.$Filter;
+      readonly PartialInterfaceUnionMember2?: PartialInterfaceUnionMember2.$Filter;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -56951,6 +58122,13 @@ export namespace NoRdfTypeClassUnion {
     });
   }
 
+  export type $Filter = {
+    readonly on?: {
+      readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
+      readonly NoRdfTypeClassUnionMember2?: NoRdfTypeClassUnionMember2.$Filter;
+    };
+  };
+
   export function $fromJson(
     json: unknown,
   ): purify.Either<zod.ZodError, NoRdfTypeClassUnion> {
@@ -57208,6 +58386,13 @@ export namespace RecursiveClassUnion {
       }
     });
   }
+
+  export type $Filter = {
+    readonly on?: {
+      readonly RecursiveClassUnionMember1?: RecursiveClassUnionMember1.$Filter;
+      readonly RecursiveClassUnionMember2?: RecursiveClassUnionMember2.$Filter;
+    };
+  };
 
   export function $fromJson(
     json: unknown,

@@ -28,6 +28,14 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return conversions;
   }
 
+  @Memoize()
+  get filterType(): Type.CompositeFilterType {
+    return new Type.CompositeFilterType({
+      value: new Type.ScalarFilterType("boolean"),
+    });
+  }
+
+  @Memoize()
   override get graphqlType(): Type.GraphqlType {
     return new Type.GraphqlType("graphql.GraphQLBoolean");
   }

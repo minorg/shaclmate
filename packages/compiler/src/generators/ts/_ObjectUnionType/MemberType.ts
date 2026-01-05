@@ -61,6 +61,10 @@ export class MemberType {
     return this.delegate.features;
   }
 
+  get filterType() {
+    return this.delegate.filterType;
+  }
+
   get fromRdfType() {
     return this.delegate.fromRdfType;
   }
