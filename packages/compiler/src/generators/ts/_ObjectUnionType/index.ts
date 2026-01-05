@@ -1,4 +1,5 @@
 export * from "./equalsFunctionDeclaration.js";
+export * from "./filterTypeDeclaration.js";
 export * from "./graphqlTypeVariableStatement.js";
 export * from "./hashFunctionDeclaration.js";
 export * from "./identifierTypeDeclarations.js";

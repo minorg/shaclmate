@@ -83,6 +83,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
     const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
+      _ObjectUnionType.filterTypeDeclaration.bind(this)(),
       ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
