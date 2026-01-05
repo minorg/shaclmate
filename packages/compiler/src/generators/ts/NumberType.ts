@@ -43,18 +43,13 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
 
   @Memoize()
   get filterType(): Type.CompositeFilterType {
-    const numberFilterType = new Type.ScalarFilterType({
-      graphqlName: this.graphqlType.name,
-      name: "number",
-    });
+    const numberFilterType = new Type.ScalarFilterType("number");
     return new Type.CompositeFilterType({
-      properties: {
-        maxExclusive: numberFilterType,
-        maxInclusive: numberFilterType,
-        minExclusive: numberFilterType,
-        minInclusive: numberFilterType,
-        value: numberFilterType,
-      },
+      maxExclusive: numberFilterType,
+      maxInclusive: numberFilterType,
+      minExclusive: numberFilterType,
+      minInclusive: numberFilterType,
+      value: numberFilterType,
     });
   }
 

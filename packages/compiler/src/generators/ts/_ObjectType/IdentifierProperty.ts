@@ -24,6 +24,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
 
+  override readonly filterProperty: Property<IdentifierType>["filterProperty"] =
+    Maybe.empty();
   readonly equalsFunction = Maybe.of(`${syntheticNamePrefix}booleanEquals`);
   readonly mutable = false;
   readonly recursive = false;

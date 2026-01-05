@@ -145,15 +145,10 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    return new Type.CompositeFilterType({
-      properties: {
-        properties: new Type.ScalarFilterType({
-          graphqlName: this.graphqlType.name,
-          name: `${this.staticModuleName}.Filter`,
-        }),
-      },
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${this.staticModuleName}.Filter`,
+    );
   }
 
   @Memoize()

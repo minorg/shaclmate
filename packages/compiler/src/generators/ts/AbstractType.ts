@@ -26,7 +26,9 @@ export abstract class AbstractType implements Type {
   abstract readonly conversions: readonly Type.Conversion[];
   abstract readonly discriminantProperty: Maybe<Type.DiscriminantProperty>;
   abstract readonly equalsFunction: string;
-  abstract readonly filterType: Type.CompositeFilterType;
+  abstract readonly filterType:
+    | Type.CompositeFilterType
+    | Type.CompositeFilterTypeReference;
   abstract readonly graphqlType: Type.GraphqlType;
   abstract readonly mutable: boolean;
   abstract readonly name: string;

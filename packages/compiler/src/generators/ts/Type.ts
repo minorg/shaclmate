@@ -28,7 +28,9 @@ export interface Type {
   /**
    * Type of another type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
    */
-  readonly filterType: Type.CompositeFilterType;
+  readonly filterType:
+    | Type.CompositeFilterType
+    | Type.CompositeFilterTypeReference;
 
   /**
    * GraphQL-compatible version of the type.
@@ -285,33 +287,21 @@ export namespace Type {
   }
 
   export class CompositeFilterType {
-    readonly properties: Readonly<Record<string, FilterType>>;
+    constructor(readonly properties: Readonly<Record<string, FilterType>>) {}
+  }
 
-    constructor({
-      properties,
-    }: { properties: Readonly<Record<string, FilterType>> }) {
-      this.properties = properties;
-    }
+  export class CompositeFilterTypeReference {
+    constructor(readonly reference: string) {}
   }
 
   export class ScalarFilterType {
-    /**
-     * Name of the GraphQL version of this type.
-     */
-    readonly graphqlName: string;
-
-    /**
-     * TypeScript name of this type.
-     */
-    readonly name: string;
-
-    constructor({ graphqlName, name }: { graphqlName: string; name: string }) {
-      this.graphqlName = graphqlName;
-      this.name = name;
-    }
+    constructor(readonly name: string) {}
   }
 
-  export type FilterType = CompositeFilterType | ScalarFilterType;
+  export type FilterType =
+    | CompositeFilterType
+    | CompositeFilterTypeReference
+    | ScalarFilterType;
 
   export class GraphqlType {
     /**

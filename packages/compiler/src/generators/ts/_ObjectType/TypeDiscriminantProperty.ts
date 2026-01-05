@@ -21,6 +21,8 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override readonly equalsFunction = Maybe.of(
     `${syntheticNamePrefix}strictEquals`,
   );
+  override readonly filterProperty: Property<TypeDiscriminantProperty.Type>["filterProperty"] =
+    Maybe.empty();
   override readonly getAccessorDeclaration: Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > = Maybe.empty();

@@ -7,16 +7,11 @@ import { Type } from "./Type.js";
 export class LiteralType extends AbstractLiteralType {
   @Memoize()
   get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType({
-      graphqlName: "graphql.GraphQLString",
-      name: "string",
-    });
+    const stringFilterType = new Type.ScalarFilterType("string");
     return new Type.CompositeFilterType({
-      properties: {
-        datatype: stringFilterType,
-        language: stringFilterType,
-        value: stringFilterType,
-      },
+      datatype: stringFilterType,
+      language: stringFilterType,
+      value: stringFilterType,
     });
   }
 

@@ -34,15 +34,10 @@ export class TermType<
 
   @Memoize()
   get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType({
-      graphqlName: "graphql.GraphQLString",
-      name: "string",
-    });
+    const stringFilterType = new Type.ScalarFilterType("string");
     return new Type.CompositeFilterType({
-      properties: {
-        type: stringFilterType,
-        value: stringFilterType,
-      },
+      type: stringFilterType,
+      value: stringFilterType,
     });
   }
 

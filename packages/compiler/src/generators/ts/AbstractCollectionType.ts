@@ -149,16 +149,11 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   get filterType(): Type.CompositeFilterType {
-    const intFilterType = new Type.ScalarFilterType({
-      graphqlName: "graphql.GraphQLInt",
-      name: "number",
-    });
+    const intFilterType = new Type.ScalarFilterType("number");
     return new Type.CompositeFilterType({
-      properties: {
-        ...this.itemType.filterType.properties,
-        maxCount: intFilterType,
-        minCount: intFilterType,
-      },
+      items: this.itemType.filterType,
+      maxCount: intFilterType,
+      minCount: intFilterType,
     });
   }
 

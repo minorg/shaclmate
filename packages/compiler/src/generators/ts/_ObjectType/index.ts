@@ -4,6 +4,8 @@ export * from "./createFunctionDeclaration.js";
 
 export * from "./equalsFunctionDeclaration.js";
 
+export * from "./filterTypeDeclaration.js";
+
 export * from "./fromRdfTypeVariableStatement.js";
 
 export * from "./graphqlTypeVariableStatement.js";

@@ -285,15 +285,7 @@ ${this.memberTypes
 
   @Memoize()
   get filterType(): Type.CompositeFilterType {
-    return new Type.CompositeFilterType({
-      properties: {
-        // Don't support union filters for the time being
-        // properties: new Type.ScalarFilterType({
-        //   graphqlName: "GraphQL doesn't support scalar unions",
-        //   name: `${this.staticModuleName}.Filter`,
-        // }),
-      },
-    });
+    return new Type.CompositeFilterType({});
   }
 
   override get graphqlType(): Type.GraphqlType {

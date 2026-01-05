@@ -31,12 +31,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   @Memoize()
   get filterType(): Type.CompositeFilterType {
     return new Type.CompositeFilterType({
-      properties: {
-        value: new Type.ScalarFilterType({
-          graphqlName: this.graphqlType.name,
-          name: this.name,
-        }),
-      },
+      value: new Type.ScalarFilterType("boolean"),
     });
   }
 

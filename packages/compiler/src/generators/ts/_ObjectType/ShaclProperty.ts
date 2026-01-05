@@ -125,6 +125,14 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     ];
   }
 
+  @Memoize()
+  override get filterProperty() {
+    return Maybe.of({
+      name: this.name,
+      type: this.type.filterType,
+    });
+  }
+
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
