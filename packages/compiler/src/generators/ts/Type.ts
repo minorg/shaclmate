@@ -58,6 +58,16 @@ export interface Type {
   readonly typeofs: NonEmptyList<"boolean" | "object" | "number" | "string">;
 
   /**
+   * A function that takes a filter of filterType (above) and a value of this type and returns true if the value passes the filter.
+   */
+  filterFunction(parameters: {
+    variables: {
+      filter: string;
+      value: string;
+    };
+  }): string;
+
+  /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
    * already been validated and converted to the expected JSON type with Zod.
    */
