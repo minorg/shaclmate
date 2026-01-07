@@ -96,7 +96,7 @@ export abstract class AbstractType implements Type {
   abstract snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
-  }): readonly string[];
+  }): Readonly<Record<string, string>>;
 
   sparqlConstructTemplateTriples({
     allowIgnoreRdfType,

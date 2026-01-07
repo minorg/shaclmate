@@ -9,9 +9,11 @@ export function objectSetMethodSignatures(parameters: {
     readonly name: string;
   };
   queryT?: string;
-}): Record<
-  keyof ObjectType.ObjectSetMethodNames,
-  OptionalKind<MethodSignatureStructure>
+}): Readonly<
+  Record<
+    keyof ObjectType.ObjectSetMethodNames,
+    OptionalKind<MethodSignatureStructure>
+  >
 > {
   const { objectType } = parameters;
   const queryT = parameters.queryT ?? `${syntheticNamePrefix}ObjectSet.Query`;

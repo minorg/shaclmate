@@ -12,6 +12,7 @@ import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
@@ -263,17 +264,22 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override snippetDeclarations(
     parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ): readonly string[] {
+  ): Readonly<Record<string, string>> {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
-      return [];
+      return {};
     }
     recursionStack.push(this);
-    const result = this.memberTypes.flatMap((memberType) =>
-      memberType.snippetDeclarations(parameters),
+    const snippetDeclarations = this.memberTypes.reduce(
+      (snippetDeclarations, memberType) =>
+        mergeSnippetDeclarations(
+          snippetDeclarations,
+          memberType.snippetDeclarations(parameters),
+        ),
+      {} as Record<string, string>,
     );
     invariant(Object.is(recursionStack.pop(), this));
-    return result;
+    return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(

@@ -15,7 +15,7 @@ import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { SnippetDeclarations } from "../SnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
@@ -469,12 +469,11 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
   }
 
-  override snippetDeclarations(): readonly string[] {
-    const snippetDeclarations: string[] = [];
+  override snippetDeclarations(): Readonly<Record<string, string>> {
     if (this.objectType.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.booleanEquals);
+      return sharedSnippetDeclarations.booleanEquals;
     }
-    return snippetDeclarations;
+    return {};
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {

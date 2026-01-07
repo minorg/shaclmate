@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -33,7 +33,29 @@ export class LazyObjectType extends AbstractLazyObjectType<
         name: `${syntheticNamePrefix}LazyObject<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
         partialPropertyName: "partial",
         rawName: `${syntheticNamePrefix}LazyObject`,
-        snippetDeclaration: SnippetDeclarations.LazyObject,
+        snippetDeclarations: singleEntryRecord(
+          `${syntheticNamePrefix}LazyObject`,
+          `\
+/**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+  readonly partial: PartialObjectT;
+  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>;
+
+  constructor({ partial, resolver }: {
+    partial: PartialObjectT
+    resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>,
+  }) {
+    this.partial = partial;
+    this.resolver = resolver;
+  }
+
+  resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
+    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
+  }
+}`,
+        ),
       },
     });
   }

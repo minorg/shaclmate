@@ -176,12 +176,13 @@ export interface Type {
    * ObjectType's. Instead of re-declaring the return type anonymously on every equals function, declare a named type
    * as a snippet and reference it.
    *
-   * The generator deduplicates snippet declarations across all types before adding them to the source.
+   * Snippets should be named in order to facilitate deduplication. A snippet should usually be a single declaration (e.g.,
+   * a function or a type) and the snippet's name should be the name of that declaration.
    */
   snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
-  }): readonly string[];
+  }): Readonly<Record<string, string>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).

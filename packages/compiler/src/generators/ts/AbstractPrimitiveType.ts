@@ -1,7 +1,8 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
@@ -55,11 +56,18 @@ export abstract class AbstractPrimitiveType<
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
-    const snippetDeclarations: string[] = [];
+  }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
+    Record<string, string>
+  > {
+    let snippetDeclarations: Record<string, string> = {};
+
     if (features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.strictEquals);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sharedSnippetDeclarations.strictEquals,
+      );
     }
+
     return snippetDeclarations;
   }
 

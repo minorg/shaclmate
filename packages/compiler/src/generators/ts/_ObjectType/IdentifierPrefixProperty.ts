@@ -11,8 +11,8 @@ import {
 import { Memoize } from "typescript-memoize";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
-import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import type { StringType } from "../StringType.js";
+import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
@@ -129,12 +129,11 @@ export class IdentifierPrefixProperty extends Property<StringType> {
       : Maybe.empty();
   }
 
-  override snippetDeclarations(): readonly string[] {
-    const snippetDeclarations: string[] = [];
+  override snippetDeclarations(): Readonly<Record<string, string>> {
     if (this.objectType.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.strictEquals);
+      return sharedSnippetDeclarations.strictEquals;
     }
-    return snippetDeclarations;
+    return {};
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {

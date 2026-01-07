@@ -7,7 +7,6 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
@@ -109,11 +108,23 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     features,
   }: Parameters<
     AbstractPrimitiveType<Date>["snippetDeclarations"]
-  >[0]): readonly string[] {
-    const snippetDeclarations: string[] = [];
+  >[0]): Readonly<Record<string, string>> {
+    const snippetDeclarations: Record<string, string> = {};
+
     if (features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.dateEquals);
+      snippetDeclarations[`${syntheticNamePrefix}dateEquals`] = `\
+/**
+ * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
+ */
+export function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.getTime() === right.getTime(),
+  );
+}`;
     }
+
     return snippetDeclarations;
   }
 

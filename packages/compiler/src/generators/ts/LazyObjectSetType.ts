@@ -4,7 +4,7 @@ import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -42,7 +42,47 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
         name: `${syntheticNamePrefix}LazyObjectSet<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
         partialPropertyName: "partials",
         rawName: `${syntheticNamePrefix}LazyObjectSet`,
-        snippetDeclaration: SnippetDeclarations.LazyObjectSet,
+        snippetDeclarations: singleEntryRecord(
+          `${syntheticNamePrefix}LazyObjectSet`,
+          `\
+/**
+ * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+  readonly partials: readonly PartialObjectT[];
+  private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>;
+
+  constructor({ partials, resolver }: {
+    partials: readonly PartialObjectT[]
+    resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<purify.Either<Error, readonly ResolvedObjectT[]>>,
+  }) {
+    this.partials = partials;
+    this.resolver = resolver;
+  }
+
+  get length(): number {
+    return this.partials.length;
+  }
+
+  async resolve(options?: { limit?: number; offset?: number }): Promise<purify.Either<Error, readonly ResolvedObjectT[]>> {
+    if (this.partials.length === 0) {
+      return purify.Either.of([]);
+    }
+
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier));
+  }
+}`,
+        ),
       },
     });
   }

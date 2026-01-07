@@ -8,7 +8,7 @@ import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -226,12 +226,13 @@ export abstract class AbstractTermType<
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
-    const snippetDeclarations: string[] = [];
+  }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
+    Record<string, string>
+  > {
     if (features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.booleanEquals);
+      return sharedSnippetDeclarations.booleanEquals;
     }
-    return snippetDeclarations;
+    return {};
   }
 
   override sparqlWherePatterns(

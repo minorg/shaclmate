@@ -20,7 +20,7 @@ export abstract class AbstractLazyObjectType<
     readonly name: string;
     readonly partialPropertyName: string;
     readonly rawName: string;
-    readonly snippetDeclaration: string;
+    readonly snippetDeclarations: Readonly<Record<string, string>>;
   };
   override readonly discriminantProperty: Type["discriminantProperty"] =
     Maybe.empty();
@@ -109,11 +109,12 @@ export abstract class AbstractLazyObjectType<
 
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    return this.partialType
-      .snippetDeclarations(parameters)
-      .concat(this.resolvedType.snippetDeclarations(parameters))
-      .concat(this.runtimeClass.snippetDeclaration);
+  ): Readonly<Record<string, string>> {
+    return {
+      ...this.partialType.snippetDeclarations(parameters),
+      ...this.resolvedType.snippetDeclarations(parameters),
+      ...this.runtimeClass.snippetDeclarations,
+    } as Record<string, string>;
   }
 
   override sparqlConstructTemplateTriples(

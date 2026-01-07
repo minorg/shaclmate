@@ -4,7 +4,7 @@ import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -35,7 +35,32 @@ export class LazyObjectOptionType extends AbstractLazyObjectType<
         name: `${syntheticNamePrefix}LazyObjectOption<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
         partialPropertyName: "partial",
         rawName: `${syntheticNamePrefix}LazyObjectOption`,
-        snippetDeclaration: SnippetDeclarations.LazyObjectOption,
+        snippetDeclarations: singleEntryRecord(
+          `${syntheticNamePrefix}LazyObjectOption`,
+          `\
+/**
+ * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+  readonly partial: purify.Maybe<PartialObjectT>;
+  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>;
+
+  constructor({ partial, resolver }: {
+    partial: purify.Maybe<PartialObjectT>
+    resolver: (identifier: ObjectIdentifierT) => Promise<purify.Either<Error, ResolvedObjectT>>,
+  }) {
+    this.partial = partial;
+    this.resolver = resolver;
+  }
+
+  async resolve(): Promise<purify.Either<Error, purify.Maybe<ResolvedObjectT>>> {
+    if (this.partial.isNothing()) {
+      return purify.Either.of(purify.Maybe.empty());
+    }
+    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier)).map(purify.Maybe.of);
+  }
+}`,
+        ),
       },
     });
   }

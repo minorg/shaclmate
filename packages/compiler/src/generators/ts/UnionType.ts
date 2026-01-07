@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { Type } from "./Type.js";
 
@@ -123,9 +124,7 @@ class MemberType {
     }
   }
 
-  snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
+  snippetDeclarations(parameters: Parameters<Type["snippetDeclarations"]>[0]) {
     return this.delegate.snippetDeclarations(parameters);
   }
 
@@ -478,17 +477,22 @@ ${this.memberTypes
 
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
+  ): Readonly<Record<string, string>> {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
-      return [];
+      return {};
     }
     recursionStack.push(this);
-    const result = this.memberTypes.flatMap((memberType) =>
-      memberType.snippetDeclarations(parameters),
+    const snippetDeclarations = this.memberTypes.reduce(
+      (snippetDeclarations, memberType) =>
+        mergeSnippetDeclarations(
+          snippetDeclarations,
+          memberType.snippetDeclarations(parameters),
+        ),
+      {} as Record<string, string>,
     );
     invariant(Object.is(recursionStack.pop(), this));
-    return result;
+    return snippetDeclarations;
   }
 
   override sparqlConstructTemplateTriples(

@@ -18,11 +18,44 @@ import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
+
+const sparqlInstancesOfPatternSnippet = singleEntryRecord(
+  `${syntheticNamePrefix}sparqlInstancesOfPattern`,
+  `\
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}`,
+);
 
 export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
@@ -435,33 +468,45 @@ export class ObjectType extends AbstractDeclaredType {
 
   override snippetDeclarations({
     recursionStack,
-  }: Parameters<
-    AbstractDeclaredType["snippetDeclarations"]
-  >[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0]): Readonly<
+    Record<string, string>
+  > {
     if (recursionStack.some((type) => Object.is(type, this))) {
-      return [];
+      return {};
     }
 
-    const snippetDeclarations: string[] = [];
+    let snippetDeclarations: Record<string, string> = {};
     if (this.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.EqualsResult);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sharedSnippetDeclarations.EqualsResult,
+      );
     }
     if (this.features.has("rdf")) {
-      snippetDeclarations.push(SnippetDeclarations.RdfVocabularies);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sharedSnippetDeclarations.RdfVocabularies,
+      );
     }
     if (this.features.has("sparql") && this.fromRdfType.isJust()) {
-      snippetDeclarations.push(SnippetDeclarations.sparqlInstancesOfPattern);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sparqlInstancesOfPatternSnippet,
+      );
     }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
       this.parentObjectTypes.length > 0
     ) {
-      snippetDeclarations.push(SnippetDeclarations.UnwrapR);
+      // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
+      snippetDeclarations[`${syntheticNamePrefix}UnwrapR`] =
+        `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`;
     }
     recursionStack.push(this);
     for (const property of this.ownProperties) {
-      snippetDeclarations.push(
-        ...property.snippetDeclarations({
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        property.snippetDeclarations({
           features: this.features,
           recursionStack,
         }),
