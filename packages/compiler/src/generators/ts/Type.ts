@@ -1,4 +1,5 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { Import } from "./Import.js";
@@ -24,6 +25,12 @@ export interface Type {
    * $EqualsResult.
    */
   readonly equalsFunction: string;
+
+  /**
+   * A function (reference or declaration) that takes a filter of filterType (above) and a value of this type
+   * and returns true if the value passes the filter.
+   */
+  // readonly filterFunction: string;
 
   /**
    * Type of another type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
@@ -56,16 +63,6 @@ export interface Type {
    * JavaScript typeof(s) the type.
    */
   readonly typeofs: NonEmptyList<"boolean" | "object" | "number" | "string">;
-
-  /**
-   * A function that takes a filter of filterType (above) and a value of this type and returns true if the value passes the filter.
-   */
-  filterFunction(parameters: {
-    variables: {
-      filter: string;
-      value: string;
-    };
-  }): string;
 
   /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
@@ -297,11 +294,27 @@ export namespace Type {
   }
 
   export class CompositeFilterType {
-    constructor(readonly properties: Readonly<Record<string, FilterType>>) {}
+    constructor(readonly properties: Readonly<Record<string, FilterType>>) {
+      invariant(Object.entries(properties).length > 0);
+    }
+
+    @Memoize()
+    get name(): string {
+      return `{ ${Object.entries(this.properties)
+        .map(
+          ([propertyName, propertyFilterType]) =>
+            `readonly "${propertyName}"?: ${propertyFilterType.toString()};`,
+        )
+        .join(" ")} }`;
+    }
   }
 
   export class CompositeFilterTypeReference {
     constructor(readonly reference: string) {}
+
+    get name(): string {
+      return this.reference;
+    }
   }
 
   export class ScalarFilterType {
