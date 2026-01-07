@@ -7,6 +7,82 @@ import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 import { z as zod } from "zod";
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */
+export function $arrayEquals<T>(
+  leftArray: readonly T[],
+  rightArray: readonly T[],
+  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
+  if (leftArray.length !== rightArray.length) {
+    return purify.Left({
+      left: leftArray,
+      right: rightArray,
+      type: "ArrayLength",
+    });
+  }
+
+  for (
+    let leftElementIndex = 0;
+    leftElementIndex < leftArray.length;
+    leftElementIndex++
+  ) {
+    const leftElement = leftArray[leftElementIndex];
+
+    const rightUnequals: $EqualsResult.Unequal[] = [];
+    for (
+      let rightElementIndex = 0;
+      rightElementIndex < rightArray.length;
+      rightElementIndex++
+    ) {
+      const rightElement = rightArray[rightElementIndex];
+
+      const leftElementEqualsRightElement =
+        $EqualsResult.fromBooleanEqualsResult(
+          leftElement,
+          rightElement,
+          elementEquals(leftElement, rightElement),
+        );
+      if (leftElementEqualsRightElement.isRight()) {
+        break; // left element === right element, break out of the right iteration
+      }
+      rightUnequals.push(
+        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
+      );
+    }
+
+    if (rightUnequals.length === rightArray.length) {
+      // All right elements were unequal to the left element
+      return purify.Left({
+        left: {
+          array: leftArray,
+          element: leftElement,
+          elementIndex: leftElementIndex,
+        },
+        right: {
+          array: rightArray,
+          unequals: rightUnequals,
+        },
+        type: "ArrayElement",
+      });
+    }
+    // Else there was a right element equal to the left element, continue to the next left element
+  }
+
+  return $EqualsResult.Equal;
+}
+
+/**
+ * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
+ */
+export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+}
+
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -82,6 +158,36 @@ export namespace $EqualsResult {
         readonly type: "RightNull";
       };
 }
+
+export function $maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return $EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
+  }
+
+  return $EqualsResult.Equal;
+}
+
 export namespace $RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode(
@@ -125,15 +231,7 @@ export namespace $RdfVocabularies {
     );
   }
 }
-/**
- * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
- */
-export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
-}
+
 /**
  * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
  */
@@ -142,99 +240,6 @@ export function $strictEquals<T extends bigint | boolean | number | string>(
   right: T,
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
-}
-/**
- * Compare two arrays element-wise with the provided elementEquals function.
- */
-export function $arrayEquals<T>(
-  leftArray: readonly T[],
-  rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftArray.length !== rightArray.length) {
-    return purify.Left({
-      left: leftArray,
-      right: rightArray,
-      type: "ArrayLength",
-    });
-  }
-
-  for (
-    let leftElementIndex = 0;
-    leftElementIndex < leftArray.length;
-    leftElementIndex++
-  ) {
-    const leftElement = leftArray[leftElementIndex];
-
-    const rightUnequals: $EqualsResult.Unequal[] = [];
-    for (
-      let rightElementIndex = 0;
-      rightElementIndex < rightArray.length;
-      rightElementIndex++
-    ) {
-      const rightElement = rightArray[rightElementIndex];
-
-      const leftElementEqualsRightElement =
-        $EqualsResult.fromBooleanEqualsResult(
-          leftElement,
-          rightElement,
-          elementEquals(leftElement, rightElement),
-        );
-      if (leftElementEqualsRightElement.isRight()) {
-        break; // left element === right element, break out of the right iteration
-      }
-      rightUnequals.push(
-        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
-      );
-    }
-
-    if (rightUnequals.length === rightArray.length) {
-      // All right elements were unequal to the left element
-      return purify.Left({
-        left: {
-          array: leftArray,
-          element: leftElement,
-          elementIndex: leftElementIndex,
-        },
-        right: {
-          array: rightArray,
-          unequals: rightUnequals,
-        },
-        type: "ArrayElement",
-      });
-    }
-    // Else there was a right element equal to the left element, continue to the next left element
-  }
-
-  return $EqualsResult.Equal;
-}
-export function $maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return $EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
-
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return $EqualsResult.Equal;
 }
 export interface NestedNodeShape {
   readonly $identifier: NestedNodeShape.$Identifier;
@@ -302,6 +307,15 @@ export namespace NestedNodeShape {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly requiredStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
@@ -776,6 +790,49 @@ export namespace FormNodeShape {
         })),
       );
   }
+
+  export type $Filter = {
+    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly emptyStringSetProperty?: {
+      readonly items?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly nestedObjectProperty?: NestedNodeShape.$Filter;
+    readonly nonEmptyStringSetProperty?: {
+      readonly items?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly maxCount?: number;
+      readonly minCount?: number;
+    };
+    readonly optionalStringProperty?: {
+      readonly item?: {
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      };
+      readonly null?: boolean;
+    };
+    readonly requiredIntegerProperty?: {
+      readonly maxExclusive?: number;
+      readonly maxInclusive?: number;
+      readonly minExclusive?: number;
+      readonly minInclusive?: number;
+      readonly value?: number;
+    };
+    readonly requiredStringProperty?: {
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    };
+  };
 
   export function $fromJson(
     json: unknown,
