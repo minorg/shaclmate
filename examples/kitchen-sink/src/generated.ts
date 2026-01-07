@@ -11,6 +11,123 @@ import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
 import { z as zod } from "zod";
 import { ExternClass } from "./ExternClass.js";
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */
+export function $arrayEquals<T>(
+  leftArray: readonly T[],
+  rightArray: readonly T[],
+  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
+  if (leftArray.length !== rightArray.length) {
+    return purify.Left({
+      left: leftArray,
+      right: rightArray,
+      type: "ArrayLength",
+    });
+  }
+
+  for (
+    let leftElementIndex = 0;
+    leftElementIndex < leftArray.length;
+    leftElementIndex++
+  ) {
+    const leftElement = leftArray[leftElementIndex];
+
+    const rightUnequals: $EqualsResult.Unequal[] = [];
+    for (
+      let rightElementIndex = 0;
+      rightElementIndex < rightArray.length;
+      rightElementIndex++
+    ) {
+      const rightElement = rightArray[rightElementIndex];
+
+      const leftElementEqualsRightElement =
+        $EqualsResult.fromBooleanEqualsResult(
+          leftElement,
+          rightElement,
+          elementEquals(leftElement, rightElement),
+        );
+      if (leftElementEqualsRightElement.isRight()) {
+        break; // left element === right element, break out of the right iteration
+      }
+      rightUnequals.push(
+        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
+      );
+    }
+
+    if (rightUnequals.length === rightArray.length) {
+      // All right elements were unequal to the left element
+      return purify.Left({
+        left: {
+          array: leftArray,
+          element: leftElement,
+          elementIndex: leftElementIndex,
+        },
+        right: {
+          array: rightArray,
+          unequals: rightUnequals,
+        },
+        type: "ArrayElement",
+      });
+    }
+    // Else there was a right element equal to the left element, continue to the next left element
+  }
+
+  return $EqualsResult.Equal;
+}
+
+export function $arrayIntersection<T>(
+  left: readonly T[],
+  right: readonly T[],
+): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }
+    }
+  }
+  return [...intersection];
+}
+
+/**
+ * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
+ */
+export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+}
+
+/**
+ * Compare two Dates and return an $EqualsResult.
+ */
+export function $dateEquals(left: Date, right: Date): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.getTime() === right.getTime(),
+  );
+}
+
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -86,209 +203,54 @@ export namespace $EqualsResult {
         readonly type: "RightNull";
       };
 }
-export namespace $RdfVocabularies {
-  export namespace rdf {
-    export const first = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
-    );
-    export const nil = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
-    );
-    export const rest = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
-    );
-    export const subject = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
-    );
-    export const type = dataFactory.namedNode(
-      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-    );
-  }
 
-  export namespace rdfs {
-    export const subClassOf = dataFactory.namedNode(
-      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
-    );
-  }
-
-  export namespace xsd {
-    export const boolean = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#boolean",
-    );
-    export const date = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#date",
-    );
-    export const dateTime = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#dateTime",
-    );
-    export const decimal = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#decimal",
-    );
-    export const integer = dataFactory.namedNode(
-      "http://www.w3.org/2001/XMLSchema#integer",
-    );
-  }
+function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
 }
-/**
- * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
- */
-export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+
+function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every((z) => typeof z === "number");
 }
-/**
- * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
- */
-export function $strictEquals<T extends bigint | boolean | number | string>(
-  left: T,
-  right: T,
-): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
-}
-/**
- * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
- */
-export function $sparqlInstancesOfPattern({
-  rdfType,
-  subject,
-}: {
-  rdfType: rdfjs.NamedNode | rdfjs.Variable;
-  subject: sparqljs.Triple["subject"];
-}): sparqljs.Pattern {
-  return {
-    triples: [
-      {
-        subject,
-        predicate: {
-          items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-        object: rdfType,
-      },
-    ],
-    type: "bgp",
-  };
-}
-type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
-export function $maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return $EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
 
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return $EqualsResult.Equal;
-}
-/**
- * Compare two arrays element-wise with the provided elementEquals function.
- */
-export function $arrayEquals<T>(
-  leftArray: readonly T[],
-  rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | $EqualsResult,
-): $EqualsResult {
-  if (leftArray.length !== rightArray.length) {
-    return purify.Left({
-      left: leftArray,
-      right: rightArray,
-      type: "ArrayLength",
-    });
-  }
-
-  for (
-    let leftElementIndex = 0;
-    leftElementIndex < leftArray.length;
-    leftElementIndex++
-  ) {
-    const leftElement = leftArray[leftElementIndex];
-
-    const rightUnequals: $EqualsResult.Unequal[] = [];
-    for (
-      let rightElementIndex = 0;
-      rightElementIndex < rightArray.length;
-      rightElementIndex++
-    ) {
-      const rightElement = rightArray[rightElementIndex];
-
-      const leftElementEqualsRightElement =
-        $EqualsResult.fromBooleanEqualsResult(
-          leftElement,
-          rightElement,
-          elementEquals(leftElement, rightElement),
-        );
-      if (leftElementEqualsRightElement.isRight()) {
-        break; // left element === right element, break out of the right iteration
-      }
-      rightUnequals.push(
-        leftElementEqualsRightElement.extract() as $EqualsResult.Unequal,
-      );
-    }
-
-    if (rightUnequals.length === rightArray.length) {
-      // All right elements were unequal to the left element
-      return purify.Left({
-        left: {
-          array: leftArray,
-          element: leftElement,
-          elementIndex: leftElementIndex,
-        },
-        right: {
-          array: rightArray,
-          unequals: rightUnequals,
-        },
-        type: "ArrayElement",
-      });
-    }
-    // Else there was a right element equal to the left element, continue to the next left element
-  }
-
-  return $EqualsResult.Equal;
-}
-/**
- * Compare two Dates and return an $EqualsResult.
- */
-export function $dateEquals(left: Date, right: Date): $EqualsResult {
-  return $EqualsResult.fromBooleanEqualsResult(
-    left,
-    right,
-    left.getTime() === right.getTime(),
-  );
-}
 function $isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every((z) => typeof z === "object");
 }
+
 function $isReadonlyStringArray(x: unknown): x is readonly string[] {
   return Array.isArray(x) && x.every((z) => typeof z === "string");
 }
+
+/**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class $LazyObject<
+  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+> {
+  readonly partial: PartialObjectT;
+  private readonly resolver: (
+    identifier: ObjectIdentifierT,
+  ) => Promise<purify.Either<Error, ResolvedObjectT>>;
+
+  constructor({
+    partial,
+    resolver,
+  }: {
+    partial: PartialObjectT;
+    resolver: (
+      identifier: ObjectIdentifierT,
+    ) => Promise<purify.Either<Error, ResolvedObjectT>>;
+  }) {
+    this.partial = partial;
+    this.resolver = resolver;
+  }
+
+  resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
+    return this.resolver(this.partial.$identifier);
+  }
+}
+
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -326,36 +288,7 @@ export class $LazyObjectOption<
     );
   }
 }
-/**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class $LazyObject<
-  ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
-> {
-  readonly partial: PartialObjectT;
-  private readonly resolver: (
-    identifier: ObjectIdentifierT,
-  ) => Promise<purify.Either<Error, ResolvedObjectT>>;
 
-  constructor({
-    partial,
-    resolver,
-  }: {
-    partial: PartialObjectT;
-    resolver: (
-      identifier: ObjectIdentifierT,
-    ) => Promise<purify.Either<Error, ResolvedObjectT>>;
-  }) {
-    this.partial = partial;
-    this.resolver = resolver;
-  }
-
-  resolve(): Promise<purify.Either<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.$identifier);
-  }
-}
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -411,41 +344,124 @@ export class $LazyObjectSet<
     );
   }
 }
-export function $arrayIntersection<T>(
-  left: readonly T[],
-  right: readonly T[],
-): readonly T[] {
-  if (left.length === 0) {
-    return right;
-  }
-  if (right.length === 0) {
-    return left;
+
+export function $maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | $EqualsResult,
+): $EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return $EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
   }
 
-  const intersection = new Set<T>();
-  if (left.length <= right.length) {
-    const rightSet = new Set(right);
-    for (const leftElement of left) {
-      if (rightSet.has(leftElement)) {
-        intersection.add(leftElement);
-      }
-    }
-  } else {
-    const leftSet = new Set(left);
-    for (const rightElement of right) {
-      if (leftSet.has(rightElement)) {
-        intersection.add(rightElement);
-      }
-    }
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
   }
-  return [...intersection];
+
+  return $EqualsResult.Equal;
 }
-function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "boolean");
+
+export namespace $RdfVocabularies {
+  export namespace rdf {
+    export const first = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
+    );
+    export const nil = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil",
+    );
+    export const rest = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest",
+    );
+    export const subject = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#subject",
+    );
+    export const type = dataFactory.namedNode(
+      "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+    );
+  }
+
+  export namespace rdfs {
+    export const subClassOf = dataFactory.namedNode(
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf",
+    );
+  }
+
+  export namespace xsd {
+    export const boolean = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#boolean",
+    );
+    export const date = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#date",
+    );
+    export const dateTime = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#dateTime",
+    );
+    export const decimal = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#decimal",
+    );
+    export const integer = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#integer",
+    );
+  }
 }
-function $isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every((z) => typeof z === "number");
+
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+export function $sparqlInstancesOfPattern({
+  rdfType,
+  subject,
+}: {
+  rdfType: rdfjs.NamedNode | rdfjs.Variable;
+  subject: sparqljs.Triple["subject"];
+}): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
 }
+
+/**
+ * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
+ */
+export function $strictEquals<T extends bigint | boolean | number | string>(
+  left: T,
+  right: T,
+): $EqualsResult {
+  return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+}
+
+type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $NamedDefaultPartial {
   readonly $identifier: $NamedDefaultPartial.$Identifier;
   readonly $type = "$NamedDefaultPartial";

@@ -304,7 +304,7 @@ export namespace Type {
       return `{ ${Object.entries(this.properties)
         .map(
           ([propertyName, propertyFilterType]) =>
-            `readonly "${propertyName}"?: ${propertyFilterType.toString()};`,
+            `readonly "${propertyName}"?: ${propertyFilterType.name};`,
         )
         .join(" ")} }`;
     }

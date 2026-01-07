@@ -72,16 +72,23 @@ export class TsGenerator implements Generator {
     sourceFile.addStatements([...stringImports]);
     sourceFile.addStatements(Object.values(structureImportsByModuleSpecifier));
 
-    let snippetDeclarations: Record<string, string> = {};
-    for (const declaredType of declaredTypes) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        declaredType.snippetDeclarations({
-          features: declaredType.features,
-          recursionStack: [],
-        }),
-      );
-    }
+    sourceFile.addStatements(
+      Object.entries(
+        declaredTypes.reduce(
+          (snippetDeclarations, declaredType) =>
+            mergeSnippetDeclarations(
+              snippetDeclarations,
+              declaredType.snippetDeclarations({
+                features: declaredType.features,
+                recursionStack: [],
+              }),
+            ),
+          {} as Record<string, string>,
+        ),
+      )
+        .sort((left, right) => left[0].localeCompare(right[0]))
+        .map((entry) => entry[1]),
+    );
 
     for (const objectType of objectTypes) {
       sourceFile.addStatements(objectType.declarations);
