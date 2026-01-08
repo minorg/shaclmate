@@ -1,6 +1,7 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -53,15 +54,15 @@ export abstract class AbstractPrimitiveType<
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
-  override snippetDeclarations({
-    features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
-    Record<string, string>
-  > {
-    if (features.has("equals")) {
-      return sharedSnippetDeclarations.strictEquals;
-    }
-    return {};
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      parameters.features.has("equals")
+        ? sharedSnippetDeclarations.strictEquals
+        : {},
+    );
   }
 
   override sparqlWherePatterns(
