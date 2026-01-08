@@ -2,10 +2,14 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const arrayEqualsSnippet = `\
+const arrayEqualsSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}arrayEquals`,
+  `\
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */  
@@ -71,7 +75,8 @@ export function ${syntheticNamePrefix}arrayEquals<T>(
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }
-`;
+`,
+);
 
 function isTypeofString(
   x: string,
@@ -305,13 +310,15 @@ export abstract class AbstractCollectionType<
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    const snippetDeclarations = {
+    let snippetDeclarations = {
       ...this.itemType.snippetDeclarations(parameters),
     };
 
     if (parameters.features.has("equals")) {
-      snippetDeclarations[`${syntheticNamePrefix}arrayEquals`] =
-        arrayEqualsSnippet;
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        arrayEqualsSnippetDeclaration,
+      );
     }
 
     for (const conversion of this.conversions) {
@@ -323,32 +330,51 @@ export abstract class AbstractCollectionType<
       sourceTypeCheckExpression = sourceTypeCheckExpression.substring(
         syntheticNamePrefix.length,
       );
+      let isReadonlyArraySnippetDeclaration: Record<string, string> | undefined;
       if (sourceTypeCheckExpression.startsWith("isReadonlyBooleanArray")) {
-        snippetDeclarations[`${syntheticNamePrefix}isReadonlyBooleanArray`] = `\
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyBooleanArray`,
+          `\
 function ${syntheticNamePrefix}isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every(z => typeof z === "boolean");
-}`;
+}`,
+        );
       } else if (
         sourceTypeCheckExpression.startsWith("isReadonlyNumberArray")
       ) {
-        snippetDeclarations[`${syntheticNamePrefix}isReadonlyNumberArray`] = `\
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyNumberArray`,
+          `\
 function ${syntheticNamePrefix}isReadonlyNumberArray(x: unknown): x is readonly number[] {
   return Array.isArray(x) && x.every(z => typeof z === "number");
-}`;
+}`,
+        );
       } else if (
         sourceTypeCheckExpression.startsWith("isReadonlyObjectArray")
       ) {
-        snippetDeclarations[`${syntheticNamePrefix}isReadonlyObjectArray`] = `\
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyObjectArray`,
+          `\
 function ${syntheticNamePrefix}isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every(z => typeof z === "object");
-}`;
+}`,
+        );
       } else if (
         sourceTypeCheckExpression.startsWith("isReadonlyStringArray")
       ) {
-        snippetDeclarations[`${syntheticNamePrefix}isReadonlyStringArray`] = `\
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyStringArray`,
+          `\
 function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly string[] {
   return Array.isArray(x) && x.every(z => typeof z === "string");
-}`;
+}`,
+        );
+      }
+      if (isReadonlyArraySnippetDeclaration) {
+        snippetDeclarations = mergeSnippetDeclarations(
+          snippetDeclarations,
+          isReadonlyArraySnippetDeclaration,
+        );
       }
     }
 

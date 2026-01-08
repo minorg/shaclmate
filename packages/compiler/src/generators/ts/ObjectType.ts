@@ -26,7 +26,7 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const sparqlInstancesOfPatternSnippet = singleEntryRecord(
+const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
   `${syntheticNamePrefix}sparqlInstancesOfPattern`,
   `\
 /**
@@ -55,6 +55,12 @@ export function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subjec
     type: "bgp",
   };
 }`,
+);
+
+// export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
+const UnwrapRSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}UnwrapR`,
+  `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`,
 );
 
 export class ObjectType extends AbstractDeclaredType {
@@ -491,16 +497,17 @@ export class ObjectType extends AbstractDeclaredType {
     if (this.features.has("sparql") && this.fromRdfType.isJust()) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sparqlInstancesOfPatternSnippet,
+        sparqlInstancesOfPatternSnippetDeclaration,
       );
     }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
       this.parentObjectTypes.length > 0
     ) {
-      // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
-      snippetDeclarations[`${syntheticNamePrefix}UnwrapR`] =
-        `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`;
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        UnwrapRSnippetDeclaration,
+      );
     }
     recursionStack.push(this);
     for (const property of this.ownProperties) {

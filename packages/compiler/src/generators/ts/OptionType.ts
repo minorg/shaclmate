@@ -1,11 +1,46 @@
-import { Maybe, NonEmptyList } from "purify-ts";
+import { Maybe, maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
+
+const maybeEqualsSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}maybeEquals`,
+  `\
+export function ${syntheticNamePrefix}maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
+  }
+
+  return ${syntheticNamePrefix}EqualsResult.Equal;
+}`,
+);
 
 export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
@@ -160,40 +195,15 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    const snippetDeclarations: Record<string, string> = {
+    let snippetDeclarations: Record<string, string> = {
       ...this.itemType.snippetDeclarations(parameters),
     };
 
     if (parameters.features.has("equals")) {
-      snippetDeclarations[`${syntheticNamePrefix}maybeEquals`] = `\
-export function ${syntheticNamePrefix}maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
-): ${syntheticNamePrefix}EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        maybeEqualsSnippetDeclaration,
       );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
-
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return ${syntheticNamePrefix}EqualsResult.Equal;
-}`;
     }
 
     return snippetDeclarations;

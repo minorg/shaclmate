@@ -1,10 +1,14 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const arrayIntersectionSnippet = `\
+const arrayIntersectionSnippet = singleEntryRecord(
+  `${syntheticNamePrefix}arrayIntersection`,
+  `\
   export function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
     if (left.length === 0) {
       return right;
@@ -30,7 +34,8 @@ const arrayIntersectionSnippet = `\
       }
     }
     return [...intersection];
-  }`;
+  }`,
+);
 
 export class LiteralType extends AbstractLiteralType {
   @Memoize()
@@ -87,13 +92,15 @@ export class LiteralType extends AbstractLiteralType {
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    const snippetDeclarations: Record<string, string> = {
+    let snippetDeclarations: Record<string, string> = {
       ...super.snippetDeclarations(parameters),
     };
     const { features } = parameters;
     if (features.has("sparql") && this.languageIn.length > 0) {
-      snippetDeclarations[`${syntheticNamePrefix}arrayIntersection`] =
-        arrayIntersectionSnippet;
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        arrayIntersectionSnippet,
+      );
     }
     return snippetDeclarations;
   }

@@ -1,18 +1,26 @@
 export function mergeSnippetDeclarations(
-  leftSnippetDeclarations: Readonly<Record<string, string>>,
-  rightSnippetDeclarations: Readonly<Record<string, string>>,
+  ...snippetDeclarations: Readonly<Record<string, string>>[]
 ): Readonly<Record<string, string>> {
+  if (snippetDeclarations.length === 0) {
+    return {};
+  }
+  if (snippetDeclarations.length === 1) {
+    return snippetDeclarations[0];
+  }
+
   const mergedSnippetDeclarations: Record<string, string> = {
-    ...leftSnippetDeclarations,
+    ...snippetDeclarations[0],
   };
-  for (const [rightKey, rightSnippetDeclaration] of Object.entries(
-    rightSnippetDeclarations,
-  )) {
-    const existingSnippetDeclaration = mergedSnippetDeclarations[rightKey];
-    if (!existingSnippetDeclaration) {
-      mergedSnippetDeclarations[rightKey] = rightSnippetDeclaration;
-    } else if (existingSnippetDeclaration !== rightSnippetDeclaration) {
-      throw new Error(`conflicting snippet declarations for ${rightKey}`);
+  for (const snippetDeclarations_ of snippetDeclarations.slice(1)) {
+    for (const [key, snippetDeclaration] of Object.entries(
+      snippetDeclarations_,
+    )) {
+      const existingSnippetDeclaration = mergedSnippetDeclarations[key];
+      if (!existingSnippetDeclaration) {
+        mergedSnippetDeclarations[key] = snippetDeclaration;
+      } else if (existingSnippetDeclaration !== snippetDeclaration) {
+        throw new Error(`conflicting snippet declarations for ${key}`);
+      }
     }
   }
   return mergedSnippetDeclarations;

@@ -59,16 +59,10 @@ export abstract class AbstractPrimitiveType<
   }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
     Record<string, string>
   > {
-    let snippetDeclarations: Record<string, string> = {};
-
     if (features.has("equals")) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        sharedSnippetDeclarations.strictEquals,
-      );
+      return sharedSnippetDeclarations.strictEquals;
     }
-
-    return snippetDeclarations;
+    return {};
   }
 
   override sparqlWherePatterns(

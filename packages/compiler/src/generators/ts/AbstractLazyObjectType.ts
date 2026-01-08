@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
@@ -110,11 +111,11 @@ export abstract class AbstractLazyObjectType<
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    return {
-      ...this.partialType.snippetDeclarations(parameters),
-      ...this.resolvedType.snippetDeclarations(parameters),
-      ...this.runtimeClass.snippetDeclarations,
-    } as Record<string, string>;
+    return mergeSnippetDeclarations(
+      this.partialType.snippetDeclarations(parameters),
+      this.resolvedType.snippetDeclarations(parameters),
+      this.runtimeClass.snippetDeclarations,
+    );
   }
 
   override sparqlConstructTemplateTriples(
