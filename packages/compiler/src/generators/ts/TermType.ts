@@ -116,7 +116,7 @@ export class TermType<
       singleEntryRecord(
         `${syntheticNamePrefix}TermFilter`,
         `\
-export interface ${syntheticNamePrefix}TermFilter {
+interface ${syntheticNamePrefix}TermFilter {
   readonly datatype?: string;
   readonly language?: string;
   readonly type?: "BlankNode" | "Literal" | "NamedNode";

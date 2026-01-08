@@ -7,6 +7,79 @@ import * as graphql from "graphql";
 import { DataFactory as dataFactory } from "n3";
 import * as purify from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
+
+interface $ArrayFilter<ItemFilterT> {
+  readonly items?: ItemFilterT;
+  readonly maxCount?: number;
+  readonly minCount?: number;
+}
+
+function $fromRdfPreferredLanguages({
+  focusResource,
+  predicate,
+  preferredLanguages,
+  values,
+}: {
+  focusResource: rdfjsResource.Resource;
+  predicate: rdfjs.NamedNode;
+  preferredLanguages?: readonly string[];
+  values: rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>;
+}): purify.Either<
+  Error,
+  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+> {
+  if (!preferredLanguages || preferredLanguages.length === 0) {
+    return purify.Either.of<
+      Error,
+      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+    >(values);
+  }
+
+  const literalValuesEither = values.chainMap((value) => value.toLiteral());
+  if (literalValuesEither.isLeft()) {
+    return literalValuesEither;
+  }
+  const literalValues = literalValuesEither.unsafeCoerce();
+
+  // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
+  // Within a preferredLanguage the literals may be in any order.
+  let filteredLiteralValues:
+    | rdfjsResource.Resource.Values<rdfjs.Literal>
+    | undefined;
+  for (const preferredLanguage of preferredLanguages) {
+    if (!filteredLiteralValues) {
+      filteredLiteralValues = literalValues.filter(
+        (value) => value.language === preferredLanguage,
+      );
+    } else {
+      filteredLiteralValues = filteredLiteralValues.concat(
+        ...literalValues
+          .filter((value) => value.language === preferredLanguage)
+          .toArray(),
+      );
+    }
+  }
+
+  return purify.Either.of<
+    Error,
+    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+  >(
+    filteredLiteralValues!.map(
+      (literalValue) =>
+        new rdfjsResource.Resource.TermValue({
+          focusResource,
+          predicate,
+          term: literalValue,
+        }),
+    ),
+  );
+}
+
+interface $IdentifierFilter {
+  readonly type?: "BlankNode" | "NamedNode";
+  readonly value?: string;
+}
+
 /**
  * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
@@ -101,7 +174,24 @@ export class $LazyObjectSet<
   }
 }
 
-export namespace $RdfVocabularies {
+interface $MaybeFilter<ItemFilterT> {
+  readonly item?: ItemFilterT;
+  readonly null?: boolean;
+}
+
+interface $NamedNodeFilter {
+  readonly value?: string;
+}
+
+interface $NumberFilter {
+  readonly maxExclusive?: number;
+  readonly maxInclusive?: number;
+  readonly minExclusive?: number;
+  readonly minInclusive?: number;
+  readonly value?: number;
+}
+
+namespace $RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
@@ -145,6 +235,11 @@ export namespace $RdfVocabularies {
   }
 }
 
+interface $StringFilter {
+  readonly maxLength?: number;
+  readonly minLength?: number;
+}
+
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
 export class $DefaultPartial {
   readonly $identifier: $DefaultPartial.$Identifier;
@@ -182,9 +277,7 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromRdf(
     resource: rdfjsResource.Resource,
@@ -327,15 +420,8 @@ export class UnionMember2 {
 
 export namespace UnionMember2 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
   export function $fromRdf(
@@ -471,59 +557,15 @@ export namespace UnionMember2 {
         { unique: true },
       ),
     )
-      .chain((values) => {
-        if (
-          !$parameters.preferredLanguages ||
-          $parameters.preferredLanguages.length === 0
-        ) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $parameters.preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.TermValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  UnionMember2.$properties.optionalStringProperty["identifier"],
-                term: literalValue,
-              }),
-          ),
-        );
-      })
+      .chain((values) =>
+        $fromRdfPreferredLanguages({
+          focusResource: $parameters.resource,
+          predicate:
+            UnionMember2.$properties.optionalStringProperty["identifier"],
+          preferredLanguages: $parameters.preferredLanguages,
+          values,
+        }),
+      )
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -627,17 +669,8 @@ export class UnionMember1 {
 
 export namespace UnionMember1 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalNumberProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: number;
-        readonly maxInclusive?: number;
-        readonly minExclusive?: number;
-        readonly minInclusive?: number;
-        readonly value?: number;
-      };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumberFilter>;
   };
 
   export function $fromRdf(
@@ -909,30 +942,10 @@ export class Nested {
 
 export namespace Nested {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalNumberProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: number;
-        readonly maxInclusive?: number;
-        readonly minExclusive?: number;
-        readonly minInclusive?: number;
-        readonly value?: number;
-      };
-      readonly null?: boolean;
-    };
-    readonly optionalStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly requiredStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalNumberProperty?: $MaybeFilter<$NumberFilter>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
   };
 
   export function $fromRdf(
@@ -1120,59 +1133,15 @@ export namespace Nested {
         { unique: true },
       ),
     )
-      .chain((values) => {
-        if (
-          !$parameters.preferredLanguages ||
-          $parameters.preferredLanguages.length === 0
-        ) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $parameters.preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.TermValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  UnionMember2.$properties.optionalStringProperty["identifier"],
-                term: literalValue,
-              }),
-          ),
-        );
-      })
+      .chain((values) =>
+        $fromRdfPreferredLanguages({
+          focusResource: $parameters.resource,
+          predicate:
+            UnionMember2.$properties.optionalStringProperty["identifier"],
+          preferredLanguages: $parameters.preferredLanguages,
+          values,
+        }),
+      )
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -1200,59 +1169,14 @@ export namespace Nested {
           { unique: true },
         ),
       )
-        .chain((values) => {
-          if (
-            !$parameters.preferredLanguages ||
-            $parameters.preferredLanguages.length === 0
-          ) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $parameters.preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.TermValue({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    Nested.$properties.requiredStringProperty["identifier"],
-                  term: literalValue,
-                }),
-            ),
-          );
-        })
+        .chain((values) =>
+          $fromRdfPreferredLanguages({
+            focusResource: $parameters.resource,
+            predicate: Nested.$properties.requiredStringProperty["identifier"],
+            preferredLanguages: $parameters.preferredLanguages,
+            values,
+          }),
+        )
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {
@@ -1338,15 +1262,8 @@ export class Parent {
 
 export namespace ParentStatic {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly parentStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly parentStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
   export function $fromRdf(
@@ -1495,59 +1412,15 @@ export namespace ParentStatic {
         { unique: true },
       ),
     )
-      .chain((values) => {
-        if (
-          !$parameters.preferredLanguages ||
-          $parameters.preferredLanguages.length === 0
-        ) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $parameters.preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.TermValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  ParentStatic.$properties.parentStringProperty["identifier"],
-                term: literalValue,
-              }),
-          ),
-        );
-      })
+      .chain((values) =>
+        $fromRdfPreferredLanguages({
+          focusResource: $parameters.resource,
+          predicate:
+            ParentStatic.$properties.parentStringProperty["identifier"],
+          preferredLanguages: $parameters.preferredLanguages,
+          values,
+        }),
+      )
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -1819,40 +1692,12 @@ export class Child extends Parent {
 
 export namespace Child {
   export type $Filter = {
-    readonly childStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly lazyObjectSetProperty?: {
-      readonly items?: $DefaultPartial.$Filter;
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly optionalLazyObjectProperty?: {
-      readonly item?: $DefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalObjectProperty?: {
-      readonly item?: Nested.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly requiredStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly childStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly lazyObjectSetProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyObjectProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalObjectProperty?: $MaybeFilter<Nested.$Filter>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
   } & ParentStatic.$Filter;
 
   export function $fromRdf(
@@ -2073,58 +1918,14 @@ export namespace Child {
         { unique: true },
       ),
     )
-      .chain((values) => {
-        if (
-          !$parameters.preferredLanguages ||
-          $parameters.preferredLanguages.length === 0
-        ) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $parameters.preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.TermValue({
-                focusResource: $parameters.resource,
-                predicate: Child.$properties.childStringProperty["identifier"],
-                term: literalValue,
-              }),
-          ),
-        );
-      })
+      .chain((values) =>
+        $fromRdfPreferredLanguages({
+          focusResource: $parameters.resource,
+          predicate: Child.$properties.childStringProperty["identifier"],
+          preferredLanguages: $parameters.preferredLanguages,
+          values,
+        }),
+      )
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -2295,59 +2096,15 @@ export namespace Child {
         { unique: true },
       ),
     )
-      .chain((values) => {
-        if (
-          !$parameters.preferredLanguages ||
-          $parameters.preferredLanguages.length === 0
-        ) {
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(values);
-        }
-
-        const literalValuesEither = values.chainMap((value) =>
-          value.toLiteral(),
-        );
-        if (literalValuesEither.isLeft()) {
-          return literalValuesEither;
-        }
-        const literalValues = literalValuesEither.unsafeCoerce();
-
-        // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-        // Within a preferredLanguage the literals may be in any order.
-        let filteredLiteralValues:
-          | rdfjsResource.Resource.Values<rdfjs.Literal>
-          | undefined;
-        for (const preferredLanguage of $parameters.preferredLanguages) {
-          if (!filteredLiteralValues) {
-            filteredLiteralValues = literalValues.filter(
-              (value) => value.language === preferredLanguage,
-            );
-          } else {
-            filteredLiteralValues = filteredLiteralValues.concat(
-              ...literalValues
-                .filter((value) => value.language === preferredLanguage)
-                .toArray(),
-            );
-          }
-        }
-
-        return purify.Either.of<
-          Error,
-          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-        >(
-          filteredLiteralValues!.map(
-            (literalValue) =>
-              new rdfjsResource.Resource.TermValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  UnionMember2.$properties.optionalStringProperty["identifier"],
-                term: literalValue,
-              }),
-          ),
-        );
-      })
+      .chain((values) =>
+        $fromRdfPreferredLanguages({
+          focusResource: $parameters.resource,
+          predicate:
+            UnionMember2.$properties.optionalStringProperty["identifier"],
+          preferredLanguages: $parameters.preferredLanguages,
+          values,
+        }),
+      )
       .chain((values) => values.chainMap((value) => value.toString()))
       .map((values) =>
         values.length > 0
@@ -2375,59 +2132,14 @@ export namespace Child {
           { unique: true },
         ),
       )
-        .chain((values) => {
-          if (
-            !$parameters.preferredLanguages ||
-            $parameters.preferredLanguages.length === 0
-          ) {
-            return purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-            >(values);
-          }
-
-          const literalValuesEither = values.chainMap((value) =>
-            value.toLiteral(),
-          );
-          if (literalValuesEither.isLeft()) {
-            return literalValuesEither;
-          }
-          const literalValues = literalValuesEither.unsafeCoerce();
-
-          // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-          // Within a preferredLanguage the literals may be in any order.
-          let filteredLiteralValues:
-            | rdfjsResource.Resource.Values<rdfjs.Literal>
-            | undefined;
-          for (const preferredLanguage of $parameters.preferredLanguages) {
-            if (!filteredLiteralValues) {
-              filteredLiteralValues = literalValues.filter(
-                (value) => value.language === preferredLanguage,
-              );
-            } else {
-              filteredLiteralValues = filteredLiteralValues.concat(
-                ...literalValues
-                  .filter((value) => value.language === preferredLanguage)
-                  .toArray(),
-              );
-            }
-          }
-
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            filteredLiteralValues!.map(
-              (literalValue) =>
-                new rdfjsResource.Resource.TermValue({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    Nested.$properties.requiredStringProperty["identifier"],
-                  term: literalValue,
-                }),
-            ),
-          );
-        })
+        .chain((values) =>
+          $fromRdfPreferredLanguages({
+            focusResource: $parameters.resource,
+            predicate: Nested.$properties.requiredStringProperty["identifier"],
+            preferredLanguages: $parameters.preferredLanguages,
+            values,
+          }),
+        )
         .chain((values) => values.chainMap((value) => value.toString()))
         .chain((values) => values.head());
     if (_requiredStringPropertyEither.isLeft()) {

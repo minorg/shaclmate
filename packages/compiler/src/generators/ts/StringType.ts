@@ -93,7 +93,7 @@ export class StringType extends AbstractPrimitiveType<string> {
       singleEntryRecord(
         `${syntheticNamePrefix}StringFilter`,
         `\
-export interface ${syntheticNamePrefix}StringFilter {
+interface ${syntheticNamePrefix}StringFilter {
   readonly maxLength?: number;
   readonly minLength?: number;
 }`,

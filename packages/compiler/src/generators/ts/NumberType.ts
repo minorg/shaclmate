@@ -99,7 +99,7 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
       singleEntryRecord(
         `${syntheticNamePrefix}NumberFilter`,
         `\
-export interface ${syntheticNamePrefix}NumberFilter {
+interface ${syntheticNamePrefix}NumberFilter {
   readonly maxExclusive?: number;
   readonly maxInclusive?: number;
   readonly minExclusive?: number;

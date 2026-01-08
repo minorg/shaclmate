@@ -11,10 +11,11 @@ import * as sparqljs from "sparqljs";
 import * as uuid from "uuid";
 import { z as zod } from "zod";
 import { ExternClass } from "./ExternClass.js";
+
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */
-export function $arrayEquals<T>(
+function $arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
   elementEquals: (left: T, right: T) => boolean | $EqualsResult,
@@ -77,13 +78,13 @@ export function $arrayEquals<T>(
   return $EqualsResult.Equal;
 }
 
-export interface $ArrayFilter<ItemFilterT> {
+interface $ArrayFilter<ItemFilterT> {
   readonly items?: ItemFilterT;
   readonly maxCount?: number;
   readonly minCount?: number;
 }
 
-export function $arrayIntersection<T>(
+function $arrayIntersection<T>(
   left: readonly T[],
   right: readonly T[],
 ): readonly T[] {
@@ -113,26 +114,26 @@ export function $arrayIntersection<T>(
   return [...intersection];
 }
 
-export interface $BlankNodeFilter {}
+interface $BlankNodeFilter {}
 
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
-export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
+function $booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
 }
 
-export interface $BooleanFilter {
+interface $BooleanFilter {
   readonly value?: boolean;
 }
 
 /**
  * Compare two Dates and return an $EqualsResult.
  */
-export function $dateEquals(left: Date, right: Date): $EqualsResult {
+function $dateEquals(left: Date, right: Date): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(
     left,
     right,
@@ -140,7 +141,7 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
   );
 }
 
-export interface $DateFilter {
+interface $DateFilter {
   readonly maxExclusive: Date;
   readonly maxInclusive: Date;
   readonly minExclusive: Date;
@@ -285,7 +286,7 @@ function $fromRdfPreferredLanguages({
   );
 }
 
-export interface $IdentifierFilter {
+interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
   readonly value?: string;
 }
@@ -431,13 +432,13 @@ export class $LazyObjectSet<
   }
 }
 
-export interface $LiteralFilter {
+interface $LiteralFilter {
   readonly datatype?: string;
   readonly language?: string;
   readonly value?: string;
 }
 
-export function $maybeEquals<T>(
+function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
   valueEquals: (left: T, right: T) => boolean | $EqualsResult,
@@ -466,16 +467,16 @@ export function $maybeEquals<T>(
   return $EqualsResult.Equal;
 }
 
-export interface $MaybeFilter<ItemFilterT> {
+interface $MaybeFilter<ItemFilterT> {
   readonly item?: ItemFilterT;
   readonly null?: boolean;
 }
 
-export interface $NamedNodeFilter {
+interface $NamedNodeFilter {
   readonly value?: string;
 }
 
-export interface $NumberFilter {
+interface $NumberFilter {
   readonly maxExclusive?: number;
   readonly maxInclusive?: number;
   readonly minExclusive?: number;
@@ -483,7 +484,7 @@ export interface $NumberFilter {
   readonly value?: number;
 }
 
-export namespace $RdfVocabularies {
+namespace $RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode(
       "http://www.w3.org/1999/02/22-rdf-syntax-ns#first",
@@ -530,7 +531,7 @@ export namespace $RdfVocabularies {
 /**
  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
  */
-export function $sparqlInstancesOfPattern({
+function $sparqlInstancesOfPattern({
   rdfType,
   subject,
 }: {
@@ -563,19 +564,19 @@ export function $sparqlInstancesOfPattern({
 /**
  * Compare two values for strict equality (===), returning an $EqualsResult rather than a boolean.
  */
-export function $strictEquals<T extends bigint | boolean | number | string>(
+function $strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }
 
-export interface $StringFilter {
+interface $StringFilter {
   readonly maxLength?: number;
   readonly minLength?: number;
 }
 
-export interface $TermFilter {
+interface $TermFilter {
   readonly datatype?: string;
   readonly language?: string;
   readonly type?: "BlankNode" | "Literal" | "NamedNode";

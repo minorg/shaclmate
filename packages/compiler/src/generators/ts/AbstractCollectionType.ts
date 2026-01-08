@@ -14,7 +14,7 @@ const allSnippetDeclarations = {
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */  
-export function ${syntheticNamePrefix}arrayEquals<T>(
+function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
   elementEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
@@ -81,7 +81,7 @@ export function ${syntheticNamePrefix}arrayEquals<T>(
   ArrayFilter: singleEntryRecord(
     `${syntheticNamePrefix}ArrayFilter`,
     `\
-export interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
+interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
   readonly items?: ItemFilterT;
   readonly maxCount?: number;
   readonly minCount?: number;

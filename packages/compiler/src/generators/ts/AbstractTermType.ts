@@ -236,7 +236,7 @@ export abstract class AbstractTermType<
   /**
    * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
    */
-  export function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+  function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
     left: T,
     right: T,
   ): ${syntheticNamePrefix}EqualsResult {

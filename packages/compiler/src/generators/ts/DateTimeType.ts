@@ -20,7 +20,7 @@ const allSnippetDeclarations = {
 /**
  * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
  */
-export function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
+function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
   return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
     left,
     right,
@@ -32,7 +32,7 @@ export function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syn
   DateTimeFilter: singleEntryRecord(
     `${syntheticNamePrefix}DateFilter`,
     `\
-export interface ${syntheticNamePrefix}DateFilter {
+interface ${syntheticNamePrefix}DateFilter {
   readonly maxExclusive: Date;
   readonly maxInclusive: Date;
   readonly minExclusive: Date;

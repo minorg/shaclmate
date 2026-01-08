@@ -8,16 +8,6 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 
-const allSnippetDeclarations = {
-  BooleanFilter: singleEntryRecord(
-    `${syntheticNamePrefix}BooleanFilter`,
-    `\
-export interface ${syntheticNamePrefix}BooleanFilter {
-  readonly value?: boolean;
-}`,
-  ),
-};
-
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
   override readonly typeofs = NonEmptyList(["boolean" as const]);
@@ -94,7 +84,13 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
-      allSnippetDeclarations.BooleanFilter,
+      singleEntryRecord(
+        `${syntheticNamePrefix}BooleanFilter`,
+        `\
+interface ${syntheticNamePrefix}BooleanFilter {
+  readonly value?: boolean;
+}`,
+      ),
     );
   }
 

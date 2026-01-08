@@ -13,7 +13,7 @@ const allSnippetDeclarations = {
   maybeEquals: singleEntryRecord(
     `${syntheticNamePrefix}maybeEquals`,
     `\
-export function ${syntheticNamePrefix}maybeEquals<T>(
+function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
   valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
@@ -46,7 +46,7 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
   MaybeFilter: singleEntryRecord(
     `${syntheticNamePrefix}MaybeFilter`,
     `\
-export interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
+interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
   readonly item?: ItemFilterT;
   readonly null?: boolean;
 }`,

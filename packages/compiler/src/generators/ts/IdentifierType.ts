@@ -18,13 +18,13 @@ const allSnippetDeclarations = {
   BlankNodeFilter: singleEntryRecord(
     `${syntheticNamePrefix}BlankNodeFilter`,
     `\
-export interface ${syntheticNamePrefix}BlankNodeFilter {
+interface ${syntheticNamePrefix}BlankNodeFilter {
 }`,
   ),
   IdentifierFilter: singleEntryRecord(
     `${syntheticNamePrefix}IdentifierFilter`,
     `\
-export interface ${syntheticNamePrefix}IdentifierFilter {
+interface ${syntheticNamePrefix}IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
   readonly value?: string;
 }`,
@@ -32,7 +32,7 @@ export interface ${syntheticNamePrefix}IdentifierFilter {
   NamedNodeFilter: singleEntryRecord(
     `${syntheticNamePrefix}NamedNodeFilter`,
     `\
-export interface ${syntheticNamePrefix}NamedNodeFilter {
+interface ${syntheticNamePrefix}NamedNodeFilter {
   readonly value?: string;
 }`,
   ),

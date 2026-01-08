@@ -85,7 +85,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
   RdfVocabularies: singleEntryRecord(
     `${syntheticNamePrefix}RdfVocabularies`,
     `\
-export namespace ${syntheticNamePrefix}RdfVocabularies {
+namespace ${syntheticNamePrefix}RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
     export const nil = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
@@ -114,7 +114,7 @@ export namespace ${syntheticNamePrefix}RdfVocabularies {
 /**
  * Compare two values for strict equality (===), returning an ${syntheticNamePrefix}EqualsResult rather than a boolean.
  */
-export function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number | string>(
+function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
 ): ${syntheticNamePrefix}EqualsResult {
