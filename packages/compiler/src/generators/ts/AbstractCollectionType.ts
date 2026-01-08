@@ -74,8 +74,17 @@ export function ${syntheticNamePrefix}arrayEquals<T>(
   }
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
-}
-`,
+}`,
+);
+
+const ArrayFilterSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}ArrayFilter`,
+  `\
+export interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
+  readonly items?: ItemFilterT;
+  readonly maxCount?: number;
+  readonly minCount?: number;
+}`,
 );
 
 function isTypeofString(
@@ -220,13 +229,10 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const intFilterType = new Type.ScalarFilterType("number");
-    return new Type.CompositeFilterType({
-      items: this.itemType.filterType,
-      maxCount: intFilterType,
-      minCount: intFilterType,
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}ArrayFilter<${this.itemType.filterType.name}>`,
+    );
   }
 
   @Memoize()
@@ -377,6 +383,11 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
         );
       }
     }
+
+    snippetDeclarations = mergeSnippetDeclarations(
+      snippetDeclarations,
+      ArrayFilterSnippetDeclaration,
+    );
 
     return snippetDeclarations;
   }

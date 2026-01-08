@@ -1,7 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";

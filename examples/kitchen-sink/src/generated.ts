@@ -77,6 +77,12 @@ export function $arrayEquals<T>(
   return $EqualsResult.Equal;
 }
 
+export interface $ArrayFilter<ItemFilterT> {
+  readonly items?: ItemFilterT;
+  readonly maxCount?: number;
+  readonly minCount?: number;
+}
+
 export function $arrayIntersection<T>(
   left: readonly T[],
   right: readonly T[],
@@ -3249,52 +3255,40 @@ export namespace UnionDiscriminantsClass {
         };
       };
     };
-    readonly setClassOrClassOrStringProperty?: {
-      readonly items?: {
-        readonly on?: {
-          readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-          readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-          readonly "2-string"?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
+    readonly setClassOrClassOrStringProperty?: $ArrayFilter<{
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
         };
       };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly setIriOrLiteralProperty?: {
-      readonly items?: {
-        readonly on?: {
-          readonly NamedNode?: {
-            readonly type?: string;
-            readonly value?: string;
-          };
-          readonly Literal?: {
-            readonly datatype?: string;
-            readonly language?: string;
-            readonly value?: string;
-          };
+    }>;
+    readonly setIriOrLiteralProperty?: $ArrayFilter<{
+      readonly on?: {
+        readonly NamedNode?: {
+          readonly type?: string;
+          readonly value?: string;
+        };
+        readonly Literal?: {
+          readonly datatype?: string;
+          readonly language?: string;
+          readonly value?: string;
         };
       };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly setIriOrStringProperty?: {
-      readonly items?: {
-        readonly on?: {
-          readonly object?: { readonly type?: string; readonly value?: string };
-          readonly string?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
+    }>;
+    readonly setIriOrStringProperty?: $ArrayFilter<{
+      readonly on?: {
+        readonly object?: { readonly type?: string; readonly value?: string };
+        readonly string?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
         };
       };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    }>;
   };
 
   export function $fromJson(
@@ -10386,24 +10380,16 @@ export class PropertyCardinalitiesClass {
 export namespace PropertyCardinalitiesClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly emptyStringSetProperty?: {
-      readonly items?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly nonEmptyStringSetProperty?: {
-      readonly items?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly emptyStringSetProperty?: $ArrayFilter<{
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    }>;
+    readonly nonEmptyStringSetProperty?: $ArrayFilter<{
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    }>;
     readonly optionalStringProperty?: {
       readonly item?: {
         readonly maxLength?: number;
@@ -16411,26 +16397,18 @@ export namespace MutablePropertiesClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly mutableListProperty?: {
-      readonly item?: {
-        readonly items?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
-        readonly maxCount?: number;
-        readonly minCount?: number;
-      };
-      readonly null?: boolean;
-    };
-    readonly mutableSetProperty?: {
-      readonly items?: {
+      readonly item?: $ArrayFilter<{
         readonly maxLength?: number;
         readonly minLength?: number;
         readonly value?: string;
-      };
-      readonly maxCount?: number;
-      readonly minCount?: number;
+      }>;
+      readonly null?: boolean;
     };
+    readonly mutableSetProperty?: $ArrayFilter<{
+      readonly maxLength?: number;
+      readonly minLength?: number;
+      readonly value?: string;
+    }>;
     readonly mutableStringProperty?: {
       readonly item?: {
         readonly maxLength?: number;
@@ -17665,31 +17643,22 @@ export namespace ListPropertiesClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
     readonly iriListProperty?: {
-      readonly item?: {
-        readonly items?: { readonly type?: string; readonly value?: string };
-        readonly maxCount?: number;
-        readonly minCount?: number;
-      };
+      readonly item?: $ArrayFilter<{
+        readonly type?: string;
+        readonly value?: string;
+      }>;
       readonly null?: boolean;
     };
     readonly objectListProperty?: {
-      readonly item?: {
-        readonly items?: NonClass.$Filter;
-        readonly maxCount?: number;
-        readonly minCount?: number;
-      };
+      readonly item?: $ArrayFilter<NonClass.$Filter>;
       readonly null?: boolean;
     };
     readonly stringListProperty?: {
-      readonly item?: {
-        readonly items?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
-        readonly maxCount?: number;
-        readonly minCount?: number;
-      };
+      readonly item?: $ArrayFilter<{
+        readonly maxLength?: number;
+        readonly minLength?: number;
+        readonly value?: string;
+      }>;
       readonly null?: boolean;
     };
   };
@@ -20166,16 +20135,8 @@ export namespace LazyPropertiesInterface {
     };
     readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
     readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
-    readonly setLazyToResolvedInterfaceProperty?: {
-      readonly items?: $DefaultPartial.$Filter;
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly setPartialInterfaceToResolvedInterfaceProperty?: {
-      readonly items?: PartialInterface.$Filter;
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly setLazyToResolvedInterfaceProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: $ArrayFilter<PartialInterface.$Filter>;
   };
 
   export function $fromJson(
@@ -23814,16 +23775,8 @@ export namespace LazyPropertiesClass {
     };
     readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
     readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
-    readonly setLazyToResolvedClassProperty?: {
-      readonly items?: $DefaultPartial.$Filter;
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly setPartialClassToResolvedClassProperty?: {
-      readonly items?: PartialClass.$Filter;
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly setLazyToResolvedClassProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
+    readonly setPartialClassToResolvedClassProperty?: $ArrayFilter<PartialClass.$Filter>;
   };
 
   export function $fromJson(
@@ -30443,15 +30396,11 @@ export class LanguageInPropertiesClass {
 export namespace LanguageInPropertiesClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly languageInLiteralProperty?: {
-      readonly items?: {
-        readonly datatype?: string;
-        readonly language?: string;
-        readonly value?: string;
-      };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly languageInLiteralProperty?: $ArrayFilter<{
+      readonly datatype?: string;
+      readonly language?: string;
+      readonly value?: string;
+    }>;
   };
 
   export function $fromJson(
@@ -31105,27 +31054,23 @@ export class JsPrimitiveUnionPropertyClass {
 export namespace JsPrimitiveUnionPropertyClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly jsPrimitiveUnionProperty?: {
-      readonly items?: {
-        readonly on?: {
-          readonly boolean?: { readonly value?: boolean };
-          readonly number?: {
-            readonly maxExclusive?: number;
-            readonly maxInclusive?: number;
-            readonly minExclusive?: number;
-            readonly minInclusive?: number;
-            readonly value?: number;
-          };
-          readonly string?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
+    readonly jsPrimitiveUnionProperty?: $ArrayFilter<{
+      readonly on?: {
+        readonly boolean?: { readonly value?: boolean };
+        readonly number?: {
+          readonly maxExclusive?: number;
+          readonly maxInclusive?: number;
+          readonly minExclusive?: number;
+          readonly minInclusive?: number;
+          readonly value?: number;
+        };
+        readonly string?: {
+          readonly maxLength?: number;
+          readonly minLength?: number;
+          readonly value?: string;
         };
       };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    }>;
   };
 
   export function $fromJson(
@@ -46143,11 +46088,10 @@ export class ConvertibleTypePropertiesClass {
 export namespace ConvertibleTypePropertiesClass {
   export type $Filter = {
     readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly convertibleIriNonEmptySetProperty?: {
-      readonly items?: { readonly type?: string; readonly value?: string };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly convertibleIriNonEmptySetProperty?: $ArrayFilter<{
+      readonly type?: string;
+      readonly value?: string;
+    }>;
     readonly convertibleIriOptionProperty?: {
       readonly item?: { readonly type?: string; readonly value?: string };
       readonly null?: boolean;
@@ -46156,20 +46100,15 @@ export namespace ConvertibleTypePropertiesClass {
       readonly type?: string;
       readonly value?: string;
     };
-    readonly convertibleIriSetProperty?: {
-      readonly items?: { readonly type?: string; readonly value?: string };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly convertibleLiteralNonEmptySetProperty?: {
-      readonly items?: {
-        readonly datatype?: string;
-        readonly language?: string;
-        readonly value?: string;
-      };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly convertibleIriSetProperty?: $ArrayFilter<{
+      readonly type?: string;
+      readonly value?: string;
+    }>;
+    readonly convertibleLiteralNonEmptySetProperty?: $ArrayFilter<{
+      readonly datatype?: string;
+      readonly language?: string;
+      readonly value?: string;
+    }>;
     readonly convertibleLiteralOptionProperty?: {
       readonly item?: {
         readonly datatype?: string;
@@ -46183,20 +46122,15 @@ export namespace ConvertibleTypePropertiesClass {
       readonly language?: string;
       readonly value?: string;
     };
-    readonly convertibleLiteralSetProperty?: {
-      readonly items?: {
-        readonly datatype?: string;
-        readonly language?: string;
-        readonly value?: string;
-      };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
-    readonly convertibleTermNonEmptySetProperty?: {
-      readonly items?: { readonly type?: string; readonly value?: string };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly convertibleLiteralSetProperty?: $ArrayFilter<{
+      readonly datatype?: string;
+      readonly language?: string;
+      readonly value?: string;
+    }>;
+    readonly convertibleTermNonEmptySetProperty?: $ArrayFilter<{
+      readonly type?: string;
+      readonly value?: string;
+    }>;
     readonly convertibleTermOptionProperty?: {
       readonly item?: { readonly type?: string; readonly value?: string };
       readonly null?: boolean;
@@ -46205,11 +46139,10 @@ export namespace ConvertibleTypePropertiesClass {
       readonly type?: string;
       readonly value?: string;
     };
-    readonly convertibleTermSetProperty?: {
-      readonly items?: { readonly type?: string; readonly value?: string };
-      readonly maxCount?: number;
-      readonly minCount?: number;
-    };
+    readonly convertibleTermSetProperty?: $ArrayFilter<{
+      readonly type?: string;
+      readonly value?: string;
+    }>;
   };
 
   export function $fromJson(

@@ -1,4 +1,4 @@
-import { Maybe, maybe, NonEmptyList } from "purify-ts";
+import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
