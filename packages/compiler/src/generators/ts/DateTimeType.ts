@@ -5,12 +5,42 @@ import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
+
+const allSnippetDeclarations = {
+  dateEquals: singleEntryRecord(
+    `${syntheticNamePrefix}dateEquals`,
+    `\
+/**
+ * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
+ */
+export function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.getTime() === right.getTime(),
+  );
+}`,
+  ),
+
+  DateTimeFilter: singleEntryRecord(
+    `${syntheticNamePrefix}DateFilter`,
+    `\
+export interface ${syntheticNamePrefix}DateFilter {
+  readonly maxExclusive: Date;
+  readonly maxInclusive: Date;
+  readonly minExclusive: Date;
+  readonly minInclusive: Date;
+  readonly value?: Date;
+}`,
+  ),
+};
 
 export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
@@ -43,15 +73,10 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const dateFilterType = new Type.ScalarFilterType(this.name);
-    return new Type.CompositeFilterType({
-      maxExclusive: dateFilterType,
-      maxInclusive: dateFilterType,
-      minExclusive: dateFilterType,
-      minInclusive: dateFilterType,
-      value: dateFilterType,
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}DateFilter`,
+    );
   }
 
   @Memoize()
@@ -105,28 +130,18 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     };
   }
 
-  override snippetDeclarations({
-    features,
-  }: Parameters<
-    AbstractPrimitiveType<Date>["snippetDeclarations"]
-  >[0]): Readonly<Record<string, string>> {
-    if (features.has("equals")) {
-      return singleEntryRecord(
-        `${syntheticNamePrefix}dateEquals`,
-        `\
-/**
- * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
- */
-export function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-    left,
-    right,
-    left.getTime() === right.getTime(),
-  );
-}`,
-      );
-    }
-    return {};
+  override snippetDeclarations(
+    parameters: Parameters<
+      AbstractPrimitiveType<Date>["snippetDeclarations"]
+    >[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      parameters.features.has("equals")
+        ? allSnippetDeclarations.dateEquals
+        : {},
+      allSnippetDeclarations.DateTimeFilter,
+    );
   }
 
   protected toIsoStringExpression(variables: { value: string }) {

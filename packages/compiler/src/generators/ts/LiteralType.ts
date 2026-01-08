@@ -6,9 +6,10 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const arrayIntersectionSnippet = singleEntryRecord(
-  `${syntheticNamePrefix}arrayIntersection`,
-  `\
+const allSnippetDeclarations = {
+  arrayIntersection: singleEntryRecord(
+    `${syntheticNamePrefix}arrayIntersection`,
+    `\
   export function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
     if (left.length === 0) {
       return right;
@@ -35,17 +36,24 @@ const arrayIntersectionSnippet = singleEntryRecord(
     }
     return [...intersection];
   }`,
-);
+  ),
+  LiteralFilter: singleEntryRecord(
+    `${syntheticNamePrefix}LiteralFilter`,
+    `\
+export interface ${syntheticNamePrefix}LiteralFilter {
+  readonly datatype?: string;
+  readonly language?: string;
+  readonly value?: string;
+}`,
+  ),
+};
 
 export class LiteralType extends AbstractLiteralType {
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType("string");
-    return new Type.CompositeFilterType({
-      datatype: stringFilterType,
-      language: stringFilterType,
-      value: stringFilterType,
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}LiteralFilter`,
+    );
   }
 
   @Memoize()
@@ -92,17 +100,13 @@ export class LiteralType extends AbstractLiteralType {
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    let snippetDeclarations: Record<string, string> = {
-      ...super.snippetDeclarations(parameters),
-    };
-    const { features } = parameters;
-    if (features.has("sparql") && this.languageIn.length > 0) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        arrayIntersectionSnippet,
-      );
-    }
-    return snippetDeclarations;
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      parameters.features.has("sparql") && this.languageIn.length > 0
+        ? allSnippetDeclarations.arrayIntersection
+        : {},
+      allSnippetDeclarations.LiteralFilter,
+    );
   }
 
   override toJsonExpression({

@@ -4,6 +4,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 /**
@@ -33,12 +36,10 @@ export class TermType<
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType("string");
-    return new Type.CompositeFilterType({
-      type: stringFilterType,
-      value: stringFilterType,
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}TermFilter`,
+    );
   }
 
   override get graphqlType(): Type.GraphqlType {
@@ -105,6 +106,24 @@ export class TermType<
         }
       })
       .join(", ")}])`;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}TermFilter`,
+        `\
+export interface ${syntheticNamePrefix}TermFilter {
+  readonly datatype?: string;
+  readonly language?: string;
+  readonly type?: "BlankNode" | "Literal" | "NamedNode";
+  readonly value?: string;
+}`,
+      ),
+    );
   }
 
   override toJsonExpression({

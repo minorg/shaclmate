@@ -7,9 +7,10 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const arrayEqualsSnippetDeclaration = singleEntryRecord(
-  `${syntheticNamePrefix}arrayEquals`,
-  `\
+const allSnippetDeclarations = {
+  arrayEquals: singleEntryRecord(
+    `${syntheticNamePrefix}arrayEquals`,
+    `\
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */  
@@ -75,17 +76,18 @@ export function ${syntheticNamePrefix}arrayEquals<T>(
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }`,
-);
+  ),
 
-const ArrayFilterSnippetDeclaration = singleEntryRecord(
-  `${syntheticNamePrefix}ArrayFilter`,
-  `\
+  ArrayFilter: singleEntryRecord(
+    `${syntheticNamePrefix}ArrayFilter`,
+    `\
 export interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
   readonly items?: ItemFilterT;
   readonly maxCount?: number;
   readonly minCount?: number;
 }`,
-);
+  ),
+};
 
 function isTypeofString(
   x: string,
@@ -323,7 +325,7 @@ export abstract class AbstractCollectionType<
     if (parameters.features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        arrayEqualsSnippetDeclaration,
+        allSnippetDeclarations.arrayEquals,
       );
     }
 
@@ -386,7 +388,7 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
 
     snippetDeclarations = mergeSnippetDeclarations(
       snippetDeclarations,
-      ArrayFilterSnippetDeclaration,
+      allSnippetDeclarations.ArrayFilter,
     );
 
     return snippetDeclarations;

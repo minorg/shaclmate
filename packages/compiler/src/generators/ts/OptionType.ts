@@ -9,9 +9,10 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const maybeEqualsSnippetDeclaration = singleEntryRecord(
-  `${syntheticNamePrefix}maybeEquals`,
-  `\
+const allSnippetDeclarations = {
+  maybeEquals: singleEntryRecord(
+    `${syntheticNamePrefix}maybeEquals`,
+    `\
 export function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
@@ -40,7 +41,17 @@ export function ${syntheticNamePrefix}maybeEquals<T>(
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }`,
-);
+  ),
+
+  MaybeFilter: singleEntryRecord(
+    `${syntheticNamePrefix}MaybeFilter`,
+    `\
+export interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
+  readonly item?: ItemFilterT;
+  readonly null?: boolean;
+}`,
+  ),
+};
 
 export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
@@ -103,11 +114,10 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    return new Type.CompositeFilterType({
-      item: this.itemType.filterType,
-      null: new Type.ScalarFilterType("boolean"),
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}MaybeFilter<${this.itemType.filterType.name}>`,
+    );
   }
 
   @Memoize()
@@ -195,18 +205,13 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    let snippetDeclarations: Record<string, string> = {
-      ...this.itemType.snippetDeclarations(parameters),
-    };
-
-    if (parameters.features.has("equals")) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        maybeEqualsSnippetDeclaration,
-      );
-    }
-
-    return snippetDeclarations;
+    return mergeSnippetDeclarations(
+      this.itemType.snippetDeclarations(parameters),
+      parameters.features.has("equals")
+        ? allSnippetDeclarations.maybeEquals
+        : {},
+      allSnippetDeclarations.MaybeFilter,
+    );
   }
 
   override sparqlConstructTemplateTriples(

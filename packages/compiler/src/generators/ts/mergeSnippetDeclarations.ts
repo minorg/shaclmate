@@ -11,9 +11,13 @@ export function mergeSnippetDeclarations(
   const mergedSnippetDeclarations: Record<string, string> = {
     ...snippetDeclarations[0],
   };
-  for (const snippetDeclarations_ of snippetDeclarations.slice(1)) {
+  for (
+    let snippetDeclarationsI = 1;
+    snippetDeclarationsI < snippetDeclarations.length;
+    snippetDeclarationsI++
+  ) {
     for (const [key, snippetDeclaration] of Object.entries(
-      snippetDeclarations_,
+      snippetDeclarations[snippetDeclarationsI],
     )) {
       const existingSnippetDeclaration = mergedSnippetDeclarations[key];
       if (!existingSnippetDeclaration) {

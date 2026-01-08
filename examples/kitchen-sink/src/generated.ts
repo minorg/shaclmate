@@ -113,6 +113,8 @@ export function $arrayIntersection<T>(
   return [...intersection];
 }
 
+export interface $BlankNodeFilter {}
+
 /**
  * Compare two objects with equals(other: T): boolean methods and return an $EqualsResult.
  */
@@ -121,6 +123,10 @@ export function $booleanEquals<T extends { equals: (other: T) => boolean }>(
   right: T,
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left.equals(right));
+}
+
+export interface $BooleanFilter {
+  readonly value?: boolean;
 }
 
 /**
@@ -132,6 +138,14 @@ export function $dateEquals(left: Date, right: Date): $EqualsResult {
     right,
     left.getTime() === right.getTime(),
   );
+}
+
+export interface $DateFilter {
+  readonly maxExclusive: Date;
+  readonly maxInclusive: Date;
+  readonly minExclusive: Date;
+  readonly minInclusive: Date;
+  readonly value?: Date;
 }
 
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
@@ -208,6 +222,11 @@ export namespace $EqualsResult {
         readonly left: any;
         readonly type: "RightNull";
       };
+}
+
+export interface $IdentifierFilter {
+  readonly type?: "BlankNode" | "NamedNode";
+  readonly value?: string;
 }
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
@@ -351,6 +370,12 @@ export class $LazyObjectSet<
   }
 }
 
+export interface $LiteralFilter {
+  readonly datatype?: string;
+  readonly language?: string;
+  readonly value?: string;
+}
+
 export function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
@@ -378,6 +403,23 @@ export function $maybeEquals<T>(
   }
 
   return $EqualsResult.Equal;
+}
+
+export interface $MaybeFilter<ItemFilterT> {
+  readonly item?: ItemFilterT;
+  readonly null?: boolean;
+}
+
+export interface $NamedNodeFilter {
+  readonly value?: string;
+}
+
+export interface $NumberFilter {
+  readonly maxExclusive?: number;
+  readonly maxInclusive?: number;
+  readonly minExclusive?: number;
+  readonly minInclusive?: number;
+  readonly value?: number;
 }
 
 export namespace $RdfVocabularies {
@@ -465,6 +507,18 @@ export function $strictEquals<T extends bigint | boolean | number | string>(
   right: T,
 ): $EqualsResult {
   return $EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+}
+
+export interface $StringFilter {
+  readonly maxLength?: number;
+  readonly minLength?: number;
+}
+
+export interface $TermFilter {
+  readonly datatype?: string;
+  readonly language?: string;
+  readonly type?: "BlankNode" | "Literal" | "NamedNode";
+  readonly value?: string;
 }
 
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
@@ -556,9 +610,7 @@ export class $NamedDefaultPartial {
 }
 
 export namespace $NamedDefaultPartial {
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $NamedNodeFilter };
 
   export function $fromJson(
     json: unknown,
@@ -856,9 +908,7 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromJson(
     json: unknown,
@@ -1123,12 +1173,8 @@ export namespace UuidV4IriIdentifierInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly uuidV4IriProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly uuidV4IriProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -1730,12 +1776,8 @@ export class UuidV4IriIdentifierClass {
 
 export namespace UuidV4IriIdentifierClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly uuidV4IriProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly uuidV4IriProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -3177,116 +3219,62 @@ export class UnionDiscriminantsClass {
 
 export namespace UnionDiscriminantsClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalClassOrClassOrStringProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
-          readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-          readonly "2-string"?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
-        };
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalClassOrClassOrStringProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+        readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+        readonly "2-string"?: $StringFilter;
       };
-      readonly null?: boolean;
-    };
-    readonly optionalIriOrLiteralProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly NamedNode?: {
-            readonly type?: string;
-            readonly value?: string;
-          };
-          readonly Literal?: {
-            readonly datatype?: string;
-            readonly language?: string;
-            readonly value?: string;
-          };
-        };
+    }>;
+    readonly optionalIriOrLiteralProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly NamedNode?: $NamedNodeFilter;
+        readonly Literal?: $LiteralFilter;
       };
-      readonly null?: boolean;
-    };
-    readonly optionalIriOrStringProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly object?: { readonly type?: string; readonly value?: string };
-          readonly string?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
-        };
+    }>;
+    readonly optionalIriOrStringProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly object?: $NamedNodeFilter;
+        readonly string?: $StringFilter;
       };
-      readonly null?: boolean;
-    };
+    }>;
     readonly requiredClassOrClassOrStringProperty?: {
       readonly on?: {
         readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
         readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-        readonly "2-string"?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
+        readonly "2-string"?: $StringFilter;
       };
     };
     readonly requiredIriOrLiteralProperty?: {
       readonly on?: {
-        readonly NamedNode?: {
-          readonly type?: string;
-          readonly value?: string;
-        };
-        readonly Literal?: {
-          readonly datatype?: string;
-          readonly language?: string;
-          readonly value?: string;
-        };
+        readonly NamedNode?: $NamedNodeFilter;
+        readonly Literal?: $LiteralFilter;
       };
     };
     readonly requiredIriOrStringProperty?: {
       readonly on?: {
-        readonly object?: { readonly type?: string; readonly value?: string };
-        readonly string?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
+        readonly object?: $NamedNodeFilter;
+        readonly string?: $StringFilter;
       };
     };
     readonly setClassOrClassOrStringProperty?: $ArrayFilter<{
       readonly on?: {
         readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
         readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
-        readonly "2-string"?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
+        readonly "2-string"?: $StringFilter;
       };
     }>;
     readonly setIriOrLiteralProperty?: $ArrayFilter<{
       readonly on?: {
-        readonly NamedNode?: {
-          readonly type?: string;
-          readonly value?: string;
-        };
-        readonly Literal?: {
-          readonly datatype?: string;
-          readonly language?: string;
-          readonly value?: string;
-        };
+        readonly NamedNode?: $NamedNodeFilter;
+        readonly Literal?: $LiteralFilter;
       };
     }>;
     readonly setIriOrStringProperty?: $ArrayFilter<{
       readonly on?: {
-        readonly object?: { readonly type?: string; readonly value?: string };
-        readonly string?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
+        readonly object?: $NamedNodeFilter;
+        readonly string?: $StringFilter;
       };
     }>;
   };
@@ -6725,69 +6713,16 @@ export class TermPropertiesClass {
 
 export namespace TermPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly blankNodeTermProperty?: {
-      readonly item?: { readonly type?: string; readonly value?: string };
-      readonly null?: boolean;
-    };
-    readonly booleanTermProperty?: {
-      readonly item?: { readonly value?: boolean };
-      readonly null?: boolean;
-    };
-    readonly dateTermProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: Date;
-        readonly maxInclusive?: Date;
-        readonly minExclusive?: Date;
-        readonly minInclusive?: Date;
-        readonly value?: Date;
-      };
-      readonly null?: boolean;
-    };
-    readonly dateTimeTermProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: Date;
-        readonly maxInclusive?: Date;
-        readonly minExclusive?: Date;
-        readonly minInclusive?: Date;
-        readonly value?: Date;
-      };
-      readonly null?: boolean;
-    };
-    readonly iriTermProperty?: {
-      readonly item?: { readonly type?: string; readonly value?: string };
-      readonly null?: boolean;
-    };
-    readonly literalTermProperty?: {
-      readonly item?: {
-        readonly datatype?: string;
-        readonly language?: string;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly numberTermProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: number;
-        readonly maxInclusive?: number;
-        readonly minExclusive?: number;
-        readonly minInclusive?: number;
-        readonly value?: number;
-      };
-      readonly null?: boolean;
-    };
-    readonly stringTermProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly termProperty?: {
-      readonly item?: { readonly type?: string; readonly value?: string };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly blankNodeTermProperty?: $MaybeFilter<$BlankNodeFilter>;
+    readonly booleanTermProperty?: $MaybeFilter<$BooleanFilter>;
+    readonly dateTermProperty?: $MaybeFilter<$DateFilter>;
+    readonly dateTimeTermProperty?: $MaybeFilter<$DateFilter>;
+    readonly iriTermProperty?: $MaybeFilter<$NamedNodeFilter>;
+    readonly literalTermProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly numberTermProperty?: $MaybeFilter<$NumberFilter>;
+    readonly stringTermProperty?: $MaybeFilter<$StringFilter>;
+    readonly termProperty?: $MaybeFilter<$TermFilter>;
   };
 
   export function $fromJson(
@@ -8070,12 +8005,8 @@ export class Sha256IriIdentifierClass {
 
 export namespace Sha256IriIdentifierClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly sha256IriProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly sha256IriProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -8604,11 +8535,8 @@ export class RecursiveClassUnionMember2 {
 
 export namespace RecursiveClassUnionMember2 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly recursiveClassUnionMember2Property?: {
-      readonly item?: RecursiveClassUnion.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly recursiveClassUnionMember2Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
   };
 
   export function $fromJson(
@@ -9037,11 +8965,8 @@ export class RecursiveClassUnionMember1 {
 
 export namespace RecursiveClassUnionMember1 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly recursiveClassUnionMember1Property?: {
-      readonly item?: RecursiveClassUnion.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly recursiveClassUnionMember1Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
   };
 
   export function $fromJson(
@@ -9481,22 +9406,10 @@ export class PropertyVisibilitiesClass {
 
 export namespace PropertyVisibilitiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly privateProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
-    readonly protectedProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
-    readonly publicProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly privateProperty?: $StringFilter;
+    readonly protectedProperty?: $StringFilter;
+    readonly publicProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -10379,30 +10292,11 @@ export class PropertyCardinalitiesClass {
 
 export namespace PropertyCardinalitiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly emptyStringSetProperty?: $ArrayFilter<{
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    }>;
-    readonly nonEmptyStringSetProperty?: $ArrayFilter<{
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    }>;
-    readonly optionalStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly requiredStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly emptyStringSetProperty?: $ArrayFilter<$StringFilter>;
+    readonly nonEmptyStringSetProperty?: $ArrayFilter<$StringFilter>;
+    readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
+    readonly requiredStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -11364,12 +11258,8 @@ export namespace PartialInterfaceUnionMember2 {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -11993,12 +11883,8 @@ export namespace PartialInterfaceUnionMember1 {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -12693,12 +12579,8 @@ export class PartialClassUnionMember2 {
 
 export namespace PartialClassUnionMember2 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -13298,12 +13180,8 @@ export class PartialClassUnionMember1 {
 
 export namespace PartialClassUnionMember1 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -13933,22 +13811,10 @@ export class OrderedPropertiesClass {
 
 export namespace OrderedPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly orderedPropertyC?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
-    readonly orderedPropertyB?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
-    readonly orderedPropertyA?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly orderedPropertyC?: $StringFilter;
+    readonly orderedPropertyB?: $StringFilter;
+    readonly orderedPropertyA?: $StringFilter;
   };
 
   export function $fromJson(
@@ -14717,12 +14583,8 @@ export class NonClass {
 
 export namespace NonClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly nonClassProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly nonClassProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -15195,12 +15057,8 @@ export class NoRdfTypeClassUnionMember2 {
 
 export namespace NoRdfTypeClassUnionMember2 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly noRdfTypeClassUnionMember2Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly noRdfTypeClassUnionMember2Property?: $StringFilter;
   };
 
   export function $fromJson(
@@ -15712,12 +15570,8 @@ export class NoRdfTypeClassUnionMember1 {
 
 export namespace NoRdfTypeClassUnionMember1 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly noRdfTypeClassUnionMember1Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly noRdfTypeClassUnionMember1Property?: $StringFilter;
   };
 
   export function $fromJson(
@@ -16395,28 +16249,10 @@ export class MutablePropertiesClass {
 
 export namespace MutablePropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly mutableListProperty?: {
-      readonly item?: $ArrayFilter<{
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      }>;
-      readonly null?: boolean;
-    };
-    readonly mutableSetProperty?: $ArrayFilter<{
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    }>;
-    readonly mutableStringProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly mutableListProperty?: $MaybeFilter<$ArrayFilter<$StringFilter>>;
+    readonly mutableSetProperty?: $ArrayFilter<$StringFilter>;
+    readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
   export function $fromJson(
@@ -17641,26 +17477,10 @@ export class ListPropertiesClass {
 
 export namespace ListPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly iriListProperty?: {
-      readonly item?: $ArrayFilter<{
-        readonly type?: string;
-        readonly value?: string;
-      }>;
-      readonly null?: boolean;
-    };
-    readonly objectListProperty?: {
-      readonly item?: $ArrayFilter<NonClass.$Filter>;
-      readonly null?: boolean;
-    };
-    readonly stringListProperty?: {
-      readonly item?: $ArrayFilter<{
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      }>;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly iriListProperty?: $MaybeFilter<$ArrayFilter<$NamedNodeFilter>>;
+    readonly objectListProperty?: $MaybeFilter<$ArrayFilter<NonClass.$Filter>>;
+    readonly stringListProperty?: $MaybeFilter<$ArrayFilter<$StringFilter>>;
   };
 
   export function $fromJson(
@@ -18689,12 +18509,8 @@ export namespace PartialInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -20108,31 +19924,13 @@ export namespace LazyPropertiesInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalLazyToResolvedInterfaceProperty?: {
-      readonly item?: $DefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalLazyToResolvedInterfaceUnionProperty?: {
-      readonly item?: $DefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: {
-      readonly item?: $NamedDefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: {
-      readonly item?: PartialInterface.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: {
-      readonly item?: PartialInterface.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: {
-      readonly item?: PartialInterfaceUnion.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalLazyToResolvedInterfaceProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedInterfaceUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedIriIdentifierInterfaceProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
+    readonly optionalPartialInterfaceToResolvedInterfaceProperty?: $MaybeFilter<PartialInterface.$Filter>;
+    readonly optionalPartialInterfaceToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterface.$Filter>;
+    readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterfaceUnion.$Filter>;
     readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
     readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
     readonly setLazyToResolvedInterfaceProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
@@ -22256,12 +22054,8 @@ export class PartialClass {
 
 export namespace PartialClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -23748,31 +23542,13 @@ export class LazyPropertiesClass {
 
 export namespace LazyPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly optionalLazyToResolvedClassProperty?: {
-      readonly item?: $DefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalLazyToResolvedClassUnionProperty?: {
-      readonly item?: $DefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalLazyToResolvedIriIdentifierClassProperty?: {
-      readonly item?: $NamedDefaultPartial.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalPartialClassToResolvedClassProperty?: {
-      readonly item?: PartialClass.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalPartialClassToResolvedClassUnionProperty?: {
-      readonly item?: PartialClass.$Filter;
-      readonly null?: boolean;
-    };
-    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: {
-      readonly item?: PartialClassUnion.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly optionalLazyToResolvedClassProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedClassUnionProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
+    readonly optionalLazyToResolvedIriIdentifierClassProperty?: $MaybeFilter<$NamedDefaultPartial.$Filter>;
+    readonly optionalPartialClassToResolvedClassProperty?: $MaybeFilter<PartialClass.$Filter>;
+    readonly optionalPartialClassToResolvedClassUnionProperty?: $MaybeFilter<PartialClass.$Filter>;
+    readonly optionalPartialClassUnionToResolvedClassUnionProperty?: $MaybeFilter<PartialClassUnion.$Filter>;
     readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
     readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
     readonly setLazyToResolvedClassProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
@@ -25540,12 +25316,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -26132,12 +25904,8 @@ export class LazilyResolvedIriIdentifierClass {
 
 export namespace LazilyResolvedIriIdentifierClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -26587,12 +26355,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -27217,12 +26981,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -27918,12 +27678,8 @@ export class LazilyResolvedClassUnionMember2 {
 
 export namespace LazilyResolvedClassUnionMember2 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -28523,12 +28279,8 @@ export class LazilyResolvedClassUnionMember1 {
 
 export namespace LazilyResolvedClassUnionMember1 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -29060,12 +28812,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -29774,12 +29522,8 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly lazilyResolvedStringProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly lazilyResolvedStringProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -30395,12 +30139,8 @@ export class LanguageInPropertiesClass {
 
 export namespace LanguageInPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly languageInLiteralProperty?: $ArrayFilter<{
-      readonly datatype?: string;
-      readonly language?: string;
-      readonly value?: string;
-    }>;
+    readonly $identifier?: $IdentifierFilter;
+    readonly languageInLiteralProperty?: $ArrayFilter<$LiteralFilter>;
   };
 
   export function $fromJson(
@@ -31053,22 +30793,12 @@ export class JsPrimitiveUnionPropertyClass {
 
 export namespace JsPrimitiveUnionPropertyClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
+    readonly $identifier?: $IdentifierFilter;
     readonly jsPrimitiveUnionProperty?: $ArrayFilter<{
       readonly on?: {
-        readonly boolean?: { readonly value?: boolean };
-        readonly number?: {
-          readonly maxExclusive?: number;
-          readonly maxInclusive?: number;
-          readonly minExclusive?: number;
-          readonly minInclusive?: number;
-          readonly value?: number;
-        };
-        readonly string?: {
-          readonly maxLength?: number;
-          readonly minLength?: number;
-          readonly value?: string;
-        };
+        readonly boolean?: $BooleanFilter;
+        readonly number?: $NumberFilter;
+        readonly string?: $StringFilter;
       };
     }>;
   };
@@ -31598,9 +31328,7 @@ export namespace IriIdentifierInterface {
       );
   }
 
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $NamedNodeFilter };
 
   export function $fromJson(
     json: unknown,
@@ -31961,9 +31689,7 @@ export class IriIdentifierClass {
 }
 
 export namespace IriIdentifierClass {
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $NamedNodeFilter };
 
   export function $fromJson(
     json: unknown,
@@ -32231,12 +31957,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly interfaceUnionMemberCommonParentProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceUnionMemberCommonParentProperty?: $StringFilter;
   };
 
   export function $hash<
@@ -32715,11 +32437,7 @@ export namespace InterfaceUnionMember2 {
   }
 
   export type $Filter = {
-    readonly interfaceUnionMember2Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly interfaceUnionMember2Property?: $StringFilter;
   } & InterfaceUnionMemberCommonParentStatic.$Filter;
 
   export function $fromJson(
@@ -33346,11 +33064,7 @@ export namespace InterfaceUnionMember1 {
   }
 
   export type $Filter = {
-    readonly interfaceUnionMember1Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly interfaceUnionMember1Property?: $StringFilter;
   } & InterfaceUnionMemberCommonParentStatic.$Filter;
 
   export function $fromJson(
@@ -33985,12 +33699,8 @@ export namespace Interface {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly interfaceProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly interfaceProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -34551,11 +34261,8 @@ export class IndirectRecursiveHelperClass {
 
 export namespace IndirectRecursiveHelperClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly indirectRecursiveProperty?: {
-      readonly item?: IndirectRecursiveClass.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursiveClass.$Filter>;
   };
 
   export function $fromJson(
@@ -34976,11 +34683,8 @@ export class IndirectRecursiveClass {
 
 export namespace IndirectRecursiveClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly indirectRecursiveHelperProperty?: {
-      readonly item?: IndirectRecursiveHelperClass.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelperClass.$Filter>;
   };
 
   export function $fromJson(
@@ -35560,43 +35264,12 @@ export class InPropertiesClass {
 
 export namespace InPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly inBooleansProperty?: {
-      readonly item?: { readonly value?: boolean };
-      readonly null?: boolean;
-    };
-    readonly inDateTimesProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: Date;
-        readonly maxInclusive?: Date;
-        readonly minExclusive?: Date;
-        readonly minInclusive?: Date;
-        readonly value?: Date;
-      };
-      readonly null?: boolean;
-    };
-    readonly inIrisProperty?: {
-      readonly item?: { readonly type?: string; readonly value?: string };
-      readonly null?: boolean;
-    };
-    readonly inNumbersProperty?: {
-      readonly item?: {
-        readonly maxExclusive?: number;
-        readonly maxInclusive?: number;
-        readonly minExclusive?: number;
-        readonly minInclusive?: number;
-        readonly value?: number;
-      };
-      readonly null?: boolean;
-    };
-    readonly inStringsProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
+    readonly inDateTimesProperty?: $MaybeFilter<$DateFilter>;
+    readonly inIrisProperty?: $MaybeFilter<$NamedNodeFilter>;
+    readonly inNumbersProperty?: $MaybeFilter<$NumberFilter>;
+    readonly inStringsProperty?: $MaybeFilter<$StringFilter>;
   };
 
   export function $fromJson(
@@ -36554,15 +36227,8 @@ export class InIdentifierClass {
 
 export namespace InIdentifierClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly inIdentifierProperty?: {
-      readonly item?: {
-        readonly maxLength?: number;
-        readonly minLength?: number;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $NamedNodeFilter;
+    readonly inIdentifierProperty?: $MaybeFilter<$StringFilter>;
   };
 
   export function $fromJson(
@@ -37149,12 +36815,8 @@ export abstract class IdentifierOverride1Class {
 
 export namespace IdentifierOverride1ClassStatic {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly identifierOverrideProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly identifierOverrideProperty?: $StringFilter;
   };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
@@ -39158,16 +38820,9 @@ export class HasValuePropertiesClass {
 
 export namespace HasValuePropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly hasIriValueProperty?: {
-      readonly type?: string;
-      readonly value?: string;
-    };
-    readonly hasLiteralValueProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly hasIriValueProperty?: $NamedNodeFilter;
+    readonly hasLiteralValueProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -39772,12 +39427,8 @@ export class FlattenClassUnionMember3 {
 
 export namespace FlattenClassUnionMember3 {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly flattenClassUnionMember3Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly flattenClassUnionMember3Property?: $StringFilter;
   };
 
   export function $fromJson(
@@ -40393,11 +40044,8 @@ export class ExternClassPropertyClass {
 
 export namespace ExternClassPropertyClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly externClassProperty?: {
-      readonly item?: ExternClass.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly externClassProperty?: $MaybeFilter<ExternClass.$Filter>;
   };
 
   export function $fromJson(
@@ -40860,12 +40508,8 @@ export class ExplicitRdfTypeClass {
 
 export namespace ExplicitRdfTypeClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly explicitRdfTypeProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly explicitRdfTypeProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -41468,12 +41112,8 @@ export class ExplicitFromToRdfTypesClass {
 
 export namespace ExplicitFromToRdfTypesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly explicitFromToRdfTypesProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly explicitFromToRdfTypesProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -42088,11 +41728,8 @@ export class DirectRecursiveClass {
 
 export namespace DirectRecursiveClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly directRecursiveProperty?: {
-      readonly item?: DirectRecursiveClass.$Filter;
-      readonly null?: boolean;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly directRecursiveProperty?: $MaybeFilter<DirectRecursiveClass.$Filter>;
   };
 
   export function $fromJson(
@@ -42712,35 +42349,13 @@ export class DefaultValuePropertiesClass {
 
 export namespace DefaultValuePropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly dateDefaultValueProperty?: {
-      readonly maxExclusive?: Date;
-      readonly maxInclusive?: Date;
-      readonly minExclusive?: Date;
-      readonly minInclusive?: Date;
-      readonly value?: Date;
-    };
-    readonly dateTimeDefaultValueProperty?: {
-      readonly maxExclusive?: Date;
-      readonly maxInclusive?: Date;
-      readonly minExclusive?: Date;
-      readonly minInclusive?: Date;
-      readonly value?: Date;
-    };
-    readonly falseBooleanDefaultValueProperty?: { readonly value?: boolean };
-    readonly numberDefaultValueProperty?: {
-      readonly maxExclusive?: number;
-      readonly maxInclusive?: number;
-      readonly minExclusive?: number;
-      readonly minInclusive?: number;
-      readonly value?: number;
-    };
-    readonly stringDefaultValueProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
-    readonly trueBooleanDefaultValueProperty?: { readonly value?: boolean };
+    readonly $identifier?: $IdentifierFilter;
+    readonly dateDefaultValueProperty?: $DateFilter;
+    readonly dateTimeDefaultValueProperty?: $DateFilter;
+    readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
+    readonly numberDefaultValueProperty?: $NumberFilter;
+    readonly stringDefaultValueProperty?: $StringFilter;
+    readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
   };
 
   export function $fromJson(
@@ -44068,87 +43683,31 @@ export class DateUnionPropertiesClass {
 
 export namespace DateUnionPropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly dateOrDateTimeProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly date?: {
-            readonly maxExclusive?: Date;
-            readonly maxInclusive?: Date;
-            readonly minExclusive?: Date;
-            readonly minInclusive?: Date;
-            readonly value?: Date;
-          };
-          readonly dateTime?: {
-            readonly maxExclusive?: Date;
-            readonly maxInclusive?: Date;
-            readonly minExclusive?: Date;
-            readonly minInclusive?: Date;
-            readonly value?: Date;
-          };
-        };
+    readonly $identifier?: $IdentifierFilter;
+    readonly dateOrDateTimeProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly date?: $DateFilter;
+        readonly dateTime?: $DateFilter;
       };
-      readonly null?: boolean;
-    };
-    readonly dateOrStringProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly date?: {
-            readonly maxExclusive?: Date;
-            readonly maxInclusive?: Date;
-            readonly minExclusive?: Date;
-            readonly minInclusive?: Date;
-            readonly value?: Date;
-          };
-          readonly string?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
-        };
+    }>;
+    readonly dateOrStringProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly date?: $DateFilter;
+        readonly string?: $StringFilter;
       };
-      readonly null?: boolean;
-    };
-    readonly dateTimeOrDateProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly dateTime?: {
-            readonly maxExclusive?: Date;
-            readonly maxInclusive?: Date;
-            readonly minExclusive?: Date;
-            readonly minInclusive?: Date;
-            readonly value?: Date;
-          };
-          readonly date?: {
-            readonly maxExclusive?: Date;
-            readonly maxInclusive?: Date;
-            readonly minExclusive?: Date;
-            readonly minInclusive?: Date;
-            readonly value?: Date;
-          };
-        };
+    }>;
+    readonly dateTimeOrDateProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly dateTime?: $DateFilter;
+        readonly date?: $DateFilter;
       };
-      readonly null?: boolean;
-    };
-    readonly stringOrDateProperty?: {
-      readonly item?: {
-        readonly on?: {
-          readonly string?: {
-            readonly maxLength?: number;
-            readonly minLength?: number;
-            readonly value?: string;
-          };
-          readonly date?: {
-            readonly maxExclusive?: Date;
-            readonly maxInclusive?: Date;
-            readonly minExclusive?: Date;
-            readonly minInclusive?: Date;
-            readonly value?: Date;
-          };
-        };
+    }>;
+    readonly stringOrDateProperty?: $MaybeFilter<{
+      readonly on?: {
+        readonly string?: $StringFilter;
+        readonly date?: $DateFilter;
       };
-      readonly null?: boolean;
-    };
+    }>;
   };
 
   export function $fromJson(
@@ -46087,62 +45646,19 @@ export class ConvertibleTypePropertiesClass {
 
 export namespace ConvertibleTypePropertiesClass {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly convertibleIriNonEmptySetProperty?: $ArrayFilter<{
-      readonly type?: string;
-      readonly value?: string;
-    }>;
-    readonly convertibleIriOptionProperty?: {
-      readonly item?: { readonly type?: string; readonly value?: string };
-      readonly null?: boolean;
-    };
-    readonly convertibleIriProperty?: {
-      readonly type?: string;
-      readonly value?: string;
-    };
-    readonly convertibleIriSetProperty?: $ArrayFilter<{
-      readonly type?: string;
-      readonly value?: string;
-    }>;
-    readonly convertibleLiteralNonEmptySetProperty?: $ArrayFilter<{
-      readonly datatype?: string;
-      readonly language?: string;
-      readonly value?: string;
-    }>;
-    readonly convertibleLiteralOptionProperty?: {
-      readonly item?: {
-        readonly datatype?: string;
-        readonly language?: string;
-        readonly value?: string;
-      };
-      readonly null?: boolean;
-    };
-    readonly convertibleLiteralProperty?: {
-      readonly datatype?: string;
-      readonly language?: string;
-      readonly value?: string;
-    };
-    readonly convertibleLiteralSetProperty?: $ArrayFilter<{
-      readonly datatype?: string;
-      readonly language?: string;
-      readonly value?: string;
-    }>;
-    readonly convertibleTermNonEmptySetProperty?: $ArrayFilter<{
-      readonly type?: string;
-      readonly value?: string;
-    }>;
-    readonly convertibleTermOptionProperty?: {
-      readonly item?: { readonly type?: string; readonly value?: string };
-      readonly null?: boolean;
-    };
-    readonly convertibleTermProperty?: {
-      readonly type?: string;
-      readonly value?: string;
-    };
-    readonly convertibleTermSetProperty?: $ArrayFilter<{
-      readonly type?: string;
-      readonly value?: string;
-    }>;
+    readonly $identifier?: $IdentifierFilter;
+    readonly convertibleIriNonEmptySetProperty?: $ArrayFilter<$NamedNodeFilter>;
+    readonly convertibleIriOptionProperty?: $MaybeFilter<$NamedNodeFilter>;
+    readonly convertibleIriProperty?: $NamedNodeFilter;
+    readonly convertibleIriSetProperty?: $ArrayFilter<$NamedNodeFilter>;
+    readonly convertibleLiteralNonEmptySetProperty?: $ArrayFilter<$LiteralFilter>;
+    readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
+    readonly convertibleLiteralProperty?: $LiteralFilter;
+    readonly convertibleLiteralSetProperty?: $ArrayFilter<$LiteralFilter>;
+    readonly convertibleTermNonEmptySetProperty?: $ArrayFilter<$TermFilter>;
+    readonly convertibleTermOptionProperty?: $MaybeFilter<$TermFilter>;
+    readonly convertibleTermProperty?: $TermFilter;
+    readonly convertibleTermSetProperty?: $ArrayFilter<$TermFilter>;
   };
 
   export function $fromJson(
@@ -48073,12 +47589,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
   }
 
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly baseInterfaceWithPropertiesProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly baseInterfaceWithPropertiesProperty?: $StringFilter;
   };
 
   export function $fromJson(
@@ -49201,11 +48713,7 @@ export namespace ConcreteParentInterfaceStatic {
   }
 
   export type $Filter = {
-    readonly concreteParentInterfaceProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly concreteParentInterfaceProperty?: $StringFilter;
   } & BaseInterfaceWithoutPropertiesStatic.$Filter;
 
   export function $fromJson(
@@ -49854,11 +49362,7 @@ export namespace ConcreteChildInterface {
   }
 
   export type $Filter = {
-    readonly concreteChildInterfaceProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly concreteChildInterfaceProperty?: $StringFilter;
   } & ConcreteParentInterfaceStatic.$Filter;
 
   export function $fromJson(
@@ -50592,12 +50096,8 @@ export abstract class AbstractBaseClassWithProperties {
 
 export namespace AbstractBaseClassWithPropertiesStatic {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly abstractBaseClassWithPropertiesProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassWithPropertiesProperty?: $StringFilter;
   };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
@@ -51326,11 +50826,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 
 export namespace ConcreteParentClassStatic {
   export type $Filter = {
-    readonly concreteParentClassProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly concreteParentClassProperty?: $StringFilter;
   } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
 
   export function $fromJson(
@@ -51950,11 +51446,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
 
 export namespace ConcreteChildClass {
   export type $Filter = {
-    readonly concreteChildClassProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly concreteChildClassProperty?: $StringFilter;
   } & ConcreteParentClassStatic.$Filter;
 
   export function $fromJson(
@@ -52566,12 +52058,8 @@ export abstract class ClassUnionMemberCommonParent {
 
 export namespace ClassUnionMemberCommonParentStatic {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly classUnionMemberCommonParentProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly classUnionMemberCommonParentProperty?: $StringFilter;
   };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
@@ -53021,11 +52509,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 
 export namespace ClassUnionMember2 {
   export type $Filter = {
-    readonly classUnionMember2Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly classUnionMember2Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
 
   export function $fromJson(
@@ -53609,11 +53093,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 
 export namespace ClassUnionMember1 {
   export type $Filter = {
-    readonly classUnionMember1Property?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly classUnionMember1Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
 
   export function $fromJson(
@@ -54145,9 +53625,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       );
   }
 
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromJson(
     json: unknown,
@@ -54527,9 +54005,7 @@ export class BlankNodeOrIriIdentifierClass {
 }
 
 export namespace BlankNodeOrIriIdentifierClass {
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromJson(
     json: unknown,
@@ -54879,9 +54355,7 @@ export namespace BlankNodeIdentifierInterface {
       );
   }
 
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
 
   export function $fromJson(
     json: unknown,
@@ -55261,9 +54735,7 @@ export class BlankNodeIdentifierClass {
 }
 
 export namespace BlankNodeIdentifierClass {
-  export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-  };
+  export type $Filter = { readonly $identifier?: $BlankNodeFilter };
 
   export function $fromJson(
     json: unknown,
@@ -55698,12 +55170,8 @@ export abstract class AbstractBaseClassForExternClass {
 
 export namespace AbstractBaseClassForExternClassStatic {
   export type $Filter = {
-    readonly $identifier?: { readonly type?: string; readonly value?: string };
-    readonly abstractBaseClassForExternClassProperty?: {
-      readonly maxLength?: number;
-      readonly minLength?: number;
-      readonly value?: string;
-    };
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
   };
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 

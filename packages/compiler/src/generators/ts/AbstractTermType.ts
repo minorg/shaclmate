@@ -8,7 +8,7 @@ import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -230,7 +230,23 @@ export abstract class AbstractTermType<
     Record<string, string>
   > {
     if (features.has("equals")) {
-      return sharedSnippetDeclarations.booleanEquals;
+      return singleEntryRecord(
+        `${syntheticNamePrefix}booleanEquals`,
+        `\
+  /**
+   * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
+   */
+  export function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+    left: T,
+    right: T,
+  ): ${syntheticNamePrefix}EqualsResult {
+    return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+      left,
+      right,
+      left.equals(right),
+    );
+  }`,
+      );
     }
     return {};
   }

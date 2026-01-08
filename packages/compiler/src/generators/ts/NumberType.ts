@@ -2,8 +2,11 @@ import type { NamedNode } from "@rdfjs/types";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 
@@ -42,15 +45,10 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const numberFilterType = new Type.ScalarFilterType("number");
-    return new Type.CompositeFilterType({
-      maxExclusive: numberFilterType,
-      maxInclusive: numberFilterType,
-      minExclusive: numberFilterType,
-      minInclusive: numberFilterType,
-      value: numberFilterType,
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}NumberFilter`,
+    );
   }
 
   @Memoize()
@@ -91,6 +89,25 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
       preferredLanguages: undefined,
       valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}NumberFilter`,
+        `\
+export interface ${syntheticNamePrefix}NumberFilter {
+  readonly maxExclusive?: number;
+  readonly maxInclusive?: number;
+  readonly minExclusive?: number;
+  readonly minInclusive?: number;
+  readonly value?: number;
+}`,
+      ),
+    );
   }
 
   override toRdfExpression({

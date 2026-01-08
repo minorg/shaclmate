@@ -9,7 +9,34 @@ import {
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
+
+const allSnippetDeclarations = {
+  BlankNodeFilter: singleEntryRecord(
+    `${syntheticNamePrefix}BlankNodeFilter`,
+    `\
+export interface ${syntheticNamePrefix}BlankNodeFilter {
+}`,
+  ),
+  IdentifierFilter: singleEntryRecord(
+    `${syntheticNamePrefix}IdentifierFilter`,
+    `\
+export interface ${syntheticNamePrefix}IdentifierFilter {
+  readonly type?: "BlankNode" | "NamedNode";
+  readonly value?: string;
+}`,
+  ),
+  NamedNodeFilter: singleEntryRecord(
+    `${syntheticNamePrefix}NamedNodeFilter`,
+    `\
+export interface ${syntheticNamePrefix}NamedNodeFilter {
+  readonly value?: string;
+}`,
+  ),
+};
 
 export class IdentifierType extends AbstractTermType<
   NamedNode,
@@ -35,12 +62,10 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType("string");
-    return new Type.CompositeFilterType({
-      type: stringFilterType,
-      value: stringFilterType,
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}${this.isBlankNodeKind ? "BlankNode" : this.isNamedNodeKind ? "NamedNode" : "Identifier"}Filter`,
+    );
   }
 
   @Memoize()
@@ -241,6 +266,19 @@ export class IdentifierType extends AbstractTermType<
       : "";
 
     return `${variables.zod}.object({ "@id": ${idSchema}${discriminantProperty} })`;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      this.isBlankNodeKind
+        ? allSnippetDeclarations.BlankNodeFilter
+        : this.isNamedNodeKind
+          ? allSnippetDeclarations.NamedNodeFilter
+          : allSnippetDeclarations.IdentifierFilter,
+    );
   }
 
   override toJsonExpression({

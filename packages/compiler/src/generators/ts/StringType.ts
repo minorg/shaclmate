@@ -1,7 +1,10 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -28,13 +31,10 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const intFilterType = new Type.ScalarFilterType("number");
-    return new Type.CompositeFilterType({
-      maxLength: intFilterType,
-      minLength: intFilterType,
-      value: new Type.ScalarFilterType("string"),
-    });
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}StringFilter`,
+    );
   }
 
   @Memoize()
@@ -83,6 +83,22 @@ export class StringType extends AbstractPrimitiveType<string> {
       default:
         return `${variables.zod}.enum(${JSON.stringify(this.primitiveIn)})`;
     }
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}StringFilter`,
+        `\
+export interface ${syntheticNamePrefix}StringFilter {
+  readonly maxLength?: number;
+  readonly minLength?: number;
+}`,
+      ),
+    );
   }
 
   override sparqlWherePatterns(
