@@ -10,6 +10,7 @@ import { Type } from "./Type.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
+  override readonly filterFunction = `${syntheticNamePrefix}filterBoolean`;
   override readonly filterType = new Type.CompositeFilterTypeReference(
     `${syntheticNamePrefix}BooleanFilter`,
   );
