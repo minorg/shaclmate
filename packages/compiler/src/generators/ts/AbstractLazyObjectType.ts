@@ -63,6 +63,11 @@ export abstract class AbstractLazyObjectType<
     return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
   }
 
+  @Memoize()
+  get filterFunction(): string {
+    return `((filter: ${this.filterType.name}, value: ${this.name}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
+  }
+
   get filterType():
     | Type.CompositeFilterType
     | Type.CompositeFilterTypeReference {

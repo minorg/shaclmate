@@ -36,6 +36,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    * Optional property in the object type's filter.
    */
   abstract readonly filterProperty: Maybe<{
+    readonly function: Type["filterFunction"];
     readonly name: string;
     readonly type: Type["filterType"];
   }>;

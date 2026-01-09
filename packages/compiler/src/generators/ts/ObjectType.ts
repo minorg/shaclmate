@@ -203,8 +203,9 @@ export class ObjectType extends AbstractDeclaredType {
     const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.filterFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.filterTypeDeclaration.bind(this)().toList(),
+      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
@@ -269,6 +270,11 @@ export class ObjectType extends AbstractDeclaredType {
       default:
         throw new RangeError(this.declarationType);
     }
+  }
+
+  @Memoize()
+  get filterFunction(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()

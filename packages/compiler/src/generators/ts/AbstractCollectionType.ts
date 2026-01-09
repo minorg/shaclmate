@@ -258,7 +258,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   get filterFunction(): string {
-    return `${syntheticNamePrefix}filterArray<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return `${syntheticNamePrefix}filterArray<${this.itemType.name}, ${this.itemType.filterType.name}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()

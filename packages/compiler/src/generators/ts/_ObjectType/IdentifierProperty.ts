@@ -109,6 +109,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   @Memoize()
   override get filterProperty() {
     return Maybe.of({
+      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });

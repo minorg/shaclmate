@@ -128,6 +128,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   @Memoize()
   override get filterProperty() {
     return Maybe.of({
+      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });

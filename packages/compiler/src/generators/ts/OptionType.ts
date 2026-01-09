@@ -139,7 +139,7 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
 
   @Memoize()
   get filterFunction(): string {
-    return `${syntheticNamePrefix}filterMaybe<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return `${syntheticNamePrefix}filterMaybe<${this.itemType.name}, ${this.itemType.filterType.name}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()

@@ -839,6 +839,19 @@ export class $NamedDefaultPartial {
 }
 
 export namespace $NamedDefaultPartial {
+  export function $filter(
+    filter: $NamedDefaultPartial.$Filter,
+    value: $NamedDefaultPartial,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $NamedNodeFilter };
 
   export function $fromJson(
@@ -1137,6 +1150,19 @@ export class $DefaultPartial {
 }
 
 export namespace $DefaultPartial {
+  export function $filter(
+    filter: $DefaultPartial.$Filter,
+    value: $DefaultPartial,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromJson(
@@ -1399,6 +1425,25 @@ export namespace UuidV4IriIdentifierInterface {
           }),
         ),
       );
+  }
+
+  export function $filter(
+    filter: UuidV4IriIdentifierInterface.$Filter,
+    value: UuidV4IriIdentifierInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.uuidV4IriProperty !== "undefined") {
+      if (!$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -1960,6 +2005,25 @@ export class UuidV4IriIdentifierClass {
 }
 
 export namespace UuidV4IriIdentifierClass {
+  export function $filter(
+    filter: UuidV4IriIdentifierClass.$Filter,
+    value: UuidV4IriIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.uuidV4IriProperty !== "undefined") {
+      if (!$filterString(filter.uuidV4IriProperty, value.uuidV4IriProperty)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $NamedNodeFilter;
     readonly uuidV4IriProperty?: $StringFilter;
@@ -3359,6 +3423,172 @@ export class UnionDiscriminantsClass {
 }
 
 export namespace UnionDiscriminantsClass {
+  export function $filter(
+    filter: UnionDiscriminantsClass.$Filter,
+    value: UnionDiscriminantsClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.optionalClassOrClassOrStringProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+          | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
+          | { type: "2-string"; value: string },
+          {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          }
+        >(undefined)(
+          filter.optionalClassOrClassOrStringProperty,
+          value.optionalClassOrClassOrStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.optionalIriOrLiteralProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          rdfjs.NamedNode | rdfjs.Literal,
+          {
+            readonly on?: {
+              readonly NamedNode?: $NamedNodeFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          }
+        >(undefined)(
+          filter.optionalIriOrLiteralProperty,
+          value.optionalIriOrLiteralProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.optionalIriOrStringProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          rdfjs.NamedNode | string,
+          {
+            readonly on?: {
+              readonly object?: $NamedNodeFilter;
+              readonly string?: $StringFilter;
+            };
+          }
+        >(undefined)(
+          filter.optionalIriOrStringProperty,
+          value.optionalIriOrStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.requiredClassOrClassOrStringProperty !== "undefined") {
+      if (
+        !undefined(
+          filter.requiredClassOrClassOrStringProperty,
+          value.requiredClassOrClassOrStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.requiredIriOrLiteralProperty !== "undefined") {
+      if (
+        !undefined(
+          filter.requiredIriOrLiteralProperty,
+          value.requiredIriOrLiteralProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.requiredIriOrStringProperty !== "undefined") {
+      if (
+        !undefined(
+          filter.requiredIriOrStringProperty,
+          value.requiredIriOrStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.setClassOrClassOrStringProperty !== "undefined") {
+      if (
+        !$filterArray<
+          | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+          | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
+          | { type: "2-string"; value: string },
+          {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          }
+        >(undefined)(
+          filter.setClassOrClassOrStringProperty,
+          value.setClassOrClassOrStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.setIriOrLiteralProperty !== "undefined") {
+      if (
+        !$filterArray<
+          rdfjs.NamedNode | rdfjs.Literal,
+          {
+            readonly on?: {
+              readonly NamedNode?: $NamedNodeFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          }
+        >(undefined)(
+          filter.setIriOrLiteralProperty,
+          value.setIriOrLiteralProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.setIriOrStringProperty !== "undefined") {
+      if (
+        !$filterArray<
+          rdfjs.NamedNode | string,
+          {
+            readonly on?: {
+              readonly object?: $NamedNodeFilter;
+              readonly string?: $StringFilter;
+            };
+          }
+        >(undefined)(
+          filter.setIriOrStringProperty,
+          value.setIriOrStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly optionalClassOrClassOrStringProperty?: $MaybeFilter<{
@@ -6435,6 +6665,118 @@ export class TermPropertiesClass {
 }
 
 export namespace TermPropertiesClass {
+  export function $filter(
+    filter: TermPropertiesClass.$Filter,
+    value: TermPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.blankNodeTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<rdfjs.BlankNode, $BlankNodeFilter>($filterBlankNode)(
+          filter.blankNodeTermProperty,
+          value.blankNodeTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.booleanTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<boolean, $BooleanFilter>($filterBoolean)(
+          filter.booleanTermProperty,
+          value.booleanTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<Date, $DateFilter>($filterDate)(
+          filter.dateTermProperty,
+          value.dateTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateTimeTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<Date, $DateFilter>($filterDate)(
+          filter.dateTimeTermProperty,
+          value.dateTimeTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.iriTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode)(
+          filter.iriTermProperty,
+          value.iriTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.literalTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<rdfjs.Literal, $LiteralFilter>(undefined)(
+          filter.literalTermProperty,
+          value.literalTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.numberTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<number, $NumberFilter>($filterNumber)(
+          filter.numberTermProperty,
+          value.numberTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.stringTermProperty !== "undefined") {
+      if (
+        !$filterMaybe<string, $StringFilter>($filterString)(
+          filter.stringTermProperty,
+          value.stringTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.termProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
+          $TermFilter
+        >(undefined)(filter.termProperty, value.termProperty)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly blankNodeTermProperty?: $MaybeFilter<$BlankNodeFilter>;
@@ -7635,6 +7977,25 @@ export class Sha256IriIdentifierClass {
 }
 
 export namespace Sha256IriIdentifierClass {
+  export function $filter(
+    filter: Sha256IriIdentifierClass.$Filter,
+    value: Sha256IriIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.sha256IriProperty !== "undefined") {
+      if (!$filterString(filter.sha256IriProperty, value.sha256IriProperty)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $NamedNodeFilter;
     readonly sha256IriProperty?: $StringFilter;
@@ -8121,6 +8482,32 @@ export class RecursiveClassUnionMember2 {
 }
 
 export namespace RecursiveClassUnionMember2 {
+  export function $filter(
+    filter: RecursiveClassUnionMember2.$Filter,
+    value: RecursiveClassUnionMember2,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.recursiveClassUnionMember2Property !== "undefined") {
+      if (
+        !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
+          undefined,
+        )(
+          filter.recursiveClassUnionMember2Property,
+          value.recursiveClassUnionMember2Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly recursiveClassUnionMember2Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
@@ -8551,6 +8938,32 @@ export class RecursiveClassUnionMember1 {
 }
 
 export namespace RecursiveClassUnionMember1 {
+  export function $filter(
+    filter: RecursiveClassUnionMember1.$Filter,
+    value: RecursiveClassUnionMember1,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.recursiveClassUnionMember1Property !== "undefined") {
+      if (
+        !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
+          undefined,
+        )(
+          filter.recursiveClassUnionMember1Property,
+          value.recursiveClassUnionMember1Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly recursiveClassUnionMember1Property?: $MaybeFilter<RecursiveClassUnion.$Filter>;
@@ -8992,6 +9405,37 @@ export class PropertyVisibilitiesClass {
 }
 
 export namespace PropertyVisibilitiesClass {
+  export function $filter(
+    filter: PropertyVisibilitiesClass.$Filter,
+    value: PropertyVisibilitiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.privateProperty !== "undefined") {
+      if (!$filterString(filter.privateProperty, value.privateProperty)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.protectedProperty !== "undefined") {
+      if (!$filterString(filter.protectedProperty, value.protectedProperty)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.publicProperty !== "undefined") {
+      if (!$filterString(filter.publicProperty, value.publicProperty)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly privateProperty?: $StringFilter;
@@ -9746,6 +10190,63 @@ export class PropertyCardinalitiesClass {
 }
 
 export namespace PropertyCardinalitiesClass {
+  export function $filter(
+    filter: PropertyCardinalitiesClass.$Filter,
+    value: PropertyCardinalitiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.emptyStringSetProperty !== "undefined") {
+      if (
+        !$filterArray<string, $StringFilter>($filterString)(
+          filter.emptyStringSetProperty,
+          value.emptyStringSetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.nonEmptyStringSetProperty !== "undefined") {
+      if (
+        !$filterArray<string, $StringFilter>($filterString)(
+          filter.nonEmptyStringSetProperty,
+          value.nonEmptyStringSetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.optionalStringProperty !== "undefined") {
+      if (
+        !$filterMaybe<string, $StringFilter>($filterString)(
+          filter.optionalStringProperty,
+          value.optionalStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.requiredStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.requiredStringProperty,
+          value.requiredStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly emptyStringSetProperty?: $ArrayFilter<$StringFilter>;
@@ -10538,6 +11039,30 @@ export namespace PartialInterfaceUnionMember2 {
       );
   }
 
+  export function $filter(
+    filter: PartialInterfaceUnionMember2.$Filter,
+    value: PartialInterfaceUnionMember2,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -11117,6 +11642,30 @@ export namespace PartialInterfaceUnionMember1 {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: PartialInterfaceUnionMember1.$Filter,
+    value: PartialInterfaceUnionMember1,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -11771,6 +12320,30 @@ export class PartialClassUnionMember2 {
 }
 
 export namespace PartialClassUnionMember2 {
+  export function $filter(
+    filter: PartialClassUnionMember2.$Filter,
+    value: PartialClassUnionMember2,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -12329,6 +12902,30 @@ export class PartialClassUnionMember1 {
 }
 
 export namespace PartialClassUnionMember1 {
+  export function $filter(
+    filter: PartialClassUnionMember1.$Filter,
+    value: PartialClassUnionMember1,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -12917,6 +13514,37 @@ export class OrderedPropertiesClass {
 }
 
 export namespace OrderedPropertiesClass {
+  export function $filter(
+    filter: OrderedPropertiesClass.$Filter,
+    value: OrderedPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.orderedPropertyC !== "undefined") {
+      if (!$filterString(filter.orderedPropertyC, value.orderedPropertyC)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.orderedPropertyB !== "undefined") {
+      if (!$filterString(filter.orderedPropertyB, value.orderedPropertyB)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.orderedPropertyA !== "undefined") {
+      if (!$filterString(filter.orderedPropertyA, value.orderedPropertyA)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly orderedPropertyC?: $StringFilter;
@@ -13551,6 +14179,22 @@ export class NonClass {
 }
 
 export namespace NonClass {
+  export function $filter(filter: NonClass.$Filter, value: NonClass): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.nonClassProperty !== "undefined") {
+      if (!$filterString(filter.nonClassProperty, value.nonClassProperty)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly nonClassProperty?: $StringFilter;
@@ -13980,6 +14624,30 @@ export class NoRdfTypeClassUnionMember2 {
 }
 
 export namespace NoRdfTypeClassUnionMember2 {
+  export function $filter(
+    filter: NoRdfTypeClassUnionMember2.$Filter,
+    value: NoRdfTypeClassUnionMember2,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.noRdfTypeClassUnionMember2Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.noRdfTypeClassUnionMember2Property,
+          value.noRdfTypeClassUnionMember2Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly noRdfTypeClassUnionMember2Property?: $StringFilter;
@@ -14449,6 +15117,30 @@ export class NoRdfTypeClassUnionMember1 {
 }
 
 export namespace NoRdfTypeClassUnionMember1 {
+  export function $filter(
+    filter: NoRdfTypeClassUnionMember1.$Filter,
+    value: NoRdfTypeClassUnionMember1,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.noRdfTypeClassUnionMember1Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.noRdfTypeClassUnionMember1Property,
+          value.noRdfTypeClassUnionMember1Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly noRdfTypeClassUnionMember1Property?: $StringFilter;
@@ -15084,6 +15776,51 @@ export class MutablePropertiesClass {
 }
 
 export namespace MutablePropertiesClass {
+  export function $filter(
+    filter: MutablePropertiesClass.$Filter,
+    value: MutablePropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.mutableListProperty !== "undefined") {
+      if (
+        !$filterMaybe<string[], $ArrayFilter<$StringFilter>>(
+          $filterArray<string, $StringFilter>($filterString),
+        )(filter.mutableListProperty, value.mutableListProperty)
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.mutableSetProperty !== "undefined") {
+      if (
+        !$filterArray<string, $StringFilter>($filterString)(
+          filter.mutableSetProperty,
+          value.mutableSetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.mutableStringProperty !== "undefined") {
+      if (
+        !$filterMaybe<string, $StringFilter>($filterString)(
+          filter.mutableStringProperty,
+          value.mutableStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly mutableListProperty?: $MaybeFilter<$ArrayFilter<$StringFilter>>;
@@ -16180,6 +16917,53 @@ export class ListPropertiesClass {
 }
 
 export namespace ListPropertiesClass {
+  export function $filter(
+    filter: ListPropertiesClass.$Filter,
+    value: ListPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.iriListProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          readonly rdfjs.NamedNode[],
+          $ArrayFilter<$NamedNodeFilter>
+        >($filterArray<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode))(
+          filter.iriListProperty,
+          value.iriListProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.objectListProperty !== "undefined") {
+      if (
+        !$filterMaybe<readonly NonClass[], $ArrayFilter<NonClass.$Filter>>(
+          $filterArray<NonClass, NonClass.$Filter>(NonClass.$filter),
+        )(filter.objectListProperty, value.objectListProperty)
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.stringListProperty !== "undefined") {
+      if (
+        !$filterMaybe<readonly string[], $ArrayFilter<$StringFilter>>(
+          $filterArray<string, $StringFilter>($filterString),
+        )(filter.stringListProperty, value.stringListProperty)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly iriListProperty?: $MaybeFilter<$ArrayFilter<$NamedNodeFilter>>;
@@ -17166,6 +17950,30 @@ export namespace PartialInterface {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: PartialInterface.$Filter,
+    value: PartialInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -18537,6 +19345,243 @@ export namespace LazyPropertiesInterface {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: LazyPropertiesInterface.$Filter,
+    value: LazyPropertiesInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.optionalLazyToResolvedInterfaceProperty !== "undefined") {
+      if (
+        !((
+          filter: $MaybeFilter<$DefaultPartial.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifierInterface
+          >,
+        ) =>
+          $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+            $DefaultPartial.$filter,
+          )(filter, value.partial))(
+          filter.optionalLazyToResolvedInterfaceProperty,
+          value.optionalLazyToResolvedInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalLazyToResolvedInterfaceUnionProperty !== "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<$DefaultPartial.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedInterfaceUnion.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedInterfaceUnion
+          >,
+        ) =>
+          $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+            $DefaultPartial.$filter,
+          )(filter, value.partial))(
+          filter.optionalLazyToResolvedInterfaceUnionProperty,
+          value.optionalLazyToResolvedInterfaceUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalLazyToResolvedIriIdentifierInterfaceProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedIriIdentifierInterface.$Identifier,
+            $NamedDefaultPartial,
+            LazilyResolvedIriIdentifierInterface
+          >,
+        ) =>
+          $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
+            $NamedDefaultPartial.$filter,
+          )(filter, value.partial))(
+          filter.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+          value.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalPartialInterfaceToResolvedInterfaceProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<PartialInterface.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+            PartialInterface,
+            LazilyResolvedBlankNodeOrIriIdentifierInterface
+          >,
+        ) =>
+          $filterMaybe<PartialInterface, PartialInterface.$Filter>(
+            PartialInterface.$filter,
+          )(filter, value.partial))(
+          filter.optionalPartialInterfaceToResolvedInterfaceProperty,
+          value.optionalPartialInterfaceToResolvedInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<PartialInterface.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedInterfaceUnion.$Identifier,
+            PartialInterface,
+            LazilyResolvedInterfaceUnion
+          >,
+        ) =>
+          $filterMaybe<PartialInterface, PartialInterface.$Filter>(
+            PartialInterface.$filter,
+          )(filter, value.partial))(
+          filter.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+          value.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<PartialInterfaceUnion.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedInterfaceUnion.$Identifier,
+            PartialInterfaceUnion,
+            LazilyResolvedInterfaceUnion
+          >,
+        ) =>
+          $filterMaybe<PartialInterfaceUnion, PartialInterfaceUnion.$Filter>(
+            undefined,
+          )(filter, value.partial))(
+          filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+          value.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.requiredLazyToResolvedInterfaceProperty !== "undefined") {
+      if (
+        !((
+          filter: $DefaultPartial.$Filter,
+          value: $LazyObject<
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifierInterface
+          >,
+        ) => $DefaultPartial.$filter(filter, value.partial))(
+          filter.requiredLazyToResolvedInterfaceProperty,
+          value.requiredLazyToResolvedInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.requiredPartialInterfaceToResolvedInterfaceProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: PartialInterface.$Filter,
+          value: $LazyObject<
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+            PartialInterface,
+            LazilyResolvedBlankNodeOrIriIdentifierInterface
+          >,
+        ) => PartialInterface.$filter(filter, value.partial))(
+          filter.requiredPartialInterfaceToResolvedInterfaceProperty,
+          value.requiredPartialInterfaceToResolvedInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.setLazyToResolvedInterfaceProperty !== "undefined") {
+      if (
+        !((
+          filter: $ArrayFilter<$DefaultPartial.$Filter>,
+          value: $LazyObjectSet<
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifierInterface
+          >,
+        ) =>
+          $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+            $DefaultPartial.$filter,
+          )(filter, value.partials))(
+          filter.setLazyToResolvedInterfaceProperty,
+          value.setLazyToResolvedInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.setPartialInterfaceToResolvedInterfaceProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $ArrayFilter<PartialInterface.$Filter>,
+          value: $LazyObjectSet<
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+            PartialInterface,
+            LazilyResolvedBlankNodeOrIriIdentifierInterface
+          >,
+        ) =>
+          $filterArray<PartialInterface, PartialInterface.$Filter>(
+            PartialInterface.$filter,
+          )(filter, value.partials))(
+          filter.setPartialInterfaceToResolvedInterfaceProperty,
+          value.setPartialInterfaceToResolvedInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -20669,6 +21714,30 @@ export class PartialClass {
 }
 
 export namespace PartialClass {
+  export function $filter(
+    filter: PartialClass.$Filter,
+    value: PartialClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -22113,6 +23182,239 @@ export class LazyPropertiesClass {
 }
 
 export namespace LazyPropertiesClass {
+  export function $filter(
+    filter: LazyPropertiesClass.$Filter,
+    value: LazyPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.optionalLazyToResolvedClassProperty !== "undefined") {
+      if (
+        !((
+          filter: $MaybeFilter<$DefaultPartial.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifierClass
+          >,
+        ) =>
+          $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+            $DefaultPartial.$filter,
+          )(filter, value.partial))(
+          filter.optionalLazyToResolvedClassProperty,
+          value.optionalLazyToResolvedClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalLazyToResolvedClassUnionProperty !== "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<$DefaultPartial.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedClassUnion.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedClassUnion
+          >,
+        ) =>
+          $filterMaybe<$DefaultPartial, $DefaultPartial.$Filter>(
+            $DefaultPartial.$filter,
+          )(filter, value.partial))(
+          filter.optionalLazyToResolvedClassUnionProperty,
+          value.optionalLazyToResolvedClassUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalLazyToResolvedIriIdentifierClassProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<$NamedDefaultPartial.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedIriIdentifierClass.$Identifier,
+            $NamedDefaultPartial,
+            LazilyResolvedIriIdentifierClass
+          >,
+        ) =>
+          $filterMaybe<$NamedDefaultPartial, $NamedDefaultPartial.$Filter>(
+            $NamedDefaultPartial.$filter,
+          )(filter, value.partial))(
+          filter.optionalLazyToResolvedIriIdentifierClassProperty,
+          value.optionalLazyToResolvedIriIdentifierClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalPartialClassToResolvedClassProperty !== "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<PartialClass.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+            PartialClass,
+            LazilyResolvedBlankNodeOrIriIdentifierClass
+          >,
+        ) =>
+          $filterMaybe<PartialClass, PartialClass.$Filter>(
+            PartialClass.$filter,
+          )(filter, value.partial))(
+          filter.optionalPartialClassToResolvedClassProperty,
+          value.optionalPartialClassToResolvedClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalPartialClassToResolvedClassUnionProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<PartialClass.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedClassUnion.$Identifier,
+            PartialClass,
+            LazilyResolvedClassUnion
+          >,
+        ) =>
+          $filterMaybe<PartialClass, PartialClass.$Filter>(
+            PartialClass.$filter,
+          )(filter, value.partial))(
+          filter.optionalPartialClassToResolvedClassUnionProperty,
+          value.optionalPartialClassToResolvedClassUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.optionalPartialClassUnionToResolvedClassUnionProperty !==
+      "undefined"
+    ) {
+      if (
+        !((
+          filter: $MaybeFilter<PartialClassUnion.$Filter>,
+          value: $LazyObjectOption<
+            LazilyResolvedClassUnion.$Identifier,
+            PartialClassUnion,
+            LazilyResolvedClassUnion
+          >,
+        ) =>
+          $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(undefined)(
+            filter,
+            value.partial,
+          ))(
+          filter.optionalPartialClassUnionToResolvedClassUnionProperty,
+          value.optionalPartialClassUnionToResolvedClassUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.requiredLazyToResolvedClassProperty !== "undefined") {
+      if (
+        !((
+          filter: $DefaultPartial.$Filter,
+          value: $LazyObject<
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifierClass
+          >,
+        ) => $DefaultPartial.$filter(filter, value.partial))(
+          filter.requiredLazyToResolvedClassProperty,
+          value.requiredLazyToResolvedClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.requiredPartialClassToResolvedClassProperty !== "undefined"
+    ) {
+      if (
+        !((
+          filter: PartialClass.$Filter,
+          value: $LazyObject<
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+            PartialClass,
+            LazilyResolvedBlankNodeOrIriIdentifierClass
+          >,
+        ) => PartialClass.$filter(filter, value.partial))(
+          filter.requiredPartialClassToResolvedClassProperty,
+          value.requiredPartialClassToResolvedClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.setLazyToResolvedClassProperty !== "undefined") {
+      if (
+        !((
+          filter: $ArrayFilter<$DefaultPartial.$Filter>,
+          value: $LazyObjectSet<
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+            $DefaultPartial,
+            LazilyResolvedBlankNodeOrIriIdentifierClass
+          >,
+        ) =>
+          $filterArray<$DefaultPartial, $DefaultPartial.$Filter>(
+            $DefaultPartial.$filter,
+          )(filter, value.partials))(
+          filter.setLazyToResolvedClassProperty,
+          value.setLazyToResolvedClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.setPartialClassToResolvedClassProperty !== "undefined") {
+      if (
+        !((
+          filter: $ArrayFilter<PartialClass.$Filter>,
+          value: $LazyObjectSet<
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+            PartialClass,
+            LazilyResolvedBlankNodeOrIriIdentifierClass
+          >,
+        ) =>
+          $filterArray<PartialClass, PartialClass.$Filter>(
+            PartialClass.$filter,
+          )(filter, value.partials))(
+          filter.setPartialClassToResolvedClassProperty,
+          value.setPartialClassToResolvedClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly optionalLazyToResolvedClassProperty?: $MaybeFilter<$DefaultPartial.$Filter>;
@@ -23887,6 +25189,30 @@ export namespace LazilyResolvedIriIdentifierInterface {
       );
   }
 
+  export function $filter(
+    filter: LazilyResolvedIriIdentifierInterface.$Filter,
+    value: LazilyResolvedIriIdentifierInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $NamedNodeFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -24431,6 +25757,30 @@ export class LazilyResolvedIriIdentifierClass {
 }
 
 export namespace LazilyResolvedIriIdentifierClass {
+  export function $filter(
+    filter: LazilyResolvedIriIdentifierClass.$Filter,
+    value: LazilyResolvedIriIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $NamedNodeFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -24836,6 +26186,30 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnionMember2.$Filter,
+    value: LazilyResolvedInterfaceUnionMember2,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -25418,6 +26792,30 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnionMember1.$Filter,
+    value: LazilyResolvedInterfaceUnionMember1,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -26073,6 +27471,30 @@ export class LazilyResolvedClassUnionMember2 {
 }
 
 export namespace LazilyResolvedClassUnionMember2 {
+  export function $filter(
+    filter: LazilyResolvedClassUnionMember2.$Filter,
+    value: LazilyResolvedClassUnionMember2,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -26630,6 +28052,30 @@ export class LazilyResolvedClassUnionMember1 {
 }
 
 export namespace LazilyResolvedClassUnionMember1 {
+  export function $filter(
+    filter: LazilyResolvedClassUnionMember1.$Filter,
+    value: LazilyResolvedClassUnionMember1,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -27117,6 +28563,30 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
+    value: LazilyResolvedBlankNodeOrIriIdentifierInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -27785,6 +29255,30 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
 }
 
 export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
+  export function $filter(
+    filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
+    value: LazilyResolvedBlankNodeOrIriIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.lazilyResolvedStringProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.lazilyResolvedStringProperty,
+          value.lazilyResolvedStringProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly lazilyResolvedStringProperty?: $StringFilter;
@@ -28358,6 +29852,30 @@ export class LanguageInPropertiesClass {
 }
 
 export namespace LanguageInPropertiesClass {
+  export function $filter(
+    filter: LanguageInPropertiesClass.$Filter,
+    value: LanguageInPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.languageInLiteralProperty !== "undefined") {
+      if (
+        !$filterArray<rdfjs.Literal, $LiteralFilter>(undefined)(
+          filter.languageInLiteralProperty,
+          value.languageInLiteralProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly languageInLiteralProperty?: $ArrayFilter<$LiteralFilter>;
@@ -28969,6 +30487,39 @@ export class JsPrimitiveUnionPropertyClass {
 }
 
 export namespace JsPrimitiveUnionPropertyClass {
+  export function $filter(
+    filter: JsPrimitiveUnionPropertyClass.$Filter,
+    value: JsPrimitiveUnionPropertyClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.jsPrimitiveUnionProperty !== "undefined") {
+      if (
+        !$filterArray<
+          boolean | number | string,
+          {
+            readonly on?: {
+              readonly boolean?: $BooleanFilter;
+              readonly number?: $NumberFilter;
+              readonly string?: $StringFilter;
+            };
+          }
+        >(undefined)(
+          filter.jsPrimitiveUnionProperty,
+          value.jsPrimitiveUnionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly jsPrimitiveUnionProperty?: $ArrayFilter<{
@@ -29459,6 +31010,19 @@ export namespace IriIdentifierInterface {
       );
   }
 
+  export function $filter(
+    filter: IriIdentifierInterface.$Filter,
+    value: IriIdentifierInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $NamedNodeFilter };
 
   export function $fromJson(
@@ -29820,6 +31384,19 @@ export class IriIdentifierClass {
 }
 
 export namespace IriIdentifierClass {
+  export function $filter(
+    filter: IriIdentifierClass.$Filter,
+    value: IriIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $NamedNodeFilter };
 
   export function $fromJson(
@@ -30085,6 +31662,32 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           type: "Property" as const,
         })),
       );
+  }
+
+  export function $filter(
+    filter: InterfaceUnionMemberCommonParentStatic.$Filter,
+    value: InterfaceUnionMemberCommonParent,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.interfaceUnionMemberCommonParentProperty !== "undefined"
+    ) {
+      if (
+        !$filterString(
+          filter.interfaceUnionMemberCommonParentProperty,
+          value.interfaceUnionMemberCommonParentProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -30521,6 +32124,28 @@ export namespace InterfaceUnionMember2 {
           type: "Property" as const,
         })),
     );
+  }
+
+  export function $filter(
+    filter: InterfaceUnionMember2.$Filter,
+    value: InterfaceUnionMember2,
+  ): boolean {
+    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.interfaceUnionMember2Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.interfaceUnionMember2Property,
+          value.interfaceUnionMember2Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -31105,6 +32730,28 @@ export namespace InterfaceUnionMember1 {
           type: "Property" as const,
         })),
     );
+  }
+
+  export function $filter(
+    filter: InterfaceUnionMember1.$Filter,
+    value: InterfaceUnionMember1,
+  ): boolean {
+    if (!InterfaceUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.interfaceUnionMember1Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.interfaceUnionMember1Property,
+          value.interfaceUnionMember1Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -31699,6 +33346,25 @@ export namespace Interface {
       );
   }
 
+  export function $filter(
+    filter: Interface.$Filter,
+    value: Interface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.interfaceProperty !== "undefined") {
+      if (!$filterString(filter.interfaceProperty, value.interfaceProperty)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly interfaceProperty?: $StringFilter;
@@ -32216,6 +33882,29 @@ export class IndirectRecursiveHelperClass {
 }
 
 export namespace IndirectRecursiveHelperClass {
+  export function $filter(
+    filter: IndirectRecursiveHelperClass.$Filter,
+    value: IndirectRecursiveHelperClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.indirectRecursiveProperty !== "undefined") {
+      if (
+        !$filterMaybe<IndirectRecursiveClass, IndirectRecursiveClass.$Filter>(
+          IndirectRecursiveClass.$filter,
+        )(filter.indirectRecursiveProperty, value.indirectRecursiveProperty)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly indirectRecursiveProperty?: $MaybeFilter<IndirectRecursiveClass.$Filter>;
@@ -32638,6 +34327,33 @@ export class IndirectRecursiveClass {
 }
 
 export namespace IndirectRecursiveClass {
+  export function $filter(
+    filter: IndirectRecursiveClass.$Filter,
+    value: IndirectRecursiveClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.indirectRecursiveHelperProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          IndirectRecursiveHelperClass,
+          IndirectRecursiveHelperClass.$Filter
+        >(IndirectRecursiveHelperClass.$filter)(
+          filter.indirectRecursiveHelperProperty,
+          value.indirectRecursiveHelperProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly indirectRecursiveHelperProperty?: $MaybeFilter<IndirectRecursiveHelperClass.$Filter>;
@@ -33219,6 +34935,77 @@ export class InPropertiesClass {
 }
 
 export namespace InPropertiesClass {
+  export function $filter(
+    filter: InPropertiesClass.$Filter,
+    value: InPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.inBooleansProperty !== "undefined") {
+      if (
+        !$filterMaybe<true, $BooleanFilter>($filterBoolean)(
+          filter.inBooleansProperty,
+          value.inBooleansProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.inDateTimesProperty !== "undefined") {
+      if (
+        !$filterMaybe<Date, $DateFilter>($filterDate)(
+          filter.inDateTimesProperty,
+          value.inDateTimesProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.inIrisProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          rdfjs.NamedNode<
+            | "http://example.com/InPropertiesIri1"
+            | "http://example.com/InPropertiesIri2"
+          >,
+          $NamedNodeFilter
+        >($filterNamedNode)(filter.inIrisProperty, value.inIrisProperty)
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.inNumbersProperty !== "undefined") {
+      if (
+        !$filterMaybe<1 | 2, $NumberFilter>($filterNumber)(
+          filter.inNumbersProperty,
+          value.inNumbersProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.inStringsProperty !== "undefined") {
+      if (
+        !$filterMaybe<"text" | "html", $StringFilter>($filterString)(
+          filter.inStringsProperty,
+          value.inStringsProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly inBooleansProperty?: $MaybeFilter<$BooleanFilter>;
@@ -34138,6 +35925,30 @@ export class InIdentifierClass {
 }
 
 export namespace InIdentifierClass {
+  export function $filter(
+    filter: InIdentifierClass.$Filter,
+    value: InIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterNamedNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.inIdentifierProperty !== "undefined") {
+      if (
+        !$filterMaybe<string, $StringFilter>($filterString)(
+          filter.inIdentifierProperty,
+          value.inIdentifierProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $NamedNodeFilter;
     readonly inIdentifierProperty?: $MaybeFilter<$StringFilter>;
@@ -34680,6 +36491,30 @@ export abstract class IdentifierOverride1Class {
 }
 
 export namespace IdentifierOverride1ClassStatic {
+  export function $filter(
+    filter: IdentifierOverride1ClassStatic.$Filter,
+    value: IdentifierOverride1Class,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.identifierOverrideProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.identifierOverrideProperty,
+          value.identifierOverrideProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly identifierOverrideProperty?: $StringFilter;
@@ -35035,6 +36870,17 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
 }
 
 export namespace IdentifierOverride2ClassStatic {
+  export function $filter(
+    filter: IdentifierOverride2ClassStatic.$Filter,
+    value: IdentifierOverride2Class,
+  ): boolean {
+    if (!IdentifierOverride1ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = IdentifierOverride1ClassStatic.$Filter;
   export type $Identifier = rdfjs.NamedNode;
 
@@ -35316,6 +37162,17 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
 }
 
 export namespace IdentifierOverride3ClassStatic {
+  export function $filter(
+    filter: IdentifierOverride3ClassStatic.$Filter,
+    value: IdentifierOverride3Class,
+  ): boolean {
+    if (!IdentifierOverride2ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = IdentifierOverride2ClassStatic.$Filter;
 
   export function $fromJson(
@@ -35740,6 +37597,17 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
 }
 
 export namespace IdentifierOverride4ClassStatic {
+  export function $filter(
+    filter: IdentifierOverride4ClassStatic.$Filter,
+    value: IdentifierOverride4Class,
+  ): boolean {
+    if (!IdentifierOverride3ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = IdentifierOverride3ClassStatic.$Filter;
 
   export function $fromJson(
@@ -36157,6 +38025,17 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
 }
 
 export namespace IdentifierOverride5Class {
+  export function $filter(
+    filter: IdentifierOverride5Class.$Filter,
+    value: IdentifierOverride5Class,
+  ): boolean {
+    if (!IdentifierOverride4ClassStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = IdentifierOverride4ClassStatic.$Filter;
 
   export function $fromJson(
@@ -36641,6 +38520,38 @@ export class HasValuePropertiesClass {
 }
 
 export namespace HasValuePropertiesClass {
+  export function $filter(
+    filter: HasValuePropertiesClass.$Filter,
+    value: HasValuePropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.hasIriValueProperty !== "undefined") {
+      if (
+        !$filterNamedNode(filter.hasIriValueProperty, value.hasIriValueProperty)
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.hasLiteralValueProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.hasLiteralValueProperty,
+          value.hasLiteralValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly hasIriValueProperty?: $NamedNodeFilter;
@@ -37204,6 +39115,30 @@ export class FlattenClassUnionMember3 {
 }
 
 export namespace FlattenClassUnionMember3 {
+  export function $filter(
+    filter: FlattenClassUnionMember3.$Filter,
+    value: FlattenClassUnionMember3,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.flattenClassUnionMember3Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.flattenClassUnionMember3Property,
+          value.flattenClassUnionMember3Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly flattenClassUnionMember3Property?: $StringFilter;
@@ -37777,6 +39712,30 @@ export class ExternClassPropertyClass {
 }
 
 export namespace ExternClassPropertyClass {
+  export function $filter(
+    filter: ExternClassPropertyClass.$Filter,
+    value: ExternClassPropertyClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.externClassProperty !== "undefined") {
+      if (
+        !$filterMaybe<ExternClass, ExternClass.$Filter>(ExternClass.$filter)(
+          filter.externClassProperty,
+          value.externClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly externClassProperty?: $MaybeFilter<ExternClass.$Filter>;
@@ -38241,6 +40200,30 @@ export class ExplicitRdfTypeClass {
 }
 
 export namespace ExplicitRdfTypeClass {
+  export function $filter(
+    filter: ExplicitRdfTypeClass.$Filter,
+    value: ExplicitRdfTypeClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.explicitRdfTypeProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.explicitRdfTypeProperty,
+          value.explicitRdfTypeProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly explicitRdfTypeProperty?: $StringFilter;
@@ -38801,6 +40784,30 @@ export class ExplicitFromToRdfTypesClass {
 }
 
 export namespace ExplicitFromToRdfTypesClass {
+  export function $filter(
+    filter: ExplicitFromToRdfTypesClass.$Filter,
+    value: ExplicitFromToRdfTypesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.explicitFromToRdfTypesProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.explicitFromToRdfTypesProperty,
+          value.explicitFromToRdfTypesProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly explicitFromToRdfTypesProperty?: $StringFilter;
@@ -39373,6 +41380,29 @@ export class DirectRecursiveClass {
 }
 
 export namespace DirectRecursiveClass {
+  export function $filter(
+    filter: DirectRecursiveClass.$Filter,
+    value: DirectRecursiveClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.directRecursiveProperty !== "undefined") {
+      if (
+        !$filterMaybe<DirectRecursiveClass, DirectRecursiveClass.$Filter>(
+          DirectRecursiveClass.$filter,
+        )(filter.directRecursiveProperty, value.directRecursiveProperty)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly directRecursiveProperty?: $MaybeFilter<DirectRecursiveClass.$Filter>;
@@ -39994,6 +42024,85 @@ export class DefaultValuePropertiesClass {
 }
 
 export namespace DefaultValuePropertiesClass {
+  export function $filter(
+    filter: DefaultValuePropertiesClass.$Filter,
+    value: DefaultValuePropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateDefaultValueProperty !== "undefined") {
+      if (
+        !$filterDate(
+          filter.dateDefaultValueProperty,
+          value.dateDefaultValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateTimeDefaultValueProperty !== "undefined") {
+      if (
+        !$filterDate(
+          filter.dateTimeDefaultValueProperty,
+          value.dateTimeDefaultValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.falseBooleanDefaultValueProperty !== "undefined") {
+      if (
+        !$filterBoolean(
+          filter.falseBooleanDefaultValueProperty,
+          value.falseBooleanDefaultValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.numberDefaultValueProperty !== "undefined") {
+      if (
+        !$filterNumber(
+          filter.numberDefaultValueProperty,
+          value.numberDefaultValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.stringDefaultValueProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.stringDefaultValueProperty,
+          value.stringDefaultValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.trueBooleanDefaultValueProperty !== "undefined") {
+      if (
+        !$filterBoolean(
+          filter.trueBooleanDefaultValueProperty,
+          value.trueBooleanDefaultValueProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly dateDefaultValueProperty?: $DateFilter;
@@ -41284,6 +43393,89 @@ export class DateUnionPropertiesClass {
 }
 
 export namespace DateUnionPropertiesClass {
+  export function $filter(
+    filter: DateUnionPropertiesClass.$Filter,
+    value: DateUnionPropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateOrDateTimeProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          { type: "date"; value: Date } | { type: "dateTime"; value: Date },
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly dateTime?: $DateFilter;
+            };
+          }
+        >(undefined)(
+          filter.dateOrDateTimeProperty,
+          value.dateOrDateTimeProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateOrStringProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          { type: "date"; value: Date } | { type: "string"; value: string },
+          {
+            readonly on?: {
+              readonly date?: $DateFilter;
+              readonly string?: $StringFilter;
+            };
+          }
+        >(undefined)(filter.dateOrStringProperty, value.dateOrStringProperty)
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.dateTimeOrDateProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          { type: "dateTime"; value: Date } | { type: "date"; value: Date },
+          {
+            readonly on?: {
+              readonly dateTime?: $DateFilter;
+              readonly date?: $DateFilter;
+            };
+          }
+        >(undefined)(
+          filter.dateTimeOrDateProperty,
+          value.dateTimeOrDateProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.stringOrDateProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          { type: "string"; value: string } | { type: "date"; value: Date },
+          {
+            readonly on?: {
+              readonly string?: $StringFilter;
+              readonly date?: $DateFilter;
+            };
+          }
+        >(undefined)(filter.stringOrDateProperty, value.stringOrDateProperty)
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly dateOrDateTimeProperty?: $MaybeFilter<{
@@ -43158,6 +45350,160 @@ export class ConvertibleTypePropertiesClass {
 }
 
 export namespace ConvertibleTypePropertiesClass {
+  export function $filter(
+    filter: ConvertibleTypePropertiesClass.$Filter,
+    value: ConvertibleTypePropertiesClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleIriNonEmptySetProperty !== "undefined") {
+      if (
+        !$filterArray<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode)(
+          filter.convertibleIriNonEmptySetProperty,
+          value.convertibleIriNonEmptySetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleIriOptionProperty !== "undefined") {
+      if (
+        !$filterMaybe<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode)(
+          filter.convertibleIriOptionProperty,
+          value.convertibleIriOptionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleIriProperty !== "undefined") {
+      if (
+        !$filterNamedNode(
+          filter.convertibleIriProperty,
+          value.convertibleIriProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleIriSetProperty !== "undefined") {
+      if (
+        !$filterArray<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode)(
+          filter.convertibleIriSetProperty,
+          value.convertibleIriSetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleLiteralNonEmptySetProperty !== "undefined") {
+      if (
+        !$filterArray<rdfjs.Literal, $LiteralFilter>(undefined)(
+          filter.convertibleLiteralNonEmptySetProperty,
+          value.convertibleLiteralNonEmptySetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleLiteralOptionProperty !== "undefined") {
+      if (
+        !$filterMaybe<rdfjs.Literal, $LiteralFilter>(undefined)(
+          filter.convertibleLiteralOptionProperty,
+          value.convertibleLiteralOptionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleLiteralProperty !== "undefined") {
+      if (
+        !undefined(
+          filter.convertibleLiteralProperty,
+          value.convertibleLiteralProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleLiteralSetProperty !== "undefined") {
+      if (
+        !$filterArray<rdfjs.Literal, $LiteralFilter>(undefined)(
+          filter.convertibleLiteralSetProperty,
+          value.convertibleLiteralSetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleTermNonEmptySetProperty !== "undefined") {
+      if (
+        !$filterArray<
+          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
+          $TermFilter
+        >(undefined)(
+          filter.convertibleTermNonEmptySetProperty,
+          value.convertibleTermNonEmptySetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleTermOptionProperty !== "undefined") {
+      if (
+        !$filterMaybe<
+          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
+          $TermFilter
+        >(undefined)(
+          filter.convertibleTermOptionProperty,
+          value.convertibleTermOptionProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleTermProperty !== "undefined") {
+      if (
+        !undefined(
+          filter.convertibleTermProperty,
+          value.convertibleTermProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    if (typeof filter.convertibleTermSetProperty !== "undefined") {
+      if (
+        !$filterArray<
+          rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
+          $TermFilter
+        >(undefined)(
+          filter.convertibleTermSetProperty,
+          value.convertibleTermSetProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly convertibleIriNonEmptySetProperty?: $ArrayFilter<$NamedNodeFilter>;
@@ -44925,6 +47271,30 @@ export namespace BaseInterfaceWithPropertiesStatic {
       );
   }
 
+  export function $filter(
+    filter: BaseInterfaceWithPropertiesStatic.$Filter,
+    value: BaseInterfaceWithProperties,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.baseInterfaceWithPropertiesProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.baseInterfaceWithPropertiesProperty,
+          value.baseInterfaceWithPropertiesProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly baseInterfaceWithPropertiesProperty?: $StringFilter;
@@ -45521,6 +47891,17 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return BaseInterfaceWithPropertiesStatic.$equals(left, right);
   }
 
+  export function $filter(
+    filter: BaseInterfaceWithoutPropertiesStatic.$Filter,
+    value: BaseInterfaceWithoutProperties,
+  ): boolean {
+    if (!BaseInterfaceWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = BaseInterfaceWithPropertiesStatic.$Filter;
 
   export function $fromJson(
@@ -46003,6 +48384,28 @@ export namespace ConcreteParentInterfaceStatic {
         type: "Property" as const,
       })),
     );
+  }
+
+  export function $filter(
+    filter: ConcreteParentInterfaceStatic.$Filter,
+    value: ConcreteParentInterface,
+  ): boolean {
+    if (!BaseInterfaceWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.concreteParentInterfaceProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.concreteParentInterfaceProperty,
+          value.concreteParentInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -46608,6 +49011,28 @@ export namespace ConcreteChildInterface {
         type: "Property" as const,
       })),
     );
+  }
+
+  export function $filter(
+    filter: ConcreteChildInterface.$Filter,
+    value: ConcreteChildInterface,
+  ): boolean {
+    if (!ConcreteParentInterfaceStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.concreteChildInterfaceProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.concreteChildInterfaceProperty,
+          value.concreteChildInterfaceProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -47301,6 +49726,30 @@ export abstract class AbstractBaseClassWithProperties {
 }
 
 export namespace AbstractBaseClassWithPropertiesStatic {
+  export function $filter(
+    filter: AbstractBaseClassWithPropertiesStatic.$Filter,
+    value: AbstractBaseClassWithProperties,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.abstractBaseClassWithPropertiesProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.abstractBaseClassWithPropertiesProperty,
+          value.abstractBaseClassWithPropertiesProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly abstractBaseClassWithPropertiesProperty?: $StringFilter;
@@ -47664,6 +50113,17 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
 }
 
 export namespace AbstractBaseClassWithoutPropertiesStatic {
+  export function $filter(
+    filter: AbstractBaseClassWithoutPropertiesStatic.$Filter,
+    value: AbstractBaseClassWithoutProperties,
+  ): boolean {
+    if (!AbstractBaseClassWithPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = AbstractBaseClassWithPropertiesStatic.$Filter;
   export type $Identifier = AbstractBaseClassWithPropertiesStatic.$Identifier;
   export const $Identifier = AbstractBaseClassWithPropertiesStatic.$Identifier;
@@ -47987,6 +50447,28 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
 }
 
 export namespace ConcreteParentClassStatic {
+  export function $filter(
+    filter: ConcreteParentClassStatic.$Filter,
+    value: ConcreteParentClass,
+  ): boolean {
+    if (!AbstractBaseClassWithoutPropertiesStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.concreteParentClassProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.concreteParentClassProperty,
+          value.concreteParentClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly concreteParentClassProperty?: $StringFilter;
   } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
@@ -48564,6 +51046,28 @@ export class ConcreteChildClass extends ConcreteParentClass {
 }
 
 export namespace ConcreteChildClass {
+  export function $filter(
+    filter: ConcreteChildClass.$Filter,
+    value: ConcreteChildClass,
+  ): boolean {
+    if (!ConcreteParentClassStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.concreteChildClassProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.concreteChildClassProperty,
+          value.concreteChildClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly concreteChildClassProperty?: $StringFilter;
   } & ConcreteParentClassStatic.$Filter;
@@ -49132,6 +51636,30 @@ export abstract class ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMemberCommonParentStatic {
+  export function $filter(
+    filter: ClassUnionMemberCommonParentStatic.$Filter,
+    value: ClassUnionMemberCommonParent,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.classUnionMemberCommonParentProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.classUnionMemberCommonParentProperty,
+          value.classUnionMemberCommonParentProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly classUnionMemberCommonParentProperty?: $StringFilter;
@@ -49539,6 +52067,28 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember2 {
+  export function $filter(
+    filter: ClassUnionMember2.$Filter,
+    value: ClassUnionMember2,
+  ): boolean {
+    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.classUnionMember2Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.classUnionMember2Property,
+          value.classUnionMember2Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly classUnionMember2Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
@@ -50079,6 +52629,28 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 }
 
 export namespace ClassUnionMember1 {
+  export function $filter(
+    filter: ClassUnionMember1.$Filter,
+    value: ClassUnionMember1,
+  ): boolean {
+    if (!ClassUnionMemberCommonParentStatic.$filter(filter, value)) {
+      return false;
+    }
+
+    if (typeof filter.classUnionMember1Property !== "undefined") {
+      if (
+        !$filterString(
+          filter.classUnionMember1Property,
+          value.classUnionMember1Property,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly classUnionMember1Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
@@ -50568,6 +53140,19 @@ export namespace BlankNodeOrIriIdentifierInterface {
       );
   }
 
+  export function $filter(
+    filter: BlankNodeOrIriIdentifierInterface.$Filter,
+    value: BlankNodeOrIriIdentifierInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromJson(
@@ -50948,6 +53533,19 @@ export class BlankNodeOrIriIdentifierClass {
 }
 
 export namespace BlankNodeOrIriIdentifierClass {
+  export function $filter(
+    filter: BlankNodeOrIriIdentifierClass.$Filter,
+    value: BlankNodeOrIriIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $IdentifierFilter };
 
   export function $fromJson(
@@ -51296,6 +53894,19 @@ export namespace BlankNodeIdentifierInterface {
           }),
         ),
       );
+  }
+
+  export function $filter(
+    filter: BlankNodeIdentifierInterface.$Filter,
+    value: BlankNodeIdentifierInterface,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterBlankNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   export type $Filter = { readonly $identifier?: $BlankNodeFilter };
@@ -51678,6 +54289,19 @@ export class BlankNodeIdentifierClass {
 }
 
 export namespace BlankNodeIdentifierClass {
+  export function $filter(
+    filter: BlankNodeIdentifierClass.$Filter,
+    value: BlankNodeIdentifierClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterBlankNode(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = { readonly $identifier?: $BlankNodeFilter };
 
   export function $fromJson(
@@ -52112,6 +54736,30 @@ export abstract class AbstractBaseClassForExternClass {
 }
 
 export namespace AbstractBaseClassForExternClassStatic {
+  export function $filter(
+    filter: AbstractBaseClassForExternClassStatic.$Filter,
+    value: AbstractBaseClassForExternClass,
+  ): boolean {
+    if (typeof filter.$identifier !== "undefined") {
+      if (!$filterIdentifier(filter.$identifier, value.$identifier)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.abstractBaseClassForExternClassProperty !== "undefined") {
+      if (
+        !$filterString(
+          filter.abstractBaseClassForExternClassProperty,
+          value.abstractBaseClassForExternClassProperty,
+        )
+      ) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly abstractBaseClassForExternClassProperty?: $StringFilter;
