@@ -9,6 +9,11 @@ import { Type } from "./Type.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   readonly kind = "StringType";
+  override readonly filterFunction = `${syntheticNamePrefix}filterString`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}StringFilter`,
+  );
+  override readonly graphqlType = new Type.GraphqlType("graphql.GraphQLString");
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
@@ -28,18 +33,6 @@ export class StringType extends AbstractPrimitiveType<string> {
       });
     });
     return conversions;
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}StringFilter`,
-    );
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -96,6 +89,26 @@ export class StringType extends AbstractPrimitiveType<string> {
 interface ${syntheticNamePrefix}StringFilter {
   readonly maxLength?: number;
   readonly minLength?: number;
+  readonly value?: string;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterString`,
+        `\
+function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}StringFilter, value: string) {
+  if (typeof filter.maxLength !== "undefined" && value.length > filter.maxLength) {
+    return false;
+  }
+
+  if (typeof filter.minLength !== "undefined" && value.length < filter.minLength) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
 }`,
       ),
     );

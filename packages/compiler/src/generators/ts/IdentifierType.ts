@@ -21,6 +21,39 @@ const allSnippetDeclarations = {
 interface ${syntheticNamePrefix}BlankNodeFilter {
 }`,
   ),
+  filterBlankNode: singleEntryRecord(
+    `${syntheticNamePrefix}filterBlankNode`,
+    `\
+function ${syntheticNamePrefix}filterBlankNode(filter: ${syntheticNamePrefix}BlankNodeFilter, value: rdfjs.BlankNode) {
+  return true;
+}`,
+  ),
+  filterIdentifier: singleEntryRecord(
+    `${syntheticNamePrefix}filterIdentifier`,
+    `\
+function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return
+  }
+
+  return true;
+}`,
+  ),
+  filterNamedNode: singleEntryRecord(
+    `${syntheticNamePrefix}filterNamedNode`,
+    `\
+function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+  ),
   IdentifierFilter: singleEntryRecord(
     `${syntheticNamePrefix}IdentifierFilter`,
     `\
@@ -42,6 +75,7 @@ export class IdentifierType extends AbstractTermType<
   NamedNode,
   BlankNode | NamedNode
 > {
+  override readonly graphqlType = new Type.GraphqlType("graphql.GraphQLString");
   readonly kind = "IdentifierType";
 
   @Memoize()
@@ -59,6 +93,11 @@ export class IdentifierType extends AbstractTermType<
     } else if (this.isBlankNodeKind) {
     }
     return conversions;
+  }
+
+  @Memoize()
+  get filterFunction() {
+    return `${syntheticNamePrefix}filter${this.isBlankNodeKind ? "BlankNode" : this.isNamedNodeKind ? "NamedNode" : "Identifier"}`;
   }
 
   @Memoize()
@@ -124,11 +163,6 @@ export class IdentifierType extends AbstractTermType<
         `return ${expressions.join(".")} as purify.Either<Error, ${this.name}>;`,
       ],
     };
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphql.GraphQLString");
   }
 
   @Memoize()

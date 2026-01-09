@@ -10,6 +10,12 @@ import { Type } from "./Type.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}BooleanFilter`,
+  );
+  override readonly graphqlType = new Type.GraphqlType(
+    "graphql.GraphQLBoolean",
+  );
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -29,18 +35,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       });
     });
     return conversions;
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}BooleanFilter`,
-    );
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphql.GraphQLBoolean");
   }
 
   @Memoize()
@@ -89,6 +83,17 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
         `\
 interface ${syntheticNamePrefix}BooleanFilter {
   readonly value?: boolean;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterBoolean`,
+        `\
+function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}BooleanFilter, value: boolean) {
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
 }`,
       ),
     );

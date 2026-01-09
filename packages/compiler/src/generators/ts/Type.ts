@@ -27,10 +27,10 @@ export interface Type {
   readonly equalsFunction: string;
 
   /**
-   * A function (reference or declaration) that takes a filter of filterType (above) and a value of this type
+   * A function (reference or declaration) that takes a filter of filterType (below) and a value of this type
    * and returns true if the value passes the filter.
    */
-  // readonly filterFunction: string;
+  readonly filterFunction: string;
 
   /**
    * Type of another type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.

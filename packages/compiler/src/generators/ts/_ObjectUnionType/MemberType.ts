@@ -61,6 +61,10 @@ export class MemberType {
     return this.delegate.features;
   }
 
+  get filterFunction() {
+    return this.delegate.filterFunction;
+  }
+
   get filterType() {
     return this.delegate.filterType;
   }

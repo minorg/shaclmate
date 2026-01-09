@@ -12,6 +12,10 @@ import { Type } from "./Type.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
+  override readonly filterFunction = `${syntheticNamePrefix}filterNumber`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}NumberFilter`,
+  );
   readonly kind = "NumberType";
   override readonly typeofs = NonEmptyList(["number" as const]);
 
@@ -42,13 +46,6 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
       });
     });
     return conversions;
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}NumberFilter`,
-    );
   }
 
   @Memoize()
@@ -105,6 +102,33 @@ interface ${syntheticNamePrefix}NumberFilter {
   readonly minExclusive?: number;
   readonly minInclusive?: number;
   readonly value?: number;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterNumber`,
+        `\
+function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
+  if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
+    return false;
+  }
+
+  if (typeof filter.maxInclusive !== "undefined" && value > filter.maxInclusive) {
+    return false;
+  }
+
+  if (typeof filter.minExclusive !== "undefined" && value <= filter.minExclusive) {
+    return false;
+  }
+
+  if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
 }`,
       ),
     );

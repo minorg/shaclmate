@@ -40,12 +40,46 @@ interface ${syntheticNamePrefix}DateFilter {
   readonly value?: Date;
 }`,
   ),
+
+  filterDate: singleEntryRecord(
+    `${syntheticNamePrefix}filterDate`,
+    `\
+function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilter, value: Date) {
+  if (typeof filter.maxExclusive !== "undefined" && value.getTime() >= filter.maxExclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.maxInclusive !== "undefined" && value.getTime() > filter.maxInclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.minExclusive !== "undefined" && value.getTime() <= filter.minExclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.minInclusive !== "undefined" && value.getTime() < filter.minInclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.getTime() !== filter.value.getTime()) {
+    return false;
+  }
+
+  return true;
+}`,
+  ),
 };
 
 export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
-
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
+  override readonly filterFunction = `${syntheticNamePrefix}filterDate`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}DateFilter`,
+  );
+  override readonly graphqlType = new Type.GraphqlType(
+    "graphqlScalars.DateTime",
+  );
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
   override readonly mutable = true;
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -70,18 +104,6 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     });
 
     return conversions;
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}DateFilter`,
-    );
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphqlScalars.DateTime");
   }
 
   @Memoize()
@@ -141,6 +163,7 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
         ? allSnippetDeclarations.dateEquals
         : {},
       allSnippetDeclarations.DateTimeFilter,
+      allSnippetDeclarations.filterDate,
     );
   }
 

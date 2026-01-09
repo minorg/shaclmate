@@ -118,10 +118,6 @@ export abstract class AbstractTermType<
     });
   }
 
-  override get graphqlType(): Type.GraphqlType {
-    throw new Error("not implemented");
-  }
-
   @Memoize()
   override get name(): string {
     return `(${[...this.nodeKinds]
