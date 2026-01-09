@@ -297,10 +297,10 @@ ${this.memberTypes
 ${this.memberTypes
   .map(
     (memberType) => `\
-if (typeof filter.on?.${memberType.discriminantValues[0]} !== "undefined") {
+if (typeof filter.on?.["${memberType.discriminantValues[0]}"] !== "undefined") {
   switch (${this.discriminantVariable("value")}) {
 ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminantValue}":`)}
-    if (!${memberType.filterFunction}(filter.on.${memberType.discriminantValues[0]}, ${memberType.payload("value")})) {
+    if (!${memberType.filterFunction}(filter.on["${memberType.discriminantValues[0]}"], ${memberType.payload("value")})) {
       return false;
     }
     break;
@@ -309,7 +309,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 }`,
   )
-  .join("\n")}
+  .join("\n\n")}
 
   return true;
 })`;

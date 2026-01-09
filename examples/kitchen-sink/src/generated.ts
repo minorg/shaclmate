@@ -3497,7 +3497,67 @@ export namespace UnionDiscriminantsClass {
               readonly "2-string"?: $StringFilter;
             };
           }
-        >(undefined)(
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+                readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+                readonly "2-string"?: $StringFilter;
+              };
+            },
+            value:
+              | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+              | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
+              | { type: "2-string"; value: string },
+          ) => {
+            if (typeof filter.on?.["0-ClassUnionMember1"] !== "undefined") {
+              switch (value.type) {
+                case "0-ClassUnionMember1":
+                  if (
+                    !ClassUnionMember1.$filter(
+                      filter.on["0-ClassUnionMember1"],
+                      value.value,
+                    )
+                  ) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
+              switch (value.type) {
+                case "1-ClassUnionMember2":
+                  if (
+                    !ClassUnionMember2.$filter(
+                      filter.on["1-ClassUnionMember2"],
+                      value.value,
+                    )
+                  ) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["2-string"] !== "undefined") {
+              switch (value.type) {
+                case "2-string":
+                  if (!$filterString(filter.on["2-string"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(
           filter.optionalClassOrClassOrStringProperty,
           value.optionalClassOrClassOrStringProperty,
         )
@@ -3516,7 +3576,42 @@ export namespace UnionDiscriminantsClass {
               readonly Literal?: $LiteralFilter;
             };
           }
-        >(undefined)(
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly NamedNode?: $NamedNodeFilter;
+                readonly Literal?: $LiteralFilter;
+              };
+            },
+            value: rdfjs.NamedNode | rdfjs.Literal,
+          ) => {
+            if (typeof filter.on?.["NamedNode"] !== "undefined") {
+              switch (value.termType) {
+                case "NamedNode":
+                  if (!$filterNamedNode(filter.on["NamedNode"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["Literal"] !== "undefined") {
+              switch (value.termType) {
+                case "Literal":
+                  if (!$filterLiteral(filter.on["Literal"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(
           filter.optionalIriOrLiteralProperty,
           value.optionalIriOrLiteralProperty,
         )
@@ -3535,10 +3630,42 @@ export namespace UnionDiscriminantsClass {
               readonly string?: $StringFilter;
             };
           }
-        >(undefined)(
-          filter.optionalIriOrStringProperty,
-          value.optionalIriOrStringProperty,
-        )
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly object?: $NamedNodeFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            value: rdfjs.NamedNode | string,
+          ) => {
+            if (typeof filter.on?.["object"] !== "undefined") {
+              switch (typeof value) {
+                case "object":
+                  if (!$filterNamedNode(filter.on["object"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["string"] !== "undefined") {
+              switch (typeof value) {
+                case "string":
+                  if (!$filterString(filter.on["string"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.optionalIriOrStringProperty, value.optionalIriOrStringProperty)
       ) {
         return false;
       }
@@ -3546,7 +3673,65 @@ export namespace UnionDiscriminantsClass {
 
     if (typeof filter.requiredClassOrClassOrStringProperty !== "undefined") {
       if (
-        !undefined(
+        !((
+          filter: {
+            readonly on?: {
+              readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+              readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+              readonly "2-string"?: $StringFilter;
+            };
+          },
+          value:
+            | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+            | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
+            | { type: "2-string"; value: string },
+        ) => {
+          if (typeof filter.on?.["0-ClassUnionMember1"] !== "undefined") {
+            switch (value.type) {
+              case "0-ClassUnionMember1":
+                if (
+                  !ClassUnionMember1.$filter(
+                    filter.on["0-ClassUnionMember1"],
+                    value.value,
+                  )
+                ) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+          if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
+            switch (value.type) {
+              case "1-ClassUnionMember2":
+                if (
+                  !ClassUnionMember2.$filter(
+                    filter.on["1-ClassUnionMember2"],
+                    value.value,
+                  )
+                ) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+          if (typeof filter.on?.["2-string"] !== "undefined") {
+            switch (value.type) {
+              case "2-string":
+                if (!$filterString(filter.on["2-string"], value.value)) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+
+          return true;
+        })(
           filter.requiredClassOrClassOrStringProperty,
           value.requiredClassOrClassOrStringProperty,
         )
@@ -3557,7 +3742,40 @@ export namespace UnionDiscriminantsClass {
 
     if (typeof filter.requiredIriOrLiteralProperty !== "undefined") {
       if (
-        !undefined(
+        !((
+          filter: {
+            readonly on?: {
+              readonly NamedNode?: $NamedNodeFilter;
+              readonly Literal?: $LiteralFilter;
+            };
+          },
+          value: rdfjs.NamedNode | rdfjs.Literal,
+        ) => {
+          if (typeof filter.on?.["NamedNode"] !== "undefined") {
+            switch (value.termType) {
+              case "NamedNode":
+                if (!$filterNamedNode(filter.on["NamedNode"], value)) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+          if (typeof filter.on?.["Literal"] !== "undefined") {
+            switch (value.termType) {
+              case "Literal":
+                if (!$filterLiteral(filter.on["Literal"], value)) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+
+          return true;
+        })(
           filter.requiredIriOrLiteralProperty,
           value.requiredIriOrLiteralProperty,
         )
@@ -3568,7 +3786,40 @@ export namespace UnionDiscriminantsClass {
 
     if (typeof filter.requiredIriOrStringProperty !== "undefined") {
       if (
-        !undefined(
+        !((
+          filter: {
+            readonly on?: {
+              readonly object?: $NamedNodeFilter;
+              readonly string?: $StringFilter;
+            };
+          },
+          value: rdfjs.NamedNode | string,
+        ) => {
+          if (typeof filter.on?.["object"] !== "undefined") {
+            switch (typeof value) {
+              case "object":
+                if (!$filterNamedNode(filter.on["object"], value)) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+          if (typeof filter.on?.["string"] !== "undefined") {
+            switch (typeof value) {
+              case "string":
+                if (!$filterString(filter.on["string"], value)) {
+                  return false;
+                }
+                break;
+              default:
+                return false;
+            }
+          }
+
+          return true;
+        })(
           filter.requiredIriOrStringProperty,
           value.requiredIriOrStringProperty,
         )
@@ -3590,7 +3841,67 @@ export namespace UnionDiscriminantsClass {
               readonly "2-string"?: $StringFilter;
             };
           }
-        >(undefined)(
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
+                readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
+                readonly "2-string"?: $StringFilter;
+              };
+            },
+            value:
+              | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
+              | { type: "1-ClassUnionMember2"; value: ClassUnionMember2 }
+              | { type: "2-string"; value: string },
+          ) => {
+            if (typeof filter.on?.["0-ClassUnionMember1"] !== "undefined") {
+              switch (value.type) {
+                case "0-ClassUnionMember1":
+                  if (
+                    !ClassUnionMember1.$filter(
+                      filter.on["0-ClassUnionMember1"],
+                      value.value,
+                    )
+                  ) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
+              switch (value.type) {
+                case "1-ClassUnionMember2":
+                  if (
+                    !ClassUnionMember2.$filter(
+                      filter.on["1-ClassUnionMember2"],
+                      value.value,
+                    )
+                  ) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["2-string"] !== "undefined") {
+              switch (value.type) {
+                case "2-string":
+                  if (!$filterString(filter.on["2-string"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(
           filter.setClassOrClassOrStringProperty,
           value.setClassOrClassOrStringProperty,
         )
@@ -3609,10 +3920,42 @@ export namespace UnionDiscriminantsClass {
               readonly Literal?: $LiteralFilter;
             };
           }
-        >(undefined)(
-          filter.setIriOrLiteralProperty,
-          value.setIriOrLiteralProperty,
-        )
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly NamedNode?: $NamedNodeFilter;
+                readonly Literal?: $LiteralFilter;
+              };
+            },
+            value: rdfjs.NamedNode | rdfjs.Literal,
+          ) => {
+            if (typeof filter.on?.["NamedNode"] !== "undefined") {
+              switch (value.termType) {
+                case "NamedNode":
+                  if (!$filterNamedNode(filter.on["NamedNode"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["Literal"] !== "undefined") {
+              switch (value.termType) {
+                case "Literal":
+                  if (!$filterLiteral(filter.on["Literal"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.setIriOrLiteralProperty, value.setIriOrLiteralProperty)
       ) {
         return false;
       }
@@ -3628,10 +3971,42 @@ export namespace UnionDiscriminantsClass {
               readonly string?: $StringFilter;
             };
           }
-        >(undefined)(
-          filter.setIriOrStringProperty,
-          value.setIriOrStringProperty,
-        )
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly object?: $NamedNodeFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            value: rdfjs.NamedNode | string,
+          ) => {
+            if (typeof filter.on?.["object"] !== "undefined") {
+              switch (typeof value) {
+                case "object":
+                  if (!$filterNamedNode(filter.on["object"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["string"] !== "undefined") {
+              switch (typeof value) {
+                case "string":
+                  if (!$filterString(filter.on["string"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.setIriOrStringProperty, value.setIriOrStringProperty)
       ) {
         return false;
       }
@@ -30558,10 +30933,54 @@ export namespace JsPrimitiveUnionPropertyClass {
               readonly string?: $StringFilter;
             };
           }
-        >(undefined)(
-          filter.jsPrimitiveUnionProperty,
-          value.jsPrimitiveUnionProperty,
-        )
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly boolean?: $BooleanFilter;
+                readonly number?: $NumberFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            value: boolean | number | string,
+          ) => {
+            if (typeof filter.on?.["boolean"] !== "undefined") {
+              switch (typeof value) {
+                case "boolean":
+                  if (!$filterBoolean(filter.on["boolean"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["number"] !== "undefined") {
+              switch (typeof value) {
+                case "number":
+                  if (!$filterNumber(filter.on["number"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["string"] !== "undefined") {
+              switch (typeof value) {
+                case "string":
+                  if (!$filterString(filter.on["string"], value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.jsPrimitiveUnionProperty, value.jsPrimitiveUnionProperty)
       ) {
         return false;
       }
@@ -43463,10 +43882,44 @@ export namespace DateUnionPropertiesClass {
               readonly dateTime?: $DateFilter;
             };
           }
-        >(undefined)(
-          filter.dateOrDateTimeProperty,
-          value.dateOrDateTimeProperty,
-        )
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly date?: $DateFilter;
+                readonly dateTime?: $DateFilter;
+              };
+            },
+            value:
+              | { type: "date"; value: Date }
+              | { type: "dateTime"; value: Date },
+          ) => {
+            if (typeof filter.on?.["date"] !== "undefined") {
+              switch (value.type) {
+                case "date":
+                  if (!$filterDate(filter.on["date"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["dateTime"] !== "undefined") {
+              switch (value.type) {
+                case "dateTime":
+                  if (!$filterDate(filter.on["dateTime"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.dateOrDateTimeProperty, value.dateOrDateTimeProperty)
       ) {
         return false;
       }
@@ -43482,7 +43935,44 @@ export namespace DateUnionPropertiesClass {
               readonly string?: $StringFilter;
             };
           }
-        >(undefined)(filter.dateOrStringProperty, value.dateOrStringProperty)
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly date?: $DateFilter;
+                readonly string?: $StringFilter;
+              };
+            },
+            value:
+              | { type: "date"; value: Date }
+              | { type: "string"; value: string },
+          ) => {
+            if (typeof filter.on?.["date"] !== "undefined") {
+              switch (value.type) {
+                case "date":
+                  if (!$filterDate(filter.on["date"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["string"] !== "undefined") {
+              switch (value.type) {
+                case "string":
+                  if (!$filterString(filter.on["string"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.dateOrStringProperty, value.dateOrStringProperty)
       ) {
         return false;
       }
@@ -43498,10 +43988,44 @@ export namespace DateUnionPropertiesClass {
               readonly date?: $DateFilter;
             };
           }
-        >(undefined)(
-          filter.dateTimeOrDateProperty,
-          value.dateTimeOrDateProperty,
-        )
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly dateTime?: $DateFilter;
+                readonly date?: $DateFilter;
+              };
+            },
+            value:
+              | { type: "dateTime"; value: Date }
+              | { type: "date"; value: Date },
+          ) => {
+            if (typeof filter.on?.["dateTime"] !== "undefined") {
+              switch (value.type) {
+                case "dateTime":
+                  if (!$filterDate(filter.on["dateTime"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["date"] !== "undefined") {
+              switch (value.type) {
+                case "date":
+                  if (!$filterDate(filter.on["date"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.dateTimeOrDateProperty, value.dateTimeOrDateProperty)
       ) {
         return false;
       }
@@ -43517,7 +44041,44 @@ export namespace DateUnionPropertiesClass {
               readonly date?: $DateFilter;
             };
           }
-        >(undefined)(filter.stringOrDateProperty, value.stringOrDateProperty)
+        >(
+          (
+            filter: {
+              readonly on?: {
+                readonly string?: $StringFilter;
+                readonly date?: $DateFilter;
+              };
+            },
+            value:
+              | { type: "string"; value: string }
+              | { type: "date"; value: Date },
+          ) => {
+            if (typeof filter.on?.["string"] !== "undefined") {
+              switch (value.type) {
+                case "string":
+                  if (!$filterString(filter.on["string"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+            if (typeof filter.on?.["date"] !== "undefined") {
+              switch (value.type) {
+                case "date":
+                  if (!$filterDate(filter.on["date"], value.value)) {
+                    return false;
+                  }
+                  break;
+                default:
+                  return false;
+              }
+            }
+
+            return true;
+          },
+        )(filter.stringOrDateProperty, value.stringOrDateProperty)
       ) {
         return false;
       }
