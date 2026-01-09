@@ -13,63 +13,6 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 
-const allSnippetDeclarations = {
-  dateEquals: singleEntryRecord(
-    `${syntheticNamePrefix}dateEquals`,
-    `\
-/**
- * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
- */
-function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-    left,
-    right,
-    left.getTime() === right.getTime(),
-  );
-}`,
-  ),
-
-  DateTimeFilter: singleEntryRecord(
-    `${syntheticNamePrefix}DateFilter`,
-    `\
-interface ${syntheticNamePrefix}DateFilter {
-  readonly maxExclusive: Date;
-  readonly maxInclusive: Date;
-  readonly minExclusive: Date;
-  readonly minInclusive: Date;
-  readonly value?: Date;
-}`,
-  ),
-
-  filterDate: singleEntryRecord(
-    `${syntheticNamePrefix}filterDate`,
-    `\
-function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilter, value: Date) {
-  if (typeof filter.maxExclusive !== "undefined" && value.getTime() >= filter.maxExclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.maxInclusive !== "undefined" && value.getTime() > filter.maxInclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.minExclusive !== "undefined" && value.getTime() <= filter.minExclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.minInclusive !== "undefined" && value.getTime() < filter.minInclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.value !== "undefined" && value.getTime() !== filter.value.getTime()) {
-    return false;
-  }
-
-  return true;
-}`,
-  ),
-};
-
 export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
@@ -159,11 +102,63 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+
       parameters.features.has("equals")
-        ? allSnippetDeclarations.dateEquals
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}dateEquals`,
+            `\
+/**
+ * Compare two Dates and return an ${syntheticNamePrefix}EqualsResult.
+ */
+function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.getTime() === right.getTime(),
+  );
+}`,
+          )
         : {},
-      allSnippetDeclarations.DateTimeFilter,
-      allSnippetDeclarations.filterDate,
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}DateFilter`,
+        `\
+interface ${syntheticNamePrefix}DateFilter {
+  readonly maxExclusive: Date;
+  readonly maxInclusive: Date;
+  readonly minExclusive: Date;
+  readonly minInclusive: Date;
+  readonly value?: Date;
+}`,
+      ),
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterDate`,
+        `\
+function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilter, value: Date) {
+  if (typeof filter.maxExclusive !== "undefined" && value.getTime() >= filter.maxExclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.maxInclusive !== "undefined" && value.getTime() > filter.maxInclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.minExclusive !== "undefined" && value.getTime() <= filter.minExclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.minInclusive !== "undefined" && value.getTime() < filter.minInclusive.getTime()) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.getTime() !== filter.value.getTime()) {
+    return false;
+  }
+
+  return true;
+}`,
+      ),
     );
   }
 

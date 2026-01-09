@@ -9,74 +9,6 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const allSnippetDeclarations = {
-  filterMaybe: singleEntryRecord(
-    `${syntheticNamePrefix}filterMaybe`,
-    `\
-function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT>, value: purify.Maybe<ItemT>): boolean => {
-    if (typeof filter.item !== "undefined") {
-      if (value.isNothing()) {
-        return false;
-      }
-
-      if (!filterItem(filter.item, value.extract()!)) {
-        return false;
-      }
-    }
-
-    if (typeof filter.null !== "undefined" && filter.null !== value.isNothing()) {
-      return false;
-    }
-
-    return true;
-  }
-}`,
-  ),
-
-  maybeEquals: singleEntryRecord(
-    `${syntheticNamePrefix}maybeEquals`,
-    `\
-function ${syntheticNamePrefix}maybeEquals<T>(
-  leftMaybe: purify.Maybe<T>,
-  rightMaybe: purify.Maybe<T>,
-  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
-): ${syntheticNamePrefix}EqualsResult {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return purify.Left({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
-
-  if (rightMaybe.isJust()) {
-    return purify.Left({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return ${syntheticNamePrefix}EqualsResult.Equal;
-}`,
-  ),
-
-  MaybeFilter: singleEntryRecord(
-    `${syntheticNamePrefix}MaybeFilter`,
-    `\
-interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
-  readonly item?: ItemFilterT;
-  readonly null?: boolean;
-}`,
-  ),
-};
-
 export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
     Maybe.empty();
@@ -236,11 +168,74 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
-      allSnippetDeclarations.filterMaybe,
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterMaybe`,
+        `\
+function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT>, value: purify.Maybe<ItemT>): boolean => {
+    if (typeof filter.item !== "undefined") {
+      if (value.isNothing()) {
+        return false;
+      }
+
+      if (!filterItem(filter.item, value.extract()!)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.null !== "undefined" && filter.null !== value.isNothing()) {
+      return false;
+    }
+
+    return true;
+  }
+}`,
+      ),
+
       parameters.features.has("equals")
-        ? allSnippetDeclarations.maybeEquals
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}maybeEquals`,
+            `\
+function ${syntheticNamePrefix}maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
+  }
+
+  return ${syntheticNamePrefix}EqualsResult.Equal;
+}`,
+          )
         : {},
-      allSnippetDeclarations.MaybeFilter,
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}MaybeFilter`,
+        `\
+interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
+  readonly item?: ItemFilterT;
+  readonly null?: boolean;
+}`,
+      ),
     );
   }
 

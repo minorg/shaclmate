@@ -22,6 +22,11 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
+  override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}TermFilter`,
+  );
+
   constructor(
     superParameters: ConstructorParameters<
       typeof AbstractTermType<ConstantTermT, RuntimeTermT>
@@ -32,13 +37,6 @@ export class TermType<
       this.nodeKinds.has("Literal") &&
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "should be IdentifierType or LiteralType",
-    );
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}TermFilter`,
     );
   }
 
@@ -121,6 +119,29 @@ interface ${syntheticNamePrefix}TermFilter {
   readonly language?: string;
   readonly type?: "BlankNode" | "Literal" | "NamedNode";
   readonly value?: string;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterTerm`,
+        `\
+function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
+  if (typeof filter.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype !== filter.datatype.value)) {
+    return false;
+  }
+
+  if (typeof filter.language !== "undefined" && (value.termType !== "Literal" || value.language !== filter.language)) {
+    return false;
+  }
+
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
 }`,
       ),
     );
