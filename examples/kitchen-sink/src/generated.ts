@@ -225,6 +225,139 @@ export namespace $EqualsResult {
       };
 }
 
+function $filterBoolean(filter: $BooleanFilter, value: boolean) {
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterDate(filter: $DateFilter, value: Date) {
+  if (
+    typeof filter.maxExclusive !== "undefined" &&
+    value.getTime() >= filter.maxExclusive.getTime()
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxInclusive !== "undefined" &&
+    value.getTime() > filter.maxInclusive.getTime()
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minExclusive !== "undefined" &&
+    value.getTime() <= filter.minExclusive.getTime()
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minInclusive !== "undefined" &&
+    value.getTime() < filter.minInclusive.getTime()
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.value !== "undefined" &&
+    value.getTime() !== filter.value.getTime()
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterMaybe<ItemT, ItemFilterT>(
+  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
+) {
+  return (
+    filter: $MaybeFilter<ItemFilterT>,
+    value: purify.Maybe<ItemT>,
+  ): boolean => {
+    if (typeof filter.item !== "undefined") {
+      if (value.isNothing()) {
+        return false;
+      }
+
+      if (!filterItem(filter.item, value.extract()!)) {
+        return false;
+      }
+    }
+
+    if (
+      typeof filter.null !== "undefined" &&
+      filter.null !== value.isNothing()
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
+function $filterNumber(filter: $NumberFilter, value: number) {
+  if (
+    typeof filter.maxExclusive !== "undefined" &&
+    value >= filter.maxExclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxInclusive !== "undefined" &&
+    value > filter.maxInclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minExclusive !== "undefined" &&
+    value <= filter.minExclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minInclusive !== "undefined" &&
+    value < filter.minInclusive
+  ) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterString(filter: $StringFilter, value: string) {
+  if (
+    typeof filter.maxLength !== "undefined" &&
+    value.length > filter.maxLength
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minLength !== "undefined" &&
+    value.length < filter.minLength
+  ) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}
+
 function $fromRdfPreferredLanguages({
   focusResource,
   predicate,
@@ -574,6 +707,7 @@ function $strictEquals<T extends bigint | boolean | number | string>(
 interface $StringFilter {
   readonly maxLength?: number;
   readonly minLength?: number;
+  readonly value?: string;
 }
 
 interface $TermFilter {

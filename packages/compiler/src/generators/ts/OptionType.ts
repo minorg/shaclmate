@@ -10,6 +10,30 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 const allSnippetDeclarations = {
+  filterMaybe: singleEntryRecord(
+    `${syntheticNamePrefix}filterMaybe`,
+    `\
+function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT>, value: purify.Maybe<ItemT>): boolean => {
+    if (typeof filter.item !== "undefined") {
+      if (value.isNothing()) {
+        return false;
+      }
+
+      if (!filterItem(filter.item, value.extract()!)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.null !== "undefined" && filter.null !== value.isNothing()) {
+      return false;
+    }
+
+    return true;
+  }
+}`,
+  ),
+
   maybeEquals: singleEntryRecord(
     `${syntheticNamePrefix}maybeEquals`,
     `\
@@ -114,6 +138,11 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
+  get filterFunction(): string {
+    return `${syntheticNamePrefix}filterMaybe<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+  }
+
+  @Memoize()
   get filterType(): Type.CompositeFilterTypeReference {
     return new Type.CompositeFilterTypeReference(
       `${syntheticNamePrefix}MaybeFilter<${this.itemType.filterType.name}>`,
@@ -207,6 +236,7 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
+      allSnippetDeclarations.filterMaybe,
       parameters.features.has("equals")
         ? allSnippetDeclarations.maybeEquals
         : {},
