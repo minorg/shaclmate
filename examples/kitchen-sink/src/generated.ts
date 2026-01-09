@@ -9868,20 +9868,6 @@ export namespace PropertyVisibilitiesClass {
     }
 
     if (
-      typeof filter.privateProperty !== "undefined" &&
-      !$filterString(filter.privateProperty, value.privateProperty)
-    ) {
-      return false;
-    }
-
-    if (
-      typeof filter.protectedProperty !== "undefined" &&
-      !$filterString(filter.protectedProperty, value.protectedProperty)
-    ) {
-      return false;
-    }
-
-    if (
       typeof filter.publicProperty !== "undefined" &&
       !$filterString(filter.publicProperty, value.publicProperty)
     ) {
@@ -9893,8 +9879,6 @@ export namespace PropertyVisibilitiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly privateProperty?: $StringFilter;
-    readonly protectedProperty?: $StringFilter;
     readonly publicProperty?: $StringFilter;
   };
 

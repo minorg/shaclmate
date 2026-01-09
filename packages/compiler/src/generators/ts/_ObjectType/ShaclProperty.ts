@@ -127,6 +127,10 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   @Memoize()
   override get filterProperty() {
+    if (this.visibility !== "public") {
+      return Maybe.empty();
+    }
+
     return Maybe.of({
       function: this.type.filterFunction,
       name: this.name,
