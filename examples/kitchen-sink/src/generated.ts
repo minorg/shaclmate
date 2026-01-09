@@ -305,6 +305,28 @@ function $filterDate(filter: $DateFilter, value: Date) {
   return true;
 }
 
+function $filterLiteral(filter: $LiteralFilter, value: rdfjs.Literal): boolean {
+  if (
+    typeof filter.datatype !== "undefined" &&
+    value.datatype !== filter.datatype.value
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.language !== "undefined" &&
+    value.language !== filter.language
+  ) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}
+
 function $filterMaybe<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
 ) {
@@ -385,6 +407,35 @@ function $filterString(filter: $StringFilter, value: string) {
   }
 
   if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}
+
+function $filterTerm(
+  filter: $TermFilter,
+  value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
+): boolean {
+  if (
+    typeof filter.datatype !== "undefined" &&
+    (value.termType !== "Literal" || value.datatype !== filter.datatype.value)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.language !== "undefined" &&
+    (value.termType !== "Literal" || value.language !== filter.language)
+  ) {
+    return false;
+  }
+
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
     return false;
   }
 
@@ -6732,7 +6783,7 @@ export namespace TermPropertiesClass {
 
     if (typeof filter.literalTermProperty !== "undefined") {
       if (
-        !$filterMaybe<rdfjs.Literal, $LiteralFilter>(undefined)(
+        !$filterMaybe<rdfjs.Literal, $LiteralFilter>($filterLiteral)(
           filter.literalTermProperty,
           value.literalTermProperty,
         )
@@ -6768,7 +6819,7 @@ export namespace TermPropertiesClass {
         !$filterMaybe<
           rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
           $TermFilter
-        >(undefined)(filter.termProperty, value.termProperty)
+        >($filterTerm)(filter.termProperty, value.termProperty)
       ) {
         return false;
       }
@@ -8495,7 +8546,7 @@ export namespace RecursiveClassUnionMember2 {
     if (typeof filter.recursiveClassUnionMember2Property !== "undefined") {
       if (
         !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
-          undefined,
+          RecursiveClassUnion.$filter,
         )(
           filter.recursiveClassUnionMember2Property,
           value.recursiveClassUnionMember2Property,
@@ -8951,7 +9002,7 @@ export namespace RecursiveClassUnionMember1 {
     if (typeof filter.recursiveClassUnionMember1Property !== "undefined") {
       if (
         !$filterMaybe<RecursiveClassUnion, RecursiveClassUnion.$Filter>(
-          undefined,
+          RecursiveClassUnion.$filter,
         )(
           filter.recursiveClassUnionMember1Property,
           value.recursiveClassUnionMember1Property,
@@ -19487,7 +19538,7 @@ export namespace LazyPropertiesInterface {
           >,
         ) =>
           $filterMaybe<PartialInterfaceUnion, PartialInterfaceUnion.$Filter>(
-            undefined,
+            PartialInterfaceUnion.$filter,
           )(filter, value.partial))(
           filter.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
           value.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
@@ -23320,10 +23371,9 @@ export namespace LazyPropertiesClass {
             LazilyResolvedClassUnion
           >,
         ) =>
-          $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(undefined)(
-            filter,
-            value.partial,
-          ))(
+          $filterMaybe<PartialClassUnion, PartialClassUnion.$Filter>(
+            PartialClassUnion.$filter,
+          )(filter, value.partial))(
           filter.optionalPartialClassUnionToResolvedClassUnionProperty,
           value.optionalPartialClassUnionToResolvedClassUnionProperty,
         )
@@ -29864,7 +29914,7 @@ export namespace LanguageInPropertiesClass {
 
     if (typeof filter.languageInLiteralProperty !== "undefined") {
       if (
-        !$filterArray<rdfjs.Literal, $LiteralFilter>(undefined)(
+        !$filterArray<rdfjs.Literal, $LiteralFilter>($filterLiteral)(
           filter.languageInLiteralProperty,
           value.languageInLiteralProperty,
         )
@@ -45406,7 +45456,7 @@ export namespace ConvertibleTypePropertiesClass {
 
     if (typeof filter.convertibleLiteralNonEmptySetProperty !== "undefined") {
       if (
-        !$filterArray<rdfjs.Literal, $LiteralFilter>(undefined)(
+        !$filterArray<rdfjs.Literal, $LiteralFilter>($filterLiteral)(
           filter.convertibleLiteralNonEmptySetProperty,
           value.convertibleLiteralNonEmptySetProperty,
         )
@@ -45417,7 +45467,7 @@ export namespace ConvertibleTypePropertiesClass {
 
     if (typeof filter.convertibleLiteralOptionProperty !== "undefined") {
       if (
-        !$filterMaybe<rdfjs.Literal, $LiteralFilter>(undefined)(
+        !$filterMaybe<rdfjs.Literal, $LiteralFilter>($filterLiteral)(
           filter.convertibleLiteralOptionProperty,
           value.convertibleLiteralOptionProperty,
         )
@@ -45428,7 +45478,7 @@ export namespace ConvertibleTypePropertiesClass {
 
     if (typeof filter.convertibleLiteralProperty !== "undefined") {
       if (
-        !undefined(
+        !$filterLiteral(
           filter.convertibleLiteralProperty,
           value.convertibleLiteralProperty,
         )
@@ -45439,7 +45489,7 @@ export namespace ConvertibleTypePropertiesClass {
 
     if (typeof filter.convertibleLiteralSetProperty !== "undefined") {
       if (
-        !$filterArray<rdfjs.Literal, $LiteralFilter>(undefined)(
+        !$filterArray<rdfjs.Literal, $LiteralFilter>($filterLiteral)(
           filter.convertibleLiteralSetProperty,
           value.convertibleLiteralSetProperty,
         )
@@ -45453,7 +45503,7 @@ export namespace ConvertibleTypePropertiesClass {
         !$filterArray<
           rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
           $TermFilter
-        >(undefined)(
+        >($filterTerm)(
           filter.convertibleTermNonEmptySetProperty,
           value.convertibleTermNonEmptySetProperty,
         )
@@ -45467,7 +45517,7 @@ export namespace ConvertibleTypePropertiesClass {
         !$filterMaybe<
           rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
           $TermFilter
-        >(undefined)(
+        >($filterTerm)(
           filter.convertibleTermOptionProperty,
           value.convertibleTermOptionProperty,
         )
@@ -45478,7 +45528,7 @@ export namespace ConvertibleTypePropertiesClass {
 
     if (typeof filter.convertibleTermProperty !== "undefined") {
       if (
-        !undefined(
+        !$filterTerm(
           filter.convertibleTermProperty,
           value.convertibleTermProperty,
         )
@@ -45492,7 +45542,7 @@ export namespace ConvertibleTypePropertiesClass {
         !$filterArray<
           rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
           $TermFilter
-        >(undefined)(
+        >($filterTerm)(
           filter.convertibleTermSetProperty,
           value.convertibleTermSetProperty,
         )
@@ -55084,6 +55134,27 @@ export namespace ClassUnion {
     });
   }
 
+  export function $filter(
+    filter: ClassUnion.$Filter,
+    value: ClassUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.ClassUnionMember1 !== "undefined" &&
+      !ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.ClassUnionMember2 !== "undefined" &&
+      !ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly on?: {
       readonly ClassUnionMember1?: ClassUnionMember1.$Filter;
@@ -55357,6 +55428,37 @@ export namespace FlattenClassUnion {
           throw new Error("unrecognized type");
       }
     });
+  }
+
+  export function $filter(
+    filter: FlattenClassUnion.$Filter,
+    value: FlattenClassUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.ClassUnionMember1 !== "undefined" &&
+      !ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.ClassUnionMember2 !== "undefined" &&
+      !ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.FlattenClassUnionMember3 !== "undefined" &&
+      !FlattenClassUnionMember3.$filter(
+        filter.on.FlattenClassUnionMember3,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -55669,6 +55771,27 @@ export namespace InterfaceUnion {
     });
   }
 
+  export function $filter(
+    filter: InterfaceUnion.$Filter,
+    value: InterfaceUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.InterfaceUnionMember1 !== "undefined" &&
+      !InterfaceUnionMember1.$filter(filter.on.InterfaceUnionMember1, value)
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.InterfaceUnionMember2 !== "undefined" &&
+      !InterfaceUnionMember2.$filter(filter.on.InterfaceUnionMember2, value)
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly on?: {
       readonly InterfaceUnionMember1?: InterfaceUnionMember1.$Filter;
@@ -55946,6 +56069,33 @@ export namespace LazilyResolvedClassUnion {
           throw new Error("unrecognized type");
       }
     });
+  }
+
+  export function $filter(
+    filter: LazilyResolvedClassUnion.$Filter,
+    value: LazilyResolvedClassUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.LazilyResolvedClassUnionMember1 !== "undefined" &&
+      !LazilyResolvedClassUnionMember1.$filter(
+        filter.on.LazilyResolvedClassUnionMember1,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.LazilyResolvedClassUnionMember2 !== "undefined" &&
+      !LazilyResolvedClassUnionMember2.$filter(
+        filter.on.LazilyResolvedClassUnionMember2,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -56230,6 +56380,33 @@ export namespace LazilyResolvedInterfaceUnion {
           throw new Error("unrecognized type");
       }
     });
+  }
+
+  export function $filter(
+    filter: LazilyResolvedInterfaceUnion.$Filter,
+    value: LazilyResolvedInterfaceUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.LazilyResolvedInterfaceUnionMember1 !== "undefined" &&
+      !LazilyResolvedInterfaceUnionMember1.$filter(
+        filter.on.LazilyResolvedInterfaceUnionMember1,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.LazilyResolvedInterfaceUnionMember2 !== "undefined" &&
+      !LazilyResolvedInterfaceUnionMember2.$filter(
+        filter.on.LazilyResolvedInterfaceUnionMember2,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -56526,6 +56703,33 @@ export namespace PartialClassUnion {
     });
   }
 
+  export function $filter(
+    filter: PartialClassUnion.$Filter,
+    value: PartialClassUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.PartialClassUnionMember1 !== "undefined" &&
+      !PartialClassUnionMember1.$filter(
+        filter.on.PartialClassUnionMember1,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.PartialClassUnionMember2 !== "undefined" &&
+      !PartialClassUnionMember2.$filter(
+        filter.on.PartialClassUnionMember2,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly on?: {
       readonly PartialClassUnionMember1?: PartialClassUnionMember1.$Filter;
@@ -56799,6 +57003,33 @@ export namespace PartialInterfaceUnion {
           throw new Error("unrecognized type");
       }
     });
+  }
+
+  export function $filter(
+    filter: PartialInterfaceUnion.$Filter,
+    value: PartialInterfaceUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.PartialInterfaceUnionMember1 !== "undefined" &&
+      !PartialInterfaceUnionMember1.$filter(
+        filter.on.PartialInterfaceUnionMember1,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.PartialInterfaceUnionMember2 !== "undefined" &&
+      !PartialInterfaceUnionMember2.$filter(
+        filter.on.PartialInterfaceUnionMember2,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   export type $Filter = {
@@ -57086,6 +57317,33 @@ export namespace NoRdfTypeClassUnion {
     });
   }
 
+  export function $filter(
+    filter: NoRdfTypeClassUnion.$Filter,
+    value: NoRdfTypeClassUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.NoRdfTypeClassUnionMember1 !== "undefined" &&
+      !NoRdfTypeClassUnionMember1.$filter(
+        filter.on.NoRdfTypeClassUnionMember1,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.NoRdfTypeClassUnionMember2 !== "undefined" &&
+      !NoRdfTypeClassUnionMember2.$filter(
+        filter.on.NoRdfTypeClassUnionMember2,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   export type $Filter = {
     readonly on?: {
       readonly NoRdfTypeClassUnionMember1?: NoRdfTypeClassUnionMember1.$Filter;
@@ -57349,6 +57607,33 @@ export namespace RecursiveClassUnion {
           throw new Error("unrecognized type");
       }
     });
+  }
+
+  export function $filter(
+    filter: RecursiveClassUnion.$Filter,
+    value: RecursiveClassUnion,
+  ): boolean {
+    if (
+      typeof filter.on?.RecursiveClassUnionMember1 !== "undefined" &&
+      !RecursiveClassUnionMember1.$filter(
+        filter.on.RecursiveClassUnionMember1,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.on?.RecursiveClassUnionMember2 !== "undefined" &&
+      !RecursiveClassUnionMember2.$filter(
+        filter.on.RecursiveClassUnionMember2,
+        value,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   export type $Filter = {
