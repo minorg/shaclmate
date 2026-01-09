@@ -87,6 +87,32 @@ interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
   readonly minCount?: number;
 }`,
   ),
+
+  filterArray: singleEntryRecord(
+    `${syntheticNamePrefix}filterArray`,
+    `\
+function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${syntheticNamePrefix}ArrayFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
+    if (typeof filter.items !== "undefined") {
+      for (const value of values) {
+        if (!filterItem(filter.items, value)) {
+          return false;
+        }
+      }
+    }
+
+    if (typeof filter.maxCount !== "undefined" && values.length > filter.maxCount) {
+      return false;
+    }
+
+    if (typeof filter.minCount !== "undefined" && values.length < filter.minCount) {
+      return false;
+    }
+
+    return true;
+  }
+}`,
+  ),
 };
 
 function isTypeofString(
@@ -228,6 +254,11 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get equalsFunction(): string {
     return `((left, right) => ${syntheticNamePrefix}arrayEquals(left, right, ${this.itemType.equalsFunction}))`;
+  }
+
+  @Memoize()
+  get filterFunction(): string {
+    return `${syntheticNamePrefix}filterArray<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
@@ -389,6 +420,7 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
     snippetDeclarations = mergeSnippetDeclarations(
       snippetDeclarations,
       allSnippetDeclarations.ArrayFilter,
+      allSnippetDeclarations.filterArray,
     );
 
     return snippetDeclarations;

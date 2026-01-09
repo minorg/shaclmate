@@ -225,6 +225,39 @@ export namespace $EqualsResult {
       };
 }
 
+function $filterArray<ItemT, ItemFilterT>(
+  filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
+) {
+  return (
+    filter: $ArrayFilter<ItemFilterT>,
+    values: readonly ItemT[],
+  ): boolean => {
+    if (typeof filter.items !== "undefined") {
+      for (const value of values) {
+        if (!filterItem(filter.items, value)) {
+          return false;
+        }
+      }
+    }
+
+    if (
+      typeof filter.maxCount !== "undefined" &&
+      values.length > filter.maxCount
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.minCount !== "undefined" &&
+      values.length < filter.minCount
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+}
+
 function $filterBoolean(filter: $BooleanFilter, value: boolean) {
   if (typeof filter.value !== "undefined" && value !== filter.value) {
     return false;
