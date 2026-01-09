@@ -78,6 +78,10 @@ class MemberType {
     return this.delegate.equalsFunction;
   }
 
+  get filterFunction() {
+    return this.delegate.filterFunction;
+  }
+
   get filterType() {
     return this.delegate.filterType;
   }
@@ -268,8 +272,8 @@ export class UnionType extends AbstractType {
 
   @Memoize()
   override get equalsFunction(): string {
-    return `
-(left: ${this.name}, right: ${this.name}) => {
+    return `\
+((left: ${this.name}, right: ${this.name}) => {
 ${this.memberTypes
   .flatMap((memberType) =>
     memberType.discriminantValues.map(
@@ -283,7 +287,32 @@ ${this.memberTypes
   .join("\n")}
 
   return purify.Left({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "BooleanEquals" as const }, type: "Property" as const });
-}`;
+})`;
+  }
+
+  @Memoize()
+  get filterFunction(): string {
+    return `\
+((filter: ${this.filterType.name}, value: ${this.name}) => {
+${this.memberTypes
+  .map(
+    (memberType) => `\
+if (typeof filter.on?.${memberType.discriminantValues[0]} !== "undefined") {
+  switch (${this.discriminantVariable("value")}) {
+${memberType.discriminantValues.map((discriminantValue) => `case "${discriminantValue}":`)}
+    if (!${memberType.filterFunction}(filter.on.${memberType.discriminantValues[0]}, ${memberType.payload("value")})) {
+      return false;
+    }
+    break;
+  default:
+    return false;
+  }
+}`,
+  )
+  .join("\n")}
+
+  return true;
+})`;
   }
 
   @Memoize()
