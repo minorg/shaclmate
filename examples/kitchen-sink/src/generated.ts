@@ -308,7 +308,7 @@ function $filterDate(filter: $DateFilter, value: Date) {
 function $filterLiteral(filter: $LiteralFilter, value: rdfjs.Literal): boolean {
   if (
     typeof filter.datatype !== "undefined" &&
-    value.datatype !== filter.datatype.value
+    value.datatype.value !== filter.datatype
   ) {
     return false;
   }
@@ -419,7 +419,7 @@ function $filterTerm(
 ): boolean {
   if (
     typeof filter.datatype !== "undefined" &&
-    (value.termType !== "Literal" || value.datatype !== filter.datatype.value)
+    (value.termType !== "Literal" || value.datatype.value !== filter.datatype)
   ) {
     return false;
   }
@@ -3527,6 +3527,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
               switch (value.type) {
                 case "1-ClassUnionMember2":
@@ -3543,6 +3544,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["2-string"] !== "undefined") {
               switch (value.type) {
                 case "2-string":
@@ -3597,6 +3599,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["Literal"] !== "undefined") {
               switch (value.termType) {
                 case "Literal":
@@ -3651,6 +3654,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["string"] !== "undefined") {
               switch (typeof value) {
                 case "string":
@@ -3702,6 +3706,7 @@ export namespace UnionDiscriminantsClass {
                 return false;
             }
           }
+
           if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
             switch (value.type) {
               case "1-ClassUnionMember2":
@@ -3718,6 +3723,7 @@ export namespace UnionDiscriminantsClass {
                 return false;
             }
           }
+
           if (typeof filter.on?.["2-string"] !== "undefined") {
             switch (value.type) {
               case "2-string":
@@ -3762,6 +3768,7 @@ export namespace UnionDiscriminantsClass {
                 return false;
             }
           }
+
           if (typeof filter.on?.["Literal"] !== "undefined") {
             switch (value.termType) {
               case "Literal":
@@ -3806,6 +3813,7 @@ export namespace UnionDiscriminantsClass {
                 return false;
             }
           }
+
           if (typeof filter.on?.["string"] !== "undefined") {
             switch (typeof value) {
               case "string":
@@ -3871,6 +3879,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["1-ClassUnionMember2"] !== "undefined") {
               switch (value.type) {
                 case "1-ClassUnionMember2":
@@ -3887,6 +3896,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["2-string"] !== "undefined") {
               switch (value.type) {
                 case "2-string":
@@ -3941,6 +3951,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["Literal"] !== "undefined") {
               switch (value.termType) {
                 case "Literal":
@@ -3992,6 +4003,7 @@ export namespace UnionDiscriminantsClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["string"] !== "undefined") {
               switch (typeof value) {
                 case "string":
@@ -30955,6 +30967,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["number"] !== "undefined") {
               switch (typeof value) {
                 case "number":
@@ -30966,6 +30979,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["string"] !== "undefined") {
               switch (typeof value) {
                 case "string":
@@ -43905,6 +43919,7 @@ export namespace DateUnionPropertiesClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["dateTime"] !== "undefined") {
               switch (value.type) {
                 case "dateTime":
@@ -43958,6 +43973,7 @@ export namespace DateUnionPropertiesClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["string"] !== "undefined") {
               switch (value.type) {
                 case "string":
@@ -44011,6 +44027,7 @@ export namespace DateUnionPropertiesClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["date"] !== "undefined") {
               switch (value.type) {
                 case "date":
@@ -44064,6 +44081,7 @@ export namespace DateUnionPropertiesClass {
                   return false;
               }
             }
+
             if (typeof filter.on?.["date"] !== "undefined") {
               switch (value.type) {
                 case "date":
@@ -55699,17 +55717,31 @@ export namespace ClassUnion {
     filter: ClassUnion.$Filter,
     value: ClassUnion,
   ): boolean {
-    if (
-      typeof filter.on?.ClassUnionMember1 !== "undefined" &&
-      !ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)
-    ) {
+    if (typeof filter.on?.ClassUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "ClassUnionMember1":
+          if (!ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.ClassUnionMember2 !== "undefined" &&
-      !ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)
-    ) {
+    if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "ClassUnionMember2":
+          if (!ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -55995,27 +56027,50 @@ export namespace FlattenClassUnion {
     filter: FlattenClassUnion.$Filter,
     value: FlattenClassUnion,
   ): boolean {
-    if (
-      typeof filter.on?.ClassUnionMember1 !== "undefined" &&
-      !ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)
-    ) {
+    if (typeof filter.on?.ClassUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "ClassUnionMember1":
+          if (!ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.ClassUnionMember2 !== "undefined" &&
-      !ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)
-    ) {
+    if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "ClassUnionMember2":
+          if (!ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.FlattenClassUnionMember3 !== "undefined" &&
-      !FlattenClassUnionMember3.$filter(
-        filter.on.FlattenClassUnionMember3,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.FlattenClassUnionMember3 !== "undefined") {
+      switch (value.$type) {
+        case "FlattenClassUnionMember3":
+          if (
+            !FlattenClassUnionMember3.$filter(
+              filter.on.FlattenClassUnionMember3,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -56336,17 +56391,41 @@ export namespace InterfaceUnion {
     filter: InterfaceUnion.$Filter,
     value: InterfaceUnion,
   ): boolean {
-    if (
-      typeof filter.on?.InterfaceUnionMember1 !== "undefined" &&
-      !InterfaceUnionMember1.$filter(filter.on.InterfaceUnionMember1, value)
-    ) {
+    if (typeof filter.on?.InterfaceUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "InterfaceUnionMember1":
+          if (
+            !InterfaceUnionMember1.$filter(
+              filter.on.InterfaceUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.InterfaceUnionMember2 !== "undefined" &&
-      !InterfaceUnionMember2.$filter(filter.on.InterfaceUnionMember2, value)
-    ) {
+    if (typeof filter.on?.InterfaceUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "InterfaceUnionMember2":
+          if (
+            !InterfaceUnionMember2.$filter(
+              filter.on.InterfaceUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -56636,23 +56715,41 @@ export namespace LazilyResolvedClassUnion {
     filter: LazilyResolvedClassUnion.$Filter,
     value: LazilyResolvedClassUnion,
   ): boolean {
-    if (
-      typeof filter.on?.LazilyResolvedClassUnionMember1 !== "undefined" &&
-      !LazilyResolvedClassUnionMember1.$filter(
-        filter.on.LazilyResolvedClassUnionMember1,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.LazilyResolvedClassUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "LazilyResolvedClassUnionMember1":
+          if (
+            !LazilyResolvedClassUnionMember1.$filter(
+              filter.on.LazilyResolvedClassUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.LazilyResolvedClassUnionMember2 !== "undefined" &&
-      !LazilyResolvedClassUnionMember2.$filter(
-        filter.on.LazilyResolvedClassUnionMember2,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.LazilyResolvedClassUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "LazilyResolvedClassUnionMember2":
+          if (
+            !LazilyResolvedClassUnionMember2.$filter(
+              filter.on.LazilyResolvedClassUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -56947,23 +57044,41 @@ export namespace LazilyResolvedInterfaceUnion {
     filter: LazilyResolvedInterfaceUnion.$Filter,
     value: LazilyResolvedInterfaceUnion,
   ): boolean {
-    if (
-      typeof filter.on?.LazilyResolvedInterfaceUnionMember1 !== "undefined" &&
-      !LazilyResolvedInterfaceUnionMember1.$filter(
-        filter.on.LazilyResolvedInterfaceUnionMember1,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.LazilyResolvedInterfaceUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "LazilyResolvedInterfaceUnionMember1":
+          if (
+            !LazilyResolvedInterfaceUnionMember1.$filter(
+              filter.on.LazilyResolvedInterfaceUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.LazilyResolvedInterfaceUnionMember2 !== "undefined" &&
-      !LazilyResolvedInterfaceUnionMember2.$filter(
-        filter.on.LazilyResolvedInterfaceUnionMember2,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.LazilyResolvedInterfaceUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "LazilyResolvedInterfaceUnionMember2":
+          if (
+            !LazilyResolvedInterfaceUnionMember2.$filter(
+              filter.on.LazilyResolvedInterfaceUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -57268,23 +57383,41 @@ export namespace PartialClassUnion {
     filter: PartialClassUnion.$Filter,
     value: PartialClassUnion,
   ): boolean {
-    if (
-      typeof filter.on?.PartialClassUnionMember1 !== "undefined" &&
-      !PartialClassUnionMember1.$filter(
-        filter.on.PartialClassUnionMember1,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.PartialClassUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "PartialClassUnionMember1":
+          if (
+            !PartialClassUnionMember1.$filter(
+              filter.on.PartialClassUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.PartialClassUnionMember2 !== "undefined" &&
-      !PartialClassUnionMember2.$filter(
-        filter.on.PartialClassUnionMember2,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.PartialClassUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "PartialClassUnionMember2":
+          if (
+            !PartialClassUnionMember2.$filter(
+              filter.on.PartialClassUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -57570,23 +57703,41 @@ export namespace PartialInterfaceUnion {
     filter: PartialInterfaceUnion.$Filter,
     value: PartialInterfaceUnion,
   ): boolean {
-    if (
-      typeof filter.on?.PartialInterfaceUnionMember1 !== "undefined" &&
-      !PartialInterfaceUnionMember1.$filter(
-        filter.on.PartialInterfaceUnionMember1,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.PartialInterfaceUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "PartialInterfaceUnionMember1":
+          if (
+            !PartialInterfaceUnionMember1.$filter(
+              filter.on.PartialInterfaceUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.PartialInterfaceUnionMember2 !== "undefined" &&
-      !PartialInterfaceUnionMember2.$filter(
-        filter.on.PartialInterfaceUnionMember2,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.PartialInterfaceUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "PartialInterfaceUnionMember2":
+          if (
+            !PartialInterfaceUnionMember2.$filter(
+              filter.on.PartialInterfaceUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -57882,23 +58033,41 @@ export namespace NoRdfTypeClassUnion {
     filter: NoRdfTypeClassUnion.$Filter,
     value: NoRdfTypeClassUnion,
   ): boolean {
-    if (
-      typeof filter.on?.NoRdfTypeClassUnionMember1 !== "undefined" &&
-      !NoRdfTypeClassUnionMember1.$filter(
-        filter.on.NoRdfTypeClassUnionMember1,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.NoRdfTypeClassUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "NoRdfTypeClassUnionMember1":
+          if (
+            !NoRdfTypeClassUnionMember1.$filter(
+              filter.on.NoRdfTypeClassUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.NoRdfTypeClassUnionMember2 !== "undefined" &&
-      !NoRdfTypeClassUnionMember2.$filter(
-        filter.on.NoRdfTypeClassUnionMember2,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.NoRdfTypeClassUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "NoRdfTypeClassUnionMember2":
+          if (
+            !NoRdfTypeClassUnionMember2.$filter(
+              filter.on.NoRdfTypeClassUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
@@ -58174,23 +58343,41 @@ export namespace RecursiveClassUnion {
     filter: RecursiveClassUnion.$Filter,
     value: RecursiveClassUnion,
   ): boolean {
-    if (
-      typeof filter.on?.RecursiveClassUnionMember1 !== "undefined" &&
-      !RecursiveClassUnionMember1.$filter(
-        filter.on.RecursiveClassUnionMember1,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.RecursiveClassUnionMember1 !== "undefined") {
+      switch (value.$type) {
+        case "RecursiveClassUnionMember1":
+          if (
+            !RecursiveClassUnionMember1.$filter(
+              filter.on.RecursiveClassUnionMember1,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
-    if (
-      typeof filter.on?.RecursiveClassUnionMember2 !== "undefined" &&
-      !RecursiveClassUnionMember2.$filter(
-        filter.on.RecursiveClassUnionMember2,
-        value,
-      )
-    ) {
+    if (typeof filter.on?.RecursiveClassUnionMember2 !== "undefined") {
+      switch (value.$type) {
+        case "RecursiveClassUnionMember2":
+          if (
+            !RecursiveClassUnionMember2.$filter(
+              filter.on.RecursiveClassUnionMember2,
+              value,
+            )
+          ) {
+            return false;
+          }
+          break;
+        default:
+          return false;
+      }
+
       return false;
     }
 
