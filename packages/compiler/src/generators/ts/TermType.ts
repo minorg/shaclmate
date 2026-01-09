@@ -125,7 +125,7 @@ interface ${syntheticNamePrefix}TermFilter {
         `${syntheticNamePrefix}filterTerm`,
         `\
 function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
-  if (typeof filter.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype !== filter.datatype.value)) {
+  if (typeof filter.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== filter.datatype)) {
     return false;
   }
 

@@ -14,63 +14,6 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
-const allSnippetDeclarations = {
-  BlankNodeFilter: singleEntryRecord(
-    `${syntheticNamePrefix}BlankNodeFilter`,
-    `\
-interface ${syntheticNamePrefix}BlankNodeFilter {
-}`,
-  ),
-  filterBlankNode: singleEntryRecord(
-    `${syntheticNamePrefix}filterBlankNode`,
-    `\
-function ${syntheticNamePrefix}filterBlankNode(filter: ${syntheticNamePrefix}BlankNodeFilter, value: rdfjs.BlankNode) {
-  return true;
-}`,
-  ),
-  filterIdentifier: singleEntryRecord(
-    `${syntheticNamePrefix}filterIdentifier`,
-    `\
-function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
-    return false;
-  }
-
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
-    return
-  }
-
-  return true;
-}`,
-  ),
-  filterNamedNode: singleEntryRecord(
-    `${syntheticNamePrefix}filterNamedNode`,
-    `\
-function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
-    return false;
-  }
-
-  return true;
-}`,
-  ),
-  IdentifierFilter: singleEntryRecord(
-    `${syntheticNamePrefix}IdentifierFilter`,
-    `\
-interface ${syntheticNamePrefix}IdentifierFilter {
-  readonly type?: "BlankNode" | "NamedNode";
-  readonly value?: string;
-}`,
-  ),
-  NamedNodeFilter: singleEntryRecord(
-    `${syntheticNamePrefix}NamedNodeFilter`,
-    `\
-interface ${syntheticNamePrefix}NamedNodeFilter {
-  readonly value?: string;
-}`,
-  ),
-};
-
 export class IdentifierType extends AbstractTermType<
   NamedNode,
   BlankNode | NamedNode
@@ -305,14 +248,77 @@ export class IdentifierType extends AbstractTermType<
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-      this.isBlankNodeKind
-        ? allSnippetDeclarations.BlankNodeFilter
-        : this.isNamedNodeKind
-          ? allSnippetDeclarations.NamedNodeFilter
-          : allSnippetDeclarations.IdentifierFilter,
-    );
+    let snippetDeclarations = { ...super.snippetDeclarations(parameters) };
+
+    if (this.isBlankNodeKind) {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}BlankNodeFilter`,
+          `\
+interface ${syntheticNamePrefix}BlankNodeFilter {
+}`,
+        ),
+        singleEntryRecord(
+          `${syntheticNamePrefix}filterBlankNode`,
+          `\
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}BlankNodeFilter, _value: rdfjs.BlankNode) {
+  return true;
+}`,
+        ),
+      );
+    } else if (this.isNamedNodeKind) {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}filterNamedNode`,
+          `\
+function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+        ),
+        singleEntryRecord(
+          `${syntheticNamePrefix}NamedNodeFilter`,
+          `\
+interface ${syntheticNamePrefix}NamedNodeFilter {
+  readonly value?: string;
+}`,
+        ),
+      );
+    } else {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}filterIdentifier`,
+          `\
+function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return
+  }
+
+  return true;
+}`,
+        ),
+        singleEntryRecord(
+          `${syntheticNamePrefix}IdentifierFilter`,
+          `\
+interface ${syntheticNamePrefix}IdentifierFilter {
+  readonly type?: "BlankNode" | "NamedNode";
+  readonly value?: string;
+}`,
+        ),
+      );
+    }
+
+    return snippetDeclarations;
   }
 
   override toJsonExpression({

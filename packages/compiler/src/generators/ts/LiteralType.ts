@@ -96,7 +96,7 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  if (typeof filter.datatype !== "undefined" && value.datatype !== filter.datatype.value) {
+  if (typeof filter.datatype !== "undefined" && value.datatype.value !== filter.datatype) {
     return false;
   }
 

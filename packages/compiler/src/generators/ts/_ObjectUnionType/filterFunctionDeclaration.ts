@@ -23,7 +23,17 @@ export function filterFunctionDeclaration(
     statements: this.memberTypes
       .map(
         (memberType) => `\
-if (typeof filter.on?.${memberType.name} !== "undefined" && !${memberType.filterFunction}(filter.on.${memberType.name}, value)) {
+if (typeof filter.on?.${memberType.name} !== "undefined") {
+  switch (value.${this._discriminantProperty.name}) {
+    ${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join(" ")}
+      if (!${memberType.filterFunction}(filter.on.${memberType.name}, value)) {
+        return false;
+      }
+      break;
+    default:
+      return false;
+  }
+
   return false;  
 }`,
       )

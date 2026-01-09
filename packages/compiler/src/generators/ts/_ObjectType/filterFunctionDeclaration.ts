@@ -21,7 +21,7 @@ export function filterFunctionDeclaration(
     for (const ownProperty of this.ownProperties) {
       ownProperty.filterProperty.ifJust(({ function: function_, name }) => {
         statements.push(
-          `if (typeof filter.${name} !== "undefined") { if (!${function_}(filter.${name}, value.${ownProperty.name})) { return false; } }`,
+          `if (typeof filter.${name} !== "undefined" && !${function_}(filter.${name}, value.${ownProperty.name})) { return false; }`,
         );
       });
     }
