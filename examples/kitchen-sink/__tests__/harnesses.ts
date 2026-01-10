@@ -627,7 +627,7 @@ export const harnesses = {
     }),
     kitchenSink.TermPropertiesClass,
   ),
-  unionDiscriminants1: new ClassHarness(
+  unionDiscriminantsClass1: new ClassHarness(
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrClassOrStringProperty: {
@@ -658,7 +658,7 @@ export const harnesses = {
     }),
     kitchenSink.UnionDiscriminantsClass,
   ),
-  unionDiscriminants2Class: new ClassHarness(
+  unionDiscriminantsClass2: new ClassHarness(
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrClassOrStringProperty: {

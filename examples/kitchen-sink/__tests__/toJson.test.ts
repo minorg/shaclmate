@@ -4,7 +4,7 @@ import { harnesses } from "./harnesses.js";
 describe("toJson", () => {
   it("union properties", ({ expect }) => {
     {
-      const jsonObject = harnesses.unionDiscriminants1.instance.$toJson();
+      const jsonObject = harnesses.unionDiscriminantsClass1.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.$type).toStrictEqual("UnionDiscriminantsClass");
       expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
@@ -45,7 +45,7 @@ describe("toJson", () => {
     }
 
     {
-      const jsonObject = harnesses.unionDiscriminants2Class.instance.$toJson();
+      const jsonObject = harnesses.unionDiscriminantsClass2.instance.$toJson();
       expect(jsonObject["@id"]).toStrictEqual("http://example.com/instance");
       expect(jsonObject.optionalClassOrClassOrStringProperty).toStrictEqual({
         type: "1-ClassUnionMember2",
