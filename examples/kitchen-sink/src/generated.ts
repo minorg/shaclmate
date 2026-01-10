@@ -55656,11 +55656,7 @@ export namespace ClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
@@ -55670,11 +55666,7 @@ export namespace ClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -55966,11 +55958,7 @@ export namespace FlattenClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
@@ -55980,11 +55968,7 @@ export namespace FlattenClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.FlattenClassUnionMember3 !== "undefined") {
@@ -55999,11 +55983,7 @@ export namespace FlattenClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -56335,11 +56315,7 @@ export namespace InterfaceUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.InterfaceUnionMember2 !== "undefined") {
@@ -56354,11 +56330,7 @@ export namespace InterfaceUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -56659,11 +56631,7 @@ export namespace LazilyResolvedClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.LazilyResolvedClassUnionMember2 !== "undefined") {
@@ -56678,11 +56646,7 @@ export namespace LazilyResolvedClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -56988,11 +56952,7 @@ export namespace LazilyResolvedInterfaceUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.LazilyResolvedInterfaceUnionMember2 !== "undefined") {
@@ -57007,11 +56967,7 @@ export namespace LazilyResolvedInterfaceUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -57327,11 +57283,7 @@ export namespace PartialClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.PartialClassUnionMember2 !== "undefined") {
@@ -57346,11 +57298,7 @@ export namespace PartialClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -57647,11 +57595,7 @@ export namespace PartialInterfaceUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.PartialInterfaceUnionMember2 !== "undefined") {
@@ -57666,11 +57610,7 @@ export namespace PartialInterfaceUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -57977,11 +57917,7 @@ export namespace NoRdfTypeClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.NoRdfTypeClassUnionMember2 !== "undefined") {
@@ -57996,11 +57932,7 @@ export namespace NoRdfTypeClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;
@@ -58287,11 +58219,7 @@ export namespace RecursiveClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     if (typeof filter.on?.RecursiveClassUnionMember2 !== "undefined") {
@@ -58306,11 +58234,7 @@ export namespace RecursiveClassUnion {
             return false;
           }
           break;
-        default:
-          return false;
       }
-
-      return false;
     }
 
     return true;

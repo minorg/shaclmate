@@ -30,11 +30,7 @@ if (typeof filter.on?.${memberType.name} !== "undefined") {
         return false;
       }
       break;
-    default:
-      return false;
   }
-
-  return false;  
 }`,
       )
       .concat(`return true;`),

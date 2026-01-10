@@ -1,4 +1,6 @@
 import {
+  ClassUnion,
+  type ClassUnionMember1,
   ConcreteChildClass,
   LazyPropertiesClass,
   PropertyCardinalitiesClass,
@@ -498,6 +500,86 @@ describe("filter", () => {
           instance,
         ),
       ).toStrictEqual(false);
+    });
+  });
+
+  describe("object union", () => {
+    const instance = harnesses.classUnionMember1.instance as ClassUnionMember1;
+
+    it("no member filters", ({ expect }) => {
+      expect(ClassUnion.$filter({}, instance)).toStrictEqual(true);
+    });
+
+    it("member 1 filter", ({ expect }) => {
+      expect(
+        ClassUnion.$filter(
+          {
+            on: {
+              ClassUnionMember1: {
+                classUnionMember1Property: {
+                  value: instance.classUnionMember1Property,
+                },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        ClassUnion.$filter(
+          {
+            on: {
+              ClassUnionMember1: {
+                classUnionMember1Property: {
+                  value: instance.classUnionMember1Property.concat("x"),
+                },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("member 2 filter", ({ expect }) => {
+      expect(
+        ClassUnion.$filter(
+          {
+            on: {
+              ClassUnionMember2: {
+                classUnionMember2Property: {
+                  value: "could be anything",
+                },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+    });
+
+    it("both member filters", ({ expect }) => {
+      expect(
+        ClassUnion.$filter(
+          {
+            on: {
+              // Only the member 1 filter will be tested
+              ClassUnionMember1: {
+                classUnionMember1Property: {
+                  value: instance.classUnionMember1Property,
+                },
+              },
+              ClassUnionMember2: {
+                classUnionMember2Property: {
+                  value: "could be anything",
+                },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
     });
   });
 
