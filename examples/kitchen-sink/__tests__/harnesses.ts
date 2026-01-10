@@ -1,7 +1,7 @@
 import type {} from "@rdfjs/types";
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
-import * as kitchenSink from "../src/index.js";
 
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";

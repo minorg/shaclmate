@@ -1,4 +1,6 @@
 import {
+  ConcreteChildClass,
+  LazyPropertiesClass,
   PropertyCardinalitiesClass,
   TermPropertiesClass,
 } from "@shaclmate/kitchen-sink-example";
@@ -6,6 +8,7 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { DataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
+import { harnesses } from "./harnesses.js";
 
 describe("filter", () => {
   describe("boolean", () => {
@@ -189,6 +192,53 @@ describe("filter", () => {
     });
   });
 
+  describe("lazy", () => {
+    const instance = harnesses.lazyPropertiesClassNonEmpty.instance;
+
+    it("optional", ({ expect }) => {
+      expect(
+        LazyPropertiesClass.$filter(
+          {
+            optionalLazyToResolvedClassProperty: {
+              null: false,
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+    });
+
+    it("required", ({ expect }) => {
+      expect(
+        LazyPropertiesClass.$filter(
+          {
+            requiredLazyToResolvedClassProperty: {
+              $identifier: {
+                value:
+                  instance.requiredLazyToResolvedClassProperty.partial
+                    .$identifier.value,
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+    });
+
+    it("set", ({ expect }) => {
+      expect(
+        LazyPropertiesClass.$filter(
+          {
+            setLazyToResolvedClassProperty: {
+              minCount: 1,
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+    });
+  });
+
   describe("literal", () => {
     it("datatype", ({ expect }) => {
       const value = DataFactory.literal("test", xsd.string);
@@ -369,6 +419,82 @@ describe("filter", () => {
       expect(
         TermPropertiesClass.$filter(
           { numberTermProperty: { item: { value: value - 1 } } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+  });
+
+  describe("object", () => {
+    const instance = harnesses.concreteChildClass.instance;
+
+    it("identifier", ({ expect }) => {
+      expect(
+        ConcreteChildClass.$filter(
+          {
+            $identifier: {
+              value: instance.$identifier.value,
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        ConcreteChildClass.$filter(
+          {
+            $identifier: {
+              value: instance.$identifier.value.concat("x"),
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("property", ({ expect }) => {
+      expect(
+        ConcreteChildClass.$filter(
+          {
+            concreteChildClassProperty: {
+              value: instance.concreteChildClassProperty,
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        ConcreteChildClass.$filter(
+          {
+            concreteChildClassProperty: {
+              value: instance.concreteChildClassProperty.concat("x"),
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("parent class property", ({ expect }) => {
+      expect(
+        ConcreteChildClass.$filter(
+          {
+            concreteParentClassProperty: {
+              value: instance.concreteParentClassProperty,
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        ConcreteChildClass.$filter(
+          {
+            concreteParentClassProperty: {
+              value: instance.concreteParentClassProperty.concat("x"),
+            },
+          },
           instance,
         ),
       ).toStrictEqual(false);
