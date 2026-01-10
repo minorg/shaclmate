@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
@@ -20,7 +21,7 @@ export abstract class AbstractLazyObjectType<
     readonly name: string;
     readonly partialPropertyName: string;
     readonly rawName: string;
-    readonly snippetDeclaration: string;
+    readonly snippetDeclarations: Readonly<Record<string, string>>;
   };
   override readonly discriminantProperty: Type["discriminantProperty"] =
     Maybe.empty();
@@ -60,6 +61,11 @@ export abstract class AbstractLazyObjectType<
   @Memoize()
   override get equalsFunction(): string {
     return `((left, right) => ${this.partialType.equalsFunction}(left.${this.runtimeClass.partialPropertyName}, right.${this.runtimeClass.partialPropertyName}))`;
+  }
+
+  @Memoize()
+  get filterFunction(): string {
+    return `((filter: ${this.filterType.name}, value: ${this.name}) => ${this.partialType.filterFunction}(filter, value.${this.runtimeClass.partialPropertyName}))`;
   }
 
   get filterType():
@@ -109,11 +115,12 @@ export abstract class AbstractLazyObjectType<
 
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    return this.partialType
-      .snippetDeclarations(parameters)
-      .concat(this.resolvedType.snippetDeclarations(parameters))
-      .concat(this.runtimeClass.snippetDeclaration);
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      this.partialType.snippetDeclarations(parameters),
+      this.resolvedType.snippetDeclarations(parameters),
+      this.runtimeClass.snippetDeclarations,
+    );
   }
 
   override sparqlConstructTemplateTriples(

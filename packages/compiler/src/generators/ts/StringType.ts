@@ -1,11 +1,19 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   readonly kind = "StringType";
+  override readonly filterFunction = `${syntheticNamePrefix}filterString`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}StringFilter`,
+  );
+  override readonly graphqlType = new Type.GraphqlType("graphql.GraphQLString");
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
@@ -25,21 +33,6 @@ export class StringType extends AbstractPrimitiveType<string> {
       });
     });
     return conversions;
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const intFilterType = new Type.ScalarFilterType("number");
-    return new Type.CompositeFilterType({
-      maxLength: intFilterType,
-      minLength: intFilterType,
-      value: new Type.ScalarFilterType("string"),
-    });
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -83,6 +76,42 @@ export class StringType extends AbstractPrimitiveType<string> {
       default:
         return `${variables.zod}.enum(${JSON.stringify(this.primitiveIn)})`;
     }
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}StringFilter`,
+        `\
+interface ${syntheticNamePrefix}StringFilter {
+  readonly maxLength?: number;
+  readonly minLength?: number;
+  readonly value?: string;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterString`,
+        `\
+function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}StringFilter, value: string) {
+  if (typeof filter.maxLength !== "undefined" && value.length > filter.maxLength) {
+    return false;
+  }
+
+  if (typeof filter.minLength !== "undefined" && value.length < filter.minLength) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+      ),
+    );
   }
 
   override sparqlWherePatterns(

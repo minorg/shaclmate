@@ -1,30 +1,18 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
-import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 export class LiteralType extends AbstractLiteralType {
-  @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType("string");
-    return new Type.CompositeFilterType({
-      datatype: stringFilterType,
-      language: stringFilterType,
-      value: stringFilterType,
-    });
-  }
+  override readonly filterFunction = `${syntheticNamePrefix}filterLiteral`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}LiteralFilter`,
+  );
 
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<Type["jsonType"]>[0],
-  ): Type.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "Literal"`
-      : "";
-    return new Type.JsonType(
-      `{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
-    );
+  get graphqlType(): Type.GraphqlType {
+    throw new Error("not implemented");
   }
 
   override fromJsonExpression({
@@ -43,6 +31,17 @@ export class LiteralType extends AbstractLiteralType {
     ].concat(super.hashStatements({ depth, variables }));
   }
 
+  override jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType {
+    const discriminantProperty = parameters?.includeDiscriminantProperty
+      ? `, readonly termType: "Literal"`
+      : "";
+    return new Type.JsonType(
+      `{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
+    );
+  }
+
   override jsonZodSchema({
     includeDiscriminantProperty,
     variables,
@@ -58,15 +57,70 @@ export class LiteralType extends AbstractLiteralType {
 
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    let snippetDeclarations = super.snippetDeclarations(parameters);
-    const { features } = parameters;
-    if (features.has("sparql") && this.languageIn.length > 0) {
-      snippetDeclarations = snippetDeclarations.concat(
-        SnippetDeclarations.arrayIntersection,
-      );
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      parameters.features.has("sparql") && this.languageIn.length > 0
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}arrayIntersection`,
+            `\
+function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
     }
-    return snippetDeclarations;
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }  
+    }
+  }
+  return [...intersection];
+}`,
+          )
+        : {},
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterLiteral`,
+        `\
+function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
+  if (typeof filter.datatype !== "undefined" && value.datatype.value !== filter.datatype) {
+    return false;
+  }
+
+  if (typeof filter.language !== "undefined" && value.language !== filter.language) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}LiteralFilter`,
+        `\
+interface ${syntheticNamePrefix}LiteralFilter {
+  readonly datatype?: string;
+  readonly language?: string;
+  readonly value?: string;
+}`,
+      ),
+    );
   }
 
   override toJsonExpression({

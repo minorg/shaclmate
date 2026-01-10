@@ -127,7 +127,12 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   @Memoize()
   override get filterProperty() {
+    if (this.visibility !== "public") {
+      return Maybe.empty();
+    }
+
     return Maybe.of({
+      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });
@@ -232,7 +237,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   override snippetDeclarations(
     parameters: Parameters<Property<Type>["snippetDeclarations"]>[0],
-  ): readonly string[] {
+  ): Readonly<Record<string, string>> {
     return this.type.snippetDeclarations(parameters);
   }
 

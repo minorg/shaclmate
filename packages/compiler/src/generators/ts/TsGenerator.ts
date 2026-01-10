@@ -7,6 +7,7 @@ import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
@@ -71,19 +72,23 @@ export class TsGenerator implements Generator {
     sourceFile.addStatements([...stringImports]);
     sourceFile.addStatements(Object.values(structureImportsByModuleSpecifier));
 
-    // Deduplicate and add snippet declarations
-    const addedSnippetDeclarations = new Set<string>();
-    for (const declaredType of declaredTypes) {
-      for (const snippetDeclaration of declaredType.snippetDeclarations({
-        features: declaredType.features,
-        recursionStack: [],
-      })) {
-        if (!addedSnippetDeclarations.has(snippetDeclaration)) {
-          sourceFile.addStatements([snippetDeclaration]);
-          addedSnippetDeclarations.add(snippetDeclaration);
-        }
-      }
-    }
+    sourceFile.addStatements(
+      Object.entries(
+        declaredTypes.reduce(
+          (snippetDeclarations, declaredType) =>
+            mergeSnippetDeclarations(
+              snippetDeclarations,
+              declaredType.snippetDeclarations({
+                features: declaredType.features,
+                recursionStack: [],
+              }),
+            ),
+          {} as Record<string, string>,
+        ),
+      )
+        .sort((left, right) => left[0].localeCompare(right[0]))
+        .map((entry) => entry[1]),
+    );
 
     for (const objectType of objectTypes) {
       sourceFile.addStatements(objectType.declarations);

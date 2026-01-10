@@ -2,9 +2,118 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
+
+const allSnippetDeclarations = {
+  arrayEquals: singleEntryRecord(
+    `${syntheticNamePrefix}arrayEquals`,
+    `\
+/**
+ * Compare two arrays element-wise with the provided elementEquals function.
+ */  
+function ${syntheticNamePrefix}arrayEquals<T>(
+  leftArray: readonly T[],
+  rightArray: readonly T[],
+  elementEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
+  if (leftArray.length !== rightArray.length) {
+    return purify.Left({
+      left: leftArray,
+      right: rightArray,
+      type: "ArrayLength",
+    });
+  }
+
+  for (
+    let leftElementIndex = 0;
+    leftElementIndex < leftArray.length;
+    leftElementIndex++
+  ) {
+    const leftElement = leftArray[leftElementIndex];
+
+    const rightUnequals: ${syntheticNamePrefix}EqualsResult.Unequal[] = [];
+    for (
+      let rightElementIndex = 0;
+      rightElementIndex < rightArray.length;
+      rightElementIndex++
+    ) {
+      const rightElement = rightArray[rightElementIndex];
+
+      const leftElementEqualsRightElement =
+        ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+          leftElement,
+          rightElement,
+          elementEquals(leftElement, rightElement),
+        );
+      if (leftElementEqualsRightElement.isRight()) {
+        break; // left element === right element, break out of the right iteration
+      }
+      rightUnequals.push(
+        leftElementEqualsRightElement.extract() as ${syntheticNamePrefix}EqualsResult.Unequal,
+      );
+    }
+
+    if (rightUnequals.length === rightArray.length) {
+      // All right elements were unequal to the left element
+      return purify.Left({
+        left: {
+          array: leftArray,
+          element: leftElement,
+          elementIndex: leftElementIndex,
+        },
+        right: {
+          array: rightArray,
+          unequals: rightUnequals,
+        },
+        type: "ArrayElement",
+      });
+    }
+    // Else there was a right element equal to the left element, continue to the next left element
+  }
+
+  return ${syntheticNamePrefix}EqualsResult.Equal;
+}`,
+  ),
+
+  ArrayFilter: singleEntryRecord(
+    `${syntheticNamePrefix}ArrayFilter`,
+    `\
+interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
+  readonly items?: ItemFilterT;
+  readonly maxCount?: number;
+  readonly minCount?: number;
+}`,
+  ),
+
+  filterArray: singleEntryRecord(
+    `${syntheticNamePrefix}filterArray`,
+    `\
+function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${syntheticNamePrefix}ArrayFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
+    if (typeof filter.items !== "undefined") {
+      for (const value of values) {
+        if (!filterItem(filter.items, value)) {
+          return false;
+        }
+      }
+    }
+
+    if (typeof filter.maxCount !== "undefined" && values.length > filter.maxCount) {
+      return false;
+    }
+
+    if (typeof filter.minCount !== "undefined" && values.length < filter.minCount) {
+      return false;
+    }
+
+    return true;
+  }
+}`,
+  ),
+};
 
 function isTypeofString(
   x: string,
@@ -148,13 +257,15 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const intFilterType = new Type.ScalarFilterType("number");
-    return new Type.CompositeFilterType({
-      items: this.itemType.filterType,
-      maxCount: intFilterType,
-      minCount: intFilterType,
-    });
+  get filterFunction(): string {
+    return `${syntheticNamePrefix}filterArray<${this.itemType.name}, ${this.itemType.filterType.name}>(${this.itemType.filterFunction})`;
+  }
+
+  @Memoize()
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}ArrayFilter<${this.itemType.filterType.name}>`,
+    );
   }
 
   @Memoize()
@@ -237,13 +348,16 @@ export abstract class AbstractCollectionType<
 
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    const snippetDeclarations: string[] = this.itemType
-      .snippetDeclarations(parameters)
-      .concat();
+  ): Readonly<Record<string, string>> {
+    let snippetDeclarations = {
+      ...this.itemType.snippetDeclarations(parameters),
+    };
 
     if (parameters.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.arrayEquals);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        allSnippetDeclarations.arrayEquals,
+      );
     }
 
     for (const conversion of this.conversions) {
@@ -255,22 +369,59 @@ export abstract class AbstractCollectionType<
       sourceTypeCheckExpression = sourceTypeCheckExpression.substring(
         syntheticNamePrefix.length,
       );
+      let isReadonlyArraySnippetDeclaration: Record<string, string> | undefined;
       if (sourceTypeCheckExpression.startsWith("isReadonlyBooleanArray")) {
-        snippetDeclarations.push(SnippetDeclarations.isReadonlyBooleanArray);
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyBooleanArray`,
+          `\
+function ${syntheticNamePrefix}isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
+  return Array.isArray(x) && x.every(z => typeof z === "boolean");
+}`,
+        );
       } else if (
         sourceTypeCheckExpression.startsWith("isReadonlyNumberArray")
       ) {
-        snippetDeclarations.push(SnippetDeclarations.isReadonlyNumberArray);
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyNumberArray`,
+          `\
+function ${syntheticNamePrefix}isReadonlyNumberArray(x: unknown): x is readonly number[] {
+  return Array.isArray(x) && x.every(z => typeof z === "number");
+}`,
+        );
       } else if (
         sourceTypeCheckExpression.startsWith("isReadonlyObjectArray")
       ) {
-        snippetDeclarations.push(SnippetDeclarations.isReadonlyObjectArray);
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyObjectArray`,
+          `\
+function ${syntheticNamePrefix}isReadonlyObjectArray(x: unknown): x is readonly object[] {
+  return Array.isArray(x) && x.every(z => typeof z === "object");
+}`,
+        );
       } else if (
         sourceTypeCheckExpression.startsWith("isReadonlyStringArray")
       ) {
-        snippetDeclarations.push(SnippetDeclarations.isReadonlyStringArray);
+        isReadonlyArraySnippetDeclaration = singleEntryRecord(
+          `${syntheticNamePrefix}isReadonlyStringArray`,
+          `\
+function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly string[] {
+  return Array.isArray(x) && x.every(z => typeof z === "string");
+}`,
+        );
+      }
+      if (isReadonlyArraySnippetDeclaration) {
+        snippetDeclarations = mergeSnippetDeclarations(
+          snippetDeclarations,
+          isReadonlyArraySnippetDeclaration,
+        );
       }
     }
+
+    snippetDeclarations = mergeSnippetDeclarations(
+      snippetDeclarations,
+      allSnippetDeclarations.ArrayFilter,
+      allSnippetDeclarations.filterArray,
+    );
 
     return snippetDeclarations;
   }

@@ -1,12 +1,22 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import { Type } from "./Type.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
+  override readonly filterFunction = `${syntheticNamePrefix}filterBoolean`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}BooleanFilter`,
+  );
+  override readonly graphqlType = new Type.GraphqlType(
+    "graphql.GraphQLBoolean",
+  );
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -26,18 +36,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       });
     });
     return conversions;
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    return new Type.CompositeFilterType({
-      value: new Type.ScalarFilterType("boolean"),
-    });
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphql.GraphQLBoolean");
   }
 
   @Memoize()
@@ -74,6 +72,32 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       preferredLanguages: undefined,
       valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}BooleanFilter`,
+        `\
+interface ${syntheticNamePrefix}BooleanFilter {
+  readonly value?: boolean;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterBoolean`,
+        `\
+function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}BooleanFilter, value: boolean) {
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+      ),
+    );
   }
 
   override toRdfExpression({

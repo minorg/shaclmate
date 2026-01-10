@@ -61,6 +61,10 @@ export class MemberType {
     return this.delegate.features;
   }
 
+  get filterFunction() {
+    return this.delegate.filterFunction;
+  }
+
   get filterType() {
     return this.delegate.filterType;
   }
@@ -119,15 +123,13 @@ export class MemberType {
     return this.delegate.jsonZodSchema(parameters);
   }
 
-  newExpression(
-    parameters: Parameters<ObjectType["newExpression"]>[0],
-  ): string {
+  newExpression(parameters: Parameters<ObjectType["newExpression"]>[0]) {
     return this.delegate.newExpression(parameters);
   }
 
   snippetDeclarations(
     parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ): readonly string[] {
+  ) {
     return this.delegate.snippetDeclarations(parameters);
   }
 

@@ -4,6 +4,9 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 /**
@@ -19,6 +22,11 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
+  override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
+  override readonly filterType = new Type.CompositeFilterTypeReference(
+    `${syntheticNamePrefix}TermFilter`,
+  );
+
   constructor(
     superParameters: ConstructorParameters<
       typeof AbstractTermType<ConstantTermT, RuntimeTermT>
@@ -30,15 +38,6 @@ export class TermType<
         (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
       "should be IdentifierType or LiteralType",
     );
-  }
-
-  @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType("string");
-    return new Type.CompositeFilterType({
-      type: stringFilterType,
-      value: stringFilterType,
-    });
   }
 
   override get graphqlType(): Type.GraphqlType {
@@ -105,6 +104,47 @@ export class TermType<
         }
       })
       .join(", ")}])`;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}TermFilter`,
+        `\
+interface ${syntheticNamePrefix}TermFilter {
+  readonly datatype?: string;
+  readonly language?: string;
+  readonly type?: "BlankNode" | "Literal" | "NamedNode";
+  readonly value?: string;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterTerm`,
+        `\
+function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
+  if (typeof filter.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== filter.datatype)) {
+    return false;
+  }
+
+  if (typeof filter.language !== "undefined" && (value.termType !== "Literal" || value.language !== filter.language)) {
+    return false;
+  }
+
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+      ),
+    );
   }
 
   override toJsonExpression({

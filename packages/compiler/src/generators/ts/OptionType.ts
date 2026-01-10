@@ -4,7 +4,8 @@ import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
@@ -69,11 +70,15 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    return new Type.CompositeFilterType({
-      item: this.itemType.filterType,
-      null: new Type.ScalarFilterType("boolean"),
-    });
+  get filterFunction(): string {
+    return `${syntheticNamePrefix}filterMaybe<${this.itemType.name}, ${this.itemType.filterType.name}>(${this.itemType.filterFunction})`;
+  }
+
+  @Memoize()
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}MaybeFilter<${this.itemType.filterType.name}>`,
+    );
   }
 
   @Memoize()
@@ -160,14 +165,78 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
 
   override snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[] {
-    const snippetDeclarations: string[] = this.itemType
-      .snippetDeclarations(parameters)
-      .concat();
-    if (parameters.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.maybeEquals);
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      this.itemType.snippetDeclarations(parameters),
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterMaybe`,
+        `\
+function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT>, value: purify.Maybe<ItemT>): boolean => {
+    if (typeof filter.item !== "undefined") {
+      if (value.isNothing()) {
+        return false;
+      }
+
+      if (!filterItem(filter.item, value.extract()!)) {
+        return false;
+      }
     }
-    return snippetDeclarations;
+
+    if (typeof filter.null !== "undefined" && filter.null !== value.isNothing()) {
+      return false;
+    }
+
+    return true;
+  }
+}`,
+      ),
+
+      parameters.features.has("equals")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}maybeEquals`,
+            `\
+function ${syntheticNamePrefix}maybeEquals<T>(
+  leftMaybe: purify.Maybe<T>,
+  rightMaybe: purify.Maybe<T>,
+  valueEquals: (left: T, right: T) => boolean | ${syntheticNamePrefix}EqualsResult,
+): ${syntheticNamePrefix}EqualsResult {
+  if (leftMaybe.isJust()) {
+    if (rightMaybe.isJust()) {
+      return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+        leftMaybe,
+        rightMaybe,
+        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
+      );
+    }
+    return purify.Left({
+      left: leftMaybe.unsafeCoerce(),
+      type: "RightNull",
+    });
+  }
+
+  if (rightMaybe.isJust()) {
+    return purify.Left({
+      right: rightMaybe.unsafeCoerce(),
+      type: "LeftNull",
+    });
+  }
+
+  return ${syntheticNamePrefix}EqualsResult.Equal;
+}`,
+          )
+        : {},
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}MaybeFilter`,
+        `\
+interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
+  readonly item?: ItemFilterT;
+  readonly null?: boolean;
+}`,
+      ),
+    );
   }
 
   override sparqlConstructTemplateTriples(

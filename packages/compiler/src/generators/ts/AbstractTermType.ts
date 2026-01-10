@@ -8,7 +8,7 @@ import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -118,10 +118,6 @@ export abstract class AbstractTermType<
     });
   }
 
-  override get graphqlType(): Type.GraphqlType {
-    throw new Error("not implemented");
-  }
-
   @Memoize()
   override get name(): string {
     return `(${[...this.nodeKinds]
@@ -226,12 +222,29 @@ export abstract class AbstractTermType<
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): readonly string[] {
-    const snippetDeclarations: string[] = [];
+  }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
+    Record<string, string>
+  > {
     if (features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.booleanEquals);
+      return singleEntryRecord(
+        `${syntheticNamePrefix}booleanEquals`,
+        `\
+  /**
+   * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
+   */
+  function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+    left: T,
+    right: T,
+  ): ${syntheticNamePrefix}EqualsResult {
+    return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+      left,
+      right,
+      left.equals(right),
+    );
+  }`,
+      );
     }
-    return snippetDeclarations;
+    return {};
   }
 
   override sparqlWherePatterns(

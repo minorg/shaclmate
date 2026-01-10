@@ -15,7 +15,6 @@ import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { SnippetDeclarations } from "../SnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
@@ -24,7 +23,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
 
-  readonly equalsFunction = Maybe.of(`${syntheticNamePrefix}booleanEquals`);
   readonly mutable = false;
   readonly recursive = false;
 
@@ -104,8 +102,14 @@ export class IdentifierProperty extends Property<IdentifierType> {
   }
 
   @Memoize()
+  get equalsFunction(): Maybe<string> {
+    return Maybe.of(this.type.equalsFunction);
+  }
+
+  @Memoize()
   override get filterProperty() {
     return Maybe.of({
+      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });
@@ -469,12 +473,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
     });
   }
 
-  override snippetDeclarations(): readonly string[] {
-    const snippetDeclarations: string[] = [];
-    if (this.objectType.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.booleanEquals);
-    }
-    return snippetDeclarations;
+  override snippetDeclarations(
+    parameters: Parameters<Property<IdentifierType>["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return this.type.snippetDeclarations(parameters);
   }
 
   override sparqlConstructTemplateTriples(): readonly string[] {

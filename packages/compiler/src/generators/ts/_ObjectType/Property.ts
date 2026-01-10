@@ -36,6 +36,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    * Optional property in the object type's filter.
    */
   abstract readonly filterProperty: Maybe<{
+    readonly function: Type["filterFunction"];
     readonly name: string;
     readonly type: Type["filterType"];
   }>;
@@ -205,7 +206,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    */
   abstract snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): readonly string[];
+  ): Readonly<Record<string, string>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for this property as strings (so they can incorporate runtime calls).

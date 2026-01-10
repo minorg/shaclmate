@@ -1,7 +1,7 @@
 import type {} from "@rdfjs/types";
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { DataFactory as dataFactory } from "n3";
 import { NonEmptyList } from "purify-ts";
-import * as kitchenSink from "../src/index.js";
 
 import { ClassHarness } from "./ClassHarness.js";
 import { ClassUnionHarness } from "./ClassUnionHarness.js";
@@ -627,7 +627,7 @@ export const harnesses = {
     }),
     kitchenSink.TermPropertiesClass,
   ),
-  unionDiscriminants1: new ClassHarness(
+  unionDiscriminantsClass1: new ClassHarness(
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrClassOrStringProperty: {
@@ -658,7 +658,7 @@ export const harnesses = {
     }),
     kitchenSink.UnionDiscriminantsClass,
   ),
-  unionDiscriminants2Class: new ClassHarness(
+  unionDiscriminantsClass2: new ClassHarness(
     new kitchenSink.UnionDiscriminantsClass({
       $identifier,
       optionalClassOrClassOrStringProperty: {

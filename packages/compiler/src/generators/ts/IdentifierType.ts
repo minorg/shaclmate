@@ -9,12 +9,16 @@ import {
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
 export class IdentifierType extends AbstractTermType<
   NamedNode,
   BlankNode | NamedNode
 > {
+  override readonly graphqlType = new Type.GraphqlType("graphql.GraphQLString");
   readonly kind = "IdentifierType";
 
   @Memoize()
@@ -35,12 +39,15 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterType {
-    const stringFilterType = new Type.ScalarFilterType("string");
-    return new Type.CompositeFilterType({
-      type: stringFilterType,
-      value: stringFilterType,
-    });
+  get filterFunction() {
+    return `${syntheticNamePrefix}filter${this.isBlankNodeKind ? "BlankNode" : this.isNamedNodeKind ? "NamedNode" : "Identifier"}`;
+  }
+
+  @Memoize()
+  get filterType(): Type.CompositeFilterTypeReference {
+    return new Type.CompositeFilterTypeReference(
+      `${syntheticNamePrefix}${this.isBlankNodeKind ? "BlankNode" : this.isNamedNodeKind ? "NamedNode" : "Identifier"}Filter`,
+    );
   }
 
   @Memoize()
@@ -99,11 +106,6 @@ export class IdentifierType extends AbstractTermType<
         `return ${expressions.join(".")} as purify.Either<Error, ${this.name}>;`,
       ],
     };
-  }
-
-  @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType("graphql.GraphQLString");
   }
 
   @Memoize()
@@ -241,6 +243,82 @@ export class IdentifierType extends AbstractTermType<
       : "";
 
     return `${variables.zod}.object({ "@id": ${idSchema}${discriminantProperty} })`;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    let snippetDeclarations = { ...super.snippetDeclarations(parameters) };
+
+    if (this.isBlankNodeKind) {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}BlankNodeFilter`,
+          `\
+interface ${syntheticNamePrefix}BlankNodeFilter {
+}`,
+        ),
+        singleEntryRecord(
+          `${syntheticNamePrefix}filterBlankNode`,
+          `\
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}BlankNodeFilter, _value: rdfjs.BlankNode) {
+  return true;
+}`,
+        ),
+      );
+    } else if (this.isNamedNodeKind) {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}filterNamedNode`,
+          `\
+function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+        ),
+        singleEntryRecord(
+          `${syntheticNamePrefix}NamedNodeFilter`,
+          `\
+interface ${syntheticNamePrefix}NamedNodeFilter {
+  readonly value?: string;
+}`,
+        ),
+      );
+    } else {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}filterIdentifier`,
+          `\
+function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+    return
+  }
+
+  return true;
+}`,
+        ),
+        singleEntryRecord(
+          `${syntheticNamePrefix}IdentifierFilter`,
+          `\
+interface ${syntheticNamePrefix}IdentifierFilter {
+  readonly type?: "BlankNode" | "NamedNode";
+  readonly value?: string;
+}`,
+        ),
+      );
+    }
+
+    return snippetDeclarations;
   }
 
   override toJsonExpression({

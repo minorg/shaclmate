@@ -1,4 +1,5 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { Import } from "./Import.js";
@@ -24,6 +25,12 @@ export interface Type {
    * $EqualsResult.
    */
   readonly equalsFunction: string;
+
+  /**
+   * A function (reference or declaration) that takes a filter of filterType (below) and a value of this type
+   * and returns true if the value passes the filter.
+   */
+  readonly filterFunction: string;
 
   /**
    * Type of another type for filtering instances of this type e.g., SomeObject.Filter with filters for each property.
@@ -169,12 +176,13 @@ export interface Type {
    * ObjectType's. Instead of re-declaring the return type anonymously on every equals function, declare a named type
    * as a snippet and reference it.
    *
-   * The generator deduplicates snippet declarations across all types before adding them to the source.
+   * Snippets should be named in order to facilitate deduplication. A snippet should usually be a single declaration (e.g.,
+   * a function or a type) and the snippet's name should be the name of that declaration.
    */
   snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
-  }): readonly string[];
+  }): Readonly<Record<string, string>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
@@ -287,11 +295,27 @@ export namespace Type {
   }
 
   export class CompositeFilterType {
-    constructor(readonly properties: Readonly<Record<string, FilterType>>) {}
+    constructor(readonly properties: Readonly<Record<string, FilterType>>) {
+      invariant(Object.entries(properties).length > 0);
+    }
+
+    @Memoize()
+    get name(): string {
+      return `{ ${Object.entries(this.properties)
+        .map(
+          ([propertyName, propertyFilterType]) =>
+            `readonly "${propertyName}"?: ${propertyFilterType.name};`,
+        )
+        .join(" ")} }`;
+    }
   }
 
   export class CompositeFilterTypeReference {
     constructor(readonly reference: string) {}
+
+    get name(): string {
+      return this.reference;
+    }
   }
 
   export class ScalarFilterType {

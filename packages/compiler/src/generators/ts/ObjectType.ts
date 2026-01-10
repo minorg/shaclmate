@@ -18,11 +18,50 @@ import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import { SnippetDeclarations } from "./SnippetDeclarations.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
+
+const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}sparqlInstancesOfPattern`,
+  `\
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.Pattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}`,
+);
+
+// export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
+const UnwrapRSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}UnwrapR`,
+  `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`,
+);
 
 export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
@@ -164,8 +203,9 @@ export class ObjectType extends AbstractDeclaredType {
     const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.filterFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.filterTypeDeclaration.bind(this)().toList(),
+      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
@@ -230,6 +270,11 @@ export class ObjectType extends AbstractDeclaredType {
       default:
         throw new RangeError(this.declarationType);
     }
+  }
+
+  @Memoize()
+  get filterFunction(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}filter`;
   }
 
   @Memoize()
@@ -435,33 +480,46 @@ export class ObjectType extends AbstractDeclaredType {
 
   override snippetDeclarations({
     recursionStack,
-  }: Parameters<
-    AbstractDeclaredType["snippetDeclarations"]
-  >[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0]): Readonly<
+    Record<string, string>
+  > {
     if (recursionStack.some((type) => Object.is(type, this))) {
-      return [];
+      return {};
     }
 
-    const snippetDeclarations: string[] = [];
+    let snippetDeclarations: Record<string, string> = {};
     if (this.features.has("equals")) {
-      snippetDeclarations.push(SnippetDeclarations.EqualsResult);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sharedSnippetDeclarations.EqualsResult,
+      );
     }
     if (this.features.has("rdf")) {
-      snippetDeclarations.push(SnippetDeclarations.RdfVocabularies);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sharedSnippetDeclarations.RdfVocabularies,
+      );
     }
     if (this.features.has("sparql") && this.fromRdfType.isJust()) {
-      snippetDeclarations.push(SnippetDeclarations.sparqlInstancesOfPattern);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sparqlInstancesOfPatternSnippetDeclaration,
+      );
     }
     if (
       (this.features.has("json") || this.features.has("rdf")) &&
       this.parentObjectTypes.length > 0
     ) {
-      snippetDeclarations.push(SnippetDeclarations.UnwrapR);
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        UnwrapRSnippetDeclaration,
+      );
     }
     recursionStack.push(this);
     for (const property of this.ownProperties) {
-      snippetDeclarations.push(
-        ...property.snippetDeclarations({
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        property.snippetDeclarations({
           features: this.features,
           recursionStack,
         }),

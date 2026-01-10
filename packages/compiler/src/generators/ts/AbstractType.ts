@@ -26,6 +26,7 @@ export abstract class AbstractType implements Type {
   abstract readonly conversions: readonly Type.Conversion[];
   abstract readonly discriminantProperty: Maybe<Type.DiscriminantProperty>;
   abstract readonly equalsFunction: string;
+  abstract readonly filterFunction: string;
   abstract readonly filterType:
     | Type.CompositeFilterType
     | Type.CompositeFilterTypeReference;
@@ -95,7 +96,7 @@ export abstract class AbstractType implements Type {
   abstract snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
-  }): readonly string[];
+  }): Readonly<Record<string, string>>;
 
   sparqlConstructTemplateTriples({
     allowIgnoreRdfType,
