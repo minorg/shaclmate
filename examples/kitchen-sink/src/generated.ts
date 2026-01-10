@@ -142,10 +142,10 @@ function $dateEquals(left: Date, right: Date): $EqualsResult {
 }
 
 interface $DateFilter {
-  readonly maxExclusive: Date;
-  readonly maxInclusive: Date;
-  readonly minExclusive: Date;
-  readonly minInclusive: Date;
+  readonly maxExclusive?: Date;
+  readonly maxInclusive?: Date;
+  readonly minExclusive?: Date;
+  readonly minInclusive?: Date;
   readonly value?: Date;
 }
 
