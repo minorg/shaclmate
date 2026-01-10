@@ -1,6 +1,10 @@
-import { TermPropertiesClass } from "@shaclmate/kitchen-sink-example";
+import {
+  PropertyCardinalitiesClass,
+  TermPropertiesClass,
+} from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { DataFactory } from "n3";
+import { NonEmptyList } from "purify-ts";
 import { describe, it } from "vitest";
 
 describe("filter", () => {
@@ -24,7 +28,22 @@ describe("filter", () => {
     });
   });
 
-  describe("Date", () => {
+  describe("blank node", () => {
+    const instance = new TermPropertiesClass({
+      blankNodeTermProperty: DataFactory.blankNode(),
+    });
+
+    it("value", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          { blankNodeTermProperty: { item: {} } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+    });
+  });
+
+  describe("date", () => {
     const value = new Date(1523268000000);
     const instance = new TermPropertiesClass({ dateTermProperty: value });
 
@@ -129,7 +148,48 @@ describe("filter", () => {
     });
   });
 
-  describe("Literal (with datatype)", () => {
+  describe("identifier", () => {
+    const blankNodeInstance = new TermPropertiesClass({
+      $identifier: DataFactory.blankNode(),
+    });
+    const iriInstance = new TermPropertiesClass({
+      $identifier: DataFactory.namedNode("http://example.com"),
+    });
+
+    it("type", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          { $identifier: { type: iriInstance.$identifier.termType } },
+          iriInstance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { $identifier: { value: iriInstance.$identifier.termType } },
+          blankNodeInstance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("value", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          { $identifier: { value: iriInstance.$identifier.value } },
+          iriInstance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { $identifier: { value: iriInstance.$identifier.value.concat("x") } },
+          iriInstance,
+        ),
+      ).toStrictEqual(false);
+    });
+  });
+
+  describe("literal (with datatype)", () => {
     const value = DataFactory.literal("test", xsd.string);
     const instance = new TermPropertiesClass({ literalTermProperty: value });
 
@@ -178,7 +238,7 @@ describe("filter", () => {
     });
   });
 
-  describe("Literal (with language)", () => {
+  describe("literal (with language)", () => {
     const value = DataFactory.literal("test", "en");
     const instance = new TermPropertiesClass({ literalTermProperty: value });
 
@@ -221,6 +281,29 @@ describe("filter", () => {
       expect(
         TermPropertiesClass.$filter(
           { literalTermProperty: { item: { value: value.value.concat("x") } } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+  });
+
+  describe("named node", () => {
+    const value = "http://example.com";
+    const instance = new TermPropertiesClass({
+      iriTermProperty: DataFactory.namedNode(value),
+    });
+
+    it("value", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          { iriTermProperty: { item: { value } } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { iriTermProperty: { item: { value: value.concat("x") } } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -356,6 +439,63 @@ describe("filter", () => {
       expect(
         TermPropertiesClass.$filter(
           { numberTermProperty: { null: false } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+  });
+
+  describe("set", () => {
+    const value = "test";
+    const instance = new PropertyCardinalitiesClass({
+      emptyStringSetProperty: [value],
+      nonEmptyStringSetProperty: NonEmptyList([value]),
+      requiredStringProperty: value,
+    });
+
+    it("maxCount", ({ expect }) => {
+      expect(
+        PropertyCardinalitiesClass.$filter(
+          { emptyStringSetProperty: { maxCount: 1 } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        PropertyCardinalitiesClass.$filter(
+          { emptyStringSetProperty: { maxCount: 0 } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("minCount", ({ expect }) => {
+      expect(
+        PropertyCardinalitiesClass.$filter(
+          { emptyStringSetProperty: { minCount: 0 } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        PropertyCardinalitiesClass.$filter(
+          { emptyStringSetProperty: { minCount: 2 } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("items", ({ expect }) => {
+      expect(
+        PropertyCardinalitiesClass.$filter(
+          { emptyStringSetProperty: { items: { value } } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        PropertyCardinalitiesClass.$filter(
+          { emptyStringSetProperty: { items: { value: value.concat("x") } } },
           instance,
         ),
       ).toStrictEqual(false);
