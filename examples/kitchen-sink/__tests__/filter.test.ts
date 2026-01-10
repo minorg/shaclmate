@@ -5,6 +5,7 @@ import {
   LazyPropertiesClass,
   PropertyCardinalitiesClass,
   TermPropertiesClass,
+  UnionDiscriminantsClass,
 } from "@shaclmate/kitchen-sink-example";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { DataFactory } from "n3";
@@ -841,6 +842,121 @@ describe("filter", () => {
       expect(
         TermPropertiesClass.$filter(
           { termProperty: { item: { value: value.value.concat("x") } } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+  });
+
+  describe("union", () => {
+    const instance = new UnionDiscriminantsClass({
+      requiredClassOrClassOrStringProperty: {
+        type: "2-string",
+        value: "test",
+      },
+      requiredIriOrLiteralProperty: DataFactory.namedNode("http://example.com"),
+      requiredIriOrStringProperty: "test",
+    });
+
+    it("no filters", ({ expect }) => {
+      expect(UnionDiscriminantsClass.$filter({}, instance)).toStrictEqual(true);
+    });
+
+    it("envelope discriminant", ({ expect }) => {
+      expect(
+        UnionDiscriminantsClass.$filter(
+          {
+            requiredClassOrClassOrStringProperty: {
+              on: {
+                "0-ClassUnionMember1": {
+                  classUnionMember1Property: { value: "test" },
+                },
+                "1-ClassUnionMember2": {
+                  classUnionMember2Property: { value: "test" },
+                },
+                "2-string": { value: "test" },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        UnionDiscriminantsClass.$filter(
+          {
+            requiredClassOrClassOrStringProperty: {
+              on: {
+                "0-ClassUnionMember1": {
+                  classUnionMember1Property: { value: "test" },
+                },
+                "1-ClassUnionMember2": {
+                  classUnionMember2Property: { value: "test" },
+                },
+                "2-string": { value: "testx" },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("inline discriminant", ({ expect }) => {
+      expect(
+        UnionDiscriminantsClass.$filter(
+          {
+            requiredIriOrLiteralProperty: {
+              on: {
+                Literal: { value: "test" },
+                NamedNode: { value: "http://example.com" },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        UnionDiscriminantsClass.$filter(
+          {
+            requiredIriOrLiteralProperty: {
+              on: {
+                Literal: { value: "test" },
+                NamedNode: { value: "http://example.comXXX" },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("typeof discriminant", ({ expect }) => {
+      expect(
+        UnionDiscriminantsClass.$filter(
+          {
+            requiredIriOrStringProperty: {
+              on: {
+                object: { value: "test" },
+                string: { value: "test" },
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        UnionDiscriminantsClass.$filter(
+          {
+            requiredIriOrStringProperty: {
+              on: {
+                object: { value: "test" },
+                string: { value: "testx" },
+              },
+            },
+          },
           instance,
         ),
       ).toStrictEqual(false);

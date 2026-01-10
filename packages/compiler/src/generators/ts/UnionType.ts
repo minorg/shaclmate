@@ -304,8 +304,6 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       return false;
     }
     break;
-  default:
-    return false;
   }
 }`,
   )

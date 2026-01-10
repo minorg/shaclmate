@@ -3557,8 +3557,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3574,8 +3572,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3586,8 +3582,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3628,8 +3622,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3640,8 +3632,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3679,8 +3669,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3691,8 +3679,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3730,8 +3716,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3747,8 +3731,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3759,8 +3741,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3791,8 +3771,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3803,8 +3781,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3835,8 +3811,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3847,8 +3821,6 @@ export namespace UnionDiscriminantsClass {
                 return false;
               }
               break;
-            default:
-              return false;
           }
         }
 
@@ -3897,8 +3869,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3914,8 +3884,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3926,8 +3894,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3968,8 +3934,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -3980,8 +3944,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -4019,8 +3981,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -4031,8 +3991,6 @@ export namespace UnionDiscriminantsClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -30922,8 +30880,6 @@ export namespace JsPrimitiveUnionPropertyClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -30934,8 +30890,6 @@ export namespace JsPrimitiveUnionPropertyClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -30946,8 +30900,6 @@ export namespace JsPrimitiveUnionPropertyClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -43864,8 +43816,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -43876,8 +43826,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -43917,8 +43865,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -43929,8 +43875,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -43970,8 +43914,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -43982,8 +43924,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -44023,8 +43963,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
@@ -44035,8 +43973,6 @@ export namespace DateUnionPropertiesClass {
                   return false;
                 }
                 break;
-              default:
-                return false;
             }
           }
 
