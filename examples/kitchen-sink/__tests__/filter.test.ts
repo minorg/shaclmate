@@ -189,11 +189,10 @@ describe("filter", () => {
     });
   });
 
-  describe("literal (with datatype)", () => {
-    const value = DataFactory.literal("test", xsd.string);
-    const instance = new TermPropertiesClass({ literalTermProperty: value });
-
+  describe("literal", () => {
     it("datatype", ({ expect }) => {
+      const value = DataFactory.literal("test", xsd.string);
+      const instance = new TermPropertiesClass({ literalTermProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
@@ -217,32 +216,9 @@ describe("filter", () => {
       ).toStrictEqual(false);
     });
 
-    it("value", ({ expect }) => {
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            literalTermProperty: {
-              item: { value: value.value },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          { literalTermProperty: { item: { value: value.value.concat("x") } } },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
-  });
-
-  describe("literal (with language)", () => {
-    const value = DataFactory.literal("test", "en");
-    const instance = new TermPropertiesClass({ literalTermProperty: value });
-
     it("language", ({ expect }) => {
+      const value = DataFactory.literal("test", "en");
+      const instance = new TermPropertiesClass({ literalTermProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
@@ -267,6 +243,8 @@ describe("filter", () => {
     });
 
     it("value", ({ expect }) => {
+      const value = DataFactory.literal("test");
+      const instance = new TermPropertiesClass({ literalTermProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
@@ -280,7 +258,9 @@ describe("filter", () => {
 
       expect(
         TermPropertiesClass.$filter(
-          { literalTermProperty: { item: { value: value.value.concat("x") } } },
+          {
+            literalTermProperty: { item: { value: value.value.concat("x") } },
+          },
           instance,
         ),
       ).toStrictEqual(false);
@@ -549,6 +529,110 @@ describe("filter", () => {
       expect(
         TermPropertiesClass.$filter(
           { stringTermProperty: { item: { value: value.concat("x") } } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+  });
+
+  describe("term", () => {
+    it("datatype", ({ expect }) => {
+      const value = DataFactory.literal("test", xsd.string);
+      const instance = new TermPropertiesClass({ termProperty: value });
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { datatype: value.datatype.value },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { datatype: value.datatype.value.concat("x") },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("language", ({ expect }) => {
+      const value = DataFactory.literal("test", "en");
+      const instance = new TermPropertiesClass({ termProperty: value });
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { language: value.language },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { language: value.language.concat("x") },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("type", ({ expect }) => {
+      const value = DataFactory.literal("test");
+      const instance = new TermPropertiesClass({ termProperty: value });
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { type: value.termType },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { type: "BlankNode" },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("value", ({ expect }) => {
+      const value = DataFactory.literal("test");
+      const instance = new TermPropertiesClass({ termProperty: value });
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: { value: value.value },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { termProperty: { item: { value: value.value.concat("x") } } },
           instance,
         ),
       ).toStrictEqual(false);
