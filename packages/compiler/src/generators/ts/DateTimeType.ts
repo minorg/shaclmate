@@ -124,10 +124,10 @@ function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticN
         `${syntheticNamePrefix}DateFilter`,
         `\
 interface ${syntheticNamePrefix}DateFilter {
-  readonly maxExclusive: Date;
-  readonly maxInclusive: Date;
-  readonly minExclusive: Date;
-  readonly minInclusive: Date;
+  readonly maxExclusive?: Date;
+  readonly maxInclusive?: Date;
+  readonly minExclusive?: Date;
+  readonly minInclusive?: Date;
   readonly value?: Date;
 }`,
       ),
