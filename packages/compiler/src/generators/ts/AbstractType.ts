@@ -1,5 +1,3 @@
-import type {} from "@rdfjs/types";
-
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 

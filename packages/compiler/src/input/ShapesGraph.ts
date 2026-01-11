@@ -5,7 +5,6 @@ import type { Resource } from "rdfjs-resource";
 import { ancestorClassIris } from "./ancestorClassIris.js";
 import { descendantClassIris } from "./descendantClassIris.js";
 import * as generated from "./generated.js";
-import type {} from "./index.js";
 import {
   NodeShape,
   Ontology,

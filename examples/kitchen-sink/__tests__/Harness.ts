@@ -1,4 +1,4 @@
-import type {} from "@rdfjs/types";
+import type { $EqualsResult } from "@shaclmate/kitchen-sink-example";
 import type { Either } from "purify-ts";
 import type {
   MutableResource,
@@ -6,7 +6,6 @@ import type {
   Resource,
 } from "rdfjs-resource";
 import type { z as zod } from "zod";
-import type { $EqualsResult } from "../src/index.js";
 
 export abstract class Harness<
   T extends { readonly $identifier: Resource.Identifier },

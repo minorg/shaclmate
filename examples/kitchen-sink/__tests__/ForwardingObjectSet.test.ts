@@ -1,6 +1,6 @@
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { describe } from "vitest";
-import * as kitchenSink from "../src/index.js";
 import { behavesLikeObjectSet } from "./behavesLikeObjectSet.js";
 
 class TestForwardingObjectSet extends kitchenSink.$ForwardingObjectSet {

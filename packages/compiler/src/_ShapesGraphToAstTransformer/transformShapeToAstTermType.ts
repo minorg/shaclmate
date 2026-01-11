@@ -1,4 +1,3 @@
-import type {} from "@rdfjs/types";
 import { Either, Left } from "purify-ts";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";

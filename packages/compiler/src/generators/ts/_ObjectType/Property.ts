@@ -1,4 +1,3 @@
-import type {} from "@rdfjs/types";
 import type { Maybe } from "purify-ts";
 import {
   type GetAccessorDeclarationStructure,
