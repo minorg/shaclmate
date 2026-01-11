@@ -114,15 +114,15 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
     return false;
   }
 
-  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype))) {
+  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype)) {
     return false;
   }
 
-  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
+  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language)) {
     return false;
   }
 
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value))) {
+  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value)) {
     return false;
   }
 
@@ -134,7 +134,7 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
         `\
 interface ${syntheticNamePrefix}LiteralFilter {
   readonly datatypeIn?: readonly string[];
-  readonly in?: { readonly datatype?: string; readonly language?: string; readonly value?: string; }[];
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value?: string; }[];
   readonly languageIn?: readonly string[];
   readonly valueIn?: readonly string[];
 }`,

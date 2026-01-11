@@ -116,10 +116,10 @@ export class TermType<
         `\
 interface ${syntheticNamePrefix}TermFilter {
   readonly datatypeIn?: readonly string[];
-  readonly in?: { readonly datatype?: string; readonly language?: string; readonly type?: string; readonly value?: string; }[];
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type?: string; readonly value?: string; }[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-  readonly valueIn[]: readonly string[];
+  readonly valueIn?: readonly string[];
 }`,
       ),
       singleEntryRecord(
@@ -148,19 +148,19 @@ function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilt
     return false;
   }
 
-  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype))) {
+  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype)) {
     return false;
   }
 
-  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
+  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language)) {
     return false;
   }
 
-  if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType))) {
+  if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType)) {
     return false;
   }
 
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value))) {
+  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value)) {
     return false;
   }
 
