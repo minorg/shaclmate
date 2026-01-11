@@ -1,9 +1,8 @@
 import type { Quad } from "@rdfjs/types";
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { beforeAll, it } from "vitest";
-import type { $ObjectSet } from "../src/index.js";
-import * as kitchenSink from "../src/index.js";
 
 const testData = {
   blankNodeOrIriIdentifierClasses: [...new Array(4)].map(
@@ -114,7 +113,9 @@ const testData = {
   }) as readonly kitchenSink.NoRdfTypeClassUnion[],
 };
 
-export function behavesLikeObjectSet<ObjectSetT extends $ObjectSet>({
+export function behavesLikeObjectSet<
+  ObjectSetT extends kitchenSink.$ObjectSet,
+>({
   addQuad,
   objectSet,
 }: {

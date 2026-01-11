@@ -1,4 +1,3 @@
-import type {} from "@rdfjs/types";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";

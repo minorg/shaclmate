@@ -1,7 +1,6 @@
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { DataFactory as dataFactory } from "n3";
 import { describe, it } from "vitest";
-import "./harnesses.js"; // Must be imported before kitchenSink
-import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 
 describe("identifier", () => {

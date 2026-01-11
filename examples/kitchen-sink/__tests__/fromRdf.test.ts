@@ -1,8 +1,8 @@
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory as dataFactory } from "n3";
 import { MutableResourceSet, Resource, ResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, it } from "vitest";
-import * as kitchenSink from "../src/index.js";
 import { harnesses } from "./harnesses.js";
 
 describe("fromRdf", () => {
@@ -117,6 +117,42 @@ describe("fromRdf", () => {
     const fromRdfInstance =
       kitchenSink.ExplicitFromToRdfTypesClass.$fromRdf(resource);
     expect(fromRdfInstance.isRight()).toBe(true);
+  });
+
+  it("ignore extraneous RDF type", ({ expect }) => {
+    const expectedInstance = harnesses.concreteChildClass.instance;
+    const actualResource = expectedInstance.$toRdf();
+    expect(kitchenSink.ConcreteChildClass.$fromRdfType.value).not.toStrictEqual(
+      "http://example.com/ExtraneousRdfType",
+    );
+    const actualRdfTypeQuads = [
+      ...actualResource.dataset.match(actualResource.identifier, rdf.type),
+    ];
+    expect(actualRdfTypeQuads).toHaveLength(1);
+    const extraneousRdfType = dataFactory.namedNode(
+      "http://example.com/ExtraneousRdfType",
+    );
+    expect(
+      actualRdfTypeQuads[0].object.equals(extraneousRdfType),
+    ).toStrictEqual(false);
+    expect(
+      kitchenSink.ConcreteChildClass.$fromRdf(actualResource)
+        .unsafeCoerce()
+        .$equals(expectedInstance)
+        .isRight(),
+    ).toStrictEqual(true);
+    actualResource.dataset.add(
+      dataFactory.quad(actualResource.identifier, rdf.type, extraneousRdfType),
+    );
+    expect([
+      ...actualResource.dataset.match(actualResource.identifier, rdf.type),
+    ]).toHaveLength(2);
+    expect(
+      kitchenSink.ConcreteChildClass.$fromRdf(actualResource)
+        .unsafeCoerce()
+        .$equals(expectedInstance)
+        .isRight(),
+    ).toStrictEqual(true);
   });
 
   it("reject invalid values (sh:hasValue)", ({ expect }) => {

@@ -1,4 +1,3 @@
-import type {} from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import {
   StructureKind,

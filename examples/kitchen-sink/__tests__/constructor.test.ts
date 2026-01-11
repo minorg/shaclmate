@@ -1,5 +1,4 @@
 import { describe, it } from "vitest";
-import "./harnesses.js"; // Must be imported before kitchenSink
 import { harnesses } from "./harnesses.js";
 
 describe("constructor", () => {

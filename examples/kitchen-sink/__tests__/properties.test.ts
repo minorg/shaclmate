@@ -1,5 +1,5 @@
+import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import { describe, it } from "vitest";
-import * as kitchenSink from "../src/index.js";
 
 describe("properties", () => {
   it("class properties should have an own property", ({ expect }) => {
