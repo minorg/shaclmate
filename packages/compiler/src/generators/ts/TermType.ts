@@ -115,29 +115,52 @@ export class TermType<
         `${syntheticNamePrefix}TermFilter`,
         `\
 interface ${syntheticNamePrefix}TermFilter {
-  readonly datatype?: string;
-  readonly language?: string;
-  readonly type?: "BlankNode" | "Literal" | "NamedNode";
-  readonly value?: string;
+  readonly datatypeIn?: readonly string[];
+  readonly in?: { readonly datatype?: string; readonly language?: string; readonly type?: string; readonly value?: string; }[];
+  readonly languageIn?: readonly string[];
+  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
+  readonly valueIn[]: readonly string[];
 }`,
       ),
       singleEntryRecord(
         `${syntheticNamePrefix}filterTerm`,
         `\
 function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
-  if (typeof filter.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== filter.datatype)) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
+    if (typeof in_.datatype !== "undefined" && value.datatype !== in_.datatype) {
+      return false;
+    }
+
+    if (typeof in_.language !== "undefined" && value.language !== in_.language) {
+      return false;
+    }
+
+    if (typeof in_.type !== "undefined" && value.termType !== in_.type) {
+      return false;
+    }
+
+    if (typeof in_.value !== "undefined" && value.value !== in_.value) {
+      return false;
+    }
+
+    return true;
+  })) {
     return false;
   }
 
-  if (typeof filter.language !== "undefined" && (value.termType !== "Literal" || value.language !== filter.language)) {
+  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype))) {
     return false;
   }
 
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+  if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType))) {
+    return false;
+  }
+
+  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value))) {
     return false;
   }
 
