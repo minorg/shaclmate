@@ -117,7 +117,7 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
             `\
 // biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace ${syntheticNamePrefix}StringFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, subject }: { filter: ${syntheticNamePrefix}StringFilter, subject: rdfjs.Variable, variablePrefix: string }) {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter, value: rdfjs.Variable) {
     const patterns: sparqljs.Pattern[] = [];
 
     if (typeof filter.in !== "undefined") {
@@ -126,7 +126,7 @@ namespace ${syntheticNamePrefix}StringFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [subject, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
         }
       });
     }
@@ -137,7 +137,7 @@ namespace ${syntheticNamePrefix}StringFilter {
         expression: {
           type: "operation",
           operator: "<=",
-          args: [{ args: [subject], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+          args: [{ args: [value], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
         }
       });
     }
@@ -148,7 +148,7 @@ namespace ${syntheticNamePrefix}StringFilter {
         expression: {
           type: "operation",
           operator: ">=",
-          args: [{ args: [subject], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+          args: [{ args: [value], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
         }
       });
     }

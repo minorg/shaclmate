@@ -97,6 +97,31 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
   return true;
 }`,
       ),
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}BooleanFilter.sparqlWherePatterns`,
+            `\
+// biome-ignore lint/correctness/noUnusedVariables: false positive
+namespace ${syntheticNamePrefix}BooleanFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter, value: rdfjs.Variable) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (typeof filter.value !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "=",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.value)],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+          )
+        : {},
     );
   }
 

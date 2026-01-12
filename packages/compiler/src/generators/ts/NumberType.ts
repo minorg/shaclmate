@@ -140,7 +140,7 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
               `\
 // biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, subject }: { filter: ${syntheticNamePrefix}NumberFilter, subject: rdfjs.Variable, variablePrefix: string }): readonly sparqljs.Pattern[] {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
     const patterns: sparqljs.Pattern[] = [];
 
     if (typeof filter.in !== "undefined") {
@@ -149,7 +149,7 @@ namespace ${syntheticNamePrefix}NumberFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [subject, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
         }
       });
     }
@@ -160,7 +160,7 @@ namespace ${syntheticNamePrefix}NumberFilter {
         expression: {
           type: "operation",
           operator: "<",
-          args: [subject, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
         }
       });
     }
@@ -171,7 +171,7 @@ namespace ${syntheticNamePrefix}NumberFilter {
         expression: {
           type: "operation",
           operator: "<=",
-          args: [subject, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
         }
       });
     }
@@ -182,7 +182,7 @@ namespace ${syntheticNamePrefix}NumberFilter {
         expression: {
           type: "operation",
           operator: ">",
-          args: [subject, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
         }
       });
     }
@@ -193,7 +193,7 @@ namespace ${syntheticNamePrefix}NumberFilter {
         expression: {
           type: "operation",
           operator: ">=",
-          args: [subject, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
         }
       });
     }

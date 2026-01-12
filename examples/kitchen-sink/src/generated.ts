@@ -130,6 +130,29 @@ interface $BooleanFilter {
   readonly value?: boolean;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: false positive
+namespace $BooleanFilter {
+  export function $sparqlWherePatterns(
+    filter: $BooleanFilter,
+    value: rdfjs.Variable,
+  ) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (typeof filter.value !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "=",
+          args: [value, $toLiteral(filter.value)],
+        },
+      });
+    }
+
+    return patterns;
+  }
+}
+
 /**
  * Compare two Dates and return an $EqualsResult.
  */
@@ -818,14 +841,10 @@ interface $NumberFilter {
 
 // biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace $NumberFilter {
-  export function $sparqlWherePatterns({
-    filter,
-    subject,
-  }: {
-    filter: $NumberFilter;
-    subject: rdfjs.Variable;
-    variablePrefix: string;
-  }): readonly sparqljs.Pattern[] {
+  export function $sparqlWherePatterns(
+    filter: $NumberFilter,
+    value: rdfjs.Variable,
+  ): readonly sparqljs.Pattern[] {
     const patterns: sparqljs.Pattern[] = [];
 
     if (typeof filter.in !== "undefined") {
@@ -834,7 +853,7 @@ namespace $NumberFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [subject, filter.in.map((inValue) => $toLiteral(inValue))],
+          args: [value, filter.in.map((inValue) => $toLiteral(inValue))],
         },
       });
     }
@@ -845,7 +864,7 @@ namespace $NumberFilter {
         expression: {
           type: "operation",
           operator: "<",
-          args: [subject, $toLiteral(filter.maxExclusive)],
+          args: [value, $toLiteral(filter.maxExclusive)],
         },
       });
     }
@@ -856,7 +875,7 @@ namespace $NumberFilter {
         expression: {
           type: "operation",
           operator: "<=",
-          args: [subject, $toLiteral(filter.maxInclusive)],
+          args: [value, $toLiteral(filter.maxInclusive)],
         },
       });
     }
@@ -867,7 +886,7 @@ namespace $NumberFilter {
         expression: {
           type: "operation",
           operator: ">",
-          args: [subject, $toLiteral(filter.minExclusive)],
+          args: [value, $toLiteral(filter.minExclusive)],
         },
       });
     }
@@ -878,7 +897,7 @@ namespace $NumberFilter {
         expression: {
           type: "operation",
           operator: ">=",
-          args: [subject, $toLiteral(filter.minInclusive)],
+          args: [value, $toLiteral(filter.minInclusive)],
         },
       });
     }
@@ -985,14 +1004,10 @@ interface $StringFilter {
 
 // biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace $StringFilter {
-  export function $sparqlWherePatterns({
-    filter,
-    subject,
-  }: {
-    filter: $StringFilter;
-    subject: rdfjs.Variable;
-    variablePrefix: string;
-  }) {
+  export function $sparqlWherePatterns(
+    filter: $StringFilter,
+    value: rdfjs.Variable,
+  ) {
     const patterns: sparqljs.Pattern[] = [];
 
     if (typeof filter.in !== "undefined") {
@@ -1001,7 +1016,7 @@ namespace $StringFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [subject, filter.in.map((inValue) => $toLiteral(inValue))],
+          args: [value, filter.in.map((inValue) => $toLiteral(inValue))],
         },
       });
     }
@@ -1013,7 +1028,7 @@ namespace $StringFilter {
           type: "operation",
           operator: "<=",
           args: [
-            { args: [subject], function: "strlen", type: "functionCall" },
+            { args: [value], function: "strlen", type: "functionCall" },
             $toLiteral(filter.maxLength),
           ],
         },
@@ -1027,7 +1042,7 @@ namespace $StringFilter {
           type: "operation",
           operator: ">=",
           args: [
-            { args: [subject], function: "strlen", type: "functionCall" },
+            { args: [value], function: "strlen", type: "functionCall" },
             $toLiteral(filter.minLength),
           ],
         },
