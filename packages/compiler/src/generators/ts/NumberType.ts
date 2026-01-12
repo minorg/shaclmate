@@ -97,17 +97,21 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
         `${syntheticNamePrefix}NumberFilter`,
         `\
 interface ${syntheticNamePrefix}NumberFilter {
+  readonly in?: readonly number[];
   readonly maxExclusive?: number;
   readonly maxInclusive?: number;
   readonly minExclusive?: number;
   readonly minInclusive?: number;
-  readonly value?: number;
 }`,
       ),
       singleEntryRecord(
         `${syntheticNamePrefix}filterNumber`,
         `\
 function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
+    return false;
+  }
+
   if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
     return false;
   }
@@ -121,10 +125,6 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
   }
 
   if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
-    return false;
-  }
-
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
     return false;
   }
 

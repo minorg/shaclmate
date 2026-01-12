@@ -124,11 +124,11 @@ function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${syntheticN
         `${syntheticNamePrefix}DateFilter`,
         `\
 interface ${syntheticNamePrefix}DateFilter {
+  readonly in?: readonly Date[];
   readonly maxExclusive?: Date;
   readonly maxInclusive?: Date;
   readonly minExclusive?: Date;
   readonly minInclusive?: Date;
-  readonly value?: Date;
 }`,
       ),
 
@@ -136,6 +136,10 @@ interface ${syntheticNamePrefix}DateFilter {
         `${syntheticNamePrefix}filterDate`,
         `\
 function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilter, value: Date) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.getTime() === value.getTime())) {
+    return false;
+  }
+
   if (typeof filter.maxExclusive !== "undefined" && value.getTime() >= filter.maxExclusive.getTime()) {
     return false;
   }
@@ -149,10 +153,6 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
   }
 
   if (typeof filter.minInclusive !== "undefined" && value.getTime() < filter.minInclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.value !== "undefined" && value.getTime() !== filter.value.getTime()) {
     return false;
   }
 

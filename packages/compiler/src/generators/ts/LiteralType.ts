@@ -96,15 +96,33 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  if (typeof filter.datatype !== "undefined" && value.datatype.value !== filter.datatype) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
+    if (typeof in_.datatype !== "undefined" && value.datatype.value !== in_.datatype) {
+      return false;
+    }
+
+    if (typeof in_.language !== "undefined" && value.language !== in_.language) {
+      return false;
+    }
+
+    if (typeof in_.value !== "undefined" && value.value !== in_.value) {
+      return false;
+    }
+
+    return true;
+  })) {
     return false;
   }
 
-  if (typeof filter.language !== "undefined" && value.language !== filter.language) {
+  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value)) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language)) {
+    return false;
+  }
+
+  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
     return false;
   }
 
@@ -115,9 +133,10 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
         `${syntheticNamePrefix}LiteralFilter`,
         `\
 interface ${syntheticNamePrefix}LiteralFilter {
-  readonly datatype?: string;
-  readonly language?: string;
-  readonly value?: string;
+  readonly datatypeIn?: readonly string[];
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value?: string; }[];
+  readonly languageIn?: readonly string[];
+  readonly valueIn?: readonly string[];
 }`,
       ),
     );

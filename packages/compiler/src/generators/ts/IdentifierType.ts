@@ -274,7 +274,7 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
           `${syntheticNamePrefix}filterNamedNode`,
           `\
 function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value.value)) {
     return false;
   }
 
@@ -285,7 +285,7 @@ function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}Nam
           `${syntheticNamePrefix}NamedNodeFilter`,
           `\
 interface ${syntheticNamePrefix}NamedNodeFilter {
-  readonly value?: string;
+  readonly in?: readonly string[];
 }`,
         ),
       );
@@ -296,12 +296,12 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
           `${syntheticNamePrefix}filterIdentifier`,
           `\
 function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value.value)) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
-    return
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
   }
 
   return true;
@@ -311,8 +311,8 @@ function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}Id
           `${syntheticNamePrefix}IdentifierFilter`,
           `\
 interface ${syntheticNamePrefix}IdentifierFilter {
+  readonly in?: readonly string[];
   readonly type?: "BlankNode" | "NamedNode";
-  readonly value?: string;
 }`,
         ),
       );

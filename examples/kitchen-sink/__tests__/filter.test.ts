@@ -39,7 +39,7 @@ describe("filter", () => {
       blankNodeTermProperty: DataFactory.blankNode(),
     });
 
-    it("value", ({ expect }) => {
+    it("{}", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
           { blankNodeTermProperty: { item: {} } },
@@ -52,6 +52,30 @@ describe("filter", () => {
   describe("date", () => {
     const value = new Date(1523268000000);
     const instance = new TermPropertiesClass({ dateTermProperty: value });
+
+    it("in", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            dateTermProperty: {
+              item: { in: [value, new Date(value.getTime() + 1)] },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            dateTermProperty: {
+              item: { in: [new Date(value.getTime() + 1)] },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
 
     it("maxExclusive", ({ expect }) => {
       expect(
@@ -132,26 +156,6 @@ describe("filter", () => {
         ),
       ).toStrictEqual(false);
     });
-
-    it("value", ({ expect }) => {
-      expect(
-        TermPropertiesClass.$filter(
-          { dateTermProperty: { item: { value: value } } },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            dateTermProperty: {
-              item: { value: new Date(value.getTime() + 1) },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
   });
 
   describe("identifier", () => {
@@ -160,6 +164,29 @@ describe("filter", () => {
     });
     const iriInstance = new TermPropertiesClass({
       $identifier: DataFactory.namedNode("http://example.com"),
+    });
+
+    it("in", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            $identifier: {
+              in: [
+                iriInstance.$identifier.value,
+                blankNodeInstance.$identifier.value,
+              ],
+            },
+          },
+          iriInstance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { $identifier: { in: [iriInstance.$identifier.value.concat("x")] } },
+          iriInstance,
+        ),
+      ).toStrictEqual(false);
     });
 
     it("type", ({ expect }) => {
@@ -172,24 +199,8 @@ describe("filter", () => {
 
       expect(
         TermPropertiesClass.$filter(
-          { $identifier: { value: iriInstance.$identifier.termType } },
+          { $identifier: { type: iriInstance.$identifier.termType } },
           blankNodeInstance,
-        ),
-      ).toStrictEqual(false);
-    });
-
-    it("value", ({ expect }) => {
-      expect(
-        TermPropertiesClass.$filter(
-          { $identifier: { value: iriInstance.$identifier.value } },
-          iriInstance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          { $identifier: { value: iriInstance.$identifier.value.concat("x") } },
-          iriInstance,
         ),
       ).toStrictEqual(false);
     });
@@ -217,9 +228,10 @@ describe("filter", () => {
           {
             requiredLazyToResolvedClassProperty: {
               $identifier: {
-                value:
+                in: [
                   instance.requiredLazyToResolvedClassProperty.partial
                     .$identifier.value,
+                ],
               },
             },
           },
@@ -243,14 +255,19 @@ describe("filter", () => {
   });
 
   describe("literal", () => {
-    it("datatype", ({ expect }) => {
+    it("datatypeIn", ({ expect }) => {
       const value = DataFactory.literal("test", xsd.string);
       const instance = new TermPropertiesClass({ literalTermProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { datatype: value.datatype.value },
+              item: {
+                datatypeIn: [
+                  value.datatype.value.concat("x"),
+                  value.datatype.value,
+                ],
+              },
             },
           },
           instance,
@@ -261,7 +278,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { datatype: value.datatype.value.concat("x") },
+              item: { datatypeIn: [value.datatype.value.concat("x")] },
             },
           },
           instance,
@@ -269,14 +286,56 @@ describe("filter", () => {
       ).toStrictEqual(false);
     });
 
-    it("language", ({ expect }) => {
+    it("in", ({ expect }) => {
+      const value = DataFactory.literal("test", xsd.string);
+      const instance = new TermPropertiesClass({ literalTermProperty: value });
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            literalTermProperty: {
+              item: {
+                in: [
+                  {
+                    datatype: xsd.string.value,
+                    value: value.value,
+                  },
+                ],
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            literalTermProperty: {
+              item: {
+                in: [
+                  {
+                    datatype: xsd.integer.value,
+                    value: value.value,
+                  },
+                ],
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("languageIn", ({ expect }) => {
       const value = DataFactory.literal("test", "en");
       const instance = new TermPropertiesClass({ literalTermProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { language: value.language },
+              item: {
+                languageIn: [value.language.concat("x"), value.language],
+              },
             },
           },
           instance,
@@ -287,7 +346,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { language: value.language.concat("x") },
+              item: { languageIn: [value.language.concat("x")] },
             },
           },
           instance,
@@ -295,14 +354,14 @@ describe("filter", () => {
       ).toStrictEqual(false);
     });
 
-    it("value", ({ expect }) => {
+    it("valueIn", ({ expect }) => {
       const value = DataFactory.literal("test");
       const instance = new TermPropertiesClass({ literalTermProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { value: value.value },
+              item: { valueIn: [value.value.concat("x"), value.value] },
             },
           },
           instance,
@@ -312,7 +371,9 @@ describe("filter", () => {
       expect(
         TermPropertiesClass.$filter(
           {
-            literalTermProperty: { item: { value: value.value.concat("x") } },
+            literalTermProperty: {
+              item: { valueIn: [value.value.concat("x")] },
+            },
           },
           instance,
         ),
@@ -326,17 +387,17 @@ describe("filter", () => {
       iriTermProperty: DataFactory.namedNode(value),
     });
 
-    it("value", ({ expect }) => {
+    it("in", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { iriTermProperty: { item: { value } } },
+          { iriTermProperty: { item: { in: [value.concat("x"), value] } } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { iriTermProperty: { item: { value: value.concat("x") } } },
+          { iriTermProperty: { item: { in: [value.concat("x")] } } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -346,6 +407,22 @@ describe("filter", () => {
   describe("number", () => {
     const value = 1;
     const instance = new TermPropertiesClass({ numberTermProperty: value });
+
+    it("in", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          { numberTermProperty: { item: { in: [value - 1, value] } } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { numberTermProperty: { item: { in: [value - 1] } } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
 
     it("maxExclusive", ({ expect }) => {
       expect(
@@ -410,22 +487,6 @@ describe("filter", () => {
         ),
       ).toStrictEqual(false);
     });
-
-    it("value", ({ expect }) => {
-      expect(
-        TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { value } } },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { value: value - 1 } } },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
   });
 
   describe("object", () => {
@@ -436,7 +497,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             $identifier: {
-              value: instance.$identifier.value,
+              in: [instance.$identifier.value],
             },
           },
           instance,
@@ -447,7 +508,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             $identifier: {
-              value: instance.$identifier.value.concat("x"),
+              in: [instance.$identifier.value.concat("x")],
             },
           },
           instance,
@@ -460,7 +521,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             concreteChildClassProperty: {
-              value: instance.concreteChildClassProperty,
+              in: [instance.concreteChildClassProperty],
             },
           },
           instance,
@@ -471,7 +532,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             concreteChildClassProperty: {
-              value: instance.concreteChildClassProperty.concat("x"),
+              in: [instance.concreteChildClassProperty.concat("x")],
             },
           },
           instance,
@@ -484,7 +545,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             concreteParentClassProperty: {
-              value: instance.concreteParentClassProperty,
+              in: [instance.concreteParentClassProperty],
             },
           },
           instance,
@@ -495,7 +556,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             concreteParentClassProperty: {
-              value: instance.concreteParentClassProperty.concat("x"),
+              in: [instance.concreteParentClassProperty.concat("x")],
             },
           },
           instance,
@@ -518,7 +579,7 @@ describe("filter", () => {
             on: {
               ClassUnionMember1: {
                 classUnionMember1Property: {
-                  value: instance.classUnionMember1Property,
+                  in: [instance.classUnionMember1Property],
                 },
               },
             },
@@ -533,7 +594,7 @@ describe("filter", () => {
             on: {
               ClassUnionMember1: {
                 classUnionMember1Property: {
-                  value: instance.classUnionMember1Property.concat("x"),
+                  in: [instance.classUnionMember1Property.concat("x")],
                 },
               },
             },
@@ -550,7 +611,7 @@ describe("filter", () => {
             on: {
               ClassUnionMember2: {
                 classUnionMember2Property: {
-                  value: "could be anything",
+                  in: ["could be anything"],
                 },
               },
             },
@@ -568,12 +629,12 @@ describe("filter", () => {
               // Only the member 1 filter will be tested
               ClassUnionMember1: {
                 classUnionMember1Property: {
-                  value: instance.classUnionMember1Property,
+                  in: [instance.classUnionMember1Property],
                 },
               },
               ClassUnionMember2: {
                 classUnionMember2Property: {
-                  value: "could be anything",
+                  in: ["could be anything"],
                 },
               },
             },
@@ -677,14 +738,14 @@ describe("filter", () => {
     it("items", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { items: { value } } },
+          { emptyStringSetProperty: { items: { in: [value] } } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { items: { value: value.concat("x") } } },
+          { emptyStringSetProperty: { items: { in: [value.concat("x")] } } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -694,6 +755,22 @@ describe("filter", () => {
   describe("string", () => {
     const value = "test";
     const instance = new TermPropertiesClass({ stringTermProperty: value });
+
+    it("in", ({ expect }) => {
+      expect(
+        TermPropertiesClass.$filter(
+          { stringTermProperty: { item: { in: [value.concat("x"), value] } } },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          { stringTermProperty: { item: { in: [value.concat("x")] } } },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
 
     it("maxLength", ({ expect }) => {
       expect(
@@ -726,26 +803,10 @@ describe("filter", () => {
         ),
       ).toStrictEqual(false);
     });
-
-    it("value", ({ expect }) => {
-      expect(
-        TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { value } } },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { value: value.concat("x") } } },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
   });
 
   describe("term", () => {
-    it("datatype", ({ expect }) => {
+    it("datatypeIn", ({ expect }) => {
       const value = DataFactory.literal("test", xsd.string);
       const instance = new TermPropertiesClass({ termProperty: value });
 
@@ -753,7 +814,12 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { datatype: value.datatype.value },
+              item: {
+                datatypeIn: [
+                  value.datatype.value.concat("x"),
+                  value.datatype.value,
+                ],
+              },
             },
           },
           instance,
@@ -764,7 +830,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { datatype: value.datatype.value.concat("x") },
+              item: { datatypeIn: [value.datatype.value.concat("x")] },
             },
           },
           instance,
@@ -772,14 +838,56 @@ describe("filter", () => {
       ).toStrictEqual(false);
     });
 
-    it("language", ({ expect }) => {
+    it("in", ({ expect }) => {
+      const value = DataFactory.literal("test", xsd.string);
+      const instance = new TermPropertiesClass({ termProperty: value });
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: {
+                in: [
+                  {
+                    datatype: xsd.string.value,
+                    value: value.value,
+                  },
+                ],
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(true);
+
+      expect(
+        TermPropertiesClass.$filter(
+          {
+            termProperty: {
+              item: {
+                in: [
+                  {
+                    datatype: xsd.integer.value,
+                    value: value.value,
+                  },
+                ],
+              },
+            },
+          },
+          instance,
+        ),
+      ).toStrictEqual(false);
+    });
+
+    it("languageIn", ({ expect }) => {
       const value = DataFactory.literal("test", "en");
       const instance = new TermPropertiesClass({ termProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { language: value.language },
+              item: {
+                languageIn: [value.language.concat("x"), value.language],
+              },
             },
           },
           instance,
@@ -790,7 +898,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { language: value.language.concat("x") },
+              item: { languageIn: [value.language.concat("x")] },
             },
           },
           instance,
@@ -798,14 +906,14 @@ describe("filter", () => {
       ).toStrictEqual(false);
     });
 
-    it("type", ({ expect }) => {
+    it("typeIn", ({ expect }) => {
       const value = DataFactory.literal("test");
       const instance = new TermPropertiesClass({ termProperty: value });
       expect(
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { type: value.termType },
+              item: { typeIn: ["BlankNode", value.termType] },
             },
           },
           instance,
@@ -816,7 +924,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { type: "BlankNode" },
+              item: { typeIn: ["BlankNode"] },
             },
           },
           instance,
@@ -824,7 +932,7 @@ describe("filter", () => {
       ).toStrictEqual(false);
     });
 
-    it("value", ({ expect }) => {
+    it("valueIn", ({ expect }) => {
       const value = DataFactory.literal("test");
       const instance = new TermPropertiesClass({ termProperty: value });
 
@@ -832,7 +940,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { value: value.value },
+              item: { valueIn: [value.value.concat("x"), value.value] },
             },
           },
           instance,
@@ -841,7 +949,7 @@ describe("filter", () => {
 
       expect(
         TermPropertiesClass.$filter(
-          { termProperty: { item: { value: value.value.concat("x") } } },
+          { termProperty: { item: { valueIn: [value.value.concat("x")] } } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -869,12 +977,12 @@ describe("filter", () => {
             requiredClassOrClassOrStringProperty: {
               on: {
                 "0-ClassUnionMember1": {
-                  classUnionMember1Property: { value: "test" },
+                  classUnionMember1Property: { in: ["test"] },
                 },
                 "1-ClassUnionMember2": {
-                  classUnionMember2Property: { value: "test" },
+                  classUnionMember2Property: { in: ["test"] },
                 },
-                "2-string": { value: "test" },
+                "2-string": { in: ["test"] },
               },
             },
           },
@@ -888,12 +996,12 @@ describe("filter", () => {
             requiredClassOrClassOrStringProperty: {
               on: {
                 "0-ClassUnionMember1": {
-                  classUnionMember1Property: { value: "test" },
+                  classUnionMember1Property: { in: ["test"] },
                 },
                 "1-ClassUnionMember2": {
-                  classUnionMember2Property: { value: "test" },
+                  classUnionMember2Property: { in: ["test"] },
                 },
-                "2-string": { value: "testx" },
+                "2-string": { in: ["testx"] },
               },
             },
           },
@@ -908,8 +1016,8 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { value: "test" },
-                NamedNode: { value: "http://example.com" },
+                Literal: { valueIn: ["test"] },
+                NamedNode: { in: ["http://example.com"] },
               },
             },
           },
@@ -922,8 +1030,8 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { value: "test" },
-                NamedNode: { value: "http://example.comXXX" },
+                Literal: { valueIn: ["test"] },
+                NamedNode: { in: ["http://example.comXXX"] },
               },
             },
           },
@@ -938,8 +1046,8 @@ describe("filter", () => {
           {
             requiredIriOrStringProperty: {
               on: {
-                object: { value: "test" },
-                string: { value: "test" },
+                object: { in: ["test"] },
+                string: { in: ["test"] },
               },
             },
           },
@@ -952,8 +1060,8 @@ describe("filter", () => {
           {
             requiredIriOrStringProperty: {
               on: {
-                object: { value: "test" },
-                string: { value: "testx" },
+                object: { in: ["test"] },
+                string: { in: ["testx"] },
               },
             },
           },

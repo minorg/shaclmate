@@ -87,24 +87,24 @@ export class StringType extends AbstractPrimitiveType<string> {
         `${syntheticNamePrefix}StringFilter`,
         `\
 interface ${syntheticNamePrefix}StringFilter {
+  readonly in?: readonly string[];
   readonly maxLength?: number;
   readonly minLength?: number;
-  readonly value?: string;
 }`,
       ),
       singleEntryRecord(
         `${syntheticNamePrefix}filterString`,
         `\
 function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}StringFilter, value: string) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
+    return false;
+  }
+
   if (typeof filter.maxLength !== "undefined" && value.length > filter.maxLength) {
     return false;
   }
 
   if (typeof filter.minLength !== "undefined" && value.length < filter.minLength) {
-    return false;
-  }
-
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
     return false;
   }
 
