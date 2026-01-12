@@ -12,7 +12,8 @@ import { Type } from "./Type.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
-  override readonly filterFunction = `${syntheticNamePrefix}filterNumber`;
+  override readonly filterFunction =
+    `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}function`;
   override readonly filterType = new Type.CompositeFilterTypeReference(
     `${syntheticNamePrefix}NumberFilter`,
   );
@@ -105,32 +106,45 @@ interface ${syntheticNamePrefix}NumberFilter {
 }`,
       ),
       singleEntryRecord(
-        `${syntheticNamePrefix}filterNumber`,
+        `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}function`,
         `\
-function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
-    return false;
-  }
+namespace ${syntheticNamePrefix}NumberFilter {
+  export function ${syntheticNamePrefix}function(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
+    if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
+      return false;
+    }
 
-  if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
-    return false;
-  }
+    if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
+      return false;
+    }
 
-  if (typeof filter.maxInclusive !== "undefined" && value > filter.maxInclusive) {
-    return false;
-  }
+    if (typeof filter.maxInclusive !== "undefined" && value > filter.maxInclusive) {
+      return false;
+    }
 
-  if (typeof filter.minExclusive !== "undefined" && value <= filter.minExclusive) {
-    return false;
-  }
+    if (typeof filter.minExclusive !== "undefined" && value <= filter.minExclusive) {
+      return false;
+    }
 
-  if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
-    return false;
-  }
+    if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
+      return false;
+    }
 
-  return true;
+    return true;
+  }
 }`,
       ),
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
+            `\
+namespace ${syntheticNamePrefix}NumberFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, subject, variablePrefix }: { filter: ${syntheticNamePrefix}NumberFilter, subject: string, variablePrefix: string }): readonly sparqljs.Pattern[] {
+    return [];
+  }
+}`,
+          )
+        : {},
     );
   }
 

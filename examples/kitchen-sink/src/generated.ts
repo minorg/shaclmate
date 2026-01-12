@@ -418,45 +418,6 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: rdfjs.NamedNode) {
   return true;
 }
 
-function $filterNumber(filter: $NumberFilter, value: number) {
-  if (
-    typeof filter.in !== "undefined" &&
-    !filter.in.some((inValue) => inValue === value)
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.maxExclusive !== "undefined" &&
-    value >= filter.maxExclusive
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.maxInclusive !== "undefined" &&
-    value > filter.maxInclusive
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.minExclusive !== "undefined" &&
-    value <= filter.minExclusive
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.minInclusive !== "undefined" &&
-    value < filter.minInclusive
-  ) {
-    return false;
-  }
-
-  return true;
-}
-
 function $filterString(filter: $StringFilter, value: string) {
   if (
     typeof filter.in !== "undefined" &&
@@ -814,6 +775,47 @@ interface $NumberFilter {
   readonly maxInclusive?: number;
   readonly minExclusive?: number;
   readonly minInclusive?: number;
+}
+
+namespace $NumberFilter {
+  export function $function(filter: $NumberFilter, value: number) {
+    if (
+      typeof filter.in !== "undefined" &&
+      !filter.in.some((inValue) => inValue === value)
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.maxExclusive !== "undefined" &&
+      value >= filter.maxExclusive
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.maxInclusive !== "undefined" &&
+      value > filter.maxInclusive
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.minExclusive !== "undefined" &&
+      value <= filter.minExclusive
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.minInclusive !== "undefined" &&
+      value < filter.minInclusive
+    ) {
+      return false;
+    }
+
+    return true;
+  }
 }
 
 namespace $RdfVocabularies {
@@ -7247,7 +7249,7 @@ export namespace TermPropertiesClass {
 
     if (
       typeof filter.numberTermProperty !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($filterNumber)(
+      !$filterMaybe<number, $NumberFilter>($NumberFilter.$function)(
         filter.numberTermProperty,
         value.numberTermProperty,
       )
@@ -30980,7 +30982,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           if (typeof filter.on?.["number"] !== "undefined") {
             switch (typeof value) {
               case "number":
-                if (!$filterNumber(filter.on["number"], value)) {
+                if (!$NumberFilter.$function(filter.on["number"], value)) {
                   return false;
                 }
                 break;
@@ -35468,7 +35470,7 @@ export namespace InPropertiesClass {
 
     if (
       typeof filter.inNumbersProperty !== "undefined" &&
-      !$filterMaybe<1 | 2, $NumberFilter>($filterNumber)(
+      !$filterMaybe<1 | 2, $NumberFilter>($NumberFilter.$function)(
         filter.inNumbersProperty,
         value.inNumbersProperty,
       )
@@ -42549,7 +42551,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.numberDefaultValueProperty !== "undefined" &&
-      !$filterNumber(
+      !$NumberFilter.$function(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
       )
