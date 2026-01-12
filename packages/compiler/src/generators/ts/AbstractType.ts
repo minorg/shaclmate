@@ -96,80 +96,76 @@ export abstract class AbstractType implements Type {
     recursionStack: Type[];
   }): Readonly<Record<string, string>>;
 
-  sparqlConstructTemplateTriples({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }: Parameters<Type["sparqlConstructTemplateTriples"]>[0]): readonly string[] {
-    switch (context) {
-      case "object": {
-        const objectPrefix = "dataFactory.variable!(";
-        const objectSuffix = ")";
-        invariant(variables.object.startsWith(objectPrefix));
-        invariant(variables.object.endsWith(objectSuffix));
-        return [
-          objectInitializer({
-            object: variables.object,
-            predicate: variables.predicate,
-            subject: variables.subject,
-          }),
-        ].concat(
-          this.sparqlConstructTemplateTriples({
-            allowIgnoreRdfType,
-            context: "subject",
-            variables: {
-              subject: variables.object,
-              variablePrefix: variables.object.substring(
-                objectPrefix.length,
-                variables.object.length - objectSuffix.length,
-              ),
-            },
-          }),
-        );
-      }
-      case "subject":
-        return [];
-    }
+  sparqlConstructChainTriples(
+    _parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
+  ): readonly string[] {
+    return [];
   }
 
-  sparqlWherePatterns({
+  sparqlConstructPropertyTriples({
     allowIgnoreRdfType,
-    context,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
-    switch (context) {
-      case "object": {
-        const objectPrefix = "dataFactory.variable!(";
-        const objectSuffix = ")";
-        invariant(variables.object.startsWith(objectPrefix));
-        invariant(variables.object.endsWith(objectSuffix));
-        return [
-          objectInitializer({
-            triples: `[${objectInitializer({
-              object: variables.object,
-              predicate: variables.predicate,
-              subject: variables.subject,
-            })}]`,
-            type: '"bgp"',
-          }),
-        ].concat(
-          this.sparqlWherePatterns({
-            allowIgnoreRdfType,
-            context: "subject",
-            variables: {
-              preferredLanguages: variables.preferredLanguages,
-              subject: variables.object,
-              variablePrefix: variables.object.substring(
-                objectPrefix.length,
-                variables.object.length - objectSuffix.length,
-              ),
-            },
-          }),
-        );
-      }
-      case "subject":
-        return [];
-    }
+  }: Parameters<Type["sparqlConstructPropertyTriples"]>[0]): readonly string[] {
+    const objectPrefix = "dataFactory.variable!(";
+    const objectSuffix = ")";
+    invariant(variables.object.startsWith(objectPrefix));
+    invariant(variables.object.endsWith(objectSuffix));
+    return [
+      objectInitializer({
+        object: variables.object,
+        predicate: variables.predicate,
+        subject: variables.subject,
+      }),
+    ].concat(
+      this.sparqlConstructChainTriples({
+        allowIgnoreRdfType,
+        variables: {
+          subject: variables.object,
+          variablePrefix: variables.object.substring(
+            objectPrefix.length,
+            variables.object.length - objectSuffix.length,
+          ),
+        },
+      }),
+    );
+  }
+
+  sparqlWhereChainPatterns(
+    _parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
+  ): readonly string[] {
+    return [];
+  }
+
+  sparqlWherePropertyPatterns({
+    allowIgnoreRdfType,
+    variables,
+  }: Parameters<Type["sparqlWherePropertyPatterns"]>[0]): readonly string[] {
+    const objectPrefix = "dataFactory.variable!(";
+    const objectSuffix = ")";
+    invariant(variables.object.startsWith(objectPrefix));
+    invariant(variables.object.endsWith(objectSuffix));
+    return [
+      objectInitializer({
+        triples: `[${objectInitializer({
+          object: variables.object,
+          predicate: variables.predicate,
+          subject: variables.subject,
+        })}]`,
+        type: '"bgp"',
+      }),
+    ].concat(
+      this.sparqlWhereChainPatterns({
+        allowIgnoreRdfType,
+        variables: {
+          preferredLanguages: variables.preferredLanguages,
+          subject: variables.object,
+          variablePrefix: variables.object.substring(
+            objectPrefix.length,
+            variables.object.length - objectSuffix.length,
+          ),
+        },
+      }),
+    );
   }
 
   abstract toJsonExpression(parameters: {

@@ -39,35 +39,29 @@ export class SetType<
     return chain.join(".");
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  override sparqlConstructChainTriples(
+    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
   ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlConstructTemplateTriples(parameters);
-      case "subject":
-        return this.itemType.sparqlConstructTemplateTriples(parameters);
-    }
+    return this.itemType.sparqlConstructChainTriples(parameters);
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  override sparqlWhereChainPatterns(
+    _parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
   ): readonly string[] {
-    switch (parameters.context) {
-      case "object": {
-        const patterns = this.itemType.sparqlWherePatterns(parameters);
-        if (patterns.length === 0) {
-          return [];
-        }
-        return this.minCount > 0
-          ? patterns
-          : [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
-      }
-      case "subject": {
-        throw new Error("should never be called");
-        // return this.itemType.sparqlWherePatterns(parameters);
-      }
+    throw new Error("should never be called");
+    // return this.itemType.sparqlWherePatterns(parameters);
+  }
+
+  override sparqlWherePropertyPatterns(
+    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
+  ): readonly string[] {
+    const patterns = this.itemType.sparqlWherePropertyPatterns(parameters);
+    if (patterns.length === 0) {
+      return [];
     }
+    return this.minCount > 0
+      ? patterns
+      : [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
   }
 
   override toRdfExpression({

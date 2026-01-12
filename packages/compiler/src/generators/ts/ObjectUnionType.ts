@@ -288,41 +288,31 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  override sparqlConstructChainTriples(
+    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
   ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlConstructTemplateTriples(parameters);
-      case "subject":
-        return [
-          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples(${objectInitializer(
-            {
-              subject: parameters.variables.subject,
-              variablePrefix: parameters.variables.variablePrefix,
-            },
-          )})`,
-        ];
-    }
+    return [
+      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
+        {
+          subject: parameters.variables.subject,
+          variablePrefix: parameters.variables.variablePrefix,
+        },
+      )})`,
+    ];
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  override sparqlWhereChainPatterns(
+    parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
   ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlWherePatterns(parameters);
-      case "subject":
-        return [
-          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-            {
-              preferredLanguages: parameters.variables.preferredLanguages,
-              subject: parameters.variables.subject,
-              variablePrefix: parameters.variables.variablePrefix,
-            },
-          )})`,
-        ];
-    }
+    return [
+      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
+        {
+          preferredLanguages: parameters.variables.preferredLanguages,
+          subject: parameters.variables.subject,
+          variablePrefix: parameters.variables.variablePrefix,
+        },
+      )})`,
+    ];
   }
 
   override toJsonExpression({

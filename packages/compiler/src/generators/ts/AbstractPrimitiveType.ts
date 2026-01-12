@@ -65,10 +65,12 @@ export abstract class AbstractPrimitiveType<
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractLiteralType["sparqlWherePatterns"]>[0],
+  override sparqlWherePropertyPatterns(
+    parameters: Parameters<
+      AbstractLiteralType["sparqlWherePropertyPatterns"]
+    >[0],
   ): readonly string[] {
-    return super.sparqlWherePatterns({
+    return super.sparqlWherePropertyPatterns({
       ...parameters,
       ignoreLiteralLanguage: parameters.ignoreLiteralLanguage ?? true,
     });

@@ -136,7 +136,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     return {};
   }
 
-  override sparqlConstructTemplateTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly string[] {
     return [];
   }
 

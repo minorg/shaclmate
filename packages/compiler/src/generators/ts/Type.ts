@@ -187,66 +187,66 @@ export interface Type {
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * This method is called in two contexts:
-   * (1) When an instance of the type is an "object" of a property.
-   *     This method should return a BGP (variables.subject, variables.predicate, variables.object) and recursively call itself with the variables.object as a "subject" context.
-   * (2) When an instance of the type is a "subject".
-   *     For example, ListType calls this method to with the item variable as a subject in order to chain additional patterns on items. Term types with no additional patterns should return an empty array.
+   * This method is called when an instance of the type is the object of a property.
+   *
+   * The method should return a BGP (variables.subject, variables.predicate, variables.object) and optionally its own sparqlConstructChainTriples method to
+   * chain variables.object to other triples (using variables.object as the "subject" of that call).
    */
-  sparqlConstructTemplateTriples({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }:
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "object";
-        variables: {
-          object: string;
-          predicate: string;
-          subject: string;
-          variablePrefix: string;
-        };
-      }
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "subject";
-        variables: {
-          subject: string;
-          variablePrefix: string;
-        };
-      }): readonly string[];
+  sparqlConstructPropertyTriples(parameters: {
+    allowIgnoreRdfType: boolean;
+    variables: {
+      object: string;
+      predicate: string;
+      subject: string;
+      variablePrefix: string;
+    };
+  }): readonly string[];
 
   /**
-   * An array of SPARQL.js where patterns for a value of this type, as strings (so they can incorporate runtime calls).
+   * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * See note in sparqlConstructTemplateTriples re: how this method is used.
+   * This method is called when an instance of the type is the subject of chains.
+   * For example, ListType calls this method to with the item variable as a subject in order to chain additional triples on items.
+   *
+   * Types with no additional patterns to chain should return an empty array.
    */
-  sparqlWherePatterns({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }:
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "object";
-        variables: {
-          object: string;
-          predicate: string;
-          preferredLanguages: string;
-          subject: string;
-          variablePrefix: string;
-        };
-      }
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "subject";
-        variables: {
-          preferredLanguages: string;
-          subject: string;
-          variablePrefix: string;
-        };
-      }): readonly string[];
+  sparqlConstructChainTriples(parameters: {
+    allowIgnoreRdfType: boolean;
+    variables: {
+      subject: string;
+      variablePrefix: string;
+    };
+  }): readonly string[];
+
+  /**
+   * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
+   *
+   * See note in sparqlConstructPropertyTriples re: how this method is used.
+   */
+  sparqlWherePropertyPatterns(parameters: {
+    allowIgnoreRdfType: boolean;
+    variables: {
+      object: string;
+      predicate: string;
+      preferredLanguages: string;
+      subject: string;
+      variablePrefix: string;
+    };
+  }): readonly string[];
+
+  /**
+   * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
+   *
+   * See note in sparqlConstructChainTriples re: how this method is used.
+   */
+  sparqlWhereChainPatterns(parameters: {
+    allowIgnoreRdfType: boolean;
+    variables: {
+      preferredLanguages: string;
+      subject: string;
+      variablePrefix: string;
+    };
+  }): readonly string[];
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence

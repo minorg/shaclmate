@@ -132,14 +132,28 @@ class MemberType {
     return this.delegate.snippetDeclarations(parameters);
   }
 
-  sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  sparqlConstructChainTriples(
+    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
   ) {
-    return this.delegate.sparqlConstructTemplateTriples(parameters);
+    return this.delegate.sparqlConstructChainTriples(parameters);
   }
 
-  sparqlWherePatterns(parameters: Parameters<Type["sparqlWherePatterns"]>[0]) {
-    return this.delegate.sparqlWherePatterns(parameters);
+  sparqlConstructPropertyTriples(
+    parameters: Parameters<Type["sparqlConstructPropertyTriples"]>[0],
+  ) {
+    return this.delegate.sparqlConstructPropertyTriples(parameters);
+  }
+
+  sparqlWhereChainPatterns(
+    parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
+  ) {
+    return this.delegate.sparqlWhereChainPatterns(parameters);
+  }
+
+  sparqlWherePropertyPatterns(
+    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
+  ) {
+    return this.delegate.sparqlWherePropertyPatterns(parameters);
   }
 
   toJsonExpression(parameters: Parameters<Type["toJsonExpression"]>[0]) {
@@ -522,32 +536,67 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  override sparqlConstructChainTriples(
+    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
   ): readonly string[] {
+    return this.sparqlConstructTriples((memberType) =>
+      memberType.sparqlConstructChainTriples({
+        ...parameters,
+        allowIgnoreRdfType: false,
+      }),
+    );
+  }
+
+  override sparqlConstructPropertyTriples(
+    parameters: Parameters<Type["sparqlConstructPropertyTriples"]>[0],
+  ): readonly string[] {
+    return this.sparqlConstructTriples((memberType) =>
+      memberType.sparqlConstructPropertyTriples({
+        ...parameters,
+        allowIgnoreRdfType: false,
+      }),
+    );
+  }
+
+  private sparqlConstructTriples(
+    memberTypeTriples: (memberType: MemberType) => readonly string[],
+  ) {
     return this.memberTypes.reduce(
-      (array, memberType) =>
-        array.concat(
-          memberType.sparqlConstructTemplateTriples({
-            ...parameters,
-            allowIgnoreRdfType: false,
-          }),
-        ),
+      (array, memberType) => array.concat(memberTypeTriples(memberType)),
       [] as string[],
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  override sparqlWhereChainPatterns(
+    parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
+  ): readonly string[] {
+    return this.sparqlWherePatterns((memberType) =>
+      memberType.sparqlWhereChainPatterns({
+        ...parameters,
+        allowIgnoreRdfType: false,
+      }),
+    );
+  }
+
+  override sparqlWherePropertyPatterns(
+    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
+  ): readonly string[] {
+    return this.sparqlWherePatterns((memberType) =>
+      memberType.sparqlWherePropertyPatterns({
+        ...parameters,
+        allowIgnoreRdfType: false,
+      }),
+    );
+  }
+
+  private sparqlWherePatterns(
+    memberTypePatterns: (memberType: MemberType) => readonly string[],
   ): readonly string[] {
     let haveEmptyGroup = false; // Only need one empty group
     return [
       `{ patterns: [${this.memberTypes
         .flatMap((memberType) => {
-          const groupPatterns = memberType.sparqlWherePatterns({
-            ...parameters,
-            allowIgnoreRdfType: false,
-          });
+          const groupPatterns = memberTypePatterns(memberType);
           if (groupPatterns.length === 0) {
             if (haveEmptyGroup) {
               return [];

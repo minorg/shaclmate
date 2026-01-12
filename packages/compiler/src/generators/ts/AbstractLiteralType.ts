@@ -88,15 +88,15 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
+  override sparqlWherePropertyPatterns(
+    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0] & {
       ignoreLiteralLanguage?: boolean;
     },
   ): readonly string[] {
-    const { context, ignoreLiteralLanguage, variables } = parameters;
+    const { ignoreLiteralLanguage, variables } = parameters;
 
-    const superPatterns = super.sparqlWherePatterns(parameters);
-    if (ignoreLiteralLanguage || context === "subject") {
+    const superPatterns = super.sparqlWherePropertyPatterns(parameters);
+    if (ignoreLiteralLanguage) {
       return superPatterns;
     }
 

@@ -1,5 +1,4 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -252,22 +251,17 @@ export abstract class AbstractTermType<
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  override sparqlWherePropertyPatterns(
+    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
   ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return this.defaultValue
-          .map(
-            () =>
-              [
-                `{ patterns: [${super.sparqlWherePatterns(parameters).join(", ")}], type: "optional" }`,
-              ] as readonly string[],
-          )
-          .orDefault(super.sparqlWherePatterns(parameters));
-      case "subject":
-        return super.sparqlWherePatterns(parameters);
-    }
+    return this.defaultValue
+      .map(
+        () =>
+          [
+            `{ patterns: [${super.sparqlWherePropertyPatterns(parameters).join(", ")}], type: "optional" }`,
+          ] as readonly string[],
+      )
+      .orDefault(super.sparqlWherePropertyPatterns(parameters));
   }
 
   override toRdfExpression({

@@ -28,7 +28,7 @@ export function sparqlFunctionDeclarations(
 
   const subjectDefault = camelCase(this.name);
 
-  const sparqlConstructTemplateTriplesStatements = [
+  const sparqlConstructTriplesStatements = [
     `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
     "const triples: sparqljs.Triple[] = []",
     `const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}");`,
@@ -43,8 +43,8 @@ export function sparqlFunctionDeclarations(
   ];
 
   for (const parentObjectType of this.parentObjectTypes) {
-    sparqlConstructTemplateTriplesStatements.push(
-      `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ ignoreRdfType: true, subject, variablePrefix }));`,
+    sparqlConstructTriplesStatements.push(
+      `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType: true, subject, variablePrefix }));`,
     );
     sparqlWherePatternsStatements.push(`\
 for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: true, subject, variablePrefix })) {
@@ -62,7 +62,7 @@ for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix
       .toList()
       .concat(this.descendantFromRdfTypeVariables);
 
-    sparqlConstructTemplateTriplesStatements.push(`\
+    sparqlConstructTriplesStatements.push(`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
     { subject, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
@@ -129,10 +129,10 @@ if (!parameters?.ignoreRdfType) {
       continue;
     }
 
-    for (const triple of property.sparqlConstructTemplateTriples({
+    for (const triple of property.sparqlConstructTriples({
       variables,
     })) {
-      sparqlConstructTemplateTriplesStatements.push(`triples.push(${triple});`);
+      sparqlConstructTriplesStatements.push(`triples.push(${triple});`);
       nop = false;
     }
     propertySparqlWherePatterns.push(
@@ -152,7 +152,7 @@ for (const pattern of propertyPatterns) {
     nop = false;
   }
 
-  sparqlConstructTemplateTriplesStatements.push("return triples;");
+  sparqlConstructTriplesStatements.push("return triples;");
   sparqlWherePatternsStatements.push(
     "return requiredPatterns.concat(optionalPatterns);",
   );
@@ -163,7 +163,7 @@ for (const pattern of propertyPatterns) {
     {
       isExported: true,
       kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}sparqlConstructTemplateTriples`,
+      name: `${syntheticNamePrefix}sparqlConstructTriples`,
       parameters: [
         {
           hasQuestionToken: true,
@@ -172,7 +172,7 @@ for (const pattern of propertyPatterns) {
         },
       ],
       returnType: "readonly sparqljs.Triple[]",
-      statements: nop ? "return [];" : sparqlConstructTemplateTriplesStatements,
+      statements: nop ? "return [];" : sparqlConstructTriplesStatements,
     },
     {
       isExported: true,

@@ -479,7 +479,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return this.type.snippetDeclarations(parameters);
   }
 
-  override sparqlConstructTemplateTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly string[] {
     return [];
   }
 

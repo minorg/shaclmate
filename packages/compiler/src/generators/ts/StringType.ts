@@ -114,12 +114,12 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
     );
   }
 
-  override sparqlWherePatterns(
+  override sparqlWherePropertyPatterns(
     parameters: Parameters<
-      AbstractPrimitiveType<string>["sparqlWherePatterns"]
+      AbstractPrimitiveType<string>["sparqlWherePropertyPatterns"]
     >[0],
   ): readonly string[] {
-    return super.sparqlWherePatterns({
+    return super.sparqlWherePropertyPatterns({
       ...parameters,
       ignoreLiteralLanguage: false,
     });

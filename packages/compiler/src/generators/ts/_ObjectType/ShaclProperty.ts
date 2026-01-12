@@ -264,15 +264,14 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     ];
   }
 
-  sparqlConstructTemplateTriples({
+  sparqlConstructTriples({
     variables,
   }: Parameters<
-    Property<TypeT>["sparqlConstructTemplateTriples"]
+    Property<TypeT>["sparqlConstructTriples"]
   >[0]): readonly string[] {
     const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    return this.type.sparqlConstructTemplateTriples({
+    return this.type.sparqlConstructPropertyTriples({
       allowIgnoreRdfType: true,
-      context: "object",
       variables: {
         object: `dataFactory.variable!(${objectString})`,
         predicate: this.predicate,
@@ -286,9 +285,8 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     variables,
   }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]): readonly string[] {
     const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    return this.type.sparqlWherePatterns({
+    return this.type.sparqlWherePropertyPatterns({
       allowIgnoreRdfType: true,
-      context: "object",
       variables: {
         object: `dataFactory.variable!(${objectString})`,
         predicate: this.predicate,

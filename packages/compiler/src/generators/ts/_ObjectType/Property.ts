@@ -210,7 +210,7 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
   /**
    * An array of SPARQL.js CONSTRUCT template triples for this property as strings (so they can incorporate runtime calls).
    */
-  abstract sparqlConstructTemplateTriples(parameters: {
+  abstract sparqlConstructTriples(parameters: {
     variables: { subject: string; variablePrefix: string };
   }): readonly string[];
 

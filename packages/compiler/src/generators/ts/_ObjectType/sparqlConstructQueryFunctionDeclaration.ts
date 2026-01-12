@@ -18,7 +18,7 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
     returnType: "sparqljs.ConstructQuery",
     statements: [
       "const { ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {}",
-      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType, preferredLanguages, subject })) };`,
+      `return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType, preferredLanguages, subject })) };`,
     ],
   };
 }

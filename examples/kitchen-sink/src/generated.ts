@@ -1315,7 +1315,7 @@ export namespace $NamedDefaultPartial {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        $NamedDefaultPartial.$sparqlConstructTemplateTriples({
+        $NamedDefaultPartial.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -1345,7 +1345,7 @@ export namespace $NamedDefaultPartial {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1617,10 +1617,7 @@ export namespace $DefaultPartial {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        $DefaultPartial.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        $DefaultPartial.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -1647,7 +1644,7 @@ export namespace $DefaultPartial {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -1993,7 +1990,7 @@ export namespace UuidV4IriIdentifierInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UuidV4IriIdentifierInterface.$sparqlConstructTemplateTriples({
+        UuidV4IriIdentifierInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -2023,7 +2020,7 @@ export namespace UuidV4IriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -2538,7 +2535,7 @@ export namespace UuidV4IriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UuidV4IriIdentifierClass.$sparqlConstructTemplateTriples({
+        UuidV4IriIdentifierClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -2568,7 +2565,7 @@ export namespace UuidV4IriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5667,7 +5664,7 @@ export namespace UnionDiscriminantsClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        UnionDiscriminantsClass.$sparqlConstructTemplateTriples({
+        UnionDiscriminantsClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -5697,7 +5694,7 @@ export namespace UnionDiscriminantsClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -5720,7 +5717,7 @@ export namespace UnionDiscriminantsClass {
       subject,
     });
     triples.push(
-      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalClassOrClassOrStringProperty`,
         ),
@@ -5728,7 +5725,7 @@ export namespace UnionDiscriminantsClass {
       }),
     );
     triples.push(
-      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember2.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalClassOrClassOrStringProperty`,
         ),
@@ -5765,7 +5762,7 @@ export namespace UnionDiscriminantsClass {
       subject,
     });
     triples.push(
-      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredClassOrClassOrStringProperty`,
         ),
@@ -5782,7 +5779,7 @@ export namespace UnionDiscriminantsClass {
       subject,
     });
     triples.push(
-      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember2.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredClassOrClassOrStringProperty`,
         ),
@@ -5849,7 +5846,7 @@ export namespace UnionDiscriminantsClass {
       subject,
     });
     triples.push(
-      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}SetClassOrClassOrStringProperty`,
         ),
@@ -5857,7 +5854,7 @@ export namespace UnionDiscriminantsClass {
       }),
     );
     triples.push(
-      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember2.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}SetClassOrClassOrStringProperty`,
         ),
@@ -8066,10 +8063,7 @@ export namespace TermPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        TermPropertiesClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        TermPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -8096,7 +8090,7 @@ export namespace TermPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -8809,7 +8803,7 @@ export namespace Sha256IriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Sha256IriIdentifierClass.$sparqlConstructTemplateTriples({
+        Sha256IriIdentifierClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -8839,7 +8833,7 @@ export namespace Sha256IriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9345,7 +9339,7 @@ export namespace RecursiveClassUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        RecursiveClassUnionMember2.$sparqlConstructTemplateTriples({
+        RecursiveClassUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -9375,7 +9369,7 @@ export namespace RecursiveClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -9801,7 +9795,7 @@ export namespace RecursiveClassUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        RecursiveClassUnionMember1.$sparqlConstructTemplateTriples({
+        RecursiveClassUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -9831,7 +9825,7 @@ export namespace RecursiveClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -10312,7 +10306,7 @@ export namespace PropertyVisibilitiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PropertyVisibilitiesClass.$sparqlConstructTemplateTriples({
+        PropertyVisibilitiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -10342,7 +10336,7 @@ export namespace PropertyVisibilitiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11244,7 +11238,7 @@ export namespace PropertyCardinalitiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PropertyCardinalitiesClass.$sparqlConstructTemplateTriples({
+        PropertyCardinalitiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -11274,7 +11268,7 @@ export namespace PropertyCardinalitiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -11929,7 +11923,7 @@ export namespace PartialInterfaceUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialInterfaceUnionMember2.$sparqlConstructTemplateTriples({
+        PartialInterfaceUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -11959,7 +11953,7 @@ export namespace PartialInterfaceUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -12534,7 +12528,7 @@ export namespace PartialInterfaceUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialInterfaceUnionMember1.$sparqlConstructTemplateTriples({
+        PartialInterfaceUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -12564,7 +12558,7 @@ export namespace PartialInterfaceUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13171,7 +13165,7 @@ export namespace PartialClassUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialClassUnionMember2.$sparqlConstructTemplateTriples({
+        PartialClassUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -13201,7 +13195,7 @@ export namespace PartialClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -13753,7 +13747,7 @@ export namespace PartialClassUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialClassUnionMember1.$sparqlConstructTemplateTriples({
+        PartialClassUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -13783,7 +13777,7 @@ export namespace PartialClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14424,7 +14418,7 @@ export namespace OrderedPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        OrderedPropertiesClass.$sparqlConstructTemplateTriples({
+        OrderedPropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -14454,7 +14448,7 @@ export namespace OrderedPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -14982,7 +14976,7 @@ export namespace NonClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NonClass.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        NonClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -15009,7 +15003,7 @@ export namespace NonClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15454,7 +15448,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NoRdfTypeClassUnionMember2.$sparqlConstructTemplateTriples({
+        NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -15484,7 +15478,7 @@ export namespace NoRdfTypeClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -15947,7 +15941,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NoRdfTypeClassUnionMember1.$sparqlConstructTemplateTriples({
+        NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -15977,7 +15971,7 @@ export namespace NoRdfTypeClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -16792,7 +16786,7 @@ export namespace MutablePropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        MutablePropertiesClass.$sparqlConstructTemplateTriples({
+        MutablePropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -16822,7 +16816,7 @@ export namespace MutablePropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -17949,10 +17943,7 @@ export namespace ListPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ListPropertiesClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        ListPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -17979,7 +17970,7 @@ export namespace ListPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -18041,7 +18032,7 @@ export namespace ListPropertiesClass {
       ),
     });
     triples.push(
-      ...NonClass.$sparqlConstructTemplateTriples({
+      ...NonClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}Item0`,
@@ -18066,7 +18057,7 @@ export namespace ListPropertiesClass {
       ),
     });
     triples.push(
-      ...NonClass.$sparqlConstructTemplateTriples({
+      ...NonClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${`${variablePrefix}ObjectListProperty`}ItemN`,
@@ -18797,10 +18788,7 @@ export namespace PartialInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialInterface.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        PartialInterface.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -18827,7 +18815,7 @@ export namespace PartialInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -21442,7 +21430,7 @@ export namespace LazyPropertiesInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazyPropertiesInterface.$sparqlConstructTemplateTriples({
+        LazyPropertiesInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -21472,7 +21460,7 @@ export namespace LazyPropertiesInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -21495,7 +21483,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalLazyToResolvedInterfaceProperty`,
@@ -21513,7 +21501,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalLazyToResolvedInterfaceUnionProperty`,
@@ -21531,7 +21519,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...$NamedDefaultPartial.$sparqlConstructTemplateTriples({
+      ...$NamedDefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
@@ -21549,7 +21537,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...PartialInterface.$sparqlConstructTemplateTriples({
+      ...PartialInterface.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalPartialInterfaceToResolvedInterfaceProperty`,
@@ -21569,7 +21557,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...PartialInterface.$sparqlConstructTemplateTriples({
+      ...PartialInterface.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
@@ -21589,7 +21577,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...PartialInterfaceUnion.$sparqlConstructTemplateTriples({
+      ...PartialInterfaceUnion.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
         ),
@@ -21606,7 +21594,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredLazyToResolvedInterfaceProperty`,
@@ -21624,7 +21612,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...PartialInterface.$sparqlConstructTemplateTriples({
+      ...PartialInterface.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredPartialInterfaceToResolvedInterfaceProperty`,
@@ -21643,7 +21631,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}SetLazyToResolvedInterfaceProperty`,
@@ -21661,7 +21649,7 @@ export namespace LazyPropertiesInterface {
       subject,
     });
     triples.push(
-      ...PartialInterface.$sparqlConstructTemplateTriples({
+      ...PartialInterface.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}SetPartialInterfaceToResolvedInterfaceProperty`,
@@ -22507,10 +22495,7 @@ export namespace PartialClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        PartialClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -22537,7 +22522,7 @@ export namespace PartialClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -25158,10 +25143,7 @@ export namespace LazyPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazyPropertiesClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        LazyPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -25188,7 +25170,7 @@ export namespace LazyPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -25210,7 +25192,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalLazyToResolvedClassProperty`,
@@ -25228,7 +25210,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalLazyToResolvedClassUnionProperty`,
@@ -25246,7 +25228,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...$NamedDefaultPartial.$sparqlConstructTemplateTriples({
+      ...$NamedDefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalLazyToResolvedIriIdentifierClassProperty`,
@@ -25264,7 +25246,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...PartialClass.$sparqlConstructTemplateTriples({
+      ...PartialClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalPartialClassToResolvedClassProperty`,
@@ -25282,7 +25264,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...PartialClass.$sparqlConstructTemplateTriples({
+      ...PartialClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalPartialClassToResolvedClassUnionProperty`,
@@ -25300,7 +25282,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...PartialClassUnion.$sparqlConstructTemplateTriples({
+      ...PartialClassUnion.$sparqlConstructTriples({
         subject: dataFactory.variable!(
           `${variablePrefix}OptionalPartialClassUnionToResolvedClassUnionProperty`,
         ),
@@ -25318,7 +25300,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredLazyToResolvedClassProperty`,
@@ -25336,7 +25318,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...PartialClass.$sparqlConstructTemplateTriples({
+      ...PartialClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}RequiredPartialClassToResolvedClassProperty`,
@@ -25355,7 +25337,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...$DefaultPartial.$sparqlConstructTemplateTriples({
+      ...$DefaultPartial.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}SetLazyToResolvedClassProperty`,
@@ -25374,7 +25356,7 @@ export namespace LazyPropertiesClass {
       subject,
     });
     triples.push(
-      ...PartialClass.$sparqlConstructTemplateTriples({
+      ...PartialClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(
           `${variablePrefix}SetPartialClassToResolvedClassProperty`,
@@ -26018,7 +26000,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedIriIdentifierInterface.$sparqlConstructTemplateTriples({
+        LazilyResolvedIriIdentifierInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -26048,7 +26030,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -26541,7 +26523,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedIriIdentifierClass.$sparqlConstructTemplateTriples({
+        LazilyResolvedIriIdentifierClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -26571,7 +26553,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -27039,7 +27021,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedInterfaceUnionMember2.$sparqlConstructTemplateTriples({
+        LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -27069,7 +27051,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -27645,7 +27627,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedInterfaceUnionMember1.$sparqlConstructTemplateTriples({
+        LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -27675,7 +27657,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -28280,7 +28262,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedClassUnionMember2.$sparqlConstructTemplateTriples({
+        LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -28310,7 +28292,7 @@ export namespace LazilyResolvedClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -28861,7 +28843,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedClassUnionMember1.$sparqlConstructTemplateTriples({
+        LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -28891,7 +28873,7 @@ export namespace LazilyResolvedClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -29423,7 +29405,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTemplateTriples(
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTriples(
           { ignoreRdfType, subject },
         ),
       ),
@@ -29454,7 +29436,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -30068,9 +30050,10 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTemplateTriples(
-          { ignoreRdfType, subject },
-        ),
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -30099,7 +30082,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -30694,7 +30677,7 @@ export namespace LanguageInPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LanguageInPropertiesClass.$sparqlConstructTemplateTriples({
+        LanguageInPropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -30724,7 +30707,7 @@ export namespace LanguageInPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -31364,7 +31347,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        JsPrimitiveUnionPropertyClass.$sparqlConstructTemplateTriples({
+        JsPrimitiveUnionPropertyClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -31394,7 +31377,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -31807,7 +31790,7 @@ export namespace IriIdentifierInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IriIdentifierInterface.$sparqlConstructTemplateTriples({
+        IriIdentifierInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -31837,7 +31820,7 @@ export namespace IriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -32148,10 +32131,7 @@ export namespace IriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IriIdentifierClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        IriIdentifierClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -32178,7 +32158,7 @@ export namespace IriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -32484,7 +32464,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples({
+        InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -32514,7 +32494,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -33002,7 +32982,7 @@ export namespace InterfaceUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionMember2.$sparqlConstructTemplateTriples({
+        InterfaceUnionMember2.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -33032,7 +33012,7 @@ export namespace InterfaceUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -33046,9 +33026,11 @@ export namespace InterfaceUnionMember2 {
         ? subject.value
         : "interfaceUnionMember2");
     triples.push(
-      ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples(
-        { ignoreRdfType: true, subject, variablePrefix },
-      ),
+      ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
@@ -33607,7 +33589,7 @@ export namespace InterfaceUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnionMember1.$sparqlConstructTemplateTriples({
+        InterfaceUnionMember1.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -33637,7 +33619,7 @@ export namespace InterfaceUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -33651,9 +33633,11 @@ export namespace InterfaceUnionMember1 {
         ? subject.value
         : "interfaceUnionMember1");
     triples.push(
-      ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples(
-        { ignoreRdfType: true, subject, variablePrefix },
-      ),
+      ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
@@ -34171,7 +34155,7 @@ export namespace Interface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        Interface.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        Interface.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -34198,7 +34182,7 @@ export namespace Interface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -34717,7 +34701,7 @@ export namespace IndirectRecursiveHelperClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IndirectRecursiveHelperClass.$sparqlConstructTemplateTriples({
+        IndirectRecursiveHelperClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -34747,7 +34731,7 @@ export namespace IndirectRecursiveHelperClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -35168,7 +35152,7 @@ export namespace IndirectRecursiveClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IndirectRecursiveClass.$sparqlConstructTemplateTriples({
+        IndirectRecursiveClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -35198,7 +35182,7 @@ export namespace IndirectRecursiveClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -36152,10 +36136,7 @@ export namespace InPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InPropertiesClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        InPropertiesClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -36182,7 +36163,7 @@ export namespace InPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -36816,10 +36797,7 @@ export namespace InIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InIdentifierClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        InIdentifierClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -36846,7 +36824,7 @@ export namespace InIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -37272,7 +37250,7 @@ export namespace IdentifierOverride1ClassStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IdentifierOverride1ClassStatic.$sparqlConstructTemplateTriples({
+        IdentifierOverride1ClassStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -37302,7 +37280,7 @@ export namespace IdentifierOverride1ClassStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -37601,7 +37579,7 @@ export namespace IdentifierOverride2ClassStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IdentifierOverride2ClassStatic.$sparqlConstructTemplateTriples({
+        IdentifierOverride2ClassStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -37631,7 +37609,7 @@ export namespace IdentifierOverride2ClassStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -37645,7 +37623,7 @@ export namespace IdentifierOverride2ClassStatic {
         ? subject.value
         : "identifierOverride2Class");
     triples.push(
-      ...IdentifierOverride1ClassStatic.$sparqlConstructTemplateTriples({
+      ...IdentifierOverride1ClassStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -37946,7 +37924,7 @@ export namespace IdentifierOverride3ClassStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IdentifierOverride3ClassStatic.$sparqlConstructTemplateTriples({
+        IdentifierOverride3ClassStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -37976,7 +37954,7 @@ export namespace IdentifierOverride3ClassStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -37990,7 +37968,7 @@ export namespace IdentifierOverride3ClassStatic {
         ? subject.value
         : "identifierOverride3Class");
     triples.push(
-      ...IdentifierOverride2ClassStatic.$sparqlConstructTemplateTriples({
+      ...IdentifierOverride2ClassStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -38379,7 +38357,7 @@ export namespace IdentifierOverride4ClassStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IdentifierOverride4ClassStatic.$sparqlConstructTemplateTriples({
+        IdentifierOverride4ClassStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -38409,7 +38387,7 @@ export namespace IdentifierOverride4ClassStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -38423,7 +38401,7 @@ export namespace IdentifierOverride4ClassStatic {
         ? subject.value
         : "identifierOverride4Class");
     triples.push(
-      ...IdentifierOverride3ClassStatic.$sparqlConstructTemplateTriples({
+      ...IdentifierOverride3ClassStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -38803,7 +38781,7 @@ export namespace IdentifierOverride5Class {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        IdentifierOverride5Class.$sparqlConstructTemplateTriples({
+        IdentifierOverride5Class.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -38833,7 +38811,7 @@ export namespace IdentifierOverride5Class {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -38847,7 +38825,7 @@ export namespace IdentifierOverride5Class {
         ? subject.value
         : "identifierOverride5Class");
     triples.push(
-      ...IdentifierOverride4ClassStatic.$sparqlConstructTemplateTriples({
+      ...IdentifierOverride4ClassStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -39412,7 +39390,7 @@ export namespace HasValuePropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        HasValuePropertiesClass.$sparqlConstructTemplateTriples({
+        HasValuePropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -39442,7 +39420,7 @@ export namespace HasValuePropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -39961,7 +39939,7 @@ export namespace FlattenClassUnionMember3 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        FlattenClassUnionMember3.$sparqlConstructTemplateTriples({
+        FlattenClassUnionMember3.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -39991,7 +39969,7 @@ export namespace FlattenClassUnionMember3 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -40536,7 +40514,7 @@ export namespace ExternClassPropertyClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExternClassPropertyClass.$sparqlConstructTemplateTriples({
+        ExternClassPropertyClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -40566,7 +40544,7 @@ export namespace ExternClassPropertyClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -40586,7 +40564,7 @@ export namespace ExternClassPropertyClass {
       subject,
     });
     triples.push(
-      ...ExternClass.$sparqlConstructTemplateTriples({
+      ...ExternClass.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject: dataFactory.variable!(`${variablePrefix}ExternClassProperty`),
         variablePrefix: `${variablePrefix}ExternClassProperty`,
@@ -41042,7 +41020,7 @@ export namespace ExplicitRdfTypeClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExplicitRdfTypeClass.$sparqlConstructTemplateTriples({
+        ExplicitRdfTypeClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -41072,7 +41050,7 @@ export namespace ExplicitRdfTypeClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -41628,7 +41606,7 @@ export namespace ExplicitFromToRdfTypesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ExplicitFromToRdfTypesClass.$sparqlConstructTemplateTriples({
+        ExplicitFromToRdfTypesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -41658,7 +41636,7 @@ export namespace ExplicitFromToRdfTypesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -42211,7 +42189,7 @@ export namespace DirectRecursiveClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        DirectRecursiveClass.$sparqlConstructTemplateTriples({
+        DirectRecursiveClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -42241,7 +42219,7 @@ export namespace DirectRecursiveClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -43148,7 +43126,7 @@ export namespace DefaultValuePropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        DefaultValuePropertiesClass.$sparqlConstructTemplateTriples({
+        DefaultValuePropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -43178,7 +43156,7 @@ export namespace DefaultValuePropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -44849,7 +44827,7 @@ export namespace DateUnionPropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        DateUnionPropertiesClass.$sparqlConstructTemplateTriples({
+        DateUnionPropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -44879,7 +44857,7 @@ export namespace DateUnionPropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -47285,7 +47263,7 @@ export namespace ConvertibleTypePropertiesClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConvertibleTypePropertiesClass.$sparqlConstructTemplateTriples({
+        ConvertibleTypePropertiesClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -47315,7 +47293,7 @@ export namespace ConvertibleTypePropertiesClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -48260,7 +48238,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithPropertiesStatic.$sparqlConstructTemplateTriples({
+        BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -48290,7 +48268,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -48791,7 +48769,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTemplateTriples({
+        BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -48821,7 +48799,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -48836,7 +48814,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         ? subject.value
         : "baseInterfaceWithoutProperties");
     triples.push(
-      ...BaseInterfaceWithPropertiesStatic.$sparqlConstructTemplateTriples({
+      ...BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -49345,7 +49323,7 @@ export namespace ConcreteParentInterfaceStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentInterfaceStatic.$sparqlConstructTemplateTriples({
+        ConcreteParentInterfaceStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -49375,7 +49353,7 @@ export namespace ConcreteParentInterfaceStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -49389,7 +49367,7 @@ export namespace ConcreteParentInterfaceStatic {
         ? subject.value
         : "concreteParentInterface");
     triples.push(
-      ...BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTemplateTriples({
+      ...BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -49968,7 +49946,7 @@ export namespace ConcreteChildInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildInterface.$sparqlConstructTemplateTriples({
+        ConcreteChildInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -49998,7 +49976,7 @@ export namespace ConcreteChildInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -50012,7 +49990,7 @@ export namespace ConcreteChildInterface {
         ? subject.value
         : "concreteChildInterface");
     triples.push(
-      ...ConcreteParentInterfaceStatic.$sparqlConstructTemplateTriples({
+      ...ConcreteParentInterfaceStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -50586,7 +50564,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithPropertiesStatic.$sparqlConstructTemplateTriples({
+        AbstractBaseClassWithPropertiesStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -50616,7 +50594,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -50898,9 +50876,10 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTemplateTriples(
-          { ignoreRdfType, subject },
-        ),
+        AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTriples({
+          ignoreRdfType,
+          subject,
+        }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -50929,7 +50908,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -50944,7 +50923,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         ? subject.value
         : "abstractBaseClassWithoutProperties");
     triples.push(
-      ...AbstractBaseClassWithPropertiesStatic.$sparqlConstructTemplateTriples({
+      ...AbstractBaseClassWithPropertiesStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -51373,7 +51352,7 @@ export namespace ConcreteParentClassStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteParentClassStatic.$sparqlConstructTemplateTriples({
+        ConcreteParentClassStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -51403,7 +51382,7 @@ export namespace ConcreteParentClassStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -51415,9 +51394,11 @@ export namespace ConcreteParentClassStatic {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "concreteParentClass");
     triples.push(
-      ...AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTemplateTriples(
-        { ignoreRdfType: true, subject, variablePrefix },
-      ),
+      ...AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTriples({
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
     );
     if (!parameters?.ignoreRdfType) {
       triples.push(
@@ -51961,10 +51942,7 @@ export namespace ConcreteChildClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ConcreteChildClass.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        ConcreteChildClass.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -51991,7 +51969,7 @@ export namespace ConcreteChildClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -52003,7 +51981,7 @@ export namespace ConcreteChildClass {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "concreteChildClass");
     triples.push(
-      ...ConcreteParentClassStatic.$sparqlConstructTemplateTriples({
+      ...ConcreteParentClassStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -52494,7 +52472,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples({
+        ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -52524,7 +52502,7 @@ export namespace ClassUnionMemberCommonParentStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -52979,10 +52957,7 @@ export namespace ClassUnionMember2 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnionMember2.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        ClassUnionMember2.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -53009,7 +52984,7 @@ export namespace ClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -53021,7 +52996,7 @@ export namespace ClassUnionMember2 {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember2");
     triples.push(
-      ...ClassUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples({
+      ...ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -53540,10 +53515,7 @@ export namespace ClassUnionMember1 {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnionMember1.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        ClassUnionMember1.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -53570,7 +53542,7 @@ export namespace ClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -53582,7 +53554,7 @@ export namespace ClassUnionMember1 {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember1");
     triples.push(
-      ...ClassUnionMemberCommonParentStatic.$sparqlConstructTemplateTriples({
+      ...ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
         ignoreRdfType: true,
         subject,
         variablePrefix,
@@ -53998,7 +53970,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankNodeOrIriIdentifierInterface.$sparqlConstructTemplateTriples({
+        BlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -54028,7 +54000,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -54391,7 +54363,7 @@ export namespace BlankNodeOrIriIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankNodeOrIriIdentifierClass.$sparqlConstructTemplateTriples({
+        BlankNodeOrIriIdentifierClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -54421,7 +54393,7 @@ export namespace BlankNodeOrIriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -54761,7 +54733,7 @@ export namespace BlankNodeIdentifierInterface {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankNodeIdentifierInterface.$sparqlConstructTemplateTriples({
+        BlankNodeIdentifierInterface.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -54791,7 +54763,7 @@ export namespace BlankNodeIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(_parameters?: {
+  export function $sparqlConstructTriples(_parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -55155,7 +55127,7 @@ export namespace BlankNodeIdentifierClass {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        BlankNodeIdentifierClass.$sparqlConstructTemplateTriples({
+        BlankNodeIdentifierClass.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -55185,7 +55157,7 @@ export namespace BlankNodeIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -55596,7 +55568,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassForExternClassStatic.$sparqlConstructTemplateTriples({
+        AbstractBaseClassForExternClassStatic.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -55626,7 +55598,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
@@ -55892,7 +55864,7 @@ export namespace ClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        ClassUnion.$sparqlConstructTemplateTriples({ ignoreRdfType, subject }),
+        ClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -55919,13 +55891,13 @@ export namespace ClassUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("classUnionClassUnionMember1"),
@@ -55933,7 +55905,7 @@ export namespace ClassUnion {
           ? `${parameters.variablePrefix}ClassUnionMember1`
           : "classUnionClassUnionMember1",
       }).concat(),
-      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("classUnionClassUnionMember2"),
@@ -56224,10 +56196,7 @@ export namespace FlattenClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        FlattenClassUnion.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        FlattenClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -56254,13 +56223,13 @@ export namespace FlattenClassUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...ClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("flattenClassUnionClassUnionMember1"),
@@ -56268,7 +56237,7 @@ export namespace FlattenClassUnion {
           ? `${parameters.variablePrefix}ClassUnionMember1`
           : "flattenClassUnionClassUnionMember1",
       }).concat(),
-      ...ClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...ClassUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("flattenClassUnionClassUnionMember2"),
@@ -56276,7 +56245,7 @@ export namespace FlattenClassUnion {
           ? `${parameters.variablePrefix}ClassUnionMember2`
           : "flattenClassUnionClassUnionMember2",
       }).concat(),
-      ...FlattenClassUnionMember3.$sparqlConstructTemplateTriples({
+      ...FlattenClassUnionMember3.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("flattenClassUnionFlattenClassUnionMember3"),
@@ -56556,10 +56525,7 @@ export namespace InterfaceUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        InterfaceUnion.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        InterfaceUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -56586,13 +56552,13 @@ export namespace InterfaceUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...InterfaceUnionMember1.$sparqlConstructTemplateTriples({
+      ...InterfaceUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("interfaceUnionInterfaceUnionMember1"),
@@ -56600,7 +56566,7 @@ export namespace InterfaceUnion {
           ? `${parameters.variablePrefix}InterfaceUnionMember1`
           : "interfaceUnionInterfaceUnionMember1",
       }).concat(),
-      ...InterfaceUnionMember2.$sparqlConstructTemplateTriples({
+      ...InterfaceUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
@@ -56877,7 +56843,7 @@ export namespace LazilyResolvedClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedClassUnion.$sparqlConstructTemplateTriples({
+        LazilyResolvedClassUnion.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -56907,13 +56873,13 @@ export namespace LazilyResolvedClassUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...LazilyResolvedClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -56923,7 +56889,7 @@ export namespace LazilyResolvedClassUnion {
           ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
           : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
       }).concat(),
-      ...LazilyResolvedClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -57204,7 +57170,7 @@ export namespace LazilyResolvedInterfaceUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        LazilyResolvedInterfaceUnion.$sparqlConstructTemplateTriples({
+        LazilyResolvedInterfaceUnion.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -57234,13 +57200,13 @@ export namespace LazilyResolvedInterfaceUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTemplateTriples({
+      ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -57250,7 +57216,7 @@ export namespace LazilyResolvedInterfaceUnion {
           ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1`
           : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
       }).concat(),
-      ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTemplateTriples({
+      ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -57526,10 +57492,7 @@ export namespace PartialClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialClassUnion.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        PartialClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -57556,13 +57519,13 @@ export namespace PartialClassUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...PartialClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...PartialClassUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("partialClassUnionPartialClassUnionMember1"),
@@ -57570,7 +57533,7 @@ export namespace PartialClassUnion {
           ? `${parameters.variablePrefix}PartialClassUnionMember1`
           : "partialClassUnionPartialClassUnionMember1",
       }).concat(),
-      ...PartialClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...PartialClassUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!("partialClassUnionPartialClassUnionMember2"),
@@ -57844,7 +57807,7 @@ export namespace PartialInterfaceUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        PartialInterfaceUnion.$sparqlConstructTemplateTriples({
+        PartialInterfaceUnion.$sparqlConstructTriples({
           ignoreRdfType,
           subject,
         }),
@@ -57874,13 +57837,13 @@ export namespace PartialInterfaceUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...PartialInterfaceUnionMember1.$sparqlConstructTemplateTriples({
+      ...PartialInterfaceUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -57890,7 +57853,7 @@ export namespace PartialInterfaceUnion {
           ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
           : "partialInterfaceUnionPartialInterfaceUnionMember1",
       }).concat(),
-      ...PartialInterfaceUnionMember2.$sparqlConstructTemplateTriples({
+      ...PartialInterfaceUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -58152,10 +58115,7 @@ export namespace NoRdfTypeClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        NoRdfTypeClassUnion.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        NoRdfTypeClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -58182,13 +58142,13 @@ export namespace NoRdfTypeClassUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...NoRdfTypeClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -58198,7 +58158,7 @@ export namespace NoRdfTypeClassUnion {
           ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
           : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
       }).concat(),
-      ...NoRdfTypeClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -58454,10 +58414,7 @@ export namespace RecursiveClassUnion {
       prefixes: parameters?.prefixes ?? {},
       queryType: "CONSTRUCT",
       template: (queryParameters.template ?? []).concat(
-        RecursiveClassUnion.$sparqlConstructTemplateTriples({
-          ignoreRdfType,
-          subject,
-        }),
+        RecursiveClassUnion.$sparqlConstructTriples({ ignoreRdfType, subject }),
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
@@ -58484,13 +58441,13 @@ export namespace RecursiveClassUnion {
     );
   }
 
-  export function $sparqlConstructTemplateTriples(parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...RecursiveClassUnionMember1.$sparqlConstructTemplateTriples({
+      ...RecursiveClassUnionMember1.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(
@@ -58500,7 +58457,7 @@ export namespace RecursiveClassUnion {
           ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
           : "recursiveClassUnionRecursiveClassUnionMember1",
       }).concat(),
-      ...RecursiveClassUnionMember2.$sparqlConstructTemplateTriples({
+      ...RecursiveClassUnionMember2.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
           dataFactory.variable!(

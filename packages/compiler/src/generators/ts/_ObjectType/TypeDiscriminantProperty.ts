@@ -155,7 +155,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
     return {};
   }
 
-  override sparqlConstructTemplateTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly string[] {
     return [];
   }
 

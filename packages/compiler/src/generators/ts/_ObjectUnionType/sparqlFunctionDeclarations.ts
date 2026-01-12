@@ -19,7 +19,7 @@ export function sparqlFunctionDeclarations(
     {
       isExported: true,
       kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}sparqlConstructTemplateTriples`,
+      name: `${syntheticNamePrefix}sparqlConstructTriples`,
       // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
       parameters: [
         {
@@ -33,7 +33,7 @@ export function sparqlFunctionDeclarations(
         `return [${this.memberTypes
           .map(
             (memberType) =>
-              `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+              `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
           )
           .join(", ")}];`,
       ],
