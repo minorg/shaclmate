@@ -142,11 +142,11 @@ function $dateEquals(left: Date, right: Date): $EqualsResult {
 }
 
 interface $DateFilter {
+  readonly in?: readonly Date[];
   readonly maxExclusive?: Date;
   readonly maxInclusive?: Date;
   readonly minExclusive?: Date;
   readonly minInclusive?: Date;
-  readonly value?: Date;
 }
 
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
@@ -272,6 +272,13 @@ function $filterBoolean(filter: $BooleanFilter, value: boolean) {
 
 function $filterDate(filter: $DateFilter, value: Date) {
   if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue.getTime() === value.getTime())
+  ) {
+    return false;
+  }
+
+  if (
     typeof filter.maxExclusive !== "undefined" &&
     value.getTime() >= filter.maxExclusive.getTime()
   ) {
@@ -299,13 +306,6 @@ function $filterDate(filter: $DateFilter, value: Date) {
     return false;
   }
 
-  if (
-    typeof filter.value !== "undefined" &&
-    value.getTime() !== filter.value.getTime()
-  ) {
-    return false;
-  }
-
   return true;
 }
 
@@ -313,12 +313,15 @@ function $filterIdentifier(
   filter: $IdentifierFilter,
   value: rdfjs.BlankNode | rdfjs.NamedNode,
 ) {
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value.value)
+  ) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
-    return;
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
   }
 
   return true;
@@ -326,20 +329,50 @@ function $filterIdentifier(
 
 function $filterLiteral(filter: $LiteralFilter, value: rdfjs.Literal): boolean {
   if (
-    typeof filter.datatype !== "undefined" &&
-    value.datatype.value !== filter.datatype
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((in_) => {
+      if (
+        typeof in_.datatype !== "undefined" &&
+        value.datatype.value !== in_.datatype
+      ) {
+        return false;
+      }
+
+      if (
+        typeof in_.language !== "undefined" &&
+        value.language !== in_.language
+      ) {
+        return false;
+      }
+
+      if (typeof in_.value !== "undefined" && value.value !== in_.value) {
+        return false;
+      }
+
+      return true;
+    })
   ) {
     return false;
   }
 
   if (
-    typeof filter.language !== "undefined" &&
-    value.language !== filter.language
+    typeof filter.datatypeIn !== "undefined" &&
+    !filter.datatypeIn.some((inDatatype) => inDatatype === value.datatype.value)
   ) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+  if (
+    typeof filter.languageIn !== "undefined" &&
+    !filter.languageIn.some((inLanguage) => inLanguage === value.language)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.valueIn !== "undefined" &&
+    !filter.valueIn.some((inValue) => inValue === value.value)
+  ) {
     return false;
   }
 
@@ -375,7 +408,10 @@ function $filterMaybe<ItemT, ItemFilterT>(
 }
 
 function $filterNamedNode(filter: $NamedNodeFilter, value: rdfjs.NamedNode) {
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value.value)
+  ) {
     return false;
   }
 
@@ -383,6 +419,13 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: rdfjs.NamedNode) {
 }
 
 function $filterNumber(filter: $NumberFilter, value: number) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value)
+  ) {
+    return false;
+  }
+
   if (
     typeof filter.maxExclusive !== "undefined" &&
     value >= filter.maxExclusive
@@ -411,14 +454,17 @@ function $filterNumber(filter: $NumberFilter, value: number) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
-    return false;
-  }
-
   return true;
 }
 
 function $filterString(filter: $StringFilter, value: string) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value)
+  ) {
+    return false;
+  }
+
   if (
     typeof filter.maxLength !== "undefined" &&
     value.length > filter.maxLength
@@ -433,10 +479,6 @@ function $filterString(filter: $StringFilter, value: string) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
-    return false;
-  }
-
   return true;
 }
 
@@ -445,24 +487,65 @@ function $filterTerm(
   value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
 ): boolean {
   if (
-    typeof filter.datatype !== "undefined" &&
-    (value.termType !== "Literal" || value.datatype.value !== filter.datatype)
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((in_) => {
+      if (
+        typeof in_.datatype !== "undefined" &&
+        (value.termType !== "Literal" || value.datatype.value !== in_.datatype)
+      ) {
+        return false;
+      }
+
+      if (
+        typeof in_.language !== "undefined" &&
+        (value.termType !== "Literal" || value.language !== in_.language)
+      ) {
+        return false;
+      }
+
+      if (typeof in_.type !== "undefined" && value.termType !== in_.type) {
+        return false;
+      }
+
+      if (typeof in_.value !== "undefined" && value.value !== in_.value) {
+        return false;
+      }
+
+      return true;
+    })
   ) {
     return false;
   }
 
   if (
-    typeof filter.language !== "undefined" &&
-    (value.termType !== "Literal" || value.language !== filter.language)
+    typeof filter.datatypeIn !== "undefined" &&
+    (value.termType !== "Literal" ||
+      !filter.datatypeIn.some(
+        (inDatatype) => inDatatype === value.datatype.value,
+      ))
   ) {
     return false;
   }
 
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+  if (
+    typeof filter.languageIn !== "undefined" &&
+    (value.termType !== "Literal" ||
+      !filter.languageIn.some((inLanguage) => inLanguage === value.language))
+  ) {
     return false;
   }
 
-  if (typeof filter.value !== "undefined" && value.value !== filter.value) {
+  if (
+    typeof filter.typeIn !== "undefined" &&
+    !filter.typeIn.some((inType) => inType === value.termType)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.valueIn !== "undefined" &&
+    !filter.valueIn.some((inValue) => inValue === value.value)
+  ) {
     return false;
   }
 
@@ -531,8 +614,8 @@ function $fromRdfPreferredLanguages({
 }
 
 interface $IdentifierFilter {
+  readonly in?: readonly string[];
   readonly type?: "BlankNode" | "NamedNode";
-  readonly value?: string;
 }
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
@@ -677,9 +760,14 @@ export class $LazyObjectSet<
 }
 
 interface $LiteralFilter {
-  readonly datatype?: string;
-  readonly language?: string;
-  readonly value?: string;
+  readonly datatypeIn?: readonly string[];
+  readonly in?: readonly {
+    readonly datatype?: string;
+    readonly language?: string;
+    readonly value?: string;
+  }[];
+  readonly languageIn?: readonly string[];
+  readonly valueIn?: readonly string[];
 }
 
 function $maybeEquals<T>(
@@ -717,15 +805,15 @@ interface $MaybeFilter<ItemFilterT> {
 }
 
 interface $NamedNodeFilter {
-  readonly value?: string;
+  readonly in?: readonly string[];
 }
 
 interface $NumberFilter {
+  readonly in?: readonly number[];
   readonly maxExclusive?: number;
   readonly maxInclusive?: number;
   readonly minExclusive?: number;
   readonly minInclusive?: number;
-  readonly value?: number;
 }
 
 namespace $RdfVocabularies {
@@ -816,16 +904,22 @@ function $strictEquals<T extends bigint | boolean | number | string>(
 }
 
 interface $StringFilter {
+  readonly in?: readonly string[];
   readonly maxLength?: number;
   readonly minLength?: number;
-  readonly value?: string;
 }
 
 interface $TermFilter {
-  readonly datatype?: string;
-  readonly language?: string;
-  readonly type?: "BlankNode" | "Literal" | "NamedNode";
-  readonly value?: string;
+  readonly datatypeIn?: readonly string[];
+  readonly in?: readonly {
+    readonly datatype?: string;
+    readonly language?: string;
+    readonly type?: string;
+    readonly value?: string;
+  }[];
+  readonly languageIn?: readonly string[];
+  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
+  readonly valueIn?: readonly string[];
 }
 
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
