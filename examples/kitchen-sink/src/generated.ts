@@ -418,6 +418,45 @@ function $filterNamedNode(filter: $NamedNodeFilter, value: rdfjs.NamedNode) {
   return true;
 }
 
+function $filterNumber(filter: $NumberFilter, value: number) {
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inValue) => inValue === value)
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxExclusive !== "undefined" &&
+    value >= filter.maxExclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.maxInclusive !== "undefined" &&
+    value > filter.maxInclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minExclusive !== "undefined" &&
+    value <= filter.minExclusive
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.minInclusive !== "undefined" &&
+    value < filter.minInclusive
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 function $filterString(filter: $StringFilter, value: string) {
   if (
     typeof filter.in !== "undefined" &&
@@ -777,44 +816,74 @@ interface $NumberFilter {
   readonly minInclusive?: number;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace $NumberFilter {
-  export function $function(filter: $NumberFilter, value: number) {
-    if (
-      typeof filter.in !== "undefined" &&
-      !filter.in.some((inValue) => inValue === value)
-    ) {
-      return false;
+  export function $sparqlWherePatterns({
+    filter,
+    subject,
+  }: {
+    filter: $NumberFilter;
+    subject: rdfjs.Variable;
+    variablePrefix: string;
+  }): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [subject, filter.in.map((inValue) => $toLiteral(inValue))],
+        },
+      });
     }
 
-    if (
-      typeof filter.maxExclusive !== "undefined" &&
-      value >= filter.maxExclusive
-    ) {
-      return false;
+    if (typeof filter.maxExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [subject, $toLiteral(filter.maxExclusive)],
+        },
+      });
     }
 
-    if (
-      typeof filter.maxInclusive !== "undefined" &&
-      value > filter.maxInclusive
-    ) {
-      return false;
+    if (typeof filter.maxInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [subject, $toLiteral(filter.maxInclusive)],
+        },
+      });
     }
 
-    if (
-      typeof filter.minExclusive !== "undefined" &&
-      value <= filter.minExclusive
-    ) {
-      return false;
+    if (typeof filter.minExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [subject, $toLiteral(filter.minExclusive)],
+        },
+      });
     }
 
-    if (
-      typeof filter.minInclusive !== "undefined" &&
-      value < filter.minInclusive
-    ) {
-      return false;
+    if (typeof filter.minInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [subject, $toLiteral(filter.minInclusive)],
+        },
+      });
     }
 
-    return true;
+    return patterns;
   }
 }
 
@@ -855,6 +924,9 @@ namespace $RdfVocabularies {
     );
     export const decimal = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#decimal",
+    );
+    export const double = dataFactory.namedNode(
+      "http://www.w3.org/2001/XMLSchema#double",
     );
     export const integer = dataFactory.namedNode(
       "http://www.w3.org/2001/XMLSchema#integer",
@@ -922,6 +994,64 @@ interface $TermFilter {
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
   readonly valueIn?: readonly string[];
+}
+
+function $toLiteral(
+  value: boolean | Date | number | string,
+  datatype?: rdfjs.NamedNode,
+): rdfjs.Literal {
+  switch (typeof value) {
+    case "boolean":
+      return dataFactory.literal(
+        value.toString(),
+        $RdfVocabularies.xsd.boolean,
+      );
+    case "object": {
+      if (value instanceof Date) {
+        if (datatype) {
+          if (datatype.equals($RdfVocabularies.xsd.date)) {
+            return dataFactory.literal(
+              value.toISOString().replace(/T.*$/, ""),
+              datatype,
+            );
+          } else if (datatype.equals($RdfVocabularies.xsd.dateTime)) {
+            return dataFactory.literal(value.toISOString(), datatype);
+          } else {
+            throw new RangeError(datatype.value);
+          }
+        }
+
+        return dataFactory.literal(
+          value.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        );
+      }
+      value satisfies never;
+      throw new Error("should never happen");
+    }
+    case "number": {
+      if (datatype) {
+        return dataFactory.literal(value.toString(10), datatype);
+      }
+
+      // Convert the number to a literal following SPARQL rules = tests on the lexical form
+      const valueString = value.toString(10);
+      if (/^[+-]?[0-9]+$/.test(valueString)) {
+        // No decimal point, no exponent: xsd:integer
+        return dataFactory.literal(valueString, $RdfVocabularies.xsd.integer);
+      }
+      if (
+        /^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)[eE][+-]?[0-9]+$/.test(valueString)
+      ) {
+        // Has exponent: xsd:double
+        return dataFactory.literal(valueString, $RdfVocabularies.xsd.double);
+      }
+      // Default: xsd:decimal
+      return dataFactory.literal(valueString, $RdfVocabularies.xsd.decimal);
+    }
+    case "string":
+      return dataFactory.literal(value, datatype);
+  }
 }
 
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
@@ -6750,31 +6880,22 @@ export class TermPropertiesClass {
       this.literalTermProperty = parameters?.literalTermProperty;
     } else if (typeof parameters?.literalTermProperty === "boolean") {
       this.literalTermProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters?.literalTermProperty.toString(),
-          $RdfVocabularies.xsd.boolean,
-        ),
+        $toLiteral(parameters?.literalTermProperty),
       );
     } else if (
       typeof parameters?.literalTermProperty === "object" &&
       parameters?.literalTermProperty instanceof Date
     ) {
       this.literalTermProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters?.literalTermProperty.toISOString(),
-          $RdfVocabularies.xsd.dateTime,
-        ),
+        $toLiteral(parameters?.literalTermProperty),
       );
     } else if (typeof parameters?.literalTermProperty === "number") {
       this.literalTermProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters?.literalTermProperty.toString(),
-          $RdfVocabularies.xsd.decimal,
-        ),
+        $toLiteral(parameters?.literalTermProperty),
       );
     } else if (typeof parameters?.literalTermProperty === "string") {
       this.literalTermProperty = purify.Maybe.of(
-        dataFactory.literal(parameters?.literalTermProperty),
+        $toLiteral(parameters?.literalTermProperty),
       );
     } else if (typeof parameters?.literalTermProperty === "object") {
       this.literalTermProperty = purify.Maybe.of(
@@ -6810,33 +6931,16 @@ export class TermPropertiesClass {
     if (purify.Maybe.isMaybe(parameters?.termProperty)) {
       this.termProperty = parameters?.termProperty;
     } else if (typeof parameters?.termProperty === "boolean") {
-      this.termProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters?.termProperty.toString(),
-          $RdfVocabularies.xsd.boolean,
-        ),
-      );
+      this.termProperty = purify.Maybe.of($toLiteral(parameters?.termProperty));
     } else if (
       typeof parameters?.termProperty === "object" &&
       parameters?.termProperty instanceof Date
     ) {
-      this.termProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters?.termProperty.toISOString(),
-          $RdfVocabularies.xsd.dateTime,
-        ),
-      );
+      this.termProperty = purify.Maybe.of($toLiteral(parameters?.termProperty));
     } else if (typeof parameters?.termProperty === "number") {
-      this.termProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters?.termProperty.toString(),
-          $RdfVocabularies.xsd.decimal,
-        ),
-      );
+      this.termProperty = purify.Maybe.of($toLiteral(parameters?.termProperty));
     } else if (typeof parameters?.termProperty === "string") {
-      this.termProperty = purify.Maybe.of(
-        dataFactory.literal(parameters?.termProperty),
-      );
+      this.termProperty = purify.Maybe.of($toLiteral(parameters?.termProperty));
     } else if (typeof parameters?.termProperty === "object") {
       this.termProperty = purify.Maybe.of(parameters?.termProperty);
     } else if (typeof parameters?.termProperty === "undefined") {
@@ -7249,7 +7353,7 @@ export namespace TermPropertiesClass {
 
     if (
       typeof filter.numberTermProperty !== "undefined" &&
-      !$filterMaybe<number, $NumberFilter>($NumberFilter.$function)(
+      !$filterMaybe<number, $NumberFilter>($filterNumber)(
         filter.numberTermProperty,
         value.numberTermProperty,
       )
@@ -30982,7 +31086,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           if (typeof filter.on?.["number"] !== "undefined") {
             switch (typeof value) {
               case "number":
-                if (!$NumberFilter.$function(filter.on["number"], value)) {
+                if (!$filterNumber(filter.on["number"], value)) {
                   return false;
                 }
                 break;
@@ -35470,7 +35574,7 @@ export namespace InPropertiesClass {
 
     if (
       typeof filter.inNumbersProperty !== "undefined" &&
-      !$filterMaybe<1 | 2, $NumberFilter>($NumberFilter.$function)(
+      !$filterMaybe<1 | 2, $NumberFilter>($filterNumber)(
         filter.inNumbersProperty,
         value.inNumbersProperty,
       )
@@ -42551,7 +42655,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.numberDefaultValueProperty !== "undefined" &&
-      !$NumberFilter.$function(
+      !$filterNumber(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
       )
@@ -45255,35 +45359,26 @@ export class ConvertibleTypePropertiesClass {
       typeof parameters.convertibleLiteralOptionProperty === "boolean"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters.convertibleLiteralOptionProperty.toString(),
-          $RdfVocabularies.xsd.boolean,
-        ),
+        $toLiteral(parameters.convertibleLiteralOptionProperty),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "object" &&
       parameters.convertibleLiteralOptionProperty instanceof Date
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters.convertibleLiteralOptionProperty.toISOString(),
-          $RdfVocabularies.xsd.dateTime,
-        ),
+        $toLiteral(parameters.convertibleLiteralOptionProperty),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "number"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters.convertibleLiteralOptionProperty.toString(),
-          $RdfVocabularies.xsd.decimal,
-        ),
+        $toLiteral(parameters.convertibleLiteralOptionProperty),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "string"
     ) {
       this.convertibleLiteralOptionProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.convertibleLiteralOptionProperty),
+        $toLiteral(parameters.convertibleLiteralOptionProperty),
       );
     } else if (
       typeof parameters.convertibleLiteralOptionProperty === "object"
@@ -45301,25 +45396,22 @@ export class ConvertibleTypePropertiesClass {
     }
 
     if (typeof parameters.convertibleLiteralProperty === "boolean") {
-      this.convertibleLiteralProperty = dataFactory.literal(
-        parameters.convertibleLiteralProperty.toString(),
-        $RdfVocabularies.xsd.boolean,
+      this.convertibleLiteralProperty = $toLiteral(
+        parameters.convertibleLiteralProperty,
       );
     } else if (
       typeof parameters.convertibleLiteralProperty === "object" &&
       parameters.convertibleLiteralProperty instanceof Date
     ) {
-      this.convertibleLiteralProperty = dataFactory.literal(
-        parameters.convertibleLiteralProperty.toISOString(),
-        $RdfVocabularies.xsd.dateTime,
+      this.convertibleLiteralProperty = $toLiteral(
+        parameters.convertibleLiteralProperty,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "number") {
-      this.convertibleLiteralProperty = dataFactory.literal(
-        parameters.convertibleLiteralProperty.toString(),
-        $RdfVocabularies.xsd.decimal,
+      this.convertibleLiteralProperty = $toLiteral(
+        parameters.convertibleLiteralProperty,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "string") {
-      this.convertibleLiteralProperty = dataFactory.literal(
+      this.convertibleLiteralProperty = $toLiteral(
         parameters.convertibleLiteralProperty,
       );
     } else if (typeof parameters.convertibleLiteralProperty === "object") {
@@ -45341,21 +45433,21 @@ export class ConvertibleTypePropertiesClass {
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.boolean),
+          $toLiteral(item),
         );
     } else if (
       $isReadonlyNumberArray(parameters.convertibleLiteralSetProperty)
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.decimal),
+          $toLiteral(item),
         );
     } else if (
       $isReadonlyStringArray(parameters.convertibleLiteralSetProperty)
     ) {
       this.convertibleLiteralSetProperty =
         parameters.convertibleLiteralSetProperty.map((item) =>
-          dataFactory.literal(item),
+          $toLiteral(item),
         );
     } else {
       this.convertibleLiteralSetProperty =
@@ -45369,31 +45461,22 @@ export class ConvertibleTypePropertiesClass {
         parameters.convertibleTermOptionProperty;
     } else if (typeof parameters.convertibleTermOptionProperty === "boolean") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters.convertibleTermOptionProperty.toString(),
-          $RdfVocabularies.xsd.boolean,
-        ),
+        $toLiteral(parameters.convertibleTermOptionProperty),
       );
     } else if (
       typeof parameters.convertibleTermOptionProperty === "object" &&
       parameters.convertibleTermOptionProperty instanceof Date
     ) {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters.convertibleTermOptionProperty.toISOString(),
-          $RdfVocabularies.xsd.dateTime,
-        ),
+        $toLiteral(parameters.convertibleTermOptionProperty),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "number") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        dataFactory.literal(
-          parameters.convertibleTermOptionProperty.toString(),
-          $RdfVocabularies.xsd.decimal,
-        ),
+        $toLiteral(parameters.convertibleTermOptionProperty),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "string") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
-        dataFactory.literal(parameters.convertibleTermOptionProperty),
+        $toLiteral(parameters.convertibleTermOptionProperty),
       );
     } else if (typeof parameters.convertibleTermOptionProperty === "object") {
       this.convertibleTermOptionProperty = purify.Maybe.of(
@@ -45409,25 +45492,22 @@ export class ConvertibleTypePropertiesClass {
     }
 
     if (typeof parameters.convertibleTermProperty === "boolean") {
-      this.convertibleTermProperty = dataFactory.literal(
-        parameters.convertibleTermProperty.toString(),
-        $RdfVocabularies.xsd.boolean,
+      this.convertibleTermProperty = $toLiteral(
+        parameters.convertibleTermProperty,
       );
     } else if (
       typeof parameters.convertibleTermProperty === "object" &&
       parameters.convertibleTermProperty instanceof Date
     ) {
-      this.convertibleTermProperty = dataFactory.literal(
-        parameters.convertibleTermProperty.toISOString(),
-        $RdfVocabularies.xsd.dateTime,
+      this.convertibleTermProperty = $toLiteral(
+        parameters.convertibleTermProperty,
       );
     } else if (typeof parameters.convertibleTermProperty === "number") {
-      this.convertibleTermProperty = dataFactory.literal(
-        parameters.convertibleTermProperty.toString(),
-        $RdfVocabularies.xsd.decimal,
+      this.convertibleTermProperty = $toLiteral(
+        parameters.convertibleTermProperty,
       );
     } else if (typeof parameters.convertibleTermProperty === "string") {
-      this.convertibleTermProperty = dataFactory.literal(
+      this.convertibleTermProperty = $toLiteral(
         parameters.convertibleTermProperty,
       );
     } else if (typeof parameters.convertibleTermProperty === "object") {
@@ -45443,19 +45523,13 @@ export class ConvertibleTypePropertiesClass {
       this.convertibleTermSetProperty = parameters.convertibleTermSetProperty;
     } else if ($isReadonlyBooleanArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
-        parameters.convertibleTermSetProperty.map((item) =>
-          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.boolean),
-        );
+        parameters.convertibleTermSetProperty.map((item) => $toLiteral(item));
     } else if ($isReadonlyNumberArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
-        parameters.convertibleTermSetProperty.map((item) =>
-          dataFactory.literal(item.toString(), $RdfVocabularies.xsd.decimal),
-        );
+        parameters.convertibleTermSetProperty.map((item) => $toLiteral(item));
     } else if ($isReadonlyStringArray(parameters.convertibleTermSetProperty)) {
       this.convertibleTermSetProperty =
-        parameters.convertibleTermSetProperty.map((item) =>
-          dataFactory.literal(item),
-        );
+        parameters.convertibleTermSetProperty.map((item) => $toLiteral(item));
     } else {
       this.convertibleTermSetProperty =
         parameters.convertibleTermSetProperty satisfies never;

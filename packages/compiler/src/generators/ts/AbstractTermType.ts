@@ -6,8 +6,10 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -66,25 +68,26 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            `dataFactory.literal(${value}.toString(), ${rdfjsTermExpression(xsd.boolean)})`,
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
           sourceTypeName: "boolean",
         },
         {
           conversionExpression: (value) =>
-            `dataFactory.literal(${value}.toISOString(), ${rdfjsTermExpression(xsd.dateTime)})`,
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: "Date",
         },
         {
           conversionExpression: (value) =>
-            `dataFactory.literal(${value}.toString(), ${rdfjsTermExpression(xsd.decimal)})`,
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
           sourceTypeName: "number",
         },
         {
-          conversionExpression: (value) => `dataFactory.literal(${value})`,
+          conversionExpression: (value) =>
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
           sourceTypeName: "string",
         },
@@ -225,10 +228,11 @@ export abstract class AbstractTermType<
   }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
     Record<string, string>
   > {
-    if (features.has("equals")) {
-      return singleEntryRecord(
-        `${syntheticNamePrefix}booleanEquals`,
-        `\
+    return mergeSnippetDeclarations(
+      features.has("equals")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}booleanEquals`,
+            `\
   /**
    * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
    */
@@ -242,9 +246,10 @@ export abstract class AbstractTermType<
       left.equals(right),
     );
   }`,
-      );
-    }
-    return {};
+          )
+        : {},
+      sharedSnippetDeclarations.toLiteral,
+    );
   }
 
   override sparqlWherePatterns(

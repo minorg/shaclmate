@@ -1,3 +1,5 @@
+import { xsd } from "@tpluscode/rdf-ns-builders";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -103,6 +105,7 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
     export const date = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date");
     export const dateTime = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
     export const decimal = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
+    export const double = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double");
     export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
 }`,
@@ -119,6 +122,54 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
   right: T,
 ): ${syntheticNamePrefix}EqualsResult {
   return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+}`,
+  ),
+
+  toLiteral: singleEntryRecord(
+    `${syntheticNamePrefix}toLiteral`,
+    `\
+function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
+  switch (typeof value) {
+    case "boolean":
+      return dataFactory.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
+    case "object": {
+      if (value instanceof Date) {
+        if (datatype) {
+          if (datatype.equals(${rdfjsTermExpression(xsd.date)})) {
+            return dataFactory.literal(value.toISOString().replace(/T.*$/, ''), datatype);
+          } else if (datatype.equals(${rdfjsTermExpression(xsd.dateTime)})) {
+            return dataFactory.literal(value.toISOString(), datatype);             
+          } else {
+            throw new RangeError(datatype.value);
+          }
+        }
+          
+        return dataFactory.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
+      }
+      value satisfies never;
+      throw new Error("should never happen");
+    }
+    case "number": {
+      if (datatype) {
+        return dataFactory.literal(value.toString(10), datatype);
+      }
+
+      // Convert the number to a literal following SPARQL rules = tests on the lexical form
+      const valueString = value.toString(10);
+      if (/^[+-]?[0-9]+$/.test(valueString)) {
+        // No decimal point, no exponent: xsd:integer
+        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
+      }
+      if (/^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)[eE][+-]?[0-9]+$/.test(valueString)) {
+        // Has exponent: xsd:double
+        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.double)});
+      }
+      // Default: xsd:decimal
+      return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
+    }
+    case "string":
+      return dataFactory.literal(value, datatype);
+  }
 }`,
   ),
 };

@@ -5,6 +5,7 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
@@ -12,8 +13,7 @@ import { Type } from "./Type.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
-  override readonly filterFunction =
-    `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}function`;
+  override readonly filterFunction = `${syntheticNamePrefix}filterNumber`;
   override readonly filterType = new Type.CompositeFilterTypeReference(
     `${syntheticNamePrefix}NumberFilter`,
   );
@@ -106,44 +106,103 @@ interface ${syntheticNamePrefix}NumberFilter {
 }`,
       ),
       singleEntryRecord(
-        `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}function`,
+        `${syntheticNamePrefix}filterNumber`,
         `\
-namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}function(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
-    if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
-      return false;
-    }
-
-    if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
-      return false;
-    }
-
-    if (typeof filter.maxInclusive !== "undefined" && value > filter.maxInclusive) {
-      return false;
-    }
-
-    if (typeof filter.minExclusive !== "undefined" && value <= filter.minExclusive) {
-      return false;
-    }
-
-    if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
-      return false;
-    }
-
-    return true;
+function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
+    return false;
   }
+
+  if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
+    return false;
+  }
+
+  if (typeof filter.maxInclusive !== "undefined" && value > filter.maxInclusive) {
+    return false;
+  }
+
+  if (typeof filter.minExclusive !== "undefined" && value <= filter.minExclusive) {
+    return false;
+  }
+
+  if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
+    return false;
+  }
+
+  return true;
 }`,
       ),
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
-            `\
+        ? {
+            ...sharedSnippetDeclarations.toLiteral,
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
+              `\
+// biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, subject, variablePrefix }: { filter: ${syntheticNamePrefix}NumberFilter, subject: string, variablePrefix: string }): readonly sparqljs.Pattern[] {
-    return [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, subject }: { filter: ${syntheticNamePrefix}NumberFilter, subject: rdfjs.Variable, variablePrefix: string }): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [subject, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        }                
+      });
+    }
+
+    if (typeof filter.maxExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [subject, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.maxInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [subject, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.minExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [subject, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.minInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [subject, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+        }
+      });
+    }
+
+    return patterns;
   }
 }`,
-          )
+            ),
+          }
         : {},
     );
   }

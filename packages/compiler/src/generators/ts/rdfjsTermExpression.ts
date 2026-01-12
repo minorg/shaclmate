@@ -51,6 +51,7 @@ export function rdfjsTermExpression(
           case "date":
           case "dateTime":
           case "decimal":
+          case "double":
           case "integer":
             return `${syntheticNamePrefix}RdfVocabularies.xsd.${unqualifiedName}`;
           default:
