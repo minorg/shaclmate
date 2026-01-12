@@ -150,7 +150,7 @@ namespace ${syntheticNamePrefix}NumberFilter {
           type: "operation",
           operator: "in",
           args: [subject, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
-        }                
+        }
       });
     }
 

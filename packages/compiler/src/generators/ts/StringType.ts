@@ -111,6 +111,53 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
   return true;
 }`,
       ),
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
+            `\
+// biome-ignore lint/correctness/noUnusedVariables: false positive
+namespace ${syntheticNamePrefix}StringFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns({ filter, subject }: { filter: ${syntheticNamePrefix}StringFilter, subject: rdfjs.Variable, variablePrefix: string }) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [subject, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        }
+      });
+    }
+
+    if (typeof filter.maxLength !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [{ args: [subject], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+        }
+      });
+    }
+
+    if (typeof filter.minLength !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [{ args: [subject], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+          )
+        : {},
     );
   }
 

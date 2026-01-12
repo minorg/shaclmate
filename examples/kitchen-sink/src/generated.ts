@@ -983,6 +983,61 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
+// biome-ignore lint/correctness/noUnusedVariables: false positive
+namespace $StringFilter {
+  export function $sparqlWherePatterns({
+    filter,
+    subject,
+  }: {
+    filter: $StringFilter;
+    subject: rdfjs.Variable;
+    variablePrefix: string;
+  }) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [subject, filter.in.map((inValue) => $toLiteral(inValue))],
+        },
+      });
+    }
+
+    if (typeof filter.maxLength !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [
+            { args: [subject], function: "strlen", type: "functionCall" },
+            $toLiteral(filter.maxLength),
+          ],
+        },
+      });
+    }
+
+    if (typeof filter.minLength !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [
+            { args: [subject], function: "strlen", type: "functionCall" },
+            $toLiteral(filter.minLength),
+          ],
+        },
+      });
+    }
+
+    return patterns;
+  }
+}
+
 interface $TermFilter {
   readonly datatypeIn?: readonly string[];
   readonly in?: readonly {
