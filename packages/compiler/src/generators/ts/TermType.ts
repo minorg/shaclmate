@@ -127,11 +127,11 @@ interface ${syntheticNamePrefix}TermFilter {
         `\
 function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
   if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
-    if (typeof in_.datatype !== "undefined" && value.datatype !== in_.datatype) {
+    if (typeof in_.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== in_.datatype)) {
       return false;
     }
 
-    if (typeof in_.language !== "undefined" && value.language !== in_.language) {
+    if (typeof in_.language !== "undefined" && (value.termType !== "Literal" || value.language !== in_.language)) {
       return false;
     }
 
@@ -148,11 +148,11 @@ function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilt
     return false;
   }
 
-  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype)) {
+  if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value))) {
     return false;
   }
 
-  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language)) {
+  if (typeof filter.languageIn !== "undefined" && (value.termType !== "Literal" || !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
     return false;
   }
 
@@ -160,7 +160,7 @@ function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilt
     return false;
   }
 
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value)) {
+  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
     return false;
   }
 

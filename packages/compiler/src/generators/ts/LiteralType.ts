@@ -97,7 +97,7 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
   if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
-    if (typeof in_.datatype !== "undefined" && value.datatype !== in_.datatype) {
+    if (typeof in_.datatype !== "undefined" && value.datatype.value !== in_.datatype) {
       return false;
     }
 
@@ -114,7 +114,7 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
     return false;
   }
 
-  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype)) {
+  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value)) {
     return false;
   }
 
@@ -122,7 +122,7 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
     return false;
   }
 
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue.value === value.value)) {
+  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
     return false;
   }
 

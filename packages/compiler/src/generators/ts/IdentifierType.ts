@@ -275,7 +275,7 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
           `\
 function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value.value)) {
-    return
+    return false;
   }
 
   return true;
@@ -297,7 +297,7 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
           `\
 function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value.value)) {
-    return
+    return false;
   }
 
   if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
