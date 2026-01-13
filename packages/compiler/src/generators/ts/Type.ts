@@ -187,7 +187,7 @@ export interface Type {
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * This method is called when an instance of the type is the object of a property.
+   * This method is called when an instance of the type is the value of a Property.
    *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
@@ -234,16 +234,16 @@ export interface Type {
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
    *
+   * This method is called when an instance of the type is the value of a Property.
+   *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
    *   variables: (at runtime)
-   *     - basicPattern: the basic (s, p, o) or (o, p, s) pattern of the property as a sparqljs.Pattern
+   *     - basicPattern: the basic (s, p, o) or (o, p, s) pattern of the invoking property, as a sparqljs.Pattern
    *     - filter: if Just, an instance of filterType or undefined
    *     - preferredLanguages: array of preferred language code (strings)
    *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
    *     - variablePrefix: prefix to use for new variables
-   *
-   * See note in sparqlConstructPropertyTriples re: how this method is used.
    */
   sparqlWherePropertyPatterns(parameters: {
     allowIgnoreRdfType: boolean;
@@ -259,6 +259,8 @@ export interface Type {
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
    *
+   * This method is called when an instance of the type is the subject of chains.
+   *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
    *   variables: (at runtime)
@@ -266,8 +268,6 @@ export interface Type {
    *     - preferredLanguages: array of preferred language code (strings)
    *     - valueVariable: rdfjs.Variable of the value of this type
    *     - variablePrefix: prefix to use for new variables
-   *
-   * See note in sparqlConstructChainTriples re: how this method is used.
    */
   sparqlWhereChainPatterns(parameters: {
     allowIgnoreRdfType: boolean;

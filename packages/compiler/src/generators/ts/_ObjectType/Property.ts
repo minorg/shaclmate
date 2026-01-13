@@ -221,7 +221,7 @@ export abstract class Property<
   }): readonly string[];
 
   /**
-   * An array of SPARQL.js where patterns for this property as strings (so they can incorporate runtime calls).
+   * An array of SPARQL.js WHERE patterns for this property as strings (so they can incorporate runtime calls).
    *
    * Parameters:
    *   variables: (at runtime)
