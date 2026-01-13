@@ -538,7 +538,7 @@ export class ObjectType extends AbstractDeclaredType {
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
         {
           ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-          subject: parameters.variables.subject,
+          subject: parameters.variables.valueVariable,
           variablePrefix: parameters.variables.variablePrefix,
         },
       )})`,
@@ -553,7 +553,7 @@ export class ObjectType extends AbstractDeclaredType {
         {
           ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
           preferredLanguages: parameters.variables.preferredLanguages,
-          subject: parameters.variables.subject,
+          valueVariable: parameters.variables.valueVariable,
           variablePrefix: parameters.variables.variablePrefix,
         },
       )})`,

@@ -294,7 +294,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return [
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
         {
-          subject: parameters.variables.subject,
+          subject: parameters.variables.valueVariable,
           variablePrefix: parameters.variables.variablePrefix,
         },
       )})`,
@@ -308,7 +308,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
         {
           preferredLanguages: parameters.variables.preferredLanguages,
-          subject: parameters.variables.subject,
+          subject: parameters.variables.valueVariable,
           variablePrefix: parameters.variables.variablePrefix,
         },
       )})`,

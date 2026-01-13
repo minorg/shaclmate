@@ -482,12 +482,10 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return [];
   }
 
-  override sparqlWherePatterns({
-    variables,
-  }: Parameters<
-    Property<IdentifierType>["sparqlWherePatterns"]
-  >[0]): readonly string[] {
-    // Filter on variables.subject
+  override sparqlWherePatterns(
+    _parameters: Parameters<Property<IdentifierType>["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return [];
   }
 
   override toJsonObjectMember({

@@ -113,7 +113,7 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
               type: "operation" as const,
               operator: "=",
               args: [
-                { type: "operation" as const, operator: "lang", args: [${variables.object}] },
+                { type: "operation" as const, operator: "lang", args: [${variables.valueVariable}] },
                 dataFactory.literal(language)
               ]
             })

@@ -65,7 +65,7 @@ export class ListType<
     variables,
   }: Parameters<Type["sparqlConstructChainTriples"]>[0]): readonly string[] {
     const triples: string[] = [];
-    const listVariable = variables.subject;
+    const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
     const variablePrefix = (suffix: string) =>
@@ -83,7 +83,7 @@ export class ListType<
         ...this.itemType.sparqlConstructChainTriples({
           allowIgnoreRdfType: true,
           variables: {
-            subject: item0Variable,
+            valueVariable: item0Variable,
             variablePrefix: variablePrefix("Item0"),
           },
         }),
@@ -117,7 +117,7 @@ export class ListType<
         ...this.itemType.sparqlConstructChainTriples({
           allowIgnoreRdfType: true,
           variables: {
-            subject: itemNVariable,
+            valueVariable: itemNVariable,
             variablePrefix: variablePrefix("ItemN"),
           },
         }),
@@ -145,7 +145,7 @@ export class ListType<
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
     const patterns: string[] = [];
-    const listVariable = variables.subject;
+    const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
     const variablePrefix = (suffix: string) =>
@@ -165,7 +165,7 @@ export class ListType<
           variables: {
             filter: variables.filter.map((filter) => `${filter}?.items`),
             preferredLanguages: variables.preferredLanguages,
-            subject: item0Variable,
+            valueVariable: item0Variable,
             variablePrefix: variablePrefix("Item0"),
           },
         }),
@@ -210,7 +210,7 @@ export class ListType<
           variables: {
             filter: variables.filter.map((filter) => `${filter}?.items`),
             preferredLanguages: variables.preferredLanguages,
-            subject: itemNVariable,
+            valueVariable: itemNVariable,
             variablePrefix: variablePrefix("ItemN"),
           },
         }),

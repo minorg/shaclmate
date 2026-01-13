@@ -1,9 +1,7 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
-import { invariant } from "ts-invariant";
 
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -106,26 +104,10 @@ export abstract class AbstractType implements Type {
     allowIgnoreRdfType,
     variables,
   }: Parameters<Type["sparqlConstructPropertyTriples"]>[0]): readonly string[] {
-    const objectPrefix = "dataFactory.variable!(";
-    const objectSuffix = ")";
-    invariant(variables.object.startsWith(objectPrefix));
-    invariant(variables.object.endsWith(objectSuffix));
-    return [
-      objectInitializer({
-        object: variables.object,
-        predicate: variables.predicate,
-        subject: variables.subject,
-      }),
-    ].concat(
+    return [variables.basicTriple].concat(
       this.sparqlConstructChainTriples({
         allowIgnoreRdfType,
-        variables: {
-          subject: variables.object,
-          variablePrefix: variables.object.substring(
-            objectPrefix.length,
-            variables.object.length - objectSuffix.length,
-          ),
-        },
+        variables,
       }),
     );
   }
@@ -140,30 +122,10 @@ export abstract class AbstractType implements Type {
     allowIgnoreRdfType,
     variables,
   }: Parameters<Type["sparqlWherePropertyPatterns"]>[0]): readonly string[] {
-    const objectPrefix = "dataFactory.variable!(";
-    const objectSuffix = ")";
-    invariant(variables.object.startsWith(objectPrefix));
-    invariant(variables.object.endsWith(objectSuffix));
-    return [
-      objectInitializer({
-        triples: `[${objectInitializer({
-          object: variables.object,
-          predicate: variables.predicate,
-          subject: variables.subject,
-        })}]`,
-        type: '"bgp"',
-      }),
-    ].concat(
+    return [variables.basicPattern].concat(
       this.sparqlWhereChainPatterns({
         allowIgnoreRdfType,
-        variables: {
-          preferredLanguages: variables.preferredLanguages,
-          subject: variables.object,
-          variablePrefix: variables.object.substring(
-            objectPrefix.length,
-            variables.object.length - objectSuffix.length,
-          ),
-        },
+        variables,
       }),
     );
   }

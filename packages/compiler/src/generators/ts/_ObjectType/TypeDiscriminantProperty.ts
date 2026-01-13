@@ -88,7 +88,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override hashStatements({
     variables,
   }: Parameters<
-    Property<TypeDiscriminantProperty>["hashStatements"]
+    Property<TypeDiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
   }
