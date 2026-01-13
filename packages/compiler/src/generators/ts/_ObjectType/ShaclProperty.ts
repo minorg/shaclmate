@@ -275,8 +275,8 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
       allowIgnoreRdfType: true,
       variables: {
         basicTriple: objectInitializer({
-          predicate: this.predicate,
           object: valueVariable,
+          predicate: this.predicate,
           subject: variables.focusIdentifier,
         }),
         valueVariable,

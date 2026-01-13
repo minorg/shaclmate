@@ -553,7 +553,7 @@ export class ObjectType extends AbstractDeclaredType {
         {
           ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
           preferredLanguages: parameters.variables.preferredLanguages,
-          valueVariable: parameters.variables.valueVariable,
+          subject: parameters.variables.valueVariable,
           variablePrefix: parameters.variables.variablePrefix,
         },
       )})`,
