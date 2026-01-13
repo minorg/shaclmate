@@ -19,8 +19,9 @@ export function sparqlFunctionDeclarations(
   }
 
   const variables = {
+    filter: "parameters?.filter",
     preferredLanguages: "parameters?.preferredLanguages",
-    subject: "subject",
+    focusIdentifier: "subject",
     variablePrefix: "variablePrefix",
   };
   const rdfClassVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
@@ -137,7 +138,9 @@ if (!parameters?.ignoreRdfType) {
       nop = false;
     }
     propertySparqlWherePatterns.push(
-      ...property.sparqlWherePatterns({ variables }),
+      ...property.sparqlWherePatterns({
+        variables,
+      }),
     );
   }
   if (propertySparqlWherePatterns.length > 0) {

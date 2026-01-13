@@ -19,9 +19,9 @@ export function filterFunctionDeclaration(
 
   if (this.ownProperties.length > 0) {
     for (const ownProperty of this.ownProperties) {
-      ownProperty.filterProperty.ifJust(({ function: function_, name }) => {
+      ownProperty.filterProperty.ifJust(({ name }) => {
         statements.push(
-          `if (typeof filter.${name} !== "undefined" && !${function_}(filter.${name}, value.${ownProperty.name})) { return false; }`,
+          `if (typeof filter.${name} !== "undefined" && !${ownProperty.filterFunction}(filter.${name}, value.${ownProperty.name})) { return false; }`,
         );
       });
     }

@@ -189,15 +189,22 @@ export interface Type {
    *
    * This method is called when an instance of the type is the object of a property.
    *
-   * The method should return a BGP (variables.subject, variables.predicate, variables.object) and optionally its own sparqlConstructChainTriples method to
+   * Parameters:
+   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *
+   *   variables: runtime variables
+   *     - basicTriple: the basic (s, p, o) or (o, p, s) triple of the property as a sparqljs.Triple
+   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
+   *     - variablePrefix: prefix to use for variables
+   *
+   * The method should return a BGP (variables.focusIdentifier, variables.predicate, variables.value) and optionally its own sparqlConstructChainTriples method to
    * chain variables.object to other triples (using variables.object as the "subject" of that call).
    */
   sparqlConstructPropertyTriples(parameters: {
     allowIgnoreRdfType: boolean;
     variables: {
-      object: string;
-      predicate: string;
-      subject: string;
+      basicTriple: string;
+      valueVariable: string;
       variablePrefix: string;
     };
   }): readonly string[];
@@ -208,28 +215,43 @@ export interface Type {
    * This method is called when an instance of the type is the subject of chains.
    * For example, ListType calls this method to with the item variable as a subject in order to chain additional triples on items.
    *
+   * Parameters:
+   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *   variables: (at runtime)
+   *     - valueVariable: rdfjs.Variable of the value of this type
+   *     - variablePrefix: prefix to use for new variables
+   *
    * Types with no additional patterns to chain should return an empty array.
    */
   sparqlConstructChainTriples(parameters: {
     allowIgnoreRdfType: boolean;
     variables: {
-      subject: string;
+      valueVariable: string;
       variablePrefix: string;
     };
   }): readonly string[];
 
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
+   *
+   * Parameters:
+   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *   variables: (at runtime)
+   *     - basicPattern: the basic (s, p, o) or (o, p, s) pattern of the property as a sparqljs.Pattern
+   *     - filter: if Just, an instance of filterType or undefined
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
+   *     - variablePrefix: prefix to use for new variables
    *
    * See note in sparqlConstructPropertyTriples re: how this method is used.
    */
   sparqlWherePropertyPatterns(parameters: {
     allowIgnoreRdfType: boolean;
     variables: {
-      object: string;
-      predicate: string;
+      basicPattern: string;
+      filter: Maybe<string>;
       preferredLanguages: string;
-      subject: string;
+      valueVariable: string;
       variablePrefix: string;
     };
   }): readonly string[];
@@ -237,13 +259,22 @@ export interface Type {
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
    *
+   * Parameters:
+   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *   variables: (at runtime)
+   *     - filter: if Just, an instance of filterType or undefined
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - valueVariable: rdfjs.Variable of the value of this type
+   *     - variablePrefix: prefix to use for new variables
+   *
    * See note in sparqlConstructChainTriples re: how this method is used.
    */
   sparqlWhereChainPatterns(parameters: {
     allowIgnoreRdfType: boolean;
     variables: {
+      filter: Maybe<string>;
       preferredLanguages: string;
-      subject: string;
+      valueVariable: string;
       variablePrefix: string;
     };
   }): readonly string[];

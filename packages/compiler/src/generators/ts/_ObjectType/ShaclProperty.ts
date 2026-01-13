@@ -9,6 +9,7 @@ import type {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
+import { objectInitializer } from "../objectInitializer.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -132,7 +133,6 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     }
 
     return Maybe.of({
-      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });
@@ -269,14 +269,18 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }: Parameters<
     Property<TypeT>["sparqlConstructTriples"]
   >[0]): readonly string[] {
-    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueVariable = `dataFactory.variable!(${valueString})`;
     return this.type.sparqlConstructPropertyTriples({
       allowIgnoreRdfType: true,
       variables: {
-        object: `dataFactory.variable!(${objectString})`,
-        predicate: this.predicate,
-        subject: variables.subject,
-        variablePrefix: objectString,
+        basicTriple: objectInitializer({
+          predicate: this.predicate,
+          object: valueVariable,
+          subject: variables.focusIdentifier,
+        }),
+        valueVariable,
+        variablePrefix: valueString,
       },
     });
   }
@@ -284,15 +288,25 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   sparqlWherePatterns({
     variables,
   }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]): readonly string[] {
-    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueVariable = `dataFactory.variable!(${valueString})`;
     return this.type.sparqlWherePropertyPatterns({
       allowIgnoreRdfType: true,
       variables: {
-        object: `dataFactory.variable!(${objectString})`,
-        predicate: this.predicate,
+        basicPattern: objectInitializer({
+          triples: `[${objectInitializer({
+            object: valueVariable,
+            predicate: this.predicate,
+            subject: variables.focusIdentifier,
+          })}]`,
+          type: '"bgp"',
+        }),
+        filter: this.filterProperty.map(
+          ({ name }) => `${variables.filter}?.${name}`,
+        ),
         preferredLanguages: variables.preferredLanguages,
-        subject: variables.subject,
-        variablePrefix: objectString,
+        valueVariable,
+        variablePrefix: valueString,
       },
     });
   }

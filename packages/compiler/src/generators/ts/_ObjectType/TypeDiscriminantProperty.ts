@@ -178,6 +178,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
 
 export namespace TypeDiscriminantProperty {
   export class Type {
+    readonly filterFunction = "nonextant";
     readonly mutable: boolean;
     readonly descendantValues: readonly string[];
     readonly ownValues: readonly string[];

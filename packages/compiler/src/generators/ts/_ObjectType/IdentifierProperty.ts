@@ -109,7 +109,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
   @Memoize()
   override get filterProperty() {
     return Maybe.of({
-      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });
@@ -483,8 +482,12 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return [];
   }
 
-  override sparqlWherePatterns(): readonly string[] {
-    return [];
+  override sparqlWherePatterns({
+    variables,
+  }: Parameters<
+    Property<IdentifierType>["sparqlWherePatterns"]
+  >[0]): readonly string[] {
+    // Filter on variables.subject
   }
 
   override toJsonObjectMember({

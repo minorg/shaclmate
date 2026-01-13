@@ -163,6 +163,7 @@ export class ListType<
         ...this.itemType.sparqlWhereChainPatterns({
           allowIgnoreRdfType: true,
           variables: {
+            filter: variables.filter.map((filter) => `${filter}?.items`),
             preferredLanguages: variables.preferredLanguages,
             subject: item0Variable,
             variablePrefix: variablePrefix("Item0"),
@@ -207,6 +208,7 @@ export class ListType<
         ...this.itemType.sparqlWhereChainPatterns({
           allowIgnoreRdfType: true,
           variables: {
+            filter: variables.filter.map((filter) => `${filter}?.items`),
             preferredLanguages: variables.preferredLanguages,
             subject: itemNVariable,
             variablePrefix: variablePrefix("ItemN"),
