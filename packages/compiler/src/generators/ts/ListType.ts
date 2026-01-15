@@ -145,7 +145,7 @@ export class ListType<
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
-    const patterns: string[] = propertyPatterns.concat();
+    const patterns: string[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
@@ -238,7 +238,14 @@ export class ListType<
     );
 
     // Having an optional around everything handles the rdf:nil case
-    return new Type.SparqlWherePatterns(patterns, { type: "optional" });
+    let result = new Type.SparqlWherePatterns(patterns, { type: "optional" });
+    if (propertyPatterns.length > 0) {
+      result = new Type.SparqlWherePatterns([
+        ...propertyPatterns,
+        ...result.toArray(),
+      ]);
+    }
+    return result;
   }
 
   override toRdfExpression({
