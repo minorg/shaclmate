@@ -2148,8 +2148,6 @@ export namespace UuidV4IriIdentifierInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: UuidV4IriIdentifierInterface.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -2701,7 +2699,6 @@ export namespace UuidV4IriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: UuidV4IriIdentifierClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -5966,7 +5963,6 @@ export namespace UnionDiscriminantsClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: UnionDiscriminantsClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -8251,7 +8247,6 @@ export namespace TermPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: TermPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -8961,7 +8956,6 @@ export namespace Sha256IriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: Sha256IriIdentifierClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -10504,7 +10498,6 @@ export namespace PropertyVisibilitiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PropertyVisibilitiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -11463,7 +11456,6 @@ export namespace PropertyCardinalitiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PropertyCardinalitiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -12149,8 +12141,6 @@ export namespace PartialInterfaceUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PartialInterfaceUnionMember2.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -12765,8 +12755,6 @@ export namespace PartialInterfaceUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PartialInterfaceUnionMember1.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -13412,7 +13400,6 @@ export namespace PartialClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PartialClassUnionMember2.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -14004,7 +13991,6 @@ export namespace PartialClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PartialClassUnionMember1.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -14678,7 +14664,6 @@ export namespace OrderedPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: OrderedPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -15227,7 +15212,6 @@ export namespace NonClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: NonClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
@@ -15720,7 +15704,6 @@ export namespace NoRdfTypeClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: NoRdfTypeClassUnionMember2.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -16223,7 +16206,6 @@ export namespace NoRdfTypeClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: NoRdfTypeClassUnionMember1.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -17118,7 +17100,6 @@ export namespace MutablePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: MutablePropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -18433,7 +18414,6 @@ export namespace ListPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ListPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -19239,7 +19219,6 @@ export namespace PartialInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PartialInterface.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -22072,7 +22051,6 @@ export namespace LazyPropertiesInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazyPropertiesInterface.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -22966,7 +22944,6 @@ export namespace PartialClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: PartialClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -25799,7 +25776,6 @@ export namespace LazyPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazyPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -26498,8 +26474,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedIriIdentifierInterface.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -27032,8 +27006,6 @@ export namespace LazilyResolvedIriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedIriIdentifierClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -27556,8 +27528,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedInterfaceUnionMember2.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -28173,8 +28143,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedInterfaceUnionMember1.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -28819,8 +28787,6 @@ export namespace LazilyResolvedClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedClassUnionMember2.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -29411,8 +29377,6 @@ export namespace LazilyResolvedClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedClassUnionMember1.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -29985,8 +29949,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -30642,8 +30604,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -31263,7 +31223,6 @@ export namespace LanguageInPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: LanguageInPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -31944,8 +31903,6 @@ export namespace JsPrimitiveUnionPropertyClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: JsPrimitiveUnionPropertyClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -33089,8 +33046,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: InterfaceUnionMemberCommonParentStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -33640,7 +33595,6 @@ export namespace InterfaceUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: InterfaceUnionMember2.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -33651,7 +33605,12 @@ export namespace InterfaceUnionMember2 {
         ? subject.value
         : "interfaceUnionMember2");
     for (const pattern of InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -34257,7 +34216,6 @@ export namespace InterfaceUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: InterfaceUnionMember1.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -34268,7 +34226,12 @@ export namespace InterfaceUnionMember1 {
         ? subject.value
         : "interfaceUnionMember1");
     for (const pattern of InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -34800,7 +34763,6 @@ export namespace Interface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: Interface.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject = parameters?.subject ?? dataFactory.variable!("interface");
@@ -36831,7 +36793,6 @@ export namespace InPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: InPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -37482,7 +37443,6 @@ export namespace InIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: InIdentifierClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -37954,8 +37914,6 @@ export namespace IdentifierOverride1ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: IdentifierOverride1ClassStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -38291,8 +38249,6 @@ export namespace IdentifierOverride2ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: IdentifierOverride2ClassStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -38303,7 +38259,7 @@ export namespace IdentifierOverride2ClassStatic {
         ? subject.value
         : "identifierOverride2Class");
     for (const pattern of IdentifierOverride1ClassStatic.$sparqlWherePatterns({
-      filter,
+      filter: parameters?.filter,
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -38663,8 +38619,6 @@ export namespace IdentifierOverride3ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: IdentifierOverride3ClassStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -38675,7 +38629,7 @@ export namespace IdentifierOverride3ClassStatic {
         ? subject.value
         : "identifierOverride3Class");
     for (const pattern of IdentifierOverride2ClassStatic.$sparqlWherePatterns({
-      filter,
+      filter: parameters?.filter,
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -39108,8 +39062,6 @@ export namespace IdentifierOverride4ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: IdentifierOverride4ClassStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -39120,7 +39072,7 @@ export namespace IdentifierOverride4ClassStatic {
         ? subject.value
         : "identifierOverride4Class");
     for (const pattern of IdentifierOverride3ClassStatic.$sparqlWherePatterns({
-      filter,
+      filter: parameters?.filter,
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -39544,7 +39496,6 @@ export namespace IdentifierOverride5Class {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: IdentifierOverride5Class.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -39555,7 +39506,7 @@ export namespace IdentifierOverride5Class {
         ? subject.value
         : "identifierOverride5Class");
     for (const pattern of IdentifierOverride4ClassStatic.$sparqlWherePatterns({
-      filter,
+      filter: parameters?.filter,
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -40156,7 +40107,6 @@ export namespace HasValuePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: HasValuePropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -40726,7 +40676,6 @@ export namespace FlattenClassUnionMember3 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: FlattenClassUnionMember3.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -41299,7 +41248,6 @@ export namespace ExternClassPropertyClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ExternClassPropertyClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -41823,7 +41771,6 @@ export namespace ExplicitRdfTypeClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ExplicitRdfTypeClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -42424,8 +42371,6 @@ export namespace ExplicitFromToRdfTypesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ExplicitFromToRdfTypesClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -43998,8 +43943,6 @@ export namespace DefaultValuePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: DefaultValuePropertiesClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -45678,7 +45621,6 @@ export namespace DateUnionPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: DateUnionPropertiesClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -48222,8 +48164,6 @@ export namespace ConvertibleTypePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ConvertibleTypePropertiesClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -49107,8 +49047,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: BaseInterfaceWithPropertiesStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -49647,8 +49585,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: BaseInterfaceWithoutPropertiesStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -49660,7 +49596,12 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         ? subject.value
         : "baseInterfaceWithoutProperties");
     for (const pattern of BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -50220,8 +50161,6 @@ export namespace ConcreteParentInterfaceStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ConcreteParentInterfaceStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -50232,7 +50171,12 @@ export namespace ConcreteParentInterfaceStatic {
         ? subject.value
         : "concreteParentInterface");
     for (const pattern of BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -50855,7 +50799,6 @@ export namespace ConcreteChildInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ConcreteChildInterface.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -50866,7 +50809,7 @@ export namespace ConcreteChildInterface {
         ? subject.value
         : "concreteChildInterface");
     for (const pattern of ConcreteParentInterfaceStatic.$sparqlWherePatterns({
-      filter,
+      filter: parameters?.filter,
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -51462,8 +51405,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: AbstractBaseClassWithPropertiesStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -51785,8 +51726,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: AbstractBaseClassWithoutPropertiesStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -51798,7 +51737,12 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         ? subject.value
         : "abstractBaseClassWithoutProperties");
     for (const pattern of AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -52292,7 +52236,6 @@ export namespace ConcreteParentClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ConcreteParentClassStatic.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -52301,7 +52244,12 @@ export namespace ConcreteParentClassStatic {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "concreteParentClass");
     for (const pattern of AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -52887,7 +52835,6 @@ export namespace ConcreteChildClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ConcreteChildClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -52896,7 +52843,7 @@ export namespace ConcreteChildClass {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "concreteChildClass");
     for (const pattern of ConcreteParentClassStatic.$sparqlWherePatterns({
-      filter,
+      filter: parameters?.filter,
       ignoreRdfType: true,
       subject,
       variablePrefix,
@@ -53413,8 +53360,6 @@ export namespace ClassUnionMemberCommonParentStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ClassUnionMemberCommonParentStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -53924,7 +53869,6 @@ export namespace ClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ClassUnionMember2.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -53933,7 +53877,12 @@ export namespace ClassUnionMember2 {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember2");
     for (const pattern of ClassUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -54492,7 +54441,6 @@ export namespace ClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: ClassUnionMember1.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -54501,7 +54449,12 @@ export namespace ClassUnionMember1 {
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember1");
     for (const pattern of ClassUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      { filter, ignoreRdfType: true, subject, variablePrefix },
+      {
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      },
     )) {
       if (pattern.type === "optional") {
         optionalPatterns.push(pattern);
@@ -55350,8 +55303,6 @@ export namespace BlankNodeOrIriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: BlankNodeOrIriIdentifierClass.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -56133,7 +56084,6 @@ export namespace BlankNodeIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: BlankNodeIdentifierClass.$Filter = parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =
@@ -56579,8 +56529,6 @@ export namespace AbstractBaseClassForExternClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const filter: AbstractBaseClassForExternClassStatic.$Filter =
-      parameters?.filter ?? {};
     const optionalPatterns: sparqljs.OptionalPattern[] = [];
     const requiredPatterns: sparqljs.Pattern[] = [];
     const subject =

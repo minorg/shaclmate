@@ -37,7 +37,6 @@ export function sparqlFunctionDeclarations(
   let nop = true;
 
   const sparqlWherePatternsStatements = [
-    `const filter: ${this.filterType.name} = parameters?.filter ?? {};`,
     "const optionalPatterns: sparqljs.OptionalPattern[] = [];",
     "const requiredPatterns: sparqljs.Pattern[] = [];",
     `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
@@ -49,7 +48,7 @@ export function sparqlFunctionDeclarations(
       `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType: true, subject, variablePrefix }));`,
     );
     sparqlWherePatternsStatements.push(`\
-for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter, ignoreRdfType: true, subject, variablePrefix })) {
+for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix })) {
   if (pattern.type === "optional") {
     optionalPatterns.push(pattern);
   } else {
