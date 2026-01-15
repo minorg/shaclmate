@@ -57,6 +57,17 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
     return "number";
   }
 
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
+    return variables.filter
+      .map(
+        (filterVariable) =>
+          `...${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+      )
+      .toList();
+  }
+
   override jsonZodSchema({
     variables,
   }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
@@ -138,10 +149,13 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
             ...singleEntryRecord(
               `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
               `\
-// biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter?: ${syntheticNamePrefix}NumberFilter, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
     const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
 
     if (typeof filter.in !== "undefined") {
       patterns.push({

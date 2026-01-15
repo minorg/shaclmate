@@ -839,13 +839,16 @@ interface $NumberFilter {
   readonly minInclusive?: number;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace $NumberFilter {
   export function $sparqlWherePatterns(
-    filter: $NumberFilter,
+    filter?: $NumberFilter,
     value: rdfjs.Variable,
   ): readonly sparqljs.Pattern[] {
     const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
 
     if (typeof filter.in !== "undefined") {
       patterns.push({
@@ -8426,6 +8429,10 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...$NumberFilter.$sparqlWherePatterns(
+            parameters?.filter?.numberTermProperty?.item,
+            dataFactory.variable!(`${variablePrefix}NumberTermProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -31951,6 +31958,12 @@ export namespace JsPrimitiveUnionPropertyClass {
                     ],
                     type: "bgp",
                   },
+                  ...$NumberFilter.$sparqlWherePatterns(
+                    parameters?.filter?.jsPrimitiveUnionProperty?.items,
+                    dataFactory.variable!(
+                      `${variablePrefix}JsPrimitiveUnionProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -36872,6 +36885,10 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...$NumberFilter.$sparqlWherePatterns(
+            parameters?.filter?.inNumbersProperty?.item,
+            dataFactory.variable!(`${variablePrefix}InNumbersProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -44025,6 +44042,12 @@ export namespace DefaultValuePropertiesClass {
             ],
             type: "bgp",
           },
+          ...$NumberFilter.$sparqlWherePatterns(
+            parameters?.filter?.numberDefaultValueProperty,
+            dataFactory.variable!(
+              `${variablePrefix}NumberDefaultValueProperty`,
+            ),
+          ),
         ],
         type: "optional",
       },

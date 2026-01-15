@@ -533,15 +533,24 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): Type.SparqlWherePatterns {
+  override sparqlWherePatterns({
+    allowIgnoreRdfType: _allowIgnoreRdfType,
+    variables,
+    ...otherParameters
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
     let haveEmptyGroup = false; // Only need one empty group
     return new Type.SparqlWherePatterns(
       this.memberTypes.flatMap((memberType) => {
         const groupPatterns = memberType.sparqlWherePatterns({
-          ...parameters,
+          ...otherParameters,
           allowIgnoreRdfType: false,
+          variables: {
+            ...variables,
+            filter: variables.filter.map(
+              (filterVariable) =>
+                `${filterVariable}?.on?.${memberType.discriminantValues[0]}`,
+            ),
+          },
         });
         if (groupPatterns.patterns.length === 0) {
           if (haveEmptyGroup) {

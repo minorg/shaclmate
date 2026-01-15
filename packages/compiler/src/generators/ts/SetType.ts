@@ -45,10 +45,19 @@ export class SetType<
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): Type.SparqlWherePatterns {
-    const itemPatterns = this.itemType.sparqlWherePatterns(parameters);
+  override sparqlWherePatterns({
+    variables,
+    ...otherParameters
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
+    const itemPatterns = this.itemType.sparqlWherePatterns({
+      ...otherParameters,
+      variables: {
+        ...variables,
+        filter: variables.filter.map(
+          (filterVariable) => `${filterVariable}?.items`,
+        ),
+      },
+    });
     return this.minCount > 0 ||
       itemPatterns.patterns.length === 0 ||
       itemPatterns.type === "optional"
