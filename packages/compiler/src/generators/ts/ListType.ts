@@ -61,9 +61,9 @@ export class ListType<
     ].join(".");
   }
 
-  override sparqlConstructChainTriples({
+  override sparqlConstructTriples({
     variables,
-  }: Parameters<Type["sparqlConstructChainTriples"]>[0]): readonly string[] {
+  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly string[] {
     const triples: string[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
@@ -80,7 +80,7 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: item0Variable,
         }),
-        ...this.itemType.sparqlConstructChainTriples({
+        ...this.itemType.sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
             valueVariable: item0Variable,
@@ -114,7 +114,7 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: itemNVariable,
         }),
-        ...this.itemType.sparqlConstructChainTriples({
+        ...this.itemType.sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
             valueVariable: itemNVariable,
@@ -136,15 +136,16 @@ export class ListType<
     return triples;
   }
 
-  override sparqlWhereChainPatterns({
+  override sparqlWherePatterns({
+    propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWhereChainPatterns"]>[0]): readonly string[] {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
-    const patterns: string[] = [];
+    const patterns: string[] = propertyPatterns.concat();
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
@@ -160,8 +161,9 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: item0Variable,
         })}] }`,
-        ...this.itemType.sparqlWhereChainPatterns({
+        ...this.itemType.sparqlWherePatterns({
           allowIgnoreRdfType: true,
+          propertyPatterns: [],
           variables: {
             filter: variables.filter.map((filter) => `${filter}?.items`),
             preferredLanguages: variables.preferredLanguages,
@@ -205,8 +207,9 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: itemNVariable,
         })}] }`,
-        ...this.itemType.sparqlWhereChainPatterns({
+        ...this.itemType.sparqlWherePatterns({
           allowIgnoreRdfType: true,
+          propertyPatterns: [],
           variables: {
             filter: variables.filter.map((filter) => `${filter}?.items`),
             preferredLanguages: variables.preferredLanguages,

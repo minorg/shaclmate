@@ -239,23 +239,16 @@ interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
     );
   }
 
-  override sparqlConstructChainTriples(
-    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
+  override sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
   ): readonly string[] {
-    return this.itemType.sparqlConstructChainTriples(parameters);
+    return this.itemType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWhereChainPatterns(
-    _parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
-    throw new Error("should never be called");
-    // return this.itemType.sparqlWherePatterns(parameters);
-  }
-
-  override sparqlWherePropertyPatterns(
-    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
-  ): readonly string[] {
-    const patterns = this.itemType.sparqlWherePropertyPatterns(parameters);
+    const patterns = this.itemType.sparqlWherePatterns(parameters);
     if (patterns.length === 0) {
       return [];
     }

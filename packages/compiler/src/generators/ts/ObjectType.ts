@@ -529,32 +529,38 @@ export class ObjectType extends AbstractDeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructChainTriples(
-    parameters: Parameters<
-      AbstractDeclaredType["sparqlConstructChainTriples"]
-    >[0],
-  ): readonly string[] {
+  override sparqlConstructTriples({
+    allowIgnoreRdfType,
+    variables,
+  }: Parameters<
+    AbstractDeclaredType["sparqlConstructTriples"]
+  >[0]): readonly string[] {
     return [
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
         {
-          ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-          subject: parameters.variables.valueVariable,
-          variablePrefix: parameters.variables.variablePrefix,
+          ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+          subject: variables.valueVariable,
+          variablePrefix: variables.variablePrefix,
         },
       )})`,
     ];
   }
 
-  override sparqlWhereChainPatterns(
-    parameters: Parameters<AbstractDeclaredType["sparqlWhereChainPatterns"]>[0],
-  ): readonly string[] {
+  override sparqlWherePatterns({
+    allowIgnoreRdfType,
+    propertyPatterns,
+    variables,
+  }: Parameters<
+    AbstractDeclaredType["sparqlWherePatterns"]
+  >[0]): readonly string[] {
     return [
+      ...propertyPatterns,
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
         {
-          ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-          preferredLanguages: parameters.variables.preferredLanguages,
-          subject: parameters.variables.valueVariable,
-          variablePrefix: parameters.variables.variablePrefix,
+          ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+          preferredLanguages: variables.preferredLanguages,
+          subject: variables.valueVariable,
+          variablePrefix: variables.variablePrefix,
         },
       )})`,
     ];

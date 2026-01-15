@@ -1,6 +1,5 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 
-import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import type { Type } from "./Type.js";
 
@@ -60,94 +59,47 @@ export abstract class AbstractType implements Type {
     >
   >;
 
-  abstract graphqlResolveExpression(parameters: {
-    variables: {
-      args: string;
-      value: string;
-    };
-  }): string;
+  abstract graphqlResolveExpression(
+    parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string;
 
-  abstract hashStatements(parameters: {
-    depth: number;
-    variables: {
-      hasher: string;
-      value: string;
-    };
-  }): readonly string[];
+  abstract hashStatements(
+    parameters: Parameters<Type["hashStatements"]>[0],
+  ): readonly string[];
 
-  abstract jsonType(parameters?: {
-    includeDiscriminantProperty?: boolean;
-  }): Type.JsonType;
+  abstract jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType;
 
-  abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: string };
-  }): Maybe<string>;
+  abstract jsonUiSchemaElement(
+    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
+  ): Maybe<string>;
 
-  abstract jsonZodSchema(parameters: {
-    includeDiscriminantProperty?: boolean;
-    context: "property" | "type";
-    variables: { zod: string };
-  }): string;
+  abstract jsonZodSchema(
+    parameters: Parameters<Type["jsonZodSchema"]>[0],
+  ): string;
 
-  abstract snippetDeclarations(parameters: {
-    features: ReadonlySet<TsFeature>;
-    recursionStack: Type[];
-  }): Readonly<Record<string, string>>;
+  abstract snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>>;
 
-  sparqlConstructChainTriples(
-    _parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
-  ): readonly string[] {
-    return [];
-  }
+  abstract sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
+  ): readonly string[];
 
-  sparqlConstructPropertyTriples({
-    allowIgnoreRdfType,
-    variables,
-  }: Parameters<Type["sparqlConstructPropertyTriples"]>[0]): readonly string[] {
-    return [variables.basicTriple].concat(
-      this.sparqlConstructChainTriples({
-        allowIgnoreRdfType,
-        variables,
-      }),
-    );
-  }
+  abstract sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[];
 
-  sparqlWhereChainPatterns(
-    _parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
-  ): readonly string[] {
-    return [];
-  }
+  abstract toJsonExpression(
+    parameters: Parameters<Type["toJsonExpression"]>[0],
+  ): string;
 
-  sparqlWherePropertyPatterns({
-    allowIgnoreRdfType,
-    variables,
-  }: Parameters<Type["sparqlWherePropertyPatterns"]>[0]): readonly string[] {
-    return [variables.basicPattern].concat(
-      this.sparqlWhereChainPatterns({
-        allowIgnoreRdfType,
-        variables,
-      }),
-    );
-  }
+  abstract toRdfExpression(
+    parameters: Parameters<Type["toRdfExpression"]>[0],
+  ): string;
 
-  abstract toJsonExpression(parameters: {
-    includeDiscriminantProperty?: boolean;
-    variables: {
-      value: string;
-    };
-  }): string;
-
-  abstract toRdfExpression(parameters: {
-    variables: {
-      predicate: string;
-      mutateGraph: string;
-      resource: string;
-      resourceSet: string;
-      value: string;
-    };
-  }): string;
-
-  abstract useImports(parameters: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[];
+  abstract useImports(
+    parameters: Parameters<Type["useImports"]>[0],
+  ): readonly Import[];
 }

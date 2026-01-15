@@ -271,18 +271,21 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   >[0]): readonly string[] {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
-    return this.type.sparqlConstructPropertyTriples({
-      allowIgnoreRdfType: true,
-      variables: {
-        basicTriple: objectInitializer({
-          object: valueVariable,
-          predicate: this.predicate,
-          subject: variables.focusIdentifier,
-        }),
-        valueVariable,
-        variablePrefix: valueString,
-      },
-    });
+    return [
+      objectInitializer({
+        object: valueVariable,
+        predicate: this.predicate,
+        subject: variables.focusIdentifier,
+      }),
+    ].concat(
+      this.type.sparqlConstructTriples({
+        allowIgnoreRdfType: true,
+        variables: {
+          valueVariable,
+          variablePrefix: valueString,
+        },
+      }),
+    );
   }
 
   sparqlWherePatterns({
@@ -290,10 +293,10 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]): readonly string[] {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
-    return this.type.sparqlWherePropertyPatterns({
+    return this.type.sparqlWherePatterns({
       allowIgnoreRdfType: true,
-      variables: {
-        basicPattern: objectInitializer({
+      propertyPatterns: [
+        objectInitializer({
           triples: `[${objectInitializer({
             object: valueVariable,
             predicate: this.predicate,
@@ -301,6 +304,8 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
           })}]`,
           type: '"bgp"',
         }),
+      ],
+      variables: {
         filter: this.filterProperty.map(
           ({ name }) => `${variables.filter}?.${name}`,
         ),

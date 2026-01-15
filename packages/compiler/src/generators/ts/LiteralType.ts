@@ -15,6 +15,12 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
+  protected override filterSparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return [...this.preferredLanguagesSparqlWherePatterns(parameters)];
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {

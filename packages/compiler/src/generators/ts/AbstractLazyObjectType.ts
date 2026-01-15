@@ -123,28 +123,16 @@ export abstract class AbstractLazyObjectType<
     );
   }
 
-  override sparqlConstructChainTriples(
-    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
+  override sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
   ): readonly string[] {
-    return this.partialType.sparqlConstructChainTriples(parameters);
+    return this.partialType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlConstructPropertyTriples(
-    parameters: Parameters<Type["sparqlConstructPropertyTriples"]>[0],
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
-    return this.partialType.sparqlConstructPropertyTriples(parameters);
-  }
-
-  override sparqlWhereChainPatterns(
-    parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
-  ): readonly string[] {
-    return this.partialType.sparqlWhereChainPatterns(parameters);
-  }
-
-  override sparqlWherePropertyPatterns(
-    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
-  ): readonly string[] {
-    return this.partialType.sparqlWherePropertyPatterns(parameters);
+    return this.partialType.sparqlWherePatterns(parameters);
   }
 
   protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({

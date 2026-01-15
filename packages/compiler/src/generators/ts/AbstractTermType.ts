@@ -127,6 +127,12 @@ export abstract class AbstractTermType<
       .join(" | ")})`;
   }
 
+  protected filterSparqlWherePatterns(
+    _parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly string[] {
+    return [];
+  }
+
   override fromRdfExpression(
     parameters: Parameters<Type["fromRdfExpression"]>[0],
   ): string {
@@ -251,17 +257,26 @@ export abstract class AbstractTermType<
     );
   }
 
-  override sparqlWherePropertyPatterns(
-    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0],
+  override sparqlConstructTriples(): readonly string[] {
+    return [];
+  }
+
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
+    const requiredPatterns: string[] = [
+      ...parameters.propertyPatterns,
+      ...this.filterSparqlWherePatterns(parameters),
+    ];
+
     return this.defaultValue
       .map(
         () =>
           [
-            `{ patterns: [${super.sparqlWherePropertyPatterns(parameters).join(", ")}], type: "optional" }`,
+            `{ patterns: [${requiredPatterns.join(", ")}], type: "optional" }`,
           ] as readonly string[],
       )
-      .orDefault(super.sparqlWherePropertyPatterns(parameters));
+      .orDefault(requiredPatterns);
   }
 
   override toRdfExpression({

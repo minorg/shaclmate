@@ -288,8 +288,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructChainTriples(
-    parameters: Parameters<Type["sparqlConstructChainTriples"]>[0],
+  override sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
   ): readonly string[] {
     return [
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
@@ -301,15 +301,17 @@ export class ObjectUnionType extends AbstractDeclaredType {
     ];
   }
 
-  override sparqlWhereChainPatterns(
-    parameters: Parameters<Type["sparqlWhereChainPatterns"]>[0],
-  ): readonly string[] {
+  override sparqlWherePatterns({
+    propertyPatterns,
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
     return [
+      ...propertyPatterns,
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
         {
-          preferredLanguages: parameters.variables.preferredLanguages,
-          subject: parameters.variables.valueVariable,
-          variablePrefix: parameters.variables.variablePrefix,
+          preferredLanguages: variables.preferredLanguages,
+          subject: variables.valueVariable,
+          variablePrefix: variables.variablePrefix,
         },
       )})`,
     ];

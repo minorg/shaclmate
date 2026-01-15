@@ -187,43 +187,13 @@ export interface Type {
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * This method is called when an instance of the type is the value of a Property.
-   *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *
    *   variables: runtime variables
-   *     - basicTriple: the basic (s, p, o) or (o, p, s) triple of the property as a sparqljs.Triple
    *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
    *     - variablePrefix: prefix to use for variables
-   *
-   * The method should return a BGP (variables.focusIdentifier, variables.predicate, variables.value) and optionally its own sparqlConstructChainTriples method to
-   * chain variables.object to other triples (using variables.object as the "subject" of that call).
    */
-  sparqlConstructPropertyTriples(parameters: {
-    allowIgnoreRdfType: boolean;
-    variables: {
-      basicTriple: string;
-      valueVariable: string;
-      variablePrefix: string;
-    };
-  }): readonly string[];
-
-  /**
-   * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
-   *
-   * This method is called when an instance of the type is the subject of chains.
-   * For example, ListType calls this method to with the item variable as a subject in order to chain additional triples on items.
-   *
-   * Parameters:
-   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *   variables: (at runtime)
-   *     - valueVariable: rdfjs.Variable of the value of this type
-   *     - variablePrefix: prefix to use for new variables
-   *
-   * Types with no additional patterns to chain should return an empty array.
-   */
-  sparqlConstructChainTriples(parameters: {
+  sparqlConstructTriples(parameters: {
     allowIgnoreRdfType: boolean;
     variables: {
       valueVariable: string;
@@ -234,43 +204,18 @@ export interface Type {
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * This method is called when an instance of the type is the value of a Property.
-   *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *   variables: (at runtime)
-   *     - basicPattern: the basic (s, p, o) or (o, p, s) pattern of the invoking property, as a sparqljs.Pattern
-   *     - filter: if Just, an instance of filterType or undefined
-   *     - preferredLanguages: array of preferred language code (strings)
-   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
-   *     - variablePrefix: prefix to use for new variables
-   */
-  sparqlWherePropertyPatterns(parameters: {
-    allowIgnoreRdfType: boolean;
-    variables: {
-      basicPattern: string;
-      filter: Maybe<string>;
-      preferredLanguages: string;
-      valueVariable: string;
-      variablePrefix: string;
-    };
-  }): readonly string[];
-
-  /**
-   * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
-   *
-   * This method is called when an instance of the type is the subject of chains.
-   *
-   * Parameters:
-   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *   propertyPattern: if Just, should be included in the patterns for this type
    *   variables: (at runtime)
    *     - filter: if Just, an instance of filterType or undefined
    *     - preferredLanguages: array of preferred language code (strings)
    *     - valueVariable: rdfjs.Variable of the value of this type
    *     - variablePrefix: prefix to use for new variables
    */
-  sparqlWhereChainPatterns(parameters: {
+  sparqlWherePatterns(parameters: {
     allowIgnoreRdfType: boolean;
+    propertyPatterns: readonly string[];
     variables: {
       filter: Maybe<string>;
       preferredLanguages: string;

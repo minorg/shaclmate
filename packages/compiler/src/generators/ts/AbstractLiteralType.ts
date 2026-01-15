@@ -88,19 +88,10 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     );
   }
 
-  override sparqlWherePropertyPatterns(
-    parameters: Parameters<Type["sparqlWherePropertyPatterns"]>[0] & {
-      ignoreLiteralLanguage?: boolean;
-    },
-  ): readonly string[] {
-    const { ignoreLiteralLanguage, variables } = parameters;
-
-    const superPatterns = super.sparqlWherePropertyPatterns(parameters);
-    if (ignoreLiteralLanguage) {
-      return superPatterns;
-    }
-
-    return superPatterns.concat(
+  protected preferredLanguagesSparqlWherePatterns({
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]) {
+    return [
       `...[${
         this.languageIn.length > 0
           ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
@@ -134,6 +125,6 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
             }, null as sparqljs.Expression | null) as sparqljs.Expression
           })
         )`,
-    );
+    ];
   }
 }

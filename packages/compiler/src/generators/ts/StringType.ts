@@ -161,15 +161,10 @@ namespace ${syntheticNamePrefix}StringFilter {
     );
   }
 
-  override sparqlWherePropertyPatterns(
-    parameters: Parameters<
-      AbstractPrimitiveType<string>["sparqlWherePropertyPatterns"]
-    >[0],
+  protected override filterSparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
   ): readonly string[] {
-    return super.sparqlWherePropertyPatterns({
-      ...parameters,
-      ignoreLiteralLanguage: false,
-    });
+    return [...this.preferredLanguagesSparqlWherePatterns(parameters)];
   }
 
   override toRdfExpression({
