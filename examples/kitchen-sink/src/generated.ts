@@ -5886,15 +5886,6 @@ export namespace UnionDiscriminantsClass {
         variablePrefix: `${variablePrefix}RequiredClassOrClassOrStringProperty`,
       }),
     );
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}RequiredClassOrClassOrStringProperty`,
-      ),
-      predicate:
-        UnionDiscriminantsClass.$properties
-          .requiredClassOrClassOrStringProperty["identifier"],
-      subject,
-    });
     triples.push(
       ...ClassUnionMember2.$sparqlConstructTriples({
         subject: dataFactory.variable!(
@@ -5905,39 +5896,10 @@ export namespace UnionDiscriminantsClass {
     );
     triples.push({
       object: dataFactory.variable!(
-        `${variablePrefix}RequiredClassOrClassOrStringProperty`,
-      ),
-      predicate:
-        UnionDiscriminantsClass.$properties
-          .requiredClassOrClassOrStringProperty["identifier"],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(
         `${variablePrefix}RequiredIriOrLiteralProperty`,
       ),
       predicate:
         UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}RequiredIriOrLiteralProperty`,
-      ),
-      predicate:
-        UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
-          "identifier"
-        ],
-      subject,
-    });
-    triples.push({
-      object: dataFactory.variable!(
-        `${variablePrefix}RequiredIriOrStringProperty`,
-      ),
-      predicate:
-        UnionDiscriminantsClass.$properties.requiredIriOrStringProperty[
           "identifier"
         ],
       subject,
