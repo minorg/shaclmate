@@ -17132,23 +17132,23 @@ export namespace MutablePropertiesClass {
       {
         patterns: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}MutableListProperty`,
-                ),
-                predicate:
-                  MutablePropertiesClass.$properties.mutableListProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          {
             type: "optional",
             patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}MutableListProperty`,
+                    ),
+                    predicate:
+                      MutablePropertiesClass.$properties.mutableListProperty[
+                        "identifier"
+                      ],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
               {
                 type: "bgp",
                 triples: [
@@ -17163,6 +17163,42 @@ export namespace MutablePropertiesClass {
                   },
                 ],
               },
+              ...[parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${`${variablePrefix}MutableListProperty`}Item0`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                })),
               {
                 type: "bgp",
                 triples: [
@@ -17212,6 +17248,42 @@ export namespace MutablePropertiesClass {
                       },
                     ],
                   },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${`${variablePrefix}MutableListProperty`}ItemN`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
                   {
                     type: "bgp",
                     triples: [
@@ -18373,21 +18445,23 @@ export namespace ListPropertiesClass {
       {
         patterns: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}IriListProperty`,
-                ),
-                predicate:
-                  ListPropertiesClass.$properties.iriListProperty["identifier"],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          {
             type: "optional",
             patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}IriListProperty`,
+                    ),
+                    predicate:
+                      ListPropertiesClass.$properties.iriListProperty[
+                        "identifier"
+                      ],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
               {
                 type: "bgp",
                 triples: [
@@ -18475,23 +18549,23 @@ export namespace ListPropertiesClass {
       {
         patterns: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}ObjectListProperty`,
-                ),
-                predicate:
-                  ListPropertiesClass.$properties.objectListProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          {
             type: "optional",
             patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}ObjectListProperty`,
+                    ),
+                    predicate:
+                      ListPropertiesClass.$properties.objectListProperty[
+                        "identifier"
+                      ],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
               {
                 type: "bgp",
                 triples: [
@@ -18595,23 +18669,23 @@ export namespace ListPropertiesClass {
       {
         patterns: [
           {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}StringListProperty`,
-                ),
-                predicate:
-                  ListPropertiesClass.$properties.stringListProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          {
             type: "optional",
             patterns: [
+              {
+                triples: [
+                  {
+                    object: dataFactory.variable!(
+                      `${variablePrefix}StringListProperty`,
+                    ),
+                    predicate:
+                      ListPropertiesClass.$properties.stringListProperty[
+                        "identifier"
+                      ],
+                    subject,
+                  },
+                ],
+                type: "bgp",
+              },
               {
                 type: "bgp",
                 triples: [
@@ -18626,6 +18700,42 @@ export namespace ListPropertiesClass {
                   },
                 ],
               },
+              ...[parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${`${variablePrefix}StringListProperty`}Item0`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                })),
               {
                 type: "bgp",
                 triples: [
@@ -18675,6 +18785,42 @@ export namespace ListPropertiesClass {
                       },
                     ],
                   },
+                  ...[parameters?.preferredLanguages ?? []]
+                    .filter((languages) => languages.length > 0)
+                    .map((languages) =>
+                      languages.map((language) => ({
+                        type: "operation" as const,
+                        operator: "=",
+                        args: [
+                          {
+                            type: "operation" as const,
+                            operator: "lang",
+                            args: [
+                              dataFactory.variable!(
+                                `${`${variablePrefix}StringListProperty`}ItemN`,
+                              ),
+                            ],
+                          },
+                          dataFactory.literal(language),
+                        ],
+                      })),
+                    )
+                    .map((langEqualsExpressions) => ({
+                      type: "filter" as const,
+                      expression: langEqualsExpressions.reduce(
+                        (reducedExpression, langEqualsExpression) => {
+                          if (reducedExpression === null) {
+                            return langEqualsExpression;
+                          }
+                          return {
+                            type: "operation" as const,
+                            operator: "||",
+                            args: [reducedExpression, langEqualsExpression],
+                          };
+                        },
+                        null as sparqljs.Expression | null,
+                      ) as sparqljs.Expression,
+                    })),
                   {
                     type: "bgp",
                     triples: [
@@ -43957,45 +44103,45 @@ export namespace DefaultValuePropertiesClass {
             ],
             type: "bgp",
           },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${variablePrefix}StringDefaultValueProperty`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
         ],
         type: "optional",
       },
-      ...[parameters?.preferredLanguages ?? []]
-        .filter((languages) => languages.length > 0)
-        .map((languages) =>
-          languages.map((language) => ({
-            type: "operation" as const,
-            operator: "=",
-            args: [
-              {
-                type: "operation" as const,
-                operator: "lang",
-                args: [
-                  dataFactory.variable!(
-                    `${variablePrefix}StringDefaultValueProperty`,
-                  ),
-                ],
-              },
-              dataFactory.literal(language),
-            ],
-          })),
-        )
-        .map((langEqualsExpressions) => ({
-          type: "filter" as const,
-          expression: langEqualsExpressions.reduce(
-            (reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression],
-              };
-            },
-            null as sparqljs.Expression | null,
-          ) as sparqljs.Expression,
-        })),
       {
         patterns: [
           {
