@@ -17113,23 +17113,87 @@ export namespace MutablePropertiesClass {
       {
         patterns: [
           {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}MutableListProperty`,
+                ),
+                predicate:
+                  MutablePropertiesClass.$properties.mutableListProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}MutableListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.first,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}MutableListProperty`}Item0`,
+                ),
+              },
+            ],
+          },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${`${variablePrefix}MutableListProperty`}Item0`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}MutableListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.rest,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}MutableListProperty`}Rest0`,
+                ),
+              },
+            ],
+          },
+          {
             type: "optional",
             patterns: [
-              {
-                triples: [
-                  {
-                    object: dataFactory.variable!(
-                      `${variablePrefix}MutableListProperty`,
-                    ),
-                    predicate:
-                      MutablePropertiesClass.$properties.mutableListProperty[
-                        "identifier"
-                      ],
-                    subject,
-                  },
-                ],
-                type: "bgp",
-              },
               {
                 type: "bgp",
                 triples: [
@@ -17137,9 +17201,27 @@ export namespace MutablePropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}MutableListProperty`,
                     ),
+                    predicate: {
+                      type: "path",
+                      pathType: "*",
+                      items: [$RdfVocabularies.rdf.rest],
+                    },
+                    object: dataFactory.variable!(
+                      `${`${variablePrefix}MutableListProperty`}RestN`,
+                    ),
+                  },
+                ],
+              },
+              {
+                type: "bgp",
+                triples: [
+                  {
+                    subject: dataFactory.variable!(
+                      `${`${variablePrefix}MutableListProperty`}RestN`,
+                    ),
                     predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}MutableListProperty`}Item0`,
+                      `${`${variablePrefix}MutableListProperty`}ItemN`,
                     ),
                   },
                 ],
@@ -17156,7 +17238,7 @@ export namespace MutablePropertiesClass {
                         operator: "lang",
                         args: [
                           dataFactory.variable!(
-                            `${`${variablePrefix}MutableListProperty`}Item0`,
+                            `${`${variablePrefix}MutableListProperty`}ItemN`,
                           ),
                         ],
                       },
@@ -17185,99 +17267,12 @@ export namespace MutablePropertiesClass {
                 triples: [
                   {
                     subject: dataFactory.variable!(
-                      `${variablePrefix}MutableListProperty`,
+                      `${`${variablePrefix}MutableListProperty`}RestN`,
                     ),
                     predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}MutableListProperty`}Rest0`,
+                      `${`${variablePrefix}MutableListProperty`}RestNBasic`,
                     ),
-                  },
-                ],
-              },
-              {
-                type: "optional",
-                patterns: [
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${variablePrefix}MutableListProperty`,
-                        ),
-                        predicate: {
-                          type: "path",
-                          pathType: "*",
-                          items: [$RdfVocabularies.rdf.rest],
-                        },
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}MutableListProperty`}RestN`,
-                        ),
-                      },
-                    ],
-                  },
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}MutableListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.first,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}MutableListProperty`}ItemN`,
-                        ),
-                      },
-                    ],
-                  },
-                  ...[parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${`${variablePrefix}MutableListProperty`}ItemN`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
-                        },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    })),
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}MutableListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.rest,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}MutableListProperty`}RestNBasic`,
-                        ),
-                      },
-                    ],
                   },
                 ],
               },
@@ -18425,33 +18420,77 @@ export namespace ListPropertiesClass {
       {
         patterns: [
           {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}IriListProperty`,
+                ),
+                predicate:
+                  ListPropertiesClass.$properties.iriListProperty["identifier"],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}IriListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.first,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}IriListProperty`}Item0`,
+                ),
+              },
+            ],
+          },
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}IriListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.rest,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}IriListProperty`}Rest0`,
+                ),
+              },
+            ],
+          },
+          {
             type: "optional",
             patterns: [
               {
+                type: "bgp",
                 triples: [
                   {
-                    object: dataFactory.variable!(
+                    subject: dataFactory.variable!(
                       `${variablePrefix}IriListProperty`,
                     ),
-                    predicate:
-                      ListPropertiesClass.$properties.iriListProperty[
-                        "identifier"
-                      ],
-                    subject,
+                    predicate: {
+                      type: "path",
+                      pathType: "*",
+                      items: [$RdfVocabularies.rdf.rest],
+                    },
+                    object: dataFactory.variable!(
+                      `${`${variablePrefix}IriListProperty`}RestN`,
+                    ),
                   },
                 ],
-                type: "bgp",
               },
               {
                 type: "bgp",
                 triples: [
                   {
                     subject: dataFactory.variable!(
-                      `${variablePrefix}IriListProperty`,
+                      `${`${variablePrefix}IriListProperty`}RestN`,
                     ),
                     predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}IriListProperty`}Item0`,
+                      `${`${variablePrefix}IriListProperty`}ItemN`,
                     ),
                   },
                 ],
@@ -18461,63 +18500,12 @@ export namespace ListPropertiesClass {
                 triples: [
                   {
                     subject: dataFactory.variable!(
-                      `${variablePrefix}IriListProperty`,
+                      `${`${variablePrefix}IriListProperty`}RestN`,
                     ),
                     predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}IriListProperty`}Rest0`,
+                      `${`${variablePrefix}IriListProperty`}RestNBasic`,
                     ),
-                  },
-                ],
-              },
-              {
-                type: "optional",
-                patterns: [
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${variablePrefix}IriListProperty`,
-                        ),
-                        predicate: {
-                          type: "path",
-                          pathType: "*",
-                          items: [$RdfVocabularies.rdf.rest],
-                        },
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}IriListProperty`}RestN`,
-                        ),
-                      },
-                    ],
-                  },
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}IriListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.first,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}IriListProperty`}ItemN`,
-                        ),
-                      },
-                    ],
-                  },
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}IriListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.rest,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}IriListProperty`}RestNBasic`,
-                        ),
-                      },
-                    ],
                   },
                 ],
               },
@@ -18529,23 +18517,59 @@ export namespace ListPropertiesClass {
       {
         patterns: [
           {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}ObjectListProperty`,
+                ),
+                predicate:
+                  ListPropertiesClass.$properties.objectListProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}ObjectListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.first,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}ObjectListProperty`}Item0`,
+                ),
+              },
+            ],
+          },
+          ...NonClass.$sparqlWherePatterns({
+            ignoreRdfType: true,
+            preferredLanguages: parameters?.preferredLanguages,
+            subject: dataFactory.variable!(
+              `${`${variablePrefix}ObjectListProperty`}Item0`,
+            ),
+            variablePrefix: `${`${variablePrefix}ObjectListProperty`}Item0`,
+          }),
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}ObjectListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.rest,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}ObjectListProperty`}Rest0`,
+                ),
+              },
+            ],
+          },
+          {
             type: "optional",
             patterns: [
-              {
-                triples: [
-                  {
-                    object: dataFactory.variable!(
-                      `${variablePrefix}ObjectListProperty`,
-                    ),
-                    predicate:
-                      ListPropertiesClass.$properties.objectListProperty[
-                        "identifier"
-                      ],
-                    subject,
-                  },
-                ],
-                type: "bgp",
-              },
               {
                 type: "bgp",
                 triples: [
@@ -18553,9 +18577,27 @@ export namespace ListPropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}ObjectListProperty`,
                     ),
+                    predicate: {
+                      type: "path",
+                      pathType: "*",
+                      items: [$RdfVocabularies.rdf.rest],
+                    },
+                    object: dataFactory.variable!(
+                      `${`${variablePrefix}ObjectListProperty`}RestN`,
+                    ),
+                  },
+                ],
+              },
+              {
+                type: "bgp",
+                triples: [
+                  {
+                    subject: dataFactory.variable!(
+                      `${`${variablePrefix}ObjectListProperty`}RestN`,
+                    ),
                     predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}ObjectListProperty`}Item0`,
+                      `${`${variablePrefix}ObjectListProperty`}ItemN`,
                     ),
                   },
                 ],
@@ -18564,80 +18606,21 @@ export namespace ListPropertiesClass {
                 ignoreRdfType: true,
                 preferredLanguages: parameters?.preferredLanguages,
                 subject: dataFactory.variable!(
-                  `${`${variablePrefix}ObjectListProperty`}Item0`,
+                  `${`${variablePrefix}ObjectListProperty`}ItemN`,
                 ),
-                variablePrefix: `${`${variablePrefix}ObjectListProperty`}Item0`,
+                variablePrefix: `${`${variablePrefix}ObjectListProperty`}ItemN`,
               }),
               {
                 type: "bgp",
                 triples: [
                   {
                     subject: dataFactory.variable!(
-                      `${variablePrefix}ObjectListProperty`,
+                      `${`${variablePrefix}ObjectListProperty`}RestN`,
                     ),
                     predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}ObjectListProperty`}Rest0`,
+                      `${`${variablePrefix}ObjectListProperty`}RestNBasic`,
                     ),
-                  },
-                ],
-              },
-              {
-                type: "optional",
-                patterns: [
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${variablePrefix}ObjectListProperty`,
-                        ),
-                        predicate: {
-                          type: "path",
-                          pathType: "*",
-                          items: [$RdfVocabularies.rdf.rest],
-                        },
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}ObjectListProperty`}RestN`,
-                        ),
-                      },
-                    ],
-                  },
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}ObjectListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.first,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}ObjectListProperty`}ItemN`,
-                        ),
-                      },
-                    ],
-                  },
-                  ...NonClass.$sparqlWherePatterns({
-                    ignoreRdfType: true,
-                    preferredLanguages: parameters?.preferredLanguages,
-                    subject: dataFactory.variable!(
-                      `${`${variablePrefix}ObjectListProperty`}ItemN`,
-                    ),
-                    variablePrefix: `${`${variablePrefix}ObjectListProperty`}ItemN`,
-                  }),
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}ObjectListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.rest,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}ObjectListProperty`}RestNBasic`,
-                        ),
-                      },
-                    ],
                   },
                 ],
               },
@@ -18649,23 +18632,87 @@ export namespace ListPropertiesClass {
       {
         patterns: [
           {
+            triples: [
+              {
+                object: dataFactory.variable!(
+                  `${variablePrefix}StringListProperty`,
+                ),
+                predicate:
+                  ListPropertiesClass.$properties.stringListProperty[
+                    "identifier"
+                  ],
+                subject,
+              },
+            ],
+            type: "bgp",
+          },
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}StringListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.first,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}StringListProperty`}Item0`,
+                ),
+              },
+            ],
+          },
+          ...[parameters?.preferredLanguages ?? []]
+            .filter((languages) => languages.length > 0)
+            .map((languages) =>
+              languages.map((language) => ({
+                type: "operation" as const,
+                operator: "=",
+                args: [
+                  {
+                    type: "operation" as const,
+                    operator: "lang",
+                    args: [
+                      dataFactory.variable!(
+                        `${`${variablePrefix}StringListProperty`}Item0`,
+                      ),
+                    ],
+                  },
+                  dataFactory.literal(language),
+                ],
+              })),
+            )
+            .map((langEqualsExpressions) => ({
+              type: "filter" as const,
+              expression: langEqualsExpressions.reduce(
+                (reducedExpression, langEqualsExpression) => {
+                  if (reducedExpression === null) {
+                    return langEqualsExpression;
+                  }
+                  return {
+                    type: "operation" as const,
+                    operator: "||",
+                    args: [reducedExpression, langEqualsExpression],
+                  };
+                },
+                null as sparqljs.Expression | null,
+              ) as sparqljs.Expression,
+            })),
+          {
+            type: "bgp",
+            triples: [
+              {
+                subject: dataFactory.variable!(
+                  `${variablePrefix}StringListProperty`,
+                ),
+                predicate: $RdfVocabularies.rdf.rest,
+                object: dataFactory.variable!(
+                  `${`${variablePrefix}StringListProperty`}Rest0`,
+                ),
+              },
+            ],
+          },
+          {
             type: "optional",
             patterns: [
-              {
-                triples: [
-                  {
-                    object: dataFactory.variable!(
-                      `${variablePrefix}StringListProperty`,
-                    ),
-                    predicate:
-                      ListPropertiesClass.$properties.stringListProperty[
-                        "identifier"
-                      ],
-                    subject,
-                  },
-                ],
-                type: "bgp",
-              },
               {
                 type: "bgp",
                 triples: [
@@ -18673,9 +18720,27 @@ export namespace ListPropertiesClass {
                     subject: dataFactory.variable!(
                       `${variablePrefix}StringListProperty`,
                     ),
+                    predicate: {
+                      type: "path",
+                      pathType: "*",
+                      items: [$RdfVocabularies.rdf.rest],
+                    },
+                    object: dataFactory.variable!(
+                      `${`${variablePrefix}StringListProperty`}RestN`,
+                    ),
+                  },
+                ],
+              },
+              {
+                type: "bgp",
+                triples: [
+                  {
+                    subject: dataFactory.variable!(
+                      `${`${variablePrefix}StringListProperty`}RestN`,
+                    ),
                     predicate: $RdfVocabularies.rdf.first,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}StringListProperty`}Item0`,
+                      `${`${variablePrefix}StringListProperty`}ItemN`,
                     ),
                   },
                 ],
@@ -18692,7 +18757,7 @@ export namespace ListPropertiesClass {
                         operator: "lang",
                         args: [
                           dataFactory.variable!(
-                            `${`${variablePrefix}StringListProperty`}Item0`,
+                            `${`${variablePrefix}StringListProperty`}ItemN`,
                           ),
                         ],
                       },
@@ -18721,99 +18786,12 @@ export namespace ListPropertiesClass {
                 triples: [
                   {
                     subject: dataFactory.variable!(
-                      `${variablePrefix}StringListProperty`,
+                      `${`${variablePrefix}StringListProperty`}RestN`,
                     ),
                     predicate: $RdfVocabularies.rdf.rest,
                     object: dataFactory.variable!(
-                      `${`${variablePrefix}StringListProperty`}Rest0`,
+                      `${`${variablePrefix}StringListProperty`}RestNBasic`,
                     ),
-                  },
-                ],
-              },
-              {
-                type: "optional",
-                patterns: [
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${variablePrefix}StringListProperty`,
-                        ),
-                        predicate: {
-                          type: "path",
-                          pathType: "*",
-                          items: [$RdfVocabularies.rdf.rest],
-                        },
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}StringListProperty`}RestN`,
-                        ),
-                      },
-                    ],
-                  },
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}StringListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.first,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}StringListProperty`}ItemN`,
-                        ),
-                      },
-                    ],
-                  },
-                  ...[parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${`${variablePrefix}StringListProperty`}ItemN`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
-                        },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    })),
-                  {
-                    type: "bgp",
-                    triples: [
-                      {
-                        subject: dataFactory.variable!(
-                          `${`${variablePrefix}StringListProperty`}RestN`,
-                        ),
-                        predicate: $RdfVocabularies.rdf.rest,
-                        object: dataFactory.variable!(
-                          `${`${variablePrefix}StringListProperty`}RestNBasic`,
-                        ),
-                      },
-                    ],
                   },
                 ],
               },

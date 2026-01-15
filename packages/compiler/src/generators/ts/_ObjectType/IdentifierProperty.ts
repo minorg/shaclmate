@@ -16,6 +16,7 @@ import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { Type } from "../Type.js";
 import { Property } from "./Property.js";
 
 export class IdentifierProperty extends Property<IdentifierType> {
@@ -484,8 +485,8 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
   override sparqlWherePatterns(
     _parameters: Parameters<Property<IdentifierType>["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    return [];
+  ): Type.SparqlWherePatterns {
+    return Type.SparqlWherePatterns.empty;
   }
 
   override toJsonObjectMember({

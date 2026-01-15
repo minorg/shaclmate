@@ -11,7 +11,7 @@ import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { Type } from "./Type.js";
+import { Type } from "./Type.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.
@@ -263,7 +263,7 @@ export abstract class AbstractTermType<
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
+  ): Type.SparqlWherePatterns {
     const requiredPatterns: string[] = [
       ...parameters.propertyPatterns,
       ...this.filterSparqlWherePatterns(parameters),
@@ -272,11 +272,9 @@ export abstract class AbstractTermType<
     return this.defaultValue
       .map(
         () =>
-          [
-            `{ patterns: [${requiredPatterns.join(", ")}], type: "optional" }`,
-          ] as readonly string[],
+          new Type.SparqlWherePatterns(requiredPatterns, { type: "optional" }),
       )
-      .orDefault(requiredPatterns);
+      .orDefault(new Type.SparqlWherePatterns(requiredPatterns));
   }
 
   override toRdfExpression({

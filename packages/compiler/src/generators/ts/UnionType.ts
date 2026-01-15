@@ -535,31 +535,27 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
+  ): Type.SparqlWherePatterns {
     let haveEmptyGroup = false; // Only need one empty group
-    return [
-      `{ patterns: [${this.memberTypes
-        .flatMap((memberType) => {
-          const groupPatterns = memberType.sparqlWherePatterns({
-            ...parameters,
-            allowIgnoreRdfType: false,
-          });
-          if (groupPatterns.length === 0) {
-            if (haveEmptyGroup) {
-              return [];
-            }
-            haveEmptyGroup = true;
-            return [objectInitializer({ patterns: "[]", type: '"group"' })];
+    return new Type.SparqlWherePatterns(
+      this.memberTypes.flatMap((memberType) => {
+        const groupPatterns = memberType.sparqlWherePatterns({
+          ...parameters,
+          allowIgnoreRdfType: false,
+        });
+        if (groupPatterns.patterns.length === 0) {
+          if (haveEmptyGroup) {
+            return [];
           }
-          return [
-            objectInitializer({
-              patterns: `[${groupPatterns.join(", ")}]`,
-              type: '"group"',
-            }),
-          ];
-        })
-        .join(", ")}], type: "union" }`,
-    ];
+          haveEmptyGroup = true;
+          return [objectInitializer({ patterns: "[]", type: '"group"' })];
+        }
+        return new Type.SparqlWherePatterns(groupPatterns.toArray(), {
+          type: "group",
+        }).toArray();
+      }),
+      { type: "union" },
+    );
   }
 
   override toJsonExpression({

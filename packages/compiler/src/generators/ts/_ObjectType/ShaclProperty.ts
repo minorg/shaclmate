@@ -290,7 +290,9 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   sparqlWherePatterns({
     variables,
-  }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]): readonly string[] {
+  }: Parameters<
+    Property<TypeT>["sparqlWherePatterns"]
+  >[0]): Type.SparqlWherePatterns {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return this.type.sparqlWherePatterns({

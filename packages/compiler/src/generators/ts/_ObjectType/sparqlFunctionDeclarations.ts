@@ -137,9 +137,11 @@ if (!parameters?.ignoreRdfType) {
       nop = false;
     }
     propertySparqlWherePatterns.push(
-      ...property.sparqlWherePatterns({
-        variables,
-      }),
+      ...property
+        .sparqlWherePatterns({
+          variables,
+        })
+        .toArray(),
     );
   }
   if (propertySparqlWherePatterns.length > 0) {

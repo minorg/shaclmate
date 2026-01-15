@@ -131,7 +131,7 @@ export abstract class AbstractLazyObjectType<
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
+  ): Type.SparqlWherePatterns {
     return this.partialType.sparqlWherePatterns(parameters);
   }
 

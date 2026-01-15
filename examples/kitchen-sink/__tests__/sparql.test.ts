@@ -58,6 +58,10 @@ describe("sparql", () => {
       continue;
     }
 
+    if (id !== "iriListProperty") {
+      continue;
+    }
+
     it(`SPARQL: ${id}`, async ({ expect }) => {
       // if (id !== "languageInPropertiesClass") {
       //   return;

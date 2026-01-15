@@ -11,6 +11,7 @@ import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { Type } from "../Type.js";
 import { Property } from "./Property.js";
 
 export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.Type> {
@@ -159,8 +160,8 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
     return [];
   }
 
-  override sparqlWherePatterns(): readonly string[] {
-    return [];
+  override sparqlWherePatterns(): Type.SparqlWherePatterns {
+    return Type.SparqlWherePatterns.empty;
   }
 
   override toJsonObjectMember({

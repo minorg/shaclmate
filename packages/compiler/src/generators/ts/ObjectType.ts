@@ -552,8 +552,8 @@ export class ObjectType extends AbstractDeclaredType {
     variables,
   }: Parameters<
     AbstractDeclaredType["sparqlWherePatterns"]
-  >[0]): readonly string[] {
-    return [
+  >[0]): Type.SparqlWherePatterns {
+    return new Type.SparqlWherePatterns([
       ...propertyPatterns,
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
         {
@@ -563,7 +563,7 @@ export class ObjectType extends AbstractDeclaredType {
           variablePrefix: variables.variablePrefix,
         },
       )})`,
-    ];
+    ]);
   }
 
   override toJsonExpression({

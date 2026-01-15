@@ -237,7 +237,7 @@ export abstract class Property<
       preferredLanguages: string;
       variablePrefix: string;
     };
-  }): readonly string[];
+  }): Type.SparqlWherePatterns;
 
   /**
    * property: expression to serialize a property to a JSON object member.

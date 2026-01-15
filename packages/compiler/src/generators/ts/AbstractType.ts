@@ -89,7 +89,7 @@ export abstract class AbstractType implements Type {
 
   abstract sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[];
+  ): Type.SparqlWherePatterns;
 
   abstract toJsonExpression(
     parameters: Parameters<Type["toJsonExpression"]>[0],

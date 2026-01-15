@@ -304,8 +304,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
-    return [
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
+    return new Type.SparqlWherePatterns([
       ...propertyPatterns,
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
         {
@@ -314,7 +314,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
           variablePrefix: variables.variablePrefix,
         },
       )})`,
-    ];
+    ]);
   }
 
   override toJsonExpression({

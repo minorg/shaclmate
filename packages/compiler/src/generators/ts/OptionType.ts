@@ -247,12 +247,14 @@ interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    const patterns = this.itemType.sparqlWherePatterns(parameters);
-    if (patterns.length === 0) {
-      return [];
-    }
-    return [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
+  ): Type.SparqlWherePatterns {
+    const itemPatterns = this.itemType.sparqlWherePatterns(parameters);
+    return itemPatterns.patterns.length === 0 ||
+      itemPatterns.type === "optional"
+      ? itemPatterns
+      : new Type.SparqlWherePatterns(itemPatterns.toArray(), {
+          type: "optional",
+        });
   }
 
   override toJsonExpression({

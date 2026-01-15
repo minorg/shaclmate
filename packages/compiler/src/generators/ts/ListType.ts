@@ -139,7 +139,7 @@ export class ListType<
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
@@ -161,16 +161,18 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: item0Variable,
         })}] }`,
-        ...this.itemType.sparqlWherePatterns({
-          allowIgnoreRdfType: true,
-          propertyPatterns: [],
-          variables: {
-            filter: variables.filter.map((filter) => `${filter}?.items`),
-            preferredLanguages: variables.preferredLanguages,
-            valueVariable: item0Variable,
-            variablePrefix: variablePrefix("Item0"),
-          },
-        }),
+        ...this.itemType
+          .sparqlWherePatterns({
+            allowIgnoreRdfType: true,
+            propertyPatterns: [],
+            variables: {
+              filter: variables.filter.map((filter) => `${filter}?.items`),
+              preferredLanguages: variables.preferredLanguages,
+              valueVariable: item0Variable,
+              variablePrefix: variablePrefix("Item0"),
+            },
+          })
+          .toArray(),
       );
     }
 
@@ -207,16 +209,18 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: itemNVariable,
         })}] }`,
-        ...this.itemType.sparqlWherePatterns({
-          allowIgnoreRdfType: true,
-          propertyPatterns: [],
-          variables: {
-            filter: variables.filter.map((filter) => `${filter}?.items`),
-            preferredLanguages: variables.preferredLanguages,
-            valueVariable: itemNVariable,
-            variablePrefix: variablePrefix("ItemN"),
-          },
-        }),
+        ...this.itemType
+          .sparqlWherePatterns({
+            allowIgnoreRdfType: true,
+            propertyPatterns: [],
+            variables: {
+              filter: variables.filter.map((filter) => `${filter}?.items`),
+              preferredLanguages: variables.preferredLanguages,
+              valueVariable: itemNVariable,
+              variablePrefix: variablePrefix("ItemN"),
+            },
+          })
+          .toArray(),
       );
     }
 
@@ -234,7 +238,7 @@ export class ListType<
     );
 
     // Having an optional around everything handles the rdf:nil case
-    return [`{ type: "optional", patterns: [${patterns.join(", ")}] }`];
+    return new Type.SparqlWherePatterns(patterns, { type: "optional" });
   }
 
   override toRdfExpression({

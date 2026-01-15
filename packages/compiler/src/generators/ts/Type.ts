@@ -222,7 +222,7 @@ export interface Type {
       valueVariable: string;
       variablePrefix: string;
     };
-  }): readonly string[];
+  }): Type.SparqlWherePatterns;
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
@@ -353,6 +353,33 @@ export namespace Type {
       return this.optional
         ? `(${this.requiredName}) | undefined`
         : this.requiredName;
+    }
+  }
+
+  export class SparqlWherePatterns {
+    static readonly empty = new SparqlWherePatterns([]);
+
+    readonly type: "group" | "optional" | "union" | undefined;
+
+    constructor(
+      readonly patterns: readonly string[],
+      options?: { type?: "group" | "optional" | "union" },
+    ) {
+      this.type = options?.type;
+    }
+
+    toArray(): readonly string[] {
+      if (!this.type) {
+        return this.patterns;
+      }
+
+      return [
+        `{ patterns: [${this.patterns.join(", ")}], type: "${this.type}" }`,
+      ];
+    }
+
+    toString(): never {
+      throw new Error("don't call");
     }
   }
 }

@@ -47,14 +47,15 @@ export class SetType<
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    const patterns = this.itemType.sparqlWherePatterns(parameters);
-    if (patterns.length === 0) {
-      return [];
-    }
-    return this.minCount > 0
-      ? patterns
-      : [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
+  ): Type.SparqlWherePatterns {
+    const itemPatterns = this.itemType.sparqlWherePatterns(parameters);
+    return this.minCount > 0 ||
+      itemPatterns.patterns.length === 0 ||
+      itemPatterns.type === "optional"
+      ? itemPatterns
+      : new Type.SparqlWherePatterns(itemPatterns.toArray(), {
+          type: "optional",
+        });
   }
 
   override toRdfExpression({
