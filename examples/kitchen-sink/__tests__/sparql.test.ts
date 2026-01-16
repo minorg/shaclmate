@@ -164,14 +164,14 @@ describe("sparql", () => {
   it("filter: string", ({ expect }) => {
     const actual = queryInstances(
       kitchenSink.TermPropertiesClass.$sparqlConstructQueryString({
-        // filter: {
-        //   stringTermProperty: {
-        //     item: {
-        //       maxLength: 4,
-        //       minLength: 1,
-        //     },
-        //   },
-        // },
+        filter: {
+          stringTermProperty: {
+            item: {
+              maxLength: 4,
+              minLength: 1,
+            },
+          },
+        },
       }),
       new kitchenSink.TermPropertiesClass({
         stringTermProperty: "test",

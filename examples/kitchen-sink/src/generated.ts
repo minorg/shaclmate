@@ -69144,6 +69144,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     // First pass: gather all resources that meet the where filters.
     // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
     const resources: {
+      object?: ObjectT;
       objectType?: {
         $fromRdf: (
           resource: rdfjsResource.Resource,
@@ -69239,21 +69240,52 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
       case "type": {
         for (const objectType of objectTypes) {
-          if (objectType.$fromRdfTypes.length === 0) {
-            continue;
-          }
-
-          for (const fromRdfType of objectType.$fromRdfTypes) {
-            for (const resource of where.identifierType === "NamedNode"
-              ? this.resourceSet.namedInstancesOf(fromRdfType)
-              : this.resourceSet.instancesOf(fromRdfType)) {
-              if (
-                !resources.some(({ resource: existingResource }) =>
-                  existingResource.identifier.equals(resource.identifier),
-                )
-              ) {
-                resources.push({ objectType, resource });
+          if (objectType.$fromRdfTypes.length > 0) {
+            for (const fromRdfType of objectType.$fromRdfTypes) {
+              for (const resource of where.identifierType === "NamedNode"
+                ? this.resourceSet.namedInstancesOf(fromRdfType)
+                : this.resourceSet.instancesOf(fromRdfType)) {
+                if (
+                  !resources.some(({ resource: existingResource }) =>
+                    existingResource.identifier.equals(resource.identifier),
+                  )
+                ) {
+                  resources.push({ objectType, resource });
+                }
               }
+            }
+          } else {
+            // The objectType has no fromRdfType
+            // Try to deserialize every resource in the dataset
+            const blankNodeSubjects = new Set<string>();
+            const namedNodeSubjects = new Set<string>();
+            for (const quad of this.resourceSet.dataset) {
+              let resource: rdfjsResource.Resource;
+              switch (quad.subject.termType) {
+                case "BlankNode": {
+                  if (blankNodeSubjects.has(quad.subject.value)) {
+                    continue;
+                  }
+                  resource = this.resourceSet.resource(quad.subject);
+                  blankNodeSubjects.add(quad.subject.value);
+                  break;
+                }
+                case "NamedNode": {
+                  if (namedNodeSubjects.has(quad.subject.value)) {
+                    continue;
+                  }
+                  resource = this.resourceSet.namedResource(quad.subject);
+                  namedNodeSubjects.add(quad.subject.value);
+                  break;
+                }
+                default:
+                  continue;
+              }
+              objectType
+                .$fromRdf(resource, { objectSet: this })
+                .ifRight((object) => {
+                  resources.push({ object, objectType, resource });
+                });
             }
           }
         }
@@ -69271,7 +69303,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (let { objectType, resource } of resources) {
+    for (let { object, objectType, resource } of resources) {
+      if (object) {
+        objects.push(object);
+        continue;
+      }
+
       let objectEither: purify.Either<Error, ObjectT>;
       if (objectType) {
         objectEither = objectType.$fromRdf(resource, { objectSet: this });
@@ -69292,7 +69329,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           readonly ObjectT[]
         >;
       }
-      const object = objectEither!.unsafeCoerce();
+      object = objectEither!.unsafeCoerce();
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
