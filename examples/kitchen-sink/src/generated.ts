@@ -575,6 +575,45 @@ function $filterTerm(
   return true;
 }
 
+function $finalizeSparqlWherePatterns(
+  patterns: readonly sparqljs.Pattern[],
+): readonly sparqljs.Pattern[] {
+  if (patterns.length === 0) {
+    return patterns;
+  }
+
+  const requiredPatterns: sparqljs.Pattern[] = [];
+  const otherPatterns: sparqljs.Pattern[] = [];
+
+  for (const pattern of patterns) {
+    switch (pattern.type) {
+      case "bgp":
+        requiredPatterns.push(pattern);
+        break;
+      case "values":
+        requiredPatterns.unshift(pattern);
+        break;
+      case "optional":
+      case "union":
+        otherPatterns.push(pattern);
+        break;
+      default:
+        throw new RangeError(
+          `unrecognized SPARQL WHERE pattern type: ${pattern.type}`,
+        );
+    }
+  }
+
+  if (requiredPatterns.length === 0) {
+    // A WHERE block must have at least one required pattern in order to match anything.
+    // The usual solution is to insert a VALUES () { () } seed as the first pattern in order to
+    // match the entire store. OPTIONAL is a left join.
+    requiredPatterns.push({ values: [{}], type: "values" });
+  }
+
+  return requiredPatterns.concat(otherPatterns);
+}
+
 function $fromRdfPreferredLanguages({
   focusResource,
   predicate,
@@ -841,7 +880,7 @@ interface $NumberFilter {
 
 namespace $NumberFilter {
   export function $sparqlWherePatterns(
-    filter?: $NumberFilter,
+    filter: $NumberFilter | undefined,
     value: rdfjs.Variable,
   ): readonly sparqljs.Pattern[] {
     const patterns: sparqljs.Pattern[] = [];
@@ -1005,13 +1044,16 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace $StringFilter {
   export function $sparqlWherePatterns(
-    filter: $StringFilter,
+    filter: $StringFilter | undefined,
     value: rdfjs.Variable,
   ) {
     const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
 
     if (typeof filter.in !== "undefined") {
       patterns.push({
@@ -1031,7 +1073,7 @@ namespace $StringFilter {
           type: "operation",
           operator: "<=",
           args: [
-            { args: [value], function: "strlen", type: "functionCall" },
+            { args: [value], operator: "strlen", type: "operation" },
             $toLiteral(filter.maxLength),
           ],
         },
@@ -1045,7 +1087,7 @@ namespace $StringFilter {
           type: "operation",
           operator: ">=",
           args: [
-            { args: [value], function: "strlen", type: "functionCall" },
+            { args: [value], operator: "strlen", type: "operation" },
             $toLiteral(filter.minLength),
           ],
         },
@@ -1401,12 +1443,14 @@ export namespace $NamedDefaultPartial {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $NamedDefaultPartial.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          $NamedDefaultPartial.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -1709,12 +1753,14 @@ export namespace $DefaultPartial {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $DefaultPartial.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          $DefaultPartial.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -2094,12 +2140,14 @@ export namespace UuidV4IriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriIdentifierInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          UuidV4IriIdentifierInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -2151,8 +2199,7 @@ export namespace UuidV4IriIdentifierInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("uuidV4IriIdentifierInterface");
@@ -2161,7 +2208,7 @@ export namespace UuidV4IriIdentifierInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "uuidV4IriIdentifierInterface");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -2209,16 +2256,12 @@ export namespace UuidV4IriIdentifierInterface {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.uuidV4IriProperty,
+        dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -2648,12 +2691,14 @@ export namespace UuidV4IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UuidV4IriIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          UuidV4IriIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -2702,8 +2747,7 @@ export namespace UuidV4IriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
     const variablePrefix =
@@ -2711,7 +2755,7 @@ export namespace UuidV4IriIdentifierClass {
       (subject.termType === "Variable"
         ? subject.value
         : "uuidV4IriIdentifierClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -2759,16 +2803,12 @@ export namespace UuidV4IriIdentifierClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.uuidV4IriProperty,
+        dataFactory.variable!(`${variablePrefix}UuidV4IriProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -5786,12 +5826,14 @@ export namespace UnionDiscriminantsClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        UnionDiscriminantsClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          UnionDiscriminantsClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -5966,8 +6008,7 @@ export namespace UnionDiscriminantsClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
     const variablePrefix =
@@ -5975,7 +6016,7 @@ export namespace UnionDiscriminantsClass {
       (subject.termType === "Variable"
         ? subject.value
         : "unionDiscriminantsClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -6084,6 +6125,13 @@ export namespace UnionDiscriminantsClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.optionalClassOrClassOrStringProperty
+                      ?.item?.on?.["2-string"],
+                    dataFactory.variable!(
+                      `${variablePrefix}OptionalClassOrClassOrStringProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -6252,6 +6300,14 @@ export namespace UnionDiscriminantsClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.optionalIriOrStringProperty?.item?.on?.[
+                      "string"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}OptionalIriOrStringProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -6367,6 +6423,14 @@ export namespace UnionDiscriminantsClass {
                     null as sparqljs.Expression | null,
                   ) as sparqljs.Expression,
                 })),
+              ...$StringFilter.$sparqlWherePatterns(
+                parameters?.filter?.requiredClassOrClassOrStringProperty?.on?.[
+                  "2-string"
+                ],
+                dataFactory.variable!(
+                  `${variablePrefix}RequiredClassOrClassOrStringProperty`,
+                ),
+              ),
             ],
             type: "group",
           },
@@ -6525,6 +6589,12 @@ export namespace UnionDiscriminantsClass {
                     null as sparqljs.Expression | null,
                   ) as sparqljs.Expression,
                 })),
+              ...$StringFilter.$sparqlWherePatterns(
+                parameters?.filter?.requiredIriOrStringProperty?.on?.["string"],
+                dataFactory.variable!(
+                  `${variablePrefix}RequiredIriOrStringProperty`,
+                ),
+              ),
             ],
             type: "group",
           },
@@ -6639,6 +6709,13 @@ export namespace UnionDiscriminantsClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.setClassOrClassOrStringProperty?.items
+                      ?.on?.["2-string"],
+                    dataFactory.variable!(
+                      `${variablePrefix}SetClassOrClassOrStringProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -6807,6 +6884,14 @@ export namespace UnionDiscriminantsClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.setIriOrStringProperty?.items?.on?.[
+                      "string"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}SetIriOrStringProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -6816,16 +6901,8 @@ export namespace UnionDiscriminantsClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -8153,12 +8230,14 @@ export namespace TermPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        TermPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          TermPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -8250,14 +8329,13 @@ export namespace TermPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "termPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -8489,6 +8567,10 @@ export namespace TermPropertiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.stringTermProperty?.item,
+            dataFactory.variable!(`${variablePrefix}StringTermProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -8508,16 +8590,8 @@ export namespace TermPropertiesClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -8909,12 +8983,14 @@ export namespace Sha256IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Sha256IriIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          Sha256IriIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -8963,8 +9039,7 @@ export namespace Sha256IriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
     const variablePrefix =
@@ -8972,7 +9047,7 @@ export namespace Sha256IriIdentifierClass {
       (subject.termType === "Variable"
         ? subject.value
         : "sha256IriIdentifierClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -9020,16 +9095,12 @@ export namespace Sha256IriIdentifierClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.sha256IriProperty,
+        dataFactory.variable!(`${variablePrefix}Sha256IriProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export class RecursiveClassUnionMember2 {
@@ -9454,12 +9525,14 @@ export namespace RecursiveClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        RecursiveClassUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          RecursiveClassUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -9919,12 +9992,14 @@ export namespace RecursiveClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        RecursiveClassUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          RecursiveClassUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -10439,12 +10514,14 @@ export namespace PropertyVisibilitiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PropertyVisibilitiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PropertyVisibilitiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -10505,8 +10582,7 @@ export namespace PropertyVisibilitiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
     const variablePrefix =
@@ -10514,7 +10590,7 @@ export namespace PropertyVisibilitiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "propertyVisibilitiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -10656,16 +10732,12 @@ export namespace PropertyVisibilitiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.publicProperty,
+        dataFactory.variable!(`${variablePrefix}PublicProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -11380,12 +11452,14 @@ export namespace PropertyCardinalitiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PropertyCardinalitiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PropertyCardinalitiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -11463,8 +11537,7 @@ export namespace PropertyCardinalitiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("propertyCardinalitiesClass");
@@ -11473,7 +11546,7 @@ export namespace PropertyCardinalitiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "propertyCardinalitiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -11527,6 +11600,10 @@ export namespace PropertyCardinalitiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.emptyStringSetProperty?.items,
+            dataFactory.variable!(`${variablePrefix}EmptyStringSetProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -11581,6 +11658,10 @@ export namespace PropertyCardinalitiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.nonEmptyStringSetProperty?.items,
+        dataFactory.variable!(`${variablePrefix}NonEmptyStringSetProperty`),
+      ),
       {
         patterns: [
           {
@@ -11634,6 +11715,10 @@ export namespace PropertyCardinalitiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.optionalStringProperty?.item,
+            dataFactory.variable!(`${variablePrefix}OptionalStringProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -11688,16 +11773,12 @@ export namespace PropertyCardinalitiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.requiredStringProperty,
+        dataFactory.variable!(`${variablePrefix}RequiredStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export interface PartialInterfaceUnionMember2 {
@@ -12074,12 +12155,14 @@ export namespace PartialInterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialInterfaceUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialInterfaceUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -12148,8 +12231,7 @@ export namespace PartialInterfaceUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("partialInterfaceUnionMember2");
@@ -12160,7 +12242,7 @@ export namespace PartialInterfaceUnionMember2 {
         : "partialInterfaceUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialInterfaceUnionMember2.$fromRdfType,
           subject,
@@ -12175,29 +12257,29 @@ export namespace PartialInterfaceUnionMember2 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -12248,16 +12330,12 @@ export namespace PartialInterfaceUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -12688,12 +12766,14 @@ export namespace PartialInterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialInterfaceUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialInterfaceUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -12762,8 +12842,7 @@ export namespace PartialInterfaceUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("partialInterfaceUnionMember1");
@@ -12774,7 +12853,7 @@ export namespace PartialInterfaceUnionMember1 {
         : "partialInterfaceUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialInterfaceUnionMember1.$fromRdfType,
           subject,
@@ -12789,29 +12868,29 @@ export namespace PartialInterfaceUnionMember1 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -12862,16 +12941,12 @@ export namespace PartialInterfaceUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -13334,12 +13409,14 @@ export namespace PartialClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialClassUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialClassUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -13407,8 +13484,7 @@ export namespace PartialClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("partialClassUnionMember2");
     const variablePrefix =
@@ -13418,7 +13494,7 @@ export namespace PartialClassUnionMember2 {
         : "partialClassUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialClassUnionMember2.$fromRdfType,
           subject,
@@ -13433,29 +13509,29 @@ export namespace PartialClassUnionMember2 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -13507,16 +13583,12 @@ export namespace PartialClassUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export class PartialClassUnionMember1 {
@@ -13925,12 +13997,14 @@ export namespace PartialClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialClassUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialClassUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -13998,8 +14072,7 @@ export namespace PartialClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("partialClassUnionMember1");
     const variablePrefix =
@@ -14009,7 +14082,7 @@ export namespace PartialClassUnionMember1 {
         : "partialClassUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: PartialClassUnionMember1.$fromRdfType,
           subject,
@@ -14024,29 +14097,29 @@ export namespace PartialClassUnionMember1 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -14098,16 +14171,12 @@ export namespace PartialClassUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -14605,12 +14674,14 @@ export namespace OrderedPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        OrderedPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          OrderedPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -14671,8 +14742,7 @@ export namespace OrderedPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("orderedPropertiesClass");
     const variablePrefix =
@@ -14680,7 +14750,7 @@ export namespace OrderedPropertiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "orderedPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -14726,6 +14796,10 @@ export namespace OrderedPropertiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.orderedPropertyC,
+        dataFactory.variable!(`${variablePrefix}OrderedPropertyC`),
+      ),
       {
         triples: [
           {
@@ -14771,6 +14845,10 @@ export namespace OrderedPropertiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.orderedPropertyB,
+        dataFactory.variable!(`${variablePrefix}OrderedPropertyB`),
+      ),
       {
         triples: [
           {
@@ -14816,16 +14894,12 @@ export namespace OrderedPropertiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.orderedPropertyA,
+        dataFactory.variable!(`${variablePrefix}OrderedPropertyA`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -15169,12 +15243,14 @@ export namespace NonClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NonClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          NonClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -15219,13 +15295,12 @@ export namespace NonClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "nonClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -15270,16 +15345,12 @@ export namespace NonClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.nonClassProperty,
+        dataFactory.variable!(`${variablePrefix}NonClassProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export class NoRdfTypeClassUnionMember2 {
@@ -15653,12 +15724,14 @@ export namespace NoRdfTypeClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -15711,8 +15784,7 @@ export namespace NoRdfTypeClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("noRdfTypeClassUnionMember2");
@@ -15721,7 +15793,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "noRdfTypeClassUnionMember2");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -15772,16 +15844,14 @@ export namespace NoRdfTypeClassUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.noRdfTypeClassUnionMember2Property,
+        dataFactory.variable!(
+          `${variablePrefix}NoRdfTypeClassUnionMember2Property`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 export class NoRdfTypeClassUnionMember1 {
@@ -16155,12 +16225,14 @@ export namespace NoRdfTypeClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -16213,8 +16285,7 @@ export namespace NoRdfTypeClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("noRdfTypeClassUnionMember1");
@@ -16223,7 +16294,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "noRdfTypeClassUnionMember1");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -16274,16 +16345,14 @@ export namespace NoRdfTypeClassUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.noRdfTypeClassUnionMember1Property,
+        dataFactory.variable!(
+          `${variablePrefix}NoRdfTypeClassUnionMember1Property`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -17009,12 +17078,14 @@ export namespace MutablePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        MutablePropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          MutablePropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -17107,8 +17178,7 @@ export namespace MutablePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
     const variablePrefix =
@@ -17116,7 +17186,7 @@ export namespace MutablePropertiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "mutablePropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -17186,6 +17256,12 @@ export namespace MutablePropertiesClass {
                     null as sparqljs.Expression | null,
                   ) as sparqljs.Expression,
                 })),
+              ...$StringFilter.$sparqlWherePatterns(
+                parameters?.filter?.mutableListProperty?.item?.items,
+                dataFactory.variable!(
+                  `${`${variablePrefix}MutableListProperty`}Item0`,
+                ),
+              ),
               {
                 type: "bgp",
                 triples: [
@@ -17271,6 +17347,12 @@ export namespace MutablePropertiesClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.mutableListProperty?.item?.items,
+                    dataFactory.variable!(
+                      `${`${variablePrefix}MutableListProperty`}ItemN`,
+                    ),
+                  ),
                   {
                     type: "bgp",
                     triples: [
@@ -17346,6 +17428,10 @@ export namespace MutablePropertiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.mutableSetProperty?.items,
+            dataFactory.variable!(`${variablePrefix}MutableSetProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -17402,19 +17488,15 @@ export namespace MutablePropertiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.mutableStringProperty?.item,
+            dataFactory.variable!(`${variablePrefix}MutableStringProperty`),
+          ),
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -18244,12 +18326,14 @@ export namespace ListPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ListPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ListPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -18421,14 +18505,13 @@ export namespace ListPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "listPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -18720,6 +18803,12 @@ export namespace ListPropertiesClass {
                     null as sparqljs.Expression | null,
                   ) as sparqljs.Expression,
                 })),
+              ...$StringFilter.$sparqlWherePatterns(
+                parameters?.filter?.stringListProperty?.item?.items,
+                dataFactory.variable!(
+                  `${`${variablePrefix}StringListProperty`}Item0`,
+                ),
+              ),
               {
                 type: "bgp",
                 triples: [
@@ -18805,6 +18894,12 @@ export namespace ListPropertiesClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.stringListProperty?.item?.items,
+                    dataFactory.variable!(
+                      `${`${variablePrefix}StringListProperty`}ItemN`,
+                    ),
+                  ),
                   {
                     type: "bgp",
                     triples: [
@@ -18827,16 +18922,8 @@ export namespace ListPropertiesClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -19170,12 +19257,14 @@ export namespace PartialInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -19224,14 +19313,13 @@ export namespace PartialInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("partialInterface");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "partialInterface");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -19283,16 +19371,12 @@ export namespace PartialInterface {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -21824,12 +21908,14 @@ export namespace LazyPropertiesInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazyPropertiesInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazyPropertiesInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -22056,8 +22142,7 @@ export namespace LazyPropertiesInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("lazyPropertiesInterface");
     const variablePrefix =
@@ -22065,7 +22150,7 @@ export namespace LazyPropertiesInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "lazyPropertiesInterface");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -22337,16 +22422,8 @@ export namespace LazyPropertiesInterface {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -22895,12 +22972,14 @@ export namespace PartialClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -22949,14 +23028,13 @@ export namespace PartialClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("partialClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "partialClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -23008,16 +23086,12 @@ export namespace PartialClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -25552,12 +25626,14 @@ export namespace LazyPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazyPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazyPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -25781,14 +25857,13 @@ export namespace LazyPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("lazyPropertiesClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -26054,16 +26129,8 @@ export namespace LazyPropertiesClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -26421,12 +26488,14 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -26479,8 +26548,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
@@ -26489,7 +26557,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedIriIdentifierInterface");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -26540,16 +26608,12 @@ export namespace LazilyResolvedIriIdentifierInterface {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -26953,12 +27017,14 @@ export namespace LazilyResolvedIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -27011,8 +27077,7 @@ export namespace LazilyResolvedIriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedIriIdentifierClass");
@@ -27021,7 +27086,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       (subject.termType === "Variable"
         ? subject.value
         : "lazilyResolvedIriIdentifierClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -27072,16 +27137,12 @@ export namespace LazilyResolvedIriIdentifierClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export interface LazilyResolvedInterfaceUnionMember2 {
@@ -27460,12 +27521,14 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -27533,8 +27596,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedInterfaceUnionMember2");
@@ -27545,7 +27607,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         : "lazilyResolvedInterfaceUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedInterfaceUnionMember2.$fromRdfType,
           subject,
@@ -27560,29 +27622,29 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -27633,16 +27695,12 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -28075,12 +28133,14 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -28148,8 +28208,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedInterfaceUnionMember1");
@@ -28160,7 +28219,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         : "lazilyResolvedInterfaceUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedInterfaceUnionMember1.$fromRdfType,
           subject,
@@ -28175,29 +28234,29 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -28248,16 +28307,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -28719,12 +28774,14 @@ export namespace LazilyResolvedClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -28792,8 +28849,7 @@ export namespace LazilyResolvedClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedClassUnionMember2");
@@ -28804,7 +28860,7 @@ export namespace LazilyResolvedClassUnionMember2 {
         : "lazilyResolvedClassUnionMember2");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedClassUnionMember2.$fromRdfType,
           subject,
@@ -28819,29 +28875,29 @@ export namespace LazilyResolvedClassUnionMember2 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -28892,16 +28948,12 @@ export namespace LazilyResolvedClassUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export class LazilyResolvedClassUnionMember1 {
@@ -29309,12 +29361,14 @@ export namespace LazilyResolvedClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -29382,8 +29436,7 @@ export namespace LazilyResolvedClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedClassUnionMember1");
@@ -29394,7 +29447,7 @@ export namespace LazilyResolvedClassUnionMember1 {
         : "lazilyResolvedClassUnionMember1");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedClassUnionMember1.$fromRdfType,
           subject,
@@ -29409,29 +29462,29 @@ export namespace LazilyResolvedClassUnionMember1 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -29482,16 +29535,12 @@ export namespace LazilyResolvedClassUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -29879,12 +29928,14 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -29954,8 +30005,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
@@ -29966,7 +30016,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         : "lazilyResolvedBlankNodeOrIriIdentifierInterface");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
           subject,
@@ -29981,29 +30031,29 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -30054,16 +30104,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -30534,12 +30580,14 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -30609,8 +30657,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
@@ -30621,7 +30668,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         : "lazilyResolvedBlankNodeOrIriIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
           subject,
@@ -30636,29 +30683,29 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -30709,16 +30756,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.lazilyResolvedStringProperty,
+        dataFactory.variable!(`${variablePrefix}LazilyResolvedStringProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -31170,12 +31213,14 @@ export namespace LanguageInPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LanguageInPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LanguageInPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -31228,8 +31273,7 @@ export namespace LanguageInPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("languageInPropertiesClass");
     const variablePrefix =
@@ -31237,7 +31281,7 @@ export namespace LanguageInPropertiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "languageInPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -31296,16 +31340,8 @@ export namespace LanguageInPropertiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -31849,12 +31885,14 @@ export namespace JsPrimitiveUnionPropertyClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -31908,8 +31946,7 @@ export namespace JsPrimitiveUnionPropertyClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("jsPrimitiveUnionPropertyClass");
@@ -31918,126 +31955,126 @@ export namespace JsPrimitiveUnionPropertyClass {
       (subject.termType === "Variable"
         ? subject.value
         : "jsPrimitiveUnionPropertyClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            patterns: [
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                ],
-                type: "group",
-              },
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                  ...$NumberFilter.$sparqlWherePatterns(
-                    parameters?.filter?.jsPrimitiveUnionProperty?.items,
-                    dataFactory.variable!(
-                      `${variablePrefix}JsPrimitiveUnionProperty`,
-                    ),
+    patterns.push({
+      patterns: [
+        {
+          patterns: [
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      object: dataFactory.variable!(
+                        `${variablePrefix}JsPrimitiveUnionProperty`,
+                      ),
+                      predicate:
+                        JsPrimitiveUnionPropertyClass.$properties
+                          .jsPrimitiveUnionProperty["identifier"],
+                      subject,
+                    },
+                  ],
+                  type: "bgp",
+                },
+              ],
+              type: "group",
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      object: dataFactory.variable!(
+                        `${variablePrefix}JsPrimitiveUnionProperty`,
+                      ),
+                      predicate:
+                        JsPrimitiveUnionPropertyClass.$properties
+                          .jsPrimitiveUnionProperty["identifier"],
+                      subject,
+                    },
+                  ],
+                  type: "bgp",
+                },
+                ...$NumberFilter.$sparqlWherePatterns(
+                  parameters?.filter?.jsPrimitiveUnionProperty?.items?.on?.[
+                    "number"
+                  ],
+                  dataFactory.variable!(
+                    `${variablePrefix}JsPrimitiveUnionProperty`,
                   ),
-                ],
-                type: "group",
-              },
-              {
-                patterns: [
-                  {
-                    triples: [
-                      {
-                        object: dataFactory.variable!(
-                          `${variablePrefix}JsPrimitiveUnionProperty`,
-                        ),
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        subject,
-                      },
-                    ],
-                    type: "bgp",
-                  },
-                  ...[parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${variablePrefix}JsPrimitiveUnionProperty`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
+                ),
+              ],
+              type: "group",
+            },
+            {
+              patterns: [
+                {
+                  triples: [
+                    {
+                      object: dataFactory.variable!(
+                        `${variablePrefix}JsPrimitiveUnionProperty`,
+                      ),
+                      predicate:
+                        JsPrimitiveUnionPropertyClass.$properties
+                          .jsPrimitiveUnionProperty["identifier"],
+                      subject,
+                    },
+                  ],
+                  type: "bgp",
+                },
+                ...[parameters?.preferredLanguages ?? []]
+                  .filter((languages) => languages.length > 0)
+                  .map((languages) =>
+                    languages.map((language) => ({
+                      type: "operation" as const,
+                      operator: "=",
+                      args: [
+                        {
+                          type: "operation" as const,
+                          operator: "lang",
+                          args: [
+                            dataFactory.variable!(
+                              `${variablePrefix}JsPrimitiveUnionProperty`,
+                            ),
+                          ],
                         },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
+                        dataFactory.literal(language),
+                      ],
                     })),
-                ],
-                type: "group",
-              },
-            ],
-            type: "union",
-          },
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+                  )
+                  .map((langEqualsExpressions) => ({
+                    type: "filter" as const,
+                    expression: langEqualsExpressions.reduce(
+                      (reducedExpression, langEqualsExpression) => {
+                        if (reducedExpression === null) {
+                          return langEqualsExpression;
+                        }
+                        return {
+                          type: "operation" as const,
+                          operator: "||",
+                          args: [reducedExpression, langEqualsExpression],
+                        };
+                      },
+                      null as sparqljs.Expression | null,
+                    ) as sparqljs.Expression,
+                  })),
+                ...$StringFilter.$sparqlWherePatterns(
+                  parameters?.filter?.jsPrimitiveUnionProperty?.items?.on?.[
+                    "string"
+                  ],
+                  dataFactory.variable!(
+                    `${variablePrefix}JsPrimitiveUnionProperty`,
+                  ),
+                ),
+              ],
+              type: "group",
+            },
+          ],
+          type: "union",
+        },
+      ],
+      type: "optional",
+    });
+    return patterns;
   }
 }
 /**
@@ -32307,12 +32344,14 @@ export namespace IriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriIdentifierInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IriIdentifierInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -32654,12 +32693,14 @@ export namespace IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IriIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IriIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -32999,12 +33040,14 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -33057,8 +33100,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("interfaceUnionMemberCommonParent");
@@ -33067,7 +33109,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "interfaceUnionMemberCommonParent");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -33118,16 +33160,14 @@ export namespace InterfaceUnionMemberCommonParentStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.interfaceUnionMemberCommonParentProperty,
+        dataFactory.variable!(
+          `${variablePrefix}InterfaceUnionMemberCommonParentProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -33526,12 +33566,14 @@ export namespace InterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          InterfaceUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -33606,8 +33648,7 @@ export namespace InterfaceUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2");
     const variablePrefix =
@@ -33615,24 +33656,17 @@ export namespace InterfaceUnionMember2 {
       (subject.termType === "Variable"
         ? subject.value
         : "interfaceUnionMember2");
-    for (const pattern of InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: InterfaceUnionMember2.$fromRdfType,
           subject,
@@ -33647,29 +33681,29 @@ export namespace InterfaceUnionMember2 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -33721,16 +33755,12 @@ export namespace InterfaceUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.interfaceUnionMember2Property,
+        dataFactory.variable!(`${variablePrefix}InterfaceUnionMember2Property`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -34147,12 +34177,14 @@ export namespace InterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          InterfaceUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -34227,8 +34259,7 @@ export namespace InterfaceUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("interfaceUnionMember1");
     const variablePrefix =
@@ -34236,24 +34267,17 @@ export namespace InterfaceUnionMember1 {
       (subject.termType === "Variable"
         ? subject.value
         : "interfaceUnionMember1");
-    for (const pattern of InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: InterfaceUnionMember1.$fromRdfType,
           subject,
@@ -34268,29 +34292,29 @@ export namespace InterfaceUnionMember1 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -34342,16 +34366,12 @@ export namespace InterfaceUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.interfaceUnionMember1Property,
+        dataFactory.variable!(`${variablePrefix}InterfaceUnionMember1Property`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -34724,12 +34744,14 @@ export namespace Interface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        Interface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          Interface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -34774,13 +34796,12 @@ export namespace Interface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject = parameters?.subject ?? dataFactory.variable!("interface");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "interface");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -34825,16 +34846,12 @@ export namespace Interface {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.interfaceProperty,
+        dataFactory.variable!(`${variablePrefix}InterfaceProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(_interface: Interface): Interface.$Json {
@@ -35282,12 +35299,14 @@ export namespace IndirectRecursiveHelperClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IndirectRecursiveHelperClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IndirectRecursiveHelperClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -35742,12 +35761,14 @@ export namespace IndirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IndirectRecursiveClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IndirectRecursiveClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -36732,12 +36753,14 @@ export namespace InPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          InPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -36804,14 +36827,13 @@ export namespace InPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "inPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -36943,19 +36965,15 @@ export namespace InPropertiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.inStringsProperty?.item,
+            dataFactory.variable!(`${variablePrefix}InStringsProperty`),
+          ),
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -37406,12 +37424,14 @@ export namespace InIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          InIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -37458,80 +37478,73 @@ export namespace InIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "inIdentifierClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}InIdentifierProperty`,
-                ),
-                predicate:
-                  InIdentifierClass.$properties.inIdentifierProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...[parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${variablePrefix}InIdentifierProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
+    patterns.push({
+      patterns: [
+        {
+          triples: [
+            {
+              object: dataFactory.variable!(
+                `${variablePrefix}InIdentifierProperty`,
+              ),
+              predicate:
+                InIdentifierClass.$properties.inIdentifierProperty[
+                  "identifier"
                 ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
+              subject,
+            },
+          ],
+          type: "bgp",
+        },
+        ...[parameters?.preferredLanguages ?? []]
+          .filter((languages) => languages.length > 0)
+          .map((languages) =>
+            languages.map((language) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "operation" as const,
+                  operator: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${variablePrefix}InIdentifierProperty`,
+                    ),
+                  ],
                 },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
+                dataFactory.literal(language),
+              ],
             })),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+          )
+          .map((langEqualsExpressions) => ({
+            type: "filter" as const,
+            expression: langEqualsExpressions.reduce(
+              (reducedExpression, langEqualsExpression) => {
+                if (reducedExpression === null) {
+                  return langEqualsExpression;
+                }
+                return {
+                  type: "operation" as const,
+                  operator: "||",
+                  args: [reducedExpression, langEqualsExpression],
+                };
+              },
+              null as sparqljs.Expression | null,
+            ) as sparqljs.Expression,
+          })),
+        ...$StringFilter.$sparqlWherePatterns(
+          parameters?.filter?.inIdentifierProperty?.item,
+          dataFactory.variable!(`${variablePrefix}InIdentifierProperty`),
+        ),
+      ],
+      type: "optional",
+    });
+    return patterns;
   }
 }
 /**
@@ -37871,12 +37884,14 @@ export namespace IdentifierOverride1ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IdentifierOverride1ClassStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IdentifierOverride1ClassStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -37929,8 +37944,7 @@ export namespace IdentifierOverride1ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
     const variablePrefix =
@@ -37938,7 +37952,7 @@ export namespace IdentifierOverride1ClassStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "identifierOverride1Class");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -37989,16 +38003,12 @@ export namespace IdentifierOverride1ClassStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.identifierOverrideProperty,
+        dataFactory.variable!(`${variablePrefix}IdentifierOverrideProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -38209,12 +38219,14 @@ export namespace IdentifierOverride2ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IdentifierOverride2ClassStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IdentifierOverride2ClassStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -38264,8 +38276,7 @@ export namespace IdentifierOverride2ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("identifierOverride2Class");
     const variablePrefix =
@@ -38273,20 +38284,15 @@ export namespace IdentifierOverride2ClassStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "identifierOverride2Class");
-    for (const pattern of IdentifierOverride1ClassStatic.$sparqlWherePatterns({
-      filter: parameters?.filter,
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    patterns.push(
+      ...IdentifierOverride1ClassStatic.$sparqlWherePatterns({
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
+    return patterns;
   }
 
   export function isIdentifierOverride2Class(
@@ -38564,12 +38570,14 @@ export namespace IdentifierOverride3ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IdentifierOverride3ClassStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IdentifierOverride3ClassStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -38634,8 +38642,7 @@ export namespace IdentifierOverride3ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("identifierOverride3Class");
     const variablePrefix =
@@ -38643,22 +38650,17 @@ export namespace IdentifierOverride3ClassStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "identifierOverride3Class");
-    for (const pattern of IdentifierOverride2ClassStatic.$sparqlWherePatterns({
-      filter: parameters?.filter,
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+    patterns.push(
+      ...IdentifierOverride2ClassStatic.$sparqlWherePatterns({
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         {
           type: "values" as const,
           values: [
@@ -38686,29 +38688,29 @@ export namespace IdentifierOverride3ClassStatic {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    return requiredPatterns.concat(optionalPatterns);
+    return patterns;
   }
 
   export function isIdentifierOverride3Class(
@@ -39007,12 +39009,14 @@ export namespace IdentifierOverride4ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IdentifierOverride4ClassStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IdentifierOverride4ClassStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -39077,8 +39081,7 @@ export namespace IdentifierOverride4ClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("identifierOverride4Class");
     const variablePrefix =
@@ -39086,22 +39089,17 @@ export namespace IdentifierOverride4ClassStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "identifierOverride4Class");
-    for (const pattern of IdentifierOverride3ClassStatic.$sparqlWherePatterns({
-      filter: parameters?.filter,
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+    patterns.push(
+      ...IdentifierOverride3ClassStatic.$sparqlWherePatterns({
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         {
           type: "values" as const,
           values: [
@@ -39128,29 +39126,29 @@ export namespace IdentifierOverride4ClassStatic {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    return requiredPatterns.concat(optionalPatterns);
+    return patterns;
   }
 
   export function isIdentifierOverride4Class(
@@ -39441,12 +39439,14 @@ export namespace IdentifierOverride5Class {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        IdentifierOverride5Class.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          IdentifierOverride5Class.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -39511,8 +39511,7 @@ export namespace IdentifierOverride5Class {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("identifierOverride5Class");
     const variablePrefix =
@@ -39520,22 +39519,17 @@ export namespace IdentifierOverride5Class {
       (subject.termType === "Variable"
         ? subject.value
         : "identifierOverride5Class");
-    for (const pattern of IdentifierOverride4ClassStatic.$sparqlWherePatterns({
-      filter: parameters?.filter,
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+    patterns.push(
+      ...IdentifierOverride4ClassStatic.$sparqlWherePatterns({
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: IdentifierOverride5Class.$fromRdfType,
           subject,
@@ -39550,29 +39544,29 @@ export namespace IdentifierOverride5Class {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    return requiredPatterns.concat(optionalPatterns);
+    return patterns;
   }
 
   export function isIdentifierOverride5Class(
@@ -40060,12 +40054,14 @@ export namespace HasValuePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        HasValuePropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          HasValuePropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -40122,8 +40118,7 @@ export namespace HasValuePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("hasValuePropertiesClass");
     const variablePrefix =
@@ -40131,7 +40126,7 @@ export namespace HasValuePropertiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "hasValuePropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -40198,16 +40193,12 @@ export namespace HasValuePropertiesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.hasLiteralValueProperty,
+        dataFactory.variable!(`${variablePrefix}HasLiteralValueProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 export class FlattenClassUnionMember3 {
@@ -40618,12 +40609,14 @@ export namespace FlattenClassUnionMember3 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        FlattenClassUnionMember3.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          FlattenClassUnionMember3.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -40691,8 +40684,7 @@ export namespace FlattenClassUnionMember3 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
     const variablePrefix =
@@ -40702,7 +40694,7 @@ export namespace FlattenClassUnionMember3 {
         : "flattenClassUnionMember3");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: FlattenClassUnionMember3.$fromRdfType,
           subject,
@@ -40717,29 +40709,29 @@ export namespace FlattenClassUnionMember3 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -40790,16 +40782,14 @@ export namespace FlattenClassUnionMember3 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.flattenClassUnionMember3Property,
+        dataFactory.variable!(
+          `${variablePrefix}FlattenClassUnionMember3Property`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -41202,12 +41192,14 @@ export namespace ExternClassPropertyClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExternClassPropertyClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ExternClassPropertyClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -41263,8 +41255,7 @@ export namespace ExternClassPropertyClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
     const variablePrefix =
@@ -41272,45 +41263,35 @@ export namespace ExternClassPropertyClass {
       (subject.termType === "Variable"
         ? subject.value
         : "externClassPropertyClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
-      {
-        patterns: [
-          {
-            triples: [
-              {
-                object: dataFactory.variable!(
-                  `${variablePrefix}ExternClassProperty`,
-                ),
-                predicate:
-                  ExternClassPropertyClass.$properties.externClassProperty[
-                    "identifier"
-                  ],
-                subject,
-              },
-            ],
-            type: "bgp",
-          },
-          ...ExternClass.$sparqlWherePatterns({
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${variablePrefix}ExternClassProperty`,
-            ),
-            variablePrefix: `${variablePrefix}ExternClassProperty`,
-          }),
-        ],
-        type: "optional",
-      },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    patterns.push({
+      patterns: [
+        {
+          triples: [
+            {
+              object: dataFactory.variable!(
+                `${variablePrefix}ExternClassProperty`,
+              ),
+              predicate:
+                ExternClassPropertyClass.$properties.externClassProperty[
+                  "identifier"
+                ],
+              subject,
+            },
+          ],
+          type: "bgp",
+        },
+        ...ExternClass.$sparqlWherePatterns({
+          ignoreRdfType: true,
+          preferredLanguages: parameters?.preferredLanguages,
+          subject: dataFactory.variable!(
+            `${variablePrefix}ExternClassProperty`,
+          ),
+          variablePrefix: `${variablePrefix}ExternClassProperty`,
+        }),
+      ],
+      type: "optional",
+    });
+    return patterns;
   }
 }
 /**
@@ -41717,12 +41698,14 @@ export namespace ExplicitRdfTypeClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExplicitRdfTypeClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ExplicitRdfTypeClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -41786,8 +41769,7 @@ export namespace ExplicitRdfTypeClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("explicitRdfTypeClass");
     const variablePrefix =
@@ -41797,7 +41779,7 @@ export namespace ExplicitRdfTypeClass {
         : "explicitRdfTypeClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ExplicitRdfTypeClass.$fromRdfType,
           subject,
@@ -41812,29 +41794,29 @@ export namespace ExplicitRdfTypeClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -41886,16 +41868,12 @@ export namespace ExplicitRdfTypeClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.explicitRdfTypeProperty,
+        dataFactory.variable!(`${variablePrefix}ExplicitRdfTypeProperty`),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -42312,12 +42290,14 @@ export namespace ExplicitFromToRdfTypesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -42386,8 +42366,7 @@ export namespace ExplicitFromToRdfTypesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("explicitFromToRdfTypesClass");
@@ -42398,7 +42377,7 @@ export namespace ExplicitFromToRdfTypesClass {
         : "explicitFromToRdfTypesClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ExplicitFromToRdfTypesClass.$fromRdfType,
           subject,
@@ -42413,29 +42392,29 @@ export namespace ExplicitFromToRdfTypesClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -42486,16 +42465,14 @@ export namespace ExplicitFromToRdfTypesClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.explicitFromToRdfTypesProperty,
+        dataFactory.variable!(
+          `${variablePrefix}ExplicitFromToRdfTypesProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 export class DirectRecursiveClass {
@@ -42904,12 +42881,14 @@ export namespace DirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        DirectRecursiveClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          DirectRecursiveClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -43850,12 +43829,14 @@ export namespace DefaultValuePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        DefaultValuePropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          DefaultValuePropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -43958,8 +43939,7 @@ export namespace DefaultValuePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("defaultValuePropertiesClass");
@@ -43968,7 +43948,7 @@ export namespace DefaultValuePropertiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "defaultValuePropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -44103,6 +44083,12 @@ export namespace DefaultValuePropertiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             })),
+          ...$StringFilter.$sparqlWherePatterns(
+            parameters?.filter?.stringDefaultValueProperty,
+            dataFactory.variable!(
+              `${variablePrefix}StringDefaultValueProperty`,
+            ),
+          ),
         ],
         type: "optional",
       },
@@ -44125,16 +44111,8 @@ export namespace DefaultValuePropertiesClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -45566,12 +45544,14 @@ export namespace DateUnionPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        DateUnionPropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          DateUnionPropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -45642,8 +45622,7 @@ export namespace DateUnionPropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
     const variablePrefix =
@@ -45651,7 +45630,7 @@ export namespace DateUnionPropertiesClass {
       (subject.termType === "Variable"
         ? subject.value
         : "dateUnionPropertiesClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         patterns: [
           {
@@ -45775,6 +45754,14 @@ export namespace DateUnionPropertiesClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.dateOrStringProperty?.item?.on?.[
+                      "string"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}DateOrStringProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45888,6 +45875,14 @@ export namespace DateUnionPropertiesClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     })),
+                  ...$StringFilter.$sparqlWherePatterns(
+                    parameters?.filter?.stringOrDateProperty?.item?.on?.[
+                      "string"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}StringOrDateProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45916,16 +45911,8 @@ export namespace DateUnionPropertiesClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -48011,12 +47998,14 @@ export namespace ConvertibleTypePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConvertibleTypePropertiesClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ConvertibleTypePropertiesClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -48185,8 +48174,7 @@ export namespace ConvertibleTypePropertiesClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("convertibleTypePropertiesClass");
@@ -48197,7 +48185,7 @@ export namespace ConvertibleTypePropertiesClass {
         : "convertibleTypePropertiesClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ConvertibleTypePropertiesClass.$fromRdfType,
           subject,
@@ -48212,29 +48200,29 @@ export namespace ConvertibleTypePropertiesClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -48578,16 +48566,8 @@ export namespace ConvertibleTypePropertiesClass {
         ],
         type: "optional",
       },
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+    );
+    return patterns;
   }
 }
 /**
@@ -48995,12 +48975,14 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -49068,8 +49050,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("baseInterfaceWithProperties");
@@ -49080,7 +49061,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         : "baseInterfaceWithProperties");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         {
           type: "values" as const,
           values: [
@@ -49109,29 +49090,29 @@ export namespace BaseInterfaceWithPropertiesStatic {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -49182,16 +49163,14 @@ export namespace BaseInterfaceWithPropertiesStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.baseInterfaceWithPropertiesProperty,
+        dataFactory.variable!(
+          `${variablePrefix}BaseInterfaceWithPropertiesProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -49535,12 +49514,14 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -49606,8 +49587,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("baseInterfaceWithoutProperties");
@@ -49616,24 +49596,17 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "baseInterfaceWithoutProperties");
-    for (const pattern of BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         {
           type: "values" as const,
           values: [
@@ -49661,29 +49634,29 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    return requiredPatterns.concat(optionalPatterns);
+    return patterns;
   }
 
   export function $toJson(
@@ -50103,12 +50076,14 @@ export namespace ConcreteParentInterfaceStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentInterfaceStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ConcreteParentInterfaceStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -50182,8 +50157,7 @@ export namespace ConcreteParentInterfaceStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("concreteParentInterface");
     const variablePrefix =
@@ -50191,24 +50165,17 @@ export namespace ConcreteParentInterfaceStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "concreteParentInterface");
-    for (const pattern of BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         {
           type: "values" as const,
           values: [
@@ -50235,29 +50202,29 @@ export namespace ConcreteParentInterfaceStatic {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -50308,16 +50275,14 @@ export namespace ConcreteParentInterfaceStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.concreteParentInterfaceProperty,
+        dataFactory.variable!(
+          `${variablePrefix}ConcreteParentInterfaceProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -50740,12 +50705,14 @@ export namespace ConcreteChildInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ConcreteChildInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -50820,8 +50787,7 @@ export namespace ConcreteChildInterface {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("concreteChildInterface");
     const variablePrefix =
@@ -50829,22 +50795,17 @@ export namespace ConcreteChildInterface {
       (subject.termType === "Variable"
         ? subject.value
         : "concreteChildInterface");
-    for (const pattern of ConcreteParentInterfaceStatic.$sparqlWherePatterns({
-      filter: parameters?.filter,
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+    patterns.push(
+      ...ConcreteParentInterfaceStatic.$sparqlWherePatterns({
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ConcreteChildInterface.$fromRdfType,
           subject,
@@ -50859,29 +50820,29 @@ export namespace ConcreteChildInterface {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -50933,16 +50894,14 @@ export namespace ConcreteChildInterface {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.concreteChildInterfaceProperty,
+        dataFactory.variable!(
+          `${variablePrefix}ConcreteChildInterfaceProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 
   export function $toJson(
@@ -51368,12 +51327,14 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -51426,8 +51387,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("abstractBaseClassWithProperties");
@@ -51436,7 +51396,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "abstractBaseClassWithProperties");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -51487,16 +51447,14 @@ export namespace AbstractBaseClassWithPropertiesStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.abstractBaseClassWithPropertiesProperty,
+        dataFactory.variable!(
+          `${variablePrefix}AbstractBaseClassWithPropertiesProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -51689,12 +51647,14 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -51747,8 +51707,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("abstractBaseClassWithoutProperties");
@@ -51757,22 +51716,15 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "abstractBaseClassWithoutProperties");
-    for (const pattern of AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      }),
+    );
+    return patterns;
   }
 
   export function isAbstractBaseClassWithoutProperties(
@@ -52179,12 +52131,14 @@ export namespace ConcreteParentClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteParentClassStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ConcreteParentClassStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -52257,31 +52211,23 @@ export namespace ConcreteParentClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("concreteParentClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "concreteParentClass");
-    for (const pattern of AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         {
           type: "values" as const,
           values: [
@@ -52308,29 +52254,29 @@ export namespace ConcreteParentClassStatic {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -52382,16 +52328,12 @@ export namespace ConcreteParentClassStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.concreteParentClassProperty,
+        dataFactory.variable!(`${variablePrefix}ConcreteParentClassProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function isConcreteParentClass(
@@ -52780,12 +52722,14 @@ export namespace ConcreteChildClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ConcreteChildClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ConcreteChildClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -52856,29 +52800,23 @@ export namespace ConcreteChildClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("concreteChildClass");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "concreteChildClass");
-    for (const pattern of ConcreteParentClassStatic.$sparqlWherePatterns({
-      filter: parameters?.filter,
-      ignoreRdfType: true,
-      subject,
-      variablePrefix,
-    })) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+    patterns.push(
+      ...ConcreteParentClassStatic.$sparqlWherePatterns({
+        filter: parameters?.filter,
+        ignoreRdfType: true,
+        subject,
+        variablePrefix,
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ConcreteChildClass.$fromRdfType,
           subject,
@@ -52893,29 +52831,29 @@ export namespace ConcreteChildClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -52967,16 +52905,12 @@ export namespace ConcreteChildClass {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.concreteChildClassProperty,
+        dataFactory.variable!(`${variablePrefix}ConcreteChildClassProperty`),
+      ),
+    );
+    return patterns;
   }
 
   export function isConcreteChildClass(
@@ -53323,12 +53257,14 @@ export namespace ClassUnionMemberCommonParentStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -53381,8 +53317,7 @@ export namespace ClassUnionMemberCommonParentStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("classUnionMemberCommonParent");
@@ -53391,7 +53326,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "classUnionMemberCommonParent");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -53442,16 +53377,14 @@ export namespace ClassUnionMemberCommonParentStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.classUnionMemberCommonParentProperty,
+        dataFactory.variable!(
+          `${variablePrefix}ClassUnionMemberCommonParentProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
@@ -53814,12 +53747,14 @@ export namespace ClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnionMember2.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ClassUnionMember2.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -53890,31 +53825,23 @@ export namespace ClassUnionMember2 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("classUnionMember2");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember2");
-    for (const pattern of ClassUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ClassUnionMember2.$fromRdfType,
           subject,
@@ -53929,29 +53856,29 @@ export namespace ClassUnionMember2 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -54003,16 +53930,12 @@ export namespace ClassUnionMember2 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.classUnionMember2Property,
+        dataFactory.variable!(`${variablePrefix}ClassUnionMember2Property`),
+      ),
+    );
+    return patterns;
   }
 
   export function isClassUnionMember2(
@@ -54386,12 +54309,14 @@ export namespace ClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnionMember1.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ClassUnionMember1.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -54462,31 +54387,23 @@ export namespace ClassUnionMember1 {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("classUnionMember1");
     const variablePrefix =
       parameters?.variablePrefix ??
       (subject.termType === "Variable" ? subject.value : "classUnionMember1");
-    for (const pattern of ClassUnionMemberCommonParentStatic.$sparqlWherePatterns(
-      {
+    patterns.push(
+      ...ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
         filter: parameters?.filter,
         ignoreRdfType: true,
         subject,
         variablePrefix,
-      },
-    )) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
+      }),
+    );
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: ClassUnionMember1.$fromRdfType,
           subject,
@@ -54501,29 +54418,29 @@ export namespace ClassUnionMember1 {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -54575,16 +54492,12 @@ export namespace ClassUnionMember1 {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.classUnionMember1Property,
+        dataFactory.variable!(`${variablePrefix}ClassUnionMember1Property`),
+      ),
+    );
+    return patterns;
   }
 
   export function isClassUnionMember1(
@@ -54858,12 +54771,14 @@ export namespace BlankNodeOrIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -55260,12 +55175,14 @@ export namespace BlankNodeOrIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -55324,8 +55241,7 @@ export namespace BlankNodeOrIriIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("blankNodeOrIriIdentifierClass");
@@ -55336,7 +55252,7 @@ export namespace BlankNodeOrIriIdentifierClass {
         : "blankNodeOrIriIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: BlankNodeOrIriIdentifierClass.$fromRdfType,
           subject,
@@ -55351,29 +55267,29 @@ export namespace BlankNodeOrIriIdentifierClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    return requiredPatterns.concat(optionalPatterns);
+    return patterns;
   }
 }
 /**
@@ -55639,12 +55555,14 @@ export namespace BlankNodeIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankNodeIdentifierInterface.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          BlankNodeIdentifierInterface.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -56042,12 +55960,14 @@ export namespace BlankNodeIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        BlankNodeIdentifierClass.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          BlankNodeIdentifierClass.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -56105,8 +56025,7 @@ export namespace BlankNodeIdentifierClass {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
     const variablePrefix =
@@ -56116,7 +56035,7 @@ export namespace BlankNodeIdentifierClass {
         : "blankNodeIdentifierClass");
     const rdfTypeVariable = dataFactory.variable!(`${variablePrefix}RdfType`);
     if (!parameters?.ignoreRdfType) {
-      requiredPatterns.push(
+      patterns.push(
         $sparqlInstancesOfPattern({
           rdfType: BlankNodeIdentifierClass.$fromRdfType,
           subject,
@@ -56131,29 +56050,29 @@ export namespace BlankNodeIdentifierClass {
           ],
           type: "bgp" as const,
         },
-      );
-      optionalPatterns.push({
-        patterns: [
-          {
-            triples: [
-              {
-                subject: rdfTypeVariable,
-                predicate: {
-                  items: [$RdfVocabularies.rdfs.subClassOf],
-                  pathType: "+" as const,
-                  type: "path" as const,
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(`${variablePrefix}RdfClass`),
                 },
-                object: dataFactory.variable!(`${variablePrefix}RdfClass`),
-              },
-            ],
-            type: "bgp" as const,
-          },
-        ],
-        type: "optional" as const,
-      });
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
     }
 
-    return requiredPatterns.concat(optionalPatterns);
+    return patterns;
   }
 }
 /**
@@ -56492,12 +56411,14 @@ export namespace AbstractBaseClassForExternClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -56550,8 +56471,7 @@ export namespace AbstractBaseClassForExternClassStatic {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    const optionalPatterns: sparqljs.OptionalPattern[] = [];
-    const requiredPatterns: sparqljs.Pattern[] = [];
+    const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ??
       dataFactory.variable!("abstractBaseClassForExternClass");
@@ -56560,7 +56480,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       (subject.termType === "Variable"
         ? subject.value
         : "abstractBaseClassForExternClass");
-    const propertyPatterns: readonly sparqljs.Pattern[] = [
+    patterns.push(
       {
         triples: [
           {
@@ -56611,16 +56531,14 @@ export namespace AbstractBaseClassForExternClassStatic {
             null as sparqljs.Expression | null,
           ) as sparqljs.Expression,
         })),
-    ];
-    for (const pattern of propertyPatterns) {
-      if (pattern.type === "optional") {
-        optionalPatterns.push(pattern);
-      } else {
-        requiredPatterns.push(pattern);
-      }
-    }
-
-    return requiredPatterns.concat(optionalPatterns);
+      ...$StringFilter.$sparqlWherePatterns(
+        parameters?.filter?.abstractBaseClassForExternClassProperty,
+        dataFactory.variable!(
+          `${variablePrefix}AbstractBaseClassForExternClassProperty`,
+        ),
+      ),
+    );
+    return patterns;
   }
 }
 /**
@@ -56794,12 +56712,14 @@ export namespace ClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        ClassUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          ClassUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -57137,12 +57057,14 @@ export namespace FlattenClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        FlattenClassUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          FlattenClassUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -57478,12 +57400,14 @@ export namespace InterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        InterfaceUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          InterfaceUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -57810,12 +57734,14 @@ export namespace LazilyResolvedClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedClassUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedClassUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -58148,12 +58074,14 @@ export namespace LazilyResolvedInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -58480,12 +58408,14 @@ export namespace PartialClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialClassUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialClassUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -58809,12 +58739,14 @@ export namespace PartialInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        PartialInterfaceUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          PartialInterfaceUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -59125,12 +59057,14 @@ export namespace NoRdfTypeClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        NoRdfTypeClassUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          NoRdfTypeClassUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -59435,12 +59369,14 @@ export namespace RecursiveClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        RecursiveClassUnion.$sparqlWherePatterns({
-          filter,
-          ignoreRdfType,
-          preferredLanguages,
-          subject,
-        }),
+        $finalizeSparqlWherePatterns(
+          RecursiveClassUnion.$sparqlWherePatterns({
+            filter,
+            ignoreRdfType,
+            preferredLanguages,
+            subject,
+          }),
+        ),
       ),
     };
   }
@@ -72847,7 +72783,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ...objectType.$sparqlWherePatterns({ subject: this.$objectVariable }),
     );
 
-    return patterns;
+    return $finalizeSparqlWherePatterns(patterns);
   }
 }
 

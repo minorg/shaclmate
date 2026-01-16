@@ -150,7 +150,7 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
               `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
               `\
 namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter?: ${syntheticNamePrefix}NumberFilter, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
     const patterns: sparqljs.Pattern[] = [];
 
     if (!filter) {

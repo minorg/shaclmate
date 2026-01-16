@@ -43,6 +43,20 @@ export class StringType extends AbstractPrimitiveType<string> {
     return "string";
   }
 
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
+    return [
+      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
+      ...variables.filter
+        .map(
+          (filterVariable) =>
+            `...${syntheticNamePrefix}StringFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+        )
+        .toList(),
+    ];
+  }
+
   protected override fromRdfExpressionChain({
     variables,
   }: Parameters<
@@ -115,10 +129,13 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
         ? singleEntryRecord(
             `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
             `\
-// biome-ignore lint/correctness/noUnusedVariables: false positive
 namespace ${syntheticNamePrefix}StringFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter, value: rdfjs.Variable) {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter | undefined, value: rdfjs.Variable) {
     const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
 
     if (typeof filter.in !== "undefined") {
       patterns.push({
@@ -137,7 +154,7 @@ namespace ${syntheticNamePrefix}StringFilter {
         expression: {
           type: "operation",
           operator: "<=",
-          args: [{ args: [value], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
         }
       });
     }
@@ -148,7 +165,7 @@ namespace ${syntheticNamePrefix}StringFilter {
         expression: {
           type: "operation",
           operator: ">=",
-          args: [{ args: [value], function: "strlen", type: "functionCall" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
         }
       });
     }
@@ -159,12 +176,6 @@ namespace ${syntheticNamePrefix}StringFilter {
           )
         : {},
     );
-  }
-
-  protected override filterSparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    return [...this.preferredLanguagesSparqlWherePatterns(parameters)];
   }
 
   override toRdfExpression({

@@ -548,7 +548,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
             ...variables,
             filter: variables.filter.map(
               (filterVariable) =>
-                `${filterVariable}?.on?.${memberType.discriminantValues[0]}`,
+                `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
             ),
           },
         });

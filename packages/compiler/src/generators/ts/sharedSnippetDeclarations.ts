@@ -84,6 +84,45 @@ export namespace ${syntheticNamePrefix}EqualsResult {
 }`,
   ),
 
+  finalizeSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}finalizeSparqlWherePatterns`,
+    `\
+function ${syntheticNamePrefix}finalizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+  if (patterns.length === 0) {
+    return patterns;
+  }
+
+  const requiredPatterns: sparqljs.Pattern[] = [];
+  const otherPatterns: sparqljs.Pattern[] = [];
+
+  for (const pattern of patterns) {
+    switch (pattern.type) {
+      case "bgp":
+        requiredPatterns.push(pattern);
+        break;
+      case "values":
+        requiredPatterns.unshift(pattern);
+        break;
+      case "optional":
+      case "union":
+        otherPatterns.push(pattern);
+        break;
+      default:
+        throw new RangeError(\`unrecognized SPARQL WHERE pattern type: \${pattern.type}\`);
+    }
+  }
+
+  if (requiredPatterns.length === 0) {
+    // A WHERE block must have at least one required pattern in order to match anything.
+    // The usual solution is to insert a VALUES () { () } seed as the first pattern in order to
+    // match the entire store. OPTIONAL is a left join.
+    requiredPatterns.push({ values: [{}], type: "values" });
+  }
+
+  return requiredPatterns.concat(otherPatterns);
+}`,
+  ),
+
   RdfVocabularies: singleEntryRecord(
     `${syntheticNamePrefix}RdfVocabularies`,
     `\

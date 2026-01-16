@@ -500,10 +500,16 @@ export class ObjectType extends AbstractDeclaredType {
         sharedSnippetDeclarations.RdfVocabularies,
       );
     }
-    if (this.features.has("sparql") && this.fromRdfType.isJust()) {
+    if (this.features.has("sparql")) {
+      if (this.fromRdfType.isJust()) {
+        snippetDeclarations = mergeSnippetDeclarations(
+          snippetDeclarations,
+          sparqlInstancesOfPatternSnippetDeclaration,
+        );
+      }
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sparqlInstancesOfPatternSnippetDeclaration,
+        sharedSnippetDeclarations.finalizeSparqlWherePatterns,
       );
     }
     if (

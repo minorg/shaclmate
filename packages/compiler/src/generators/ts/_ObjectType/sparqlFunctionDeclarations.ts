@@ -37,8 +37,7 @@ export function sparqlFunctionDeclarations(
   let nop = true;
 
   const sparqlWherePatternsStatements = [
-    "const optionalPatterns: sparqljs.OptionalPattern[] = [];",
-    "const requiredPatterns: sparqljs.Pattern[] = [];",
+    "const patterns: sparqljs.Pattern[] = [];",
     `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
     `const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}");`,
   ];
@@ -48,13 +47,7 @@ export function sparqlFunctionDeclarations(
       `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType: true, subject, variablePrefix }));`,
     );
     sparqlWherePatternsStatements.push(`\
-for (const pattern of ${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix })) {
-  if (pattern.type === "optional") {
-    optionalPatterns.push(pattern);
-  } else {
-    requiredPatterns.push(pattern);
-  }
-}`);
+patterns.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix }));`);
     nop = false;
   }
 
@@ -74,7 +67,7 @@ if (!parameters?.ignoreRdfType) {
       `const rdfTypeVariable = ${rdfTypeVariable};`,
       `\
 if (!parameters?.ignoreRdfType) {
-  requiredPatterns.push(
+  patterns.push(
     ${
       fromRdfTypeVariables.length > 1
         ? `\
@@ -98,27 +91,27 @@ if (!parameters?.ignoreRdfType) {
         }
       ],
       type: "bgp" as const
+    },
+    {
+      patterns: [
+        {
+          triples: [
+            {
+              subject: rdfTypeVariable,
+              predicate: {
+                items: [${rdfjsTermExpression(rdfs.subClassOf)}],
+                pathType: "+" as const,
+                type: "path" as const
+              },
+              object: ${rdfClassVariable}
+            }
+          ],
+          type: "bgp" as const
+        }
+      ],
+      type: "optional" as const
     }
   );
-  optionalPatterns.push({
-    patterns: [
-      {
-        triples: [
-          {
-            subject: rdfTypeVariable,
-            predicate: {
-              items: [${rdfjsTermExpression(rdfs.subClassOf)}],
-              pathType: "+" as const,
-              type: "path" as const
-            },
-            object: ${rdfClassVariable}
-          }
-        ],
-        type: "bgp" as const
-      }
-    ],
-    type: "optional" as const
-  });
 }`,
     );
     nop = false;
@@ -145,22 +138,14 @@ if (!parameters?.ignoreRdfType) {
     );
   }
   if (propertySparqlWherePatterns.length > 0) {
-    sparqlWherePatternsStatements.push(`\
-const propertyPatterns: readonly sparqljs.Pattern[] = [${propertySparqlWherePatterns.join(", ")}];
-for (const pattern of propertyPatterns) {
-  if (pattern.type === "optional") {
-    optionalPatterns.push(pattern);
-  } else {
-    requiredPatterns.push(pattern);
-  }  
-}`);
+    sparqlWherePatternsStatements.push(
+      `patterns.push(${propertySparqlWherePatterns.join(", ")});`,
+    );
     nop = false;
   }
 
   sparqlConstructTriplesStatements.push("return triples;");
-  sparqlWherePatternsStatements.push(
-    "return requiredPatterns.concat(optionalPatterns);",
-  );
+  sparqlWherePatternsStatements.push("return patterns;");
 
   return [
     sparqlConstructQueryFunctionDeclaration.bind(this)(),
