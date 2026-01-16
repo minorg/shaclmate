@@ -421,55 +421,7 @@ function $filterIdentifier(
 }
 
 function $filterLiteral(filter: $LiteralFilter, value: rdfjs.Literal): boolean {
-  if (
-    typeof filter.in !== "undefined" &&
-    !filter.in.some((in_) => {
-      if (
-        typeof in_.datatype !== "undefined" &&
-        value.datatype.value !== in_.datatype
-      ) {
-        return false;
-      }
-
-      if (
-        typeof in_.language !== "undefined" &&
-        value.language !== in_.language
-      ) {
-        return false;
-      }
-
-      if (typeof in_.value !== "undefined" && value.value !== in_.value) {
-        return false;
-      }
-
-      return true;
-    })
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.datatypeIn !== "undefined" &&
-    !filter.datatypeIn.some((inDatatype) => inDatatype === value.datatype.value)
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.languageIn !== "undefined" &&
-    !filter.languageIn.some((inLanguage) => inLanguage === value.language)
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.valueIn !== "undefined" &&
-    !filter.valueIn.some((inValue) => inValue === value.value)
-  ) {
-    return false;
-  }
-
-  return true;
+  return $filterTerm(filter, value);
 }
 
 function $filterMaybe<ItemT, ItemFilterT>(
@@ -891,15 +843,12 @@ export class $LazyObjectSet<
   }
 }
 
-interface $LiteralFilter {
-  readonly datatypeIn?: readonly string[];
+interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
   readonly in?: readonly {
     readonly datatype?: string;
     readonly language?: string;
     readonly value?: string;
   }[];
-  readonly languageIn?: readonly string[];
-  readonly valueIn?: readonly string[];
 }
 
 function $maybeEquals<T>(

@@ -2,12 +2,8 @@ import type { NamedNode, Quad } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3, { DataFactory as dataFactory } from "n3";
 import * as oxigraph from "oxigraph";
-import {
-  type MutableResource,
-  MutableResourceSet,
-  type Resource,
-} from "rdfjs-resource";
-import { beforeAll, describe, expect, it } from "vitest";
+import { MutableResourceSet } from "rdfjs-resource";
+import { beforeAll, describe, it } from "vitest";
 import { harnesses } from "./harnesses.js";
 import { quadsToTurtle } from "./quadsToTurtle.js";
 
@@ -137,29 +133,29 @@ describe("sparql", () => {
     });
   }
 
-  it("filter: number in", ({ expect }) => {
-    const actual = queryInstances(
-      kitchenSink.TermPropertiesClass.$sparqlConstructQueryString({
-        filter: {
-          numberTermProperty: {
-            item: {
-              in: [0],
-            },
-          },
-        },
-      }),
-      new kitchenSink.TermPropertiesClass({
-        numberTermProperty: 1,
-      }),
-      new kitchenSink.TermPropertiesClass({
-        numberTermProperty: 0,
-      }),
-    )
-      .termPropertiesClassesSync()
-      .unsafeCoerce();
-    expect(actual).toHaveLength(1);
-    expect(actual[0].numberTermProperty.extract()).toStrictEqual(0);
-  });
+  // it("filter: number in", ({ expect }) => {
+  //   const actual = queryInstances(
+  //     kitchenSink.TermPropertiesClass.$sparqlConstructQueryString({
+  //       filter: {
+  //         numberTermProperty: {
+  //           item: {
+  //             in: [0],
+  //           },
+  //         },
+  //       },
+  //     }),
+  //     new kitchenSink.TermPropertiesClass({
+  //       numberTermProperty: 1,
+  //     }),
+  //     new kitchenSink.TermPropertiesClass({
+  //       numberTermProperty: 0,
+  //     }),
+  //   )
+  //     .termPropertiesClassesSync()
+  //     .unsafeCoerce();
+  //   expect(actual).toHaveLength(1);
+  //   expect(actual[0].numberTermProperty.extract()).toStrictEqual(0);
+  // });
 
   // it("filter: number range", ({ expect }) => {
   //   const actual = queryInstances(

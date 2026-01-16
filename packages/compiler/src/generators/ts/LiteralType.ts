@@ -1,6 +1,7 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -102,49 +103,18 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
-    if (typeof in_.datatype !== "undefined" && value.datatype.value !== in_.datatype) {
-      return false;
-    }
-
-    if (typeof in_.language !== "undefined" && value.language !== in_.language) {
-      return false;
-    }
-
-    if (typeof in_.value !== "undefined" && value.value !== in_.value) {
-      return false;
-    }
-
-    return true;
-  })) {
-    return false;
-  }
-
-  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value)) {
-    return false;
-  }
-
-  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language)) {
-    return false;
-  }
-
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
-    return false;
-  }
-
-  return true;
+  return ${syntheticNamePrefix}filterTerm(filter, value);
 }`,
       ),
+      sharedSnippetDeclarations.filterTerm,
       singleEntryRecord(
         `${syntheticNamePrefix}LiteralFilter`,
         `\
-interface ${syntheticNamePrefix}LiteralFilter {
-  readonly datatypeIn?: readonly string[];
+interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix}TermFilter, "in" | "type"> {
   readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value?: string; }[];
-  readonly languageIn?: readonly string[];
-  readonly valueIn?: readonly string[];
 }`,
       ),
+      sharedSnippetDeclarations.TermFilter,
     );
   }
 
