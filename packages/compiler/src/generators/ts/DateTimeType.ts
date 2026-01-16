@@ -8,6 +8,7 @@ import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
@@ -56,6 +57,17 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
 
   override get name(): string {
     return "Date";
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
+    return variables.filter
+      .map(
+        (filterVariable) =>
+          `...${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+      )
+      .toList();
   }
 
   override fromJsonExpression({
@@ -159,6 +171,82 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
   return true;
 }`,
       ),
+
+      parameters.features.has("sparql")
+        ? {
+            ...sharedSnippetDeclarations.toLiteral,
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns`,
+              `\
+namespace ${syntheticNamePrefix}DateFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}DateFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        }
+      });
+    }
+
+    if (typeof filter.maxExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.maxInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.minExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.minInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+            ),
+          }
+        : {},
     );
   }
 

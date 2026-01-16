@@ -172,6 +172,76 @@ interface $DateFilter {
   readonly minInclusive?: Date;
 }
 
+namespace $DateFilter {
+  export function $sparqlWherePatterns(
+    filter: $DateFilter | undefined,
+    value: rdfjs.Variable,
+  ): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map((inValue) => $toLiteral(inValue))],
+        },
+      });
+    }
+
+    if (typeof filter.maxExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [value, $toLiteral(filter.maxExclusive)],
+        },
+      });
+    }
+
+    if (typeof filter.maxInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [value, $toLiteral(filter.maxInclusive)],
+        },
+      });
+    }
+
+    if (typeof filter.minExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [value, $toLiteral(filter.minExclusive)],
+        },
+      });
+    }
+
+    if (typeof filter.minInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [value, $toLiteral(filter.minInclusive)],
+        },
+      });
+    }
+
+    return patterns;
+  }
+}
+
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -8393,6 +8463,10 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...$DateFilter.$sparqlWherePatterns(
+            parameters?.filter?.dateTermProperty?.item,
+            dataFactory.variable!(`${variablePrefix}DateTermProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -8413,6 +8487,10 @@ export namespace TermPropertiesClass {
             ],
             type: "bgp",
           },
+          ...$DateFilter.$sparqlWherePatterns(
+            parameters?.filter?.dateTimeTermProperty?.item,
+            dataFactory.variable!(`${variablePrefix}DateTimeTermProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -36871,6 +36949,10 @@ export namespace InPropertiesClass {
             ],
             type: "bgp",
           },
+          ...$DateFilter.$sparqlWherePatterns(
+            parameters?.filter?.inDateTimesProperty?.item,
+            dataFactory.variable!(`${variablePrefix}InDateTimesProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -43965,6 +44047,10 @@ export namespace DefaultValuePropertiesClass {
             ],
             type: "bgp",
           },
+          ...$DateFilter.$sparqlWherePatterns(
+            parameters?.filter?.dateDefaultValueProperty,
+            dataFactory.variable!(`${variablePrefix}DateDefaultValueProperty`),
+          ),
         ],
         type: "optional",
       },
@@ -43984,6 +44070,12 @@ export namespace DefaultValuePropertiesClass {
             ],
             type: "bgp",
           },
+          ...$DateFilter.$sparqlWherePatterns(
+            parameters?.filter?.dateTimeDefaultValueProperty,
+            dataFactory.variable!(
+              `${variablePrefix}DateTimeDefaultValueProperty`,
+            ),
+          ),
         ],
         type: "optional",
       },
@@ -45651,6 +45743,14 @@ export namespace DateUnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...$DateFilter.$sparqlWherePatterns(
+                    parameters?.filter?.dateOrDateTimeProperty?.item?.on?.[
+                      "date"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}DateOrDateTimeProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45670,6 +45770,14 @@ export namespace DateUnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...$DateFilter.$sparqlWherePatterns(
+                    parameters?.filter?.dateOrDateTimeProperty?.item?.on?.[
+                      "dateTime"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}DateOrDateTimeProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45699,6 +45807,14 @@ export namespace DateUnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...$DateFilter.$sparqlWherePatterns(
+                    parameters?.filter?.dateOrStringProperty?.item?.on?.[
+                      "date"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}DateOrStringProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45791,6 +45907,14 @@ export namespace DateUnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...$DateFilter.$sparqlWherePatterns(
+                    parameters?.filter?.dateTimeOrDateProperty?.item?.on?.[
+                      "dateTime"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}DateTimeOrDateProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45810,6 +45934,14 @@ export namespace DateUnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...$DateFilter.$sparqlWherePatterns(
+                    parameters?.filter?.dateTimeOrDateProperty?.item?.on?.[
+                      "date"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}DateTimeOrDateProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
@@ -45902,6 +46034,14 @@ export namespace DateUnionPropertiesClass {
                     ],
                     type: "bgp",
                   },
+                  ...$DateFilter.$sparqlWherePatterns(
+                    parameters?.filter?.stringOrDateProperty?.item?.on?.[
+                      "date"
+                    ],
+                    dataFactory.variable!(
+                      `${variablePrefix}StringOrDateProperty`,
+                    ),
+                  ),
                 ],
                 type: "group",
               },
