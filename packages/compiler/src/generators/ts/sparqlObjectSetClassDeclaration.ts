@@ -439,7 +439,7 @@ switch (where_.type) {
 
 patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ subject: this.${syntheticNamePrefix}objectVariable }));
 
-return ${syntheticNamePrefix}finalizeSparqlWherePatterns(patterns);`,
+return ${syntheticNamePrefix}insertSeedSparqlWherePattern(${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns));`,
           ],
           typeParameters: [typeParameters.ObjectIdentifierT],
         },

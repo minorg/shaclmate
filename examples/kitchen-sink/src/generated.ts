@@ -609,45 +609,6 @@ function $filterTerm(
   return true;
 }
 
-function $finalizeSparqlWherePatterns(
-  patterns: readonly sparqljs.Pattern[],
-): readonly sparqljs.Pattern[] {
-  if (patterns.length === 0) {
-    return patterns;
-  }
-
-  const requiredPatterns: sparqljs.Pattern[] = [];
-  const otherPatterns: sparqljs.Pattern[] = [];
-
-  for (const pattern of patterns) {
-    switch (pattern.type) {
-      case "bgp":
-        requiredPatterns.push(pattern);
-        break;
-      case "values":
-        requiredPatterns.unshift(pattern);
-        break;
-      case "optional":
-      case "union":
-        otherPatterns.push(pattern);
-        break;
-      default:
-        throw new RangeError(
-          `unrecognized SPARQL WHERE pattern type: ${pattern.type}`,
-        );
-    }
-  }
-
-  if (requiredPatterns.length === 0) {
-    // A WHERE block must have at least one required pattern in order to match anything.
-    // The usual solution is to insert a VALUES () { () } seed as the first pattern in order to
-    // match the entire store. OPTIONAL is a left join.
-    requiredPatterns.push({ values: [{}], type: "values" });
-  }
-
-  return requiredPatterns.concat(otherPatterns);
-}
-
 function $fromRdfPreferredLanguages({
   focusResource,
   predicate,
@@ -752,6 +713,21 @@ namespace $IdentifierFilter {
 
     return patterns;
   }
+}
+
+/**
+ * Insert a seed SPARQL where pattern if necessary.
+ *
+ * A SPARQL WHERE block that solely consists of OPTIONAL blocks won't match anything. OPTIONAL is a left join.
+ * In that situation the solution is to insert a VALUES () { () } seed as the first pattern in order to match the entire store.
+ */
+function $insertSeedSparqlWherePattern(
+  patterns: readonly sparqljs.Pattern[],
+): readonly sparqljs.Pattern[] {
+  if (patterns.every((pattern) => pattern.type === "optional")) {
+    return [{ values: [{}], type: "values" }, ...patterns];
+  }
+  return patterns;
 }
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
@@ -1046,6 +1022,57 @@ namespace $NumberFilter {
 
     return patterns;
   }
+}
+
+function $optimizeSparqlWherePatterns(
+  patterns: readonly sparqljs.Pattern[],
+): readonly sparqljs.Pattern[] {
+  if (patterns.length === 0) {
+    return patterns;
+  }
+
+  const flattenPattern = (
+    pattern: sparqljs.Pattern,
+  ): readonly sparqljs.Pattern[] => {
+    switch (pattern.type) {
+      case "bgp":
+      case "bind":
+      case "filter":
+      case "query":
+      case "values":
+        return [pattern];
+      case "group":
+        return pattern.patterns.flatMap(flattenPattern);
+      case "graph":
+      case "minus":
+      case "optional":
+      case "service":
+      case "union":
+        return [
+          { ...pattern, patterns: pattern.patterns.flatMap(flattenPattern) },
+        ];
+    }
+  };
+
+  const bgpPatterns: sparqljs.Pattern[] = [];
+  const valuesPatterns: sparqljs.Pattern[] = [];
+  const otherPatterns: sparqljs.Pattern[] = [];
+
+  for (const pattern of patterns.flatMap(flattenPattern)) {
+    switch (pattern.type) {
+      case "bgp":
+        bgpPatterns.push(pattern);
+        break;
+      case "values":
+        valuesPatterns.push(pattern);
+        break;
+      default:
+        otherPatterns.push(pattern);
+        break;
+    }
+  }
+
+  return valuesPatterns.concat(bgpPatterns).concat(otherPatterns);
 }
 
 namespace $RdfVocabularies {
@@ -1543,13 +1570,15 @@ export namespace $NamedDefaultPartial {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          $NamedDefaultPartial.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            $NamedDefaultPartial.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -1865,13 +1894,15 @@ export namespace $DefaultPartial {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          $DefaultPartial.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            $DefaultPartial.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -2264,13 +2295,15 @@ export namespace UuidV4IriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          UuidV4IriIdentifierInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            UuidV4IriIdentifierInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -2831,13 +2864,15 @@ export namespace UuidV4IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          UuidV4IriIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            UuidV4IriIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -5982,13 +6017,15 @@ export namespace UnionDiscriminantsClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          UnionDiscriminantsClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            UnionDiscriminantsClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -8547,13 +8584,15 @@ export namespace TermPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          TermPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            TermPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -9396,13 +9435,15 @@ export namespace Sha256IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          Sha256IriIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            Sha256IriIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -9954,13 +9995,15 @@ export namespace RecursiveClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          RecursiveClassUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            RecursiveClassUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -10434,13 +10477,15 @@ export namespace RecursiveClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          RecursiveClassUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            RecursiveClassUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -10969,13 +11014,15 @@ export namespace PropertyVisibilitiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PropertyVisibilitiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PropertyVisibilitiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -11947,13 +11994,15 @@ export namespace PropertyCardinalitiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PropertyCardinalitiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PropertyCardinalitiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -12701,13 +12750,15 @@ export namespace PartialInterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialInterfaceUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialInterfaceUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -13332,13 +13383,15 @@ export namespace PartialInterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialInterfaceUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialInterfaceUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -13995,13 +14048,15 @@ export namespace PartialClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialClassUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialClassUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -14603,13 +14658,15 @@ export namespace PartialClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialClassUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialClassUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -15300,13 +15357,15 @@ export namespace OrderedPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          OrderedPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            OrderedPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -15923,13 +15982,15 @@ export namespace NonClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          NonClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            NonClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -16424,13 +16485,15 @@ export namespace NoRdfTypeClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -16933,13 +16996,15 @@ export namespace NoRdfTypeClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -17794,13 +17859,15 @@ export namespace MutablePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          MutablePropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            MutablePropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -19089,13 +19156,15 @@ export namespace ListPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ListPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ListPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -20085,13 +20154,15 @@ export namespace PartialInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -22750,13 +22821,15 @@ export namespace LazyPropertiesInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazyPropertiesInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazyPropertiesInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -23853,13 +23926,15 @@ export namespace PartialClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -26521,13 +26596,15 @@ export namespace LazyPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazyPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazyPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -27429,13 +27506,15 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -27968,13 +28047,15 @@ export namespace LazilyResolvedIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -28482,13 +28563,15 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -29114,13 +29197,15 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -29775,13 +29860,15 @@ export namespace LazilyResolvedClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -30382,13 +30469,15 @@ export namespace LazilyResolvedClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -30969,13 +31058,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns(
+              { filter, ignoreRdfType, preferredLanguages, subject },
+            ),
+          ),
         ),
       ),
     };
@@ -31641,13 +31729,15 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -32294,13 +32384,15 @@ export namespace LanguageInPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LanguageInPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LanguageInPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -32969,13 +33061,15 @@ export namespace JsPrimitiveUnionPropertyClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -33454,13 +33548,15 @@ export namespace IriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IriIdentifierInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IriIdentifierInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -33815,13 +33911,15 @@ export namespace IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IriIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IriIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -34174,13 +34272,15 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -34708,13 +34808,15 @@ export namespace InterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          InterfaceUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            InterfaceUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -35338,13 +35440,15 @@ export namespace InterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          InterfaceUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            InterfaceUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -35924,13 +36028,15 @@ export namespace Interface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          Interface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            Interface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -36499,13 +36605,15 @@ export namespace IndirectRecursiveHelperClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IndirectRecursiveHelperClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IndirectRecursiveHelperClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -36974,13 +37082,15 @@ export namespace IndirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IndirectRecursiveClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IndirectRecursiveClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -37978,13 +38088,15 @@ export namespace InPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          InPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            InPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -38707,13 +38819,15 @@ export namespace InIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          InIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            InIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -39183,13 +39297,15 @@ export namespace IdentifierOverride1ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IdentifierOverride1ClassStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IdentifierOverride1ClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -39528,13 +39644,15 @@ export namespace IdentifierOverride2ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IdentifierOverride2ClassStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IdentifierOverride2ClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -39877,13 +39995,15 @@ export namespace IdentifierOverride3ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IdentifierOverride3ClassStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IdentifierOverride3ClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -40327,13 +40447,15 @@ export namespace IdentifierOverride4ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IdentifierOverride4ClassStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IdentifierOverride4ClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -40768,13 +40890,15 @@ export namespace IdentifierOverride5Class {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          IdentifierOverride5Class.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            IdentifierOverride5Class.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -41391,13 +41515,15 @@ export namespace HasValuePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          HasValuePropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            HasValuePropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -41973,13 +42099,15 @@ export namespace FlattenClassUnionMember3 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          FlattenClassUnionMember3.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            FlattenClassUnionMember3.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -42574,13 +42702,15 @@ export namespace ExternClassPropertyClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ExternClassPropertyClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ExternClassPropertyClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -43086,13 +43216,15 @@ export namespace ExplicitRdfTypeClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ExplicitRdfTypeClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ExplicitRdfTypeClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -43700,13 +43832,15 @@ export namespace ExplicitFromToRdfTypesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -44309,13 +44443,15 @@ export namespace DirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          DirectRecursiveClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            DirectRecursiveClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -45269,13 +45405,15 @@ export namespace DefaultValuePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          DefaultValuePropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            DefaultValuePropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -47039,13 +47177,15 @@ export namespace DateUnionPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          DateUnionPropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            DateUnionPropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -49594,13 +49734,15 @@ export namespace ConvertibleTypePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ConvertibleTypePropertiesClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ConvertibleTypePropertiesClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -50651,13 +50793,15 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -51211,13 +51355,15 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -51784,13 +51930,15 @@ export namespace ConcreteParentInterfaceStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ConcreteParentInterfaceStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ConcreteParentInterfaceStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -52433,13 +52581,15 @@ export namespace ConcreteChildInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ConcreteChildInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ConcreteChildInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -53072,13 +53222,15 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -53400,13 +53552,15 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -53882,13 +54036,15 @@ export namespace ConcreteParentClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ConcreteParentClassStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ConcreteParentClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -54499,13 +54655,15 @@ export namespace ConcreteChildClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ConcreteChildClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ConcreteChildClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -55057,13 +55215,15 @@ export namespace ClassUnionMemberCommonParentStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -55555,13 +55715,15 @@ export namespace ClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ClassUnionMember2.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ClassUnionMember2.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -56140,13 +56302,15 @@ export namespace ClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ClassUnionMember1.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ClassUnionMember1.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -56625,13 +56789,15 @@ export namespace BlankNodeOrIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -57042,13 +57208,15 @@ export namespace BlankNodeOrIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -57431,13 +57599,15 @@ export namespace BlankNodeIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          BlankNodeIdentifierInterface.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            BlankNodeIdentifierInterface.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -57849,13 +58019,15 @@ export namespace BlankNodeIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          BlankNodeIdentifierClass.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            BlankNodeIdentifierClass.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -58309,13 +58481,15 @@ export namespace AbstractBaseClassForExternClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -58618,13 +58792,15 @@ export namespace ClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          ClassUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            ClassUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -58963,13 +59139,15 @@ export namespace FlattenClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          FlattenClassUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            FlattenClassUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -59306,13 +59484,15 @@ export namespace InterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          InterfaceUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            InterfaceUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -59640,13 +59820,15 @@ export namespace LazilyResolvedClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedClassUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedClassUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -59980,13 +60162,15 @@ export namespace LazilyResolvedInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -60314,13 +60498,15 @@ export namespace PartialClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialClassUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialClassUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -60645,13 +60831,15 @@ export namespace PartialInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          PartialInterfaceUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            PartialInterfaceUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -60963,13 +61151,15 @@ export namespace NoRdfTypeClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          NoRdfTypeClassUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            NoRdfTypeClassUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -61275,13 +61465,15 @@ export namespace RecursiveClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $finalizeSparqlWherePatterns(
-          RecursiveClassUnion.$sparqlWherePatterns({
-            filter,
-            ignoreRdfType,
-            preferredLanguages,
-            subject,
-          }),
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            RecursiveClassUnion.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
         ),
       ),
     };
@@ -74726,7 +74918,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       ...objectType.$sparqlWherePatterns({ subject: this.$objectVariable }),
     );
 
-    return $finalizeSparqlWherePatterns(patterns);
+    return $insertSeedSparqlWherePattern(
+      $optimizeSparqlWherePatterns(patterns),
+    );
   }
 }
 

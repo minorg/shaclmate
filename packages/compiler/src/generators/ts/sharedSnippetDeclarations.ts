@@ -130,42 +130,69 @@ export namespace ${syntheticNamePrefix}EqualsResult {
   }`,
   ),
 
-  finalizeSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}finalizeSparqlWherePatterns`,
+  insertSeedSparqlWherePattern: singleEntryRecord(
+    `${syntheticNamePrefix}insertSeedSparqlWherePattern`,
     `\
-function ${syntheticNamePrefix}finalizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+/**
+ * Insert a seed SPARQL where pattern if necessary.
+ * 
+ * A SPARQL WHERE block that solely consists of OPTIONAL blocks won't match anything. OPTIONAL is a left join.
+ * In that situation the solution is to insert a VALUES () { () } seed as the first pattern in order to match the entire store.
+ */
+function ${syntheticNamePrefix}insertSeedSparqlWherePattern(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+  if (patterns.every(pattern => pattern.type === "optional")) {
+    return [{ values: [{}], type: "values" }, ...patterns];
+  }
+  return patterns;
+}`,
+  ),
+
+  optimizeSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}optimizeSparqlWherePatterns`,
+    `\
+function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
   if (patterns.length === 0) {
     return patterns;
   }
 
-  const requiredPatterns: sparqljs.Pattern[] = [];
-  const otherPatterns: sparqljs.Pattern[] = [];
-
-  for (const pattern of patterns) {
+  const flattenPattern = (pattern: sparqljs.Pattern): readonly sparqljs.Pattern[] => {
     switch (pattern.type) {
       case "bgp":
-        requiredPatterns.push(pattern);
-        break;
+      case "bind":
+      case "filter":
+      case "query":
       case "values":
-        requiredPatterns.unshift(pattern);
-        break;
+        return [pattern];
+      case "group":
+        return pattern.patterns.flatMap(flattenPattern);
+      case "graph":
+      case "minus":
       case "optional":
+      case "service":
       case "union":
-        otherPatterns.push(pattern);
-        break;
-      default:
-        throw new RangeError(\`unrecognized SPARQL WHERE pattern type: \${pattern.type}\`);
+        return [{ ...pattern, patterns: pattern.patterns.flatMap(flattenPattern) }];
     }
   }
 
-  if (requiredPatterns.length === 0) {
-    // A WHERE block must have at least one required pattern in order to match anything.
-    // The usual solution is to insert a VALUES () { () } seed as the first pattern in order to
-    // match the entire store. OPTIONAL is a left join.
-    requiredPatterns.push({ values: [{}], type: "values" });
+  const bgpPatterns: sparqljs.Pattern[] = [];
+  const valuesPatterns: sparqljs.Pattern[] = [];
+  const otherPatterns: sparqljs.Pattern[] = [];
+
+  for (const pattern of patterns.flatMap(flattenPattern)) {
+    switch (pattern.type) {
+      case "bgp":
+        bgpPatterns.push(pattern);
+        break;
+      case "values":
+        valuesPatterns.push(pattern);
+        break;
+      default:
+        otherPatterns.push(pattern);
+        break;
+    }
   }
 
-  return requiredPatterns.concat(otherPatterns);
+  return valuesPatterns.concat(bgpPatterns).concat(otherPatterns);
 }`,
   ),
 

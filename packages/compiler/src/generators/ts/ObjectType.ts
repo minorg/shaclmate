@@ -510,7 +510,8 @@ export class ObjectType extends AbstractDeclaredType {
       }
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sharedSnippetDeclarations.finalizeSparqlWherePatterns,
+        sharedSnippetDeclarations.insertSeedSparqlWherePattern,
+        sharedSnippetDeclarations.optimizeSparqlWherePatterns,
       );
     }
     if (
