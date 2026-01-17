@@ -254,6 +254,21 @@ namespace $DateFilter {
   }
 }
 
+function $deduplicateSparqlWherePatterns(
+  patterns: readonly sparqljs.Pattern[],
+): readonly sparqljs.Pattern[] {
+  const deduplicatedPatterns: sparqljs.Pattern[] = [];
+  const deduplicatePatternStrings = new Set<string>();
+  for (const pattern of patterns) {
+    const patternString = JSON.stringify(pattern);
+    if (!deduplicatePatternStrings.has(patternString)) {
+      deduplicatePatternStrings.add(patternString);
+      deduplicatedPatterns.push(pattern);
+    }
+  }
+  return deduplicatedPatterns;
+}
+
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -1079,10 +1094,9 @@ function $optimizeSparqlWherePatterns(
         }
         break;
       }
-      case "union":
-        otherPatterns.push({
-          ...pattern,
-          patterns: pattern.patterns.flatMap((pattern) => {
+      case "union": {
+        const unionPatterns = $deduplicateSparqlWherePatterns(
+          pattern.patterns.flatMap((pattern) => {
             switch (pattern.type) {
               case "group":
               // Don't flatten the groups in a union
@@ -1102,14 +1116,33 @@ function $optimizeSparqlWherePatterns(
                 return [pattern];
             }
           }),
-        });
+        );
+
+        switch (unionPatterns.length) {
+          case 0:
+            break;
+          case 1:
+            otherPatterns.push(
+              ...$optimizeSparqlWherePatterns([unionPatterns[0]]),
+            );
+            break;
+          default:
+            otherPatterns.push({
+              ...pattern,
+              patterns: unionPatterns.concat(),
+            });
+            break;
+        }
         break;
+      }
       default:
         pattern satisfies never;
     }
   }
 
-  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+  return $deduplicateSparqlWherePatterns(
+    valuesPatterns.concat(otherPatterns).concat(filterPatterns),
+  );
 }
 
 namespace $RdfVocabularies {

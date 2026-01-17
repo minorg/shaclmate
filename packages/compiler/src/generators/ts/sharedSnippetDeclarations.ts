@@ -4,6 +4,23 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export const sharedSnippetDeclarations = {
+  deduplicateSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}deduplicateSparqlWherePatterns`,
+    `\
+function ${syntheticNamePrefix}deduplicateSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+  const deduplicatedPatterns: sparqljs.Pattern[] = [];
+  const deduplicatePatternStrings = new Set<string>();
+  for (const pattern of patterns) {
+    const patternString = JSON.stringify(pattern);
+    if (!deduplicatePatternStrings.has(patternString)) {
+      deduplicatePatternStrings.add(patternString);
+      deduplicatedPatterns.push(pattern);
+    }
+  }
+  return deduplicatedPatterns;
+}`,
+  ),
+
   EqualsResult: singleEntryRecord(
     `${syntheticNamePrefix}EqualsResult`,
     `\
@@ -198,8 +215,8 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
         }
         break;
       }
-      case "union":
-        otherPatterns.push({ ...pattern, patterns: pattern.patterns.flatMap(pattern => {
+      case "union": {
+        const unionPatterns = ${syntheticNamePrefix}deduplicateSparqlWherePatterns(pattern.patterns.flatMap(pattern => {
           switch (pattern.type) {
             case "group":
               // Don't flatten the groups in a union
@@ -216,14 +233,26 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
             default:
               return [pattern];
           }
-        })});
+        }));
+
+        switch (unionPatterns.length) {
+          case 0:
+            break;
+          case 1:
+            otherPatterns.push(...${syntheticNamePrefix}optimizeSparqlWherePatterns([unionPatterns[0]]));
+            break;
+          default:
+            otherPatterns.push({...pattern, patterns: unionPatterns.concat() });
+            break;
+        }
         break;
+      }
       default:
         pattern satisfies never;
     }
   }
 
-  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+  return ${syntheticNamePrefix}deduplicateSparqlWherePatterns(valuesPatterns.concat(otherPatterns).concat(filterPatterns));
 }`,
   ),
 
