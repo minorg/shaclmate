@@ -155,44 +155,75 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
     return patterns;
   }
 
-  const flattenPattern = (pattern: sparqljs.Pattern): readonly sparqljs.Pattern[] => {
-    switch (pattern.type) {
-      case "bgp":
-      case "bind":
-      case "filter":
-      case "query":
-      case "values":
-        return [pattern];
-      case "group":
-        return pattern.patterns.flatMap(flattenPattern);
-      case "graph":
-      case "minus":
-      case "optional":
-      case "service":
-      case "union":
-        return [{ ...pattern, patterns: pattern.patterns.flatMap(flattenPattern) }];
-    }
-  }
-
-  const bgpPatterns: sparqljs.Pattern[] = [];
+  const filterPatterns: sparqljs.Pattern[] = [];
   const valuesPatterns: sparqljs.Pattern[] = [];
   const otherPatterns: sparqljs.Pattern[] = [];
 
-  for (const pattern of patterns.flatMap(flattenPattern)) {
+  for (const pattern of patterns) {
     switch (pattern.type) {
-      case "bgp":
-        bgpPatterns.push(pattern);
+      case "bgp": {
+        if (pattern.triples.length === 0) {
+          continue;
+        }
+        const lastPattern = otherPatterns.at(-1);
+        if (lastPattern && lastPattern.type === "bgp") {
+          // Coalesce adjacent BGP patterns
+          lastPattern.triples.push(...pattern.triples);
+        } else {
+          otherPatterns.push(pattern);
+        }
+        break;
+      }
+      case "bind":
+      case "query":
+        otherPatterns.push(pattern);
+        break;
+      case "filter":
+        filterPatterns.push(pattern);
+        break;
+      case "group":
+        // Flatten groups outside unions
+        otherPatterns.push(...${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns));
         break;
       case "values":
         valuesPatterns.push(pattern);
         break;
-      default:
-        otherPatterns.push(pattern);
+      case "graph":
+      case "minus":
+      case "optional":
+      case "service": {
+        const optimizedPatterns = ${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns);
+        if (optimizedPatterns.length > 0) {
+          otherPatterns.push({ ...pattern, patterns: optimizedPatterns.concat() });
+        }
         break;
+      }
+      case "union":
+        otherPatterns.push({ ...pattern, patterns: pattern.patterns.flatMap(pattern => {
+          switch (pattern.type) {
+            case "group":
+              // Don't flatten the groups in a union
+            case "graph":
+            case "minus":
+            case "optional":
+            case "service": {
+              const optimizedPatterns = ${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns);
+              if (optimizedPatterns.length > 0) {
+                return [{ ...pattern, patterns: optimizedPatterns.concat() }];
+              }
+              return [] as sparqljs.Pattern[];
+            }
+            default:
+              return [pattern];
+          }
+        })});
+        break;
+      default:
+        pattern satisfies never;
     }
   }
 
-  return valuesPatterns.concat(bgpPatterns).concat(otherPatterns);
+  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
 }`,
   ),
 

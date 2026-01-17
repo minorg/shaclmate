@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { Sparql } from "./Sparql.js";
+import { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 class MemberType {
@@ -538,34 +538,43 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     variables,
     ...otherParameters
   }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
-    let haveEmptyGroup = false; // Only need one empty group
-    return [
-      {
-        patterns: this.memberTypes.flatMap((memberType) => {
-          const groupPatterns = memberType.sparqlWherePatterns({
-            ...otherParameters,
-            allowIgnoreRdfType: false,
-            variables: {
-              ...variables,
-              filter: variables.filter.map(
-                (filterVariable) =>
-                  `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
-              ),
-            },
-          });
-          if (groupPatterns.length === 0) {
-            if (haveEmptyGroup) {
-              return [];
-            }
-            haveEmptyGroup = true;
-            return [{ patterns: [], type: "group" }];
-          }
-
-          return [{ patterns: groupPatterns, type: "group" }];
+    const groupPatternStrings = new Set<string>();
+    const groupPatterns = this.memberTypes.flatMap((memberType) => {
+      const groupPattern = {
+        patterns: memberType.sparqlWherePatterns({
+          ...otherParameters,
+          allowIgnoreRdfType: false,
+          variables: {
+            ...variables,
+            filter: variables.filter.map(
+              (filterVariable) =>
+                `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
+            ),
+          },
         }),
-        type: "union",
-      },
-    ];
+        type: "group" as const,
+      };
+      const groupPatternString = Sparql.Pattern.stringify(groupPattern);
+      if (groupPatternStrings.has(groupPatternString)) {
+        return [];
+      }
+      groupPatternStrings.add(groupPatternString);
+      return [groupPattern];
+    });
+
+    switch (groupPatterns.length) {
+      case 0:
+        return [];
+      case 1:
+        return groupPatterns[0].patterns;
+      default:
+        return [
+          {
+            patterns: groupPatterns,
+            type: "union",
+          },
+        ];
+    }
   }
 
   override toJsonExpression({
