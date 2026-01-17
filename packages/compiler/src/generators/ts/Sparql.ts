@@ -133,7 +133,7 @@ export namespace Sparql {
         case "opaque":
           return pattern.expression;
         case "opaque-block":
-          return `{ patterns: ${pattern.patterns}, type: "group" }`;
+          return `{ patterns: ${pattern.patterns}.concat(), type: "group" }`;
         case "service":
           return `{ patterns: [${pattern.patterns.map(stringify).join(", ")}], name: ${pattern.name}, silent: ${pattern.silent}, type: "${pattern.type}" }`;
         case "values":

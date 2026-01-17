@@ -289,14 +289,14 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTriples(
-    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
-  ): readonly string[] {
+  override sparqlConstructTriples({
+    variables,
+  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly string[] {
     return [
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
         {
-          subject: parameters.variables.valueVariable,
-          variablePrefix: parameters.variables.variablePrefix,
+          subject: variables.valueVariable,
+          variablePrefix: variables.variablePrefix,
         },
       )})`,
     ];

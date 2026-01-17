@@ -2,6 +2,7 @@ import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -19,37 +20,26 @@ export function sparqlFunctionDeclarations(
     return [];
   }
 
+  const subjectDefault = camelCase(this.name);
+
   const variables = {
     filter: "parameters?.filter",
     preferredLanguages: "parameters?.preferredLanguages",
     focusIdentifier: "subject",
-    variablePrefix: "variablePrefix",
+    variablePrefix: `(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}"))`,
   };
   const rdfClassVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
-  const subjectDefault = camelCase(this.name);
-
-  const sparqlConstructTriplesStatements = [
-    `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
-    "const triples: sparqljs.Triple[] = []",
-    `const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}");`,
-  ];
-  let nop = true;
-
-  const sparqlWherePatternsStatements = [
-    "const patterns: sparqljs.Pattern[] = [];",
-    `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
-    `const variablePrefix = parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}");`,
-  ];
+  const sparqlConstructTriplesStatements = [];
+  const sparqlWherePatternsStatements = [];
 
   for (const parentObjectType of this.parentObjectTypes) {
     sparqlConstructTriplesStatements.push(
-      `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType: true, subject, variablePrefix }));`,
+      `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer({ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`,
     );
     sparqlWherePatternsStatements.push(`\
-patterns.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix }));`);
-    nop = false;
+patterns.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer({ filter: "parameters?.filter", ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`);
   }
 
   if (this.fromRdfType.isJust()) {
@@ -115,7 +105,6 @@ if (!parameters?.ignoreRdfType) {
   );
 }`,
     );
-    nop = false;
   }
 
   for (const property of this.ownProperties) {
@@ -127,7 +116,6 @@ if (!parameters?.ignoreRdfType) {
       variables,
     })) {
       sparqlConstructTriplesStatements.push(`triples.push(${triple});`);
-      nop = false;
     }
 
     const { condition, patterns } = property.sparqlWherePatterns({ variables });
@@ -140,12 +128,8 @@ if (!parameters?.ignoreRdfType) {
       } else {
         sparqlWherePatternsStatements.push(pushStatement);
       }
-      nop = false;
     }
   }
-
-  sparqlConstructTriplesStatements.push("return triples;");
-  sparqlWherePatternsStatements.push("return patterns;");
 
   return [
     sparqlConstructQueryFunctionDeclaration.bind(this)(),
@@ -157,12 +141,20 @@ if (!parameters?.ignoreRdfType) {
       parameters: [
         {
           hasQuestionToken: true,
-          name: `${nop ? "_" : ""}parameters`,
+          name: `${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters`,
           type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
         },
       ],
       returnType: "readonly sparqljs.Triple[]",
-      statements: nop ? "return [];" : sparqlConstructTriplesStatements,
+      statements:
+        sparqlConstructTriplesStatements.length > 0
+          ? [
+              `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
+              "const triples: sparqljs.Triple[] = []",
+              ...sparqlConstructTriplesStatements,
+              "return triples;",
+            ]
+          : ["return [];"],
     },
     {
       isExported: true,
@@ -171,12 +163,20 @@ if (!parameters?.ignoreRdfType) {
       parameters: [
         {
           hasQuestionToken: true,
-          name: `${nop ? "_" : ""}parameters`,
+          name: `${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters`,
           type: `{ filter?: ${this.filterType.name}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }`,
         },
       ],
       returnType: "readonly sparqljs.Pattern[]",
-      statements: nop ? "return [];" : sparqlWherePatternsStatements,
+      statements:
+        sparqlWherePatternsStatements.length > 0
+          ? [
+              "const patterns: sparqljs.Pattern[] = [];",
+              `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
+              ...sparqlWherePatternsStatements,
+              "return patterns;",
+            ]
+          : ["return [];"],
     },
   ];
 }

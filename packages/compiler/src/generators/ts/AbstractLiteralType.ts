@@ -96,7 +96,7 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
   }): readonly Sparql.Pattern[] {
     return [
       {
-        patterns: `...[${
+        patterns: `[${
           this.languageIn.length > 0
             ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
             : `(${variables.preferredLanguages} ?? [])`
