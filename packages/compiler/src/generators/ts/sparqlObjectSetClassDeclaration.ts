@@ -230,7 +230,7 @@ const selectQueryString = \
     queryType: "SELECT",
     type: "query",
     variables: [this.${syntheticNamePrefix}objectVariable],
-    where: wherePatterns
+    where: wherePatterns.concat()
   });
   
 return purify.EitherAsync(async () =>
@@ -345,7 +345,7 @@ return purify.EitherAsync(async ({ liftEither }) =>
           kind: StructureKind.Method,
           name: `${syntheticNamePrefix}wherePatterns`,
           parameters: [parameters.selectObjectTypeType, parameters.where],
-          returnType: "sparqljs.Pattern[]",
+          returnType: "readonly sparqljs.Pattern[]",
           scope: Scope.Protected,
           statements: [
             `\

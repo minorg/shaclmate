@@ -20,6 +20,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -558,18 +559,21 @@ export class ObjectType extends AbstractDeclaredType {
     variables,
   }: Parameters<
     AbstractDeclaredType["sparqlWherePatterns"]
-  >[0]): Type.SparqlWherePatterns {
-    return new Type.SparqlWherePatterns([
+  >[0]): readonly Sparql.Pattern[] {
+    return [
       ...propertyPatterns,
-      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-        {
-          ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-          preferredLanguages: variables.preferredLanguages,
-          subject: variables.valueVariable,
-          variablePrefix: variables.variablePrefix,
-        },
-      )})`,
-    ]);
+      {
+        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
+          {
+            ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+            preferredLanguages: variables.preferredLanguages,
+            subject: variables.valueVariable,
+            variablePrefix: variables.variablePrefix,
+          },
+        )})`,
+        type: "opaque-block",
+      },
+    ];
   }
 
   override toJsonExpression({

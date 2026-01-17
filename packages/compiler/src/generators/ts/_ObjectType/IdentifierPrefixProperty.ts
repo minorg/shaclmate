@@ -14,7 +14,6 @@ import type { Import } from "../Import.js";
 import type { StringType } from "../StringType.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { Type } from "../Type.js";
 import { Property } from "./Property.js";
 
 export class IdentifierPrefixProperty extends Property<StringType> {
@@ -141,8 +140,8 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     return [];
   }
 
-  override sparqlWherePatterns(): Type.SparqlWherePatterns {
-    return Type.SparqlWherePatterns.empty;
+  override sparqlWherePatterns() {
+    return { patterns: [] };
   }
 
   override toJsonObjectMember(): Maybe<string> {

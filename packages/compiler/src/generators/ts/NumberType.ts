@@ -5,6 +5,7 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -59,12 +60,12 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
 
   protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     return variables.filter
-      .map(
-        (filterVariable) =>
-          `...${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
-      )
+      .map((filterVariable) => ({
+        patterns: `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      }))
       .toList();
   }
 

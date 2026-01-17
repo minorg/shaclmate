@@ -2,6 +2,7 @@ import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -92,13 +93,14 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     variables,
   }: {
     variables: Parameters<Type["sparqlWherePatterns"]>[0]["variables"];
-  }): readonly string[] {
+  }): readonly Sparql.Pattern[] {
     return [
-      `...[${
-        this.languageIn.length > 0
-          ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
-          : `(${variables.preferredLanguages} ?? [])`
-      }]
+      {
+        patterns: `...[${
+          this.languageIn.length > 0
+            ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
+            : `(${variables.preferredLanguages} ?? [])`
+        }]
         .filter(languages => languages.length > 0)
         .map(languages =>
           languages.map(language => 
@@ -127,6 +129,8 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
             }, null as sparqljs.Expression | null) as sparqljs.Expression
           })
         )`,
+        type: "opaque-block" as const,
+      },
     ];
   }
 }

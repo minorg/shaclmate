@@ -1,6 +1,7 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 
 import type { Import } from "./Import.js";
+import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -89,7 +90,7 @@ export abstract class AbstractType implements Type {
 
   abstract sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): Type.SparqlWherePatterns;
+  ): readonly Sparql.Pattern[];
 
   abstract toJsonExpression(
     parameters: Parameters<Type["toJsonExpression"]>[0],

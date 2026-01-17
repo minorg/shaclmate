@@ -15,6 +15,7 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -304,17 +305,20 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
-    return new Type.SparqlWherePatterns([
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+    return [
       ...propertyPatterns,
-      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-        {
-          preferredLanguages: variables.preferredLanguages,
-          subject: variables.valueVariable,
-          variablePrefix: variables.variablePrefix,
-        },
-      )})`,
-    ]);
+      {
+        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
+          {
+            preferredLanguages: variables.preferredLanguages,
+            subject: variables.valueVariable,
+            variablePrefix: variables.variablePrefix,
+          },
+        )})`,
+        type: "opaque-block",
+      },
+    ];
   }
 
   override toJsonExpression({

@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { Import } from "./Import.js";
+import type { Sparql } from "./Sparql.js";
 
 export interface Type {
   /**
@@ -215,14 +216,14 @@ export interface Type {
    */
   sparqlWherePatterns(parameters: {
     allowIgnoreRdfType: boolean;
-    propertyPatterns: readonly string[];
+    propertyPatterns: readonly Sparql.Pattern[];
     variables: {
       filter: Maybe<string>;
       preferredLanguages: string;
       valueVariable: string;
       variablePrefix: string;
     };
-  }): Type.SparqlWherePatterns;
+  }): readonly Sparql.Pattern[];
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
@@ -353,33 +354,6 @@ export namespace Type {
       return this.optional
         ? `(${this.requiredName}) | undefined`
         : this.requiredName;
-    }
-  }
-
-  export class SparqlWherePatterns {
-    static readonly empty = new SparqlWherePatterns([]);
-
-    readonly type: "group" | "optional" | "union" | undefined;
-
-    constructor(
-      readonly patterns: readonly string[],
-      options?: { type?: "group" | "optional" | "union" },
-    ) {
-      this.type = options?.type;
-    }
-
-    toArray(): readonly string[] {
-      if (!this.type) {
-        return this.patterns;
-      }
-
-      return [
-        `{ patterns: [${this.patterns.join(", ")}], type: "${this.type}" }`,
-      ];
-    }
-
-    toString(): never {
-      throw new Error("don't call");
     }
   }
 }

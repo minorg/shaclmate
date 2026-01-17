@@ -8,10 +8,11 @@ import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
+import type { Type } from "./Type.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.
@@ -129,7 +130,7 @@ export abstract class AbstractTermType<
 
   protected filterSparqlWherePatterns(
     _parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
+  ): readonly Sparql.Pattern[] {
     return [];
   }
 
@@ -263,8 +264,8 @@ export abstract class AbstractTermType<
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): Type.SparqlWherePatterns {
-    const requiredPatterns: string[] = [
+  ): readonly Sparql.Pattern[] {
+    const requiredPatterns: Sparql.Pattern[] = [
       ...parameters.propertyPatterns,
       ...this.filterSparqlWherePatterns(parameters),
     ];
@@ -272,9 +273,11 @@ export abstract class AbstractTermType<
     return this.defaultValue
       .map(
         () =>
-          new Type.SparqlWherePatterns(requiredPatterns, { type: "optional" }),
+          [
+            { patterns: requiredPatterns, type: "optional" },
+          ] as Sparql.Pattern[],
       )
-      .orDefault(new Type.SparqlWherePatterns(requiredPatterns));
+      .orDefault(requiredPatterns);
   }
 
   override toRdfExpression({

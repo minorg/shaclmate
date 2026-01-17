@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { Import } from "./Import.js";
+import type { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 export class SetType<
@@ -48,7 +49,7 @@ export class SetType<
   override sparqlWherePatterns({
     variables,
     ...otherParameters
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     const itemPatterns = this.itemType.sparqlWherePatterns({
       ...otherParameters,
       variables: {
@@ -58,13 +59,21 @@ export class SetType<
         ),
       },
     });
-    return this.minCount > 0 ||
-      itemPatterns.patterns.length === 0 ||
-      itemPatterns.type === "optional"
-      ? itemPatterns
-      : new Type.SparqlWherePatterns(itemPatterns.toArray(), {
-          type: "optional",
-        });
+
+    if (itemPatterns.length === 0) {
+      return itemPatterns;
+    }
+
+    if (this.minCount > 0) {
+      return itemPatterns; // Treat them as required
+    }
+
+    if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
+      return itemPatterns; // Item patterns are already optional, so no need to wrap them with another optional block
+    }
+
+    // minCount === 0 and itemPatterns are required, wrap them in an optional block
+    return [{ patterns: itemPatterns, type: "optional" }];
   }
 
   override toRdfExpression({

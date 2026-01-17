@@ -3,6 +3,7 @@ import { camelCase } from "change-case";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
@@ -117,7 +118,6 @@ if (!parameters?.ignoreRdfType) {
     nop = false;
   }
 
-  const propertySparqlWherePatterns: string[] = [];
   for (const property of this.ownProperties) {
     if (property.recursive) {
       continue;
@@ -129,19 +129,19 @@ if (!parameters?.ignoreRdfType) {
       sparqlConstructTriplesStatements.push(`triples.push(${triple});`);
       nop = false;
     }
-    propertySparqlWherePatterns.push(
-      ...property
-        .sparqlWherePatterns({
-          variables,
-        })
-        .toArray(),
-    );
-  }
-  if (propertySparqlWherePatterns.length > 0) {
-    sparqlWherePatternsStatements.push(
-      `patterns.push(${propertySparqlWherePatterns.join(", ")});`,
-    );
-    nop = false;
+
+    const { condition, patterns } = property.sparqlWherePatterns({ variables });
+    if (patterns.length > 0) {
+      const pushStatement = `patterns.push(${patterns.map(Sparql.Pattern.stringify).join(", ")});`;
+      if (condition) {
+        sparqlWherePatternsStatements.push(
+          `if (${condition}) { ${pushStatement} }`,
+        );
+      } else {
+        sparqlWherePatternsStatements.push(pushStatement);
+      }
+      nop = false;
+    }
   }
 
   sparqlConstructTriplesStatements.push("return triples;");

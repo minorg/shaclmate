@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 class MemberType {
@@ -537,34 +537,35 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     allowIgnoreRdfType: _allowIgnoreRdfType,
     variables,
     ...otherParameters
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     let haveEmptyGroup = false; // Only need one empty group
-    return new Type.SparqlWherePatterns(
-      this.memberTypes.flatMap((memberType) => {
-        const groupPatterns = memberType.sparqlWherePatterns({
-          ...otherParameters,
-          allowIgnoreRdfType: false,
-          variables: {
-            ...variables,
-            filter: variables.filter.map(
-              (filterVariable) =>
-                `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
-            ),
-          },
-        });
-        if (groupPatterns.patterns.length === 0) {
-          if (haveEmptyGroup) {
-            return [];
+    return [
+      {
+        patterns: this.memberTypes.flatMap((memberType) => {
+          const groupPatterns = memberType.sparqlWherePatterns({
+            ...otherParameters,
+            allowIgnoreRdfType: false,
+            variables: {
+              ...variables,
+              filter: variables.filter.map(
+                (filterVariable) =>
+                  `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
+              ),
+            },
+          });
+          if (groupPatterns.length === 0) {
+            if (haveEmptyGroup) {
+              return [];
+            }
+            haveEmptyGroup = true;
+            return [{ patterns: [], type: "group" }];
           }
-          haveEmptyGroup = true;
-          return [objectInitializer({ patterns: "[]", type: '"group"' })];
-        }
-        return new Type.SparqlWherePatterns(groupPatterns.toArray(), {
-          type: "group",
-        }).toArray();
-      }),
-      { type: "union" },
-    );
+
+          return [{ patterns: groupPatterns, type: "group" }];
+        }),
+        type: "union",
+      },
+    ];
   }
 
   override toJsonExpression({

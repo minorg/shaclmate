@@ -5,6 +5,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -248,7 +249,7 @@ interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
   override sparqlWherePatterns({
     variables,
     ...otherParameters
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     const itemPatterns = this.itemType.sparqlWherePatterns({
       ...otherParameters,
       variables: {
@@ -258,12 +259,16 @@ interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
         ),
       },
     });
-    return itemPatterns.patterns.length === 0 ||
-      itemPatterns.type === "optional"
-      ? itemPatterns
-      : new Type.SparqlWherePatterns(itemPatterns.toArray(), {
-          type: "optional",
-        });
+
+    if (itemPatterns.length === 0) {
+      return itemPatterns;
+    }
+
+    if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
+      return itemPatterns;
+    }
+
+    return [{ patterns: itemPatterns, type: "optional" }];
   }
 
   override toJsonExpression({

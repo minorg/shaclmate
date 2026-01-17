@@ -9,6 +9,7 @@ import {
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
+import type { Sparql } from "../Sparql.js";
 import type { Type } from "../Type.js";
 
 export abstract class Property<
@@ -237,7 +238,7 @@ export abstract class Property<
       preferredLanguages: string;
       variablePrefix: string;
     };
-  }): Type.SparqlWherePatterns;
+  }): { condition?: string; patterns: readonly Sparql.Pattern[] };
 
   /**
    * property: expression to serialize a property to a JSON object member.

@@ -290,32 +290,34 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   sparqlWherePatterns({
     variables,
-  }: Parameters<
-    Property<TypeT>["sparqlWherePatterns"]
-  >[0]): Type.SparqlWherePatterns {
+  }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]) {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
-    return this.type.sparqlWherePatterns({
-      allowIgnoreRdfType: true,
-      propertyPatterns: [
-        objectInitializer({
-          triples: `[${objectInitializer({
-            object: valueVariable,
-            predicate: this.predicate,
-            subject: variables.focusIdentifier,
-          })}]`,
-          type: '"bgp"',
-        }),
-      ],
-      variables: {
-        filter: this.filterProperty.map(
-          ({ name }) => `${variables.filter}?.${name}`,
-        ),
-        preferredLanguages: variables.preferredLanguages,
-        valueVariable,
-        variablePrefix: valueString,
-      },
-    });
+    return {
+      patterns: this.type.sparqlWherePatterns({
+        allowIgnoreRdfType: true,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: valueVariable,
+                predicate: this.predicate,
+                subject: variables.focusIdentifier,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        variables: {
+          filter: this.filterProperty.map(
+            ({ name }) => `${variables.filter}?.${name}`,
+          ),
+          preferredLanguages: variables.preferredLanguages,
+          valueVariable,
+          variablePrefix: valueString,
+        },
+      }),
+    };
   }
 
   override toJsonObjectMember(

@@ -8,6 +8,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 export class ListType<
@@ -139,13 +140,13 @@ export class ListType<
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): Type.SparqlWherePatterns {
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
-    const patterns: string[] = [];
+    const patterns: Sparql.Pattern[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
@@ -156,94 +157,104 @@ export class ListType<
       // ?list rdf:first ?item0
       const item0Variable = variable("Item0");
       patterns.push(
-        `{ type: "bgp", triples: [${objectInitializer({
-          subject: listVariable,
-          predicate: rdfjsTermExpression(rdf.first),
-          object: item0Variable,
-        })}] }`,
-        ...this.itemType
-          .sparqlWherePatterns({
-            allowIgnoreRdfType: true,
-            propertyPatterns: [],
-            variables: {
-              filter: variables.filter.map((filter) => `${filter}?.items`),
-              preferredLanguages: variables.preferredLanguages,
-              valueVariable: item0Variable,
-              variablePrefix: variablePrefix("Item0"),
+        {
+          type: "bgp",
+          triples: [
+            {
+              subject: listVariable,
+              predicate: rdfjsTermExpression(rdf.first),
+              object: item0Variable,
             },
-          })
-          .toArray(),
+          ],
+        },
+        ...this.itemType.sparqlWherePatterns({
+          allowIgnoreRdfType: true,
+          propertyPatterns: [],
+          variables: {
+            filter: variables.filter.map((filter) => `${filter}?.items`),
+            preferredLanguages: variables.preferredLanguages,
+            valueVariable: item0Variable,
+            variablePrefix: variablePrefix("Item0"),
+          },
+        }),
       );
     }
 
     {
       // ?list rdf:rest ?rest0
       const rest0Variable = variable("Rest0");
-      patterns.push(
-        `{ type: "bgp", triples: [${objectInitializer({
-          subject: listVariable,
-          predicate: rdfjsTermExpression(rdf.rest),
-          object: rest0Variable,
-        })}] }`,
-      );
+      patterns.push({
+        type: "bgp",
+        triples: [
+          {
+            subject: listVariable,
+            predicate: rdfjsTermExpression(rdf.rest),
+            object: rest0Variable,
+          },
+        ],
+      });
     }
 
-    const optionalPatterns: string[] = [];
+    const optionalPatterns: Sparql.Pattern[] = [];
 
     const restNVariable = variable("RestN");
     // ?list rdf:rest+ ?restN
-    optionalPatterns.push(
-      `{ type: "bgp", triples: [${objectInitializer({
-        subject: listVariable,
-        predicate: `{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }`,
-        object: restNVariable,
-      })}] }`,
-    );
+    optionalPatterns.push({
+      type: "bgp",
+      triples: [
+        {
+          subject: listVariable,
+          predicate: `{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }`,
+          object: restNVariable,
+        },
+      ],
+    });
 
     {
       // ?rest rdf:first ?itemN
       const itemNVariable = variable("ItemN");
       optionalPatterns.push(
-        `{ type: "bgp", triples: [${objectInitializer({
-          subject: restNVariable,
-          predicate: rdfjsTermExpression(rdf.first),
-          object: itemNVariable,
-        })}] }`,
-        ...this.itemType
-          .sparqlWherePatterns({
-            allowIgnoreRdfType: true,
-            propertyPatterns: [],
-            variables: {
-              filter: variables.filter.map((filter) => `${filter}?.items`),
-              preferredLanguages: variables.preferredLanguages,
-              valueVariable: itemNVariable,
-              variablePrefix: variablePrefix("ItemN"),
+        {
+          type: "bgp",
+          triples: [
+            {
+              subject: restNVariable,
+              predicate: rdfjsTermExpression(rdf.first),
+              object: itemNVariable,
             },
-          })
-          .toArray(),
+          ],
+        },
+        ...this.itemType.sparqlWherePatterns({
+          allowIgnoreRdfType: true,
+          propertyPatterns: [],
+          variables: {
+            filter: variables.filter.map((filter) => `${filter}?.items`),
+            preferredLanguages: variables.preferredLanguages,
+            valueVariable: itemNVariable,
+            variablePrefix: variablePrefix("ItemN"),
+          },
+        }),
       );
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    optionalPatterns.push(
-      `{ type: "bgp", triples: [${objectInitializer({
-        subject: restNVariable,
-        predicate: rdfjsTermExpression(rdf.rest),
-        object: variable("RestNBasic"),
-      })}] }`,
-    );
+    optionalPatterns.push({
+      type: "bgp",
+      triples: [
+        {
+          subject: restNVariable,
+          predicate: rdfjsTermExpression(rdf.rest),
+          object: variable("RestNBasic"),
+        },
+      ],
+    });
 
-    patterns.push(
-      `{ type: "optional", patterns: [${optionalPatterns.join(", ")}] }`,
-    );
+    patterns.push({ type: "optional", patterns: optionalPatterns });
 
     // Having an optional around everything handles the rdf:nil case
-    let result = new Type.SparqlWherePatterns(patterns, { type: "optional" });
+    const result: readonly Sparql.Pattern[] = [{ patterns, type: "optional" }];
     if (propertyPatterns.length > 0) {
-      result = new Type.SparqlWherePatterns([
-        ...propertyPatterns,
-        ...result.toArray(),
-      ]);
+      return [...propertyPatterns, ...result];
     }
     return result;
   }

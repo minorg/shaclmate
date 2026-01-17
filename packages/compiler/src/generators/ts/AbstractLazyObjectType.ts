@@ -9,6 +9,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
+import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
 export abstract class AbstractLazyObjectType<
@@ -131,7 +132,7 @@ export abstract class AbstractLazyObjectType<
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): Type.SparqlWherePatterns {
+  ): readonly Sparql.Pattern[] {
     return this.partialType.sparqlWherePatterns(parameters);
   }
 
