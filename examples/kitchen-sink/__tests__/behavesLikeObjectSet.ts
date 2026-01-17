@@ -483,10 +483,6 @@ export function behavesLikeObjectSet<
   it("objectUnionsCount (without fromRdfTypes)", async ({ expect }) => {
     expect(
       (await objectSet.noRdfTypeClassUnionsCount()).unsafeCoerce(),
-    ).toStrictEqual(
-      !(objectSet instanceof kitchenSink.$SparqlObjectSet)
-        ? 0
-        : testData.interfaceUnions.length,
-    );
+    ).toStrictEqual(testData.interfaceUnions.length);
   });
 }
