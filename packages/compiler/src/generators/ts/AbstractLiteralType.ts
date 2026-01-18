@@ -2,6 +2,7 @@ import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -88,24 +89,21 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0] & {
-      ignoreLiteralLanguage?: boolean;
-    },
-  ): readonly string[] {
-    const { context, ignoreLiteralLanguage, variables } = parameters;
-
-    const superPatterns = super.sparqlWherePatterns(parameters);
-    if (ignoreLiteralLanguage || context === "subject") {
-      return superPatterns;
-    }
-
-    return superPatterns.concat(
-      `...[${
-        this.languageIn.length > 0
-          ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
-          : `(${variables.preferredLanguages} ?? [])`
-      }]
+  protected preferredLanguagesSparqlWherePatterns({
+    variables,
+  }: {
+    variables: {
+      preferredLanguages: string;
+      valueVariable: string;
+    };
+  }): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `[${
+          this.languageIn.length > 0
+            ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
+            : `(${variables.preferredLanguages} ?? [])`
+        }]
         .filter(languages => languages.length > 0)
         .map(languages =>
           languages.map(language => 
@@ -113,7 +111,7 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
               type: "operation" as const,
               operator: "=",
               args: [
-                { type: "operation" as const, operator: "lang", args: [${variables.object}] },
+                { type: "operation" as const, operator: "lang", args: [${variables.valueVariable}] },
                 dataFactory.literal(language)
               ]
             })
@@ -134,6 +132,8 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
             }, null as sparqljs.Expression | null) as sparqljs.Expression
           })
         )`,
-    );
+        type: "opaque-block" as const,
+      },
+    ];
   }
 }

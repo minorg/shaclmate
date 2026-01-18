@@ -2,9 +2,12 @@ import type { NamedNode } from "@rdfjs/types";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { Sparql } from "./Sparql.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
@@ -54,6 +57,19 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");
     }
     return "number";
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   override jsonZodSchema({
@@ -131,6 +147,81 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
   return true;
 }`,
       ),
+      parameters.features.has("sparql")
+        ? {
+            ...sharedSnippetDeclarations.toLiteral,
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
+              `\
+namespace ${syntheticNamePrefix}NumberFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        }
+      });
+    }
+
+    if (typeof filter.maxExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.maxInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.minExclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+        }
+      });
+    }
+
+    if (typeof filter.minInclusive !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+            ),
+          }
+        : {},
     );
   }
 

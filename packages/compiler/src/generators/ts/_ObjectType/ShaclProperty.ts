@@ -9,6 +9,7 @@ import type {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
+import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -132,7 +133,6 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     }
 
     return Maybe.of({
-      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });
@@ -264,39 +264,61 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     ];
   }
 
-  sparqlConstructTemplateTriples({
+  sparqlConstructTriples({
     variables,
-  }: Parameters<
-    Property<TypeT>["sparqlConstructTemplateTriples"]
-  >[0]): readonly string[] {
-    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    return this.type.sparqlConstructTemplateTriples({
-      allowIgnoreRdfType: true,
-      context: "object",
-      variables: {
-        object: `dataFactory.variable!(${objectString})`,
+  }: Parameters<Property<TypeT>["sparqlConstructTriples"]>[0]): readonly (
+    | Sparql.Triple
+    | string
+  )[] {
+    const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueVariable = `dataFactory.variable!(${valueString})`;
+    return [
+      {
+        object: valueVariable,
         predicate: this.predicate,
-        subject: variables.subject,
-        variablePrefix: objectString,
-      },
-    });
+        subject: variables.focusIdentifier,
+      } as Sparql.Triple | string,
+    ].concat(
+      this.type.sparqlConstructTriples({
+        allowIgnoreRdfType: true,
+        variables: {
+          valueVariable,
+          variablePrefix: valueString,
+        },
+      }),
+    );
   }
 
   sparqlWherePatterns({
     variables,
-  }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]): readonly string[] {
-    const objectString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    return this.type.sparqlWherePatterns({
-      allowIgnoreRdfType: true,
-      context: "object",
-      variables: {
-        object: `dataFactory.variable!(${objectString})`,
-        predicate: this.predicate,
-        preferredLanguages: variables.preferredLanguages,
-        subject: variables.subject,
-        variablePrefix: objectString,
-      },
-    });
+  }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]) {
+    const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueVariable = `dataFactory.variable!(${valueString})`;
+    return {
+      patterns: this.type.sparqlWherePatterns({
+        allowIgnoreRdfType: true,
+        propertyPatterns: [
+          {
+            triples: [
+              {
+                object: valueVariable,
+                predicate: this.predicate,
+                subject: variables.focusIdentifier,
+              },
+            ],
+            type: "bgp",
+          },
+        ],
+        variables: {
+          filter: this.filterProperty.map(
+            ({ name }) => `${variables.filter}?.${name}`,
+          ),
+          preferredLanguages: variables.preferredLanguages,
+          valueVariable,
+          variablePrefix: valueString,
+        },
+      }),
+    };
   }
 
   override toJsonObjectMember(

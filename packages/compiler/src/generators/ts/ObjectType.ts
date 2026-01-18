@@ -20,6 +20,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -500,10 +501,18 @@ export class ObjectType extends AbstractDeclaredType {
         sharedSnippetDeclarations.RdfVocabularies,
       );
     }
-    if (this.features.has("sparql") && this.fromRdfType.isJust()) {
+    if (this.features.has("sparql")) {
+      if (this.fromRdfType.isJust()) {
+        snippetDeclarations = mergeSnippetDeclarations(
+          snippetDeclarations,
+          sparqlInstancesOfPatternSnippetDeclaration,
+        );
+      }
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sparqlInstancesOfPatternSnippetDeclaration,
+        sharedSnippetDeclarations.deduplicateSparqlWherePatterns,
+        sharedSnippetDeclarations.insertSeedSparqlWherePattern,
+        sharedSnippetDeclarations.optimizeSparqlWherePatterns,
       );
     }
     if (
@@ -529,45 +538,46 @@ export class ObjectType extends AbstractDeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<
-      AbstractDeclaredType["sparqlConstructTemplateTriples"]
-    >[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlConstructTemplateTriples(parameters);
-      case "subject":
-        return [
-          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples(${objectInitializer(
-            {
-              ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-              subject: parameters.variables.subject,
-              variablePrefix: parameters.variables.variablePrefix,
-            },
-          )})`,
-        ];
-    }
+  override sparqlConstructTriples({
+    allowIgnoreRdfType,
+    variables,
+  }: Parameters<AbstractDeclaredType["sparqlConstructTriples"]>[0]): readonly (
+    | Sparql.Triple
+    | string
+  )[] {
+    return [
+      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
+        {
+          ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+          subject: variables.valueVariable,
+          variablePrefix: variables.variablePrefix,
+        },
+      )})`,
+    ];
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractDeclaredType["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlWherePatterns(parameters);
-      case "subject":
-        return [
-          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-            {
-              ignoreRdfType: parameters.allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-              preferredLanguages: parameters.variables.preferredLanguages,
-              subject: parameters.variables.subject,
-              variablePrefix: parameters.variables.variablePrefix,
-            },
-          )})`,
-        ];
-    }
+  override sparqlWherePatterns({
+    allowIgnoreRdfType,
+    propertyPatterns,
+    variables,
+  }: Parameters<
+    AbstractDeclaredType["sparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      ...propertyPatterns,
+      {
+        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
+          {
+            filter: variables.filter.extract(),
+            ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+            preferredLanguages: variables.preferredLanguages,
+            subject: variables.valueVariable,
+            variablePrefix: variables.variablePrefix,
+          },
+        )})`,
+        type: "opaque-block",
+      },
+    ];
   }
 
   override toJsonExpression({

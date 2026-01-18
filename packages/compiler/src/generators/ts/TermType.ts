@@ -5,7 +5,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import type { Sparql } from "./Sparql.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
 
@@ -42,6 +43,19 @@ export class TermType<
 
   override get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   @Memoize()
@@ -111,62 +125,9 @@ export class TermType<
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
-      singleEntryRecord(
-        `${syntheticNamePrefix}TermFilter`,
-        `\
-interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly string[];
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type?: string; readonly value?: string; }[];
-  readonly languageIn?: readonly string[];
-  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-  readonly valueIn?: readonly string[];
-}`,
-      ),
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterTerm`,
-        `\
-function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
-  if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
-    if (typeof in_.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== in_.datatype)) {
-      return false;
-    }
-
-    if (typeof in_.language !== "undefined" && (value.termType !== "Literal" || value.language !== in_.language)) {
-      return false;
-    }
-
-    if (typeof in_.type !== "undefined" && value.termType !== in_.type) {
-      return false;
-    }
-
-    if (typeof in_.value !== "undefined" && value.value !== in_.value) {
-      return false;
-    }
-
-    return true;
-  })) {
-    return false;
-  }
-
-  if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value))) {
-    return false;
-  }
-
-  if (typeof filter.languageIn !== "undefined" && (value.termType !== "Literal" || !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
-    return false;
-  }
-
-  if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType)) {
-    return false;
-  }
-
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
-    return false;
-  }
-
-  return true;
-}`,
-      ),
+      sharedSnippetDeclarations.filterTerm,
+      sharedSnippetDeclarations.TermFilter,
+      sharedSnippetDeclarations.TermFilter_sparqlWherePatterns,
     );
   }
 

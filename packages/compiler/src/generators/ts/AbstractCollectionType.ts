@@ -78,34 +78,31 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 }`,
   ),
 
-  ArrayFilter: singleEntryRecord(
-    `${syntheticNamePrefix}ArrayFilter`,
+  CollectionFilter: singleEntryRecord(
+    `${syntheticNamePrefix}CollectionFilter`,
     `\
-interface ${syntheticNamePrefix}ArrayFilter<ItemFilterT> {
-  readonly items?: ItemFilterT;
-  readonly maxCount?: number;
-  readonly minCount?: number;
-}`,
+type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
+  readonly ${syntheticNamePrefix}maxCount?: number;
+  readonly ${syntheticNamePrefix}minCount?: number;
+};`,
   ),
 
   filterArray: singleEntryRecord(
     `${syntheticNamePrefix}filterArray`,
     `\
 function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${syntheticNamePrefix}ArrayFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
-    if (typeof filter.items !== "undefined") {
-      for (const value of values) {
-        if (!filterItem(filter.items, value)) {
-          return false;
-        }
+  return (filter: ${syntheticNamePrefix}CollectionFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
+    for (const value of values) {
+      if (!filterItem(filter, value)) {
+        return false;
       }
     }
 
-    if (typeof filter.maxCount !== "undefined" && values.length > filter.maxCount) {
+    if (typeof filter.${syntheticNamePrefix}maxCount !== "undefined" && values.length > filter.${syntheticNamePrefix}maxCount) {
       return false;
     }
 
-    if (typeof filter.minCount !== "undefined" && values.length < filter.minCount) {
+    if (typeof filter.${syntheticNamePrefix}minCount !== "undefined" && values.length < filter.${syntheticNamePrefix}minCount) {
       return false;
     }
 
@@ -264,7 +261,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   get filterType(): Type.CompositeFilterTypeReference {
     return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}ArrayFilter<${this.itemType.filterType.name}>`,
+      `${syntheticNamePrefix}CollectionFilter<${this.itemType.filterType.name}>`,
     );
   }
 
@@ -419,7 +416,7 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
 
     snippetDeclarations = mergeSnippetDeclarations(
       snippetDeclarations,
-      allSnippetDeclarations.ArrayFilter,
+      allSnippetDeclarations.CollectionFilter,
       allSnippetDeclarations.filterArray,
     );
 

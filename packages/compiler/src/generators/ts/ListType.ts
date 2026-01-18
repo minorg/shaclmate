@@ -8,6 +8,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 export class ListType<
@@ -61,193 +62,200 @@ export class ListType<
     ].join(".");
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlConstructTemplateTriples(parameters);
-      case "subject": {
-        const { variables } = parameters;
-        const triples: string[] = [];
-        const listVariable = variables.subject;
-        const variable = (suffix: string) =>
-          `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
-        const variablePrefix = (suffix: string) =>
-          `\`\${${variables.variablePrefix}}${suffix}\``;
+  override sparqlConstructTriples({
+    variables,
+  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly (
+    | Sparql.Triple
+    | string
+  )[] {
+    const triples: (Sparql.Triple | string)[] = [];
+    const listVariable = variables.valueVariable;
+    const variable = (suffix: string) =>
+      `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
+    const variablePrefix = (suffix: string) =>
+      `\`\${${variables.variablePrefix}}${suffix}\``;
 
+    {
+      // ?list rdf:first ?item0
+      const item0Variable = variable("Item0");
+      triples.push(
         {
-          // ?list rdf:first ?item0
-          const item0Variable = variable("Item0");
-          triples.push(
-            objectInitializer({
-              subject: listVariable,
-              predicate: rdfjsTermExpression(rdf.first),
-              object: item0Variable,
-            }),
-            ...this.itemType.sparqlConstructTemplateTriples({
-              allowIgnoreRdfType: true,
-              context: "subject",
-              variables: {
-                subject: item0Variable,
-                variablePrefix: variablePrefix("Item0"),
-              },
-            }),
-          );
-        }
-
-        {
-          // ?list rdf:rest ?rest0
-          const rest0Variable = variable("Rest0");
-          triples.push(
-            objectInitializer({
-              subject: listVariable,
-              predicate: rdfjsTermExpression(rdf.rest),
-              object: rest0Variable,
-            }),
-          );
-        }
-
-        // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
-        const restNVariable = variable("RestN");
-
-        {
-          // ?rest rdf:first ?itemN
-          const itemNVariable = variable("ItemN");
-          triples.push(
-            objectInitializer({
-              subject: restNVariable,
-              predicate: rdfjsTermExpression(rdf.first),
-              object: itemNVariable,
-            }),
-            ...this.itemType.sparqlConstructTemplateTriples({
-              allowIgnoreRdfType: true,
-              context: "subject",
-              variables: {
-                subject: itemNVariable,
-                variablePrefix: variablePrefix("ItemN"),
-              },
-            }),
-          );
-        }
-
-        // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-        triples.push(
-          objectInitializer({
-            subject: restNVariable,
-            predicate: rdfjsTermExpression(rdf.rest),
-            object: variable("RestNBasic"),
-          }),
-        );
-
-        return triples;
-      }
+          subject: listVariable,
+          predicate: rdfjsTermExpression(rdf.first),
+          object: item0Variable,
+        },
+        ...this.itemType.sparqlConstructTriples({
+          allowIgnoreRdfType: true,
+          variables: {
+            valueVariable: item0Variable,
+            variablePrefix: variablePrefix("Item0"),
+          },
+        }),
+      );
     }
+
+    {
+      // ?list rdf:rest ?rest0
+      const rest0Variable = variable("Rest0");
+      triples.push({
+        subject: listVariable,
+        predicate: rdfjsTermExpression(rdf.rest),
+        object: rest0Variable,
+      });
+    }
+
+    // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
+    const restNVariable = variable("RestN");
+
+    {
+      // ?rest rdf:first ?itemN
+      const itemNVariable = variable("ItemN");
+      triples.push(
+        {
+          subject: restNVariable,
+          predicate: rdfjsTermExpression(rdf.first),
+          object: itemNVariable,
+        },
+        ...this.itemType.sparqlConstructTriples({
+          allowIgnoreRdfType: true,
+          variables: {
+            valueVariable: itemNVariable,
+            variablePrefix: variablePrefix("ItemN"),
+          },
+        }),
+      );
+    }
+
+    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
+    triples.push({
+      subject: restNVariable,
+      predicate: rdfjsTermExpression(rdf.rest),
+      object: variable("RestNBasic"),
+    });
+
+    return triples;
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
+  override sparqlWherePatterns({
+    propertyPatterns,
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlWherePatterns(parameters);
-      case "subject": {
-        const { variables } = parameters;
-        const patterns: string[] = [];
-        const listVariable = variables.subject;
-        const variable = (suffix: string) =>
-          `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
-        const variablePrefix = (suffix: string) =>
-          `\`\${${variables.variablePrefix}}${suffix}\``;
+    const patterns: Sparql.Pattern[] = [];
+    const listVariable = variables.valueVariable;
+    const variable = (suffix: string) =>
+      `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
+    const variablePrefix = (suffix: string) =>
+      `\`\${${variables.variablePrefix}}${suffix}\``;
 
+    {
+      // ?list rdf:first ?item0
+      const item0Variable = variable("Item0");
+      patterns.push(
         {
-          // ?list rdf:first ?item0
-          const item0Variable = variable("Item0");
-          patterns.push(
-            `{ type: "bgp", triples: [${objectInitializer({
+          type: "bgp",
+          triples: [
+            {
               subject: listVariable,
               predicate: rdfjsTermExpression(rdf.first),
               object: item0Variable,
-            })}] }`,
-            ...this.itemType.sparqlWherePatterns({
-              allowIgnoreRdfType: true,
-              context: "subject",
-              variables: {
-                preferredLanguages: parameters.variables.preferredLanguages,
-                subject: item0Variable,
-                variablePrefix: variablePrefix("Item0"),
-              },
-            }),
-          );
-        }
+            },
+          ],
+        },
+        ...this.itemType.sparqlWherePatterns({
+          allowIgnoreRdfType: true,
+          propertyPatterns: [],
+          variables: {
+            filter: variables.filter,
+            preferredLanguages: variables.preferredLanguages,
+            valueVariable: item0Variable,
+            variablePrefix: variablePrefix("Item0"),
+          },
+        }),
+      );
+    }
 
-        {
-          // ?list rdf:rest ?rest0
-          const rest0Variable = variable("Rest0");
-          patterns.push(
-            `{ type: "bgp", triples: [${objectInitializer({
-              subject: listVariable,
-              predicate: rdfjsTermExpression(rdf.rest),
-              object: rest0Variable,
-            })}] }`,
-          );
-        }
-
-        const optionalPatterns: string[] = [];
-
-        const restNVariable = variable("RestN");
-        // ?list rdf:rest+ ?restN
-        optionalPatterns.push(
-          `{ type: "bgp", triples: [${objectInitializer({
+    {
+      // ?list rdf:rest ?rest0
+      const rest0Variable = variable("Rest0");
+      patterns.push({
+        type: "bgp",
+        triples: [
+          {
             subject: listVariable,
-            predicate: `{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }`,
-            object: restNVariable,
-          })}] }`,
-        );
+            predicate: rdfjsTermExpression(rdf.rest),
+            object: rest0Variable,
+          },
+        ],
+      });
+    }
 
+    const optionalPatterns: Sparql.Pattern[] = [];
+
+    const restNVariable = variable("RestN");
+    // ?list rdf:rest+ ?restN
+    optionalPatterns.push({
+      type: "bgp",
+      triples: [
         {
-          // ?rest rdf:first ?itemN
-          const itemNVariable = variable("ItemN");
-          optionalPatterns.push(
-            `{ type: "bgp", triples: [${objectInitializer({
+          subject: listVariable,
+          predicate: `{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }`,
+          object: restNVariable,
+        },
+      ],
+    });
+
+    {
+      // ?rest rdf:first ?itemN
+      const itemNVariable = variable("ItemN");
+      optionalPatterns.push(
+        {
+          type: "bgp",
+          triples: [
+            {
               subject: restNVariable,
               predicate: rdfjsTermExpression(rdf.first),
               object: itemNVariable,
-            })}] }`,
-            ...this.itemType.sparqlWherePatterns({
-              allowIgnoreRdfType: true,
-              context: "subject",
-              variables: {
-                preferredLanguages: parameters.variables.preferredLanguages,
-                subject: itemNVariable,
-                variablePrefix: variablePrefix("ItemN"),
-              },
-            }),
-          );
-        }
-
-        // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-        optionalPatterns.push(
-          `{ type: "bgp", triples: [${objectInitializer({
-            subject: restNVariable,
-            predicate: rdfjsTermExpression(rdf.rest),
-            object: variable("RestNBasic"),
-          })}] }`,
-        );
-
-        patterns.push(
-          `{ type: "optional", patterns: [${optionalPatterns.join(", ")}] }`,
-        );
-
-        // Having an optional around everything handles the rdf:nil case
-        return [`{ type: "optional", patterns: [${patterns.join(", ")}] }`];
-      }
+            },
+          ],
+        },
+        ...this.itemType.sparqlWherePatterns({
+          allowIgnoreRdfType: true,
+          propertyPatterns: [],
+          variables: {
+            filter: variables.filter,
+            preferredLanguages: variables.preferredLanguages,
+            valueVariable: itemNVariable,
+            variablePrefix: variablePrefix("ItemN"),
+          },
+        }),
+      );
     }
+
+    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
+    optionalPatterns.push({
+      type: "bgp",
+      triples: [
+        {
+          subject: restNVariable,
+          predicate: rdfjsTermExpression(rdf.rest),
+          object: variable("RestNBasic"),
+        },
+      ],
+    });
+
+    patterns.push({ type: "optional", patterns: optionalPatterns });
+
+    // Having an optional around everything handles the rdf:nil case
+    const result: readonly Sparql.Pattern[] = [{ patterns, type: "optional" }];
+    if (propertyPatterns.length > 0) {
+      return [...propertyPatterns, ...result];
+    }
+    return result;
   }
 
   override toRdfExpression({

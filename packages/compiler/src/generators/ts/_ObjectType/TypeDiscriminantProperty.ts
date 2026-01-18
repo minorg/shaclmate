@@ -9,6 +9,7 @@ import type {
 import { Memoize } from "typescript-memoize";
 
 import type { Import } from "../Import.js";
+import type { Sparql } from "../Sparql.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
@@ -88,7 +89,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override hashStatements({
     variables,
   }: Parameters<
-    Property<TypeDiscriminantProperty>["hashStatements"]
+    Property<TypeDiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
   }
@@ -155,12 +156,12 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
     return {};
   }
 
-  override sparqlConstructTemplateTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
     return [];
   }
 
-  override sparqlWherePatterns(): readonly string[] {
-    return [];
+  override sparqlWherePatterns() {
+    return { patterns: [] };
   }
 
   override toJsonObjectMember({
@@ -178,6 +179,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
 
 export namespace TypeDiscriminantProperty {
   export class Type {
+    readonly filterFunction = "nonextant";
     readonly mutable: boolean;
     readonly descendantValues: readonly string[];
     readonly ownValues: readonly string[];

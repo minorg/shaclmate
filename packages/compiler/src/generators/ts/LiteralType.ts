@@ -1,6 +1,9 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { Sparql } from "./Sparql.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -13,6 +16,20 @@ export class LiteralType extends AbstractLiteralType {
 
   get graphqlType(): Type.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
+      {
+        patterns: `${syntheticNamePrefix}LiteralFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   override fromJsonExpression({
@@ -96,49 +113,38 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
-    if (typeof in_.datatype !== "undefined" && value.datatype.value !== in_.datatype) {
-      return false;
-    }
-
-    if (typeof in_.language !== "undefined" && value.language !== in_.language) {
-      return false;
-    }
-
-    if (typeof in_.value !== "undefined" && value.value !== in_.value) {
-      return false;
-    }
-
-    return true;
-  })) {
-    return false;
-  }
-
-  if (typeof filter.datatypeIn !== "undefined" && !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value)) {
-    return false;
-  }
-
-  if (typeof filter.languageIn !== "undefined" && !filter.languageIn.some(inLanguage => inLanguage === value.language)) {
-    return false;
-  }
-
-  if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
-    return false;
-  }
-
-  return true;
+  return ${syntheticNamePrefix}filterTerm({
+    ...filter,
+    in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
+  }, value);
 }`,
       ),
+      sharedSnippetDeclarations.filterTerm,
       singleEntryRecord(
         `${syntheticNamePrefix}LiteralFilter`,
         `\
-interface ${syntheticNamePrefix}LiteralFilter {
-  readonly datatypeIn?: readonly string[];
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value?: string; }[];
-  readonly languageIn?: readonly string[];
-  readonly valueIn?: readonly string[];
+interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix}TermFilter, "in" | "type"> {
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value: string; }[];
 }`,
       ),
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}LiteralFilter.sparqlWherePatterns`,
+            `\
+namespace ${syntheticNamePrefix}LiteralFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable) {
+    return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter ? {
+      ...filter,
+      in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
+    } : undefined, value);
+  }
+}`,
+          )
+        : {},
+      sharedSnippetDeclarations.TermFilter,
+      parameters.features.has("sparql")
+        ? sharedSnippetDeclarations.TermFilter_sparqlWherePatterns
+        : {},
     );
   }
 

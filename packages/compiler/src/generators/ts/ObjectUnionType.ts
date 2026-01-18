@@ -15,6 +15,7 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -288,41 +289,37 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlConstructTemplateTriples(parameters);
-      case "subject":
-        return [
-          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples(${objectInitializer(
-            {
-              subject: parameters.variables.subject,
-              variablePrefix: parameters.variables.variablePrefix,
-            },
-          )})`,
-        ];
-    }
+  override sparqlConstructTriples({
+    variables,
+  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly string[] {
+    return [
+      `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
+        {
+          subject: variables.valueVariable,
+          variablePrefix: variables.variablePrefix,
+        },
+      )})`,
+    ];
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlWherePatterns(parameters);
-      case "subject":
-        return [
-          `...${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-            {
-              preferredLanguages: parameters.variables.preferredLanguages,
-              subject: parameters.variables.subject,
-              variablePrefix: parameters.variables.variablePrefix,
-            },
-          )})`,
-        ];
-    }
+  override sparqlWherePatterns({
+    propertyPatterns,
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+    return [
+      ...propertyPatterns,
+      {
+        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
+          {
+            filter: variables.filter.extract(),
+            preferredLanguages: variables.preferredLanguages,
+            subject: variables.valueVariable,
+            variablePrefix: variables.variablePrefix,
+          },
+        )})`,
+        type: "opaque-block",
+      },
+    ];
   }
 
   override toJsonExpression({

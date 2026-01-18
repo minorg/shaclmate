@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 class MemberType {
@@ -132,10 +132,10 @@ class MemberType {
     return this.delegate.snippetDeclarations(parameters);
   }
 
-  sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
+  sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
   ) {
-    return this.delegate.sparqlConstructTemplateTriples(parameters);
+    return this.delegate.sparqlConstructTriples(parameters);
   }
 
   sparqlWherePatterns(parameters: Parameters<Type["sparqlWherePatterns"]>[0]) {
@@ -522,47 +522,40 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return snippetDeclarations;
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
-  ): readonly string[] {
-    return this.memberTypes.reduce(
-      (array, memberType) =>
-        array.concat(
-          memberType.sparqlConstructTemplateTriples({
-            ...parameters,
-            allowIgnoreRdfType: false,
-          }),
-        ),
-      [] as string[],
+  override sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
+  ): readonly (Sparql.Triple | string)[] {
+    return this.memberTypes.flatMap((memberType) =>
+      memberType.sparqlConstructTriples({
+        ...parameters,
+        allowIgnoreRdfType: false,
+      }),
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    let haveEmptyGroup = false; // Only need one empty group
+  override sparqlWherePatterns({
+    allowIgnoreRdfType: _allowIgnoreRdfType,
+    variables,
+    ...otherParameters
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     return [
-      `{ patterns: [${this.memberTypes
-        .flatMap((memberType) => {
-          const groupPatterns = memberType.sparqlWherePatterns({
-            ...parameters,
+      {
+        patterns: this.memberTypes.map((memberType) => ({
+          patterns: memberType.sparqlWherePatterns({
+            ...otherParameters,
             allowIgnoreRdfType: false,
-          });
-          if (groupPatterns.length === 0) {
-            if (haveEmptyGroup) {
-              return [];
-            }
-            haveEmptyGroup = true;
-            return [objectInitializer({ patterns: "[]", type: '"group"' })];
-          }
-          return [
-            objectInitializer({
-              patterns: `[${groupPatterns.join(", ")}]`,
-              type: '"group"',
-            }),
-          ];
-        })
-        .join(", ")}], type: "union" }`,
+            variables: {
+              ...variables,
+              filter: variables.filter.map(
+                (filterVariable) =>
+                  `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
+              ),
+            },
+          }),
+          type: "group" as const,
+        })),
+        type: "union" as const,
+      },
     ];
   }
 

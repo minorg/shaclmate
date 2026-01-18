@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/TsFeature.js";
 import type { Import } from "./Import.js";
+import type { Sparql } from "./Sparql.js";
 
 export interface Type {
   /**
@@ -38,6 +39,18 @@ export interface Type {
   readonly filterType:
     | Type.CompositeFilterType
     | Type.CompositeFilterTypeReference;
+
+  /**
+   * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
+   */
+  readonly graphqlArgs: Maybe<
+    Record<
+      string,
+      {
+        type: string;
+      }
+    >
+  >;
 
   /**
    * GraphQL-compatible version of the type.
@@ -109,18 +122,6 @@ export interface Type {
   }): string;
 
   /**
-   * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
-   */
-  readonly graphqlArgs: Maybe<
-    Record<
-      string,
-      {
-        type: string;
-      }
-    >
-  >;
-
-  /**
    * An expression that resolves a value of this type in the GraphQL server.
    */
   graphqlResolveExpression(parameters: {
@@ -187,66 +188,42 @@ export interface Type {
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * This method is called in two contexts:
-   * (1) When an instance of the type is an "object" of a property.
-   *     This method should return a BGP (variables.subject, variables.predicate, variables.object) and recursively call itself with the variables.object as a "subject" context.
-   * (2) When an instance of the type is a "subject".
-   *     For example, ListType calls this method to with the item variable as a subject in order to chain additional patterns on items. Term types with no additional patterns should return an empty array.
+   * Parameters:
+   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *   variables: runtime variables
+   *     - valueVariable: rdfjs.Variable of the value of this type, usually the object of the basic triple
+   *     - variablePrefix: prefix to use for variables
    */
-  sparqlConstructTemplateTriples({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }:
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "object";
-        variables: {
-          object: string;
-          predicate: string;
-          subject: string;
-          variablePrefix: string;
-        };
-      }
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "subject";
-        variables: {
-          subject: string;
-          variablePrefix: string;
-        };
-      }): readonly string[];
+  sparqlConstructTriples(parameters: {
+    allowIgnoreRdfType: boolean;
+    variables: {
+      valueVariable: string;
+      variablePrefix: string;
+    };
+  }): readonly (Sparql.Triple | string)[];
 
   /**
-   * An array of SPARQL.js where patterns for a value of this type, as strings (so they can incorporate runtime calls).
+   * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
    *
-   * See note in sparqlConstructTemplateTriples re: how this method is used.
+   * Parameters:
+   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
+   *   propertyPattern: if Just, should be included in the patterns for this type
+   *   variables: (at runtime)
+   *     - filter: if Just, an instance of filterType or undefined
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - valueVariable: rdfjs.Variable of the value of this type
+   *     - variablePrefix: prefix to use for new variables
    */
-  sparqlWherePatterns({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }:
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "object";
-        variables: {
-          object: string;
-          predicate: string;
-          preferredLanguages: string;
-          subject: string;
-          variablePrefix: string;
-        };
-      }
-    | {
-        allowIgnoreRdfType: boolean;
-        context: "subject";
-        variables: {
-          preferredLanguages: string;
-          subject: string;
-          variablePrefix: string;
-        };
-      }): readonly string[];
+  sparqlWherePatterns(parameters: {
+    allowIgnoreRdfType: boolean;
+    propertyPatterns: readonly Sparql.Pattern[];
+    variables: {
+      filter: Maybe<string>;
+      preferredLanguages: string;
+      valueVariable: string;
+      variablePrefix: string;
+    };
+  }): readonly Sparql.Pattern[];
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence

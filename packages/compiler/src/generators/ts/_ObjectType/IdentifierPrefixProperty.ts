@@ -11,6 +11,7 @@ import {
 import { Memoize } from "typescript-memoize";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
+import type { Sparql } from "../Sparql.js";
 import type { StringType } from "../StringType.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -136,12 +137,12 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     return {};
   }
 
-  override sparqlConstructTemplateTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
     return [];
   }
 
-  override sparqlWherePatterns(): readonly string[] {
-    return [];
+  override sparqlWherePatterns() {
+    return { patterns: [] };
   }
 
   override toJsonObjectMember(): Maybe<string> {

@@ -111,8 +111,8 @@ export namespace ExternClass {
   export const $jsonUiSchema =
     AbstractBaseClassForExternClassStatic.$jsonUiSchema;
 
-  export const $sparqlConstructTemplateTriples =
-    AbstractBaseClassForExternClassStatic.$sparqlConstructTemplateTriples;
+  export const $sparqlConstructTriples =
+    AbstractBaseClassForExternClassStatic.$sparqlConstructTriples;
   export const $sparqlWherePatterns =
     AbstractBaseClassForExternClassStatic.$sparqlWherePatterns;
 }

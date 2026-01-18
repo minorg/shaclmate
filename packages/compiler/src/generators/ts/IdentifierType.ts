@@ -10,6 +10,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -116,6 +117,19 @@ export class IdentifierType extends AbstractTermType<
   @Memoize()
   get isNamedNodeKind(): boolean {
     return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${this.filterType.name}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   @Memoize()
@@ -266,6 +280,17 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
   return true;
 }`,
         ),
+        parameters.features.has("sparql")
+          ? singleEntryRecord(
+              `${syntheticNamePrefix}BlankNodeFilter.sparqlWherePatterns`,
+              `\
+namespace ${syntheticNamePrefix}BlankNodeFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(_filter: ${syntheticNamePrefix}BlankNodeFilter | undefined, _value: rdfjs.Variable) {
+    return [];
+  }
+}`,
+            )
+          : {},
       );
     } else if (this.isNamedNodeKind) {
       snippetDeclarations = mergeSnippetDeclarations(
@@ -288,6 +313,34 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
   readonly in?: readonly string[];
 }`,
         ),
+        parameters.features.has("sparql")
+          ? singleEntryRecord(
+              `${syntheticNamePrefix}NamedNodeFilter.sparqlWherePatterns`,
+              `\
+namespace ${syntheticNamePrefix}NamedNodeFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NamedNodeFilter | undefined, value: rdfjs.Variable) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map(inValue => dataFactory.namedNode(inValue))],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+            )
+          : {},
       );
     } else {
       snippetDeclarations = mergeSnippetDeclarations(
@@ -315,6 +368,45 @@ interface ${syntheticNamePrefix}IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }`,
         ),
+        parameters.features.has("sparql")
+          ? singleEntryRecord(
+              `${syntheticNamePrefix}IdentifierFilter.sparqlWherePatterns`,
+              `\
+namespace ${syntheticNamePrefix}IdentifierFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}IdentifierFilter | undefined, value: rdfjs.Variable) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map(inValue => dataFactory.namedNode(inValue))],
+        }
+      });
+    }
+
+    if (typeof filter.type !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
+          args: [value],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+            )
+          : {},
       );
     }
 

@@ -1,13 +1,15 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
-import { xsd } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { Sparql } from "./Sparql.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -66,25 +68,26 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            `dataFactory.literal(${value}.toString(), ${rdfjsTermExpression(xsd.boolean)})`,
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
           sourceTypeName: "boolean",
         },
         {
           conversionExpression: (value) =>
-            `dataFactory.literal(${value}.toISOString(), ${rdfjsTermExpression(xsd.dateTime)})`,
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) =>
             `typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: "Date",
         },
         {
           conversionExpression: (value) =>
-            `dataFactory.literal(${value}.toString(), ${rdfjsTermExpression(xsd.decimal)})`,
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
           sourceTypeName: "number",
         },
         {
-          conversionExpression: (value) => `dataFactory.literal(${value})`,
+          conversionExpression: (value) =>
+            `${syntheticNamePrefix}toLiteral(${value})`,
           sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
           sourceTypeName: "string",
         },
@@ -124,6 +127,24 @@ export abstract class AbstractTermType<
       .map((nodeKind) => `rdfjs.${nodeKind}`)
       .join(" | ")})`;
   }
+
+  /**
+   * An array of SPARQL.js WHERE patterns for filtering values of this type.
+   *
+   * Parameters:
+   *   variables: (at runtime)
+   *     - filter: an instance of filterType
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - valueVariable: rdfjs.Variable of the value of this type
+   *     - variablePrefix: prefix to use for new variables
+   */
+  protected abstract filterSparqlWherePatterns(parameters: {
+    variables: {
+      preferredLanguages: string;
+      filter: string;
+      valueVariable: string;
+    };
+  }): readonly Sparql.Pattern[];
 
   override fromRdfExpression(
     parameters: Parameters<Type["fromRdfExpression"]>[0],
@@ -225,10 +246,11 @@ export abstract class AbstractTermType<
   }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
     Record<string, string>
   > {
-    if (features.has("equals")) {
-      return singleEntryRecord(
-        `${syntheticNamePrefix}booleanEquals`,
-        `\
+    return mergeSnippetDeclarations(
+      features.has("equals")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}booleanEquals`,
+            `\
   /**
    * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
    */
@@ -242,27 +264,43 @@ export abstract class AbstractTermType<
       left.equals(right),
     );
   }`,
-      );
-    }
-    return {};
+          )
+        : {},
+      sharedSnippetDeclarations.toLiteral,
+    );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return this.defaultValue
-          .map(
-            () =>
-              [
-                `{ patterns: [${super.sparqlWherePatterns(parameters).join(", ")}], type: "optional" }`,
-              ] as readonly string[],
-          )
-          .orDefault(super.sparqlWherePatterns(parameters));
-      case "subject":
-        return super.sparqlWherePatterns(parameters);
-    }
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
+    return [];
+  }
+
+  override sparqlWherePatterns({
+    propertyPatterns,
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+    const requiredPatterns: Sparql.Pattern[] = [
+      ...propertyPatterns,
+      ...variables.filter
+        .map((filterVariable) =>
+          this.filterSparqlWherePatterns({
+            variables: {
+              preferredLanguages: variables.preferredLanguages,
+              filter: filterVariable,
+              valueVariable: variables.valueVariable,
+            },
+          }),
+        )
+        .orDefault([]),
+    ];
+
+    return this.defaultValue
+      .map(
+        () =>
+          [
+            { patterns: requiredPatterns, type: "optional" },
+          ] as Sparql.Pattern[],
+      )
+      .orDefault(requiredPatterns);
   }
 
   override toRdfExpression({

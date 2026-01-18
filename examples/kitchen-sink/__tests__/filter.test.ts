@@ -20,14 +20,14 @@ describe("filter", () => {
     it("value", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { booleanTermProperty: { item: { value: true } } },
+          { booleanTermProperty: { value: true } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { booleanTermProperty: { item: { value: false } } },
+          { booleanTermProperty: { value: false } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -58,7 +58,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             dateTermProperty: {
-              item: { in: [value, new Date(value.getTime() + 1)] },
+              in: [value, new Date(value.getTime() + 1)],
             },
           },
           instance,
@@ -69,7 +69,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             dateTermProperty: {
-              item: { in: [new Date(value.getTime() + 1)] },
+              in: [new Date(value.getTime() + 1)],
             },
           },
           instance,
@@ -82,7 +82,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             dateTermProperty: {
-              item: { maxExclusive: new Date(value.getTime() + 1) },
+              maxExclusive: new Date(value.getTime() + 1),
             },
           },
           instance,
@@ -91,7 +91,7 @@ describe("filter", () => {
 
       expect(
         TermPropertiesClass.$filter(
-          { dateTermProperty: { item: { maxExclusive: value } } },
+          { dateTermProperty: { maxExclusive: value } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -100,7 +100,7 @@ describe("filter", () => {
     it("maxInclusive", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { dateTermProperty: { item: { maxInclusive: value } } },
+          { dateTermProperty: { maxInclusive: value } },
           instance,
         ),
       ).toStrictEqual(true);
@@ -109,7 +109,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             dateTermProperty: {
-              item: { maxInclusive: new Date(value.getTime() - 1) },
+              maxInclusive: new Date(value.getTime() - 1),
             },
           },
           instance,
@@ -122,7 +122,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             dateTermProperty: {
-              item: { minExclusive: new Date(value.getTime() - 1) },
+              minExclusive: new Date(value.getTime() - 1),
             },
           },
           instance,
@@ -131,7 +131,7 @@ describe("filter", () => {
 
       expect(
         TermPropertiesClass.$filter(
-          { dateTermProperty: { item: { minExclusive: value } } },
+          { dateTermProperty: { minExclusive: value } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -140,7 +140,7 @@ describe("filter", () => {
     it("minInclusive", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { dateTermProperty: { item: { minInclusive: value } } },
+          { dateTermProperty: { minInclusive: value } },
           instance,
         ),
       ).toStrictEqual(true);
@@ -149,7 +149,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             dateTermProperty: {
-              item: { minInclusive: new Date(value.getTime() + 1) },
+              minInclusive: new Date(value.getTime() + 1),
             },
           },
           instance,
@@ -213,9 +213,7 @@ describe("filter", () => {
       expect(
         LazyPropertiesClass.$filter(
           {
-            optionalLazyToResolvedClassProperty: {
-              null: false,
-            },
+            optionalLazyToResolvedClassProperty: {},
           },
           instance,
         ),
@@ -245,7 +243,7 @@ describe("filter", () => {
         LazyPropertiesClass.$filter(
           {
             setLazyToResolvedClassProperty: {
-              minCount: 1,
+              $minCount: 1,
             },
           },
           instance,
@@ -262,12 +260,10 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: {
-                datatypeIn: [
-                  value.datatype.value.concat("x"),
-                  value.datatype.value,
-                ],
-              },
+              datatypeIn: [
+                value.datatype.value.concat("x"),
+                value.datatype.value,
+              ],
             },
           },
           instance,
@@ -278,7 +274,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { datatypeIn: [value.datatype.value.concat("x")] },
+              datatypeIn: [value.datatype.value.concat("x")],
             },
           },
           instance,
@@ -293,14 +289,12 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: {
-                in: [
-                  {
-                    datatype: xsd.string.value,
-                    value: value.value,
-                  },
-                ],
-              },
+              in: [
+                {
+                  datatype: xsd.string.value,
+                  value: value.value,
+                },
+              ],
             },
           },
           instance,
@@ -311,14 +305,12 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: {
-                in: [
-                  {
-                    datatype: xsd.integer.value,
-                    value: value.value,
-                  },
-                ],
-              },
+              in: [
+                {
+                  datatype: xsd.integer.value,
+                  value: value.value,
+                },
+              ],
             },
           },
           instance,
@@ -333,9 +325,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: {
-                languageIn: [value.language.concat("x"), value.language],
-              },
+              languageIn: [value.language.concat("x"), value.language],
             },
           },
           instance,
@@ -346,33 +336,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              item: { languageIn: [value.language.concat("x")] },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
-
-    it("valueIn", ({ expect }) => {
-      const value = DataFactory.literal("test");
-      const instance = new TermPropertiesClass({ literalTermProperty: value });
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            literalTermProperty: {
-              item: { valueIn: [value.value.concat("x"), value.value] },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            literalTermProperty: {
-              item: { valueIn: [value.value.concat("x")] },
+              languageIn: [value.language.concat("x")],
             },
           },
           instance,
@@ -390,14 +354,14 @@ describe("filter", () => {
     it("in", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { iriTermProperty: { item: { in: [value.concat("x"), value] } } },
+          { iriTermProperty: { in: [value.concat("x"), value] } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { iriTermProperty: { item: { in: [value.concat("x")] } } },
+          { iriTermProperty: { in: [value.concat("x")] } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -411,14 +375,14 @@ describe("filter", () => {
     it("in", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { in: [value - 1, value] } } },
+          { numberTermProperty: { in: [value - 1, value] } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { in: [value - 1] } } },
+          { numberTermProperty: { in: [value - 1] } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -427,14 +391,14 @@ describe("filter", () => {
     it("maxExclusive", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { maxExclusive: value + 1 } } },
+          { numberTermProperty: { maxExclusive: value + 1 } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { maxExclusive: value } } },
+          { numberTermProperty: { maxExclusive: value } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -443,14 +407,14 @@ describe("filter", () => {
     it("maxInclusive", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { maxInclusive: value } } },
+          { numberTermProperty: { maxInclusive: value } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { maxInclusive: value - 1 } } },
+          { numberTermProperty: { maxInclusive: value - 1 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -459,14 +423,14 @@ describe("filter", () => {
     it("minExclusive", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { minExclusive: value - 1 } } },
+          { numberTermProperty: { minExclusive: value - 1 } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { minExclusive: value } } },
+          { numberTermProperty: { minExclusive: value } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -475,14 +439,14 @@ describe("filter", () => {
     it("minInclusive", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { minInclusive: value } } },
+          { numberTermProperty: { minInclusive: value } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { numberTermProperty: { item: { minInclusive: value + 1 } } },
+          { numberTermProperty: { minInclusive: value + 1 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -650,47 +614,29 @@ describe("filter", () => {
 
     it("item", ({ expect }) => {
       expect(
-        TermPropertiesClass.$filter(
-          { booleanTermProperty: { item: {} } },
-          instance,
-        ),
+        TermPropertiesClass.$filter({ booleanTermProperty: {} }, instance),
       ).toStrictEqual(true);
 
       expect(
-        TermPropertiesClass.$filter(
-          { numberTermProperty: { item: {} } },
-          instance,
-        ),
+        TermPropertiesClass.$filter({ numberTermProperty: {} }, instance),
       ).toStrictEqual(false);
     });
 
     it("null", ({ expect }) => {
       expect(
-        TermPropertiesClass.$filter(
-          { booleanTermProperty: { null: false } },
-          instance,
-        ),
+        TermPropertiesClass.$filter({ booleanTermProperty: {} }, instance),
       ).toStrictEqual(true);
 
       expect(
-        TermPropertiesClass.$filter(
-          { numberTermProperty: { null: true } },
-          instance,
-        ),
+        TermPropertiesClass.$filter({ numberTermProperty: null }, instance),
       ).toStrictEqual(true);
 
       expect(
-        TermPropertiesClass.$filter(
-          { booleanTermProperty: { null: true } },
-          instance,
-        ),
+        TermPropertiesClass.$filter({ booleanTermProperty: null }, instance),
       ).toStrictEqual(false);
 
       expect(
-        TermPropertiesClass.$filter(
-          { numberTermProperty: { null: false } },
-          instance,
-        ),
+        TermPropertiesClass.$filter({ numberTermProperty: {} }, instance),
       ).toStrictEqual(false);
     });
   });
@@ -706,14 +652,14 @@ describe("filter", () => {
     it("maxCount", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { maxCount: 1 } },
+          { emptyStringSetProperty: { $maxCount: 1 } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { maxCount: 0 } },
+          { emptyStringSetProperty: { $maxCount: 0 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -722,14 +668,14 @@ describe("filter", () => {
     it("minCount", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { minCount: 0 } },
+          { emptyStringSetProperty: { $minCount: 0 } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { minCount: 2 } },
+          { emptyStringSetProperty: { $minCount: 2 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -738,14 +684,14 @@ describe("filter", () => {
     it("items", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { items: { in: [value] } } },
+          { emptyStringSetProperty: { in: [value] } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { items: { in: [value.concat("x")] } } },
+          { emptyStringSetProperty: { in: [value.concat("x")] } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -759,14 +705,14 @@ describe("filter", () => {
     it("in", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { in: [value.concat("x"), value] } } },
+          { stringTermProperty: { in: [value.concat("x"), value] } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { in: [value.concat("x")] } } },
+          { stringTermProperty: { in: [value.concat("x")] } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -775,14 +721,14 @@ describe("filter", () => {
     it("maxLength", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { maxLength: value.length } } },
+          { stringTermProperty: { maxLength: value.length } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { maxLength: value.length - 1 } } },
+          { stringTermProperty: { maxLength: value.length - 1 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -791,14 +737,14 @@ describe("filter", () => {
     it("minLength", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { minLength: value.length } } },
+          { stringTermProperty: { minLength: value.length } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { stringTermProperty: { item: { minLength: value.length + 1 } } },
+          { stringTermProperty: { minLength: value.length + 1 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -814,12 +760,10 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: {
-                datatypeIn: [
-                  value.datatype.value.concat("x"),
-                  value.datatype.value,
-                ],
-              },
+              datatypeIn: [
+                value.datatype.value.concat("x"),
+                value.datatype.value,
+              ],
             },
           },
           instance,
@@ -830,7 +774,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { datatypeIn: [value.datatype.value.concat("x")] },
+              datatypeIn: [value.datatype.value.concat("x")],
             },
           },
           instance,
@@ -845,14 +789,13 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: {
-                in: [
-                  {
-                    datatype: xsd.string.value,
-                    value: value.value,
-                  },
-                ],
-              },
+              in: [
+                {
+                  datatype: xsd.string.value,
+                  type: "Literal",
+                  value: value.value,
+                },
+              ],
             },
           },
           instance,
@@ -863,14 +806,13 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: {
-                in: [
-                  {
-                    datatype: xsd.integer.value,
-                    value: value.value,
-                  },
-                ],
-              },
+              in: [
+                {
+                  datatype: xsd.integer.value,
+                  type: "Literal",
+                  value: value.value,
+                },
+              ],
             },
           },
           instance,
@@ -885,9 +827,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: {
-                languageIn: [value.language.concat("x"), value.language],
-              },
+              languageIn: [value.language.concat("x"), value.language],
             },
           },
           instance,
@@ -898,7 +838,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { languageIn: [value.language.concat("x")] },
+              languageIn: [value.language.concat("x")],
             },
           },
           instance,
@@ -913,7 +853,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { typeIn: ["BlankNode", value.termType] },
+              typeIn: ["BlankNode", value.termType],
             },
           },
           instance,
@@ -924,32 +864,9 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              item: { typeIn: ["BlankNode"] },
+              typeIn: ["BlankNode"],
             },
           },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
-
-    it("valueIn", ({ expect }) => {
-      const value = DataFactory.literal("test");
-      const instance = new TermPropertiesClass({ termProperty: value });
-
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            termProperty: {
-              item: { valueIn: [value.value.concat("x"), value.value] },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          { termProperty: { item: { valueIn: [value.value.concat("x")] } } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -1016,7 +933,7 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { valueIn: ["test"] },
+                Literal: { in: [{ value: "test" }] },
                 NamedNode: { in: ["http://example.com"] },
               },
             },
@@ -1030,7 +947,7 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { valueIn: ["test"] },
+                Literal: { in: [{ value: "test" }] },
                 NamedNode: { in: ["http://example.comXXX"] },
               },
             },

@@ -1,9 +1,7 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
-import { invariant } from "ts-invariant";
 
-import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
-import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -28,31 +26,6 @@ export abstract class AbstractType implements Type {
   abstract readonly filterType:
     | Type.CompositeFilterType
     | Type.CompositeFilterTypeReference;
-  abstract readonly graphqlType: Type.GraphqlType;
-  abstract readonly mutable: boolean;
-  abstract readonly name: string;
-  abstract readonly typeofs: NonEmptyList<
-    "boolean" | "object" | "number" | "string"
-  >;
-
-  abstract fromJsonExpression(parameters: {
-    variables: {
-      value: string;
-    };
-  }): string;
-
-  abstract fromRdfExpression(parameters: {
-    variables: {
-      context: string;
-      ignoreRdfType?: boolean;
-      objectSet: string;
-      preferredLanguages: string;
-      predicate: string;
-      resource: string;
-      resourceValues: string;
-    };
-  }): string;
-
   abstract readonly graphqlArgs: Maybe<
     Record<
       string,
@@ -61,135 +34,62 @@ export abstract class AbstractType implements Type {
       }
     >
   >;
+  abstract readonly graphqlType: Type.GraphqlType;
+  abstract readonly mutable: boolean;
+  abstract readonly name: string;
+  abstract readonly typeofs: NonEmptyList<
+    "boolean" | "object" | "number" | "string"
+  >;
 
-  abstract graphqlResolveExpression(parameters: {
-    variables: {
-      args: string;
-      value: string;
-    };
-  }): string;
+  abstract fromJsonExpression(
+    parameters: Parameters<Type["fromJsonExpression"]>[0],
+  ): string;
 
-  abstract hashStatements(parameters: {
-    depth: number;
-    variables: {
-      hasher: string;
-      value: string;
-    };
-  }): readonly string[];
+  abstract fromRdfExpression(
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
+  ): string;
 
-  abstract jsonType(parameters?: {
-    includeDiscriminantProperty?: boolean;
-  }): Type.JsonType;
+  abstract graphqlResolveExpression(
+    parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+  ): string;
 
-  abstract jsonUiSchemaElement(parameters: {
-    variables: { scopePrefix: string };
-  }): Maybe<string>;
+  abstract hashStatements(
+    parameters: Parameters<Type["hashStatements"]>[0],
+  ): readonly string[];
 
-  abstract jsonZodSchema(parameters: {
-    includeDiscriminantProperty?: boolean;
-    context: "property" | "type";
-    variables: { zod: string };
-  }): string;
+  abstract jsonType(
+    parameters?: Parameters<Type["jsonType"]>[0],
+  ): Type.JsonType;
 
-  abstract snippetDeclarations(parameters: {
-    features: ReadonlySet<TsFeature>;
-    recursionStack: Type[];
-  }): Readonly<Record<string, string>>;
+  abstract jsonUiSchemaElement(
+    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
+  ): Maybe<string>;
 
-  sparqlConstructTemplateTriples({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }: Parameters<Type["sparqlConstructTemplateTriples"]>[0]): readonly string[] {
-    switch (context) {
-      case "object": {
-        const objectPrefix = "dataFactory.variable!(";
-        const objectSuffix = ")";
-        invariant(variables.object.startsWith(objectPrefix));
-        invariant(variables.object.endsWith(objectSuffix));
-        return [
-          objectInitializer({
-            object: variables.object,
-            predicate: variables.predicate,
-            subject: variables.subject,
-          }),
-        ].concat(
-          this.sparqlConstructTemplateTriples({
-            allowIgnoreRdfType,
-            context: "subject",
-            variables: {
-              subject: variables.object,
-              variablePrefix: variables.object.substring(
-                objectPrefix.length,
-                variables.object.length - objectSuffix.length,
-              ),
-            },
-          }),
-        );
-      }
-      case "subject":
-        return [];
-    }
-  }
+  abstract jsonZodSchema(
+    parameters: Parameters<Type["jsonZodSchema"]>[0],
+  ): string;
 
-  sparqlWherePatterns({
-    allowIgnoreRdfType,
-    context,
-    variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly string[] {
-    switch (context) {
-      case "object": {
-        const objectPrefix = "dataFactory.variable!(";
-        const objectSuffix = ")";
-        invariant(variables.object.startsWith(objectPrefix));
-        invariant(variables.object.endsWith(objectSuffix));
-        return [
-          objectInitializer({
-            triples: `[${objectInitializer({
-              object: variables.object,
-              predicate: variables.predicate,
-              subject: variables.subject,
-            })}]`,
-            type: '"bgp"',
-          }),
-        ].concat(
-          this.sparqlWherePatterns({
-            allowIgnoreRdfType,
-            context: "subject",
-            variables: {
-              preferredLanguages: variables.preferredLanguages,
-              subject: variables.object,
-              variablePrefix: variables.object.substring(
-                objectPrefix.length,
-                variables.object.length - objectSuffix.length,
-              ),
-            },
-          }),
-        );
-      }
-      case "subject":
-        return [];
-    }
-  }
+  abstract snippetDeclarations(
+    parameters: Parameters<Type["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>>;
 
-  abstract toJsonExpression(parameters: {
-    includeDiscriminantProperty?: boolean;
-    variables: {
-      value: string;
-    };
-  }): string;
+  abstract sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
+  ): readonly (Sparql.Triple | string)[];
 
-  abstract toRdfExpression(parameters: {
-    variables: {
-      predicate: string;
-      mutateGraph: string;
-      resource: string;
-      resourceSet: string;
-      value: string;
-    };
-  }): string;
+  abstract sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly Sparql.Pattern[];
 
-  abstract useImports(parameters: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[];
+  abstract toJsonExpression(
+    parameters: Parameters<Type["toJsonExpression"]>[0],
+  ): string;
+
+  abstract toRdfExpression(
+    parameters: Parameters<Type["toRdfExpression"]>[0],
+  ): string;
+
+  abstract useImports(
+    parameters: Parameters<Type["useImports"]>[0],
+  ): readonly Import[];
 }

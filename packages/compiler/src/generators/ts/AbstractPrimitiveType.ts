@@ -65,15 +65,6 @@ export abstract class AbstractPrimitiveType<
     );
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractLiteralType["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    return super.sparqlWherePatterns({
-      ...parameters,
-      ignoreLiteralLanguage: parameters.ignoreLiteralLanguage ?? true,
-    });
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<Type["toJsonExpression"]>[0]): string {

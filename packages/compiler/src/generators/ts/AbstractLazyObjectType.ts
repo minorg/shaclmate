@@ -9,6 +9,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
+import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
 export abstract class AbstractLazyObjectType<
@@ -123,15 +124,15 @@ export abstract class AbstractLazyObjectType<
     );
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
-  ): readonly string[] {
-    return this.partialType.sparqlConstructTemplateTriples(parameters);
+  override sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
+  ): readonly (Sparql.Triple | string)[] {
+    return this.partialType.sparqlConstructTriples(parameters);
   }
 
   override sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
+  ): readonly Sparql.Pattern[] {
     return this.partialType.sparqlWherePatterns(parameters);
   }
 

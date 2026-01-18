@@ -196,7 +196,7 @@ if (offset < 0) { offset = 0; }
 
 // First pass: gather all resources that meet the where filters.
 // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
-const resources: { objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
+const resources: { object?: ${typeParameters.ObjectT.name}, objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[] = [];
 const where = query?.where ?? { "type": "type" };
 switch (where.type) {
   case "identifiers": {
@@ -253,15 +253,44 @@ switch (where.type) {
 
   case "type": {
     for (const objectType of objectTypes) {
-      if (objectType.${syntheticNamePrefix}fromRdfTypes.length === 0) {
-        continue;
-      }
-
-      for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-        for (const resource of (where.identifierType === "NamedNode" ? this.resourceSet.namedInstancesOf(fromRdfType) : this.resourceSet.instancesOf(fromRdfType))) {
-          if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
-            resources.push({ objectType, resource });
+      if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
+        for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+          for (const resource of (where.identifierType === "NamedNode" ? this.resourceSet.namedInstancesOf(fromRdfType) : this.resourceSet.instancesOf(fromRdfType))) {
+            if (!resources.some(({ resource: existingResource }) => existingResource.identifier.equals(resource.identifier))) {
+              resources.push({ objectType, resource });
+            }
           }
+        }
+      } else {
+        // The objectType has no fromRdfType
+        // Try to deserialize every resource in the dataset
+        const blankNodeSubjects = new Set<string>();
+        const namedNodeSubjects = new Set<string>();
+        for (const quad of this.resourceSet.dataset) {
+          let resource: rdfjsResource.Resource;
+          switch (quad.subject.termType) {
+            case "BlankNode": {
+              if (blankNodeSubjects.has(quad.subject.value)) {
+                continue;
+              }
+              resource = this.resourceSet.resource(quad.subject);
+              blankNodeSubjects.add(quad.subject.value);
+              break;
+            }
+            case "NamedNode": {
+              if (namedNodeSubjects.has(quad.subject.value)) {
+                continue;
+              }
+              resource = this.resourceSet.namedResource(quad.subject);
+              namedNodeSubjects.add(quad.subject.value);
+              break;
+            }
+            default:
+              continue;
+          }
+          objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
+            resources.push({ object, objectType, resource });
+          });
         }
       }
     }
@@ -275,7 +304,12 @@ resources.sort((left, right) => left.resource.identifier.value.localeCompare(rig
 
 let objectI = 0;
 const objects: ${typeParameters.ObjectT.name}[] = [];
-for (let { objectType, resource } of resources) {
+for (let { object, objectType, resource } of resources) {
+  if (object) {
+    objects.push(object);
+    continue;
+  }
+
   let objectEither: purify.Either<Error, ${typeParameters.ObjectT.name}>;
   if (objectType) {
     objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
@@ -293,7 +327,7 @@ for (let { objectType, resource } of resources) {
   // Doesn't appear to belong to any of the known object types, just assume the first
     return objectEither as unknown as purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>;
   }
-  const object = objectEither!.unsafeCoerce();
+  object = objectEither!.unsafeCoerce();
   if (objectI++ >= offset) {
     objects.push(object);
     if (objects.length === limit) {

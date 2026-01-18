@@ -15,6 +15,7 @@ import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
@@ -109,7 +110,6 @@ export class IdentifierProperty extends Property<IdentifierType> {
   @Memoize()
   override get filterProperty() {
     return Maybe.of({
-      function: this.type.filterFunction,
       name: this.name,
       type: this.type.filterType,
     });
@@ -479,12 +479,26 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return this.type.snippetDeclarations(parameters);
   }
 
-  override sparqlConstructTemplateTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
     return [];
   }
 
-  override sparqlWherePatterns(): readonly string[] {
-    return [];
+  override sparqlWherePatterns({
+    variables,
+  }: Parameters<Property<IdentifierType>["sparqlWherePatterns"]>[0]) {
+    return {
+      condition: `${variables.focusIdentifier}.termType === "Variable"`,
+      patterns: this.type.sparqlWherePatterns({
+        allowIgnoreRdfType: false,
+        propertyPatterns: [],
+        variables: {
+          filter: Maybe.of(`${variables.filter}?.${this.name}`),
+          preferredLanguages: variables.preferredLanguages,
+          valueVariable: variables.focusIdentifier,
+          variablePrefix: variables.variablePrefix, // Unused
+        },
+      }),
+    };
   }
 
   override toJsonObjectMember({

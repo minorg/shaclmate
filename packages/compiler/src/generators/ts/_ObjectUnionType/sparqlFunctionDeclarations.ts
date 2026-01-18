@@ -19,7 +19,7 @@ export function sparqlFunctionDeclarations(
     {
       isExported: true,
       kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}sparqlConstructTemplateTriples`,
+      name: `${syntheticNamePrefix}sparqlConstructTriples`,
       // Accept ignoreRdfType in order to reuse code but don't pass it through, since deserialization may depend on it
       parameters: [
         {
@@ -33,7 +33,7 @@ export function sparqlFunctionDeclarations(
         `return [${this.memberTypes
           .map(
             (memberType) =>
-              `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTemplateTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+              `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
           )
           .join(", ")}];`,
       ],
@@ -47,7 +47,7 @@ export function sparqlFunctionDeclarations(
         {
           hasQuestionToken: true,
           name: "parameters",
-          type: '{ ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
+          type: `{ filter?: ${this.filterType.name}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }`,
         },
       ],
       returnType: "readonly sparqljs.Pattern[]",
@@ -55,7 +55,7 @@ export function sparqlFunctionDeclarations(
         `return [{ patterns: [${this.memberTypes
           .map((memberType) =>
             objectInitializer({
-              patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+              patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
               type: '"group"',
             }),
           )

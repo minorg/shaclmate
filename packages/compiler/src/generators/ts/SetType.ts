@@ -2,6 +2,7 @@ import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { Import } from "./Import.js";
+import type { Sparql } from "./Sparql.js";
 import { Type } from "./Type.js";
 
 export class SetType<
@@ -39,35 +40,35 @@ export class SetType<
     return chain.join(".");
   }
 
-  override sparqlConstructTemplateTriples(
-    parameters: Parameters<Type["sparqlConstructTemplateTriples"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object":
-        return super.sparqlConstructTemplateTriples(parameters);
-      case "subject":
-        return this.itemType.sparqlConstructTemplateTriples(parameters);
-    }
+  override sparqlConstructTriples(
+    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
+  ): readonly (Sparql.Triple | string)[] {
+    return this.itemType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly string[] {
-    switch (parameters.context) {
-      case "object": {
-        const patterns = this.itemType.sparqlWherePatterns(parameters);
-        if (patterns.length === 0) {
-          return [];
-        }
-        return this.minCount > 0
-          ? patterns
-          : [`{ patterns: [${patterns.join(", ")}], type: "optional" }`];
-      }
-      case "subject": {
-        throw new Error("should never be called");
-        // return this.itemType.sparqlWherePatterns(parameters);
-      }
+  override sparqlWherePatterns({
+    variables,
+    ...otherParameters
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+    const itemPatterns = this.itemType.sparqlWherePatterns({
+      ...otherParameters,
+      variables,
+    });
+
+    if (itemPatterns.length === 0) {
+      return itemPatterns;
     }
+
+    if (this.minCount > 0) {
+      return itemPatterns; // Treat them as required
+    }
+
+    if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
+      return itemPatterns; // Item patterns are already optional, so no need to wrap them with another optional block
+    }
+
+    // minCount === 0 and itemPatterns are required, wrap them in an optional block
+    return [{ patterns: itemPatterns, type: "optional" }];
   }
 
   override toRdfExpression({

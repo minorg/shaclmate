@@ -9,9 +9,12 @@ import {
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
+import type { Sparql } from "../Sparql.js";
 import type { Type } from "../Type.js";
 
-export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
+export abstract class Property<
+  TypeT extends Pick<Type, "filterFunction" | "mutable" | "name">,
+> {
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
@@ -35,7 +38,6 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
    * Optional property in the object type's filter.
    */
   abstract readonly filterProperty: Maybe<{
-    readonly function: Type["filterFunction"];
     readonly name: string;
     readonly type: Type["filterType"];
   }>;
@@ -209,21 +211,34 @@ export abstract class Property<TypeT extends Pick<Type, "mutable" | "name">> {
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for this property as strings (so they can incorporate runtime calls).
+   *
+   * Parameters:
+   *   variables: (at runtime)
+   *     - focusIdentifier: identifier (rdfjs.BlankNode or rdfjs.NamedNode) of the ObjectType that is the focus of the triples
+   *     - variablePrefix: prefix to use for new variables
    */
-  abstract sparqlConstructTemplateTriples(parameters: {
-    variables: { subject: string; variablePrefix: string };
-  }): readonly string[];
+  abstract sparqlConstructTriples(parameters: {
+    variables: { focusIdentifier: string; variablePrefix: string };
+  }): readonly (Sparql.Triple | string)[];
 
   /**
-   * An array of SPARQL.js where patterns for this property as strings (so they can incorporate runtime calls).
+   * An array of SPARQL.js WHERE patterns for this property as strings (so they can incorporate runtime calls).
+   *
+   * Parameters:
+   *   variables: (at runtime)
+   *     - filter: an instance of the object's filterType or undefined
+   *     - focusIdentifier: identifier (rdfjs.BlankNode or rdfjs.NamedNode) of the object that is the focus of the patterns
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - variablePrefix: prefix to use for new variables
    */
   abstract sparqlWherePatterns(parameters: {
     variables: {
+      filter: string;
+      focusIdentifier: string;
       preferredLanguages: string;
-      subject: string;
       variablePrefix: string;
     };
-  }): readonly string[];
+  }): { condition?: string; patterns: readonly Sparql.Pattern[] };
 
   /**
    * property: expression to serialize a property to a JSON object member.

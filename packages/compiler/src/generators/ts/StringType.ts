@@ -1,8 +1,10 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -41,6 +43,20 @@ export class StringType extends AbstractPrimitiveType<string> {
       return this.primitiveIn.map((value) => `"${value}"`).join(" | ");
     }
     return "string";
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
+      {
+        patterns: `${syntheticNamePrefix}StringFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   protected override fromRdfExpressionChain({
@@ -111,18 +127,57 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
   return true;
 }`,
       ),
-    );
-  }
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
+            `\
+namespace ${syntheticNamePrefix}StringFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter | undefined, value: rdfjs.Variable) {
+    const patterns: sparqljs.Pattern[] = [];
 
-  override sparqlWherePatterns(
-    parameters: Parameters<
-      AbstractPrimitiveType<string>["sparqlWherePatterns"]
-    >[0],
-  ): readonly string[] {
-    return super.sparqlWherePatterns({
-      ...parameters,
-      ignoreLiteralLanguage: false,
-    });
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        }
+      });
+    }
+
+    if (typeof filter.maxLength !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "<=",
+          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+        }
+      });
+    }
+
+    if (typeof filter.minLength !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: ">=",
+          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+          )
+        : {},
+    );
   }
 
   override toRdfExpression({

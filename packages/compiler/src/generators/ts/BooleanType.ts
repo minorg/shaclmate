@@ -1,8 +1,10 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
@@ -46,13 +48,17 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return "boolean";
   }
 
-  override jsonZodSchema({
+  protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
-    if (this.primitiveIn.length === 1) {
-      return `${variables.zod}.literal(${this.primitiveIn[0]})`;
-    }
-    return `${variables.zod}.boolean()`;
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   protected override fromRdfExpressionChain({
@@ -72,6 +78,15 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       preferredLanguages: undefined,
       valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
+  }
+
+  override jsonZodSchema({
+    variables,
+  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+    if (this.primitiveIn.length === 1) {
+      return `${variables.zod}.literal(${this.primitiveIn[0]})`;
+    }
+    return `${variables.zod}.boolean()`;
   }
 
   override snippetDeclarations(
@@ -97,6 +112,34 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
   return true;
 }`,
       ),
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}BooleanFilter.sparqlWherePatterns`,
+            `\
+namespace ${syntheticNamePrefix}BooleanFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, value: rdfjs.Variable) {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.value !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "=",
+          args: [value, ${syntheticNamePrefix}toLiteral(filter.value)],
+        }
+      });
+    }
+
+    return patterns;
+  }
+}`,
+          )
+        : {},
     );
   }
 
