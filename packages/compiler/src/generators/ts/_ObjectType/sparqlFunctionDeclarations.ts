@@ -115,7 +115,9 @@ if (!parameters?.ignoreRdfType) {
     for (const triple of property.sparqlConstructTriples({
       variables,
     })) {
-      sparqlConstructTriplesStatements.push(`triples.push(${triple});`);
+      sparqlConstructTriplesStatements.push(
+        `triples.push(${typeof triple === "object" ? Sparql.Triple.stringify(triple) : triple});`,
+      );
     }
 
     const { condition, patterns } = property.sparqlWherePatterns({ variables });

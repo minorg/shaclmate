@@ -258,7 +258,7 @@ export abstract class AbstractTermType<
     );
   }
 
-  override sparqlConstructTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
     return [];
   }
 

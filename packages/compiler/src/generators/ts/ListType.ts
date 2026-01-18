@@ -64,8 +64,11 @@ export class ListType<
 
   override sparqlConstructTriples({
     variables,
-  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly string[] {
-    const triples: string[] = [];
+  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly (
+    | Sparql.Triple
+    | string
+  )[] {
+    const triples: (Sparql.Triple | string)[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
@@ -76,11 +79,11 @@ export class ListType<
       // ?list rdf:first ?item0
       const item0Variable = variable("Item0");
       triples.push(
-        objectInitializer({
+        {
           subject: listVariable,
           predicate: rdfjsTermExpression(rdf.first),
           object: item0Variable,
-        }),
+        },
         ...this.itemType.sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
@@ -94,13 +97,11 @@ export class ListType<
     {
       // ?list rdf:rest ?rest0
       const rest0Variable = variable("Rest0");
-      triples.push(
-        objectInitializer({
-          subject: listVariable,
-          predicate: rdfjsTermExpression(rdf.rest),
-          object: rest0Variable,
-        }),
-      );
+      triples.push({
+        subject: listVariable,
+        predicate: rdfjsTermExpression(rdf.rest),
+        object: rest0Variable,
+      });
     }
 
     // Don't do ?list rdf:rest+ ?restN in CONSTRUCT
@@ -110,11 +111,11 @@ export class ListType<
       // ?rest rdf:first ?itemN
       const itemNVariable = variable("ItemN");
       triples.push(
-        objectInitializer({
+        {
           subject: restNVariable,
           predicate: rdfjsTermExpression(rdf.first),
           object: itemNVariable,
-        }),
+        },
         ...this.itemType.sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
@@ -126,13 +127,11 @@ export class ListType<
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    triples.push(
-      objectInitializer({
-        subject: restNVariable,
-        predicate: rdfjsTermExpression(rdf.rest),
-        object: variable("RestNBasic"),
-      }),
-    );
+    triples.push({
+      subject: restNVariable,
+      predicate: rdfjsTermExpression(rdf.rest),
+      object: variable("RestNBasic"),
+    });
 
     return triples;
   }

@@ -42,7 +42,7 @@ export class SetType<
 
   override sparqlConstructTriples(
     parameters: Parameters<Type["sparqlConstructTriples"]>[0],
-  ): readonly string[] {
+  ): readonly (Sparql.Triple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 

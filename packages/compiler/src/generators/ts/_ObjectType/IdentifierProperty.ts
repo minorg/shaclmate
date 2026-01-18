@@ -478,7 +478,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return this.type.snippetDeclarations(parameters);
   }
 
-  override sparqlConstructTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
     return [];
   }
 

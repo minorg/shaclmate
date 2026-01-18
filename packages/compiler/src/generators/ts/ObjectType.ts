@@ -541,9 +541,10 @@ export class ObjectType extends AbstractDeclaredType {
   override sparqlConstructTriples({
     allowIgnoreRdfType,
     variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlConstructTriples"]
-  >[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["sparqlConstructTriples"]>[0]): readonly (
+    | Sparql.Triple
+    | string
+  )[] {
     return [
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
         {

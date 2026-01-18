@@ -86,7 +86,7 @@ export abstract class AbstractType implements Type {
 
   abstract sparqlConstructTriples(
     parameters: Parameters<Type["sparqlConstructTriples"]>[0],
-  ): readonly string[];
+  ): readonly (Sparql.Triple | string)[];
 
   abstract sparqlWherePatterns(
     parameters: Parameters<Type["sparqlWherePatterns"]>[0],

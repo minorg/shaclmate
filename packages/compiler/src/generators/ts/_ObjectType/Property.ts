@@ -219,7 +219,7 @@ export abstract class Property<
    */
   abstract sparqlConstructTriples(parameters: {
     variables: { focusIdentifier: string; variablePrefix: string };
-  }): readonly string[];
+  }): readonly (Sparql.Triple | string)[];
 
   /**
    * An array of SPARQL.js WHERE patterns for this property as strings (so they can incorporate runtime calls).

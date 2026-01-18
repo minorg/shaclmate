@@ -200,7 +200,7 @@ export interface Type {
       valueVariable: string;
       variablePrefix: string;
     };
-  }): readonly string[];
+  }): readonly (Sparql.Triple | string)[];
 
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).

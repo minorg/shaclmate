@@ -10,6 +10,7 @@ import type {
 import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
 import { objectInitializer } from "../objectInitializer.js";
+import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -266,17 +267,18 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   sparqlConstructTriples({
     variables,
-  }: Parameters<
-    Property<TypeT>["sparqlConstructTriples"]
-  >[0]): readonly string[] {
+  }: Parameters<Property<TypeT>["sparqlConstructTriples"]>[0]): readonly (
+    | Sparql.Triple
+    | string
+  )[] {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return [
-      objectInitializer({
+      {
         object: valueVariable,
         predicate: this.predicate,
         subject: variables.focusIdentifier,
-      }),
+      } as Sparql.Triple | string,
     ].concat(
       this.type.sparqlConstructTriples({
         allowIgnoreRdfType: true,

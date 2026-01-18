@@ -1,5 +1,7 @@
 // Adapted from sparql.js (MIT license), substituting strings for RDF/JS term types so they can contain runtime variables
 
+import { objectInitializer } from "./objectInitializer.js";
+
 export namespace Sparql {
   type TypeScriptExpression = string;
 
@@ -93,7 +95,7 @@ export namespace Sparql {
   //   [variable: string]: IriTerm | BlankTerm | LiteralTerm | undefined;
   // }
 
-  interface Triple {
+  export interface Triple {
     readonly subject: IriTerm | BlankTerm | VariableTerm | QuadTerm;
     readonly predicate: IriTerm | VariableTerm | PropertyPath;
     readonly object: Term;
@@ -109,11 +111,22 @@ export namespace Sparql {
     readonly type: "opaque-block";
   }
 
+  export namespace Triple {
+    /**
+     * Convert a triple to a string that can be used at runtime.
+     *
+     * Can't use JSON.stringify because the strings may actually be TypeScript expressions.
+     */
+    export function stringify(triple: Triple): string {
+      return objectInitializer(triple);
+    }
+  }
+
   export namespace Pattern {
     /**
      * Convert a pattern to a string that can be used at runtime.
      *
-     * Can't use JSON.stringify because the strings.
+     * Can't use JSON.stringify because the strings may actually be TypeScript expressions.
      */
     export function stringify(pattern: Pattern): string {
       switch (pattern.type) {
@@ -135,7 +148,7 @@ export namespace Sparql {
         case "opaque-block":
           return `{ patterns: ${pattern.patterns}.concat(), type: "group" }`;
         case "service":
-          return `{ patterns: [${pattern.patterns.map(stringify).join(", ")}], name: ${pattern.name}, silent: ${pattern.silent}, type: "${pattern.type}" }`;
+       q   return `{ patterns: [${pattern.patterns.map(stringify).join(", ")}], name: ${pattern.name}, silent: ${pattern.silent}, type: "${pattern.type}" }`;
         case "values":
           return `{ type: "${pattern.type}", values: ${pattern.values} }`;
       }

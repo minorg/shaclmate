@@ -9,6 +9,7 @@ import type {
 import { Memoize } from "typescript-memoize";
 
 import type { Import } from "../Import.js";
+import type { Sparql } from "../Sparql.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
@@ -155,7 +156,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
     return {};
   }
 
-  override sparqlConstructTriples(): readonly string[] {
+  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
     return [];
   }
 
