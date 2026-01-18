@@ -9,7 +9,6 @@ import type {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { Import } from "../Import.js";
-import { objectInitializer } from "../objectInitializer.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";

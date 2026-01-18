@@ -15,6 +15,7 @@ import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { Property } from "./Property.js";
 
