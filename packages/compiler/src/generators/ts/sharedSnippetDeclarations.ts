@@ -104,21 +104,25 @@ export namespace ${syntheticNamePrefix}EqualsResult {
   filterTerm: singleEntryRecord(
     `${syntheticNamePrefix}filterTerm`,
     `\
-  function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {
-    if (typeof filter.in !== "undefined" && !filter.in.some(in_ => {
-      if (typeof in_.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== in_.datatype)) {
+  function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {  
+    if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value))) {
+      return false;
+    }
+
+    if (typeof filter.in !== "undefined" && !filter.in.some(inTerm => {
+      if (typeof inTerm.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== inTerm.datatype)) {
         return false;
       }
   
-      if (typeof in_.language !== "undefined" && (value.termType !== "Literal" || value.language !== in_.language)) {
+      if (typeof inTerm.language !== "undefined" && (value.termType !== "Literal" || value.language !== inTerm.language)) {
         return false;
       }
   
-      if (typeof in_.type !== "undefined" && value.termType !== in_.type) {
+      if (value.termType !== inTerm.type) {
         return false;
       }
   
-      if (typeof in_.value !== "undefined" && value.value !== in_.value) {
+      if (value.value !== inTerm.value) {
         return false;
       }
   
@@ -126,10 +130,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     })) {
       return false;
     }
-  
-    if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value))) {
-      return false;
-    }
+
   
     if (typeof filter.languageIn !== "undefined" && (value.termType !== "Literal" || !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
       return false;
@@ -138,11 +139,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType)) {
       return false;
     }
-  
-    if (typeof filter.valueIn !== "undefined" && !filter.valueIn.some(inValue => inValue === value.value)) {
-      return false;
-    }
-  
+    
     return true;
   }`,
   ),
@@ -302,10 +299,107 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
     `\
 interface ${syntheticNamePrefix}TermFilter {
   readonly datatypeIn?: readonly string[];
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type?: string; readonly value?: string; }[];
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type: "BlankNode" | "Literal" | "NamedNode"; readonly value: string; }[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-  readonly valueIn?: readonly string[];
+}`,
+  ),
+
+  TermFilter_sparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}TermFilter.sparqlWherePatterns`,
+    `\
+namespace ${syntheticNamePrefix}TermFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}TermFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+  
+    if (typeof filter.datatypeIn !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [{ args: [value], operator: "datatype", type: "operation" }, filter.datatypeIn.map(dataFactory.namedNode)]
+        }
+      });
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [value, filter.in.map(inTerm => {
+            if (typeof inTerm.datatype !== "undefined") {
+              return dataFactory.literal(inTerm.value, dataFactory.namedNode(inTerm.datatype));
+            }
+            if (typeof inTerm.language !== "undefined") {
+              return dataFactory.literal(inTerm.value, inTerm.language);
+            }
+            switch (inTerm.type) {
+              case "BlankNode":
+                return dataFactory.blankNode(inTerm.value);
+              case "Literal":
+                return dataFactory.literal(inTerm.value);
+              case "NamedNode":
+                return dataFactory.namedNode(inTerm.value);
+            }
+          })],
+        }
+      });
+    }
+  
+    if (typeof filter.languageIn !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [{ args: [value], operator: "lang", type: "operation" }, filter.languageIn.map(dataFactory.literal)]
+        }
+      });
+    }
+  
+    if (typeof filter.typeIn !== "undefined") {
+      const typeInExpressions = filter.typeIn.map(type => {
+        switch (type) {
+          case "BlankNode":
+            return "isBlank";
+          case "Literal":
+            return "isLiteral";
+          case "NamedNode":
+            return "isIRI";
+        }
+      }).map(operator => ({
+        type: "operation",
+        operator,
+        args: [value]
+      }));
+
+      switch (typeInExpressions.length) {
+        case 0:
+          break;
+        case 1:
+          patterns.push({ type: "filter", expression: typeInExpressions[0] });
+          break;
+        default:
+          patterns.push({
+            type: "filter",
+            expression: {
+              type: "operation",
+              operator: "||",
+              args: typeInExpressions
+            }
+          });
+      }
+    }
+
+    return patterns;
+  }
 }`,
   ),
 

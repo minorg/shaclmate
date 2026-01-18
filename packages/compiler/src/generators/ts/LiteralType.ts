@@ -105,7 +105,10 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  return ${syntheticNamePrefix}filterTerm(filter, value);
+  return ${syntheticNamePrefix}filterTerm({
+    ...filter,
+    in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
+  }, value);
 }`,
       ),
       sharedSnippetDeclarations.filterTerm,
@@ -113,7 +116,7 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
         `${syntheticNamePrefix}LiteralFilter`,
         `\
 interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix}TermFilter, "in" | "type"> {
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value?: string; }[];
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value: string; }[];
 }`,
       ),
       sharedSnippetDeclarations.TermFilter,
