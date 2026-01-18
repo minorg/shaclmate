@@ -353,32 +353,6 @@ describe("filter", () => {
         ),
       ).toStrictEqual(false);
     });
-
-    it("valueIn", ({ expect }) => {
-      const value = DataFactory.literal("test");
-      const instance = new TermPropertiesClass({ literalTermProperty: value });
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            literalTermProperty: {
-              item: { valueIn: [value.value.concat("x"), value.value] },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            literalTermProperty: {
-              item: { valueIn: [value.value.concat("x")] },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
   });
 
   describe("named node", () => {
@@ -849,6 +823,7 @@ describe("filter", () => {
                 in: [
                   {
                     datatype: xsd.string.value,
+                    type: "Literal",
                     value: value.value,
                   },
                 ],
@@ -867,6 +842,7 @@ describe("filter", () => {
                 in: [
                   {
                     datatype: xsd.integer.value,
+                    type: "Literal",
                     value: value.value,
                   },
                 ],
@@ -927,29 +903,6 @@ describe("filter", () => {
               item: { typeIn: ["BlankNode"] },
             },
           },
-          instance,
-        ),
-      ).toStrictEqual(false);
-    });
-
-    it("valueIn", ({ expect }) => {
-      const value = DataFactory.literal("test");
-      const instance = new TermPropertiesClass({ termProperty: value });
-
-      expect(
-        TermPropertiesClass.$filter(
-          {
-            termProperty: {
-              item: { valueIn: [value.value.concat("x"), value.value] },
-            },
-          },
-          instance,
-        ),
-      ).toStrictEqual(true);
-
-      expect(
-        TermPropertiesClass.$filter(
-          { termProperty: { item: { valueIn: [value.value.concat("x")] } } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -1016,7 +969,7 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { valueIn: ["test"] },
+                Literal: { in: [{ value: "test" }] },
                 NamedNode: { in: ["http://example.com"] },
               },
             },
@@ -1030,7 +983,7 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { valueIn: ["test"] },
+                Literal: { in: [{ value: "test" }] },
                 NamedNode: { in: ["http://example.comXXX"] },
               },
             },
