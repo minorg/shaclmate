@@ -243,7 +243,7 @@ describe("filter", () => {
         LazyPropertiesClass.$filter(
           {
             setLazyToResolvedClassProperty: {
-              minCount: 1,
+              $minCount: 1,
             },
           },
           instance,
@@ -652,14 +652,14 @@ describe("filter", () => {
     it("maxCount", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { maxCount: 1 } },
+          { emptyStringSetProperty: { $maxCount: 1 } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { maxCount: 0 } },
+          { emptyStringSetProperty: { $maxCount: 0 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -668,14 +668,14 @@ describe("filter", () => {
     it("minCount", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { minCount: 0 } },
+          { emptyStringSetProperty: { $minCount: 0 } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { minCount: 2 } },
+          { emptyStringSetProperty: { $minCount: 2 } },
           instance,
         ),
       ).toStrictEqual(false);
@@ -684,14 +684,14 @@ describe("filter", () => {
     it("items", ({ expect }) => {
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { items: { in: [value] } } },
+          { emptyStringSetProperty: { in: [value] } },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         PropertyCardinalitiesClass.$filter(
-          { emptyStringSetProperty: { items: { in: [value.concat("x")] } } },
+          { emptyStringSetProperty: { in: [value.concat("x")] } },
           instance,
         ),
       ).toStrictEqual(false);

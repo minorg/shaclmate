@@ -78,12 +78,6 @@ function $arrayEquals<T>(
   return $EqualsResult.Equal;
 }
 
-interface $ArrayFilter<ItemFilterT> {
-  readonly items?: ItemFilterT;
-  readonly maxCount?: number;
-  readonly minCount?: number;
-}
-
 function $arrayIntersection<T>(
   left: readonly T[],
   right: readonly T[],
@@ -165,6 +159,10 @@ namespace $BooleanFilter {
   }
 }
 
+type $CollectionFilter<ItemFilterT> = ItemFilterT & {
+  readonly $maxCount?: number;
+  readonly $minCount?: number;
+};
 /**
  * Compare two Dates and return an $EqualsResult.
  */
@@ -349,27 +347,25 @@ function $filterArray<ItemT, ItemFilterT>(
   filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean,
 ) {
   return (
-    filter: $ArrayFilter<ItemFilterT>,
+    filter: $CollectionFilter<ItemFilterT>,
     values: readonly ItemT[],
   ): boolean => {
-    if (typeof filter.items !== "undefined") {
-      for (const value of values) {
-        if (!filterItem(filter.items, value)) {
-          return false;
-        }
+    for (const value of values) {
+      if (!filterItem(filter, value)) {
+        return false;
       }
     }
 
     if (
-      typeof filter.maxCount !== "undefined" &&
-      values.length > filter.maxCount
+      typeof filter.$maxCount !== "undefined" &&
+      values.length > filter.$maxCount
     ) {
       return false;
     }
 
     if (
-      typeof filter.minCount !== "undefined" &&
-      values.length < filter.minCount
+      typeof filter.$minCount !== "undefined" &&
+      values.length < filter.$minCount
     ) {
       return false;
     }
@@ -4837,20 +4833,20 @@ export namespace UnionDiscriminantsClass {
         readonly string?: $StringFilter;
       };
     };
-    readonly setClassOrClassOrStringProperty?: $ArrayFilter<{
+    readonly setClassOrClassOrStringProperty?: $CollectionFilter<{
       readonly on?: {
         readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;
         readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;
         readonly "2-string"?: $StringFilter;
       };
     }>;
-    readonly setIriOrLiteralProperty?: $ArrayFilter<{
+    readonly setIriOrLiteralProperty?: $CollectionFilter<{
       readonly on?: {
         readonly NamedNode?: $NamedNodeFilter;
         readonly Literal?: $LiteralFilter;
       };
     }>;
-    readonly setIriOrStringProperty?: $ArrayFilter<{
+    readonly setIriOrStringProperty?: $CollectionFilter<{
       readonly on?: {
         readonly object?: $NamedNodeFilter;
         readonly string?: $StringFilter;
@@ -11863,8 +11859,8 @@ export namespace PropertyCardinalitiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly emptyStringSetProperty?: $ArrayFilter<$StringFilter>;
-    readonly nonEmptyStringSetProperty?: $ArrayFilter<$StringFilter>;
+    readonly emptyStringSetProperty?: $CollectionFilter<$StringFilter>;
+    readonly nonEmptyStringSetProperty?: $CollectionFilter<$StringFilter>;
     readonly optionalStringProperty?: $MaybeFilter<$StringFilter>;
     readonly requiredStringProperty?: $StringFilter;
   };
@@ -17730,7 +17726,7 @@ export namespace MutablePropertiesClass {
 
     if (
       typeof filter.mutableListProperty !== "undefined" &&
-      !$filterMaybe<string[], $ArrayFilter<$StringFilter>>(
+      !$filterMaybe<string[], $CollectionFilter<$StringFilter>>(
         $filterArray<string, $StringFilter>($filterString),
       )(filter.mutableListProperty, value.mutableListProperty)
     ) {
@@ -17762,8 +17758,10 @@ export namespace MutablePropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly mutableListProperty?: $MaybeFilter<$ArrayFilter<$StringFilter>>;
-    readonly mutableSetProperty?: $ArrayFilter<$StringFilter>;
+    readonly mutableListProperty?: $MaybeFilter<
+      $CollectionFilter<$StringFilter>
+    >;
+    readonly mutableSetProperty?: $CollectionFilter<$StringFilter>;
     readonly mutableStringProperty?: $MaybeFilter<$StringFilter>;
   };
 
@@ -19022,16 +19020,20 @@ export namespace ListPropertiesClass {
 
     if (
       typeof filter.iriListProperty !== "undefined" &&
-      !$filterMaybe<readonly rdfjs.NamedNode[], $ArrayFilter<$NamedNodeFilter>>(
-        $filterArray<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode),
-      )(filter.iriListProperty, value.iriListProperty)
+      !$filterMaybe<
+        readonly rdfjs.NamedNode[],
+        $CollectionFilter<$NamedNodeFilter>
+      >($filterArray<rdfjs.NamedNode, $NamedNodeFilter>($filterNamedNode))(
+        filter.iriListProperty,
+        value.iriListProperty,
+      )
     ) {
       return false;
     }
 
     if (
       typeof filter.objectListProperty !== "undefined" &&
-      !$filterMaybe<readonly NonClass[], $ArrayFilter<NonClass.$Filter>>(
+      !$filterMaybe<readonly NonClass[], $CollectionFilter<NonClass.$Filter>>(
         $filterArray<NonClass, NonClass.$Filter>(NonClass.$filter),
       )(filter.objectListProperty, value.objectListProperty)
     ) {
@@ -19040,7 +19042,7 @@ export namespace ListPropertiesClass {
 
     if (
       typeof filter.stringListProperty !== "undefined" &&
-      !$filterMaybe<readonly string[], $ArrayFilter<$StringFilter>>(
+      !$filterMaybe<readonly string[], $CollectionFilter<$StringFilter>>(
         $filterArray<string, $StringFilter>($filterString),
       )(filter.stringListProperty, value.stringListProperty)
     ) {
@@ -19052,9 +19054,15 @@ export namespace ListPropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly iriListProperty?: $MaybeFilter<$ArrayFilter<$NamedNodeFilter>>;
-    readonly objectListProperty?: $MaybeFilter<$ArrayFilter<NonClass.$Filter>>;
-    readonly stringListProperty?: $MaybeFilter<$ArrayFilter<$StringFilter>>;
+    readonly iriListProperty?: $MaybeFilter<
+      $CollectionFilter<$NamedNodeFilter>
+    >;
+    readonly objectListProperty?: $MaybeFilter<
+      $CollectionFilter<NonClass.$Filter>
+    >;
+    readonly stringListProperty?: $MaybeFilter<
+      $CollectionFilter<$StringFilter>
+    >;
   };
 
   export function $fromJson(
@@ -21795,7 +21803,7 @@ export namespace LazyPropertiesInterface {
     if (
       typeof filter.setLazyToResolvedInterfaceProperty !== "undefined" &&
       !((
-        filter: $ArrayFilter<$DefaultPartial.$Filter>,
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           $DefaultPartial,
@@ -21816,7 +21824,7 @@ export namespace LazyPropertiesInterface {
       typeof filter.setPartialInterfaceToResolvedInterfaceProperty !==
         "undefined" &&
       !((
-        filter: $ArrayFilter<PartialInterface.$Filter>,
+        filter: $CollectionFilter<PartialInterface.$Filter>,
         value: $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
@@ -21846,8 +21854,8 @@ export namespace LazyPropertiesInterface {
     readonly optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty?: $MaybeFilter<PartialInterfaceUnion.$Filter>;
     readonly requiredLazyToResolvedInterfaceProperty?: $DefaultPartial.$Filter;
     readonly requiredPartialInterfaceToResolvedInterfaceProperty?: PartialInterface.$Filter;
-    readonly setLazyToResolvedInterfaceProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
-    readonly setPartialInterfaceToResolvedInterfaceProperty?: $ArrayFilter<PartialInterface.$Filter>;
+    readonly setLazyToResolvedInterfaceProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly setPartialInterfaceToResolvedInterfaceProperty?: $CollectionFilter<PartialInterface.$Filter>;
   };
 
   export function $fromJson(
@@ -25722,7 +25730,7 @@ export namespace LazyPropertiesClass {
     if (
       typeof filter.setLazyToResolvedClassProperty !== "undefined" &&
       !((
-        filter: $ArrayFilter<$DefaultPartial.$Filter>,
+        filter: $CollectionFilter<$DefaultPartial.$Filter>,
         value: $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           $DefaultPartial,
@@ -25742,7 +25750,7 @@ export namespace LazyPropertiesClass {
     if (
       typeof filter.setPartialClassToResolvedClassProperty !== "undefined" &&
       !((
-        filter: $ArrayFilter<PartialClass.$Filter>,
+        filter: $CollectionFilter<PartialClass.$Filter>,
         value: $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
@@ -25773,8 +25781,8 @@ export namespace LazyPropertiesClass {
     readonly optionalPartialClassUnionToResolvedClassUnionProperty?: $MaybeFilter<PartialClassUnion.$Filter>;
     readonly requiredLazyToResolvedClassProperty?: $DefaultPartial.$Filter;
     readonly requiredPartialClassToResolvedClassProperty?: PartialClass.$Filter;
-    readonly setLazyToResolvedClassProperty?: $ArrayFilter<$DefaultPartial.$Filter>;
-    readonly setPartialClassToResolvedClassProperty?: $ArrayFilter<PartialClass.$Filter>;
+    readonly setLazyToResolvedClassProperty?: $CollectionFilter<$DefaultPartial.$Filter>;
+    readonly setPartialClassToResolvedClassProperty?: $CollectionFilter<PartialClass.$Filter>;
   };
 
   export function $fromJson(
@@ -32520,7 +32528,7 @@ export namespace LanguageInPropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly languageInLiteralProperty?: $ArrayFilter<$LiteralFilter>;
+    readonly languageInLiteralProperty?: $CollectionFilter<$LiteralFilter>;
   };
 
   export function $fromJson(
@@ -33222,7 +33230,7 @@ export namespace JsPrimitiveUnionPropertyClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly jsPrimitiveUnionProperty?: $ArrayFilter<{
+    readonly jsPrimitiveUnionProperty?: $CollectionFilter<{
       readonly on?: {
         readonly boolean?: $BooleanFilter;
         readonly number?: $NumberFilter;
@@ -49082,18 +49090,18 @@ export namespace ConvertibleTypePropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly convertibleIriNonEmptySetProperty?: $ArrayFilter<$NamedNodeFilter>;
+    readonly convertibleIriNonEmptySetProperty?: $CollectionFilter<$NamedNodeFilter>;
     readonly convertibleIriOptionProperty?: $MaybeFilter<$NamedNodeFilter>;
     readonly convertibleIriProperty?: $NamedNodeFilter;
-    readonly convertibleIriSetProperty?: $ArrayFilter<$NamedNodeFilter>;
-    readonly convertibleLiteralNonEmptySetProperty?: $ArrayFilter<$LiteralFilter>;
+    readonly convertibleIriSetProperty?: $CollectionFilter<$NamedNodeFilter>;
+    readonly convertibleLiteralNonEmptySetProperty?: $CollectionFilter<$LiteralFilter>;
     readonly convertibleLiteralOptionProperty?: $MaybeFilter<$LiteralFilter>;
     readonly convertibleLiteralProperty?: $LiteralFilter;
-    readonly convertibleLiteralSetProperty?: $ArrayFilter<$LiteralFilter>;
-    readonly convertibleTermNonEmptySetProperty?: $ArrayFilter<$TermFilter>;
+    readonly convertibleLiteralSetProperty?: $CollectionFilter<$LiteralFilter>;
+    readonly convertibleTermNonEmptySetProperty?: $CollectionFilter<$TermFilter>;
     readonly convertibleTermOptionProperty?: $MaybeFilter<$TermFilter>;
     readonly convertibleTermProperty?: $TermFilter;
-    readonly convertibleTermSetProperty?: $ArrayFilter<$TermFilter>;
+    readonly convertibleTermSetProperty?: $CollectionFilter<$TermFilter>;
   };
 
   export function $fromJson(
