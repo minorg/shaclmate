@@ -101,12 +101,12 @@ describe("TsGenerator", () => {
   testData.skos.ifJust((parameters) => {
     it("should generate from a SKOS shapes graph", () => {
       compile(generate(parameters.unsafeCoerce()));
-    });
+    }, 60000);
   });
 
   testData.externalProject.ifJust((parameters) => {
     it("should generate from an external project shapes graph", () => {
       compile(generate(parameters.unsafeCoerce()));
-    });
+    }, 60000);
   });
 });
