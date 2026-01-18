@@ -18,10 +18,18 @@ export class LiteralType extends AbstractLiteralType {
     throw new Error("not implemented");
   }
 
-  protected override filterSparqlWherePatterns(
-    parameters: Parameters<AbstractTermType["filterSparqlWherePatterns"]>[0],
-  ): readonly Sparql.Pattern[] {
-    return this.preferredLanguagesSparqlWherePatterns(parameters);
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
+      {
+        patterns: `${syntheticNamePrefix}LiteralFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 
   override fromJsonExpression({
@@ -105,10 +113,10 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  return ${syntheticNamePrefix}filterTerm({
+  return ${syntheticNamePrefix}filterTerm(filter ? {
     ...filter,
     in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
-  }, value);
+  } : undefined, value);
 }`,
       ),
       sharedSnippetDeclarations.filterTerm,
@@ -119,7 +127,22 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
   readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value: string; }[];
 }`,
       ),
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}LiteralFilter.sparqlWherePatterns`,
+            `\
+namespace ${syntheticNamePrefix}LiteralFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable) {
+    return ${syntheticNamePrefix}TermFilter.sparqlWherePatterns(filter ? {
+      ...filter,
+      in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
+    } : undefined, value);
+  }
+}`,
+          )
+        : {},
       sharedSnippetDeclarations.TermFilter,
+      sharedSnippetDeclarations.TermFilter_sparqlWherePatterns,
     );
   }
 
