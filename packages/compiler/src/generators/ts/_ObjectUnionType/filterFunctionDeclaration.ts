@@ -26,7 +26,7 @@ export function filterFunctionDeclaration(
 if (typeof filter.on?.${memberType.name} !== "undefined") {
   switch (value.${this._discriminantProperty.name}) {
     ${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join(" ")}
-      if (!${memberType.filterFunction}(filter.on.${memberType.name}, value)) {
+      if (!${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name})) {
         return false;
       }
       break;
