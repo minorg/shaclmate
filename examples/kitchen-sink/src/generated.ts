@@ -448,7 +448,18 @@ function $filterIdentifier(
 }
 
 function $filterLiteral(filter: $LiteralFilter, value: rdfjs.Literal): boolean {
-  return $filterTerm(filter, value);
+  return $filterTerm(
+    {
+      ...filter,
+      in: filter.in
+        ? filter.in.map((inLiteral) => ({
+            ...inLiteral,
+            type: "Literal" as const,
+          }))
+        : undefined,
+    },
+    value,
+  );
 }
 
 function $filterMaybe<ItemT, ItemFilterT>(
@@ -559,42 +570,43 @@ function $filterTerm(
   value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode,
 ): boolean {
   if (
-    typeof filter.in !== "undefined" &&
-    !filter.in.some((in_) => {
-      if (
-        typeof in_.datatype !== "undefined" &&
-        (value.termType !== "Literal" || value.datatype.value !== in_.datatype)
-      ) {
-        return false;
-      }
-
-      if (
-        typeof in_.language !== "undefined" &&
-        (value.termType !== "Literal" || value.language !== in_.language)
-      ) {
-        return false;
-      }
-
-      if (typeof in_.type !== "undefined" && value.termType !== in_.type) {
-        return false;
-      }
-
-      if (typeof in_.value !== "undefined" && value.value !== in_.value) {
-        return false;
-      }
-
-      return true;
-    })
-  ) {
-    return false;
-  }
-
-  if (
     typeof filter.datatypeIn !== "undefined" &&
     (value.termType !== "Literal" ||
       !filter.datatypeIn.some(
         (inDatatype) => inDatatype === value.datatype.value,
       ))
+  ) {
+    return false;
+  }
+
+  if (
+    typeof filter.in !== "undefined" &&
+    !filter.in.some((inTerm) => {
+      if (
+        typeof inTerm.datatype !== "undefined" &&
+        (value.termType !== "Literal" ||
+          value.datatype.value !== inTerm.datatype)
+      ) {
+        return false;
+      }
+
+      if (
+        typeof inTerm.language !== "undefined" &&
+        (value.termType !== "Literal" || value.language !== inTerm.language)
+      ) {
+        return false;
+      }
+
+      if (value.termType !== inTerm.type) {
+        return false;
+      }
+
+      if (value.value !== inTerm.value) {
+        return false;
+      }
+
+      return true;
+    })
   ) {
     return false;
   }
@@ -610,13 +622,6 @@ function $filterTerm(
   if (
     typeof filter.typeIn !== "undefined" &&
     !filter.typeIn.some((inType) => inType === value.termType)
-  ) {
-    return false;
-  }
-
-  if (
-    typeof filter.valueIn !== "undefined" &&
-    !filter.valueIn.some((inValue) => inValue === value.value)
   ) {
     return false;
   }
@@ -890,8 +895,30 @@ interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
   readonly in?: readonly {
     readonly datatype?: string;
     readonly language?: string;
-    readonly value?: string;
+    readonly value: string;
   }[];
+}
+
+namespace $LiteralFilter {
+  export function $sparqlWherePatterns(
+    filter: $LiteralFilter | undefined,
+    value: rdfjs.Variable,
+  ) {
+    return $TermFilter.$sparqlWherePatterns(
+      filter
+        ? {
+            ...filter,
+            in: filter.in
+              ? filter.in.map((inLiteral) => ({
+                  ...inLiteral,
+                  type: "Literal" as const,
+                }))
+              : undefined,
+          }
+        : undefined,
+      value,
+    );
+  }
 }
 
 function $maybeEquals<T>(
@@ -1300,12 +1327,126 @@ interface $TermFilter {
   readonly in?: readonly {
     readonly datatype?: string;
     readonly language?: string;
-    readonly type?: string;
-    readonly value?: string;
+    readonly type: "Literal" | "NamedNode";
+    readonly value: string;
   }[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-  readonly valueIn?: readonly string[];
+}
+
+namespace $TermFilter {
+  export function $sparqlWherePatterns(
+    filter: $TermFilter | undefined,
+    value: rdfjs.Variable,
+  ): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+
+    if (!filter) {
+      return patterns;
+    }
+
+    if (typeof filter.datatypeIn !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [
+            { args: [value], operator: "datatype", type: "operation" },
+            filter.datatypeIn.map(dataFactory.namedNode),
+          ],
+        },
+      });
+    }
+
+    if (typeof filter.in !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [
+            value,
+            filter.in.map((inTerm) => {
+              if (typeof inTerm.datatype !== "undefined") {
+                return dataFactory.literal(
+                  inTerm.value,
+                  dataFactory.namedNode(inTerm.datatype),
+                );
+              }
+              if (typeof inTerm.language !== "undefined") {
+                return dataFactory.literal(inTerm.value, inTerm.language);
+              }
+              switch (inTerm.type) {
+                case "Literal":
+                  return dataFactory.literal(inTerm.value);
+                case "NamedNode":
+                  return dataFactory.namedNode(inTerm.value);
+                default:
+                  inTerm.type satisfies never;
+                  throw new RangeError(inTerm.type);
+              }
+            }),
+          ],
+        },
+      });
+    }
+
+    if (typeof filter.languageIn !== "undefined") {
+      patterns.push({
+        type: "filter",
+        expression: {
+          type: "operation",
+          operator: "in",
+          args: [
+            { args: [value], operator: "lang", type: "operation" },
+            filter.languageIn.map((value) => dataFactory.literal(value)),
+          ],
+        },
+      });
+    }
+
+    if (typeof filter.typeIn !== "undefined") {
+      const typeInExpressions = filter.typeIn
+        .map((inType) => {
+          switch (inType) {
+            case "BlankNode":
+              return "isBlank";
+            case "Literal":
+              return "isLiteral";
+            case "NamedNode":
+              return "isIRI";
+            default:
+              inType satisfies never;
+              throw new RangeError(inType);
+          }
+        })
+        .map((operator) => ({
+          type: "operation" as const,
+          operator,
+          args: [value],
+        }));
+
+      switch (typeInExpressions.length) {
+        case 0:
+          break;
+        case 1:
+          patterns.push({ type: "filter", expression: typeInExpressions[0] });
+          break;
+        default:
+          patterns.push({
+            type: "filter",
+            expression: {
+              type: "operation",
+              operator: "||",
+              args: typeInExpressions,
+            },
+          });
+      }
+    }
+
+    return patterns;
+  }
 }
 
 function $toLiteral(
@@ -6512,6 +6653,18 @@ export namespace UnionDiscriminantsClass {
                     .concat(),
                   type: "group",
                 },
+                {
+                  patterns: $LiteralFilter
+                    .$sparqlWherePatterns(
+                      parameters?.filter?.optionalIriOrLiteralProperty?.item
+                        ?.on?.["Literal"],
+                      dataFactory.variable!(
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
+                      ),
+                    )
+                    .concat(),
+                  type: "group",
+                },
               ],
               type: "group",
             },
@@ -6854,6 +7007,19 @@ export namespace UnionDiscriminantsClass {
                     null as sparqljs.Expression | null,
                   ) as sparqljs.Expression,
                 }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $LiteralFilter
+                .$sparqlWherePatterns(
+                  parameters?.filter?.requiredIriOrLiteralProperty?.on?.[
+                    "Literal"
+                  ],
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrLiteralProperty`,
+                  ),
+                )
                 .concat(),
               type: "group",
             },
@@ -7200,6 +7366,19 @@ export namespace UnionDiscriminantsClass {
                         null as sparqljs.Expression | null,
                       ) as sparqljs.Expression,
                     }))
+                    .concat(),
+                  type: "group",
+                },
+                {
+                  patterns: $LiteralFilter
+                    .$sparqlWherePatterns(
+                      parameters?.filter?.setIriOrLiteralProperty?.items?.on?.[
+                        "Literal"
+                      ],
+                      dataFactory.variable!(
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrLiteralProperty`,
+                      ),
+                    )
                     .concat(),
                   type: "group",
                 },
@@ -8990,6 +9169,17 @@ export namespace TermPropertiesClass {
             .concat(),
           type: "group",
         },
+        {
+          patterns: $LiteralFilter
+            .$sparqlWherePatterns(
+              parameters?.filter?.literalTermProperty?.item,
+              dataFactory.variable!(
+                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
+              ),
+            )
+            .concat(),
+          type: "group",
+        },
       ],
       type: "optional",
     });
@@ -9109,6 +9299,17 @@ export namespace TermPropertiesClass {
             },
           ],
           type: "bgp",
+        },
+        {
+          patterns: $TermFilter
+            .$sparqlWherePatterns(
+              parameters?.filter?.termProperty?.item,
+              dataFactory.variable!(
+                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
+              ),
+            )
+            .concat(),
+          type: "group",
         },
       ],
       type: "optional",
@@ -11167,120 +11368,34 @@ export namespace PropertyVisibilitiesClass {
       });
     }
 
-    patterns.push(
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PrivateProperty`,
-            ),
-            predicate:
-              PropertyVisibilitiesClass.$properties.privateProperty[
-                "identifier"
-              ],
-            subject: subject,
-          },
-        ],
-        type: "bgp",
-      },
-      {
-        patterns: [parameters?.preferredLanguages ?? []]
-          .filter((languages) => languages.length > 0)
-          .map((languages) =>
-            languages.map((language) => ({
-              type: "operation" as const,
-              operator: "=",
-              args: [
-                {
-                  type: "operation" as const,
-                  operator: "lang",
-                  args: [
-                    dataFactory.variable!(
-                      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PrivateProperty`,
-                    ),
-                  ],
-                },
-                dataFactory.literal(language),
-              ],
-            })),
-          )
-          .map((langEqualsExpressions) => ({
-            type: "filter" as const,
-            expression: langEqualsExpressions.reduce(
-              (reducedExpression, langEqualsExpression) => {
-                if (reducedExpression === null) {
-                  return langEqualsExpression;
-                }
-                return {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: [reducedExpression, langEqualsExpression],
-                };
-              },
-              null as sparqljs.Expression | null,
-            ) as sparqljs.Expression,
-          }))
-          .concat(),
-        type: "group",
-      },
-    );
-    patterns.push(
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}ProtectedProperty`,
-            ),
-            predicate:
-              PropertyVisibilitiesClass.$properties.protectedProperty[
-                "identifier"
-              ],
-            subject: subject,
-          },
-        ],
-        type: "bgp",
-      },
-      {
-        patterns: [parameters?.preferredLanguages ?? []]
-          .filter((languages) => languages.length > 0)
-          .map((languages) =>
-            languages.map((language) => ({
-              type: "operation" as const,
-              operator: "=",
-              args: [
-                {
-                  type: "operation" as const,
-                  operator: "lang",
-                  args: [
-                    dataFactory.variable!(
-                      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}ProtectedProperty`,
-                    ),
-                  ],
-                },
-                dataFactory.literal(language),
-              ],
-            })),
-          )
-          .map((langEqualsExpressions) => ({
-            type: "filter" as const,
-            expression: langEqualsExpressions.reduce(
-              (reducedExpression, langEqualsExpression) => {
-                if (reducedExpression === null) {
-                  return langEqualsExpression;
-                }
-                return {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: [reducedExpression, langEqualsExpression],
-                };
-              },
-              null as sparqljs.Expression | null,
-            ) as sparqljs.Expression,
-          }))
-          .concat(),
-        type: "group",
-      },
-    );
+    patterns.push({
+      triples: [
+        {
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PrivateProperty`,
+          ),
+          predicate:
+            PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
+          subject: subject,
+        },
+      ],
+      type: "bgp",
+    });
+    patterns.push({
+      triples: [
+        {
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}ProtectedProperty`,
+          ),
+          predicate:
+            PropertyVisibilitiesClass.$properties.protectedProperty[
+              "identifier"
+            ],
+          subject: subject,
+        },
+      ],
+      type: "bgp",
+    });
     patterns.push(
       {
         triples: [
@@ -32586,6 +32701,17 @@ export namespace LanguageInPropertiesClass {
           .concat(),
         type: "group",
       },
+      {
+        patterns: $LiteralFilter
+          .$sparqlWherePatterns(
+            parameters?.filter?.languageInLiteralProperty?.items,
+            dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass")}LanguageInLiteralProperty`,
+            ),
+          )
+          .concat(),
+        type: "group",
+      },
     );
     return patterns;
   }
@@ -50213,6 +50339,17 @@ export namespace ConvertibleTypePropertiesClass {
           .concat(),
         type: "group",
       },
+      {
+        patterns: $LiteralFilter
+          .$sparqlWherePatterns(
+            parameters?.filter?.convertibleLiteralNonEmptySetProperty?.items,
+            dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralNonEmptySetProperty`,
+            ),
+          )
+          .concat(),
+        type: "group",
+      },
     );
     patterns.push({
       patterns: [
@@ -50267,6 +50404,17 @@ export namespace ConvertibleTypePropertiesClass {
                 null as sparqljs.Expression | null,
               ) as sparqljs.Expression,
             }))
+            .concat(),
+          type: "group",
+        },
+        {
+          patterns: $LiteralFilter
+            .$sparqlWherePatterns(
+              parameters?.filter?.convertibleLiteralOptionProperty?.item,
+              dataFactory.variable!(
+                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
+              ),
+            )
             .concat(),
           type: "group",
         },
@@ -50328,6 +50476,17 @@ export namespace ConvertibleTypePropertiesClass {
           .concat(),
         type: "group",
       },
+      {
+        patterns: $LiteralFilter
+          .$sparqlWherePatterns(
+            parameters?.filter?.convertibleLiteralProperty,
+            dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralProperty`,
+            ),
+          )
+          .concat(),
+        type: "group",
+      },
     );
     patterns.push({
       patterns: [
@@ -50385,23 +50544,47 @@ export namespace ConvertibleTypePropertiesClass {
             .concat(),
           type: "group",
         },
+        {
+          patterns: $LiteralFilter
+            .$sparqlWherePatterns(
+              parameters?.filter?.convertibleLiteralSetProperty?.items,
+              dataFactory.variable!(
+                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralSetProperty`,
+              ),
+            )
+            .concat(),
+          type: "group",
+        },
       ],
       type: "optional",
     });
-    patterns.push({
-      triples: [
-        {
-          object: dataFactory.variable!(
-            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermNonEmptySetProperty`,
-          ),
-          predicate:
-            ConvertibleTypePropertiesClass.$properties
-              .convertibleTermNonEmptySetProperty["identifier"],
-          subject: subject,
-        },
-      ],
-      type: "bgp",
-    });
+    patterns.push(
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermNonEmptySetProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleTermNonEmptySetProperty["identifier"],
+            subject: subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: $TermFilter
+          .$sparqlWherePatterns(
+            parameters?.filter?.convertibleTermNonEmptySetProperty?.items,
+            dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermNonEmptySetProperty`,
+            ),
+          )
+          .concat(),
+        type: "group",
+      },
+    );
     patterns.push({
       patterns: [
         {
@@ -50418,24 +50601,47 @@ export namespace ConvertibleTypePropertiesClass {
           ],
           type: "bgp",
         },
+        {
+          patterns: $TermFilter
+            .$sparqlWherePatterns(
+              parameters?.filter?.convertibleTermOptionProperty?.item,
+              dataFactory.variable!(
+                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
+              ),
+            )
+            .concat(),
+          type: "group",
+        },
       ],
       type: "optional",
     });
-    patterns.push({
-      triples: [
-        {
-          object: dataFactory.variable!(
-            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermProperty`,
-          ),
-          predicate:
-            ConvertibleTypePropertiesClass.$properties.convertibleTermProperty[
-              "identifier"
-            ],
-          subject: subject,
-        },
-      ],
-      type: "bgp",
-    });
+    patterns.push(
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermProperty`,
+            ),
+            predicate:
+              ConvertibleTypePropertiesClass.$properties
+                .convertibleTermProperty["identifier"],
+            subject: subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: $TermFilter
+          .$sparqlWherePatterns(
+            parameters?.filter?.convertibleTermProperty,
+            dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermProperty`,
+            ),
+          )
+          .concat(),
+        type: "group",
+      },
+    );
     patterns.push({
       patterns: [
         {
@@ -50451,6 +50657,17 @@ export namespace ConvertibleTypePropertiesClass {
             },
           ],
           type: "bgp",
+        },
+        {
+          patterns: $TermFilter
+            .$sparqlWherePatterns(
+              parameters?.filter?.convertibleTermSetProperty?.items,
+              dataFactory.variable!(
+                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermSetProperty`,
+              ),
+            )
+            .concat(),
+          type: "group",
         },
       ],
       type: "optional",

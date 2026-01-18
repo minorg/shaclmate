@@ -299,7 +299,7 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
     `\
 interface ${syntheticNamePrefix}TermFilter {
   readonly datatypeIn?: readonly string[];
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type: "BlankNode" | "Literal" | "NamedNode"; readonly value: string; }[];
+  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type: "Literal" | "NamedNode"; readonly value: string; }[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }`,
@@ -341,12 +341,13 @@ namespace ${syntheticNamePrefix}TermFilter {
               return dataFactory.literal(inTerm.value, inTerm.language);
             }
             switch (inTerm.type) {
-              case "BlankNode":
-                return dataFactory.blankNode(inTerm.value);
               case "Literal":
                 return dataFactory.literal(inTerm.value);
               case "NamedNode":
                 return dataFactory.namedNode(inTerm.value);
+              default:
+                inTerm.type satisfies never;
+                throw new RangeError(inTerm.type);
             }
           })],
         }
@@ -359,23 +360,26 @@ namespace ${syntheticNamePrefix}TermFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [{ args: [value], operator: "lang", type: "operation" }, filter.languageIn.map(dataFactory.literal)]
+          args: [{ args: [value], operator: "lang", type: "operation" }, filter.languageIn.map(value => dataFactory.literal(value))]
         }
       });
     }
   
     if (typeof filter.typeIn !== "undefined") {
-      const typeInExpressions = filter.typeIn.map(type => {
-        switch (type) {
+      const typeInExpressions = filter.typeIn.map(inType => {
+        switch (inType) {
           case "BlankNode":
             return "isBlank";
           case "Literal":
             return "isLiteral";
           case "NamedNode":
             return "isIRI";
+          default:
+            inType satisfies never;
+            throw new RangeError(inType);
         }
       }).map(operator => ({
-        type: "operation",
+        type: "operation" as const,
         operator,
         args: [value]
       }));

@@ -113,10 +113,10 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  return ${syntheticNamePrefix}filterTerm(filter ? {
+  return ${syntheticNamePrefix}filterTerm({
     ...filter,
     in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
-  } : undefined, value);
+  }, value);
 }`,
       ),
       sharedSnippetDeclarations.filterTerm,
@@ -133,7 +133,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
             `\
 namespace ${syntheticNamePrefix}LiteralFilter {
   export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable) {
-    return ${syntheticNamePrefix}TermFilter.sparqlWherePatterns(filter ? {
+    return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter ? {
       ...filter,
       in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
     } : undefined, value);
@@ -142,7 +142,9 @@ namespace ${syntheticNamePrefix}LiteralFilter {
           )
         : {},
       sharedSnippetDeclarations.TermFilter,
-      sharedSnippetDeclarations.TermFilter_sparqlWherePatterns,
+      parameters.features.has("sparql")
+        ? sharedSnippetDeclarations.TermFilter_sparqlWherePatterns
+        : {},
     );
   }
 
