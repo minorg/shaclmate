@@ -5,7 +5,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { Sparql } from "./Sparql.js";
+import { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { Type } from "./Type.js";
@@ -175,18 +175,18 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
         `\
 function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
   return (filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT>, value: purify.Maybe<ItemT>): boolean => {
-    if (typeof filter.item !== "undefined") {
+    if (filter !== null) {
       if (value.isNothing()) {
         return false;
       }
 
-      if (!filterItem(filter.item, value.extract()!)) {
+      if (!filterItem(filter, value.extract()!)) {
         return false;
       }
-    }
-
-    if (typeof filter.null !== "undefined" && filter.null !== value.isNothing()) {
-      return false;
+    } else {
+      if (value.isJust()) {
+        return false;
+      }
     }
 
     return true;
@@ -232,11 +232,24 @@ function ${syntheticNamePrefix}maybeEquals<T>(
       singleEntryRecord(
         `${syntheticNamePrefix}MaybeFilter`,
         `\
-interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
-  readonly item?: ItemFilterT;
-  readonly null?: boolean;
-}`,
+type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
       ),
+
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}MaybeFilter.sparqlWherePatterns`,
+            `\
+namespace ${syntheticNamePrefix}MaybeFilter {
+  export function ${syntheticNamePrefix}sparqlWherePatterns<ItemFilterT>(filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT> | undefined, itemSparqlWherePatterns: (itemFilter: ItemFilterT | undefined) => readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {  
+    if (filter === null) {
+      return [{ expression: { args: itemSparqlWherePatterns(undefined).concat(), operator: "notexists", type: "operation" }, type: "filter" }]
+    }
+
+    return [{ patterns: itemSparqlWherePatterns(filter).concat(), type: "optional" }];
+  }
+}`,
+          )
+        : {},
     );
   }
 
@@ -246,29 +259,42 @@ interface ${syntheticNamePrefix}MaybeFilter<ItemFilterT> {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWherePatterns({
-    variables,
-    ...otherParameters
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
-    const itemPatterns = this.itemType.sparqlWherePatterns({
-      ...otherParameters,
-      variables: {
-        ...variables,
-        filter: variables.filter.map(
-          (filterVariable) => `${filterVariable}?.item`,
-        ),
-      },
-    });
+  override sparqlWherePatterns(
+    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+  ): readonly Sparql.Pattern[] {
+    const { variables } = parameters;
+    return variables.filter
+      .map((filterVariable) => {
+        const itemPatterns = this.itemType.sparqlWherePatterns({
+          ...parameters,
+          variables: {
+            ...variables,
+            filter: Maybe.of("itemFilter"),
+          },
+        });
 
-    if (itemPatterns.length === 0) {
-      return itemPatterns;
-    }
+        return [
+          {
+            patterns: `${syntheticNamePrefix}MaybeFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, (itemFilter) => [${itemPatterns.map(Sparql.Pattern.stringify).join(", ")}])`,
+            type: "opaque-block",
+          },
+        ] as readonly Sparql.Pattern[];
+      })
+      .orDefaultLazy(() => {
+        const itemPatterns = this.itemType.sparqlWherePatterns(parameters);
 
-    if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
-      return itemPatterns;
-    }
+        if (itemPatterns.length === 0) {
+          return itemPatterns;
+        }
 
-    return [{ patterns: itemPatterns, type: "optional" }];
+        if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
+          return itemPatterns;
+        }
+
+        return [
+          { patterns: itemPatterns, type: "optional" },
+        ] as readonly Sparql.Pattern[];
+      });
   }
 
   override toJsonExpression({

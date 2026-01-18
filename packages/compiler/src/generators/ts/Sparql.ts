@@ -21,9 +21,8 @@ export namespace Sparql {
     | BlockPattern
     | FilterPattern
     | BindPattern
-    | ValuesPattern
-    // | SelectQuery;
-    | OpaquePattern;
+    | ValuesPattern;
+  // | SelectQuery;
 
   /**
    * Basic Graph Pattern
@@ -101,11 +100,6 @@ export namespace Sparql {
     readonly object: Term;
   }
 
-  interface OpaquePattern {
-    readonly expression: TypeScriptExpression;
-    readonly type: "opaque";
-  }
-
   interface OpaqueBlockPattern {
     readonly patterns: TypeScriptExpression;
     readonly type: "opaque-block";
@@ -143,8 +137,6 @@ export namespace Sparql {
         case "optional":
         case "union":
           return `{ patterns: [${pattern.patterns.map(stringify).join(", ")}], type: "${pattern.type}" }`;
-        case "opaque":
-          return pattern.expression;
         case "opaque-block":
           return `{ patterns: ${pattern.patterns}.concat(), type: "group" }`;
         case "service":

@@ -469,21 +469,18 @@ function $filterMaybe<ItemT, ItemFilterT>(
     filter: $MaybeFilter<ItemFilterT>,
     value: purify.Maybe<ItemT>,
   ): boolean => {
-    if (typeof filter.item !== "undefined") {
+    if (filter !== null) {
       if (value.isNothing()) {
         return false;
       }
 
-      if (!filterItem(filter.item, value.extract()!)) {
+      if (!filterItem(filter, value.extract()!)) {
         return false;
       }
-    }
-
-    if (
-      typeof filter.null !== "undefined" &&
-      filter.null !== value.isNothing()
-    ) {
-      return false;
+    } else {
+      if (value.isJust()) {
+        return false;
+      }
     }
 
     return true;
@@ -950,9 +947,31 @@ function $maybeEquals<T>(
   return $EqualsResult.Equal;
 }
 
-interface $MaybeFilter<ItemFilterT> {
-  readonly item?: ItemFilterT;
-  readonly null?: boolean;
+type $MaybeFilter<ItemFilterT> = ItemFilterT | null;
+namespace $MaybeFilter {
+  export function $sparqlWherePatterns<ItemFilterT>(
+    filter: $MaybeFilter<ItemFilterT> | undefined,
+    itemSparqlWherePatterns: (
+      itemFilter: ItemFilterT | undefined,
+    ) => readonly sparqljs.Pattern[],
+  ): readonly sparqljs.Pattern[] {
+    if (filter === null) {
+      return [
+        {
+          expression: {
+            args: itemSparqlWherePatterns(undefined).concat(),
+            operator: "notexists",
+            type: "operation",
+          },
+          type: "filter",
+        },
+      ];
+    }
+
+    return [
+      { patterns: itemSparqlWherePatterns(filter).concat(), type: "optional" },
+    ];
+  }
 }
 
 interface $NamedNodeFilter {
@@ -6424,373 +6443,385 @@ export namespace UnionDiscriminantsClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalClassOrClassOrStringProperty,
+          (itemFilter) => [
             {
               patterns: [
                 {
-                  triples: [
+                  patterns: [
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalClassOrClassOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: ClassUnionMember1.$sparqlWherePatterns({
-                    filter:
-                      parameters?.filter?.optionalClassOrClassOrStringProperty
-                        ?.item?.on?.["0-ClassUnionMember1"],
-                    preferredLanguages: parameters?.preferredLanguages,
-                    subject: dataFactory.variable!(
-                      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                    ),
-                    variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                  }).concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalClassOrClassOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: ClassUnionMember2.$sparqlWherePatterns({
-                    filter:
-                      parameters?.filter?.optionalClassOrClassOrStringProperty
-                        ?.item?.on?.["1-ClassUnionMember2"],
-                    preferredLanguages: parameters?.preferredLanguages,
-                    subject: dataFactory.variable!(
-                      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                    ),
-                    variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                  }).concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalClassOrClassOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: [parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                              ),
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalClassOrClassOrStringProperty[
+                              "identifier"
                             ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
+                          subject: subject,
                         },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    }))
-                    .concat(),
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: ClassUnionMember1.$sparqlWherePatterns({
+                        filter: itemFilter?.on?.["0-ClassUnionMember1"],
+                        preferredLanguages: parameters?.preferredLanguages,
+                        subject: dataFactory.variable!(
+                          `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                        ),
+                        variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                      }).concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
                 {
-                  patterns: $StringFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.optionalClassOrClassOrStringProperty
-                        ?.item?.on?.["2-string"],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
-                      ),
-                    )
-                    .concat(),
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalClassOrClassOrStringProperty[
+                              "identifier"
+                            ],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: ClassUnionMember2.$sparqlWherePatterns({
+                        filter: itemFilter?.on?.["1-ClassUnionMember2"],
+                        preferredLanguages: parameters?.preferredLanguages,
+                        subject: dataFactory.variable!(
+                          `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                        ),
+                        variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                      }).concat(),
+                      type: "group",
+                    },
+                  ],
+                  type: "group",
+                },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalClassOrClassOrStringProperty[
+                              "identifier"
+                            ],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $StringFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["2-string"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
               ],
-              type: "group",
+              type: "union",
             },
           ],
-          type: "union",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalIriOrLiteralProperty,
+          (itemFilter) => [
             {
               patterns: [
                 {
-                  triples: [
+                  patterns: [
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalIriOrLiteralProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $NamedNodeFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.optionalIriOrLiteralProperty?.item
-                        ?.on?.["NamedNode"],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalIriOrLiteralProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: [parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalIriOrLiteralProperty["identifier"],
+                          subject: subject,
                         },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    }))
-                    .concat(),
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $NamedNodeFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["NamedNode"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
                 {
-                  patterns: $LiteralFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.optionalIriOrLiteralProperty?.item
-                        ?.on?.["Literal"],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
-                      ),
-                    )
-                    .concat(),
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalIriOrLiteralProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $LiteralFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["Literal"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
               ],
-              type: "group",
+              type: "union",
             },
           ],
-          type: "union",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalIriOrStringProperty,
+          (itemFilter) => [
             {
               patterns: [
                 {
-                  triples: [
+                  patterns: [
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalIriOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $NamedNodeFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.optionalIriOrStringProperty?.item
-                        ?.on?.["object"],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
-                      ),
-                      predicate:
-                        UnionDiscriminantsClass.$properties
-                          .optionalIriOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: [parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalIriOrStringProperty["identifier"],
+                          subject: subject,
                         },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    }))
-                    .concat(),
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $NamedNodeFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["object"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
                 {
-                  patterns: $StringFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.optionalIriOrStringProperty?.item
-                        ?.on?.["string"],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
-                      ),
-                    )
-                    .concat(),
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
+                          ),
+                          predicate:
+                            UnionDiscriminantsClass.$properties
+                              .optionalIriOrStringProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $StringFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["string"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
               ],
-              type: "group",
+              type: "union",
             },
           ],
-          type: "union",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
       patterns: [
@@ -8980,357 +9011,406 @@ export namespace TermPropertiesClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.blankNodeTermProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.blankNodeTermProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $BlankNodeFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.blankNodeTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BooleanTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.booleanTermProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $BooleanFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.booleanTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BooleanTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.dateTermProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $DateFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.dateTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTimeTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.dateTimeTermProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $DateFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.dateTimeTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTimeTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}IriTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.iriTermProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $NamedNodeFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.iriTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}IriTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.literalTermProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
-                      ),
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.blankNodeTermProperty[
+                      "identifier"
                     ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
+                  subject: subject,
                 },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $LiteralFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.literalTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
+              ],
+              type: "bgp",
+            },
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}NumberTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.numberTermProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              patterns: $BlankNodeFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $NumberFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.numberTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}NumberTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.booleanTermProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.stringTermProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
-                      ),
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BooleanTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.booleanTermProperty[
+                      "identifier"
                     ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
+                  subject: subject,
                 },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $StringFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.stringTermProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
+              ],
+              type: "bgp",
+            },
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
-              ),
-              predicate:
-                TermPropertiesClass.$properties.termProperty["identifier"],
-              subject: subject,
+              patterns: $BooleanFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BooleanTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $TermFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.termProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.dateTermProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.dateTermProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DateFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.dateTimeTermProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTimeTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.dateTimeTermProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DateFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTimeTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.iriTermProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}IriTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.iriTermProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NamedNodeFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}IriTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.literalTermProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.literalTermProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $LiteralFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.numberTermProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}NumberTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.numberTermProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NumberFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}NumberTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.stringTermProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.stringTermProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $StringFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.termProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
+                  ),
+                  predicate:
+                    TermPropertiesClass.$properties.termProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $TermFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -12438,75 +12518,79 @@ export namespace PropertyCardinalitiesClass {
       },
     );
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalStringProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
-              ),
-              predicate:
-                PropertyCardinalitiesClass.$properties.optionalStringProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
+                  ),
+                  predicate:
+                    PropertyCardinalitiesClass.$properties
+                      .optionalStringProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $StringFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
-                },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $StringFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.optionalStringProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push(
       {
@@ -18182,99 +18266,21 @@ export namespace MutablePropertiesClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
-              ),
-              predicate:
-                MutablePropertiesClass.$properties.mutableListProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.mutableListProperty,
+          (itemFilter) => [
             {
               triples: [
                 {
                   object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.first,
-                  subject: dataFactory.variable!(
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
                   ),
-                },
-              ],
-              type: "bgp",
-            },
-            {
-              patterns: [parameters?.preferredLanguages ?? []]
-                .filter((languages) => languages.length > 0)
-                .map((languages) =>
-                  languages.map((language) => ({
-                    type: "operation" as const,
-                    operator: "=",
-                    args: [
-                      {
-                        type: "operation" as const,
-                        operator: "lang",
-                        args: [
-                          dataFactory.variable!(
-                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
-                          ),
-                        ],
-                      },
-                      dataFactory.literal(language),
+                  predicate:
+                    MutablePropertiesClass.$properties.mutableListProperty[
+                      "identifier"
                     ],
-                  })),
-                )
-                .map((langEqualsExpressions) => ({
-                  type: "filter" as const,
-                  expression: langEqualsExpressions.reduce(
-                    (reducedExpression, langEqualsExpression) => {
-                      if (reducedExpression === null) {
-                        return langEqualsExpression;
-                      }
-                      return {
-                        type: "operation" as const,
-                        operator: "||",
-                        args: [reducedExpression, langEqualsExpression],
-                      };
-                    },
-                    null as sparqljs.Expression | null,
-                  ) as sparqljs.Expression,
-                }))
-                .concat(),
-              type: "group",
-            },
-            {
-              patterns: $StringFilter
-                .$sparqlWherePatterns(
-                  parameters?.filter?.mutableListProperty?.item?.items,
-                  dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
-                  ),
-                )
-                .concat(),
-              type: "group",
-            },
-            {
-              triples: [
-                {
-                  object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Rest0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.rest,
-                  subject: dataFactory.variable!(
-                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
-                  ),
+                  subject: subject,
                 },
               ],
               type: "bgp",
@@ -18285,29 +18291,11 @@ export namespace MutablePropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestN`,
-                      ),
-                      predicate: {
-                        type: "path",
-                        pathType: "*",
-                        items: [$RdfVocabularies.rdf.rest],
-                      },
-                      subject: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
-                      ),
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
                       ),
                       predicate: $RdfVocabularies.rdf.first,
                       subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestN`,
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
                       ),
                     },
                   ],
@@ -18326,7 +18314,7 @@ export namespace MutablePropertiesClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
+                                `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
                               ),
                             ],
                           },
@@ -18356,9 +18344,9 @@ export namespace MutablePropertiesClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.mutableListProperty?.item?.items,
+                      itemFilter?.items,
                       dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
                       ),
                     )
                     .concat(),
@@ -18368,24 +18356,125 @@ export namespace MutablePropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestNBasic`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Rest0`,
                       ),
                       predicate: $RdfVocabularies.rdf.rest,
                       subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestN`,
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
                       ),
                     },
                   ],
                   type: "bgp",
                 },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestN`,
+                          ),
+                          predicate: {
+                            type: "path",
+                            pathType: "*",
+                            items: [$RdfVocabularies.rdf.rest],
+                          },
+                          subject: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.first,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $StringFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.items,
+                          dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestNBasic`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.rest,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                  ],
+                  type: "optional",
+                },
               ],
               type: "optional",
             },
           ],
-          type: "optional",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
       patterns: [
@@ -18459,75 +18548,80 @@ export namespace MutablePropertiesClass {
       type: "optional",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.mutableStringProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
-              ),
-              predicate:
-                MutablePropertiesClass.$properties.mutableStringProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
+                  ),
+                  predicate:
+                    MutablePropertiesClass.$properties.mutableStringProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $StringFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
-                },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $StringFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.mutableStringProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -19568,57 +19662,21 @@ export namespace ListPropertiesClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
-              ),
-              predicate:
-                ListPropertiesClass.$properties.iriListProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.iriListProperty,
+          (itemFilter) => [
             {
               triples: [
                 {
                   object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Item0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.first,
-                  subject: dataFactory.variable!(
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
                   ),
-                },
-              ],
-              type: "bgp",
-            },
-            {
-              patterns: $NamedNodeFilter
-                .$sparqlWherePatterns(
-                  parameters?.filter?.iriListProperty?.item?.items,
-                  dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Item0`,
-                  ),
-                )
-                .concat(),
-              type: "group",
-            },
-            {
-              triples: [
-                {
-                  object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Rest0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.rest,
-                  subject: dataFactory.variable!(
-                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
-                  ),
+                  predicate:
+                    ListPropertiesClass.$properties.iriListProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
                 },
               ],
               type: "bgp",
@@ -19629,13 +19687,9 @@ export namespace ListPropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Item0`,
                       ),
-                      predicate: {
-                        type: "path",
-                        pathType: "*",
-                        items: [$RdfVocabularies.rdf.rest],
-                      },
+                      predicate: $RdfVocabularies.rdf.first,
                       subject: dataFactory.variable!(
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
                       ),
@@ -19644,25 +19698,11 @@ export namespace ListPropertiesClass {
                   type: "bgp",
                 },
                 {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}ItemN`,
-                      ),
-                      predicate: $RdfVocabularies.rdf.first,
-                      subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestN`,
-                      ),
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
                   patterns: $NamedNodeFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.iriListProperty?.item?.items,
+                      itemFilter?.items,
                       dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}ItemN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Item0`,
                       ),
                     )
                     .concat(),
@@ -19672,80 +19712,102 @@ export namespace ListPropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestNBasic`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Rest0`,
                       ),
                       predicate: $RdfVocabularies.rdf.rest,
                       subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestN`,
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
                       ),
                     },
                   ],
                   type: "bgp",
                 },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestN`,
+                          ),
+                          predicate: {
+                            type: "path",
+                            pathType: "*",
+                            items: [$RdfVocabularies.rdf.rest],
+                          },
+                          subject: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}ItemN`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.first,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $NamedNodeFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.items,
+                          dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}ItemN`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestNBasic`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.rest,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                  ],
+                  type: "optional",
+                },
               ],
               type: "optional",
             },
           ],
-          type: "optional",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
-              ),
-              predicate:
-                ListPropertiesClass.$properties.objectListProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.objectListProperty,
+          (itemFilter) => [
             {
               triples: [
                 {
                   object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Item0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.first,
-                  subject: dataFactory.variable!(
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
                   ),
-                },
-              ],
-              type: "bgp",
-            },
-            {
-              patterns: NonClass.$sparqlWherePatterns({
-                filter: parameters?.filter?.objectListProperty?.item?.items,
-                ignoreRdfType: true,
-                preferredLanguages: parameters?.preferredLanguages,
-                subject: dataFactory.variable!(
-                  `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Item0`,
-                ),
-                variablePrefix: `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Item0`,
-              }).concat(),
-              type: "group",
-            },
-            {
-              triples: [
-                {
-                  object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Rest0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.rest,
-                  subject: dataFactory.variable!(
-                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
-                  ),
+                  predicate:
+                    ListPropertiesClass.$properties.objectListProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
                 },
               ],
               type: "bgp",
@@ -19756,13 +19818,9 @@ export namespace ListPropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Item0`,
                       ),
-                      predicate: {
-                        type: "path",
-                        pathType: "*",
-                        items: [$RdfVocabularies.rdf.rest],
-                      },
+                      predicate: $RdfVocabularies.rdf.first,
                       subject: dataFactory.variable!(
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
                       ),
@@ -19771,28 +19829,14 @@ export namespace ListPropertiesClass {
                   type: "bgp",
                 },
                 {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}ItemN`,
-                      ),
-                      predicate: $RdfVocabularies.rdf.first,
-                      subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestN`,
-                      ),
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
                   patterns: NonClass.$sparqlWherePatterns({
-                    filter: parameters?.filter?.objectListProperty?.item?.items,
+                    filter: itemFilter?.items,
                     ignoreRdfType: true,
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
-                      `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}ItemN`,
+                      `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Item0`,
                     ),
-                    variablePrefix: `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}ItemN`,
+                    variablePrefix: `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Item0`,
                   }).concat(),
                   type: "group",
                 },
@@ -19800,119 +19844,103 @@ export namespace ListPropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestNBasic`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}Rest0`,
                       ),
                       predicate: $RdfVocabularies.rdf.rest,
                       subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestN`,
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
                       ),
                     },
                   ],
                   type: "bgp",
                 },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestN`,
+                          ),
+                          predicate: {
+                            type: "path",
+                            pathType: "*",
+                            items: [$RdfVocabularies.rdf.rest],
+                          },
+                          subject: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}ItemN`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.first,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: NonClass.$sparqlWherePatterns({
+                        filter: itemFilter?.items,
+                        ignoreRdfType: true,
+                        preferredLanguages: parameters?.preferredLanguages,
+                        subject: dataFactory.variable!(
+                          `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}ItemN`,
+                        ),
+                        variablePrefix: `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}ItemN`,
+                      }).concat(),
+                      type: "group",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestNBasic`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.rest,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                  ],
+                  type: "optional",
+                },
               ],
               type: "optional",
             },
           ],
-          type: "optional",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
-              ),
-              predicate:
-                ListPropertiesClass.$properties.stringListProperty[
-                  "identifier"
-                ],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.stringListProperty,
+          (itemFilter) => [
             {
               triples: [
                 {
                   object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.first,
-                  subject: dataFactory.variable!(
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
                   ),
-                },
-              ],
-              type: "bgp",
-            },
-            {
-              patterns: [parameters?.preferredLanguages ?? []]
-                .filter((languages) => languages.length > 0)
-                .map((languages) =>
-                  languages.map((language) => ({
-                    type: "operation" as const,
-                    operator: "=",
-                    args: [
-                      {
-                        type: "operation" as const,
-                        operator: "lang",
-                        args: [
-                          dataFactory.variable!(
-                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
-                          ),
-                        ],
-                      },
-                      dataFactory.literal(language),
+                  predicate:
+                    ListPropertiesClass.$properties.stringListProperty[
+                      "identifier"
                     ],
-                  })),
-                )
-                .map((langEqualsExpressions) => ({
-                  type: "filter" as const,
-                  expression: langEqualsExpressions.reduce(
-                    (reducedExpression, langEqualsExpression) => {
-                      if (reducedExpression === null) {
-                        return langEqualsExpression;
-                      }
-                      return {
-                        type: "operation" as const,
-                        operator: "||",
-                        args: [reducedExpression, langEqualsExpression],
-                      };
-                    },
-                    null as sparqljs.Expression | null,
-                  ) as sparqljs.Expression,
-                }))
-                .concat(),
-              type: "group",
-            },
-            {
-              patterns: $StringFilter
-                .$sparqlWherePatterns(
-                  parameters?.filter?.stringListProperty?.item?.items,
-                  dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
-                  ),
-                )
-                .concat(),
-              type: "group",
-            },
-            {
-              triples: [
-                {
-                  object: dataFactory.variable!(
-                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Rest0`,
-                  ),
-                  predicate: $RdfVocabularies.rdf.rest,
-                  subject: dataFactory.variable!(
-                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
-                  ),
+                  subject: subject,
                 },
               ],
               type: "bgp",
@@ -19923,29 +19951,11 @@ export namespace ListPropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestN`,
-                      ),
-                      predicate: {
-                        type: "path",
-                        pathType: "*",
-                        items: [$RdfVocabularies.rdf.rest],
-                      },
-                      subject: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
-                      ),
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
                       ),
                       predicate: $RdfVocabularies.rdf.first,
                       subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestN`,
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
                       ),
                     },
                   ],
@@ -19964,7 +19974,7 @@ export namespace ListPropertiesClass {
                             operator: "lang",
                             args: [
                               dataFactory.variable!(
-                                `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
+                                `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
                               ),
                             ],
                           },
@@ -19994,9 +20004,9 @@ export namespace ListPropertiesClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.stringListProperty?.item?.items,
+                      itemFilter?.items,
                       dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
                       ),
                     )
                     .concat(),
@@ -20006,24 +20016,125 @@ export namespace ListPropertiesClass {
                   triples: [
                     {
                       object: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestNBasic`,
+                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Rest0`,
                       ),
                       predicate: $RdfVocabularies.rdf.rest,
                       subject: dataFactory.variable!(
-                        `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestN`,
+                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
                       ),
                     },
                   ],
                   type: "bgp",
                 },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestN`,
+                          ),
+                          predicate: {
+                            type: "path",
+                            pathType: "*",
+                            items: [$RdfVocabularies.rdf.rest],
+                          },
+                          subject: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.first,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $StringFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.items,
+                          dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestNBasic`,
+                          ),
+                          predicate: $RdfVocabularies.rdf.rest,
+                          subject: dataFactory.variable!(
+                            `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}RestN`,
+                          ),
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                  ],
+                  type: "optional",
+                },
               ],
               type: "optional",
             },
           ],
-          type: "optional",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -23270,217 +23381,239 @@ export namespace LazyPropertiesInterface {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalLazyToResolvedInterfaceProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
-              ),
-              predicate:
-                LazyPropertiesInterface.$properties
-                  .optionalLazyToResolvedInterfaceProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesInterface.$properties
+                      .optionalLazyToResolvedInterfaceProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DefaultPartial
+                .$sparqlWherePatterns({
+                  filter: itemFilter,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters?.preferredLanguages,
+                  subject: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
+                  ),
+                  variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
+                })
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $DefaultPartial
-            .$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.optionalLazyToResolvedInterfaceProperty
-                  ?.item,
-              ignoreRdfType: true,
-              preferredLanguages: parameters?.preferredLanguages,
-              subject: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
-              ),
-              variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
-              ),
-              predicate:
-                LazyPropertiesInterface.$properties
-                  .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesInterface.$properties
+                      .optionalLazyToResolvedInterfaceUnionProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DefaultPartial
+                .$sparqlWherePatterns({
+                  filter: itemFilter,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters?.preferredLanguages,
+                  subject: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
+                  ),
+                  variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
+                })
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $DefaultPartial
-            .$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty
-                  ?.item,
-              ignoreRdfType: true,
-              preferredLanguages: parameters?.preferredLanguages,
-              subject: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
-              ),
-              variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter
+            ?.optionalLazyToResolvedIriIdentifierInterfaceProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-              ),
-              predicate:
-                LazyPropertiesInterface.$properties
-                  .optionalLazyToResolvedIriIdentifierInterfaceProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesInterface.$properties
+                      .optionalLazyToResolvedIriIdentifierInterfaceProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NamedDefaultPartial
+                .$sparqlWherePatterns({
+                  filter: itemFilter,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters?.preferredLanguages,
+                  subject: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
+                  ),
+                  variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
+                })
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $NamedDefaultPartial
-            .$sparqlWherePatterns({
-              filter:
-                parameters?.filter
-                  ?.optionalLazyToResolvedIriIdentifierInterfaceProperty?.item,
-              ignoreRdfType: true,
-              preferredLanguages: parameters?.preferredLanguages,
-              subject: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-              ),
-              variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter
+            ?.optionalPartialInterfaceToResolvedInterfaceProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
-              ),
-              predicate:
-                LazyPropertiesInterface.$properties
-                  .optionalPartialInterfaceToResolvedInterfaceProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesInterface.$properties
+                      .optionalPartialInterfaceToResolvedInterfaceProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: PartialInterface.$sparqlWherePatterns({
+                filter: itemFilter,
+                ignoreRdfType: true,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: PartialInterface.$sparqlWherePatterns({
-            filter:
-              parameters?.filter
-                ?.optionalPartialInterfaceToResolvedInterfaceProperty?.item,
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter
+            ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-              ),
-              predicate:
-                LazyPropertiesInterface.$properties
-                  .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesInterface.$properties
+                      .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: PartialInterface.$sparqlWherePatterns({
+                filter: itemFilter,
+                ignoreRdfType: true,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: PartialInterface.$sparqlWherePatterns({
-            filter:
-              parameters?.filter
-                ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty
-                ?.item,
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter
+            ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-              ),
-              predicate:
-                LazyPropertiesInterface.$properties
-                  .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesInterface.$properties
+                      .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: PartialInterfaceUnion.$sparqlWherePatterns({
+                filter: itemFilter,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: PartialInterfaceUnion.$sparqlWherePatterns({
-            filter:
-              parameters?.filter
-                ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
-                ?.item,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push(
       {
@@ -27073,212 +27206,234 @@ export namespace LazyPropertiesClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalLazyToResolvedClassProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
-              ),
-              predicate:
-                LazyPropertiesClass.$properties
-                  .optionalLazyToResolvedClassProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesClass.$properties
+                      .optionalLazyToResolvedClassProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DefaultPartial
+                .$sparqlWherePatterns({
+                  filter: itemFilter,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters?.preferredLanguages,
+                  subject: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
+                  ),
+                  variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
+                })
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $DefaultPartial
-            .$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.optionalLazyToResolvedClassProperty?.item,
-              ignoreRdfType: true,
-              preferredLanguages: parameters?.preferredLanguages,
-              subject: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
-              ),
-              variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalLazyToResolvedClassUnionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
-              ),
-              predicate:
-                LazyPropertiesClass.$properties
-                  .optionalLazyToResolvedClassUnionProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesClass.$properties
+                      .optionalLazyToResolvedClassUnionProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DefaultPartial
+                .$sparqlWherePatterns({
+                  filter: itemFilter,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters?.preferredLanguages,
+                  subject: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
+                  ),
+                  variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
+                })
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $DefaultPartial
-            .$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.optionalLazyToResolvedClassUnionProperty
-                  ?.item,
-              ignoreRdfType: true,
-              preferredLanguages: parameters?.preferredLanguages,
-              subject: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
-              ),
-              variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
-              ),
-              predicate:
-                LazyPropertiesClass.$properties
-                  .optionalLazyToResolvedIriIdentifierClassProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesClass.$properties
+                      .optionalLazyToResolvedIriIdentifierClassProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NamedDefaultPartial
+                .$sparqlWherePatterns({
+                  filter: itemFilter,
+                  ignoreRdfType: true,
+                  preferredLanguages: parameters?.preferredLanguages,
+                  subject: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
+                  ),
+                  variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
+                })
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $NamedDefaultPartial
-            .$sparqlWherePatterns({
-              filter:
-                parameters?.filter
-                  ?.optionalLazyToResolvedIriIdentifierClassProperty?.item,
-              ignoreRdfType: true,
-              preferredLanguages: parameters?.preferredLanguages,
-              subject: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
-              ),
-              variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
-            })
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalPartialClassToResolvedClassProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
-              ),
-              predicate:
-                LazyPropertiesClass.$properties
-                  .optionalPartialClassToResolvedClassProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesClass.$properties
+                      .optionalPartialClassToResolvedClassProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: PartialClass.$sparqlWherePatterns({
+                filter: itemFilter,
+                ignoreRdfType: true,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: PartialClass.$sparqlWherePatterns({
-            filter:
-              parameters?.filter?.optionalPartialClassToResolvedClassProperty
-                ?.item,
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
-              ),
-              predicate:
-                LazyPropertiesClass.$properties
-                  .optionalPartialClassToResolvedClassUnionProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesClass.$properties
+                      .optionalPartialClassToResolvedClassUnionProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: PartialClass.$sparqlWherePatterns({
+                filter: itemFilter,
+                ignoreRdfType: true,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: PartialClass.$sparqlWherePatterns({
-            filter:
-              parameters?.filter
-                ?.optionalPartialClassToResolvedClassUnionProperty?.item,
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter
+            ?.optionalPartialClassUnionToResolvedClassUnionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
-              ),
-              predicate:
-                LazyPropertiesClass.$properties
-                  .optionalPartialClassUnionToResolvedClassUnionProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
+                  ),
+                  predicate:
+                    LazyPropertiesClass.$properties
+                      .optionalPartialClassUnionToResolvedClassUnionProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: PartialClassUnion.$sparqlWherePatterns({
+                filter: itemFilter,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: PartialClassUnion.$sparqlWherePatterns({
-            filter:
-              parameters?.filter
-                ?.optionalPartialClassUnionToResolvedClassUnionProperty?.item,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push(
       {
@@ -38452,189 +38607,222 @@ export namespace InPropertiesClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.inBooleansProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
-              ),
-              predicate:
-                InPropertiesClass.$properties.inBooleansProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $BooleanFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.inBooleansProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InDateTimesProperty`,
-              ),
-              predicate:
-                InPropertiesClass.$properties.inDateTimesProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $DateFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.inDateTimesProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InDateTimesProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InIrisProperty`,
-              ),
-              predicate:
-                InPropertiesClass.$properties.inIrisProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $NamedNodeFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.inIrisProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InIrisProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InNumbersProperty`,
-              ),
-              predicate:
-                InPropertiesClass.$properties.inNumbersProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: $NumberFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.inNumbersProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InNumbersProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          triples: [
-            {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
-              ),
-              predicate:
-                InPropertiesClass.$properties.inStringsProperty["identifier"],
-              subject: subject,
-            },
-          ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
-                      ),
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
+                  ),
+                  predicate:
+                    InPropertiesClass.$properties.inBooleansProperty[
+                      "identifier"
                     ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
+                  subject: subject,
                 },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $StringFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.inStringsProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $BooleanFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.inDateTimesProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InDateTimesProperty`,
+                  ),
+                  predicate:
+                    InPropertiesClass.$properties.inDateTimesProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $DateFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InDateTimesProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.inIrisProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InIrisProperty`,
+                  ),
+                  predicate:
+                    InPropertiesClass.$properties.inIrisProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NamedNodeFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InIrisProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.inNumbersProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InNumbersProperty`,
+                  ),
+                  predicate:
+                    InPropertiesClass.$properties.inNumbersProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NumberFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InNumbersProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.inStringsProperty,
+          (itemFilter) => [
+            {
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
+                  ),
+                  predicate:
+                    InPropertiesClass.$properties.inStringsProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $StringFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -39155,75 +39343,80 @@ export namespace InIdentifierClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.inIdentifierProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
-              ),
-              predicate:
-                InIdentifierClass.$properties.inIdentifierProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
+                  ),
+                  predicate:
+                    InIdentifierClass.$properties.inIdentifierProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $StringFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
-                },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $StringFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.inIdentifierProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -43047,36 +43240,41 @@ export namespace ExternClassPropertyClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.externClassProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
-              ),
-              predicate:
-                ExternClassPropertyClass.$properties.externClassProperty[
-                  "identifier"
-                ],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
+                  ),
+                  predicate:
+                    ExternClassPropertyClass.$properties.externClassProperty[
+                      "identifier"
+                    ],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: ExternClass.$sparqlWherePatterns({
+                filter: itemFilter,
+                ignoreRdfType: true,
+                preferredLanguages: parameters?.preferredLanguages,
+                subject: dataFactory.variable!(
+                  `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
+                ),
+                variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
+              }).concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: ExternClass.$sparqlWherePatterns({
-            filter: parameters?.filter?.externClassProperty?.item,
-            ignoreRdfType: true,
-            preferredLanguages: parameters?.preferredLanguages,
-            subject: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
-            ),
-            variablePrefix: `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
-          }).concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -47542,380 +47740,384 @@ export namespace DateUnionPropertiesClass {
     }
 
     patterns.push({
-      patterns: [
-        {
-          patterns: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.dateOrDateTimeProperty,
+          (itemFilter) => [
             {
               patterns: [
                 {
-                  triples: [
+                  patterns: [
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .dateOrDateTimeProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $DateFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.dateOrDateTimeProperty?.item?.on?.[
-                        "date"
-                      ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .dateOrDateTimeProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $DateFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.dateOrDateTimeProperty?.item?.on?.[
-                        "dateTime"
-                      ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-          ],
-          type: "union",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          patterns: [
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .dateOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $DateFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.dateOrStringProperty?.item?.on?.[
-                        "date"
-                      ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .dateOrStringProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: [parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateOrDateTimeProperty["identifier"],
+                          subject: subject,
                         },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    }))
-                    .concat(),
-                  type: "group",
-                },
-                {
-                  patterns: $StringFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.dateOrStringProperty?.item?.on?.[
-                        "string"
                       ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-          ],
-          type: "union",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          patterns: [
-            {
-              patterns: [
-                {
-                  triples: [
+                      type: "bgp",
+                    },
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .dateTimeOrDateProperty["identifier"],
-                      subject: subject,
+                      patterns: $DateFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["date"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
                     },
                   ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $DateFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.dateTimeOrDateProperty?.item?.on?.[
-                        "dateTime"
-                      ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
-                      ),
-                    )
-                    .concat(),
                   type: "group",
                 },
-              ],
-              type: "group",
-            },
-            {
-              patterns: [
                 {
-                  triples: [
+                  patterns: [
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .dateTimeOrDateProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: $DateFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.dateTimeOrDateProperty?.item?.on?.[
-                        "date"
-                      ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
-                      ),
-                    )
-                    .concat(),
-                  type: "group",
-                },
-              ],
-              type: "group",
-            },
-          ],
-          type: "union",
-        },
-      ],
-      type: "optional",
-    });
-    patterns.push({
-      patterns: [
-        {
-          patterns: [
-            {
-              patterns: [
-                {
-                  triples: [
-                    {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .stringOrDateProperty["identifier"],
-                      subject: subject,
-                    },
-                  ],
-                  type: "bgp",
-                },
-                {
-                  patterns: [parameters?.preferredLanguages ?? []]
-                    .filter((languages) => languages.length > 0)
-                    .map((languages) =>
-                      languages.map((language) => ({
-                        type: "operation" as const,
-                        operator: "=",
-                        args: [
-                          {
-                            type: "operation" as const,
-                            operator: "lang",
-                            args: [
-                              dataFactory.variable!(
-                                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
-                              ),
-                            ],
-                          },
-                          dataFactory.literal(language),
-                        ],
-                      })),
-                    )
-                    .map((langEqualsExpressions) => ({
-                      type: "filter" as const,
-                      expression: langEqualsExpressions.reduce(
-                        (reducedExpression, langEqualsExpression) => {
-                          if (reducedExpression === null) {
-                            return langEqualsExpression;
-                          }
-                          return {
-                            type: "operation" as const,
-                            operator: "||",
-                            args: [reducedExpression, langEqualsExpression],
-                          };
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateOrDateTimeProperty["identifier"],
+                          subject: subject,
                         },
-                        null as sparqljs.Expression | null,
-                      ) as sparqljs.Expression,
-                    }))
-                    .concat(),
-                  type: "group",
-                },
-                {
-                  patterns: $StringFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.stringOrDateProperty?.item?.on?.[
-                        "string"
                       ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
-                      ),
-                    )
-                    .concat(),
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $DateFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["dateTime"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
               ],
-              type: "group",
+              type: "union",
             },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.dateOrStringProperty,
+          (itemFilter) => [
             {
               patterns: [
                 {
-                  triples: [
+                  patterns: [
                     {
-                      object: dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
-                      ),
-                      predicate:
-                        DateUnionPropertiesClass.$properties
-                          .stringOrDateProperty["identifier"],
-                      subject: subject,
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateOrStringProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $DateFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["date"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
                     },
                   ],
-                  type: "bgp",
+                  type: "group",
                 },
                 {
-                  patterns: $DateFilter
-                    .$sparqlWherePatterns(
-                      parameters?.filter?.stringOrDateProperty?.item?.on?.[
-                        "date"
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateOrStringProperty["identifier"],
+                          subject: subject,
+                        },
                       ],
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
-                      ),
-                    )
-                    .concat(),
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $StringFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["string"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
                   type: "group",
                 },
               ],
-              type: "group",
+              type: "union",
             },
           ],
-          type: "union",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.dateTimeOrDateProperty,
+          (itemFilter) => [
+            {
+              patterns: [
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateTimeOrDateProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $DateFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["dateTime"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
+                  type: "group",
+                },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateTimeOrDateProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $DateFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["date"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
+                  type: "group",
+                },
+              ],
+              type: "union",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
+    });
+    patterns.push({
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.stringOrDateProperty,
+          (itemFilter) => [
+            {
+              patterns: [
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .stringOrDateProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: [parameters?.preferredLanguages ?? []]
+                        .filter((languages) => languages.length > 0)
+                        .map((languages) =>
+                          languages.map((language) => ({
+                            type: "operation" as const,
+                            operator: "=",
+                            args: [
+                              {
+                                type: "operation" as const,
+                                operator: "lang",
+                                args: [
+                                  dataFactory.variable!(
+                                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
+                                  ),
+                                ],
+                              },
+                              dataFactory.literal(language),
+                            ],
+                          })),
+                        )
+                        .map((langEqualsExpressions) => ({
+                          type: "filter" as const,
+                          expression: langEqualsExpressions.reduce(
+                            (reducedExpression, langEqualsExpression) => {
+                              if (reducedExpression === null) {
+                                return langEqualsExpression;
+                              }
+                              return {
+                                type: "operation" as const,
+                                operator: "||",
+                                args: [reducedExpression, langEqualsExpression],
+                              };
+                            },
+                            null as sparqljs.Expression | null,
+                          ) as sparqljs.Expression,
+                        }))
+                        .concat(),
+                      type: "group",
+                    },
+                    {
+                      patterns: $StringFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["string"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
+                  type: "group",
+                },
+                {
+                  patterns: [
+                    {
+                      triples: [
+                        {
+                          object: dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
+                          ),
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .stringOrDateProperty["identifier"],
+                          subject: subject,
+                        },
+                      ],
+                      type: "bgp",
+                    },
+                    {
+                      patterns: $DateFilter
+                        .$sparqlWherePatterns(
+                          itemFilter?.on?.["date"],
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
+                          ),
+                        )
+                        .concat(),
+                      type: "group",
+                    },
+                  ],
+                  type: "group",
+                },
+              ],
+              type: "union",
+            },
+          ],
+        )
+        .concat(),
+      type: "group",
     });
     return patterns;
   }
@@ -50270,34 +50472,39 @@ export namespace ConvertibleTypePropertiesClass {
       },
     );
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.convertibleIriOptionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriOptionProperty`,
-              ),
-              predicate:
-                ConvertibleTypePropertiesClass.$properties
-                  .convertibleIriOptionProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriOptionProperty`,
+                  ),
+                  predicate:
+                    ConvertibleTypePropertiesClass.$properties
+                      .convertibleIriOptionProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $NamedNodeFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriOptionProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $NamedNodeFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.convertibleIriOptionProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriOptionProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push(
       {
@@ -50425,74 +50632,79 @@ export namespace ConvertibleTypePropertiesClass {
       },
     );
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.convertibleLiteralOptionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
-              ),
-              predicate:
-                ConvertibleTypePropertiesClass.$properties
-                  .convertibleLiteralOptionProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
+                  ),
+                  predicate:
+                    ConvertibleTypePropertiesClass.$properties
+                      .convertibleLiteralOptionProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: [parameters?.preferredLanguages ?? []]
+                .filter((languages) => languages.length > 0)
+                .map((languages) =>
+                  languages.map((language) => ({
+                    type: "operation" as const,
+                    operator: "=",
+                    args: [
+                      {
+                        type: "operation" as const,
+                        operator: "lang",
+                        args: [
+                          dataFactory.variable!(
+                            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
+                          ),
+                        ],
+                      },
+                      dataFactory.literal(language),
+                    ],
+                  })),
+                )
+                .map((langEqualsExpressions) => ({
+                  type: "filter" as const,
+                  expression: langEqualsExpressions.reduce(
+                    (reducedExpression, langEqualsExpression) => {
+                      if (reducedExpression === null) {
+                        return langEqualsExpression;
+                      }
+                      return {
+                        type: "operation" as const,
+                        operator: "||",
+                        args: [reducedExpression, langEqualsExpression],
+                      };
+                    },
+                    null as sparqljs.Expression | null,
+                  ) as sparqljs.Expression,
+                }))
+                .concat(),
+              type: "group",
+            },
+            {
+              patterns: $LiteralFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: [parameters?.preferredLanguages ?? []]
-            .filter((languages) => languages.length > 0)
-            .map((languages) =>
-              languages.map((language) => ({
-                type: "operation" as const,
-                operator: "=",
-                args: [
-                  {
-                    type: "operation" as const,
-                    operator: "lang",
-                    args: [
-                      dataFactory.variable!(
-                        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
-                      ),
-                    ],
-                  },
-                  dataFactory.literal(language),
-                ],
-              })),
-            )
-            .map((langEqualsExpressions) => ({
-              type: "filter" as const,
-              expression: langEqualsExpressions.reduce(
-                (reducedExpression, langEqualsExpression) => {
-                  if (reducedExpression === null) {
-                    return langEqualsExpression;
-                  }
-                  return {
-                    type: "operation" as const,
-                    operator: "||",
-                    args: [reducedExpression, langEqualsExpression],
-                  };
-                },
-                null as sparqljs.Expression | null,
-              ) as sparqljs.Expression,
-            }))
-            .concat(),
-          type: "group",
-        },
-        {
-          patterns: $LiteralFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.convertibleLiteralOptionProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push(
       {
@@ -50659,34 +50871,39 @@ export namespace ConvertibleTypePropertiesClass {
       },
     );
     patterns.push({
-      patterns: [
-        {
-          triples: [
+      patterns: $MaybeFilter
+        .$sparqlWherePatterns(
+          parameters?.filter?.convertibleTermOptionProperty,
+          (itemFilter) => [
             {
-              object: dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
-              ),
-              predicate:
-                ConvertibleTypePropertiesClass.$properties
-                  .convertibleTermOptionProperty["identifier"],
-              subject: subject,
+              triples: [
+                {
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
+                  ),
+                  predicate:
+                    ConvertibleTypePropertiesClass.$properties
+                      .convertibleTermOptionProperty["identifier"],
+                  subject: subject,
+                },
+              ],
+              type: "bgp",
+            },
+            {
+              patterns: $TermFilter
+                .$sparqlWherePatterns(
+                  itemFilter,
+                  dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
+                  ),
+                )
+                .concat(),
+              type: "group",
             },
           ],
-          type: "bgp",
-        },
-        {
-          patterns: $TermFilter
-            .$sparqlWherePatterns(
-              parameters?.filter?.convertibleTermOptionProperty?.item,
-              dataFactory.variable!(
-                `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
-              ),
-            )
-            .concat(),
-          type: "group",
-        },
-      ],
-      type: "optional",
+        )
+        .concat(),
+      type: "group",
     });
     patterns.push(
       {
