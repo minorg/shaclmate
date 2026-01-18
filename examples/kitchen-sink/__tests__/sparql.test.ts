@@ -183,6 +183,29 @@ describe("sparql", () => {
     expect(actual[0].stringTermProperty.extract()).toStrictEqual("test");
   });
 
+  it("filter: number non-null", ({ expect }) => {
+    const actual = queryInstances(
+      kitchenSink.TermPropertiesClass.$sparqlConstructQueryString({
+        filter: {
+          numberTermProperty: {},
+        },
+      }),
+      new kitchenSink.TermPropertiesClass({
+        stringTermProperty: "test1",
+      }),
+      new kitchenSink.TermPropertiesClass({
+        numberTermProperty: 0,
+      }),
+      new kitchenSink.TermPropertiesClass({
+        stringTermProperty: "test2",
+      }),
+    )
+      .termPropertiesClassesSync()
+      .unsafeCoerce();
+    expect(actual).toHaveLength(1);
+    expect(actual[0].numberTermProperty.extract()).toStrictEqual(0);
+  });
+
   // it("filter: number range", ({ expect }) => {
   //   const actual = queryInstances(
   //     kitchenSink.TermPropertiesClass.$sparqlConstructQueryString({
