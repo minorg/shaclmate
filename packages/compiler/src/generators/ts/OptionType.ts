@@ -280,21 +280,12 @@ namespace ${syntheticNamePrefix}MaybeFilter {
           },
         ] as readonly Sparql.Pattern[];
       })
-      .orDefaultLazy(() => {
-        const itemPatterns = this.itemType.sparqlWherePatterns(parameters);
-
-        if (itemPatterns.length === 0) {
-          return itemPatterns;
-        }
-
-        if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
-          return itemPatterns;
-        }
-
-        return [
-          { patterns: itemPatterns, type: "optional" },
-        ] as readonly Sparql.Pattern[];
-      });
+      .orDefaultLazy(() => [
+        {
+          patterns: this.itemType.sparqlWherePatterns(parameters),
+          type: "optional",
+        },
+      ]);
   }
 
   override toJsonExpression({
