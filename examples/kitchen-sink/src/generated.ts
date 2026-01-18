@@ -7200,8 +7200,9 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: ClassUnionMember1.$sparqlWherePatterns({
                     filter:
-                      parameters?.filter?.setClassOrClassOrStringProperty?.items
-                        ?.on?.["0-ClassUnionMember1"],
+                      parameters?.filter?.setClassOrClassOrStringProperty?.on?.[
+                        "0-ClassUnionMember1"
+                      ],
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
@@ -7232,8 +7233,9 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: ClassUnionMember2.$sparqlWherePatterns({
                     filter:
-                      parameters?.filter?.setClassOrClassOrStringProperty?.items
-                        ?.on?.["1-ClassUnionMember2"],
+                      parameters?.filter?.setClassOrClassOrStringProperty?.on?.[
+                        "1-ClassUnionMember2"
+                      ],
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
@@ -7304,8 +7306,9 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.setClassOrClassOrStringProperty?.items
-                        ?.on?.["2-string"],
+                      parameters?.filter?.setClassOrClassOrStringProperty?.on?.[
+                        "2-string"
+                      ],
                       dataFactory.variable!(
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
                       ),
@@ -7345,7 +7348,7 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: $NamedNodeFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.setIriOrLiteralProperty?.items?.on?.[
+                      parameters?.filter?.setIriOrLiteralProperty?.on?.[
                         "NamedNode"
                       ],
                       dataFactory.variable!(
@@ -7417,7 +7420,7 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: $LiteralFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.setIriOrLiteralProperty?.items?.on?.[
+                      parameters?.filter?.setIriOrLiteralProperty?.on?.[
                         "Literal"
                       ],
                       dataFactory.variable!(
@@ -7459,7 +7462,7 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: $NamedNodeFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.setIriOrStringProperty?.items?.on?.[
+                      parameters?.filter?.setIriOrStringProperty?.on?.[
                         "object"
                       ],
                       dataFactory.variable!(
@@ -7531,7 +7534,7 @@ export namespace UnionDiscriminantsClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.setIriOrStringProperty?.items?.on?.[
+                      parameters?.filter?.setIriOrStringProperty?.on?.[
                         "string"
                       ],
                       dataFactory.variable!(
@@ -12434,7 +12437,7 @@ export namespace PropertyCardinalitiesClass {
         {
           patterns: $StringFilter
             .$sparqlWherePatterns(
-              parameters?.filter?.emptyStringSetProperty?.items,
+              parameters?.filter?.emptyStringSetProperty,
               dataFactory.variable!(
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}EmptyStringSetProperty`,
               ),
@@ -12504,7 +12507,7 @@ export namespace PropertyCardinalitiesClass {
       {
         patterns: $StringFilter
           .$sparqlWherePatterns(
-            parameters?.filter?.nonEmptyStringSetProperty?.items,
+            parameters?.filter?.nonEmptyStringSetProperty,
             dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}NonEmptyStringSetProperty`,
             ),
@@ -18342,7 +18345,7 @@ export namespace MutablePropertiesClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      itemFilter?.items,
+                      itemFilter,
                       dataFactory.variable!(
                         `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}Item0`,
                       ),
@@ -18441,7 +18444,7 @@ export namespace MutablePropertiesClass {
                     {
                       patterns: $StringFilter
                         .$sparqlWherePatterns(
-                          itemFilter?.items,
+                          itemFilter,
                           dataFactory.variable!(
                             `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`}ItemN`,
                           ),
@@ -18534,7 +18537,7 @@ export namespace MutablePropertiesClass {
         {
           patterns: $StringFilter
             .$sparqlWherePatterns(
-              parameters?.filter?.mutableSetProperty?.items,
+              parameters?.filter?.mutableSetProperty,
               dataFactory.variable!(
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableSetProperty`,
               ),
@@ -19708,7 +19711,7 @@ export namespace ListPropertiesClass {
                 {
                   patterns: $NamedNodeFilter
                     .$sparqlWherePatterns(
-                      itemFilter?.items,
+                      itemFilter,
                       dataFactory.variable!(
                         `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}Item0`,
                       ),
@@ -19767,7 +19770,7 @@ export namespace ListPropertiesClass {
                     {
                       patterns: $NamedNodeFilter
                         .$sparqlWherePatterns(
-                          itemFilter?.items,
+                          itemFilter,
                           dataFactory.variable!(
                             `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`}ItemN`,
                           ),
@@ -19838,7 +19841,7 @@ export namespace ListPropertiesClass {
                 },
                 {
                   patterns: NonClass.$sparqlWherePatterns({
-                    filter: itemFilter?.items,
+                    filter: itemFilter,
                     ignoreRdfType: true,
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
@@ -19898,7 +19901,7 @@ export namespace ListPropertiesClass {
                     },
                     {
                       patterns: NonClass.$sparqlWherePatterns({
-                        filter: itemFilter?.items,
+                        filter: itemFilter,
                         ignoreRdfType: true,
                         preferredLanguages: parameters?.preferredLanguages,
                         subject: dataFactory.variable!(
@@ -20012,7 +20015,7 @@ export namespace ListPropertiesClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      itemFilter?.items,
+                      itemFilter,
                       dataFactory.variable!(
                         `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}Item0`,
                       ),
@@ -20111,7 +20114,7 @@ export namespace ListPropertiesClass {
                     {
                       patterns: $StringFilter
                         .$sparqlWherePatterns(
-                          itemFilter?.items,
+                          itemFilter,
                           dataFactory.variable!(
                             `${`${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`}ItemN`,
                           ),
@@ -23704,8 +23707,7 @@ export namespace LazyPropertiesInterface {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.setLazyToResolvedInterfaceProperty?.items,
+              filter: parameters?.filter?.setLazyToResolvedInterfaceProperty,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -23738,8 +23740,8 @@ export namespace LazyPropertiesInterface {
         {
           patterns: PartialInterface.$sparqlWherePatterns({
             filter:
-              parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty
-                ?.items,
+              parameters?.filter
+                ?.setPartialInterfaceToResolvedInterfaceProperty,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -27522,7 +27524,7 @@ export namespace LazyPropertiesClass {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
-              filter: parameters?.filter?.setLazyToResolvedClassProperty?.items,
+              filter: parameters?.filter?.setLazyToResolvedClassProperty,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -27554,8 +27556,7 @@ export namespace LazyPropertiesClass {
         },
         {
           patterns: PartialClass.$sparqlWherePatterns({
-            filter:
-              parameters?.filter?.setPartialClassToResolvedClassProperty?.items,
+            filter: parameters?.filter?.setPartialClassToResolvedClassProperty,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -32939,7 +32940,7 @@ export namespace LanguageInPropertiesClass {
       {
         patterns: $LiteralFilter
           .$sparqlWherePatterns(
-            parameters?.filter?.languageInLiteralProperty?.items,
+            parameters?.filter?.languageInLiteralProperty,
             dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass")}LanguageInLiteralProperty`,
             ),
@@ -33586,7 +33587,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 {
                   patterns: $BooleanFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.jsPrimitiveUnionProperty?.items?.on?.[
+                      parameters?.filter?.jsPrimitiveUnionProperty?.on?.[
                         "boolean"
                       ],
                       dataFactory.variable!(
@@ -33618,7 +33619,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 {
                   patterns: $NumberFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.jsPrimitiveUnionProperty?.items?.on?.[
+                      parameters?.filter?.jsPrimitiveUnionProperty?.on?.[
                         "number"
                       ],
                       dataFactory.variable!(
@@ -33690,7 +33691,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                 {
                   patterns: $StringFilter
                     .$sparqlWherePatterns(
-                      parameters?.filter?.jsPrimitiveUnionProperty?.items?.on?.[
+                      parameters?.filter?.jsPrimitiveUnionProperty?.on?.[
                         "string"
                       ],
                       dataFactory.variable!(
@@ -50470,7 +50471,7 @@ export namespace ConvertibleTypePropertiesClass {
       {
         patterns: $NamedNodeFilter
           .$sparqlWherePatterns(
-            parameters?.filter?.convertibleIriNonEmptySetProperty?.items,
+            parameters?.filter?.convertibleIriNonEmptySetProperty,
             dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriNonEmptySetProperty`,
             ),
@@ -50561,7 +50562,7 @@ export namespace ConvertibleTypePropertiesClass {
         {
           patterns: $NamedNodeFilter
             .$sparqlWherePatterns(
-              parameters?.filter?.convertibleIriSetProperty?.items,
+              parameters?.filter?.convertibleIriSetProperty,
               dataFactory.variable!(
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriSetProperty`,
               ),
@@ -50630,7 +50631,7 @@ export namespace ConvertibleTypePropertiesClass {
       {
         patterns: $LiteralFilter
           .$sparqlWherePatterns(
-            parameters?.filter?.convertibleLiteralNonEmptySetProperty?.items,
+            parameters?.filter?.convertibleLiteralNonEmptySetProperty,
             dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralNonEmptySetProperty`,
             ),
@@ -50840,7 +50841,7 @@ export namespace ConvertibleTypePropertiesClass {
         {
           patterns: $LiteralFilter
             .$sparqlWherePatterns(
-              parameters?.filter?.convertibleLiteralSetProperty?.items,
+              parameters?.filter?.convertibleLiteralSetProperty,
               dataFactory.variable!(
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralSetProperty`,
               ),
@@ -50869,7 +50870,7 @@ export namespace ConvertibleTypePropertiesClass {
       {
         patterns: $TermFilter
           .$sparqlWherePatterns(
-            parameters?.filter?.convertibleTermNonEmptySetProperty?.items,
+            parameters?.filter?.convertibleTermNonEmptySetProperty,
             dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermNonEmptySetProperty`,
             ),
@@ -50959,7 +50960,7 @@ export namespace ConvertibleTypePropertiesClass {
         {
           patterns: $TermFilter
             .$sparqlWherePatterns(
-              parameters?.filter?.convertibleTermSetProperty?.items,
+              parameters?.filter?.convertibleTermSetProperty,
               dataFactory.variable!(
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermSetProperty`,
               ),

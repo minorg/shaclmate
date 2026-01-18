@@ -52,12 +52,7 @@ export class SetType<
   }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     const itemPatterns = this.itemType.sparqlWherePatterns({
       ...otherParameters,
-      variables: {
-        ...variables,
-        filter: variables.filter.map(
-          (filterVariable) => `${filterVariable}?.items`,
-        ),
-      },
+      variables,
     });
 
     if (itemPatterns.length === 0) {

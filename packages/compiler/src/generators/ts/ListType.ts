@@ -170,7 +170,7 @@ export class ListType<
           allowIgnoreRdfType: true,
           propertyPatterns: [],
           variables: {
-            filter: variables.filter.map((filter) => `${filter}?.items`),
+            filter: variables.filter,
             preferredLanguages: variables.preferredLanguages,
             valueVariable: item0Variable,
             variablePrefix: variablePrefix("Item0"),
@@ -227,7 +227,7 @@ export class ListType<
           allowIgnoreRdfType: true,
           propertyPatterns: [],
           variables: {
-            filter: variables.filter.map((filter) => `${filter}?.items`),
+            filter: variables.filter,
             preferredLanguages: variables.preferredLanguages,
             valueVariable: itemNVariable,
             variablePrefix: variablePrefix("ItemN"),
