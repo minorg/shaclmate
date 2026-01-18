@@ -6445,6 +6445,9 @@ export namespace UnionDiscriminantsClass {
                 },
                 {
                   patterns: ClassUnionMember1.$sparqlWherePatterns({
+                    filter:
+                      parameters?.filter?.optionalClassOrClassOrStringProperty
+                        ?.item?.on?.["0-ClassUnionMember1"],
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
@@ -6474,6 +6477,9 @@ export namespace UnionDiscriminantsClass {
                 },
                 {
                   patterns: ClassUnionMember2.$sparqlWherePatterns({
+                    filter:
+                      parameters?.filter?.optionalClassOrClassOrStringProperty
+                        ?.item?.on?.["1-ClassUnionMember2"],
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
@@ -6806,6 +6812,9 @@ export namespace UnionDiscriminantsClass {
             },
             {
               patterns: ClassUnionMember1.$sparqlWherePatterns({
+                filter:
+                  parameters?.filter?.requiredClassOrClassOrStringProperty
+                    ?.on?.["0-ClassUnionMember1"],
                 preferredLanguages: parameters?.preferredLanguages,
                 subject: dataFactory.variable!(
                   `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredClassOrClassOrStringProperty`,
@@ -6835,6 +6844,9 @@ export namespace UnionDiscriminantsClass {
             },
             {
               patterns: ClassUnionMember2.$sparqlWherePatterns({
+                filter:
+                  parameters?.filter?.requiredClassOrClassOrStringProperty
+                    ?.on?.["1-ClassUnionMember2"],
                 preferredLanguages: parameters?.preferredLanguages,
                 subject: dataFactory.variable!(
                   `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredClassOrClassOrStringProperty`,
@@ -7160,6 +7172,9 @@ export namespace UnionDiscriminantsClass {
                 },
                 {
                   patterns: ClassUnionMember1.$sparqlWherePatterns({
+                    filter:
+                      parameters?.filter?.setClassOrClassOrStringProperty?.items
+                        ?.on?.["0-ClassUnionMember1"],
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
@@ -7189,6 +7204,9 @@ export namespace UnionDiscriminantsClass {
                 },
                 {
                   patterns: ClassUnionMember2.$sparqlWherePatterns({
+                    filter:
+                      parameters?.filter?.setClassOrClassOrStringProperty?.items
+                        ?.on?.["1-ClassUnionMember2"],
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
                       `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
@@ -19708,6 +19726,7 @@ export namespace ListPropertiesClass {
             },
             {
               patterns: NonClass.$sparqlWherePatterns({
+                filter: parameters?.filter?.objectListProperty?.item?.items,
                 ignoreRdfType: true,
                 preferredLanguages: parameters?.preferredLanguages,
                 subject: dataFactory.variable!(
@@ -19767,6 +19786,7 @@ export namespace ListPropertiesClass {
                 },
                 {
                   patterns: NonClass.$sparqlWherePatterns({
+                    filter: parameters?.filter?.objectListProperty?.item?.items,
                     ignoreRdfType: true,
                     preferredLanguages: parameters?.preferredLanguages,
                     subject: dataFactory.variable!(
@@ -23268,6 +23288,9 @@ export namespace LazyPropertiesInterface {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter?.optionalLazyToResolvedInterfaceProperty
+                  ?.item,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -23300,6 +23323,9 @@ export namespace LazyPropertiesInterface {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty
+                  ?.item,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -23334,6 +23360,9 @@ export namespace LazyPropertiesInterface {
         {
           patterns: $NamedDefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter
+                  ?.optionalLazyToResolvedIriIdentifierInterfaceProperty?.item,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -23367,6 +23396,9 @@ export namespace LazyPropertiesInterface {
         },
         {
           patterns: PartialInterface.$sparqlWherePatterns({
+            filter:
+              parameters?.filter
+                ?.optionalPartialInterfaceToResolvedInterfaceProperty?.item,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -23399,6 +23431,10 @@ export namespace LazyPropertiesInterface {
         },
         {
           patterns: PartialInterface.$sparqlWherePatterns({
+            filter:
+              parameters?.filter
+                ?.optionalPartialInterfaceToResolvedInterfaceUnionProperty
+                ?.item,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -23431,6 +23467,10 @@ export namespace LazyPropertiesInterface {
         },
         {
           patterns: PartialInterfaceUnion.$sparqlWherePatterns({
+            filter:
+              parameters?.filter
+                ?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty
+                ?.item,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
@@ -23460,6 +23500,7 @@ export namespace LazyPropertiesInterface {
       {
         patterns: $DefaultPartial
           .$sparqlWherePatterns({
+            filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -23490,6 +23531,9 @@ export namespace LazyPropertiesInterface {
       },
       {
         patterns: PartialInterface.$sparqlWherePatterns({
+          filter:
+            parameters?.filter
+              ?.requiredPartialInterfaceToResolvedInterfaceProperty,
           ignoreRdfType: true,
           preferredLanguages: parameters?.preferredLanguages,
           subject: dataFactory.variable!(
@@ -23519,6 +23563,8 @@ export namespace LazyPropertiesInterface {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter?.setLazyToResolvedInterfaceProperty?.items,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -23550,6 +23596,9 @@ export namespace LazyPropertiesInterface {
         },
         {
           patterns: PartialInterface.$sparqlWherePatterns({
+            filter:
+              parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty
+                ?.items,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -27042,6 +27091,8 @@ export namespace LazyPropertiesClass {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter?.optionalLazyToResolvedClassProperty?.item,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -27074,6 +27125,9 @@ export namespace LazyPropertiesClass {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter?.optionalLazyToResolvedClassUnionProperty
+                  ?.item,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -27108,6 +27162,9 @@ export namespace LazyPropertiesClass {
         {
           patterns: $NamedDefaultPartial
             .$sparqlWherePatterns({
+              filter:
+                parameters?.filter
+                  ?.optionalLazyToResolvedIriIdentifierClassProperty?.item,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -27139,6 +27196,9 @@ export namespace LazyPropertiesClass {
         },
         {
           patterns: PartialClass.$sparqlWherePatterns({
+            filter:
+              parameters?.filter?.optionalPartialClassToResolvedClassProperty
+                ?.item,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -27171,6 +27231,9 @@ export namespace LazyPropertiesClass {
         },
         {
           patterns: PartialClass.$sparqlWherePatterns({
+            filter:
+              parameters?.filter
+                ?.optionalPartialClassToResolvedClassUnionProperty?.item,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -27203,6 +27266,9 @@ export namespace LazyPropertiesClass {
         },
         {
           patterns: PartialClassUnion.$sparqlWherePatterns({
+            filter:
+              parameters?.filter
+                ?.optionalPartialClassUnionToResolvedClassUnionProperty?.item,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
@@ -27232,6 +27298,7 @@ export namespace LazyPropertiesClass {
       {
         patterns: $DefaultPartial
           .$sparqlWherePatterns({
+            filter: parameters?.filter?.requiredLazyToResolvedClassProperty,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -27260,6 +27327,8 @@ export namespace LazyPropertiesClass {
       },
       {
         patterns: PartialClass.$sparqlWherePatterns({
+          filter:
+            parameters?.filter?.requiredPartialClassToResolvedClassProperty,
           ignoreRdfType: true,
           preferredLanguages: parameters?.preferredLanguages,
           subject: dataFactory.variable!(
@@ -27290,6 +27359,7 @@ export namespace LazyPropertiesClass {
         {
           patterns: $DefaultPartial
             .$sparqlWherePatterns({
+              filter: parameters?.filter?.setLazyToResolvedClassProperty?.items,
               ignoreRdfType: true,
               preferredLanguages: parameters?.preferredLanguages,
               subject: dataFactory.variable!(
@@ -27321,6 +27391,8 @@ export namespace LazyPropertiesClass {
         },
         {
           patterns: PartialClass.$sparqlWherePatterns({
+            filter:
+              parameters?.filter?.setPartialClassToResolvedClassProperty?.items,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(
@@ -42993,6 +43065,7 @@ export namespace ExternClassPropertyClass {
         },
         {
           patterns: ExternClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.externClassProperty?.item,
             ignoreRdfType: true,
             preferredLanguages: parameters?.preferredLanguages,
             subject: dataFactory.variable!(

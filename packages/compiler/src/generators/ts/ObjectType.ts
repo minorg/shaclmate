@@ -568,6 +568,7 @@ export class ObjectType extends AbstractDeclaredType {
       {
         patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
           {
+            filter: variables.filter.extract(),
             ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
             preferredLanguages: variables.preferredLanguages,
             subject: variables.valueVariable,

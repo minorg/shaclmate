@@ -311,6 +311,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
       {
         patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
           {
+            filter: variables.filter.extract(),
             preferredLanguages: variables.preferredLanguages,
             subject: variables.valueVariable,
             variablePrefix: variables.variablePrefix,
