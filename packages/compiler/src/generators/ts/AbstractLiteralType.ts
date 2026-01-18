@@ -92,7 +92,10 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
   protected preferredLanguagesSparqlWherePatterns({
     variables,
   }: {
-    variables: Parameters<Type["sparqlWherePatterns"]>[0]["variables"];
+    variables: {
+      preferredLanguages: string;
+      valueVariable: string;
+    };
   }): readonly Sparql.Pattern[] {
     return [
       {

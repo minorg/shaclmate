@@ -121,13 +121,15 @@ export class IdentifierType extends AbstractTermType<
 
   protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
-    return variables.filter
-      .map((filterVariable) => ({
-        patterns: `${this.filterType.name}.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${this.filterType.name}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
         type: "opaque-block" as const,
-      }))
-      .toList();
+      },
+    ];
   }
 
   @Memoize()

@@ -41,6 +41,18 @@ export interface Type {
     | Type.CompositeFilterTypeReference;
 
   /**
+   * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
+   */
+  readonly graphqlArgs: Maybe<
+    Record<
+      string,
+      {
+        type: string;
+      }
+    >
+  >;
+
+  /**
    * GraphQL-compatible version of the type.
    */
   readonly graphqlType: Type.GraphqlType;
@@ -108,18 +120,6 @@ export interface Type {
       resourceValues: string;
     };
   }): string;
-
-  /**
-   * Declarations for GraphQL arguments to pass to this the graphqlResolveExpression.
-   */
-  readonly graphqlArgs: Maybe<
-    Record<
-      string,
-      {
-        type: string;
-      }
-    >
-  >;
 
   /**
    * An expression that resolves a value of this type in the GraphQL server.

@@ -128,11 +128,23 @@ export abstract class AbstractTermType<
       .join(" | ")})`;
   }
 
-  protected filterSparqlWherePatterns(
-    _parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly Sparql.Pattern[] {
-    return [];
-  }
+  /**
+   * An array of SPARQL.js WHERE patterns for filtering values of this type.
+   *
+   * Parameters:
+   *   variables: (at runtime)
+   *     - filter: an instance of filterType
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - valueVariable: rdfjs.Variable of the value of this type
+   *     - variablePrefix: prefix to use for new variables
+   */
+  protected abstract filterSparqlWherePatterns(parameters: {
+    variables: {
+      preferredLanguages: string;
+      filter: string;
+      valueVariable: string;
+    };
+  }): readonly Sparql.Pattern[];
 
   override fromRdfExpression(
     parameters: Parameters<Type["fromRdfExpression"]>[0],
@@ -262,12 +274,23 @@ export abstract class AbstractTermType<
     return [];
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
-  ): readonly Sparql.Pattern[] {
+  override sparqlWherePatterns({
+    propertyPatterns,
+    variables,
+  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
     const requiredPatterns: Sparql.Pattern[] = [
-      ...parameters.propertyPatterns,
-      ...this.filterSparqlWherePatterns(parameters),
+      ...propertyPatterns,
+      ...variables.filter
+        .map((filterVariable) =>
+          this.filterSparqlWherePatterns({
+            variables: {
+              preferredLanguages: variables.preferredLanguages,
+              filter: filterVariable,
+              valueVariable: variables.valueVariable,
+            },
+          }),
+        )
+        .orDefault([]),
     ];
 
     return this.defaultValue

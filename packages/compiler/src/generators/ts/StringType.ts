@@ -1,6 +1,7 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
@@ -46,15 +47,15 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
     return [
       ...this.preferredLanguagesSparqlWherePatterns({ variables }),
-      ...variables.filter
-        .map((filterVariable) => ({
-          patterns: `${syntheticNamePrefix}StringFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
-          type: "opaque-block" as const,
-        }))
-        .toList(),
+      {
+        patterns: `${syntheticNamePrefix}StringFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
     ];
   }
 

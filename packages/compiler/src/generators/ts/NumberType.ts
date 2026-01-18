@@ -2,6 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -60,13 +61,15 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
 
   protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
-    return variables.filter
-      .map((filterVariable) => ({
-        patterns: `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
         type: "opaque-block" as const,
-      }))
-      .toList();
+      },
+    ];
   }
 
   override jsonZodSchema({

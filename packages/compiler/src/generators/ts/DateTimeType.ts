@@ -4,6 +4,7 @@ import type { TsFeature } from "enums/TsFeature.js";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -62,13 +63,15 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
 
   protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
-    return variables.filter
-      .map((filterVariable) => ({
-        patterns: `${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
         type: "opaque-block" as const,
-      }))
-      .toList();
+      },
+    ];
   }
 
   override fromJsonExpression({

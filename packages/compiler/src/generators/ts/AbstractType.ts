@@ -26,31 +26,6 @@ export abstract class AbstractType implements Type {
   abstract readonly filterType:
     | Type.CompositeFilterType
     | Type.CompositeFilterTypeReference;
-  abstract readonly graphqlType: Type.GraphqlType;
-  abstract readonly mutable: boolean;
-  abstract readonly name: string;
-  abstract readonly typeofs: NonEmptyList<
-    "boolean" | "object" | "number" | "string"
-  >;
-
-  abstract fromJsonExpression(parameters: {
-    variables: {
-      value: string;
-    };
-  }): string;
-
-  abstract fromRdfExpression(parameters: {
-    variables: {
-      context: string;
-      ignoreRdfType?: boolean;
-      objectSet: string;
-      preferredLanguages: string;
-      predicate: string;
-      resource: string;
-      resourceValues: string;
-    };
-  }): string;
-
   abstract readonly graphqlArgs: Maybe<
     Record<
       string,
@@ -59,6 +34,20 @@ export abstract class AbstractType implements Type {
       }
     >
   >;
+  abstract readonly graphqlType: Type.GraphqlType;
+  abstract readonly mutable: boolean;
+  abstract readonly name: string;
+  abstract readonly typeofs: NonEmptyList<
+    "boolean" | "object" | "number" | "string"
+  >;
+
+  abstract fromJsonExpression(
+    parameters: Parameters<Type["fromJsonExpression"]>[0],
+  ): string;
+
+  abstract fromRdfExpression(
+    parameters: Parameters<Type["fromRdfExpression"]>[0],
+  ): string;
 
   abstract graphqlResolveExpression(
     parameters: Parameters<Type["graphqlResolveExpression"]>[0],

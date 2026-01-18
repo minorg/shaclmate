@@ -1,5 +1,6 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
@@ -18,7 +19,7 @@ export class LiteralType extends AbstractLiteralType {
   }
 
   protected override filterSparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractTermType["filterSparqlWherePatterns"]>[0],
   ): readonly Sparql.Pattern[] {
     return this.preferredLanguagesSparqlWherePatterns(parameters);
   }

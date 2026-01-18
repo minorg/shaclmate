@@ -1,6 +1,7 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
@@ -49,13 +50,15 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   protected override filterSparqlWherePatterns({
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
-    return variables.filter
-      .map((filterVariable) => ({
-        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, ${variables.valueVariable})`,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
         type: "opaque-block" as const,
-      }))
-      .toList();
+      },
+    ];
   }
 
   protected override fromRdfExpressionChain({
