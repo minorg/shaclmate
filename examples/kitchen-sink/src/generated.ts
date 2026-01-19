@@ -42243,24 +42243,17 @@ export namespace HasValuePropertiesClass {
           { unique: true },
         ),
       )
-        .chain((values) => {
-          for (const hasValue of [
-            dataFactory.namedNode(
-              "http://example.com/HasValuePropertiesClassIri1",
+        .chain((values) =>
+          purify.Either.sequence(
+            [
+              dataFactory.namedNode(
+                "http://example.com/HasValuePropertiesClassIri1",
+              ),
+            ].map((hasValue) =>
+              values.find((value) => value.toTerm().equals(hasValue)),
             ),
-          ]) {
-            const findResult = values.find((value) =>
-              value.toTerm().equals(hasValue),
-            );
-            if (findResult.isLeft()) {
-              return findResult;
-            }
-          }
-          return purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(values);
-        })
+          ).map(() => values),
+        )
         .chain((values) => values.chainMap((value) => value.toIri()))
         .chain((values) => values.head())
         .chain((hasIriValueProperty) =>
@@ -42273,20 +42266,13 @@ export namespace HasValuePropertiesClass {
               { unique: true },
             ),
           )
-            .chain((values) => {
-              for (const hasValue of [dataFactory.literal("test")]) {
-                const findResult = values.find((value) =>
-                  value.toTerm().equals(hasValue),
-                );
-                if (findResult.isLeft()) {
-                  return findResult;
-                }
-              }
-              return purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(values);
-            })
+            .chain((values) =>
+              purify.Either.sequence(
+                [dataFactory.literal("test")].map((hasValue) =>
+                  values.find((value) => value.toTerm().equals(hasValue)),
+                ),
+              ).map(() => values),
+            )
             .chain((values) =>
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
