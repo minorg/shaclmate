@@ -346,30 +346,28 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     ];
   }
 
-  override fromRdfStatements({
+  override fromRdfExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["fromRdfStatements"]
-  >[0]): readonly string[] {
+    AbstractProperty<IdentifierType>["fromRdfExpression"]
+  >[0]): Maybe<string> {
     if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return [
-        `let ${this.name}: ${this.typeAlias};`,
-        `switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": ${this.name} = ${rdfjsTermExpression(iri)}; break;`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} })); }`,
-      ];
-    }
-
-    const statements: string[] = [];
-    if (this.type.isBlankNodeKind || this.type.isNamedNodeKind) {
-      statements.push(
-        `if (${variables.resource}.identifier.termType !== "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}") { return purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} })); }`,
+      return Maybe.of(
+        `{ switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": return purify.Either.of(${rdfjsTermExpression(iri)});`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} })); } }`,
       );
     }
-    statements.push(
-      `const ${this.name}: ${this.typeAlias} = ${variables.resource}.identifier;`,
+
+    if (this.type.isBlankNodeKind || this.type.isNamedNodeKind) {
+      return Maybe.of(
+        `${variables.resource}.identifier.termType === "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}" ? purify.Either.of(${variables.resource}.identifier as ${this.typeAlias}) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+      );
+    }
+
+    return Maybe.of(
+      `purify.Either.of(${variables.resource}.identifier as ${this.typeAlias})`,
     );
-    return statements;
   }
 
   override hashStatements({

@@ -47,10 +47,10 @@ function fromRdfFunctionDeclaration(
 function propertiesFromRdfFunctionDeclaration(
   this: ObjectType,
 ): FunctionDeclarationStructure {
+  const chains: { expression: string; variable: string }[] = [];
   const initializers: string[] = [];
   const propertySignatures: string[] = [];
   const returnType: string[] = [];
-  const statements: string[] = [];
 
   const variables = {
     context: `${syntheticNamePrefix}parameters.context`,
@@ -61,11 +61,10 @@ function propertiesFromRdfFunctionDeclaration(
   };
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
-    statements.push(
-      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${syntheticNamePrefix}parameters, ignoreRdfType: true });`,
-      `if (${syntheticNamePrefix}super${parentObjectTypeI}Either.isLeft()) { return ${syntheticNamePrefix}super${parentObjectTypeI}Either; }`,
-      `const ${syntheticNamePrefix}super${parentObjectTypeI} = ${syntheticNamePrefix}super${parentObjectTypeI}Either.unsafeCoerce()`,
-    );
+    chains.push({
+      expression: `${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${syntheticNamePrefix}parameters, ignoreRdfType: true });`,
+      variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
+    });
     initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
       `${syntheticNamePrefix}UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf>>`,
@@ -81,10 +80,8 @@ function propertiesFromRdfFunctionDeclaration(
     for (const descendantFromRdfType of this.descendantFromRdfTypes) {
       cases.add(descendantFromRdfType.value);
     }
-    statements.push(
-      `\
-if (!${variables.ignoreRdfType}) {
-  const ${syntheticNamePrefix}rdfTypeCheck: purify.Either<Error, true> = ${variables.resource}.value(${predicate})
+    chains.push({
+      expression: `!${variables.ignoreRdfType} ? ${variables.resource}.value(${predicate})
     .chain(actualRdfType => actualRdfType.toIri())
     .chain((actualRdfType) => {
       // Check the expected type and its known subtypes
@@ -99,12 +96,9 @@ if (!${variables.ignoreRdfType}) {
       }
 
       return purify.Left(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
+    }) : purify.Either<Error, true>.of(true)`,
+      variable: "_rdfTypeCheck",
     });
-  if (${syntheticNamePrefix}rdfTypeCheck.isLeft()) {
-    return ${syntheticNamePrefix}rdfTypeCheck;
-  }
-}`,
-    );
   });
 
   const propertyFromRdfVariables = {
@@ -114,16 +108,30 @@ if (!${variables.ignoreRdfType}) {
     resource: variables.resource,
   };
   for (const property of this.properties) {
-    const propertyFromRdfStatements = property.fromRdfStatements({
-      variables: propertyFromRdfVariables,
-    });
-    if (propertyFromRdfStatements.length > 0) {
-      statements.push(...propertyFromRdfStatements);
-      initializers.push(property.name);
-      propertySignatures.push(`${property.name}: ${property.type.name};`);
-    }
+    property
+      .fromRdfExpression({
+        variables: propertyFromRdfVariables,
+      })
+      .ifJust((propertyFromRdfExpression) => {
+        chains.push({
+          expression: propertyFromRdfExpression,
+          variable: property.name,
+        });
+        initializers.push(property.name);
+        propertySignatures.push(`${property.name}: ${property.type.name};`);
+      });
   }
-  statements.push(`return purify.Either.of({ ${initializers.join(", ")} })`);
+
+  const statements: string[] = [];
+  const resultExpression = `purify.Either.of({ ${initializers.join(", ")} })`;
+  if (chains.length === 0) {
+    statements.push(`return ${resultExpression};`);
+  } else {
+    statements.push(
+      `return ${chains.map(({ expression, variable }) => `(${expression}).chain(${variable} => `).join(" ")} ${resultExpression});`,
+    );
+  }
+
   if (propertySignatures.length > 0) {
     returnType.splice(0, 0, `{ ${propertySignatures.join(" ")} }`);
   }
@@ -139,7 +147,7 @@ if (!${variables.ignoreRdfType}) {
       },
     ],
     returnType: `purify.Either<Error, ${returnType.join(" & ")}>`,
-    statements: statements,
+    statements,
   };
 }
 

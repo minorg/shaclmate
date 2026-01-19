@@ -164,16 +164,16 @@ export abstract class AbstractProperty<
   }): readonly string[];
 
   /**
-   * Statements to deserialize this property on the given rdfjsResource.Resource to a typed value of the property.
+   * Expression to deserialize this property on the given rdfjsResource.Resource to a Either<Error, this property type>.
    */
-  abstract fromRdfStatements(parameters: {
+  abstract fromRdfExpression(parameters: {
     variables: {
       context: string;
       objectSet: string;
       preferredLanguages: string;
       resource: string;
     };
-  }): readonly string[];
+  }): Maybe<string>;
 
   /**
    * Statements to hash this property using a hasher instance.
