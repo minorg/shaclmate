@@ -8,10 +8,10 @@ import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDecla
 function fromJsonFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
-  const deserializePropertiesReturnType: string[] = [];
   const initializers: string[] = [];
-  const propertyReturnTypeSignatures: string[] = [];
+  const propertiesFromJsonReturnType: string[] = [];
   const propertiesFromJsonStatements: string[] = [];
+  const propertyReturnTypeSignatures: string[] = [];
 
   propertiesFromJsonStatements.push(
     `const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(_json);`,
@@ -19,14 +19,15 @@ function fromJsonFunctionDeclarations(
     `const ${variables.jsonObject} = ${syntheticNamePrefix}jsonSafeParseResult.data;`,
   );
 
+  const chains: { expression: string; variable: string }[] = [];
+
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
-    propertiesFromJsonStatements.push(
-      `const ${syntheticNamePrefix}super${parentObjectTypeI}Either = ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject});`,
-      `if (${syntheticNamePrefix}super${parentObjectTypeI}Either.isLeft()) { return ${syntheticNamePrefix}super${parentObjectTypeI}Either; }`,
-      `const ${syntheticNamePrefix}super${parentObjectTypeI} = ${syntheticNamePrefix}super${parentObjectTypeI}Either.unsafeCoerce()`,
-    );
+    chains.push({
+      expression: `${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson(${variables.jsonObject})`,
+      variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
+    });
     initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
-    deserializePropertiesReturnType.push(
+    propertiesFromJsonReturnType.push(
       `${syntheticNamePrefix}UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>>`,
     );
   });
@@ -43,11 +44,26 @@ function fromJsonFunctionDeclarations(
       );
     }
   }
-  propertiesFromJsonStatements.push(
-    `return purify.Either.of({ ${initializers.join(", ")} })`,
-  );
+
+  const resultExpression = `{ ${initializers.join(", ")} }`;
+  if (chains.length === 0) {
+    propertiesFromJsonStatements.push(
+      `return purify.Either.of(${resultExpression})`,
+    );
+  } else {
+    propertiesFromJsonStatements.push(
+      `return ${chains
+        .reverse()
+        .reduce(
+          (acc, { expression, variable }, chainI) =>
+            `(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
+          `(${resultExpression})`,
+        )}`,
+    );
+  }
+
   if (propertyReturnTypeSignatures.length > 0) {
-    deserializePropertiesReturnType.splice(
+    propertiesFromJsonReturnType.splice(
       0,
       0,
       `{ ${propertyReturnTypeSignatures.join(" ")} }`,
@@ -66,7 +82,7 @@ function fromJsonFunctionDeclarations(
         type: "unknown",
       },
     ],
-    returnType: `purify.Either<zod.ZodError, ${deserializePropertiesReturnType.join(" & ")}>`,
+    returnType: `purify.Either<zod.ZodError, ${propertiesFromJsonReturnType.join(" & ")}>`,
     statements: propertiesFromJsonStatements,
   });
 

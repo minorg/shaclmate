@@ -86,8 +86,8 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     return [];
   }
 
-  override fromRdfStatements(): readonly string[] {
-    return [];
+  override fromRdfExpression(): Maybe<string> {
+    return Maybe.empty();
   }
 
   override get getAccessorDeclaration(): Maybe<

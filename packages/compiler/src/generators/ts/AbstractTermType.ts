@@ -208,15 +208,8 @@ export abstract class AbstractTermType<
         .extract(),
       hasValues:
         this.hasValues.length > 0
-          ? `chain(values => {
-  for (const hasValue of [${this.hasValues.map(rdfjsTermExpression).join(", ")}]) {
-    const findResult = values.find(value => value.toTerm().equals(hasValue));
-    if (findResult.isLeft()) {
-      return findResult;
-    }
-  }
-  return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(values);
-})`
+          ? `\
+chain(values => purify.Either.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
           : undefined,
       valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
     };

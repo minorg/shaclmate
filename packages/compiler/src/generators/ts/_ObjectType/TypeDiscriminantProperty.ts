@@ -78,13 +78,17 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   }
 
   override fromJsonStatements(): readonly string[] {
-    return this.fromRdfStatements();
-  }
-
-  override fromRdfStatements(): readonly string[] {
     return !this.abstract && this.objectType.declarationType === "interface"
       ? [`const ${this.name} = "${this.initializer}" as const`]
       : [];
+  }
+
+  override fromRdfExpression(): Maybe<string> {
+    return !this.abstract && this.objectType.declarationType === "interface"
+      ? Maybe.of(
+          `purify.Either.of<Error, "${this.initializer}">("${this.initializer}")`,
+        )
+      : Maybe.empty();
   }
 
   override hashStatements({
