@@ -247,27 +247,17 @@ export function transformNodeShapeToAstObjectCompoundType(
     });
 
     this.nodeShapeAstTypesByIdentifier.set(nodeShape.identifier, compoundType);
-    return (() => {
-      for (const memberNodeShape of compoundTypeNodeShapes) {
-        const memberTypeEither =
-          this.transformNodeShapeToAstType(memberNodeShape);
-        if (memberTypeEither.isLeft()) {
-          return memberTypeEither;
-        }
-        const addMemberTypeResult = compoundType.addMemberType(
-          memberTypeEither.unsafeCoerce(),
-        );
-        if (addMemberTypeResult.isLeft()) {
-          return addMemberTypeResult;
-        }
-      }
-
-      return Either.of<Error, ast.ObjectIntersectionType | ast.ObjectUnionType>(
-        compoundType,
-      );
-    })().ifLeft(() => {
-      this.nodeShapeAstTypesByIdentifier.delete(nodeShape.identifier);
-    });
+    return Either.sequence(
+      compoundTypeNodeShapes.map((memberNodeShape) =>
+        this.transformNodeShapeToAstType(memberNodeShape).chain((memberType) =>
+          compoundType.addMemberType(memberType),
+        ),
+      ),
+    )
+      .map(() => compoundType)
+      .ifLeft(() => {
+        this.nodeShapeAstTypesByIdentifier.delete(nodeShape.identifier);
+      });
   });
 }
 
