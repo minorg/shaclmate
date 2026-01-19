@@ -75983,12 +75983,7 @@ export class $SparqlObjectSet implements $ObjectSet {
         ],
       });
 
-      let quads: readonly rdfjs.Quad[];
-      try {
-        quads = await this.$sparqlClient.queryQuads(constructQueryString);
-      } catch (e) {
-        return purify.Left(e as Error);
-      }
+      const quads = await this.$sparqlClient.queryQuads(constructQueryString);
 
       const dataset = datasetFactory.dataset(quads.concat());
       const objects: ObjectT[] = [];
