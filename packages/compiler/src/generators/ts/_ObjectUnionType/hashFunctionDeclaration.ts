@@ -13,22 +13,6 @@ export function hashFunctionDeclaration(
 
   const hasherVariable = "_hasher";
 
-  const caseBlocks = this.memberTypes.map((memberType) => {
-    let returnExpression: string;
-    switch (memberType.declarationType) {
-      case "class":
-        returnExpression = `${this.thisVariable}.${syntheticNamePrefix}hash(${hasherVariable})`;
-        break;
-      case "interface":
-        returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}hash(${this.thisVariable}, ${hasherVariable})`;
-        break;
-    }
-    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
-  });
-  caseBlocks.push(
-    `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-  );
-
   return Maybe.of({
     isExported: true,
     kind: StructureKind.Function,
@@ -44,7 +28,22 @@ export function hashFunctionDeclaration(
       },
     ],
     returnType: "HasherT",
-    statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
+    statements: this.memberTypes
+      .map((memberType) => {
+        let returnExpression: string;
+        switch (memberType.declarationType) {
+          case "class":
+            returnExpression = `${this.thisVariable}.${syntheticNamePrefix}hash(${hasherVariable})`;
+            break;
+          case "interface":
+            returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}hash(${this.thisVariable}, ${hasherVariable})`;
+            break;
+        }
+        return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
+      })
+      .concat(
+        `${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
+      ),
     typeParameters: [
       {
         name: "HasherT",

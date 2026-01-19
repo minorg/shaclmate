@@ -59988,15 +59988,16 @@ export namespace ClassUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_classUnion: ClassUnion, _hasher: HasherT): HasherT {
-    switch (_classUnion.$type) {
-      case "ClassUnionMember1":
-        return _classUnion.$hash(_hasher);
-      case "ClassUnionMember2":
-        return _classUnion.$hash(_hasher);
-      default:
-        _classUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
+      return _classUnion.$hash(_hasher);
     }
+
+    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
+      return _classUnion.$hash(_hasher);
+    }
+
+    _classUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -60344,17 +60345,22 @@ export namespace FlattenClassUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_flattenClassUnion: FlattenClassUnion, _hasher: HasherT): HasherT {
-    switch (_flattenClassUnion.$type) {
-      case "ClassUnionMember1":
-        return _flattenClassUnion.$hash(_hasher);
-      case "ClassUnionMember2":
-        return _flattenClassUnion.$hash(_hasher);
-      case "FlattenClassUnionMember3":
-        return _flattenClassUnion.$hash(_hasher);
-      default:
-        _flattenClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
+      return _flattenClassUnion.$hash(_hasher);
     }
+
+    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
+      return _flattenClassUnion.$hash(_hasher);
+    }
+
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
+    ) {
+      return _flattenClassUnion.$hash(_hasher);
+    }
+
+    _flattenClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -60706,15 +60712,16 @@ export namespace InterfaceUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_interfaceUnion: InterfaceUnion, _hasher: HasherT): HasherT {
-    switch (_interfaceUnion.$type) {
-      case "InterfaceUnionMember1":
-        return InterfaceUnionMember1.$hash(_interfaceUnion, _hasher);
-      case "InterfaceUnionMember2":
-        return InterfaceUnionMember2.$hash(_interfaceUnion, _hasher);
-      default:
-        _interfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
+      return InterfaceUnionMember1.$hash(_interfaceUnion, _hasher);
     }
+
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
+      return InterfaceUnionMember2.$hash(_interfaceUnion, _hasher);
+    }
+
+    _interfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -61037,15 +61044,24 @@ export namespace LazilyResolvedClassUnion {
     _lazilyResolvedClassUnion: LazilyResolvedClassUnion,
     _hasher: HasherT,
   ): HasherT {
-    switch (_lazilyResolvedClassUnion.$type) {
-      case "LazilyResolvedClassUnionMember1":
-        return _lazilyResolvedClassUnion.$hash(_hasher);
-      case "LazilyResolvedClassUnionMember2":
-        return _lazilyResolvedClassUnion.$hash(_hasher);
-      default:
-        _lazilyResolvedClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$hash(_hasher);
     }
+
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$hash(_hasher);
+    }
+
+    _lazilyResolvedClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -61409,21 +61425,30 @@ export namespace LazilyResolvedInterfaceUnion {
     _lazilyResolvedInterfaceUnion: LazilyResolvedInterfaceUnion,
     _hasher: HasherT,
   ): HasherT {
-    switch (_lazilyResolvedInterfaceUnion.$type) {
-      case "LazilyResolvedInterfaceUnionMember1":
-        return LazilyResolvedInterfaceUnionMember1.$hash(
-          _lazilyResolvedInterfaceUnion,
-          _hasher,
-        );
-      case "LazilyResolvedInterfaceUnionMember2":
-        return LazilyResolvedInterfaceUnionMember2.$hash(
-          _lazilyResolvedInterfaceUnion,
-          _hasher,
-        );
-      default:
-        _lazilyResolvedInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$hash(
+        _lazilyResolvedInterfaceUnion,
+        _hasher,
+      );
     }
+
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$hash(
+        _lazilyResolvedInterfaceUnion,
+        _hasher,
+      );
+    }
+
+    _lazilyResolvedInterfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -61784,15 +61809,20 @@ export namespace PartialClassUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_partialClassUnion: PartialClassUnion, _hasher: HasherT): HasherT {
-    switch (_partialClassUnion.$type) {
-      case "PartialClassUnionMember1":
-        return _partialClassUnion.$hash(_hasher);
-      case "PartialClassUnionMember2":
-        return _partialClassUnion.$hash(_hasher);
-      default:
-        _partialClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$hash(_hasher);
     }
+
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$hash(_hasher);
+    }
+
+    _partialClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -62126,21 +62156,30 @@ export namespace PartialInterfaceUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_partialInterfaceUnion: PartialInterfaceUnion, _hasher: HasherT): HasherT {
-    switch (_partialInterfaceUnion.$type) {
-      case "PartialInterfaceUnionMember1":
-        return PartialInterfaceUnionMember1.$hash(
-          _partialInterfaceUnion,
-          _hasher,
-        );
-      case "PartialInterfaceUnionMember2":
-        return PartialInterfaceUnionMember2.$hash(
-          _partialInterfaceUnion,
-          _hasher,
-        );
-      default:
-        _partialInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember1.$hash(
+        _partialInterfaceUnion,
+        _hasher,
+      );
     }
+
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember2.$hash(
+        _partialInterfaceUnion,
+        _hasher,
+      );
+    }
+
+    _partialInterfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -62489,15 +62528,24 @@ export namespace NoRdfTypeClassUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_noRdfTypeClassUnion: NoRdfTypeClassUnion, _hasher: HasherT): HasherT {
-    switch (_noRdfTypeClassUnion.$type) {
-      case "NoRdfTypeClassUnionMember1":
-        return _noRdfTypeClassUnion.$hash(_hasher);
-      case "NoRdfTypeClassUnionMember2":
-        return _noRdfTypeClassUnion.$hash(_hasher);
-      default:
-        _noRdfTypeClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$hash(_hasher);
     }
+
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$hash(_hasher);
+    }
+
+    _noRdfTypeClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
@@ -62829,15 +62877,24 @@ export namespace RecursiveClassUnion {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_recursiveClassUnion: RecursiveClassUnion, _hasher: HasherT): HasherT {
-    switch (_recursiveClassUnion.$type) {
-      case "RecursiveClassUnionMember1":
-        return _recursiveClassUnion.$hash(_hasher);
-      case "RecursiveClassUnionMember2":
-        return _recursiveClassUnion.$hash(_hasher);
-      default:
-        _recursiveClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$hash(_hasher);
     }
+
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$hash(_hasher);
+    }
+
+    _recursiveClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
