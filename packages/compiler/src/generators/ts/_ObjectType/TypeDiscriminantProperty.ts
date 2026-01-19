@@ -85,7 +85,9 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
 
   override fromRdfExpression(): Maybe<string> {
     return !this.abstract && this.objectType.declarationType === "interface"
-      ? Maybe.of(`purify.Either.of("${this.initializer}" as const)`)
+      ? Maybe.of(
+          `purify.Either.of<Error, "${this.initializer}">("${this.initializer}")`,
+        )
       : Maybe.empty();
   }
 

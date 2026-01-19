@@ -355,18 +355,18 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
-        `{ switch (${variables.resource}.identifier.value) { ${this.type.in_.map((iri) => `case "${iri.value}": return purify.Either.of(${rdfjsTermExpression(iri)});`).join(" ")} default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} })); } }`,
+        `(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
     if (this.type.isBlankNodeKind || this.type.isNamedNodeKind) {
       return Maybe.of(
-        `${variables.resource}.identifier.termType === "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}" ? purify.Either.of(${variables.resource}.identifier as ${this.typeAlias}) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        `${variables.resource}.identifier.termType === "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
     return Maybe.of(
-      `purify.Either.of(${variables.resource}.identifier as ${this.typeAlias})`,
+      `purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
     );
   }
 

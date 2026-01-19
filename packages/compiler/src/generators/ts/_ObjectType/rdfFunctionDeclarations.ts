@@ -62,7 +62,7 @@ function propertiesFromRdfFunctionDeclaration(
 
   this.parentObjectTypes.forEach((parentObjectType, parentObjectTypeI) => {
     chains.push({
-      expression: `${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${syntheticNamePrefix}parameters, ignoreRdfType: true });`,
+      expression: `${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf({ ...${syntheticNamePrefix}parameters, ignoreRdfType: true })`,
       variable: `${syntheticNamePrefix}super${parentObjectTypeI}`,
     });
     initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
@@ -87,16 +87,16 @@ function propertiesFromRdfFunctionDeclaration(
       // Check the expected type and its known subtypes
       switch (actualRdfType.value) {
         ${[...cases].map((fromRdfType) => `case "${fromRdfType}":`).join("\n")}
-          return purify.Either.of(true);
+          return purify.Either.of<Error, true>(true);
       }
 
       // Check arbitrary rdfs:subClassOf's of the expected type
       if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable})) {
-        return purify.Either.of(true);
+        return purify.Either.of<Error, true>(true);
       }
 
       return purify.Left(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
-    }) : purify.Either<Error, true>.of(true)`,
+    }) : purify.Either.of<Error, true>(true)`,
       variable: "_rdfTypeCheck",
     });
   });
@@ -123,12 +123,18 @@ function propertiesFromRdfFunctionDeclaration(
   }
 
   const statements: string[] = [];
-  const resultExpression = `purify.Either.of({ ${initializers.join(", ")} })`;
+  const resultExpression = `{ ${initializers.join(", ")} }`;
   if (chains.length === 0) {
-    statements.push(`return ${resultExpression};`);
+    statements.push(`return purify.Either.of(${resultExpression});`);
   } else {
     statements.push(
-      `return ${chains.map(({ expression, variable }) => `(${expression}).chain(${variable} => `).join(" ")} ${resultExpression});`,
+      `return ${chains
+        .reverse()
+        .reduce(
+          (acc, { expression, variable }, chainI) =>
+            `(${expression}).${chainI === 0 ? "map" : "chain"}(${variable} => ${acc})`,
+          `(${resultExpression})`,
+        )}`,
     );
   }
 
