@@ -35501,25 +35501,20 @@ export namespace InterfaceUnionMember2 {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "InterfaceUnionMember2" as const;
     const interfaceUnionMember2Property =
       $jsonObject["interfaceUnionMember2Property"];
-    return purify.Either.of({
+    return InterfaceUnionMemberCommonParentStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({
       ...$super0,
       $identifier,
       $type,
       interfaceUnionMember2Property,
-    });
+    }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -36123,25 +36118,20 @@ export namespace InterfaceUnionMember1 {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      InterfaceUnionMemberCommonParentStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "InterfaceUnionMember1" as const;
     const interfaceUnionMember1Property =
       $jsonObject["interfaceUnionMember1Property"];
-    return purify.Either.of({
+    return InterfaceUnionMemberCommonParentStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({
       ...$super0,
       $identifier,
       $type,
       interfaceUnionMember1Property,
-    });
+    }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -40462,15 +40452,10 @@ export namespace IdentifierOverride2ClassStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      IdentifierOverride1ClassStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
+    return IdentifierOverride1ClassStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({ ...$super0, $identifier }),
+    );
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -40775,15 +40760,10 @@ export namespace IdentifierOverride3ClassStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      IdentifierOverride2ClassStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
+    return IdentifierOverride2ClassStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({ ...$super0, $identifier }),
+    );
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -41221,15 +41201,10 @@ export namespace IdentifierOverride4ClassStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      IdentifierOverride3ClassStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
+    return IdentifierOverride3ClassStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({ ...$super0, $identifier }),
+    );
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -41658,15 +41633,10 @@ export namespace IdentifierOverride5Class {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      IdentifierOverride4ClassStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = dataFactory.namedNode($jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
+    return IdentifierOverride4ClassStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({ ...$super0, $identifier }),
+    );
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -52325,18 +52295,13 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      BaseInterfaceWithPropertiesStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "BaseInterfaceWithoutProperties" as const;
-    return purify.Either.of({ ...$super0, $identifier, $type });
+    return BaseInterfaceWithPropertiesStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({ ...$super0, $identifier, $type }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -52863,25 +52828,20 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "ConcreteParentInterface" as const;
     const concreteParentInterfaceProperty =
       $jsonObject["concreteParentInterfaceProperty"];
-    return purify.Either.of({
+    return BaseInterfaceWithoutPropertiesStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({
       ...$super0,
       $identifier,
       $type,
       concreteParentInterfaceProperty,
-    });
+    }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -53507,25 +53467,20 @@ export namespace ConcreteChildInterface {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      ConcreteParentInterfaceStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const $type = "ConcreteChildInterface" as const;
     const concreteChildInterfaceProperty =
       $jsonObject["concreteChildInterfaceProperty"];
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      $type,
-      concreteChildInterfaceProperty,
-    });
+    return ConcreteParentInterfaceStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({
+        ...$super0,
+        $identifier,
+        $type,
+        concreteChildInterfaceProperty,
+      }),
+    );
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -54553,17 +54508,12 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      AbstractBaseClassWithPropertiesStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    return purify.Either.of({ ...$super0, $identifier });
+    return AbstractBaseClassWithPropertiesStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({ ...$super0, $identifier }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -54962,23 +54912,18 @@ export namespace ConcreteParentClassStatic {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const concreteParentClassProperty =
       $jsonObject["concreteParentClassProperty"];
-    return purify.Either.of({
+    return AbstractBaseClassWithoutPropertiesStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({
       ...$super0,
       $identifier,
       concreteParentClassProperty,
-    });
+    }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -55578,23 +55523,14 @@ export namespace ConcreteChildClass {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      ConcreteParentClassStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const concreteChildClassProperty =
       $jsonObject["concreteChildClassProperty"];
-    return purify.Either.of({
-      ...$super0,
-      $identifier,
-      concreteChildClassProperty,
-    });
+    return ConcreteParentClassStatic.$propertiesFromJson($jsonObject).map(
+      ($super0) => ({ ...$super0, $identifier, concreteChildClassProperty }),
+    );
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -56640,22 +56576,17 @@ export namespace ClassUnionMember2 {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      ClassUnionMemberCommonParentStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const classUnionMember2Property = $jsonObject["classUnionMember2Property"];
-    return purify.Either.of({
+    return ClassUnionMemberCommonParentStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({
       ...$super0,
       $identifier,
       classUnionMember2Property,
-    });
+    }));
   }
 
   export function $propertiesFromRdf($parameters: {
@@ -57219,22 +57150,17 @@ export namespace ClassUnionMember1 {
     }
 
     const $jsonObject = $jsonSafeParseResult.data;
-    const $super0Either =
-      ClassUnionMemberCommonParentStatic.$propertiesFromJson($jsonObject);
-    if ($super0Either.isLeft()) {
-      return $super0Either;
-    }
-
-    const $super0 = $super0Either.unsafeCoerce();
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
     const classUnionMember1Property = $jsonObject["classUnionMember1Property"];
-    return purify.Either.of({
+    return ClassUnionMemberCommonParentStatic.$propertiesFromJson(
+      $jsonObject,
+    ).map(($super0) => ({
       ...$super0,
       $identifier,
       classUnionMember1Property,
-    });
+    }));
   }
 
   export function $propertiesFromRdf($parameters: {
