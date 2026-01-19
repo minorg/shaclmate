@@ -153,40 +153,32 @@ function transformNodeShapeToAstListType(
             );
           }
 
-          const firstPropertyEither =
-            this.transformPropertyShapeToAstObjectTypeProperty({
-              // Just need a dummy ast.ObjectType here to get the properties transformed.
-              objectType: listPropertiesObjectType,
-              propertyShape: firstPropertyShape,
-            });
-          if (firstPropertyEither.isLeft()) {
-            return firstPropertyEither;
-          }
-          const firstProperty = firstPropertyEither.unsafeCoerce();
-          listType.itemType = firstProperty.type;
+          return this.transformPropertyShapeToAstObjectTypeProperty({
+            // Just need a dummy ast.ObjectType here to get the properties transformed.
+            objectType: listPropertiesObjectType,
+            propertyShape: firstPropertyShape,
+          }).chain((firstProperty) => {
+            listType.itemType = firstProperty.type;
 
-          const restPropertyEither =
-            this.transformPropertyShapeToAstObjectTypeProperty({
+            return this.transformPropertyShapeToAstObjectTypeProperty({
               // Just need a dummy ast.ObjectType here to get the properties transformed.
               objectType: listPropertiesObjectType,
               propertyShape: restPropertyShape,
-            });
-          if (restPropertyEither.isLeft()) {
-            return restPropertyEither;
-          }
-          const restProperty = restPropertyEither.unsafeCoerce();
-          if (
-            restProperty.type.kind !== "ListType" ||
-            !restProperty.type.shapeIdentifier.equals(nodeShape.identifier)
-          ) {
-            return Left(
-              new Error(
-                `${nodeShape} rdf:rest property is not recursive into the node shape`,
-              ),
-            );
-          }
+            }).chain((restProperty) => {
+              if (
+                restProperty.type.kind !== "ListType" ||
+                !restProperty.type.shapeIdentifier.equals(nodeShape.identifier)
+              ) {
+                return Left(
+                  new Error(
+                    `${nodeShape} rdf:rest property is not recursive into the node shape`,
+                  ),
+                );
+              }
 
-          return Either.of<Error, ast.ListType<ast.Type>>(listType);
+              return Either.of<Error, ast.ListType<ast.Type>>(listType);
+            });
+          });
         },
       );
     })().ifLeft(() => {
