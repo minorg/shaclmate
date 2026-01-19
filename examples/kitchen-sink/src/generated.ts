@@ -1854,6 +1854,17 @@ export namespace $NamedDefaultPartial {
 
     return patterns;
   }
+
+  export function is$NamedDefaultPartial(
+    object: $Object,
+  ): object is $NamedDefaultPartial {
+    switch (object.$type) {
+      case "$NamedDefaultPartial":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class $DefaultPartial {
   readonly $identifier: $DefaultPartial.$Identifier;
@@ -2177,6 +2188,17 @@ export namespace $DefaultPartial {
     }
 
     return patterns;
+  }
+
+  export function is$DefaultPartial(
+    object: $Object,
+  ): object is $DefaultPartial {
+    switch (object.$type) {
+      case "$DefaultPartial":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -2699,6 +2721,17 @@ export namespace UuidV4IriIdentifierInterface {
       ...[_uuidV4IriIdentifierInterface.uuidV4IriProperty],
     );
     return resource;
+  }
+
+  export function isUuidV4IriIdentifierInterface(
+    object: $Object,
+  ): object is UuidV4IriIdentifierInterface {
+    switch (object.$type) {
+      case "UuidV4IriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -3226,6 +3259,17 @@ export namespace UuidV4IriIdentifierClass {
       },
     );
     return patterns;
+  }
+
+  export function isUuidV4IriIdentifierClass(
+    object: $Object,
+  ): object is UuidV4IriIdentifierClass {
+    switch (object.$type) {
+      case "UuidV4IriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -7555,6 +7599,17 @@ export namespace UnionDiscriminantsClass {
     });
     return patterns;
   }
+
+  export function isUnionDiscriminantsClass(
+    object: $Object,
+  ): object is UnionDiscriminantsClass {
+    switch (object.$type) {
+      case "UnionDiscriminantsClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Shape with properties that are not nested objects
@@ -9413,6 +9468,17 @@ export namespace TermPropertiesClass {
     });
     return patterns;
   }
+
+  export function isTermPropertiesClass(
+    object: $Object,
+  ): object is TermPropertiesClass {
+    switch (object.$type) {
+      case "TermPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.
@@ -9940,6 +10006,17 @@ export namespace Sha256IriIdentifierClass {
     );
     return patterns;
   }
+
+  export function isSha256IriIdentifierClass(
+    object: $Object,
+  ): object is Sha256IriIdentifierClass {
+    switch (object.$type) {
+      case "Sha256IriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class RecursiveClassUnionMember2 {
   private _$identifier?: RecursiveClassUnionMember2.$Identifier;
@@ -10422,6 +10499,17 @@ export namespace RecursiveClassUnionMember2 {
 
     return patterns;
   }
+
+  export function isRecursiveClassUnionMember2(
+    object: $Object,
+  ): object is RecursiveClassUnionMember2 {
+    switch (object.$type) {
+      case "RecursiveClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class RecursiveClassUnionMember1 {
   private _$identifier?: RecursiveClassUnionMember1.$Identifier;
@@ -10903,6 +10991,17 @@ export namespace RecursiveClassUnionMember1 {
     }
 
     return patterns;
+  }
+
+  export function isRecursiveClassUnionMember1(
+    object: $Object,
+  ): object is RecursiveClassUnionMember1 {
+    switch (object.$type) {
+      case "RecursiveClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -11562,6 +11661,17 @@ export namespace PropertyVisibilitiesClass {
       },
     );
     return patterns;
+  }
+
+  export function isPropertyVisibilitiesClass(
+    object: $Object,
+  ): object is PropertyVisibilitiesClass {
+    switch (object.$type) {
+      case "PropertyVisibilitiesClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -12661,6 +12771,17 @@ export namespace PropertyCardinalitiesClass {
     );
     return patterns;
   }
+
+  export function isPropertyCardinalitiesClass(
+    object: $Object,
+  ): object is PropertyCardinalitiesClass {
+    switch (object.$type) {
+      case "PropertyCardinalitiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export interface PartialInterfaceUnionMember2 {
   readonly $identifier: PartialInterfaceUnionMember2.$Identifier;
@@ -13293,6 +13414,17 @@ export namespace PartialInterfaceUnionMember2 {
       ...[_partialInterfaceUnionMember2.lazilyResolvedStringProperty],
     );
     return resource;
+  }
+
+  export function isPartialInterfaceUnionMember2(
+    object: $Object,
+  ): object is PartialInterfaceUnionMember2 {
+    switch (object.$type) {
+      case "PartialInterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export interface PartialInterfaceUnionMember1 {
@@ -13927,6 +14059,17 @@ export namespace PartialInterfaceUnionMember1 {
     );
     return resource;
   }
+
+  export function isPartialInterfaceUnionMember1(
+    object: $Object,
+  ): object is PartialInterfaceUnionMember1 {
+    switch (object.$type) {
+      case "PartialInterfaceUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class PartialClassUnionMember2 {
   private _$identifier?: PartialClassUnionMember2.$Identifier;
@@ -14537,6 +14680,17 @@ export namespace PartialClassUnionMember2 {
     );
     return patterns;
   }
+
+  export function isPartialClassUnionMember2(
+    object: $Object,
+  ): object is PartialClassUnionMember2 {
+    switch (object.$type) {
+      case "PartialClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class PartialClassUnionMember1 {
   private _$identifier?: PartialClassUnionMember1.$Identifier;
@@ -15146,6 +15300,17 @@ export namespace PartialClassUnionMember1 {
       },
     );
     return patterns;
+  }
+
+  export function isPartialClassUnionMember1(
+    object: $Object,
+  ): object is PartialClassUnionMember1 {
+    switch (object.$type) {
+      case "PartialClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -15926,6 +16091,17 @@ export namespace OrderedPropertiesClass {
     );
     return patterns;
   }
+
+  export function isOrderedPropertiesClass(
+    object: $Object,
+  ): object is OrderedPropertiesClass {
+    switch (object.$type) {
+      case "OrderedPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape that isn't an rdfs:Class.
@@ -16398,6 +16574,15 @@ export namespace NonClass {
       },
     );
     return patterns;
+  }
+
+  export function isNonClass(object: $Object): object is NonClass {
+    switch (object.$type) {
+      case "NonClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export class NoRdfTypeClassUnionMember2 {
@@ -16910,6 +17095,17 @@ export namespace NoRdfTypeClassUnionMember2 {
     );
     return patterns;
   }
+
+  export function isNoRdfTypeClassUnionMember2(
+    object: $Object,
+  ): object is NoRdfTypeClassUnionMember2 {
+    switch (object.$type) {
+      case "NoRdfTypeClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class NoRdfTypeClassUnionMember1 {
   private _$identifier?: NoRdfTypeClassUnionMember1.$Identifier;
@@ -17420,6 +17616,17 @@ export namespace NoRdfTypeClassUnionMember1 {
       },
     );
     return patterns;
+  }
+
+  export function isNoRdfTypeClassUnionMember1(
+    object: $Object,
+  ): object is NoRdfTypeClassUnionMember1 {
+    switch (object.$type) {
+      case "NoRdfTypeClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -18625,6 +18832,17 @@ export namespace MutablePropertiesClass {
       type: "group",
     });
     return patterns;
+  }
+
+  export function isMutablePropertiesClass(
+    object: $Object,
+  ): object is MutablePropertiesClass {
+    switch (object.$type) {
+      case "MutablePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -20149,6 +20367,17 @@ export namespace ListPropertiesClass {
     });
     return patterns;
   }
+
+  export function isListPropertiesClass(
+    object: $Object,
+  ): object is ListPropertiesClass {
+    switch (object.$type) {
+      case "ListPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape used as a partial by LazyPropertiesInterface
@@ -20659,6 +20888,17 @@ export namespace PartialInterface {
       ...[_partialInterface.lazilyResolvedStringProperty],
     );
     return resource;
+  }
+
+  export function isPartialInterface(
+    object: $Object,
+  ): object is PartialInterface {
+    switch (object.$type) {
+      case "PartialInterface":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -23942,6 +24182,17 @@ export namespace LazyPropertiesInterface {
     );
     return resource;
   }
+
+  export function isLazyPropertiesInterface(
+    object: $Object,
+  ): object is LazyPropertiesInterface {
+    switch (object.$type) {
+      case "LazyPropertiesInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape used as a partial by LazyPropertiesClass
@@ -24439,6 +24690,15 @@ export namespace PartialClass {
       },
     );
     return patterns;
+  }
+
+  export function isPartialClass(object: $Object): object is PartialClass {
+    switch (object.$type) {
+      case "PartialClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -27571,6 +27831,17 @@ export namespace LazyPropertiesClass {
     });
     return patterns;
   }
+
+  export function isLazyPropertiesClass(
+    object: $Object,
+  ): object is LazyPropertiesClass {
+    switch (object.$type) {
+      case "LazyPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape resolved by LazyPropertiesInterface
@@ -28106,6 +28377,17 @@ export namespace LazilyResolvedIriIdentifierInterface {
     );
     return resource;
   }
+
+  export function isLazilyResolvedIriIdentifierInterface(
+    object: $Object,
+  ): object is LazilyResolvedIriIdentifierInterface {
+    switch (object.$type) {
+      case "LazilyResolvedIriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape resolved by LazyPropertiesClass
@@ -28606,6 +28888,17 @@ export namespace LazilyResolvedIriIdentifierClass {
       },
     );
     return patterns;
+  }
+
+  export function isLazilyResolvedIriIdentifierClass(
+    object: $Object,
+  ): object is LazilyResolvedIriIdentifierClass {
+    switch (object.$type) {
+      case "LazilyResolvedIriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export interface LazilyResolvedInterfaceUnionMember2 {
@@ -29241,6 +29534,17 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     );
     return resource;
   }
+
+  export function isLazilyResolvedInterfaceUnionMember2(
+    object: $Object,
+  ): object is LazilyResolvedInterfaceUnionMember2 {
+    switch (object.$type) {
+      case "LazilyResolvedInterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export interface LazilyResolvedInterfaceUnionMember1 {
   readonly $identifier: LazilyResolvedInterfaceUnionMember1.$Identifier;
@@ -29875,6 +30179,17 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     );
     return resource;
   }
+
+  export function isLazilyResolvedInterfaceUnionMember1(
+    object: $Object,
+  ): object is LazilyResolvedInterfaceUnionMember1 {
+    switch (object.$type) {
+      case "LazilyResolvedInterfaceUnionMember1":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class LazilyResolvedClassUnionMember2 {
   private _$identifier?: LazilyResolvedClassUnionMember2.$Identifier;
@@ -30484,6 +30799,17 @@ export namespace LazilyResolvedClassUnionMember2 {
     );
     return patterns;
   }
+
+  export function isLazilyResolvedClassUnionMember2(
+    object: $Object,
+  ): object is LazilyResolvedClassUnionMember2 {
+    switch (object.$type) {
+      case "LazilyResolvedClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class LazilyResolvedClassUnionMember1 {
   private _$identifier?: LazilyResolvedClassUnionMember1.$Identifier;
@@ -31092,6 +31418,17 @@ export namespace LazilyResolvedClassUnionMember1 {
       },
     );
     return patterns;
+  }
+
+  export function isLazilyResolvedClassUnionMember1(
+    object: $Object,
+  ): object is LazilyResolvedClassUnionMember1 {
+    switch (object.$type) {
+      case "LazilyResolvedClassUnionMember1":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -31738,6 +32075,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     );
     return resource;
   }
+
+  export function isLazilyResolvedBlankNodeOrIriIdentifierInterface(
+    object: $Object,
+  ): object is LazilyResolvedBlankNodeOrIriIdentifierInterface {
+    switch (object.$type) {
+      case "LazilyResolvedBlankNodeOrIriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape resolved by LazyPropertiesClass
@@ -32355,6 +32703,17 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     );
     return patterns;
   }
+
+  export function isLazilyResolvedBlankNodeOrIriIdentifierClass(
+    object: $Object,
+  ): object is LazilyResolvedBlankNodeOrIriIdentifierClass {
+    switch (object.$type) {
+      case "LazilyResolvedBlankNodeOrIriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Shape that uses the StringList in a property.
@@ -32950,6 +33309,17 @@ export namespace LanguageInPropertiesClass {
       },
     );
     return patterns;
+  }
+
+  export function isLanguageInPropertiesClass(
+    object: $Object,
+  ): object is LanguageInPropertiesClass {
+    switch (object.$type) {
+      case "LanguageInPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -33712,6 +34082,17 @@ export namespace JsPrimitiveUnionPropertyClass {
     });
     return patterns;
   }
+
+  export function isJsPrimitiveUnionPropertyClass(
+    object: $Object,
+  ): object is JsPrimitiveUnionPropertyClass {
+    switch (object.$type) {
+      case "JsPrimitiveUnionPropertyClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * A node shape that only allows IRI identifiers.
@@ -34071,6 +34452,17 @@ export namespace IriIdentifierInterface {
     );
     return resource;
   }
+
+  export function isIriIdentifierInterface(
+    object: $Object,
+  ): object is IriIdentifierInterface {
+    switch (object.$type) {
+      case "IriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * A node shape that only allows IRI identifiers.
@@ -34400,6 +34792,17 @@ export namespace IriIdentifierClass {
     }
 
     return patterns;
+  }
+
+  export function isIriIdentifierClass(
+    object: $Object,
+  ): object is IriIdentifierClass {
+    switch (object.$type) {
+      case "IriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export interface InterfaceUnionMemberCommonParent {
@@ -34887,6 +35290,18 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       ],
     );
     return resource;
+  }
+
+  export function isInterfaceUnionMemberCommonParent(
+    object: $Object,
+  ): object is InterfaceUnionMemberCommonParent {
+    switch (object.$type) {
+      case "InterfaceUnionMember1":
+      case "InterfaceUnionMember2":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export interface InterfaceUnionMember2
@@ -35511,7 +35926,7 @@ export namespace InterfaceUnionMember2 {
   }
 
   export function isInterfaceUnionMember2(
-    object: InterfaceUnionMemberCommonParent,
+    object: $Object,
   ): object is InterfaceUnionMember2 {
     switch (object.$type) {
       case "InterfaceUnionMember2":
@@ -36143,7 +36558,7 @@ export namespace InterfaceUnionMember1 {
   }
 
   export function isInterfaceUnionMember1(
-    object: InterfaceUnionMemberCommonParent,
+    object: $Object,
   ): object is InterfaceUnionMember1 {
     switch (object.$type) {
       case "InterfaceUnionMember1":
@@ -36629,6 +37044,15 @@ export namespace Interface {
     );
     return resource;
   }
+
+  export function isInterface(object: $Object): object is Interface {
+    switch (object.$type) {
+      case "Interface":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class IndirectRecursiveHelperClass {
   private _$identifier?: IndirectRecursiveHelperClass.$Identifier;
@@ -37095,6 +37519,17 @@ export namespace IndirectRecursiveHelperClass {
     }
 
     return patterns;
+  }
+
+  export function isIndirectRecursiveHelperClass(
+    object: $Object,
+  ): object is IndirectRecursiveHelperClass {
+    switch (object.$type) {
+      case "IndirectRecursiveHelperClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export class IndirectRecursiveClass {
@@ -37571,6 +38006,17 @@ export namespace IndirectRecursiveClass {
     }
 
     return patterns;
+  }
+
+  export function isIndirectRecursiveClass(
+    object: $Object,
+  ): object is IndirectRecursiveClass {
+    switch (object.$type) {
+      case "IndirectRecursiveClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -38835,6 +39281,17 @@ export namespace InPropertiesClass {
     });
     return patterns;
   }
+
+  export function isInPropertiesClass(
+    object: $Object,
+  ): object is InPropertiesClass {
+    switch (object.$type) {
+      case "InPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Shape with sh:in constraining its identifier.
@@ -39429,6 +39886,17 @@ export namespace InIdentifierClass {
     });
     return patterns;
   }
+
+  export function isInIdentifierClass(
+    object: $Object,
+  ): object is InIdentifierClass {
+    switch (object.$type) {
+      case "InIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
@@ -39905,6 +40373,19 @@ export namespace IdentifierOverride1ClassStatic {
     );
     return patterns;
   }
+
+  export function isIdentifierOverride1Class(
+    object: $Object,
+  ): object is IdentifierOverride1Class {
+    switch (object.$type) {
+      case "IdentifierOverride3Class":
+      case "IdentifierOverride4Class":
+      case "IdentifierOverride5Class":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape for testing identifier type overriding: blank node or IRI identifier, abstract
@@ -40191,7 +40672,7 @@ export namespace IdentifierOverride2ClassStatic {
   }
 
   export function isIdentifierOverride2Class(
-    object: IdentifierOverride1Class,
+    object: $Object,
   ): object is IdentifierOverride2Class {
     switch (object.$type) {
       case "IdentifierOverride3Class":
@@ -40622,7 +41103,7 @@ export namespace IdentifierOverride3ClassStatic {
   }
 
   export function isIdentifierOverride3Class(
-    object: IdentifierOverride1Class,
+    object: $Object,
   ): object is IdentifierOverride3Class {
     switch (object.$type) {
       case "IdentifierOverride4Class":
@@ -41073,7 +41554,7 @@ export namespace IdentifierOverride4ClassStatic {
   }
 
   export function isIdentifierOverride4Class(
-    object: IdentifierOverride1Class,
+    object: $Object,
   ): object is IdentifierOverride4Class {
     switch (object.$type) {
       case "IdentifierOverride5Class":
@@ -41501,7 +41982,7 @@ export namespace IdentifierOverride5Class {
   }
 
   export function isIdentifierOverride5Class(
-    object: IdentifierOverride1Class,
+    object: $Object,
   ): object is IdentifierOverride5Class {
     switch (object.$type) {
       case "IdentifierOverride5Class":
@@ -42160,6 +42641,17 @@ export namespace HasValuePropertiesClass {
     );
     return patterns;
   }
+
+  export function isHasValuePropertiesClass(
+    object: $Object,
+  ): object is HasValuePropertiesClass {
+    switch (object.$type) {
+      case "HasValuePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class FlattenClassUnionMember3 {
   private _$identifier?: FlattenClassUnionMember3.$Identifier;
@@ -42771,6 +43263,17 @@ export namespace FlattenClassUnionMember3 {
     );
     return patterns;
   }
+
+  export function isFlattenClassUnionMember3(
+    object: $Object,
+  ): object is FlattenClassUnionMember3 {
+    switch (object.$type) {
+      case "FlattenClassUnionMember3":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape that references the ExternClass in a property.
@@ -43286,6 +43789,17 @@ export namespace ExternClassPropertyClass {
       type: "group",
     });
     return patterns;
+  }
+
+  export function isExternClassPropertyClass(
+    object: $Object,
+  ): object is ExternClassPropertyClass {
+    switch (object.$type) {
+      case "ExternClassPropertyClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -43892,6 +44406,17 @@ export namespace ExplicitRdfTypeClass {
       },
     );
     return patterns;
+  }
+
+  export function isExplicitRdfTypeClass(
+    object: $Object,
+  ): object is ExplicitRdfTypeClass {
+    switch (object.$type) {
+      case "ExplicitRdfTypeClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -44512,6 +45037,17 @@ export namespace ExplicitFromToRdfTypesClass {
     );
     return patterns;
   }
+
+  export function isExplicitFromToRdfTypesClass(
+    object: $Object,
+  ): object is ExplicitFromToRdfTypesClass {
+    switch (object.$type) {
+      case "ExplicitFromToRdfTypesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 export class DirectRecursiveClass {
   private _$identifier?: DirectRecursiveClass.$Identifier;
@@ -44976,6 +45512,17 @@ export namespace DirectRecursiveClass {
     }
 
     return patterns;
+  }
+
+  export function isDirectRecursiveClass(
+    object: $Object,
+  ): object is DirectRecursiveClass {
+    switch (object.$type) {
+      case "DirectRecursiveClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -46222,6 +46769,17 @@ export namespace DefaultValuePropertiesClass {
       type: "optional",
     });
     return patterns;
+  }
+
+  export function isDefaultValuePropertiesClass(
+    object: $Object,
+  ): object is DefaultValuePropertiesClass {
+    switch (object.$type) {
+      case "DefaultValuePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -48129,6 +48687,17 @@ export namespace DateUnionPropertiesClass {
       type: "group",
     });
     return patterns;
+  }
+
+  export function isDateUnionPropertiesClass(
+    object: $Object,
+  ): object is DateUnionPropertiesClass {
+    switch (object.$type) {
+      case "DateUnionPropertiesClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -50973,6 +51542,17 @@ export namespace ConvertibleTypePropertiesClass {
     });
     return patterns;
   }
+
+  export function isConvertibleTypePropertiesClass(
+    object: $Object,
+  ): object is ConvertibleTypePropertiesClass {
+    switch (object.$type) {
+      case "ConvertibleTypePropertiesClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Base interface for other node shapes.
@@ -51652,6 +52232,20 @@ export namespace BaseInterfaceWithPropertiesStatic {
     );
     return resource;
   }
+
+  export function isBaseInterfaceWithProperties(
+    object: $Object,
+  ): object is BaseInterfaceWithProperties {
+    switch (object.$type) {
+      case "BaseInterfaceWithoutProperties":
+      case "ConcreteChildInterface":
+      case "ConcreteParentInterface":
+      case "BaseInterfaceWithProperties":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Base interface for other node shapes. Put the base interface with properties above the base interface without.
@@ -52144,7 +52738,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   }
 
   export function isBaseInterfaceWithoutProperties(
-    object: BaseInterfaceWithProperties,
+    object: $Object,
   ): object is BaseInterfaceWithoutProperties {
     switch (object.$type) {
       case "ConcreteChildInterface":
@@ -52800,7 +53394,7 @@ export namespace ConcreteParentInterfaceStatic {
   }
 
   export function isConcreteParentInterface(
-    object: BaseInterfaceWithProperties,
+    object: $Object,
   ): object is ConcreteParentInterface {
     switch (object.$type) {
       case "ConcreteChildInterface":
@@ -53436,7 +54030,7 @@ export namespace ConcreteChildInterface {
   }
 
   export function isConcreteChildInterface(
-    object: BaseInterfaceWithProperties,
+    object: $Object,
   ): object is ConcreteChildInterface {
     switch (object.$type) {
       case "ConcreteChildInterface":
@@ -53947,6 +54541,18 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     );
     return patterns;
   }
+
+  export function isAbstractBaseClassWithProperties(
+    object: $Object,
+  ): object is AbstractBaseClassWithProperties {
+    switch (object.$type) {
+      case "ConcreteChildClass":
+      case "ConcreteParentClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Abstract base for other node shapes. Put the ABC with properties above the ABC without.
@@ -54219,7 +54825,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   }
 
   export function isAbstractBaseClassWithoutProperties(
-    object: AbstractBaseClassWithProperties,
+    object: $Object,
   ): object is AbstractBaseClassWithoutProperties {
     switch (object.$type) {
       case "ConcreteChildClass":
@@ -54856,7 +55462,7 @@ export namespace ConcreteParentClassStatic {
   }
 
   export function isConcreteParentClass(
-    object: AbstractBaseClassWithProperties,
+    object: $Object,
   ): object is ConcreteParentClass {
     switch (object.$type) {
       case "ConcreteChildClass":
@@ -55458,7 +56064,7 @@ export namespace ConcreteChildClass {
   }
 
   export function isConcreteChildClass(
-    object: AbstractBaseClassWithProperties,
+    object: $Object,
   ): object is ConcreteChildClass {
     switch (object.$type) {
       case "ConcreteChildClass":
@@ -55939,6 +56545,18 @@ export namespace ClassUnionMemberCommonParentStatic {
       },
     );
     return patterns;
+  }
+
+  export function isClassUnionMemberCommonParent(
+    object: $Object,
+  ): object is ClassUnionMemberCommonParent {
+    switch (object.$type) {
+      case "ClassUnionMember1":
+      case "ClassUnionMember2":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
@@ -56518,7 +57136,7 @@ export namespace ClassUnionMember2 {
   }
 
   export function isClassUnionMember2(
-    object: ClassUnionMemberCommonParent,
+    object: $Object,
   ): object is ClassUnionMember2 {
     switch (object.$type) {
       case "ClassUnionMember2":
@@ -57105,7 +57723,7 @@ export namespace ClassUnionMember1 {
   }
 
   export function isClassUnionMember1(
-    object: ClassUnionMemberCommonParent,
+    object: $Object,
   ): object is ClassUnionMember1 {
     switch (object.$type) {
       case "ClassUnionMember1":
@@ -57470,6 +58088,17 @@ export namespace BlankNodeOrIriIdentifierInterface {
       { mutateGraph },
     );
     return resource;
+  }
+
+  export function isBlankNodeOrIriIdentifierInterface(
+    object: $Object,
+  ): object is BlankNodeOrIriIdentifierInterface {
+    switch (object.$type) {
+      case "BlankNodeOrIriIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -57921,6 +58550,17 @@ export namespace BlankNodeOrIriIdentifierClass {
 
     return patterns;
   }
+
+  export function isBlankNodeOrIriIdentifierClass(
+    object: $Object,
+  ): object is BlankNodeOrIriIdentifierClass {
+    switch (object.$type) {
+      case "BlankNodeOrIriIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape that can only have a blank node as an identifier
@@ -58276,6 +58916,17 @@ export namespace BlankNodeIdentifierInterface {
       { mutateGraph },
     );
     return resource;
+  }
+
+  export function isBlankNodeIdentifierInterface(
+    object: $Object,
+  ): object is BlankNodeIdentifierInterface {
+    switch (object.$type) {
+      case "BlankNodeIdentifierInterface":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -58729,6 +59380,17 @@ export namespace BlankNodeIdentifierClass {
     }
 
     return patterns;
+  }
+
+  export function isBlankNodeIdentifierClass(
+    object: $Object,
+  ): object is BlankNodeIdentifierClass {
+    switch (object.$type) {
+      case "BlankNodeIdentifierClass":
+        return true;
+      default:
+        return false;
+    }
   }
 }
 /**
@@ -59206,6 +59868,17 @@ export namespace AbstractBaseClassForExternClassStatic {
     );
     return patterns;
   }
+
+  export function isAbstractBaseClassForExternClass(
+    object: $Object,
+  ): object is AbstractBaseClassForExternClass {
+    switch (object.$type) {
+      case "ExternClass":
+        return true;
+      default:
+        return false;
+    }
+  }
 }
 /**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -59514,16 +60187,11 @@ export namespace ClassUnion {
     }
   }
 
-  export function isClassUnion(
-    object: ClassUnionMemberCommonParent,
-  ): object is ClassUnion {
-    switch (object.$type) {
-      case "ClassUnionMember1":
-      case "ClassUnionMember2":
-        return true;
-      default:
-        return false;
-    }
+  export function isClassUnion(object: $Object): object is ClassUnion {
+    return (
+      ClassUnionMember1.isClassUnionMember1(object) ||
+      ClassUnionMember2.isClassUnionMember2(object)
+    );
   }
 }
 /**
@@ -59899,6 +60567,16 @@ export namespace FlattenClassUnion {
         throw new Error("unrecognized type");
     }
   }
+
+  export function isFlattenClassUnion(
+    object: $Object,
+  ): object is FlattenClassUnion {
+    return (
+      ClassUnionMember1.isClassUnionMember1(object) ||
+      ClassUnionMember2.isClassUnionMember2(object) ||
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(object)
+    );
+  }
 }
 /**
  * Node shape that sh:xone's other node shapes. This will usually be generated as a discriminated union.
@@ -60216,16 +60894,11 @@ export namespace InterfaceUnion {
     }
   }
 
-  export function isInterfaceUnion(
-    object: InterfaceUnionMemberCommonParent,
-  ): object is InterfaceUnion {
-    switch (object.$type) {
-      case "InterfaceUnionMember1":
-      case "InterfaceUnionMember2":
-        return true;
-      default:
-        return false;
-    }
+  export function isInterfaceUnion(object: $Object): object is InterfaceUnion {
+    return (
+      InterfaceUnionMember1.isInterfaceUnionMember1(object) ||
+      InterfaceUnionMember2.isInterfaceUnionMember2(object)
+    );
   }
 }
 /**
@@ -60560,6 +61233,17 @@ export namespace LazilyResolvedClassUnion {
         _lazilyResolvedClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
+  }
+
+  export function isLazilyResolvedClassUnion(
+    object: $Object,
+  ): object is LazilyResolvedClassUnion {
+    return (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        object,
+      ) ||
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(object)
+    );
   }
 }
 /**
@@ -60915,6 +61599,19 @@ export namespace LazilyResolvedInterfaceUnion {
         throw new Error("unrecognized type");
     }
   }
+
+  export function isLazilyResolvedInterfaceUnion(
+    object: $Object,
+  ): object is LazilyResolvedInterfaceUnion {
+    return (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        object,
+      ) ||
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        object,
+      )
+    );
+  }
 }
 /**
  * Counterpart of ClassUnion for lazy resolution. The partial union must have the same number of members, in the corresponding order, as the 'full' union.
@@ -61232,6 +61929,15 @@ export namespace PartialClassUnion {
         _partialClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
+  }
+
+  export function isPartialClassUnion(
+    object: $Object,
+  ): object is PartialClassUnion {
+    return (
+      PartialClassUnionMember1.isPartialClassUnionMember1(object) ||
+      PartialClassUnionMember2.isPartialClassUnionMember2(object)
+    );
   }
 }
 /**
@@ -61576,6 +62282,15 @@ export namespace PartialInterfaceUnion {
         throw new Error("unrecognized type");
     }
   }
+
+  export function isPartialInterfaceUnion(
+    object: $Object,
+  ): object is PartialInterfaceUnion {
+    return (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(object) ||
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(object)
+    );
+  }
 }
 /**
  * Node shape sh:xone's other node shapes. These don't have RDF types since they're not owl:Class's
@@ -61890,6 +62605,15 @@ export namespace NoRdfTypeClassUnion {
         throw new Error("unrecognized type");
     }
   }
+
+  export function isNoRdfTypeClassUnion(
+    object: $Object,
+  ): object is NoRdfTypeClassUnion {
+    return (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(object) ||
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(object)
+    );
+  }
 }
 /**
  * Node shape sh:xone's node shapes that have properties with the union's type
@@ -62203,6 +62927,15 @@ export namespace RecursiveClassUnion {
         _recursiveClassUnion satisfies never;
         throw new Error("unrecognized type");
     }
+  }
+
+  export function isRecursiveClassUnion(
+    object: $Object,
+  ): object is RecursiveClassUnion {
+    return (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(object) ||
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(object)
+    );
   }
 }
 export type $Object =

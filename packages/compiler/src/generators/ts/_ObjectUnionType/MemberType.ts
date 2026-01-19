@@ -101,10 +101,6 @@ export class MemberType {
     return this.delegate.name;
   }
 
-  get rootAncestorObjectType() {
-    return this.delegate.rootAncestorObjectType;
-  }
-
   get staticModuleName() {
     return this.delegate.staticModuleName;
   }

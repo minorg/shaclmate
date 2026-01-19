@@ -1,12 +1,12 @@
 import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function isTypeFunctionDeclaration(
   this: ObjectType,
 ): Maybe<FunctionDeclarationStructure> {
-  const parameterObjectType = this.rootAncestorObjectType.extract();
-  if (!parameterObjectType) {
+  if (this.extern) {
     return Maybe.empty();
   }
 
@@ -17,7 +17,7 @@ export function isTypeFunctionDeclaration(
     parameters: [
       {
         name: "object",
-        type: parameterObjectType.name,
+        type: `${syntheticNamePrefix}Object`,
       },
     ],
     returnType: `object is ${this.name}`,

@@ -373,28 +373,6 @@ export class ObjectType extends AbstractDeclaredType {
     return properties;
   }
 
-  /**
-   * If there's no multiple inheritance in this object type's ancestor graph, return the root of the graph.
-   */
-  @Memoize()
-  get rootAncestorObjectType(): Maybe<ObjectType> {
-    function helper(objectType: ObjectType, depth: number): Maybe<ObjectType> {
-      switch (objectType.parentObjectTypes.length) {
-        case 0:
-          // depth === 0 is this ObjectType. If it has no parents then it has no root.
-          // depth > 0 means objectType is the root.
-          return depth > 0 ? Maybe.of(objectType) : Maybe.empty();
-        case 1:
-          // Recurse into the parent
-          return helper(objectType.parentObjectTypes[0], depth + 1);
-        default:
-          return Maybe.empty(); // Multiple inheritance
-      }
-    }
-
-    return helper(this, 0);
-  }
-
   @Memoize()
   get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
