@@ -18,6 +18,8 @@ export class PropertyShape extends ShaclCorePropertyShape<
   any,
   Shape
 > {
+  readonly kind = "PropertyShape";
+
   constructor(
     private readonly generatedShaclmatePropertyShape: generated.ShaclmatePropertyShape,
     shapesGraph: ShapesGraph,
@@ -28,14 +30,17 @@ export class PropertyShape extends ShaclCorePropertyShape<
     );
   }
 
+  @Memoize()
   get comment(): Maybe<string> {
     return List.head(this.comments);
   }
 
+  @Memoize()
   get description(): Maybe<string> {
     return List.head(super.descriptions);
   }
 
+  @Memoize()
   get label(): Maybe<string> {
     return List.head(this.labels);
   }
@@ -58,6 +63,7 @@ export class PropertyShape extends ShaclCorePropertyShape<
       : Either.of(Maybe.empty());
   }
 
+  @Memoize()
   get name(): Maybe<string> {
     return List.head(this.names);
   }

@@ -1,6 +1,6 @@
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { Either, Left } from "purify-ts";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
 
 const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
@@ -62,7 +62,7 @@ export function shapeNodeKinds(
   },
 ): Either<Error, ReadonlySet<NodeKind>> {
   return (
-    shape instanceof input.NodeShape
+    shape.kind === "NodeShape"
       ? nodeShapeNodeKinds(shape)
       : propertyShapeNodeKinds(shape)
   ).chain((explicitNodeKinds) => {
@@ -72,7 +72,7 @@ export function shapeNodeKinds(
       "sh:in": shape.constraints.in_.map((in_) => in_.termType),
       "sh:hasValue": shape.constraints.hasValues.map((value) => value.termType),
       "sh:defaultValue":
-        shape instanceof input.PropertyShape
+        shape.kind === "PropertyShape"
           ? shape.defaultValue.map((value) => value.termType).toList()
           : [],
     })) {
@@ -115,7 +115,7 @@ export function shapeNodeKinds(
     if (implicitNodeKinds.size > 0) {
       return Either.of(implicitNodeKinds);
     }
-    if (shape instanceof input.NodeShape) {
+    if (shape.kind === "NodeShape") {
       return Either.of(
         options?.defaultNodeShapeNodeKinds ?? defaultNodeShapeNodeKinds,
       );
