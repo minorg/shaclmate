@@ -59890,12 +59890,12 @@ export namespace ClassUnion {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (ClassUnionMember1.isClassUnionMember1(left)) {
         return left.$equals(right as unknown as ClassUnionMember1);
-      } else if (ClassUnionMember2.isClassUnionMember2(left)) {
-        return left.$equals(right as unknown as ClassUnionMember2);
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      if (ClassUnionMember2.isClassUnionMember2(left)) {
+        return left.$equals(right as unknown as ClassUnionMember2);
+      }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -60175,15 +60175,14 @@ export namespace ClassUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_classUnion.$type) {
-      case "ClassUnionMember1":
-        return _classUnion.$toRdf(_parameters);
-      case "ClassUnionMember2":
-        return _classUnion.$toRdf(_parameters);
-      default:
-        _classUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
+      return _classUnion.$toRdf(_parameters);
     }
+    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
+      return _classUnion.$toRdf(_parameters);
+    }
+    _classUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isClassUnion(object: $Object): object is ClassUnion {
@@ -60209,14 +60208,15 @@ export namespace FlattenClassUnion {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (ClassUnionMember1.isClassUnionMember1(left)) {
         return left.$equals(right as unknown as ClassUnionMember1);
-      } else if (ClassUnionMember2.isClassUnionMember2(left)) {
-        return left.$equals(right as unknown as ClassUnionMember2);
-      } else if (FlattenClassUnionMember3.isFlattenClassUnionMember3(left)) {
-        return left.$equals(right as unknown as FlattenClassUnionMember3);
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      if (ClassUnionMember2.isClassUnionMember2(left)) {
+        return left.$equals(right as unknown as ClassUnionMember2);
+      }
+      if (FlattenClassUnionMember3.isFlattenClassUnionMember3(left)) {
+        return left.$equals(right as unknown as FlattenClassUnionMember3);
+      }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -60553,17 +60553,19 @@ export namespace FlattenClassUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_flattenClassUnion.$type) {
-      case "ClassUnionMember1":
-        return _flattenClassUnion.$toRdf(_parameters);
-      case "ClassUnionMember2":
-        return _flattenClassUnion.$toRdf(_parameters);
-      case "FlattenClassUnionMember3":
-        return _flattenClassUnion.$toRdf(_parameters);
-      default:
-        _flattenClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
+      return _flattenClassUnion.$toRdf(_parameters);
     }
+    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
+      return _flattenClassUnion.$toRdf(_parameters);
+    }
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
+    ) {
+      return _flattenClassUnion.$toRdf(_parameters);
+    }
+    _flattenClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isFlattenClassUnion(
@@ -60592,15 +60594,15 @@ export namespace InterfaceUnion {
           left,
           right as unknown as InterfaceUnionMember1,
         );
-      } else if (InterfaceUnionMember2.isInterfaceUnionMember2(left)) {
+      }
+      if (InterfaceUnionMember2.isInterfaceUnionMember2(left)) {
         return InterfaceUnionMember2.$equals(
           left,
           right as unknown as InterfaceUnionMember2,
         );
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -60880,15 +60882,14 @@ export namespace InterfaceUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_interfaceUnion.$type) {
-      case "InterfaceUnionMember1":
-        return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
-      case "InterfaceUnionMember2":
-        return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
-      default:
-        _interfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
+      return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
     }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
+      return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
+    }
+    _interfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isInterfaceUnion(object: $Object): object is InterfaceUnion {
@@ -60917,16 +60918,16 @@ export namespace LazilyResolvedClassUnion {
         return left.$equals(
           right as unknown as LazilyResolvedClassUnionMember1,
         );
-      } else if (
+      }
+      if (
         LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(left)
       ) {
         return left.$equals(
           right as unknown as LazilyResolvedClassUnionMember2,
         );
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -61224,15 +61225,22 @@ export namespace LazilyResolvedClassUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_lazilyResolvedClassUnion.$type) {
-      case "LazilyResolvedClassUnionMember1":
-        return _lazilyResolvedClassUnion.$toRdf(_parameters);
-      case "LazilyResolvedClassUnionMember2":
-        return _lazilyResolvedClassUnion.$toRdf(_parameters);
-      default:
-        _lazilyResolvedClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toRdf(_parameters);
     }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toRdf(_parameters);
+    }
+    _lazilyResolvedClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isLazilyResolvedClassUnion(
@@ -61268,7 +61276,8 @@ export namespace LazilyResolvedInterfaceUnion {
           left,
           right as unknown as LazilyResolvedInterfaceUnionMember1,
         );
-      } else if (
+      }
+      if (
         LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
           left,
         )
@@ -61277,10 +61286,9 @@ export namespace LazilyResolvedInterfaceUnion {
           left,
           right as unknown as LazilyResolvedInterfaceUnionMember2,
         );
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -61590,21 +61598,28 @@ export namespace LazilyResolvedInterfaceUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_lazilyResolvedInterfaceUnion.$type) {
-      case "LazilyResolvedInterfaceUnionMember1":
-        return LazilyResolvedInterfaceUnionMember1.$toRdf(
-          _lazilyResolvedInterfaceUnion,
-          _parameters,
-        );
-      case "LazilyResolvedInterfaceUnionMember2":
-        return LazilyResolvedInterfaceUnionMember2.$toRdf(
-          _lazilyResolvedInterfaceUnion,
-          _parameters,
-        );
-      default:
-        _lazilyResolvedInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toRdf(
+        _lazilyResolvedInterfaceUnion,
+        _parameters,
+      );
     }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toRdf(
+        _lazilyResolvedInterfaceUnion,
+        _parameters,
+      );
+    }
+    _lazilyResolvedInterfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isLazilyResolvedInterfaceUnion(
@@ -61635,12 +61650,12 @@ export namespace PartialClassUnion {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (PartialClassUnionMember1.isPartialClassUnionMember1(left)) {
         return left.$equals(right as unknown as PartialClassUnionMember1);
-      } else if (PartialClassUnionMember2.isPartialClassUnionMember2(left)) {
-        return left.$equals(right as unknown as PartialClassUnionMember2);
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      if (PartialClassUnionMember2.isPartialClassUnionMember2(left)) {
+        return left.$equals(right as unknown as PartialClassUnionMember2);
+      }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -61926,15 +61941,18 @@ export namespace PartialClassUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_partialClassUnion.$type) {
-      case "PartialClassUnionMember1":
-        return _partialClassUnion.$toRdf(_parameters);
-      case "PartialClassUnionMember2":
-        return _partialClassUnion.$toRdf(_parameters);
-      default:
-        _partialClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toRdf(_parameters);
     }
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toRdf(_parameters);
+    }
+    _partialClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isPartialClassUnion(
@@ -61964,17 +61982,15 @@ export namespace PartialInterfaceUnion {
           left,
           right as unknown as PartialInterfaceUnionMember1,
         );
-      } else if (
-        PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(left)
-      ) {
+      }
+      if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(left)) {
         return PartialInterfaceUnionMember2.$equals(
           left,
           right as unknown as PartialInterfaceUnionMember2,
         );
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -62273,21 +62289,28 @@ export namespace PartialInterfaceUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_partialInterfaceUnion.$type) {
-      case "PartialInterfaceUnionMember1":
-        return PartialInterfaceUnionMember1.$toRdf(
-          _partialInterfaceUnion,
-          _parameters,
-        );
-      case "PartialInterfaceUnionMember2":
-        return PartialInterfaceUnionMember2.$toRdf(
-          _partialInterfaceUnion,
-          _parameters,
-        );
-      default:
-        _partialInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember1.$toRdf(
+        _partialInterfaceUnion,
+        _parameters,
+      );
     }
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember2.$toRdf(
+        _partialInterfaceUnion,
+        _parameters,
+      );
+    }
+    _partialInterfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isPartialInterfaceUnion(
@@ -62314,14 +62337,12 @@ export namespace NoRdfTypeClassUnion {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(left)) {
         return left.$equals(right as unknown as NoRdfTypeClassUnionMember1);
-      } else if (
-        NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(left)
-      ) {
-        return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(left)) {
+        return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
+      }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -62603,15 +62624,22 @@ export namespace NoRdfTypeClassUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_noRdfTypeClassUnion.$type) {
-      case "NoRdfTypeClassUnionMember1":
-        return _noRdfTypeClassUnion.$toRdf(_parameters);
-      case "NoRdfTypeClassUnionMember2":
-        return _noRdfTypeClassUnion.$toRdf(_parameters);
-      default:
-        _noRdfTypeClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toRdf(_parameters);
     }
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toRdf(_parameters);
+    }
+    _noRdfTypeClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isNoRdfTypeClassUnion(
@@ -62638,14 +62666,12 @@ export namespace RecursiveClassUnion {
     return $strictEquals(left.$type, right.$type).chain(() => {
       if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(left)) {
         return left.$equals(right as unknown as RecursiveClassUnionMember1);
-      } else if (
-        RecursiveClassUnionMember2.isRecursiveClassUnionMember2(left)
-      ) {
-        return left.$equals(right as unknown as RecursiveClassUnionMember2);
-      } else {
-        left satisfies never;
-        throw new Error("unrecognized type");
       }
+      if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(left)) {
+        return left.$equals(right as unknown as RecursiveClassUnionMember2);
+      }
+      left satisfies never;
+      throw new Error("unrecognized type");
     });
   }
 
@@ -62927,15 +62953,22 @@ export namespace RecursiveClassUnion {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
-    switch (_recursiveClassUnion.$type) {
-      case "RecursiveClassUnionMember1":
-        return _recursiveClassUnion.$toRdf(_parameters);
-      case "RecursiveClassUnionMember2":
-        return _recursiveClassUnion.$toRdf(_parameters);
-      default:
-        _recursiveClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toRdf(_parameters);
     }
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toRdf(_parameters);
+    }
+    _recursiveClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function isRecursiveClassUnion(

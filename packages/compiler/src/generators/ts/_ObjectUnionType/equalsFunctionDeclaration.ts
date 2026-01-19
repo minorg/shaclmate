@@ -10,22 +10,6 @@ export function equalsFunctionDeclaration(
     return Maybe.empty();
   }
 
-  const caseBlocks = this.memberTypes.map((memberType) => {
-    let returnExpression: string;
-    switch (memberType.declarationType) {
-      case "class":
-        returnExpression = `left.${syntheticNamePrefix}equals(right as unknown as ${memberType.name})`;
-        break;
-      case "interface":
-        returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}equals(left, right as unknown as ${memberType.name})`;
-        break;
-    }
-    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
-  });
-  caseBlocks.push(
-    'default: left satisfies never; throw new Error("unrecognized type");',
-  );
-
   return Maybe.of({
     isExported: true,
     kind: StructureKind.Function,
@@ -43,9 +27,21 @@ export function equalsFunctionDeclaration(
     returnType: `${syntheticNamePrefix}EqualsResult`,
     statements: `\
     return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
-      switch (left.${this._discriminantProperty.name}) {
-       ${caseBlocks.join(" ")}
-      }
+      ${this.memberTypes
+        .map((memberType) => {
+          let returnExpression: string;
+          switch (memberType.declarationType) {
+            case "class":
+              returnExpression = `left.${syntheticNamePrefix}equals(right as unknown as ${memberType.name})`;
+              break;
+            case "interface":
+              returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}equals(left, right as unknown as ${memberType.name})`;
+              break;
+          }
+          return `if (${memberType.staticModuleName}.is${memberType.name}(left)) { return ${returnExpression}; }`;
+        })
+        .concat('left satisfies never; throw new Error("unrecognized type");')
+        .join("\n")}
     })`,
   });
 }
