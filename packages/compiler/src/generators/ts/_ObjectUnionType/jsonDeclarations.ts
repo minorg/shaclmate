@@ -74,22 +74,6 @@ function jsonZodSchemaFunctionDeclaration(
 function toJsonFunctionDeclaration(
   this: ObjectUnionType,
 ): FunctionDeclarationStructure {
-  const caseBlocks = this.memberTypes.map((memberType) => {
-    let returnExpression: string;
-    switch (memberType.declarationType) {
-      case "class":
-        returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toJson()`;
-        break;
-      case "interface":
-        returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
-        break;
-    }
-    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
-  });
-  caseBlocks.push(
-    `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-  );
-
   return {
     isExported: true,
     kind: StructureKind.Function,
@@ -101,6 +85,21 @@ function toJsonFunctionDeclaration(
       },
     ],
     returnType: this.jsonType().name,
-    statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
+    statements: this.memberTypes
+      .map((memberType) => {
+        let returnExpression: string;
+        switch (memberType.declarationType) {
+          case "class":
+            returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toJson()`;
+            break;
+          case "interface":
+            returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
+            break;
+        }
+        return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
+      })
+      .concat(
+        `${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
+      ),
   };
 }

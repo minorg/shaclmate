@@ -50,22 +50,6 @@ function toRdfFunctionDeclaration(
 ): FunctionDeclarationStructure {
   const parametersVariable = "_parameters";
 
-  const caseBlocks = this.memberTypes.map((memberType) => {
-    let returnExpression: string;
-    switch (memberType.declarationType) {
-      case "class":
-        returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
-        break;
-      case "interface":
-        returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
-        break;
-    }
-    return `${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${returnExpression};`;
-  });
-  caseBlocks.push(
-    `default: ${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-  );
-
   return {
     isExported: true,
     kind: StructureKind.Function,
@@ -95,6 +79,21 @@ function toRdfFunctionDeclaration(
       // The types agree
       return returnType!;
     })(),
-    statements: `switch (${this.thisVariable}.${this._discriminantProperty.name}) { ${caseBlocks.join(" ")} }`,
+    statements: this.memberTypes
+      .map((memberType) => {
+        let returnExpression: string;
+        switch (memberType.declarationType) {
+          case "class":
+            returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
+            break;
+          case "interface":
+            returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
+            break;
+        }
+        return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
+      })
+      .concat(
+        `${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
+      ),
   };
 }
