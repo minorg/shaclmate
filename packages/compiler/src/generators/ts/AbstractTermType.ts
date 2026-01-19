@@ -31,12 +31,12 @@ export abstract class AbstractTermType<
 > extends AbstractType {
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   override readonly mutable: boolean = false;
   readonly nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
-  override readonly typeofs: Type["typeofs"] = NonEmptyList([
+  override readonly typeofs: AbstractType["typeofs"] = NonEmptyList([
     "object" as const,
   ]);
 
@@ -61,8 +61,8 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [];
+  get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [];
 
     if (this.nodeKinds.has("Literal")) {
       conversions.push(
@@ -112,7 +112,7 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+  override get discriminantProperty(): Maybe<AbstractType.DiscriminantProperty> {
     return Maybe.of({
       name: "termType",
       ownValues: [...this.nodeKinds],
@@ -147,7 +147,7 @@ export abstract class AbstractTermType<
   }): readonly Sparql.Pattern[];
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {
     // invariant(
     //   this.nodeKinds.has("Literal") &&
@@ -223,14 +223,14 @@ export abstract class AbstractTermType<
   }
 
   override graphqlResolveExpression(
-    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [
       `${variables.hasher}.update(${variables.value}.termType);`,
       `${variables.hasher}.update(${variables.value}.value);`,
@@ -243,7 +243,7 @@ export abstract class AbstractTermType<
 
   override snippetDeclarations({
     features,
-  }: Parameters<Type["snippetDeclarations"]>[0]): Readonly<
+  }: Parameters<AbstractType["snippetDeclarations"]>[0]): Readonly<
     Record<string, string>
   > {
     return mergeSnippetDeclarations(
@@ -277,7 +277,9 @@ export abstract class AbstractTermType<
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+  }: Parameters<
+    AbstractType["sparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
     const requiredPatterns: Sparql.Pattern[] = [
       ...propertyPatterns,
       ...variables.filter
@@ -305,7 +307,7 @@ export abstract class AbstractTermType<
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     return this.defaultValue
       .map(
         (defaultValue) =>
@@ -319,4 +321,13 @@ export abstract class AbstractTermType<
   }): readonly Import[] {
     return [Import.RDFJS_TYPES];
   }
+}
+
+export namespace AbstractTermType {
+  export type Conversion = AbstractType.Conversion;
+  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export const GraphqlType = AbstractType.GraphqlType;
+  export type GraphqlType = AbstractType.GraphqlType;
+  export const JsonType = AbstractType.JsonType;
+  export type JsonType = AbstractType.JsonType;
 }

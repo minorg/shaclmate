@@ -9,7 +9,7 @@ import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { Sparql } from "./Sparql.js";
-import { Type } from "./Type.js";
+import type { Type } from "./Type.js";
 
 export class ListType<
   ItemTypeT extends Type,
@@ -39,13 +39,17 @@ export class ListType<
   }
 
   @Memoize()
-  override jsonType(): Type.JsonType {
-    return new Type.JsonType(`readonly (${this.itemType.jsonType().name})[]`);
+  override jsonType(): AbstractCollectionType.JsonType {
+    return new AbstractCollectionType.JsonType(
+      `readonly (${this.itemType.jsonType().name})[]`,
+    );
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
+  >[0]): string {
     return [
       variables.resourceValues,
       "chain(values => values.chainMap(value => value.toList()))", // Resource.Values<Resource.TermValue> to Resource.Values<Resource.TermValue[]>
@@ -64,10 +68,9 @@ export class ListType<
 
   override sparqlConstructTriples({
     variables,
-  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly (
-    | Sparql.Triple
-    | string
-  )[] {
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
+  >[0]): readonly (Sparql.Triple | string)[] {
     const triples: (Sparql.Triple | string)[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
@@ -139,7 +142,9 @@ export class ListType<
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["sparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
@@ -260,7 +265,9 @@ export class ListType<
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toRdfExpression"]
+  >[0]): string {
     let listIdentifier: string;
     let mutableResourceTypeName: string;
     let resourceSetMethodName: string;
@@ -339,7 +346,7 @@ export class ListType<
   }
 
   override useImports(
-    parameters: Parameters<Type["useImports"]>[0],
+    parameters: Parameters<AbstractCollectionType<ItemTypeT>["useImports"]>[0],
   ): readonly Import[] {
     const imports: Import[] = this.itemType.useImports(parameters).concat();
     if (

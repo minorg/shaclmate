@@ -13,17 +13,18 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
 
 export class IdentifierType extends AbstractTermType<
   NamedNode,
   BlankNode | NamedNode
 > {
-  override readonly graphqlType = new Type.GraphqlType("graphql.GraphQLString");
+  override readonly graphqlType = new AbstractTermType.GraphqlType(
+    "graphql.GraphQLString",
+  );
   readonly kind = "IdentifierType";
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractTermType.Conversion[] {
     const conversions = super.conversions.concat();
     if (this.nodeKinds.has("NamedNode")) {
       conversions.push({
@@ -45,10 +46,8 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}${this.isBlankNodeKind ? "BlankNode" : this.isNamedNodeKind ? "NamedNode" : "Identifier"}Filter`,
-    );
+  get filterType(): string {
+    return `${syntheticNamePrefix}${this.isBlankNodeKind ? "BlankNode" : this.isNamedNodeKind ? "NamedNode" : "Identifier"}Filter`;
   }
 
   @Memoize()
@@ -126,7 +125,7 @@ export class IdentifierType extends AbstractTermType<
   >[0]): readonly Sparql.Pattern[] {
     return [
       {
-        patterns: `${this.filterType.name}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        patterns: `${this.filterType}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
         type: "opaque-block" as const,
       },
     ];
@@ -134,8 +133,8 @@ export class IdentifierType extends AbstractTermType<
 
   @Memoize()
   override jsonType(
-    parameters?: Parameters<Type["jsonType"]>[0],
-  ): Type.JsonType {
+    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
+  ): AbstractTermType.JsonType {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "BlankNode" | "NamedNode"`
       : "";
@@ -143,12 +142,12 @@ export class IdentifierType extends AbstractTermType<
     if (this.in_.length > 0 && this.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new Type.JsonType(
+      return new AbstractTermType.JsonType(
         `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
       );
     }
 
-    return new Type.JsonType(
+    return new AbstractTermType.JsonType(
       `{ readonly "@id": string${discriminantProperty} }`,
     );
   }
@@ -231,7 +230,7 @@ export class IdentifierType extends AbstractTermType<
 
   override graphqlResolveExpression({
     variables: { value },
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): string {
     return `rdfjsResource.Resource.Identifier.toString(${value})`;
   }
 
@@ -260,7 +259,7 @@ export class IdentifierType extends AbstractTermType<
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     let snippetDeclarations = { ...super.snippetDeclarations(parameters) };
 

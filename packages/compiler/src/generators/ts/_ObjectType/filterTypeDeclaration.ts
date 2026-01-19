@@ -2,7 +2,6 @@ import { Maybe } from "purify-ts";
 import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { Type } from "../Type.js";
 
 export function filterTypeDeclaration(
   this: ObjectType,
@@ -13,17 +12,18 @@ export function filterTypeDeclaration(
 
   const members: string[] = [];
   if (this.ownProperties.length > 0) {
-    const combinedProperties: Record<
-      string,
-      Type.CompositeFilterType | Type.CompositeFilterTypeReference
-    > = {};
+    const combinedProperties: Record<string, string> = {};
     for (const ownProperty of this.ownProperties) {
       ownProperty.filterProperty.ifJust(({ name, type }) => {
         combinedProperties[name] = type;
       });
     }
     if (Object.entries(combinedProperties).length > 0) {
-      members.push(new Type.CompositeFilterType(combinedProperties).name);
+      members.push(
+        `{ ${Object.entries(combinedProperties)
+          .map(([name, type]) => `readonly ${name}?: ${type}`)
+          .join(";")} }`,
+      );
     }
   }
   for (const parentObjectType of this.parentObjectTypes) {

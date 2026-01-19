@@ -4,13 +4,17 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { Type } from "./Type.js";
+
+type Super = AbstractLazyObjectType<
+  AbstractLazyObjectType.ObjectTypeConstraint,
+  AbstractLazyObjectType.ObjectTypeConstraint
+>;
 
 export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
   AbstractLazyObjectType.ObjectTypeConstraint
 > {
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
 
   constructor({
     partialType,
@@ -60,7 +64,7 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
     });
   }
 
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractLazyObjectType.Conversion[] {
     const conversions = super.conversions.concat();
 
     if (this.partialType.kind === "ObjectType") {
@@ -92,13 +96,13 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
   }
 
   override fromJsonExpression(
-    parameters: Parameters<Type["fromJsonExpression"]>[0],
+    parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): string {
     return `new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
   }
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<Super["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
     return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifier) => ${variables.objectSet}.${this.resolvedType.objectSetMethodNames.object}(identifier) })))`;
@@ -106,7 +110,7 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<Super["graphqlResolveExpression"]>[0]): string {
     return `${variables.value}.resolve().then(either => either.unsafeCoerce())`;
   }
 }

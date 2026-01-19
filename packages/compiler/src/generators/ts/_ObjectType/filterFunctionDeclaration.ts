@@ -35,7 +35,7 @@ export function filterFunctionDeclaration(
     parameters: [
       {
         name: "filter",
-        type: this.filterType.name,
+        type: this.filterType,
       },
       {
         name: "value",

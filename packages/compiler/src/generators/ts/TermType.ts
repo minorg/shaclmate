@@ -8,7 +8,6 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
 
 /**
  * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
@@ -24,9 +23,7 @@ export class TermType<
     | NamedNode,
 > extends AbstractTermType {
   override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
-  override readonly filterType = new Type.CompositeFilterTypeReference(
-    `${syntheticNamePrefix}TermFilter`,
-  );
+  override readonly filterType = `${syntheticNamePrefix}TermFilter`;
 
   constructor(
     superParameters: ConstructorParameters<
@@ -41,7 +38,7 @@ export class TermType<
     );
   }
 
-  override get graphqlType(): Type.GraphqlType {
+  override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
   }
 
@@ -59,8 +56,8 @@ export class TermType<
   }
 
   @Memoize()
-  override jsonType(): Type.JsonType {
-    return new Type.JsonType(
+  override jsonType(): AbstractTermType.JsonType {
+    return new AbstractTermType.JsonType(
       `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
         .filter((nodeKind) => nodeKind !== "Literal")
         .map((nodeKind) => `"${nodeKind}"`)
@@ -72,7 +69,7 @@ export class TermType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): string {
     return [...this.nodeKinds].reduce((expression, nodeKind) => {
       let valueToNodeKind: string;
       switch (nodeKind) {
@@ -95,14 +92,16 @@ export class TermType<
   }
 
   override graphqlResolveExpression(
-    _parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+    _parameters: Parameters<AbstractTermType["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractTermType["jsonZodSchema"]>[0]): ReturnType<
+    AbstractTermType["jsonZodSchema"]
+  > {
     return `${variables.zod}.discriminatedUnion("termType", [${[
       ...this.nodeKinds,
     ]
@@ -121,7 +120,7 @@ export class TermType<
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
@@ -133,7 +132,7 @@ export class TermType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractTermType["toJsonExpression"]>[0]): string {
     return [...this.nodeKinds].reduce((expression, nodeKind) => {
       let valueToNodeKind: string;
       switch (nodeKind) {

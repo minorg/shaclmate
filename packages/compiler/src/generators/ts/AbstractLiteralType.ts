@@ -5,7 +5,6 @@ import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { Type } from "./Type.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
@@ -46,7 +45,9 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractTermType<Literal, Literal>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
@@ -136,4 +137,13 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
       },
     ];
   }
+}
+
+export namespace AbstractLiteralType {
+  export type Conversion = AbstractTermType.Conversion;
+  export type DiscriminantProperty = AbstractTermType.DiscriminantProperty;
+  export const GraphqlType = AbstractTermType.GraphqlType;
+  export type GraphqlType = AbstractTermType.GraphqlType;
+  export const JsonType = AbstractTermType.JsonType;
+  export type JsonType = AbstractTermType.JsonType;
 }

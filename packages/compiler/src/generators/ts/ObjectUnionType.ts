@@ -18,7 +18,6 @@ import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
 import { tsComment } from "./tsComment.js";
 
 /**
@@ -32,7 +31,8 @@ import { tsComment } from "./tsComment.js";
  * It also generates SPARQL graph patterns that UNION the member object types.
  */
 export class ObjectUnionType extends AbstractDeclaredType {
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
+    Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
@@ -63,7 +63,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractDeclaredType.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
@@ -112,12 +112,12 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+  override get discriminantProperty(): Maybe<AbstractDeclaredType.DiscriminantProperty> {
     return Maybe.of(this._discriminantProperty);
   }
 
   @Memoize()
-  protected get _discriminantProperty(): Type.DiscriminantProperty {
+  protected get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
     const discriminantPropertyDescendantValues: string[] = [];
     const discriminantPropertyName =
       this.memberTypes[0]._discriminantProperty.name;
@@ -154,15 +154,13 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${this.staticModuleName}.${syntheticNamePrefix}Filter`,
-    );
+  get filterType(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}Filter`;
   }
 
   @Memoize()
-  override get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType(
+  override get graphqlType(): AbstractDeclaredType.GraphqlType {
+    return new AbstractDeclaredType.GraphqlType(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -173,8 +171,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonType(): Type.JsonType {
-    return new Type.JsonType(
+  override jsonType(): AbstractDeclaredType.JsonType {
+    return new AbstractDeclaredType.JsonType(
       this.memberTypes
         .map((memberType) => memberType.jsonType().name)
         .join(" | "),
@@ -212,14 +210,14 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromJsonExpression"]>[0]): string {
     // Assumes the JSON object has been recursively validated already.
     return `${this.staticModuleName}.${syntheticNamePrefix}fromJson(${variables.value}).unsafeCoerce()`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["fromRdfExpression"]>[0]): string {
     // Don't ignoreRdfType, we may need it to distinguish the union members
     return `${variables.resourceValues}.chain(values => values.chainMap(value => value.toResource().chain(resource => ${this.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { context: ${variables.context}, ignoreRdfType: false, objectSet: ${variables.objectSet}, preferredLanguages: ${variables.preferredLanguages} }))))`;
   }
@@ -234,7 +232,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly string[] {
     switch (this.memberTypes[0].declarationType) {
       case "class":
         return [
@@ -291,7 +289,9 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override sparqlConstructTriples({
     variables,
-  }: Parameters<Type["sparqlConstructTriples"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractDeclaredType["sparqlConstructTriples"]
+  >[0]): readonly string[] {
     return [
       `...${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer(
         {
@@ -305,7 +305,9 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override sparqlWherePatterns({
     propertyPatterns,
     variables,
-  }: Parameters<Type["sparqlWherePatterns"]>[0]): readonly Sparql.Pattern[] {
+  }: Parameters<
+    AbstractDeclaredType["sparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
     return [
       ...propertyPatterns,
       {
@@ -324,7 +326,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): string {
     switch (this.memberTypes[0].declarationType) {
       case "class":
         return `${variables.value}.${syntheticNamePrefix}toJson()`;
@@ -335,7 +337,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): string {
     const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
     switch (this.memberTypes[0].declarationType) {
       case "class":

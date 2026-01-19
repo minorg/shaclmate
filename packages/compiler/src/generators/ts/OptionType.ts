@@ -8,12 +8,12 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
+import type { Type } from "./Type.js";
 
 export class OptionType<ItemTypeT extends Type> extends AbstractType {
-  override readonly discriminantProperty: Maybe<Type.DiscriminantProperty> =
+  override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -27,8 +27,8 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [];
+  override get conversions(): readonly AbstractType.Conversion[] {
+    const conversions: AbstractType.Conversion[] = [];
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) => `purify.Maybe.isMaybe(${value})`,
@@ -72,31 +72,29 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
 
   @Memoize()
   get filterFunction(): string {
-    return `${syntheticNamePrefix}filterMaybe<${this.itemType.name}, ${this.itemType.filterType.name}>(${this.itemType.filterFunction})`;
+    return `${syntheticNamePrefix}filterMaybe<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${syntheticNamePrefix}MaybeFilter<${this.itemType.filterType.name}>`,
-    );
+  get filterType(): string {
+    return `${syntheticNamePrefix}MaybeFilter<${this.itemType.filterType}>`;
   }
 
   @Memoize()
-  override get graphqlType(): Type.GraphqlType {
+  override get graphqlType(): AbstractType.GraphqlType {
     invariant(!this.itemType.graphqlType.nullable);
-    return new Type.GraphqlType(this.itemType.graphqlType.name, {
+    return new AbstractType.GraphqlType(this.itemType.graphqlType.name, {
       nullable: true,
     });
   }
 
   @Memoize()
   override jsonType(
-    parameters?: Parameters<Type["jsonType"]>[0],
-  ): Type.JsonType {
+    parameters?: Parameters<AbstractType["jsonType"]>[0],
+  ): AbstractType.JsonType {
     const itemTypeJsonType = this.itemType.jsonType(parameters);
     invariant(!itemTypeJsonType.optional);
-    return new Type.JsonType(itemTypeJsonType.name, {
+    return new AbstractType.JsonType(itemTypeJsonType.name, {
       optional: true,
     });
   }
@@ -112,7 +110,7 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
     const expression = `purify.Maybe.fromNullable(${variables.value})`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
       variables: { value: "item" },
@@ -123,14 +121,14 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   override fromRdfExpression(
-    parameters: Parameters<Type["fromRdfExpression"]>[0],
+    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
     return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<${this.itemType.name}>>({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: purify.Maybe.empty() }))`;
   }
 
   override graphqlResolveExpression(
-    parameters: Parameters<Type["graphqlResolveExpression"]>[0],
+    parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
   ): string {
     return `${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
@@ -138,7 +136,7 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   override hashStatements({
     depth,
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
     return [
       `${variables.value}.ifJust((value${depth}) => { ${this.itemType
         .hashStatements({
@@ -153,19 +151,19 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   }
 
   override jsonUiSchemaElement(
-    parameters: Parameters<Type["jsonUiSchemaElement"]>[0],
-  ): ReturnType<Type["jsonUiSchemaElement"]> {
+    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
+  ): ReturnType<AbstractType["jsonUiSchemaElement"]> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
-    parameters: Parameters<Type["jsonZodSchema"]>[0],
-  ): ReturnType<Type["jsonZodSchema"]> {
+    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
+  ): ReturnType<AbstractType["jsonZodSchema"]> {
     return `${this.itemType.jsonZodSchema(parameters)}.optional()`;
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
@@ -254,13 +252,13 @@ namespace ${syntheticNamePrefix}MaybeFilter {
   }
 
   override sparqlConstructTriples(
-    parameters: Parameters<Type["sparqlConstructTriples"]>[0],
+    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
   ): readonly (Sparql.Triple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
   override sparqlWherePatterns(
-    parameters: Parameters<Type["sparqlWherePatterns"]>[0],
+    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly Sparql.Pattern[] {
     const { variables } = parameters;
     return variables.filter
@@ -290,13 +288,13 @@ namespace ${syntheticNamePrefix}MaybeFilter {
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })})).extract()`;
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<Type["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
     const itemTypeToRdfExpression = this.itemType.toRdfExpression({
       variables: { ...variables, value: "value" },
     });
@@ -308,7 +306,7 @@ namespace ${syntheticNamePrefix}MaybeFilter {
   }
 
   override useImports(
-    parameters: Parameters<Type["useImports"]>[0],
+    parameters: Parameters<AbstractType["useImports"]>[0],
   ): readonly Import[] {
     return [...this.itemType.useImports(parameters), Import.PURIFY];
   }
