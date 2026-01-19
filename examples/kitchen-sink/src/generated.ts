@@ -59234,7 +59234,12 @@ export namespace ClassUnion {
     if (typeof filter.on?.ClassUnionMember1 !== "undefined") {
       switch (value.$type) {
         case "ClassUnionMember1":
-          if (!ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)) {
+          if (
+            !ClassUnionMember1.$filter(
+              filter.on.ClassUnionMember1,
+              value as ClassUnionMember1,
+            )
+          ) {
             return false;
           }
           break;
@@ -59244,7 +59249,12 @@ export namespace ClassUnion {
     if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
       switch (value.$type) {
         case "ClassUnionMember2":
-          if (!ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)) {
+          if (
+            !ClassUnionMember2.$filter(
+              filter.on.ClassUnionMember2,
+              value as ClassUnionMember2,
+            )
+          ) {
             return false;
           }
           break;
@@ -59551,7 +59561,12 @@ export namespace FlattenClassUnion {
     if (typeof filter.on?.ClassUnionMember1 !== "undefined") {
       switch (value.$type) {
         case "ClassUnionMember1":
-          if (!ClassUnionMember1.$filter(filter.on.ClassUnionMember1, value)) {
+          if (
+            !ClassUnionMember1.$filter(
+              filter.on.ClassUnionMember1,
+              value as ClassUnionMember1,
+            )
+          ) {
             return false;
           }
           break;
@@ -59561,7 +59576,12 @@ export namespace FlattenClassUnion {
     if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
       switch (value.$type) {
         case "ClassUnionMember2":
-          if (!ClassUnionMember2.$filter(filter.on.ClassUnionMember2, value)) {
+          if (
+            !ClassUnionMember2.$filter(
+              filter.on.ClassUnionMember2,
+              value as ClassUnionMember2,
+            )
+          ) {
             return false;
           }
           break;
@@ -59574,7 +59594,7 @@ export namespace FlattenClassUnion {
           if (
             !FlattenClassUnionMember3.$filter(
               filter.on.FlattenClassUnionMember3,
-              value,
+              value as FlattenClassUnionMember3,
             )
           ) {
             return false;
@@ -59919,7 +59939,7 @@ export namespace InterfaceUnion {
           if (
             !InterfaceUnionMember1.$filter(
               filter.on.InterfaceUnionMember1,
-              value,
+              value as InterfaceUnionMember1,
             )
           ) {
             return false;
@@ -59934,7 +59954,7 @@ export namespace InterfaceUnion {
           if (
             !InterfaceUnionMember2.$filter(
               filter.on.InterfaceUnionMember2,
-              value,
+              value as InterfaceUnionMember2,
             )
           ) {
             return false;
@@ -60247,7 +60267,7 @@ export namespace LazilyResolvedClassUnion {
           if (
             !LazilyResolvedClassUnionMember1.$filter(
               filter.on.LazilyResolvedClassUnionMember1,
-              value,
+              value as LazilyResolvedClassUnionMember1,
             )
           ) {
             return false;
@@ -60262,7 +60282,7 @@ export namespace LazilyResolvedClassUnion {
           if (
             !LazilyResolvedClassUnionMember2.$filter(
               filter.on.LazilyResolvedClassUnionMember2,
-              value,
+              value as LazilyResolvedClassUnionMember2,
             )
           ) {
             return false;
@@ -60583,7 +60603,7 @@ export namespace LazilyResolvedInterfaceUnion {
           if (
             !LazilyResolvedInterfaceUnionMember1.$filter(
               filter.on.LazilyResolvedInterfaceUnionMember1,
-              value,
+              value as LazilyResolvedInterfaceUnionMember1,
             )
           ) {
             return false;
@@ -60598,7 +60618,7 @@ export namespace LazilyResolvedInterfaceUnion {
           if (
             !LazilyResolvedInterfaceUnionMember2.$filter(
               filter.on.LazilyResolvedInterfaceUnionMember2,
-              value,
+              value as LazilyResolvedInterfaceUnionMember2,
             )
           ) {
             return false;
@@ -60931,7 +60951,7 @@ export namespace PartialClassUnion {
           if (
             !PartialClassUnionMember1.$filter(
               filter.on.PartialClassUnionMember1,
-              value,
+              value as PartialClassUnionMember1,
             )
           ) {
             return false;
@@ -60946,7 +60966,7 @@ export namespace PartialClassUnion {
           if (
             !PartialClassUnionMember2.$filter(
               filter.on.PartialClassUnionMember2,
-              value,
+              value as PartialClassUnionMember2,
             )
           ) {
             return false;
@@ -61255,7 +61275,7 @@ export namespace PartialInterfaceUnion {
           if (
             !PartialInterfaceUnionMember1.$filter(
               filter.on.PartialInterfaceUnionMember1,
-              value,
+              value as PartialInterfaceUnionMember1,
             )
           ) {
             return false;
@@ -61270,7 +61290,7 @@ export namespace PartialInterfaceUnion {
           if (
             !PartialInterfaceUnionMember2.$filter(
               filter.on.PartialInterfaceUnionMember2,
-              value,
+              value as PartialInterfaceUnionMember2,
             )
           ) {
             return false;
@@ -61592,7 +61612,7 @@ export namespace NoRdfTypeClassUnion {
           if (
             !NoRdfTypeClassUnionMember1.$filter(
               filter.on.NoRdfTypeClassUnionMember1,
-              value,
+              value as NoRdfTypeClassUnionMember1,
             )
           ) {
             return false;
@@ -61607,7 +61627,7 @@ export namespace NoRdfTypeClassUnion {
           if (
             !NoRdfTypeClassUnionMember2.$filter(
               filter.on.NoRdfTypeClassUnionMember2,
-              value,
+              value as NoRdfTypeClassUnionMember2,
             )
           ) {
             return false;
@@ -61906,7 +61926,7 @@ export namespace RecursiveClassUnion {
           if (
             !RecursiveClassUnionMember1.$filter(
               filter.on.RecursiveClassUnionMember1,
-              value,
+              value as RecursiveClassUnionMember1,
             )
           ) {
             return false;
@@ -61921,7 +61941,7 @@ export namespace RecursiveClassUnion {
           if (
             !RecursiveClassUnionMember2.$filter(
               filter.on.RecursiveClassUnionMember2,
-              value,
+              value as RecursiveClassUnionMember2,
             )
           ) {
             return false;
