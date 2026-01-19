@@ -1,9 +1,7 @@
 import {
   type InterfaceDeclarationStructure,
   type ModuleDeclarationStructure,
-  type OptionalKind,
   StructureKind,
-  type TypeParameterDeclarationStructure,
 } from "ts-morph";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -17,13 +15,6 @@ export function objectSetInterfaceDeclaration({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): readonly (InterfaceDeclarationStructure | ModuleDeclarationStructure)[] {
-  const typeParameters = {
-    ObjectIdentifierT: {
-      constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
-      name: "ObjectIdentifierT",
-    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
-  };
-
   return [
     {
       isExported: true,
@@ -50,20 +41,14 @@ export function objectSetInterfaceDeclaration({
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Query",
-          type: `{ readonly limit?: number; readonly offset?: number; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
-          typeParameters: [typeParameters.ObjectIdentifierT],
-        },
-        {
-          kind: StructureKind.TypeAlias,
-          isExported: true,
-          name: "Where",
-          type: [
-            `{ readonly identifiers: readonly ${typeParameters.ObjectIdentifierT.name}[]; readonly type: "identifiers" }`,
-            `{ readonly objectTermType?: "NamedNode"; readonly predicate: rdfjs.NamedNode; readonly subject?: rdfjs.BlankNode | rdfjs.NamedNode; readonly type: "triple-objects" } `,
-            `{ readonly object?: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode; readonly predicate: rdfjs.NamedNode; readonly subjectTermType?: "NamedNode"; readonly type: "triple-subjects" } `,
-            `{ readonly identifierType?: "NamedNode"; readonly type: "type" } `,
-          ].join(" | "),
-          typeParameters: [typeParameters.ObjectIdentifierT],
+          type: `{ readonly filter?: FilterT; readonly limit?: number; readonly offset?: number; }`,
+          typeParameters: [
+            {
+              constraint:
+                "{ readonly $identifier?: { readonly in?: readonly string[] } }",
+              name: "FilterT",
+            },
+          ],
         },
       ],
     },
