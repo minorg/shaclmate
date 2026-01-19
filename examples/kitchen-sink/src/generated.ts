@@ -59903,37 +59903,26 @@ export namespace ClassUnion {
     filter: ClassUnion.$Filter,
     value: ClassUnion,
   ): boolean {
-    if (typeof filter.on?.ClassUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "ClassUnionMember1":
-          if (
-            !ClassUnionMember1.$filter(
-              filter.on.ClassUnionMember1,
-              value as ClassUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return filter.on?.ClassUnionMember1
+        ? ClassUnionMember1.$filter(
+            filter.on.ClassUnionMember1,
+            value as ClassUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "ClassUnionMember2":
-          if (
-            !ClassUnionMember2.$filter(
-              filter.on.ClassUnionMember2,
-              value as ClassUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return filter.on?.ClassUnionMember2
+        ? ClassUnionMember2.$filter(
+            filter.on.ClassUnionMember2,
+            value as ClassUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -60228,52 +60217,35 @@ export namespace FlattenClassUnion {
     filter: FlattenClassUnion.$Filter,
     value: FlattenClassUnion,
   ): boolean {
-    if (typeof filter.on?.ClassUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "ClassUnionMember1":
-          if (
-            !ClassUnionMember1.$filter(
-              filter.on.ClassUnionMember1,
-              value as ClassUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (ClassUnionMember1.isClassUnionMember1(value)) {
+      return filter.on?.ClassUnionMember1
+        ? ClassUnionMember1.$filter(
+            filter.on.ClassUnionMember1,
+            value as ClassUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.ClassUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "ClassUnionMember2":
-          if (
-            !ClassUnionMember2.$filter(
-              filter.on.ClassUnionMember2,
-              value as ClassUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (ClassUnionMember2.isClassUnionMember2(value)) {
+      return filter.on?.ClassUnionMember2
+        ? ClassUnionMember2.$filter(
+            filter.on.ClassUnionMember2,
+            value as ClassUnionMember2,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.FlattenClassUnionMember3 !== "undefined") {
-      switch (value.$type) {
-        case "FlattenClassUnionMember3":
-          if (
-            !FlattenClassUnionMember3.$filter(
-              filter.on.FlattenClassUnionMember3,
-              value as FlattenClassUnionMember3,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
+      return filter.on?.FlattenClassUnionMember3
+        ? FlattenClassUnionMember3.$filter(
+            filter.on.FlattenClassUnionMember3,
+            value as FlattenClassUnionMember3,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -60627,37 +60599,26 @@ export namespace InterfaceUnion {
     filter: InterfaceUnion.$Filter,
     value: InterfaceUnion,
   ): boolean {
-    if (typeof filter.on?.InterfaceUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "InterfaceUnionMember1":
-          if (
-            !InterfaceUnionMember1.$filter(
-              filter.on.InterfaceUnionMember1,
-              value as InterfaceUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
+      return filter.on?.InterfaceUnionMember1
+        ? InterfaceUnionMember1.$filter(
+            filter.on.InterfaceUnionMember1,
+            value as InterfaceUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.InterfaceUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "InterfaceUnionMember2":
-          if (
-            !InterfaceUnionMember2.$filter(
-              filter.on.InterfaceUnionMember2,
-              value as InterfaceUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
+      return filter.on?.InterfaceUnionMember2
+        ? InterfaceUnionMember2.$filter(
+            filter.on.InterfaceUnionMember2,
+            value as InterfaceUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -60956,37 +60917,30 @@ export namespace LazilyResolvedClassUnion {
     filter: LazilyResolvedClassUnion.$Filter,
     value: LazilyResolvedClassUnion,
   ): boolean {
-    if (typeof filter.on?.LazilyResolvedClassUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "LazilyResolvedClassUnionMember1":
-          if (
-            !LazilyResolvedClassUnionMember1.$filter(
-              filter.on.LazilyResolvedClassUnionMember1,
-              value as LazilyResolvedClassUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+    ) {
+      return filter.on?.LazilyResolvedClassUnionMember1
+        ? LazilyResolvedClassUnionMember1.$filter(
+            filter.on.LazilyResolvedClassUnionMember1,
+            value as LazilyResolvedClassUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.LazilyResolvedClassUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "LazilyResolvedClassUnionMember2":
-          if (
-            !LazilyResolvedClassUnionMember2.$filter(
-              filter.on.LazilyResolvedClassUnionMember2,
-              value as LazilyResolvedClassUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+    ) {
+      return filter.on?.LazilyResolvedClassUnionMember2
+        ? LazilyResolvedClassUnionMember2.$filter(
+            filter.on.LazilyResolvedClassUnionMember2,
+            value as LazilyResolvedClassUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -61337,37 +61291,34 @@ export namespace LazilyResolvedInterfaceUnion {
     filter: LazilyResolvedInterfaceUnion.$Filter,
     value: LazilyResolvedInterfaceUnion,
   ): boolean {
-    if (typeof filter.on?.LazilyResolvedInterfaceUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "LazilyResolvedInterfaceUnionMember1":
-          if (
-            !LazilyResolvedInterfaceUnionMember1.$filter(
-              filter.on.LazilyResolvedInterfaceUnionMember1,
-              value as LazilyResolvedInterfaceUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        value,
+      )
+    ) {
+      return filter.on?.LazilyResolvedInterfaceUnionMember1
+        ? LazilyResolvedInterfaceUnionMember1.$filter(
+            filter.on.LazilyResolvedInterfaceUnionMember1,
+            value as LazilyResolvedInterfaceUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.LazilyResolvedInterfaceUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "LazilyResolvedInterfaceUnionMember2":
-          if (
-            !LazilyResolvedInterfaceUnionMember2.$filter(
-              filter.on.LazilyResolvedInterfaceUnionMember2,
-              value as LazilyResolvedInterfaceUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        value,
+      )
+    ) {
+      return filter.on?.LazilyResolvedInterfaceUnionMember2
+        ? LazilyResolvedInterfaceUnionMember2.$filter(
+            filter.on.LazilyResolvedInterfaceUnionMember2,
+            value as LazilyResolvedInterfaceUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -61724,37 +61675,26 @@ export namespace PartialClassUnion {
     filter: PartialClassUnion.$Filter,
     value: PartialClassUnion,
   ): boolean {
-    if (typeof filter.on?.PartialClassUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "PartialClassUnionMember1":
-          if (
-            !PartialClassUnionMember1.$filter(
-              filter.on.PartialClassUnionMember1,
-              value as PartialClassUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
+      return filter.on?.PartialClassUnionMember1
+        ? PartialClassUnionMember1.$filter(
+            filter.on.PartialClassUnionMember1,
+            value as PartialClassUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.PartialClassUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "PartialClassUnionMember2":
-          if (
-            !PartialClassUnionMember2.$filter(
-              filter.on.PartialClassUnionMember2,
-              value as PartialClassUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
+      return filter.on?.PartialClassUnionMember2
+        ? PartialClassUnionMember2.$filter(
+            filter.on.PartialClassUnionMember2,
+            value as PartialClassUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -62071,37 +62011,26 @@ export namespace PartialInterfaceUnion {
     filter: PartialInterfaceUnion.$Filter,
     value: PartialInterfaceUnion,
   ): boolean {
-    if (typeof filter.on?.PartialInterfaceUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "PartialInterfaceUnionMember1":
-          if (
-            !PartialInterfaceUnionMember1.$filter(
-              filter.on.PartialInterfaceUnionMember1,
-              value as PartialInterfaceUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
+      return filter.on?.PartialInterfaceUnionMember1
+        ? PartialInterfaceUnionMember1.$filter(
+            filter.on.PartialInterfaceUnionMember1,
+            value as PartialInterfaceUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.PartialInterfaceUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "PartialInterfaceUnionMember2":
-          if (
-            !PartialInterfaceUnionMember2.$filter(
-              filter.on.PartialInterfaceUnionMember2,
-              value as PartialInterfaceUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
+      return filter.on?.PartialInterfaceUnionMember2
+        ? PartialInterfaceUnionMember2.$filter(
+            filter.on.PartialInterfaceUnionMember2,
+            value as PartialInterfaceUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -62443,37 +62372,26 @@ export namespace NoRdfTypeClassUnion {
     filter: NoRdfTypeClassUnion.$Filter,
     value: NoRdfTypeClassUnion,
   ): boolean {
-    if (typeof filter.on?.NoRdfTypeClassUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "NoRdfTypeClassUnionMember1":
-          if (
-            !NoRdfTypeClassUnionMember1.$filter(
-              filter.on.NoRdfTypeClassUnionMember1,
-              value as NoRdfTypeClassUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
+      return filter.on?.NoRdfTypeClassUnionMember1
+        ? NoRdfTypeClassUnionMember1.$filter(
+            filter.on.NoRdfTypeClassUnionMember1,
+            value as NoRdfTypeClassUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.NoRdfTypeClassUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "NoRdfTypeClassUnionMember2":
-          if (
-            !NoRdfTypeClassUnionMember2.$filter(
-              filter.on.NoRdfTypeClassUnionMember2,
-              value as NoRdfTypeClassUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
+      return filter.on?.NoRdfTypeClassUnionMember2
+        ? NoRdfTypeClassUnionMember2.$filter(
+            filter.on.NoRdfTypeClassUnionMember2,
+            value as NoRdfTypeClassUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {
@@ -62792,37 +62710,26 @@ export namespace RecursiveClassUnion {
     filter: RecursiveClassUnion.$Filter,
     value: RecursiveClassUnion,
   ): boolean {
-    if (typeof filter.on?.RecursiveClassUnionMember1 !== "undefined") {
-      switch (value.$type) {
-        case "RecursiveClassUnionMember1":
-          if (
-            !RecursiveClassUnionMember1.$filter(
-              filter.on.RecursiveClassUnionMember1,
-              value as RecursiveClassUnionMember1,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
+      return filter.on?.RecursiveClassUnionMember1
+        ? RecursiveClassUnionMember1.$filter(
+            filter.on.RecursiveClassUnionMember1,
+            value as RecursiveClassUnionMember1,
+          )
+        : true;
     }
 
-    if (typeof filter.on?.RecursiveClassUnionMember2 !== "undefined") {
-      switch (value.$type) {
-        case "RecursiveClassUnionMember2":
-          if (
-            !RecursiveClassUnionMember2.$filter(
-              filter.on.RecursiveClassUnionMember2,
-              value as RecursiveClassUnionMember2,
-            )
-          ) {
-            return false;
-          }
-          break;
-      }
+    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
+      return filter.on?.RecursiveClassUnionMember2
+        ? RecursiveClassUnionMember2.$filter(
+            filter.on.RecursiveClassUnionMember2,
+            value as RecursiveClassUnionMember2,
+          )
+        : true;
     }
 
-    return true;
+    value satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export type $Filter = {

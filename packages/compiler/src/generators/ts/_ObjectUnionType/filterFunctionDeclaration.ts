@@ -23,16 +23,10 @@ export function filterFunctionDeclaration(
     statements: this.memberTypes
       .map(
         (memberType) => `\
-if (typeof filter.on?.${memberType.name} !== "undefined") {
-  switch (value.${this._discriminantProperty.name}) {
-    ${memberType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join(" ")}
-      if (!${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name})) {
-        return false;
-      }
-      break;
-  }
+if (${memberType.staticModuleName}.is${memberType.name}(value)) {
+  return filter.on?.${memberType.name} ? ${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name}) : true;
 }`,
       )
-      .concat(`return true;`),
+      .concat(`value satisfies never; throw new Error("unrecognized type");`),
   };
 }
