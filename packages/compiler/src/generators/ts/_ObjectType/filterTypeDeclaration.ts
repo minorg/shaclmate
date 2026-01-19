@@ -21,7 +21,7 @@ export function filterTypeDeclaration(
     if (Object.entries(combinedProperties).length > 0) {
       members.push(
         `{ ${Object.entries(combinedProperties)
-          .map(([name, type]) => `readonly ${name}?: ${type};`)
+          .map(([name, type]) => `readonly ${name}?: ${type}`)
           .join(";")} }`,
       );
     }

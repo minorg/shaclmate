@@ -325,7 +325,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   @Memoize()
   get filterType(): string {
-    return `{ readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.discriminantValues[0]}?: ${memberType.filterType}`).join(";")}} }`;
+    return `{ readonly on?: { ${this.memberTypes.map((memberType) => `readonly "${memberType.discriminantValues[0]}"?: ${memberType.filterType}`).join(";")} } }`;
   }
 
   override get graphqlType(): AbstractType.GraphqlType {
