@@ -94,7 +94,6 @@ function toRdfFunctionDeclaration(
       })
       .concat(
         `${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-      )
-      .join("\n"),
+      ),
   };
 }

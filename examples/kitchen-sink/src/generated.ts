@@ -60157,15 +60157,16 @@ export namespace ClassUnion {
   export function $toJson(
     _classUnion: ClassUnion,
   ): ClassUnionMember1.$Json | ClassUnionMember2.$Json {
-    switch (_classUnion.$type) {
-      case "ClassUnionMember1":
-        return _classUnion.$toJson();
-      case "ClassUnionMember2":
-        return _classUnion.$toJson();
-      default:
-        _classUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
+      return _classUnion.$toJson();
     }
+
+    if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
+      return _classUnion.$toJson();
+    }
+
+    _classUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -60178,9 +60179,11 @@ export namespace ClassUnion {
     if (ClassUnionMember1.isClassUnionMember1(_classUnion)) {
       return _classUnion.$toRdf(_parameters);
     }
+
     if (ClassUnionMember2.isClassUnionMember2(_classUnion)) {
       return _classUnion.$toRdf(_parameters);
     }
+
     _classUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -60533,17 +60536,22 @@ export namespace FlattenClassUnion {
     | ClassUnionMember1.$Json
     | ClassUnionMember2.$Json
     | FlattenClassUnionMember3.$Json {
-    switch (_flattenClassUnion.$type) {
-      case "ClassUnionMember1":
-        return _flattenClassUnion.$toJson();
-      case "ClassUnionMember2":
-        return _flattenClassUnion.$toJson();
-      case "FlattenClassUnionMember3":
-        return _flattenClassUnion.$toJson();
-      default:
-        _flattenClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
+      return _flattenClassUnion.$toJson();
     }
+
+    if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
+      return _flattenClassUnion.$toJson();
+    }
+
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
+    ) {
+      return _flattenClassUnion.$toJson();
+    }
+
+    _flattenClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -60556,14 +60564,17 @@ export namespace FlattenClassUnion {
     if (ClassUnionMember1.isClassUnionMember1(_flattenClassUnion)) {
       return _flattenClassUnion.$toRdf(_parameters);
     }
+
     if (ClassUnionMember2.isClassUnionMember2(_flattenClassUnion)) {
       return _flattenClassUnion.$toRdf(_parameters);
     }
+
     if (
       FlattenClassUnionMember3.isFlattenClassUnionMember3(_flattenClassUnion)
     ) {
       return _flattenClassUnion.$toRdf(_parameters);
     }
+
     _flattenClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -60864,15 +60875,16 @@ export namespace InterfaceUnion {
   export function $toJson(
     _interfaceUnion: InterfaceUnion,
   ): InterfaceUnionMember1.$Json | InterfaceUnionMember2.$Json {
-    switch (_interfaceUnion.$type) {
-      case "InterfaceUnionMember1":
-        return InterfaceUnionMember1.$toJson(_interfaceUnion);
-      case "InterfaceUnionMember2":
-        return InterfaceUnionMember2.$toJson(_interfaceUnion);
-      default:
-        _interfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
+      return InterfaceUnionMember1.$toJson(_interfaceUnion);
     }
+
+    if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
+      return InterfaceUnionMember2.$toJson(_interfaceUnion);
+    }
+
+    _interfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -60885,9 +60897,11 @@ export namespace InterfaceUnion {
     if (InterfaceUnionMember1.isInterfaceUnionMember1(_interfaceUnion)) {
       return InterfaceUnionMember1.$toRdf(_interfaceUnion, _parameters);
     }
+
     if (InterfaceUnionMember2.isInterfaceUnionMember2(_interfaceUnion)) {
       return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
     }
+
     _interfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -61207,15 +61221,24 @@ export namespace LazilyResolvedClassUnion {
   ):
     | LazilyResolvedClassUnionMember1.$Json
     | LazilyResolvedClassUnionMember2.$Json {
-    switch (_lazilyResolvedClassUnion.$type) {
-      case "LazilyResolvedClassUnionMember1":
-        return _lazilyResolvedClassUnion.$toJson();
-      case "LazilyResolvedClassUnionMember2":
-        return _lazilyResolvedClassUnion.$toJson();
-      default:
-        _lazilyResolvedClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toJson();
     }
+
+    if (
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        _lazilyResolvedClassUnion,
+      )
+    ) {
+      return _lazilyResolvedClassUnion.$toJson();
+    }
+
+    _lazilyResolvedClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -61232,6 +61255,7 @@ export namespace LazilyResolvedClassUnion {
     ) {
       return _lazilyResolvedClassUnion.$toRdf(_parameters);
     }
+
     if (
       LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
         _lazilyResolvedClassUnion,
@@ -61239,6 +61263,7 @@ export namespace LazilyResolvedClassUnion {
     ) {
       return _lazilyResolvedClassUnion.$toRdf(_parameters);
     }
+
     _lazilyResolvedClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -61576,19 +61601,28 @@ export namespace LazilyResolvedInterfaceUnion {
   ):
     | LazilyResolvedInterfaceUnionMember1.$Json
     | LazilyResolvedInterfaceUnionMember2.$Json {
-    switch (_lazilyResolvedInterfaceUnion.$type) {
-      case "LazilyResolvedInterfaceUnionMember1":
-        return LazilyResolvedInterfaceUnionMember1.$toJson(
-          _lazilyResolvedInterfaceUnion,
-        );
-      case "LazilyResolvedInterfaceUnionMember2":
-        return LazilyResolvedInterfaceUnionMember2.$toJson(
-          _lazilyResolvedInterfaceUnion,
-        );
-      default:
-        _lazilyResolvedInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember1.$toJson(
+        _lazilyResolvedInterfaceUnion,
+      );
     }
+
+    if (
+      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+        _lazilyResolvedInterfaceUnion,
+      )
+    ) {
+      return LazilyResolvedInterfaceUnionMember2.$toJson(
+        _lazilyResolvedInterfaceUnion,
+      );
+    }
+
+    _lazilyResolvedInterfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -61608,6 +61642,7 @@ export namespace LazilyResolvedInterfaceUnion {
         _parameters,
       );
     }
+
     if (
       LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
         _lazilyResolvedInterfaceUnion,
@@ -61618,6 +61653,7 @@ export namespace LazilyResolvedInterfaceUnion {
         _parameters,
       );
     }
+
     _lazilyResolvedInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -61923,15 +61959,20 @@ export namespace PartialClassUnion {
   export function $toJson(
     _partialClassUnion: PartialClassUnion,
   ): PartialClassUnionMember1.$Json | PartialClassUnionMember2.$Json {
-    switch (_partialClassUnion.$type) {
-      case "PartialClassUnionMember1":
-        return _partialClassUnion.$toJson();
-      case "PartialClassUnionMember2":
-        return _partialClassUnion.$toJson();
-      default:
-        _partialClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toJson();
     }
+
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
+    ) {
+      return _partialClassUnion.$toJson();
+    }
+
+    _partialClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -61946,11 +61987,13 @@ export namespace PartialClassUnion {
     ) {
       return _partialClassUnion.$toRdf(_parameters);
     }
+
     if (
       PartialClassUnionMember2.isPartialClassUnionMember2(_partialClassUnion)
     ) {
       return _partialClassUnion.$toRdf(_parameters);
     }
+
     _partialClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -62271,15 +62314,24 @@ export namespace PartialInterfaceUnion {
   export function $toJson(
     _partialInterfaceUnion: PartialInterfaceUnion,
   ): PartialInterfaceUnionMember1.$Json | PartialInterfaceUnionMember2.$Json {
-    switch (_partialInterfaceUnion.$type) {
-      case "PartialInterfaceUnionMember1":
-        return PartialInterfaceUnionMember1.$toJson(_partialInterfaceUnion);
-      case "PartialInterfaceUnionMember2":
-        return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
-      default:
-        _partialInterfaceUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember1.$toJson(_partialInterfaceUnion);
     }
+
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
+        _partialInterfaceUnion,
+      )
+    ) {
+      return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
+    }
+
+    _partialInterfaceUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -62299,6 +62351,7 @@ export namespace PartialInterfaceUnion {
         _parameters,
       );
     }
+
     if (
       PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(
         _partialInterfaceUnion,
@@ -62309,6 +62362,7 @@ export namespace PartialInterfaceUnion {
         _parameters,
       );
     }
+
     _partialInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -62606,15 +62660,24 @@ export namespace NoRdfTypeClassUnion {
   export function $toJson(
     _noRdfTypeClassUnion: NoRdfTypeClassUnion,
   ): NoRdfTypeClassUnionMember1.$Json | NoRdfTypeClassUnionMember2.$Json {
-    switch (_noRdfTypeClassUnion.$type) {
-      case "NoRdfTypeClassUnionMember1":
-        return _noRdfTypeClassUnion.$toJson();
-      case "NoRdfTypeClassUnionMember2":
-        return _noRdfTypeClassUnion.$toJson();
-      default:
-        _noRdfTypeClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toJson();
     }
+
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
+        _noRdfTypeClassUnion,
+      )
+    ) {
+      return _noRdfTypeClassUnion.$toJson();
+    }
+
+    _noRdfTypeClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -62631,6 +62694,7 @@ export namespace NoRdfTypeClassUnion {
     ) {
       return _noRdfTypeClassUnion.$toRdf(_parameters);
     }
+
     if (
       NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(
         _noRdfTypeClassUnion,
@@ -62638,6 +62702,7 @@ export namespace NoRdfTypeClassUnion {
     ) {
       return _noRdfTypeClassUnion.$toRdf(_parameters);
     }
+
     _noRdfTypeClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
@@ -62935,15 +63000,24 @@ export namespace RecursiveClassUnion {
   export function $toJson(
     _recursiveClassUnion: RecursiveClassUnion,
   ): RecursiveClassUnionMember1.$Json | RecursiveClassUnionMember2.$Json {
-    switch (_recursiveClassUnion.$type) {
-      case "RecursiveClassUnionMember1":
-        return _recursiveClassUnion.$toJson();
-      case "RecursiveClassUnionMember2":
-        return _recursiveClassUnion.$toJson();
-      default:
-        _recursiveClassUnion satisfies never;
-        throw new Error("unrecognized type");
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toJson();
     }
+
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
+        _recursiveClassUnion,
+      )
+    ) {
+      return _recursiveClassUnion.$toJson();
+    }
+
+    _recursiveClassUnion satisfies never;
+    throw new Error("unrecognized type");
   }
 
   export function $toRdf(
@@ -62960,6 +63034,7 @@ export namespace RecursiveClassUnion {
     ) {
       return _recursiveClassUnion.$toRdf(_parameters);
     }
+
     if (
       RecursiveClassUnionMember2.isRecursiveClassUnionMember2(
         _recursiveClassUnion,
@@ -62967,6 +63042,7 @@ export namespace RecursiveClassUnion {
     ) {
       return _recursiveClassUnion.$toRdf(_parameters);
     }
+
     _recursiveClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
