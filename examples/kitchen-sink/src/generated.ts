@@ -59888,14 +59888,13 @@ export type ClassUnion = ClassUnionMember1 | ClassUnionMember2;
 export namespace ClassUnion {
   export function $equals(left: ClassUnion, right: ClassUnion): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "ClassUnionMember1":
-          return left.$equals(right as unknown as ClassUnionMember1);
-        case "ClassUnionMember2":
-          return left.$equals(right as unknown as ClassUnionMember2);
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (ClassUnionMember1.isClassUnionMember1(left)) {
+        return left.$equals(right as unknown as ClassUnionMember1);
+      } else if (ClassUnionMember2.isClassUnionMember2(left)) {
+        return left.$equals(right as unknown as ClassUnionMember2);
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -60208,16 +60207,15 @@ export namespace FlattenClassUnion {
     right: FlattenClassUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "ClassUnionMember1":
-          return left.$equals(right as unknown as ClassUnionMember1);
-        case "ClassUnionMember2":
-          return left.$equals(right as unknown as ClassUnionMember2);
-        case "FlattenClassUnionMember3":
-          return left.$equals(right as unknown as FlattenClassUnionMember3);
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (ClassUnionMember1.isClassUnionMember1(left)) {
+        return left.$equals(right as unknown as ClassUnionMember1);
+      } else if (ClassUnionMember2.isClassUnionMember2(left)) {
+        return left.$equals(right as unknown as ClassUnionMember2);
+      } else if (FlattenClassUnionMember3.isFlattenClassUnionMember3(left)) {
+        return left.$equals(right as unknown as FlattenClassUnionMember3);
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -60589,20 +60587,19 @@ export namespace InterfaceUnion {
     right: InterfaceUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "InterfaceUnionMember1":
-          return InterfaceUnionMember1.$equals(
-            left,
-            right as unknown as InterfaceUnionMember1,
-          );
-        case "InterfaceUnionMember2":
-          return InterfaceUnionMember2.$equals(
-            left,
-            right as unknown as InterfaceUnionMember2,
-          );
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (InterfaceUnionMember1.isInterfaceUnionMember1(left)) {
+        return InterfaceUnionMember1.$equals(
+          left,
+          right as unknown as InterfaceUnionMember1,
+        );
+      } else if (InterfaceUnionMember2.isInterfaceUnionMember2(left)) {
+        return InterfaceUnionMember2.$equals(
+          left,
+          right as unknown as InterfaceUnionMember2,
+        );
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -60914,18 +60911,21 @@ export namespace LazilyResolvedClassUnion {
     right: LazilyResolvedClassUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "LazilyResolvedClassUnionMember1":
-          return left.$equals(
-            right as unknown as LazilyResolvedClassUnionMember1,
-          );
-        case "LazilyResolvedClassUnionMember2":
-          return left.$equals(
-            right as unknown as LazilyResolvedClassUnionMember2,
-          );
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (
+        LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(left)
+      ) {
+        return left.$equals(
+          right as unknown as LazilyResolvedClassUnionMember1,
+        );
+      } else if (
+        LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(left)
+      ) {
+        return left.$equals(
+          right as unknown as LazilyResolvedClassUnionMember2,
+        );
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -61259,20 +61259,27 @@ export namespace LazilyResolvedInterfaceUnion {
     right: LazilyResolvedInterfaceUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "LazilyResolvedInterfaceUnionMember1":
-          return LazilyResolvedInterfaceUnionMember1.$equals(
-            left,
-            right as unknown as LazilyResolvedInterfaceUnionMember1,
-          );
-        case "LazilyResolvedInterfaceUnionMember2":
-          return LazilyResolvedInterfaceUnionMember2.$equals(
-            left,
-            right as unknown as LazilyResolvedInterfaceUnionMember2,
-          );
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (
+        LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
+          left,
+        )
+      ) {
+        return LazilyResolvedInterfaceUnionMember1.$equals(
+          left,
+          right as unknown as LazilyResolvedInterfaceUnionMember1,
+        );
+      } else if (
+        LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
+          left,
+        )
+      ) {
+        return LazilyResolvedInterfaceUnionMember2.$equals(
+          left,
+          right as unknown as LazilyResolvedInterfaceUnionMember2,
+        );
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -61626,14 +61633,13 @@ export namespace PartialClassUnion {
     right: PartialClassUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "PartialClassUnionMember1":
-          return left.$equals(right as unknown as PartialClassUnionMember1);
-        case "PartialClassUnionMember2":
-          return left.$equals(right as unknown as PartialClassUnionMember2);
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (PartialClassUnionMember1.isPartialClassUnionMember1(left)) {
+        return left.$equals(right as unknown as PartialClassUnionMember1);
+      } else if (PartialClassUnionMember2.isPartialClassUnionMember2(left)) {
+        return left.$equals(right as unknown as PartialClassUnionMember2);
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -61953,20 +61959,21 @@ export namespace PartialInterfaceUnion {
     right: PartialInterfaceUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "PartialInterfaceUnionMember1":
-          return PartialInterfaceUnionMember1.$equals(
-            left,
-            right as unknown as PartialInterfaceUnionMember1,
-          );
-        case "PartialInterfaceUnionMember2":
-          return PartialInterfaceUnionMember2.$equals(
-            left,
-            right as unknown as PartialInterfaceUnionMember2,
-          );
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(left)) {
+        return PartialInterfaceUnionMember1.$equals(
+          left,
+          right as unknown as PartialInterfaceUnionMember1,
+        );
+      } else if (
+        PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(left)
+      ) {
+        return PartialInterfaceUnionMember2.$equals(
+          left,
+          right as unknown as PartialInterfaceUnionMember2,
+        );
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -62305,14 +62312,15 @@ export namespace NoRdfTypeClassUnion {
     right: NoRdfTypeClassUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "NoRdfTypeClassUnionMember1":
-          return left.$equals(right as unknown as NoRdfTypeClassUnionMember1);
-        case "NoRdfTypeClassUnionMember2":
-          return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(left)) {
+        return left.$equals(right as unknown as NoRdfTypeClassUnionMember1);
+      } else if (
+        NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(left)
+      ) {
+        return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
@@ -62628,14 +62636,15 @@ export namespace RecursiveClassUnion {
     right: RecursiveClassUnion,
   ): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      switch (left.$type) {
-        case "RecursiveClassUnionMember1":
-          return left.$equals(right as unknown as RecursiveClassUnionMember1);
-        case "RecursiveClassUnionMember2":
-          return left.$equals(right as unknown as RecursiveClassUnionMember2);
-        default:
-          left satisfies never;
-          throw new Error("unrecognized type");
+      if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(left)) {
+        return left.$equals(right as unknown as RecursiveClassUnionMember1);
+      } else if (
+        RecursiveClassUnionMember2.isRecursiveClassUnionMember2(left)
+      ) {
+        return left.$equals(right as unknown as RecursiveClassUnionMember2);
+      } else {
+        left satisfies never;
+        throw new Error("unrecognized type");
       }
     });
   }
