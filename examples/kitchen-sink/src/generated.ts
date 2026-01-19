@@ -62205,6 +62205,83 @@ export namespace RecursiveClassUnion {
     }
   }
 }
+export type $Object =
+  | $DefaultPartial
+  | $NamedDefaultPartial
+  | AbstractBaseClassForExternClass
+  | AbstractBaseClassWithoutProperties
+  | AbstractBaseClassWithProperties
+  | BaseInterfaceWithoutProperties
+  | BaseInterfaceWithProperties
+  | BlankNodeIdentifierClass
+  | BlankNodeIdentifierInterface
+  | BlankNodeOrIriIdentifierClass
+  | BlankNodeOrIriIdentifierInterface
+  | ClassUnionMember1
+  | ClassUnionMember2
+  | ClassUnionMemberCommonParent
+  | ConcreteChildClass
+  | ConcreteChildInterface
+  | ConcreteParentClass
+  | ConcreteParentInterface
+  | ConvertibleTypePropertiesClass
+  | DateUnionPropertiesClass
+  | DefaultValuePropertiesClass
+  | DirectRecursiveClass
+  | ExplicitFromToRdfTypesClass
+  | ExplicitRdfTypeClass
+  | ExternClass
+  | ExternClassPropertyClass
+  | FlattenClassUnionMember3
+  | HasValuePropertiesClass
+  | IdentifierOverride1Class
+  | IdentifierOverride2Class
+  | IdentifierOverride3Class
+  | IdentifierOverride4Class
+  | IdentifierOverride5Class
+  | IndirectRecursiveClass
+  | IndirectRecursiveHelperClass
+  | InIdentifierClass
+  | InPropertiesClass
+  | Interface
+  | InterfaceUnionMember1
+  | InterfaceUnionMember2
+  | InterfaceUnionMemberCommonParent
+  | IriIdentifierClass
+  | IriIdentifierInterface
+  | JsPrimitiveUnionPropertyClass
+  | LanguageInPropertiesClass
+  | LazilyResolvedBlankNodeOrIriIdentifierClass
+  | LazilyResolvedBlankNodeOrIriIdentifierInterface
+  | LazilyResolvedClassUnionMember1
+  | LazilyResolvedClassUnionMember2
+  | LazilyResolvedInterfaceUnionMember1
+  | LazilyResolvedInterfaceUnionMember2
+  | LazilyResolvedIriIdentifierClass
+  | LazilyResolvedIriIdentifierInterface
+  | LazyPropertiesClass
+  | LazyPropertiesInterface
+  | ListPropertiesClass
+  | MutablePropertiesClass
+  | NonClass
+  | NoRdfTypeClassUnionMember1
+  | NoRdfTypeClassUnionMember2
+  | OrderedPropertiesClass
+  | PartialClass
+  | PartialClassUnionMember1
+  | PartialClassUnionMember2
+  | PartialInterface
+  | PartialInterfaceUnionMember1
+  | PartialInterfaceUnionMember2
+  | PropertyCardinalitiesClass
+  | PropertyVisibilitiesClass
+  | RecursiveClassUnionMember1
+  | RecursiveClassUnionMember2
+  | Sha256IriIdentifierClass
+  | TermPropertiesClass
+  | UnionDiscriminantsClass
+  | UuidV4IriIdentifierClass
+  | UuidV4IriIdentifierInterface;
 export interface $ObjectSet {
   baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
