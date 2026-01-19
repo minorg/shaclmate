@@ -4,7 +4,7 @@ import {
   VariableDeclarationKind,
   type VariableStatementStructure,
 } from "ts-morph";
-import { ObjectType } from "../ObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -28,7 +28,7 @@ export function propertiesVariableStatement(
         (ancestorObjectType) => ancestorObjectType.ownProperties,
       ),
     )) {
-      if (!(memberTypeProperty instanceof ObjectType.ShaclProperty)) {
+      if (memberTypeProperty.kind !== "ShaclProperty") {
         continue;
       }
       let commonProperty = commonPropertiesByName[memberTypeProperty.name];

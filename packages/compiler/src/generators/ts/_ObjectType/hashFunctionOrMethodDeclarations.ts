@@ -4,7 +4,7 @@ import {
   Scope,
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
-import { ObjectType } from "../ObjectType.js";
+import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 const hasherVariable = "_hasher";
@@ -97,7 +97,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
       returnType,
       statements: [
         ...this.ownProperties
-          .filter((property) => !(property instanceof ObjectType.ShaclProperty))
+          .filter((property) => property.kind !== "ShaclProperty")
           .flatMap((property) =>
             property.hashStatements({
               depth: 0,
