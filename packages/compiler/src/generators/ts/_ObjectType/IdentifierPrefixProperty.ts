@@ -15,16 +15,17 @@ import type { Sparql } from "../Sparql.js";
 import type { StringType } from "../StringType.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { Property } from "./Property.js";
+import { AbstractProperty } from "./AbstractProperty.js";
 
-export class IdentifierPrefixProperty extends Property<StringType> {
+export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   private readonly own: boolean;
 
   override readonly declarationImports: readonly Import[] = [];
-  override readonly filterProperty: Property<StringType>["filterProperty"] =
+  override readonly filterProperty: AbstractProperty<StringType>["filterProperty"] =
     Maybe.empty();
-  override readonly graphqlField: Property<StringType>["graphqlField"] =
+  override readonly graphqlField: AbstractProperty<StringType>["graphqlField"] =
     Maybe.empty();
+  readonly kind = "IdentifierPrefixProperty";
   override readonly propertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
@@ -40,7 +41,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   }: {
     own: boolean;
     type: StringType;
-  } & ConstructorParameters<typeof Property>[0]) {
+  } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
     invariant(this.visibility === "protected");
     this.own = own;
@@ -67,7 +68,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   override constructorStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["constructorStatements"]
+    AbstractProperty<IdentifierType>["constructorStatements"]
   >[0]): readonly string[] {
     switch (this.objectType.declarationType) {
       case "class":
@@ -111,7 +112,7 @@ export class IdentifierPrefixProperty extends Property<StringType> {
   }
 
   override jsonZodSchema(): ReturnType<
-    Property<IdentifierType>["jsonZodSchema"]
+    AbstractProperty<IdentifierType>["jsonZodSchema"]
   > {
     return Maybe.empty();
   }
@@ -141,7 +142,9 @@ export class IdentifierPrefixProperty extends Property<StringType> {
     return [];
   }
 
-  override sparqlWherePatterns() {
+  override sparqlWherePatterns(): ReturnType<
+    AbstractProperty<StringType>["sparqlWherePatterns"]
+  > {
     return { patterns: [] };
   }
 

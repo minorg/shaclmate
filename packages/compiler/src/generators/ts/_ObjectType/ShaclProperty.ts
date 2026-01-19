@@ -13,16 +13,16 @@ import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
-import { Property } from "./Property.js";
+import { AbstractProperty } from "./AbstractProperty.js";
 
-export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
+export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
   private readonly label: Maybe<string>;
-
-  readonly mutable: boolean;
+  readonly kind = "ShaclProperty";
+  override readonly mutable: boolean;
   readonly path: rdfjs.NamedNode;
-  readonly recursive: boolean;
+  override readonly recursive: boolean;
 
   constructor({
     comment,
@@ -39,7 +39,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     mutable: boolean;
     path: rdfjs.NamedNode;
     recursive: boolean;
-  } & ConstructorParameters<typeof Property<TypeT>>[0]) {
+  } & ConstructorParameters<typeof AbstractProperty<TypeT>>[0]) {
     super(superParameters);
     this.comment = comment;
     this.description = description;
@@ -80,7 +80,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   override constructorStatements({
     variables,
   }: Parameters<
-    Property<TypeT>["constructorStatements"]
+    AbstractProperty<TypeT>["constructorStatements"]
   >[0]): readonly string[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
@@ -120,7 +120,9 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   override fromJsonStatements({
     variables,
-  }: Parameters<Property<TypeT>["fromJsonStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractProperty<TypeT>["fromJsonStatements"]
+  >[0]): readonly string[] {
     return [
       `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: `${variables.jsonObject}["${this.name}"]` } })};`,
     ];
@@ -145,7 +147,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }
 
   @Memoize()
-  override get graphqlField(): Property<TypeT>["graphqlField"] {
+  override get graphqlField(): AbstractProperty<TypeT>["graphqlField"] {
     const args = this.type.graphqlArgs;
     const argsVariable = args.isJust() ? "args" : "_args";
     return Maybe.of({
@@ -158,7 +160,7 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }
 
   override hashStatements(
-    parameters: Parameters<Property<TypeT>["hashStatements"]>[0],
+    parameters: Parameters<AbstractProperty<TypeT>["hashStatements"]>[0],
   ): readonly string[] {
     return this.type.hashStatements(parameters);
   }
@@ -178,7 +180,9 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
 
   jsonUiSchemaElement({
     variables,
-  }: Parameters<Property<TypeT>["jsonUiSchemaElement"]>[0]): Maybe<string> {
+  }: Parameters<
+    AbstractProperty<TypeT>["jsonUiSchemaElement"]
+  >[0]): Maybe<string> {
     const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return this.type
       .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
@@ -190,8 +194,8 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }
 
   override jsonZodSchema(
-    parameters: Parameters<Property<TypeT>["jsonZodSchema"]>[0],
-  ): ReturnType<Property<TypeT>["jsonZodSchema"]> {
+    parameters: Parameters<AbstractProperty<TypeT>["jsonZodSchema"]>[0],
+  ): ReturnType<AbstractProperty<TypeT>["jsonZodSchema"]> {
     let schema = this.type.jsonZodSchema({
       ...parameters,
       context: "property",
@@ -236,14 +240,16 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Property<Type>["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractProperty<TypeT>["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     return this.type.snippetDeclarations(parameters);
   }
 
   override fromRdfStatements({
     variables,
-  }: Parameters<Property<TypeT>["fromRdfStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractProperty<TypeT>["fromRdfStatements"]
+  >[0]): readonly string[] {
     // Assume the property has the correct range and ignore the object's RDF type.
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
     // subject of any statements.
@@ -264,12 +270,11 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     ];
   }
 
-  sparqlConstructTriples({
+  override sparqlConstructTriples({
     variables,
-  }: Parameters<Property<TypeT>["sparqlConstructTriples"]>[0]): readonly (
-    | Sparql.Triple
-    | string
-  )[] {
+  }: Parameters<
+    AbstractProperty<TypeT>["sparqlConstructTriples"]
+  >[0]): readonly (Sparql.Triple | string)[] {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return [
@@ -289,9 +294,11 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
     );
   }
 
-  sparqlWherePatterns({
+  override sparqlWherePatterns({
     variables,
-  }: Parameters<Property<TypeT>["sparqlWherePatterns"]>[0]) {
+  }: Parameters<AbstractProperty<TypeT>["sparqlWherePatterns"]>[0]): ReturnType<
+    AbstractProperty<TypeT>["sparqlWherePatterns"]
+  > {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return {
@@ -322,14 +329,16 @@ export class ShaclProperty<TypeT extends Type> extends Property<TypeT> {
   }
 
   override toJsonObjectMember(
-    parameters: Parameters<Property<TypeT>["toJsonObjectMember"]>[0],
+    parameters: Parameters<AbstractProperty<TypeT>["toJsonObjectMember"]>[0],
   ): Maybe<string> {
     return Maybe.of(`${this.name}: ${this.type.toJsonExpression(parameters)}`);
   }
 
   override toRdfStatements({
     variables,
-  }: Parameters<Property<TypeT>["toRdfStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractProperty<TypeT>["toRdfStatements"]
+  >[0]): readonly string[] {
     return [
       `${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
         {

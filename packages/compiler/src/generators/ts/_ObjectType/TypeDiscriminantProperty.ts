@@ -12,9 +12,9 @@ import type { Import } from "../Import.js";
 import type { Sparql } from "../Sparql.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { Property } from "./Property.js";
+import { AbstractProperty } from "./AbstractProperty.js";
 
-export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.Type> {
+export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantProperty.Type> {
   override readonly constructorParametersPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
@@ -22,12 +22,13 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override readonly equalsFunction = Maybe.of(
     `${syntheticNamePrefix}strictEquals`,
   );
-  override readonly filterProperty: Property<TypeDiscriminantProperty.Type>["filterProperty"] =
+  readonly kind = "TypeDiscriminantProperty";
+  override readonly filterProperty: AbstractProperty<TypeDiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly getAccessorDeclaration: Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > = Maybe.empty();
-  override readonly graphqlField: Property<TypeDiscriminantProperty.Type>["graphqlField"] =
+  override readonly graphqlField: AbstractProperty<TypeDiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
   override readonly mutable = false;
   override readonly recursive = false;
@@ -37,7 +38,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
     ...superParameters
   }: {
     type: TypeDiscriminantProperty.Type;
-  } & ConstructorParameters<typeof Property>[0]) {
+  } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super({ ...superParameters, type });
     invariant(this.visibility === "public");
   }
@@ -89,7 +90,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override hashStatements({
     variables,
   }: Parameters<
-    Property<TypeDiscriminantProperty.Type>["hashStatements"]
+    AbstractProperty<TypeDiscriminantProperty.Type>["hashStatements"]
   >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
   }
@@ -97,7 +98,7 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    Property<TypeDiscriminantProperty.Type>["jsonUiSchemaElement"]
+    AbstractProperty<TypeDiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<string> {
     const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return Maybe.of(
@@ -108,8 +109,10 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
   override jsonZodSchema({
     variables,
   }: Parameters<
-    Property<TypeDiscriminantProperty.Type>["jsonZodSchema"]
-  >[0]): ReturnType<Property<TypeDiscriminantProperty.Type>["jsonZodSchema"]> {
+    AbstractProperty<TypeDiscriminantProperty.Type>["jsonZodSchema"]
+  >[0]): ReturnType<
+    AbstractProperty<TypeDiscriminantProperty.Type>["jsonZodSchema"]
+  > {
     return Maybe.of({
       key: this.name,
       schema:
@@ -160,14 +163,16 @@ export class TypeDiscriminantProperty extends Property<TypeDiscriminantProperty.
     return [];
   }
 
-  override sparqlWherePatterns() {
+  override sparqlWherePatterns(): ReturnType<
+    AbstractProperty<TypeDiscriminantProperty.Type>["sparqlWherePatterns"]
+  > {
     return { patterns: [] };
   }
 
   override toJsonObjectMember({
     variables,
   }: Parameters<
-    Property<TypeDiscriminantProperty.Type>["toJsonObjectMember"]
+    AbstractProperty<TypeDiscriminantProperty.Type>["toJsonObjectMember"]
   >[0]): Maybe<string> {
     return Maybe.of(`${this.name}: ${variables.value}`);
   }

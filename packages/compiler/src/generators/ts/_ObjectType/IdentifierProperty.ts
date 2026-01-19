@@ -17,15 +17,15 @@ import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { Property } from "./Property.js";
+import { AbstractProperty } from "./AbstractProperty.js";
 
-export class IdentifierProperty extends Property<IdentifierType> {
+export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
-
-  readonly mutable = false;
-  readonly recursive = false;
+  readonly kind = "IdentifierProperty";
+  override readonly mutable = false;
+  override readonly recursive = false;
 
   constructor({
     identifierMintingStrategy,
@@ -37,7 +37,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     identifierPrefixPropertyName: string;
     type: IdentifierType;
     typeAlias: string;
-  } & ConstructorParameters<typeof Property>[0]) {
+  } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
     invariant(this.visibility === "public");
     this.identifierMintingStrategy = identifierMintingStrategy;
@@ -233,7 +233,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
     return Maybe.empty();
   }
 
-  override get graphqlField(): Property<IdentifierType>["graphqlField"] {
+  override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
       args: Maybe.empty(),
@@ -261,7 +261,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override constructorStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["constructorStatements"]
+    AbstractProperty<IdentifierType>["constructorStatements"]
   >[0]): readonly string[] {
     const constructorParametersPropertySignature =
       this.constructorParametersPropertySignature.extractNullable();
@@ -339,7 +339,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override fromJsonStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["fromJsonStatements"]
+    AbstractProperty<IdentifierType>["fromJsonStatements"]
   >[0]): readonly string[] {
     return [
       `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: variables.jsonObject } })};`,
@@ -349,7 +349,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override fromRdfStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["fromRdfStatements"]
+    AbstractProperty<IdentifierType>["fromRdfStatements"]
   >[0]): readonly string[] {
     if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
@@ -375,7 +375,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override hashStatements({
     variables,
   }: Parameters<
-    Property<IdentifierType>["hashStatements"]
+    AbstractProperty<IdentifierType>["hashStatements"]
   >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.value);`];
   }
@@ -383,7 +383,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
-    Property<IdentifierType>["jsonUiSchemaElement"]
+    AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
   >[0]): Maybe<string> {
     return Maybe.of(
       `{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/${this.jsonPropertySignature.unsafeCoerce().name}\`, type: "Control" }`,
@@ -392,9 +392,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Property<IdentifierType>["jsonZodSchema"]>[0]): ReturnType<
-    Property<IdentifierType>["jsonZodSchema"]
-  > {
+  }: Parameters<
+    AbstractProperty<IdentifierType>["jsonZodSchema"]
+  >[0]): ReturnType<AbstractProperty<IdentifierType>["jsonZodSchema"]> {
     let schema: string;
     if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
       // Treat sh:in as a union of the IRIs
@@ -474,7 +474,9 @@ export class IdentifierProperty extends Property<IdentifierType> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Property<IdentifierType>["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractProperty<IdentifierType>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, string>> {
     return this.type.snippetDeclarations(parameters);
   }
@@ -485,7 +487,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
 
   override sparqlWherePatterns({
     variables,
-  }: Parameters<Property<IdentifierType>["sparqlWherePatterns"]>[0]) {
+  }: Parameters<AbstractProperty<IdentifierType>["sparqlWherePatterns"]>[0]) {
     return {
       condition: `${variables.focusIdentifier}.termType === "Variable"`,
       patterns: this.type.sparqlWherePatterns({
@@ -504,7 +506,7 @@ export class IdentifierProperty extends Property<IdentifierType> {
   override toJsonObjectMember({
     variables,
   }: Parameters<
-    Property<IdentifierType>["toJsonObjectMember"]
+    AbstractProperty<IdentifierType>["toJsonObjectMember"]
   >[0]): Maybe<string> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {

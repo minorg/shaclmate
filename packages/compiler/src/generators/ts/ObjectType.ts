@@ -301,7 +301,7 @@ export class ObjectType extends AbstractDeclaredType {
   @Memoize()
   get identifierProperty(): ObjectType.IdentifierProperty {
     const identifierProperty = this.properties.find(
-      (property) => property instanceof ObjectType.IdentifierProperty,
+      (property) => property.kind === "IdentifierProperty",
     );
     invariant(identifierProperty);
     return identifierProperty;
@@ -352,7 +352,7 @@ export class ObjectType extends AbstractDeclaredType {
   @Memoize()
   get ownShaclProperties(): readonly _ObjectType.ShaclProperty<Type>[] {
     return this.properties.filter(
-      (property) => property instanceof _ObjectType.ShaclProperty,
+      (property) => property.kind === "ShaclProperty",
     );
   }
 
@@ -638,8 +638,7 @@ export namespace ObjectType {
     readonly objectIdentifiers: string;
     readonly objects: string;
   };
-  export const Property = _ObjectType.Property;
-  export type Property = _ObjectType.Property<any>;
+  export type Property = _ObjectType.Property;
   export const ShaclProperty = _ObjectType.ShaclProperty;
   export type ShaclProperty<TypeT extends Type> =
     _ObjectType.ShaclProperty<TypeT>;
