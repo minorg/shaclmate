@@ -37,3 +37,12 @@ export abstract class AbstractDeclaredType extends AbstractType {
     this.name = name;
   }
 }
+
+export namespace AbstractDeclaredType {
+  export type Conversion = AbstractType.Conversion;
+  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export const GraphqlType = AbstractType.GraphqlType;
+  export type GraphqlType = AbstractType.GraphqlType;
+  export const JsonType = AbstractType.JsonType;
+  export type JsonType = AbstractType.JsonType;
+}

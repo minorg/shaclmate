@@ -1,26 +1,24 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   readonly kind = "StringType";
   override readonly filterFunction = `${syntheticNamePrefix}filterString`;
-  override readonly filterType = new Type.CompositeFilterTypeReference(
-    `${syntheticNamePrefix}StringFilter`,
+  override readonly filterType = `${syntheticNamePrefix}StringFilter`;
+  override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
+    "graphql.GraphQLString",
   );
-  override readonly graphqlType = new Type.GraphqlType("graphql.GraphQLString");
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
+    const conversions: AbstractPrimitiveType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
@@ -48,7 +46,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
+    AbstractPrimitiveType<string>["filterSparqlWherePatterns"]
   >[0]): readonly Sparql.Pattern[] {
     return [
       ...this.preferredLanguagesSparqlWherePatterns({ variables }),
@@ -77,13 +75,17 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractPrimitiveType<string>["hashStatements"]
+  >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value});`];
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractPrimitiveType<string>["jsonZodSchema"]>[0]): ReturnType<
+    AbstractPrimitiveType<string>["jsonZodSchema"]
+  > {
     switch (this.primitiveIn.length) {
       case 0:
         return `${variables.zod}.string()`;
@@ -95,7 +97,9 @@ export class StringType extends AbstractPrimitiveType<string> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractPrimitiveType<string>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),

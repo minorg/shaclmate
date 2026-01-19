@@ -1,27 +1,23 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
 
 export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction = `${syntheticNamePrefix}filterLiteral`;
-  override readonly filterType = new Type.CompositeFilterTypeReference(
-    `${syntheticNamePrefix}LiteralFilter`,
-  );
+  override readonly filterType = `${syntheticNamePrefix}LiteralFilter`;
 
-  get graphqlType(): Type.GraphqlType {
+  get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
   }
 
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
+    AbstractLiteralType["filterSparqlWherePatterns"]
   >[0]): readonly Sparql.Pattern[] {
     return [
       ...this.preferredLanguagesSparqlWherePatterns({ variables }),
@@ -49,12 +45,12 @@ export class LiteralType extends AbstractLiteralType {
   }
 
   override jsonType(
-    parameters?: Parameters<Type["jsonType"]>[0],
-  ): Type.JsonType {
+    parameters?: Parameters<AbstractLiteralType["jsonType"]>[0],
+  ): AbstractLiteralType.JsonType {
     const discriminantProperty = parameters?.includeDiscriminantProperty
       ? `, readonly termType: "Literal"`
       : "";
-    return new Type.JsonType(
+    return new AbstractLiteralType.JsonType(
       `{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
   }
@@ -73,7 +69,7 @@ export class LiteralType extends AbstractLiteralType {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),

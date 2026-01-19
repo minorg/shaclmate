@@ -1,9 +1,8 @@
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import type { Type } from "../Type.js";
 
 export function sparqlConstructQueryFunctionDeclaration(this: {
-  readonly filterType: Type.CompositeFilterTypeReference;
+  readonly filterType: string;
   readonly staticModuleName: string;
 }): FunctionDeclarationStructure {
   return {
@@ -14,7 +13,7 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
       {
         hasQuestionToken: true,
         name: "parameters",
-        type: `{ filter?: ${this.filterType.name}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">`,
+        type: `{ filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">`,
       },
     ],
     returnType: "sparqljs.ConstructQuery",

@@ -4,7 +4,6 @@ import type { TsFeature } from "enums/TsFeature.js";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractTermType } from "./AbstractTermType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -13,17 +12,13 @@ import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 
 export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
   override readonly filterFunction = `${syntheticNamePrefix}filterDate`;
-  override readonly filterType = new Type.CompositeFilterTypeReference(
-    `${syntheticNamePrefix}DateFilter`,
-  );
-  override readonly graphqlType = new Type.GraphqlType(
+  override readonly filterType = `${syntheticNamePrefix}DateFilter`;
+  override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     "graphqlScalars.DateTime",
   );
   readonly kind: "DateTimeType" | "DateType" = "DateTimeType";
@@ -31,8 +26,8 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
+    const conversions: AbstractPrimitiveType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
@@ -53,8 +48,8 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   }
 
   @Memoize()
-  override jsonType(): Type.JsonType {
-    return new Type.JsonType("string");
+  override jsonType(): AbstractPrimitiveType.JsonType {
+    return new AbstractPrimitiveType.JsonType("string");
   }
 
   override get name(): string {
@@ -64,7 +59,7 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
+    AbstractPrimitiveType<Date>["filterSparqlWherePatterns"]
   >[0]): readonly Sparql.Pattern[] {
     return [
       {
@@ -76,27 +71,31 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<Date>["fromJsonExpression"]>[0]): string {
     return `new Date(${variables.value})`;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractPrimitiveType<Date>["hashStatements"]
+  >[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toISOString());`];
   }
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractPrimitiveType<Date>["jsonZodSchema"]>[0]): ReturnType<
+    AbstractPrimitiveType<Date>["jsonZodSchema"]
+  > {
     return `${variables.zod}.iso.datetime()`;
   }
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    TermType["fromRdfExpressionChain"]
-  > {
+  }: Parameters<
+    AbstractPrimitiveType<Date>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<Date>["fromRdfExpressionChain"]> {
     let fromRdfResourceValueExpression = "value.toDate()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;

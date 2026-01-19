@@ -2,7 +2,6 @@ import type { NamedNode } from "@rdfjs/types";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
@@ -10,15 +9,11 @@ import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 
 export abstract class NumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
   override readonly filterFunction = `${syntheticNamePrefix}filterNumber`;
-  override readonly filterType = new Type.CompositeFilterTypeReference(
-    `${syntheticNamePrefix}NumberFilter`,
-  );
+  override readonly filterType = `${syntheticNamePrefix}NumberFilter`;
   readonly kind = "NumberType";
   override readonly typeofs = NonEmptyList(["number" as const]);
 
@@ -33,8 +28,8 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
+    const conversions: AbstractPrimitiveType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
@@ -62,7 +57,7 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
+    AbstractPrimitiveType<number>["filterSparqlWherePatterns"]
   >[0]): readonly Sparql.Pattern[] {
     return [
       {
@@ -74,7 +69,9 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0]): ReturnType<
+    AbstractPrimitiveType<number>["jsonZodSchema"]
+  > {
     switch (this.primitiveIn.length) {
       case 0:
         return `${variables.zod}.number()`;
@@ -87,9 +84,9 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    TermType["fromRdfExpressionChain"]
-  > {
+  }: Parameters<
+    AbstractPrimitiveType<number>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<number>["fromRdfExpressionChain"]> {
     let fromRdfResourceValueExpression = "value.toNumber()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
@@ -105,7 +102,9 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractPrimitiveType<number>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),

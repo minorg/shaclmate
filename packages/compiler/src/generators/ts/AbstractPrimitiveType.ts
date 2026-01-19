@@ -4,7 +4,6 @@ import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,
@@ -27,35 +26,35 @@ export abstract class AbstractPrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
-  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+  override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
     return Maybe.empty();
   }
 
   @Memoize()
-  override jsonType(): Type.JsonType {
-    return new Type.JsonType(this.name);
+  override jsonType(): AbstractLiteralType.JsonType {
+    return new AbstractLiteralType.JsonType(this.name);
   }
 
   override fromJsonExpression({
     variables,
-  }: Parameters<Type["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {
     return variables.value;
   }
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<Type["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<AbstractLiteralType["graphqlResolveExpression"]>[0]): string {
     return variables.value;
   }
 
   override hashStatements({
     variables,
-  }: Parameters<Type["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
@@ -67,7 +66,16 @@ export abstract class AbstractPrimitiveType<
 
   override toJsonExpression({
     variables,
-  }: Parameters<Type["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): string {
     return variables.value;
   }
+}
+
+export namespace AbstractPrimitiveType {
+  export type Conversion = AbstractLiteralType.Conversion;
+  export type DiscriminantProperty = AbstractLiteralType.DiscriminantProperty;
+  export const GraphqlType = AbstractLiteralType.GraphqlType;
+  export type GraphqlType = AbstractLiteralType.GraphqlType;
+  export const JsonType = AbstractLiteralType.JsonType;
+  export type JsonType = AbstractLiteralType.JsonType;
 }

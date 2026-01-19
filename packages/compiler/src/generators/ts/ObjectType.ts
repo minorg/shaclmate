@@ -25,7 +25,7 @@ import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { Type } from "./Type.js";
+import type { Type } from "./Type.js";
 
 const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
   `${syntheticNamePrefix}sparqlInstancesOfPattern`,
@@ -73,7 +73,8 @@ export class ObjectType extends AbstractDeclaredType {
   readonly declarationType: TsObjectDeclarationType;
   readonly extern: boolean;
   readonly fromRdfType: Maybe<NamedNode>;
-  override readonly graphqlArgs: Type["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
+    Maybe.empty();
   readonly identifierType: IdentifierType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
@@ -134,7 +135,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get _discriminantProperty(): Type.DiscriminantProperty {
+  get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
     const discriminantProperty = this.properties.find(
       (property) => property instanceof ObjectType.TypeDiscriminantProperty,
     );
@@ -157,7 +158,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
+  override get conversions(): readonly AbstractDeclaredType.Conversion[] {
     return [
       {
         conversionExpression: (value) => value,
@@ -252,7 +253,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override get discriminantProperty(): Maybe<Type.DiscriminantProperty> {
+  override get discriminantProperty(): Maybe<AbstractDeclaredType.DiscriminantProperty> {
     return Maybe.of(this._discriminantProperty);
   }
 
@@ -279,10 +280,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get filterType(): Type.CompositeFilterTypeReference {
-    return new Type.CompositeFilterTypeReference(
-      `${this.staticModuleName}.${syntheticNamePrefix}Filter`,
-    );
+  get filterType(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}Filter`;
   }
 
   @Memoize()
@@ -293,8 +292,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get graphqlType(): Type.GraphqlType {
-    return new Type.GraphqlType(
+  get graphqlType(): AbstractDeclaredType.GraphqlType {
+    return new AbstractDeclaredType.GraphqlType(
       `${this.staticModuleName}.${syntheticNamePrefix}GraphQL`,
     );
   }
@@ -314,8 +313,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonType(): Type.JsonType {
-    return new Type.JsonType(
+  override jsonType(): AbstractDeclaredType.JsonType {
+    return new AbstractDeclaredType.JsonType(
       `${this.staticModuleName}.${syntheticNamePrefix}Json`,
     );
   }

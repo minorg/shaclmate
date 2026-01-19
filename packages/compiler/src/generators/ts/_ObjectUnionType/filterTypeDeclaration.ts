@@ -9,6 +9,6 @@ export function filterTypeDeclaration(
     isExported: true,
     kind: StructureKind.TypeAlias,
     name: `${syntheticNamePrefix}Filter`,
-    type: `{ readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.name}?: ${memberType.filterType.reference};`).join(" ")} } }`,
+    type: `{ readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.name}?: ${memberType.filterType};`).join(" ")} } }`,
   };
 }

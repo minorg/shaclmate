@@ -39,7 +39,7 @@ export abstract class Property<
    */
   abstract readonly filterProperty: Maybe<{
     readonly name: string;
-    readonly type: Type["filterType"];
+    readonly type: string;
   }>;
 
   /**

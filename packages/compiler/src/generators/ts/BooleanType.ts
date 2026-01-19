@@ -1,29 +1,24 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import type { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   readonly kind = "BooleanType";
   override readonly filterFunction = `${syntheticNamePrefix}filterBoolean`;
-  override readonly filterType = new Type.CompositeFilterTypeReference(
-    `${syntheticNamePrefix}BooleanFilter`,
-  );
-  override readonly graphqlType = new Type.GraphqlType(
+  override readonly filterType = `${syntheticNamePrefix}BooleanFilter`;
+  override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     "graphql.GraphQLBoolean",
   );
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
-  override get conversions(): readonly Type.Conversion[] {
-    const conversions: Type.Conversion[] = [
+  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
+    const conversions: AbstractPrimitiveType.Conversion[] = [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
@@ -51,7 +46,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
+    AbstractPrimitiveType<boolean>["filterSparqlWherePatterns"]
   >[0]): readonly Sparql.Pattern[] {
     return [
       {
@@ -63,9 +58,9 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   protected override fromRdfExpressionChain({
     variables,
-  }: Parameters<TermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    TermType["fromRdfExpressionChain"]
-  > {
+  }: Parameters<
+    AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]> {
     let fromRdfResourceValueExpression = "value.toBoolean()";
     if (this.primitiveIn.length === 1) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
@@ -82,7 +77,9 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   override jsonZodSchema({
     variables,
-  }: Parameters<Type["jsonZodSchema"]>[0]): ReturnType<Type["jsonZodSchema"]> {
+  }: Parameters<
+    AbstractPrimitiveType<boolean>["jsonZodSchema"]
+  >[0]): ReturnType<AbstractPrimitiveType<boolean>["jsonZodSchema"]> {
     if (this.primitiveIn.length === 1) {
       return `${variables.zod}.literal(${this.primitiveIn[0]})`;
     }
@@ -90,7 +87,9 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   }
 
   override snippetDeclarations(
-    parameters: Parameters<Type["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractPrimitiveType<boolean>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
@@ -145,7 +144,7 @@ namespace ${syntheticNamePrefix}BooleanFilter {
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): string {
     return this.primitiveDefaultValue
       .map((defaultValue) => {
         if (defaultValue) {
