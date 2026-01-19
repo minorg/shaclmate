@@ -1,5 +1,5 @@
 import { Either, Maybe } from "purify-ts";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
 
 type AstAbstractTypeProperties = {
   readonly comment: Maybe<string>;
@@ -16,7 +16,7 @@ namespace AstAbstractTypeProperties {
 export function transformShapeToAstAbstractTypeProperties(
   shape: input.Shape,
 ): Either<Error, AstAbstractTypeProperties> {
-  if (shape instanceof input.PropertyShape) {
+  if (shape.kind === "PropertyShape") {
     // comment, label, et al. belong to the ObjectType.Property, not to the type
     return Either.of(AstAbstractTypeProperties.empty);
   }

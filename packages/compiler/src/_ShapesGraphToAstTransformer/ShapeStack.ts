@@ -1,7 +1,7 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
 
 export class ShapeStack {
   private readonly stack: input.Shape[] = [];
@@ -35,7 +35,7 @@ export class ShapeStack {
 
   get defaultValue(): Maybe<Literal | NamedNode> {
     for (const shape of this.stack.toReversed()) {
-      if (!(shape instanceof input.PropertyShape)) {
+      if (shape.kind !== "PropertyShape") {
         continue;
       }
       if (shape.defaultValue.isJust()) {

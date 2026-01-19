@@ -3,7 +3,7 @@ import { Either, Left, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
-import * as input from "../input/index.js";
+import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
@@ -109,7 +109,7 @@ export function transformShapeToAstCompoundType(
 
             if (compoundTypeKind === "UnionType") {
               let memberDiscriminantValue: string | undefined;
-              if (memberShape instanceof input.NodeShape) {
+              if (memberShape.kind === "NodeShape") {
                 memberDiscriminantValue =
                   memberShape.discriminantValue.extract();
               }

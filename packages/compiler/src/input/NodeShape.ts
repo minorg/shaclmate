@@ -33,6 +33,7 @@ export class NodeShape extends ShaclCoreNodeShape<
 
   readonly isClass: boolean;
   readonly isList: boolean;
+  readonly kind = "NodeShape";
 
   constructor({
     ancestorClassIris,
@@ -89,6 +90,7 @@ export class NodeShape extends ShaclCoreNodeShape<
     );
   }
 
+  @Memoize()
   get comment(): Maybe<string> {
     return List.head(this.comments);
   }
@@ -146,6 +148,7 @@ export class NodeShape extends ShaclCoreNodeShape<
     );
   }
 
+  @Memoize()
   get label(): Maybe<string> {
     return List.head(this.labels);
   }
