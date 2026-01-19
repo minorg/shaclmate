@@ -75982,55 +75982,52 @@ export class $SparqlObjectSet implements $ObjectSet {
     },
     query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
   ): Promise<purify.Either<Error, readonly ObjectT[]>> {
-    const identifiersEither = await this.$objectIdentifiers<ObjectIdentifierT>(
-      objectType,
-      query,
-    );
-    if (identifiersEither.isLeft()) {
-      return identifiersEither;
-    }
-    const identifiers = identifiersEither.unsafeCoerce();
-    if (identifiers.length === 0) {
-      return purify.Either.of([]);
-    }
-
-    const constructQueryString = objectType.$sparqlConstructQueryString({
-      subject: this.$objectVariable,
-      where: [
-        {
-          type: "values" as const,
-          values: identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        },
-      ],
-    });
-
-    let quads: readonly rdfjs.Quad[];
-    try {
-      quads = await this.$sparqlClient.queryQuads(constructQueryString);
-    } catch (e) {
-      return purify.Left(e as Error);
-    }
-
-    const dataset = datasetFactory.dataset(quads.concat());
-    const objects: ObjectT[] = [];
-    for (const identifier of identifiers) {
-      const objectEither = objectType.$fromRdf(
-        new rdfjsResource.Resource<rdfjs.NamedNode>({
-          dataset,
-          identifier: identifier as rdfjs.NamedNode,
-        }),
-        { objectSet: this },
+    return purify.EitherAsync(async ({ liftEither }) => {
+      const identifiers = await liftEither(
+        await this.$objectIdentifiers<ObjectIdentifierT>(objectType, query),
       );
-      if (objectEither.isLeft()) {
-        return objectEither;
+      if (identifiers.length === 0) {
+        return [];
       }
-      objects.push(objectEither.unsafeCoerce());
-    }
-    return purify.Either.of(objects);
+
+      const constructQueryString = objectType.$sparqlConstructQueryString({
+        subject: this.$objectVariable,
+        where: [
+          {
+            type: "values" as const,
+            values: identifiers.map((identifier) => {
+              const valuePatternRow: sparqljs.ValuePatternRow = {};
+              valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+              return valuePatternRow;
+            }),
+          },
+        ],
+      });
+
+      let quads: readonly rdfjs.Quad[];
+      try {
+        quads = await this.$sparqlClient.queryQuads(constructQueryString);
+      } catch (e) {
+        return purify.Left(e as Error);
+      }
+
+      const dataset = datasetFactory.dataset(quads.concat());
+      const objects: ObjectT[] = [];
+      for (const identifier of identifiers) {
+        objects.push(
+          await liftEither(
+            objectType.$fromRdf(
+              new rdfjsResource.Resource<rdfjs.NamedNode>({
+                dataset,
+                identifier: identifier as rdfjs.NamedNode,
+              }),
+              { objectSet: this },
+            ),
+          ),
+        );
+      }
+      return objects;
+    });
   }
 
   protected async $objectsCount<
