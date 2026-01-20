@@ -123,9 +123,9 @@ export class ObjectUnionType extends AbstractDeclaredType {
       this.memberTypes[0]._discriminantProperty.name;
     const discriminantPropertyOwnValues: string[] = [];
     for (const memberType of this.memberTypes) {
-      invariant(
-        memberType.declarationType === this.memberTypes[0].declarationType,
-      );
+      // invariant(
+      //   memberType.declarationType === this.memberTypes[0].declarationType,
+      // );
       invariant(
         memberType._discriminantProperty.name === discriminantPropertyName,
       );
@@ -233,16 +233,9 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override hashStatements({
     variables,
   }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly string[] {
-    switch (this.memberTypes[0].declarationType) {
-      case "class":
-        return [
-          `${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`,
-        ];
-      case "interface":
-        return [
-          `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
-        ];
-    }
+    return [
+      `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+    ];
   }
 
   override jsonUiSchemaElement(): Maybe<string> {
@@ -327,24 +320,13 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override toJsonExpression({
     variables,
   }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): string {
-    switch (this.memberTypes[0].declarationType) {
-      case "class":
-        return `${variables.value}.${syntheticNamePrefix}toJson()`;
-      case "interface":
-        return `${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
-    }
+    return `${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): string {
-    const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
-    switch (this.memberTypes[0].declarationType) {
-      case "class":
-        return `[${variables.value}.${syntheticNamePrefix}toRdf(${options}).identifier]`;
-      case "interface":
-        return `[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${options}).identifier]`;
-    }
+    return `[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${objectInitializer({ mutateGraph: variables.mutateGraph, resourceSet: variables.resourceSet })}).identifier]`;
   }
 
   override useImports(): readonly Import[] {

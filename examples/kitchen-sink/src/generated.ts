@@ -10176,7 +10176,7 @@ export class RecursiveClassUnionMember2 {
     },
   >(_hasher: HasherT): HasherT {
     this.recursiveClassUnionMember2Property.ifJust((value0) => {
-      value0.$hash(_hasher);
+      RecursiveClassUnion.$hash(value0, _hasher);
     });
     return _hasher;
   }
@@ -10191,7 +10191,7 @@ export class RecursiveClassUnionMember2 {
         $type: this.$type,
         recursiveClassUnionMember2Property:
           this.recursiveClassUnionMember2Property
-            .map((item) => item.$toJson())
+            .map((item) => RecursiveClassUnion.$toJson(item))
             .extract(),
       } satisfies RecursiveClassUnionMember2.$Json),
     );
@@ -10219,7 +10219,7 @@ export class RecursiveClassUnionMember2 {
       ...this.recursiveClassUnionMember2Property
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          RecursiveClassUnion.$toRdf(value, { mutateGraph, resourceSet })
             .identifier,
         ]),
     );
@@ -10662,7 +10662,7 @@ export class RecursiveClassUnionMember1 {
     },
   >(_hasher: HasherT): HasherT {
     this.recursiveClassUnionMember1Property.ifJust((value0) => {
-      value0.$hash(_hasher);
+      RecursiveClassUnion.$hash(value0, _hasher);
     });
     return _hasher;
   }
@@ -10677,7 +10677,7 @@ export class RecursiveClassUnionMember1 {
         $type: this.$type,
         recursiveClassUnionMember1Property:
           this.recursiveClassUnionMember1Property
-            .map((item) => item.$toJson())
+            .map((item) => RecursiveClassUnion.$toJson(item))
             .extract(),
       } satisfies RecursiveClassUnionMember1.$Json),
     );
@@ -10705,7 +10705,7 @@ export class RecursiveClassUnionMember1 {
       ...this.recursiveClassUnionMember1Property
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          RecursiveClassUnion.$toRdf(value, { mutateGraph, resourceSet })
             .identifier,
         ]),
     );
@@ -24101,10 +24101,8 @@ export namespace LazyPropertiesInterface {
       ..._lazyPropertiesInterface.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.partial
         .toList()
         .flatMap((value) => [
-          PartialInterfaceUnion.$toRdf(value, {
-            mutateGraph: mutateGraph,
-            resourceSet: resourceSet,
-          }).identifier,
+          PartialInterfaceUnion.$toRdf(value, { mutateGraph, resourceSet })
+            .identifier,
         ]),
     );
     resource.add(
@@ -25594,7 +25592,7 @@ export class LazyPropertiesClass {
     );
     this.optionalPartialClassUnionToResolvedClassUnionProperty.partial.ifJust(
       (value1) => {
-        value1.$hash(_hasher);
+        PartialClassUnion.$hash(value1, _hasher);
       },
     );
     this.requiredLazyToResolvedClassProperty.partial.$hash(_hasher);
@@ -25640,7 +25638,7 @@ export class LazyPropertiesClass {
             .extract(),
         optionalPartialClassUnionToResolvedClassUnionProperty:
           this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
-            .map((item) => item.$toJson())
+            .map((item) => PartialClassUnion.$toJson(item))
             .extract(),
         requiredLazyToResolvedClassProperty:
           this.requiredLazyToResolvedClassProperty.partial.$toJson(),
@@ -25731,7 +25729,7 @@ export class LazyPropertiesClass {
       ...this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
-          value.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
+          PartialClassUnion.$toRdf(value, { mutateGraph, resourceSet })
             .identifier,
         ]),
     );
