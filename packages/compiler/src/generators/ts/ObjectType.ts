@@ -466,6 +466,7 @@ export class ObjectType extends AbstractDeclaredType {
     }
 
     let snippetDeclarations: Record<string, string> = {};
+
     if (this.features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
@@ -475,6 +476,7 @@ export class ObjectType extends AbstractDeclaredType {
     if (this.features.has("rdf")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
+        sharedSnippetDeclarations.IdentifierSet, // For $RdfjsDatasetObjectSet
         sharedSnippetDeclarations.RdfVocabularies,
       );
     }

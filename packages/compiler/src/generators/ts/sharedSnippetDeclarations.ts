@@ -126,6 +126,35 @@ export namespace ${syntheticNamePrefix}EqualsResult {
   }`,
   ),
 
+  IdentifierSet: singleEntryRecord(
+    `${syntheticNamePrefix}IdentifierSet`,
+    `\
+class ${syntheticNamePrefix}IdentifierSet {
+  private readonly blankNodeValues = new Set<string>();
+  private readonly namedNodeValues = new Set<string>();
+
+  add(identifier: rdfjs.BlankNode | rdfjs.NamedNode): this {
+    switch (identifier.termType) {
+      case "BlankNode":
+        this.blankNodeValues.add(identifier.value);
+        return this;
+      case "NamedNode":
+        this.namedNodeValues.add(identifier.value);
+        return this;
+    }
+  }
+
+  has(identifier: rdfjs.BlankNode | rdfjs.NamedNode): boolean {
+    switch (identifier.termType) {
+      case "BlankNode":
+        return this.blankNodeValues.has(identifier.value);
+      case "NamedNode":
+        return this.namedNodeValues.has(identifier.value);
+    }
+  }
+}`,
+  ),
+
   insertSeedSparqlWherePattern: singleEntryRecord(
     `${syntheticNamePrefix}insertSeedSparqlWherePattern`,
     `\

@@ -698,6 +698,31 @@ namespace $IdentifierFilter {
   }
 }
 
+class $IdentifierSet {
+  private readonly blankNodeValues = new Set<string>();
+  private readonly namedNodeValues = new Set<string>();
+
+  add(identifier: rdfjs.BlankNode | rdfjs.NamedNode): this {
+    switch (identifier.termType) {
+      case "BlankNode":
+        this.blankNodeValues.add(identifier.value);
+        return this;
+      case "NamedNode":
+        this.namedNodeValues.add(identifier.value);
+        return this;
+    }
+  }
+
+  has(identifier: rdfjs.BlankNode | rdfjs.NamedNode): boolean {
+    switch (identifier.termType) {
+      case "BlankNode":
+        return this.blankNodeValues.has(identifier.value);
+      case "NamedNode":
+        return this.namedNodeValues.has(identifier.value);
+    }
+  }
+}
+
 /**
  * Insert a seed SPARQL where pattern if necessary.
  *
@@ -66056,14 +66081,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     return this.baseInterfaceWithoutPropertiesSync(identifier);
   }
 
-  baseInterfaceWithoutPropertiesSync(
-    identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
-  ): purify.Either<Error, BaseInterfaceWithoutProperties> {
-    return this.baseInterfaceWithoutPropertiesesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
-  }
-
   async baseInterfaceWithoutPropertiesIdentifiers(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<
@@ -66081,23 +66098,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly BaseInterfaceWithoutPropertiesStatic.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      BaseInterfaceWithoutProperties,
-      BaseInterfaceWithoutPropertiesStatic.$Filter,
-      BaseInterfaceWithoutPropertiesStatic.$Identifier
-    >(
-      [
-        {
-          $filter: BaseInterfaceWithoutPropertiesStatic.$filter,
-          $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.baseInterfaceWithoutPropertiesesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66105,29 +66107,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly BaseInterfaceWithoutProperties[]>> {
     return this.baseInterfaceWithoutPropertiesesSync(query);
-  }
-
-  baseInterfaceWithoutPropertiesesSync(
-    query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
-  ): purify.Either<Error, readonly BaseInterfaceWithoutProperties[]> {
-    return this.$objectsSync<
-      BaseInterfaceWithoutProperties,
-      BaseInterfaceWithoutPropertiesStatic.$Filter,
-      BaseInterfaceWithoutPropertiesStatic.$Identifier
-    >(
-      [
-        {
-          $filter: BaseInterfaceWithoutPropertiesStatic.$filter,
-          $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async baseInterfaceWithoutPropertiesesCount(
@@ -66145,22 +66124,36 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.baseInterfaceWithoutPropertiesesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  baseInterfaceWithoutPropertiesSync(
+    identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
+  ): purify.Either<Error, BaseInterfaceWithoutProperties> {
+    return this.baseInterfaceWithoutPropertiesesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  baseInterfaceWithoutPropertiesesSync(
+    query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
+  ): purify.Either<Error, readonly BaseInterfaceWithoutProperties[]> {
+    return this.$objectsSync<
       BaseInterfaceWithoutProperties,
       BaseInterfaceWithoutPropertiesStatic.$Filter,
       BaseInterfaceWithoutPropertiesStatic.$Identifier
     >(
-      [
-        {
-          $filter: BaseInterfaceWithoutPropertiesStatic.$filter,
-          $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: BaseInterfaceWithoutPropertiesStatic.$filter,
+        $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -66169,14 +66162,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
   ): Promise<purify.Either<Error, BaseInterfaceWithProperties>> {
     return this.baseInterfaceWithPropertiesSync(identifier);
-  }
-
-  baseInterfaceWithPropertiesSync(
-    identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
-  ): purify.Either<Error, BaseInterfaceWithProperties> {
-    return this.baseInterfaceWithPropertiesesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async baseInterfaceWithPropertiesIdentifiers(
@@ -66196,24 +66181,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly BaseInterfaceWithPropertiesStatic.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      BaseInterfaceWithProperties,
-      BaseInterfaceWithPropertiesStatic.$Filter,
-      BaseInterfaceWithPropertiesStatic.$Identifier
-    >(
-      [
-        {
-          $filter: BaseInterfaceWithPropertiesStatic.$filter,
-          $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            BaseInterfaceWithPropertiesStatic.$fromRdfType,
-            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.baseInterfaceWithPropertiesesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66221,30 +66190,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly BaseInterfaceWithProperties[]>> {
     return this.baseInterfaceWithPropertiesesSync(query);
-  }
-
-  baseInterfaceWithPropertiesesSync(
-    query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
-  ): purify.Either<Error, readonly BaseInterfaceWithProperties[]> {
-    return this.$objectsSync<
-      BaseInterfaceWithProperties,
-      BaseInterfaceWithPropertiesStatic.$Filter,
-      BaseInterfaceWithPropertiesStatic.$Identifier
-    >(
-      [
-        {
-          $filter: BaseInterfaceWithPropertiesStatic.$filter,
-          $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            BaseInterfaceWithPropertiesStatic.$fromRdfType,
-            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async baseInterfaceWithPropertiesesCount(
@@ -66262,23 +66207,37 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.baseInterfaceWithPropertiesesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  baseInterfaceWithPropertiesSync(
+    identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
+  ): purify.Either<Error, BaseInterfaceWithProperties> {
+    return this.baseInterfaceWithPropertiesesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  baseInterfaceWithPropertiesesSync(
+    query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
+  ): purify.Either<Error, readonly BaseInterfaceWithProperties[]> {
+    return this.$objectsSync<
       BaseInterfaceWithProperties,
       BaseInterfaceWithPropertiesStatic.$Filter,
       BaseInterfaceWithPropertiesStatic.$Identifier
     >(
-      [
-        {
-          $filter: BaseInterfaceWithPropertiesStatic.$filter,
-          $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            BaseInterfaceWithPropertiesStatic.$fromRdfType,
-            BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: BaseInterfaceWithPropertiesStatic.$filter,
+        $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
+        $fromRdfTypes: [
+          BaseInterfaceWithPropertiesStatic.$fromRdfType,
+          BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -66287,14 +66246,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: BlankNodeIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, BlankNodeIdentifierClass>> {
     return this.blankNodeIdentifierClassSync(identifier);
-  }
-
-  blankNodeIdentifierClassSync(
-    identifier: BlankNodeIdentifierClass.$Identifier,
-  ): purify.Either<Error, BlankNodeIdentifierClass> {
-    return this.blankNodeIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async blankNodeIdentifierClassIdentifiers(
@@ -66308,19 +66259,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   blankNodeIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      BlankNodeIdentifierClass,
-      BlankNodeIdentifierClass.$Filter,
-      BlankNodeIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeIdentifierClass.$filter,
-          $fromRdf: BlankNodeIdentifierClass.$fromRdf,
-          $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
-        },
-      ],
-      query,
+    return this.blankNodeIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66328,25 +66268,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>> {
     return this.blankNodeIdentifierClassesSync(query);
-  }
-
-  blankNodeIdentifierClassesSync(
-    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly BlankNodeIdentifierClass[]> {
-    return this.$objectsSync<
-      BlankNodeIdentifierClass,
-      BlankNodeIdentifierClass.$Filter,
-      BlankNodeIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeIdentifierClass.$filter,
-          $fromRdf: BlankNodeIdentifierClass.$fromRdf,
-          $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async blankNodeIdentifierClassesCount(
@@ -66358,18 +66279,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   blankNodeIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.blankNodeIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  blankNodeIdentifierClassSync(
+    identifier: BlankNodeIdentifierClass.$Identifier,
+  ): purify.Either<Error, BlankNodeIdentifierClass> {
+    return this.blankNodeIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  blankNodeIdentifierClassesSync(
+    query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly BlankNodeIdentifierClass[]> {
+    return this.$objectsSync<
       BlankNodeIdentifierClass,
       BlankNodeIdentifierClass.$Filter,
       BlankNodeIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: BlankNodeIdentifierClass.$filter,
-          $fromRdf: BlankNodeIdentifierClass.$fromRdf,
-          $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
-        },
-      ],
+      {
+        $filter: BlankNodeIdentifierClass.$filter,
+        $fromRdf: BlankNodeIdentifierClass.$fromRdf,
+        $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
+      },
       query,
     );
   }
@@ -66378,14 +66313,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: BlankNodeIdentifierInterface.$Identifier,
   ): Promise<purify.Either<Error, BlankNodeIdentifierInterface>> {
     return this.blankNodeIdentifierInterfaceSync(identifier);
-  }
-
-  blankNodeIdentifierInterfaceSync(
-    identifier: BlankNodeIdentifierInterface.$Identifier,
-  ): purify.Either<Error, BlankNodeIdentifierInterface> {
-    return this.blankNodeIdentifierInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async blankNodeIdentifierInterfaceIdentifiers(
@@ -66399,19 +66326,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   blankNodeIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      BlankNodeIdentifierInterface,
-      BlankNodeIdentifierInterface.$Filter,
-      BlankNodeIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeIdentifierInterface.$filter,
-          $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.blankNodeIdentifierInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66419,25 +66335,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>> {
     return this.blankNodeIdentifierInterfacesSync(query);
-  }
-
-  blankNodeIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
-  ): purify.Either<Error, readonly BlankNodeIdentifierInterface[]> {
-    return this.$objectsSync<
-      BlankNodeIdentifierInterface,
-      BlankNodeIdentifierInterface.$Filter,
-      BlankNodeIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeIdentifierInterface.$filter,
-          $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async blankNodeIdentifierInterfacesCount(
@@ -66455,18 +66352,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.blankNodeIdentifierInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  blankNodeIdentifierInterfaceSync(
+    identifier: BlankNodeIdentifierInterface.$Identifier,
+  ): purify.Either<Error, BlankNodeIdentifierInterface> {
+    return this.blankNodeIdentifierInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  blankNodeIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
+  ): purify.Either<Error, readonly BlankNodeIdentifierInterface[]> {
+    return this.$objectsSync<
       BlankNodeIdentifierInterface,
       BlankNodeIdentifierInterface.$Filter,
       BlankNodeIdentifierInterface.$Identifier
     >(
-      [
-        {
-          $filter: BlankNodeIdentifierInterface.$filter,
-          $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: BlankNodeIdentifierInterface.$filter,
+        $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -66475,14 +66386,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierClass>> {
     return this.blankNodeOrIriIdentifierClassSync(identifier);
-  }
-
-  blankNodeOrIriIdentifierClassSync(
-    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
-  ): purify.Either<Error, BlankNodeOrIriIdentifierClass> {
-    return this.blankNodeOrIriIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async blankNodeOrIriIdentifierClassIdentifiers(
@@ -66499,19 +66402,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly BlankNodeOrIriIdentifierClass.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      BlankNodeOrIriIdentifierClass,
-      BlankNodeOrIriIdentifierClass.$Filter,
-      BlankNodeOrIriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeOrIriIdentifierClass.$filter,
-          $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
-        },
-      ],
-      query,
+    return this.blankNodeOrIriIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66519,25 +66411,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
     return this.blankNodeOrIriIdentifierClassesSync(query);
-  }
-
-  blankNodeOrIriIdentifierClassesSync(
-    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]> {
-    return this.$objectsSync<
-      BlankNodeOrIriIdentifierClass,
-      BlankNodeOrIriIdentifierClass.$Filter,
-      BlankNodeOrIriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeOrIriIdentifierClass.$filter,
-          $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async blankNodeOrIriIdentifierClassesCount(
@@ -66555,18 +66428,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.blankNodeOrIriIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  blankNodeOrIriIdentifierClassSync(
+    identifier: BlankNodeOrIriIdentifierClass.$Identifier,
+  ): purify.Either<Error, BlankNodeOrIriIdentifierClass> {
+    return this.blankNodeOrIriIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  blankNodeOrIriIdentifierClassesSync(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]> {
+    return this.$objectsSync<
       BlankNodeOrIriIdentifierClass,
       BlankNodeOrIriIdentifierClass.$Filter,
       BlankNodeOrIriIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: BlankNodeOrIriIdentifierClass.$filter,
-          $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
-        },
-      ],
+      {
+        $filter: BlankNodeOrIriIdentifierClass.$filter,
+        $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
+        $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
+      },
       query,
     );
   }
@@ -66575,14 +66462,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<purify.Either<Error, BlankNodeOrIriIdentifierInterface>> {
     return this.blankNodeOrIriIdentifierInterfaceSync(identifier);
-  }
-
-  blankNodeOrIriIdentifierInterfaceSync(
-    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
-  ): purify.Either<Error, BlankNodeOrIriIdentifierInterface> {
-    return this.blankNodeOrIriIdentifierInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async blankNodeOrIriIdentifierInterfaceIdentifiers(
@@ -66602,19 +66481,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      BlankNodeOrIriIdentifierInterface,
-      BlankNodeOrIriIdentifierInterface.$Filter,
-      BlankNodeOrIriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeOrIriIdentifierInterface.$filter,
-          $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.blankNodeOrIriIdentifierInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66624,25 +66492,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>
   > {
     return this.blankNodeOrIriIdentifierInterfacesSync(query);
-  }
-
-  blankNodeOrIriIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
-  ): purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]> {
-    return this.$objectsSync<
-      BlankNodeOrIriIdentifierInterface,
-      BlankNodeOrIriIdentifierInterface.$Filter,
-      BlankNodeOrIriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: BlankNodeOrIriIdentifierInterface.$filter,
-          $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async blankNodeOrIriIdentifierInterfacesCount(
@@ -66660,18 +66509,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.blankNodeOrIriIdentifierInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  blankNodeOrIriIdentifierInterfaceSync(
+    identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, BlankNodeOrIriIdentifierInterface> {
+    return this.blankNodeOrIriIdentifierInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  blankNodeOrIriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
+  ): purify.Either<Error, readonly BlankNodeOrIriIdentifierInterface[]> {
+    return this.$objectsSync<
       BlankNodeOrIriIdentifierInterface,
       BlankNodeOrIriIdentifierInterface.$Filter,
       BlankNodeOrIriIdentifierInterface.$Identifier
     >(
-      [
-        {
-          $filter: BlankNodeOrIriIdentifierInterface.$filter,
-          $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: BlankNodeOrIriIdentifierInterface.$filter,
+        $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -66680,14 +66543,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ClassUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, ClassUnionMember1>> {
     return this.classUnionMember1Sync(identifier);
-  }
-
-  classUnionMember1Sync(
-    identifier: ClassUnionMember1.$Identifier,
-  ): purify.Either<Error, ClassUnionMember1> {
-    return this.classUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async classUnionMember1Identifiers(
@@ -66699,19 +66554,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   classUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): purify.Either<Error, readonly ClassUnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ClassUnionMember1,
-      ClassUnionMember1.$Filter,
-      ClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
+    return this.classUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66719,25 +66563,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember1[]>> {
     return this.classUnionMember1sSync(query);
-  }
-
-  classUnionMember1sSync(
-    query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly ClassUnionMember1[]> {
-    return this.$objectsSync<
-      ClassUnionMember1,
-      ClassUnionMember1.$Filter,
-      ClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async classUnionMember1sCount(
@@ -66749,18 +66574,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   classUnionMember1sCountSync(
     query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.classUnionMember1sSync(query).map((objects) => objects.length);
+  }
+
+  classUnionMember1Sync(
+    identifier: ClassUnionMember1.$Identifier,
+  ): purify.Either<Error, ClassUnionMember1> {
+    return this.classUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  classUnionMember1sSync(
+    query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly ClassUnionMember1[]> {
+    return this.$objectsSync<
       ClassUnionMember1,
       ClassUnionMember1.$Filter,
       ClassUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ClassUnionMember1.$filter,
+        $fromRdf: ClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -66769,14 +66606,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ClassUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, ClassUnionMember2>> {
     return this.classUnionMember2Sync(identifier);
-  }
-
-  classUnionMember2Sync(
-    identifier: ClassUnionMember2.$Identifier,
-  ): purify.Either<Error, ClassUnionMember2> {
-    return this.classUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async classUnionMember2Identifiers(
@@ -66788,19 +66617,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   classUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): purify.Either<Error, readonly ClassUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ClassUnionMember2,
-      ClassUnionMember2.$Filter,
-      ClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.classUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66808,25 +66626,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember2[]>> {
     return this.classUnionMember2sSync(query);
-  }
-
-  classUnionMember2sSync(
-    query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly ClassUnionMember2[]> {
-    return this.$objectsSync<
-      ClassUnionMember2,
-      ClassUnionMember2.$Filter,
-      ClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async classUnionMember2sCount(
@@ -66838,18 +66637,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   classUnionMember2sCountSync(
     query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.classUnionMember2sSync(query).map((objects) => objects.length);
+  }
+
+  classUnionMember2Sync(
+    identifier: ClassUnionMember2.$Identifier,
+  ): purify.Either<Error, ClassUnionMember2> {
+    return this.classUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  classUnionMember2sSync(
+    query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly ClassUnionMember2[]> {
+    return this.$objectsSync<
       ClassUnionMember2,
       ClassUnionMember2.$Filter,
       ClassUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ClassUnionMember2.$filter,
+        $fromRdf: ClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -66858,14 +66669,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ConcreteChildClass.$Identifier,
   ): Promise<purify.Either<Error, ConcreteChildClass>> {
     return this.concreteChildClassSync(identifier);
-  }
-
-  concreteChildClassSync(
-    identifier: ConcreteChildClass.$Identifier,
-  ): purify.Either<Error, ConcreteChildClass> {
-    return this.concreteChildClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async concreteChildClassIdentifiers(
@@ -66877,19 +66680,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteChildClassIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): purify.Either<Error, readonly ConcreteChildClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ConcreteChildClass,
-      ConcreteChildClass.$Filter,
-      ConcreteChildClass.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteChildClass.$filter,
-          $fromRdf: ConcreteChildClass.$fromRdf,
-          $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
-        },
-      ],
-      query,
+    return this.concreteChildClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66897,25 +66689,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteChildClass[]>> {
     return this.concreteChildClassesSync(query);
-  }
-
-  concreteChildClassesSync(
-    query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
-  ): purify.Either<Error, readonly ConcreteChildClass[]> {
-    return this.$objectsSync<
-      ConcreteChildClass,
-      ConcreteChildClass.$Filter,
-      ConcreteChildClass.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteChildClass.$filter,
-          $fromRdf: ConcreteChildClass.$fromRdf,
-          $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async concreteChildClassesCount(
@@ -66927,18 +66700,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteChildClassesCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.concreteChildClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  concreteChildClassSync(
+    identifier: ConcreteChildClass.$Identifier,
+  ): purify.Either<Error, ConcreteChildClass> {
+    return this.concreteChildClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  concreteChildClassesSync(
+    query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
+  ): purify.Either<Error, readonly ConcreteChildClass[]> {
+    return this.$objectsSync<
       ConcreteChildClass,
       ConcreteChildClass.$Filter,
       ConcreteChildClass.$Identifier
     >(
-      [
-        {
-          $filter: ConcreteChildClass.$filter,
-          $fromRdf: ConcreteChildClass.$fromRdf,
-          $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ConcreteChildClass.$filter,
+        $fromRdf: ConcreteChildClass.$fromRdf,
+        $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
+      },
       query,
     );
   }
@@ -66947,14 +66734,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ConcreteChildInterface.$Identifier,
   ): Promise<purify.Either<Error, ConcreteChildInterface>> {
     return this.concreteChildInterfaceSync(identifier);
-  }
-
-  concreteChildInterfaceSync(
-    identifier: ConcreteChildInterface.$Identifier,
-  ): purify.Either<Error, ConcreteChildInterface> {
-    return this.concreteChildInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async concreteChildInterfaceIdentifiers(
@@ -66968,19 +66747,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteChildInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): purify.Either<Error, readonly ConcreteChildInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ConcreteChildInterface,
-      ConcreteChildInterface.$Filter,
-      ConcreteChildInterface.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteChildInterface.$filter,
-          $fromRdf: ConcreteChildInterface.$fromRdf,
-          $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
-        },
-      ],
-      query,
+    return this.concreteChildInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -66988,25 +66756,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteChildInterface[]>> {
     return this.concreteChildInterfacesSync(query);
-  }
-
-  concreteChildInterfacesSync(
-    query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
-  ): purify.Either<Error, readonly ConcreteChildInterface[]> {
-    return this.$objectsSync<
-      ConcreteChildInterface,
-      ConcreteChildInterface.$Filter,
-      ConcreteChildInterface.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteChildInterface.$filter,
-          $fromRdf: ConcreteChildInterface.$fromRdf,
-          $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async concreteChildInterfacesCount(
@@ -67018,18 +66767,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteChildInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.concreteChildInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  concreteChildInterfaceSync(
+    identifier: ConcreteChildInterface.$Identifier,
+  ): purify.Either<Error, ConcreteChildInterface> {
+    return this.concreteChildInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  concreteChildInterfacesSync(
+    query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
+  ): purify.Either<Error, readonly ConcreteChildInterface[]> {
+    return this.$objectsSync<
       ConcreteChildInterface,
       ConcreteChildInterface.$Filter,
       ConcreteChildInterface.$Identifier
     >(
-      [
-        {
-          $filter: ConcreteChildInterface.$filter,
-          $fromRdf: ConcreteChildInterface.$fromRdf,
-          $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ConcreteChildInterface.$filter,
+        $fromRdf: ConcreteChildInterface.$fromRdf,
+        $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
+      },
       query,
     );
   }
@@ -67038,14 +66801,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ConcreteParentClassStatic.$Identifier,
   ): Promise<purify.Either<Error, ConcreteParentClass>> {
     return this.concreteParentClassSync(identifier);
-  }
-
-  concreteParentClassSync(
-    identifier: ConcreteParentClassStatic.$Identifier,
-  ): purify.Either<Error, ConcreteParentClass> {
-    return this.concreteParentClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async concreteParentClassIdentifiers(
@@ -67059,22 +66814,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteParentClassIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): purify.Either<Error, readonly ConcreteParentClassStatic.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ConcreteParentClass,
-      ConcreteParentClassStatic.$Filter,
-      ConcreteParentClassStatic.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteParentClassStatic.$filter,
-          $fromRdf: ConcreteParentClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentClassStatic.$fromRdfType,
-            ConcreteChildClass.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.concreteParentClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67082,28 +66823,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteParentClass[]>> {
     return this.concreteParentClassesSync(query);
-  }
-
-  concreteParentClassesSync(
-    query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
-  ): purify.Either<Error, readonly ConcreteParentClass[]> {
-    return this.$objectsSync<
-      ConcreteParentClass,
-      ConcreteParentClassStatic.$Filter,
-      ConcreteParentClassStatic.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteParentClassStatic.$filter,
-          $fromRdf: ConcreteParentClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentClassStatic.$fromRdfType,
-            ConcreteChildClass.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async concreteParentClassesCount(
@@ -67115,21 +66834,35 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   concreteParentClassesCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.concreteParentClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  concreteParentClassSync(
+    identifier: ConcreteParentClassStatic.$Identifier,
+  ): purify.Either<Error, ConcreteParentClass> {
+    return this.concreteParentClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  concreteParentClassesSync(
+    query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
+  ): purify.Either<Error, readonly ConcreteParentClass[]> {
+    return this.$objectsSync<
       ConcreteParentClass,
       ConcreteParentClassStatic.$Filter,
       ConcreteParentClassStatic.$Identifier
     >(
-      [
-        {
-          $filter: ConcreteParentClassStatic.$filter,
-          $fromRdf: ConcreteParentClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentClassStatic.$fromRdfType,
-            ConcreteChildClass.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: ConcreteParentClassStatic.$filter,
+        $fromRdf: ConcreteParentClassStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentClassStatic.$fromRdfType,
+          ConcreteChildClass.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -67138,14 +66871,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ConcreteParentInterfaceStatic.$Identifier,
   ): Promise<purify.Either<Error, ConcreteParentInterface>> {
     return this.concreteParentInterfaceSync(identifier);
-  }
-
-  concreteParentInterfaceSync(
-    identifier: ConcreteParentInterfaceStatic.$Identifier,
-  ): purify.Either<Error, ConcreteParentInterface> {
-    return this.concreteParentInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async concreteParentInterfaceIdentifiers(
@@ -67162,22 +66887,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly ConcreteParentInterfaceStatic.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      ConcreteParentInterface,
-      ConcreteParentInterfaceStatic.$Filter,
-      ConcreteParentInterfaceStatic.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteParentInterfaceStatic.$filter,
-          $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.concreteParentInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67185,28 +66896,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteParentInterface[]>> {
     return this.concreteParentInterfacesSync(query);
-  }
-
-  concreteParentInterfacesSync(
-    query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
-  ): purify.Either<Error, readonly ConcreteParentInterface[]> {
-    return this.$objectsSync<
-      ConcreteParentInterface,
-      ConcreteParentInterfaceStatic.$Filter,
-      ConcreteParentInterfaceStatic.$Identifier
-    >(
-      [
-        {
-          $filter: ConcreteParentInterfaceStatic.$filter,
-          $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async concreteParentInterfacesCount(
@@ -67224,21 +66913,35 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.concreteParentInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  concreteParentInterfaceSync(
+    identifier: ConcreteParentInterfaceStatic.$Identifier,
+  ): purify.Either<Error, ConcreteParentInterface> {
+    return this.concreteParentInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  concreteParentInterfacesSync(
+    query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
+  ): purify.Either<Error, readonly ConcreteParentInterface[]> {
+    return this.$objectsSync<
       ConcreteParentInterface,
       ConcreteParentInterfaceStatic.$Filter,
       ConcreteParentInterfaceStatic.$Identifier
     >(
-      [
-        {
-          $filter: ConcreteParentInterfaceStatic.$filter,
-          $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentInterfaceStatic.$fromRdfType,
-            ConcreteChildInterface.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: ConcreteParentInterfaceStatic.$filter,
+        $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
+        $fromRdfTypes: [
+          ConcreteParentInterfaceStatic.$fromRdfType,
+          ConcreteChildInterface.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -67247,14 +66950,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ConvertibleTypePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, ConvertibleTypePropertiesClass>> {
     return this.convertibleTypePropertiesClassSync(identifier);
-  }
-
-  convertibleTypePropertiesClassSync(
-    identifier: ConvertibleTypePropertiesClass.$Identifier,
-  ): purify.Either<Error, ConvertibleTypePropertiesClass> {
-    return this.convertibleTypePropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async convertibleTypePropertiesClassIdentifiers(
@@ -67271,19 +66966,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly ConvertibleTypePropertiesClass.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      ConvertibleTypePropertiesClass,
-      ConvertibleTypePropertiesClass.$Filter,
-      ConvertibleTypePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: ConvertibleTypePropertiesClass.$filter,
-          $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
-          $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
-        },
-      ],
-      query,
+    return this.convertibleTypePropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67291,25 +66975,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
     return this.convertibleTypePropertiesClassesSync(query);
-  }
-
-  convertibleTypePropertiesClassesSync(
-    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly ConvertibleTypePropertiesClass[]> {
-    return this.$objectsSync<
-      ConvertibleTypePropertiesClass,
-      ConvertibleTypePropertiesClass.$Filter,
-      ConvertibleTypePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: ConvertibleTypePropertiesClass.$filter,
-          $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
-          $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async convertibleTypePropertiesClassesCount(
@@ -67327,18 +66992,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.convertibleTypePropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  convertibleTypePropertiesClassSync(
+    identifier: ConvertibleTypePropertiesClass.$Identifier,
+  ): purify.Either<Error, ConvertibleTypePropertiesClass> {
+    return this.convertibleTypePropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  convertibleTypePropertiesClassesSync(
+    query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly ConvertibleTypePropertiesClass[]> {
+    return this.$objectsSync<
       ConvertibleTypePropertiesClass,
       ConvertibleTypePropertiesClass.$Filter,
       ConvertibleTypePropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: ConvertibleTypePropertiesClass.$filter,
-          $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
-          $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ConvertibleTypePropertiesClass.$filter,
+        $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
+        $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
+      },
       query,
     );
   }
@@ -67347,14 +67026,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: DateUnionPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, DateUnionPropertiesClass>> {
     return this.dateUnionPropertiesClassSync(identifier);
-  }
-
-  dateUnionPropertiesClassSync(
-    identifier: DateUnionPropertiesClass.$Identifier,
-  ): purify.Either<Error, DateUnionPropertiesClass> {
-    return this.dateUnionPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async dateUnionPropertiesClassIdentifiers(
@@ -67368,19 +67039,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   dateUnionPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      DateUnionPropertiesClass,
-      DateUnionPropertiesClass.$Filter,
-      DateUnionPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: DateUnionPropertiesClass.$filter,
-          $fromRdf: DateUnionPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.dateUnionPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67388,25 +67048,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>> {
     return this.dateUnionPropertiesClassesSync(query);
-  }
-
-  dateUnionPropertiesClassesSync(
-    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly DateUnionPropertiesClass[]> {
-    return this.$objectsSync<
-      DateUnionPropertiesClass,
-      DateUnionPropertiesClass.$Filter,
-      DateUnionPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: DateUnionPropertiesClass.$filter,
-          $fromRdf: DateUnionPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async dateUnionPropertiesClassesCount(
@@ -67418,18 +67059,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   dateUnionPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.dateUnionPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  dateUnionPropertiesClassSync(
+    identifier: DateUnionPropertiesClass.$Identifier,
+  ): purify.Either<Error, DateUnionPropertiesClass> {
+    return this.dateUnionPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  dateUnionPropertiesClassesSync(
+    query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly DateUnionPropertiesClass[]> {
+    return this.$objectsSync<
       DateUnionPropertiesClass,
       DateUnionPropertiesClass.$Filter,
       DateUnionPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: DateUnionPropertiesClass.$filter,
-          $fromRdf: DateUnionPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: DateUnionPropertiesClass.$filter,
+        $fromRdf: DateUnionPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -67438,14 +67093,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, DefaultValuePropertiesClass>> {
     return this.defaultValuePropertiesClassSync(identifier);
-  }
-
-  defaultValuePropertiesClassSync(
-    identifier: DefaultValuePropertiesClass.$Identifier,
-  ): purify.Either<Error, DefaultValuePropertiesClass> {
-    return this.defaultValuePropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async defaultValuePropertiesClassIdentifiers(
@@ -67459,19 +67106,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   defaultValuePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): purify.Either<Error, readonly DefaultValuePropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      DefaultValuePropertiesClass,
-      DefaultValuePropertiesClass.$Filter,
-      DefaultValuePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: DefaultValuePropertiesClass.$filter,
-          $fromRdf: DefaultValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.defaultValuePropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67479,25 +67115,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly DefaultValuePropertiesClass[]>> {
     return this.defaultValuePropertiesClassesSync(query);
-  }
-
-  defaultValuePropertiesClassesSync(
-    query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly DefaultValuePropertiesClass[]> {
-    return this.$objectsSync<
-      DefaultValuePropertiesClass,
-      DefaultValuePropertiesClass.$Filter,
-      DefaultValuePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: DefaultValuePropertiesClass.$filter,
-          $fromRdf: DefaultValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async defaultValuePropertiesClassesCount(
@@ -67515,18 +67132,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.defaultValuePropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  defaultValuePropertiesClassSync(
+    identifier: DefaultValuePropertiesClass.$Identifier,
+  ): purify.Either<Error, DefaultValuePropertiesClass> {
+    return this.defaultValuePropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  defaultValuePropertiesClassesSync(
+    query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly DefaultValuePropertiesClass[]> {
+    return this.$objectsSync<
       DefaultValuePropertiesClass,
       DefaultValuePropertiesClass.$Filter,
       DefaultValuePropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: DefaultValuePropertiesClass.$filter,
-          $fromRdf: DefaultValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: DefaultValuePropertiesClass.$filter,
+        $fromRdf: DefaultValuePropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -67535,14 +67166,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: DirectRecursiveClass.$Identifier,
   ): Promise<purify.Either<Error, DirectRecursiveClass>> {
     return this.directRecursiveClassSync(identifier);
-  }
-
-  directRecursiveClassSync(
-    identifier: DirectRecursiveClass.$Identifier,
-  ): purify.Either<Error, DirectRecursiveClass> {
-    return this.directRecursiveClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async directRecursiveClassIdentifiers(
@@ -67556,19 +67179,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   directRecursiveClassIdentifiersSync(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      DirectRecursiveClass,
-      DirectRecursiveClass.$Filter,
-      DirectRecursiveClass.$Identifier
-    >(
-      [
-        {
-          $filter: DirectRecursiveClass.$filter,
-          $fromRdf: DirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.directRecursiveClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67576,25 +67188,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<purify.Either<Error, readonly DirectRecursiveClass[]>> {
     return this.directRecursiveClassesSync(query);
-  }
-
-  directRecursiveClassesSync(
-    query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
-  ): purify.Either<Error, readonly DirectRecursiveClass[]> {
-    return this.$objectsSync<
-      DirectRecursiveClass,
-      DirectRecursiveClass.$Filter,
-      DirectRecursiveClass.$Identifier
-    >(
-      [
-        {
-          $filter: DirectRecursiveClass.$filter,
-          $fromRdf: DirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async directRecursiveClassesCount(
@@ -67606,18 +67199,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   directRecursiveClassesCountSync(
     query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.directRecursiveClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  directRecursiveClassSync(
+    identifier: DirectRecursiveClass.$Identifier,
+  ): purify.Either<Error, DirectRecursiveClass> {
+    return this.directRecursiveClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  directRecursiveClassesSync(
+    query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
+  ): purify.Either<Error, readonly DirectRecursiveClass[]> {
+    return this.$objectsSync<
       DirectRecursiveClass,
       DirectRecursiveClass.$Filter,
       DirectRecursiveClass.$Identifier
     >(
-      [
-        {
-          $filter: DirectRecursiveClass.$filter,
-          $fromRdf: DirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: DirectRecursiveClass.$filter,
+        $fromRdf: DirectRecursiveClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -67626,14 +67233,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<purify.Either<Error, ExplicitFromToRdfTypesClass>> {
     return this.explicitFromToRdfTypesClassSync(identifier);
-  }
-
-  explicitFromToRdfTypesClassSync(
-    identifier: ExplicitFromToRdfTypesClass.$Identifier,
-  ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
-    return this.explicitFromToRdfTypesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async explicitFromToRdfTypesClassIdentifiers(
@@ -67647,19 +67246,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   explicitFromToRdfTypesClassIdentifiersSync(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): purify.Either<Error, readonly ExplicitFromToRdfTypesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ExplicitFromToRdfTypesClass,
-      ExplicitFromToRdfTypesClass.$Filter,
-      ExplicitFromToRdfTypesClass.$Identifier
-    >(
-      [
-        {
-          $filter: ExplicitFromToRdfTypesClass.$filter,
-          $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
-          $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
-        },
-      ],
-      query,
+    return this.explicitFromToRdfTypesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67667,25 +67255,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ExplicitFromToRdfTypesClass[]>> {
     return this.explicitFromToRdfTypesClassesSync(query);
-  }
-
-  explicitFromToRdfTypesClassesSync(
-    query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
-  ): purify.Either<Error, readonly ExplicitFromToRdfTypesClass[]> {
-    return this.$objectsSync<
-      ExplicitFromToRdfTypesClass,
-      ExplicitFromToRdfTypesClass.$Filter,
-      ExplicitFromToRdfTypesClass.$Identifier
-    >(
-      [
-        {
-          $filter: ExplicitFromToRdfTypesClass.$filter,
-          $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
-          $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async explicitFromToRdfTypesClassesCount(
@@ -67703,18 +67272,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.explicitFromToRdfTypesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  explicitFromToRdfTypesClassSync(
+    identifier: ExplicitFromToRdfTypesClass.$Identifier,
+  ): purify.Either<Error, ExplicitFromToRdfTypesClass> {
+    return this.explicitFromToRdfTypesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  explicitFromToRdfTypesClassesSync(
+    query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
+  ): purify.Either<Error, readonly ExplicitFromToRdfTypesClass[]> {
+    return this.$objectsSync<
       ExplicitFromToRdfTypesClass,
       ExplicitFromToRdfTypesClass.$Filter,
       ExplicitFromToRdfTypesClass.$Identifier
     >(
-      [
-        {
-          $filter: ExplicitFromToRdfTypesClass.$filter,
-          $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
-          $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ExplicitFromToRdfTypesClass.$filter,
+        $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
+        $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
+      },
       query,
     );
   }
@@ -67723,14 +67306,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ExplicitRdfTypeClass.$Identifier,
   ): Promise<purify.Either<Error, ExplicitRdfTypeClass>> {
     return this.explicitRdfTypeClassSync(identifier);
-  }
-
-  explicitRdfTypeClassSync(
-    identifier: ExplicitRdfTypeClass.$Identifier,
-  ): purify.Either<Error, ExplicitRdfTypeClass> {
-    return this.explicitRdfTypeClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async explicitRdfTypeClassIdentifiers(
@@ -67744,19 +67319,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   explicitRdfTypeClassIdentifiersSync(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): purify.Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ExplicitRdfTypeClass,
-      ExplicitRdfTypeClass.$Filter,
-      ExplicitRdfTypeClass.$Identifier
-    >(
-      [
-        {
-          $filter: ExplicitRdfTypeClass.$filter,
-          $fromRdf: ExplicitRdfTypeClass.$fromRdf,
-          $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
-        },
-      ],
-      query,
+    return this.explicitRdfTypeClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67764,25 +67328,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ExplicitRdfTypeClass[]>> {
     return this.explicitRdfTypeClassesSync(query);
-  }
-
-  explicitRdfTypeClassesSync(
-    query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
-  ): purify.Either<Error, readonly ExplicitRdfTypeClass[]> {
-    return this.$objectsSync<
-      ExplicitRdfTypeClass,
-      ExplicitRdfTypeClass.$Filter,
-      ExplicitRdfTypeClass.$Identifier
-    >(
-      [
-        {
-          $filter: ExplicitRdfTypeClass.$filter,
-          $fromRdf: ExplicitRdfTypeClass.$fromRdf,
-          $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async explicitRdfTypeClassesCount(
@@ -67794,18 +67339,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   explicitRdfTypeClassesCountSync(
     query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.explicitRdfTypeClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  explicitRdfTypeClassSync(
+    identifier: ExplicitRdfTypeClass.$Identifier,
+  ): purify.Either<Error, ExplicitRdfTypeClass> {
+    return this.explicitRdfTypeClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  explicitRdfTypeClassesSync(
+    query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
+  ): purify.Either<Error, readonly ExplicitRdfTypeClass[]> {
+    return this.$objectsSync<
       ExplicitRdfTypeClass,
       ExplicitRdfTypeClass.$Filter,
       ExplicitRdfTypeClass.$Identifier
     >(
-      [
-        {
-          $filter: ExplicitRdfTypeClass.$filter,
-          $fromRdf: ExplicitRdfTypeClass.$fromRdf,
-          $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
-        },
-      ],
+      {
+        $filter: ExplicitRdfTypeClass.$filter,
+        $fromRdf: ExplicitRdfTypeClass.$fromRdf,
+        $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
+      },
       query,
     );
   }
@@ -67814,14 +67373,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ExternClassPropertyClass.$Identifier,
   ): Promise<purify.Either<Error, ExternClassPropertyClass>> {
     return this.externClassPropertyClassSync(identifier);
-  }
-
-  externClassPropertyClassSync(
-    identifier: ExternClassPropertyClass.$Identifier,
-  ): purify.Either<Error, ExternClassPropertyClass> {
-    return this.externClassPropertyClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async externClassPropertyClassIdentifiers(
@@ -67835,19 +67386,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   externClassPropertyClassIdentifiersSync(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ExternClassPropertyClass,
-      ExternClassPropertyClass.$Filter,
-      ExternClassPropertyClass.$Identifier
-    >(
-      [
-        {
-          $filter: ExternClassPropertyClass.$filter,
-          $fromRdf: ExternClassPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.externClassPropertyClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67855,25 +67395,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>> {
     return this.externClassPropertyClassesSync(query);
-  }
-
-  externClassPropertyClassesSync(
-    query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
-  ): purify.Either<Error, readonly ExternClassPropertyClass[]> {
-    return this.$objectsSync<
-      ExternClassPropertyClass,
-      ExternClassPropertyClass.$Filter,
-      ExternClassPropertyClass.$Identifier
-    >(
-      [
-        {
-          $filter: ExternClassPropertyClass.$filter,
-          $fromRdf: ExternClassPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async externClassPropertyClassesCount(
@@ -67885,18 +67406,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   externClassPropertyClassesCountSync(
     query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.externClassPropertyClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  externClassPropertyClassSync(
+    identifier: ExternClassPropertyClass.$Identifier,
+  ): purify.Either<Error, ExternClassPropertyClass> {
+    return this.externClassPropertyClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  externClassPropertyClassesSync(
+    query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
+  ): purify.Either<Error, readonly ExternClassPropertyClass[]> {
+    return this.$objectsSync<
       ExternClassPropertyClass,
       ExternClassPropertyClass.$Filter,
       ExternClassPropertyClass.$Identifier
     >(
-      [
-        {
-          $filter: ExternClassPropertyClass.$filter,
-          $fromRdf: ExternClassPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: ExternClassPropertyClass.$filter,
+        $fromRdf: ExternClassPropertyClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -67905,14 +67440,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: FlattenClassUnionMember3.$Identifier,
   ): Promise<purify.Either<Error, FlattenClassUnionMember3>> {
     return this.flattenClassUnionMember3Sync(identifier);
-  }
-
-  flattenClassUnionMember3Sync(
-    identifier: FlattenClassUnionMember3.$Identifier,
-  ): purify.Either<Error, FlattenClassUnionMember3> {
-    return this.flattenClassUnionMember3sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async flattenClassUnionMember3Identifiers(
@@ -67926,19 +67453,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   flattenClassUnionMember3IdentifiersSync(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      FlattenClassUnionMember3,
-      FlattenClassUnionMember3.$Filter,
-      FlattenClassUnionMember3.$Identifier
-    >(
-      [
-        {
-          $filter: FlattenClassUnionMember3.$filter,
-          $fromRdf: FlattenClassUnionMember3.$fromRdf,
-          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
-        },
-      ],
-      query,
+    return this.flattenClassUnionMember3sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -67946,25 +67462,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>> {
     return this.flattenClassUnionMember3sSync(query);
-  }
-
-  flattenClassUnionMember3sSync(
-    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
-  ): purify.Either<Error, readonly FlattenClassUnionMember3[]> {
-    return this.$objectsSync<
-      FlattenClassUnionMember3,
-      FlattenClassUnionMember3.$Filter,
-      FlattenClassUnionMember3.$Identifier
-    >(
-      [
-        {
-          $filter: FlattenClassUnionMember3.$filter,
-          $fromRdf: FlattenClassUnionMember3.$fromRdf,
-          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async flattenClassUnionMember3sCount(
@@ -67976,18 +67473,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   flattenClassUnionMember3sCountSync(
     query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.flattenClassUnionMember3sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  flattenClassUnionMember3Sync(
+    identifier: FlattenClassUnionMember3.$Identifier,
+  ): purify.Either<Error, FlattenClassUnionMember3> {
+    return this.flattenClassUnionMember3sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  flattenClassUnionMember3sSync(
+    query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
+  ): purify.Either<Error, readonly FlattenClassUnionMember3[]> {
+    return this.$objectsSync<
       FlattenClassUnionMember3,
       FlattenClassUnionMember3.$Filter,
       FlattenClassUnionMember3.$Identifier
     >(
-      [
-        {
-          $filter: FlattenClassUnionMember3.$filter,
-          $fromRdf: FlattenClassUnionMember3.$fromRdf,
-          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
-        },
-      ],
+      {
+        $filter: FlattenClassUnionMember3.$filter,
+        $fromRdf: FlattenClassUnionMember3.$fromRdf,
+        $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+      },
       query,
     );
   }
@@ -67996,14 +67507,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: HasValuePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, HasValuePropertiesClass>> {
     return this.hasValuePropertiesClassSync(identifier);
-  }
-
-  hasValuePropertiesClassSync(
-    identifier: HasValuePropertiesClass.$Identifier,
-  ): purify.Either<Error, HasValuePropertiesClass> {
-    return this.hasValuePropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async hasValuePropertiesClassIdentifiers(
@@ -68017,19 +67520,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   hasValuePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): purify.Either<Error, readonly HasValuePropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      HasValuePropertiesClass,
-      HasValuePropertiesClass.$Filter,
-      HasValuePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: HasValuePropertiesClass.$filter,
-          $fromRdf: HasValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.hasValuePropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68037,25 +67529,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly HasValuePropertiesClass[]>> {
     return this.hasValuePropertiesClassesSync(query);
-  }
-
-  hasValuePropertiesClassesSync(
-    query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly HasValuePropertiesClass[]> {
-    return this.$objectsSync<
-      HasValuePropertiesClass,
-      HasValuePropertiesClass.$Filter,
-      HasValuePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: HasValuePropertiesClass.$filter,
-          $fromRdf: HasValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async hasValuePropertiesClassesCount(
@@ -68067,18 +67540,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   hasValuePropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.hasValuePropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  hasValuePropertiesClassSync(
+    identifier: HasValuePropertiesClass.$Identifier,
+  ): purify.Either<Error, HasValuePropertiesClass> {
+    return this.hasValuePropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  hasValuePropertiesClassesSync(
+    query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly HasValuePropertiesClass[]> {
+    return this.$objectsSync<
       HasValuePropertiesClass,
       HasValuePropertiesClass.$Filter,
       HasValuePropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: HasValuePropertiesClass.$filter,
-          $fromRdf: HasValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: HasValuePropertiesClass.$filter,
+        $fromRdf: HasValuePropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -68087,14 +67574,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IdentifierOverride3ClassStatic.$Identifier,
   ): Promise<purify.Either<Error, IdentifierOverride3Class>> {
     return this.identifierOverride3ClassSync(identifier);
-  }
-
-  identifierOverride3ClassSync(
-    identifier: IdentifierOverride3ClassStatic.$Identifier,
-  ): purify.Either<Error, IdentifierOverride3Class> {
-    return this.identifierOverride3ClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async identifierOverride3ClassIdentifiers(
@@ -68111,23 +67590,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly IdentifierOverride3ClassStatic.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      IdentifierOverride3Class,
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
-    >(
-      [
-        {
-          $filter: IdentifierOverride3ClassStatic.$filter,
-          $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.identifierOverride3ClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68135,29 +67599,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>> {
     return this.identifierOverride3ClassesSync(query);
-  }
-
-  identifierOverride3ClassesSync(
-    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
-  ): purify.Either<Error, readonly IdentifierOverride3Class[]> {
-    return this.$objectsSync<
-      IdentifierOverride3Class,
-      IdentifierOverride3ClassStatic.$Filter,
-      IdentifierOverride3ClassStatic.$Identifier
-    >(
-      [
-        {
-          $filter: IdentifierOverride3ClassStatic.$filter,
-          $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async identifierOverride3ClassesCount(
@@ -68175,22 +67616,36 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.identifierOverride3ClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  identifierOverride3ClassSync(
+    identifier: IdentifierOverride3ClassStatic.$Identifier,
+  ): purify.Either<Error, IdentifierOverride3Class> {
+    return this.identifierOverride3ClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  identifierOverride3ClassesSync(
+    query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
+  ): purify.Either<Error, readonly IdentifierOverride3Class[]> {
+    return this.$objectsSync<
       IdentifierOverride3Class,
       IdentifierOverride3ClassStatic.$Filter,
       IdentifierOverride3ClassStatic.$Identifier
     >(
-      [
-        {
-          $filter: IdentifierOverride3ClassStatic.$filter,
-          $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: IdentifierOverride3ClassStatic.$filter,
+        $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
+        $fromRdfTypes: [
+          IdentifierOverride3ClassStatic.$fromRdfType,
+          IdentifierOverride4ClassStatic.$fromRdfType,
+          IdentifierOverride5Class.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -68199,14 +67654,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IdentifierOverride4ClassStatic.$Identifier,
   ): Promise<purify.Either<Error, IdentifierOverride4Class>> {
     return this.identifierOverride4ClassSync(identifier);
-  }
-
-  identifierOverride4ClassSync(
-    identifier: IdentifierOverride4ClassStatic.$Identifier,
-  ): purify.Either<Error, IdentifierOverride4Class> {
-    return this.identifierOverride4ClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async identifierOverride4ClassIdentifiers(
@@ -68223,22 +67670,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly IdentifierOverride4ClassStatic.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      IdentifierOverride4Class,
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >(
-      [
-        {
-          $filter: IdentifierOverride4ClassStatic.$filter,
-          $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.identifierOverride4ClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68246,28 +67679,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>> {
     return this.identifierOverride4ClassesSync(query);
-  }
-
-  identifierOverride4ClassesSync(
-    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
-  ): purify.Either<Error, readonly IdentifierOverride4Class[]> {
-    return this.$objectsSync<
-      IdentifierOverride4Class,
-      IdentifierOverride4ClassStatic.$Filter,
-      IdentifierOverride4ClassStatic.$Identifier
-    >(
-      [
-        {
-          $filter: IdentifierOverride4ClassStatic.$filter,
-          $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async identifierOverride4ClassesCount(
@@ -68285,21 +67696,35 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.identifierOverride4ClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  identifierOverride4ClassSync(
+    identifier: IdentifierOverride4ClassStatic.$Identifier,
+  ): purify.Either<Error, IdentifierOverride4Class> {
+    return this.identifierOverride4ClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  identifierOverride4ClassesSync(
+    query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
+  ): purify.Either<Error, readonly IdentifierOverride4Class[]> {
+    return this.$objectsSync<
       IdentifierOverride4Class,
       IdentifierOverride4ClassStatic.$Filter,
       IdentifierOverride4ClassStatic.$Identifier
     >(
-      [
-        {
-          $filter: IdentifierOverride4ClassStatic.$filter,
-          $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: IdentifierOverride4ClassStatic.$filter,
+        $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
+        $fromRdfTypes: [
+          IdentifierOverride4ClassStatic.$fromRdfType,
+          IdentifierOverride5Class.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -68308,14 +67733,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IdentifierOverride5Class.$Identifier,
   ): Promise<purify.Either<Error, IdentifierOverride5Class>> {
     return this.identifierOverride5ClassSync(identifier);
-  }
-
-  identifierOverride5ClassSync(
-    identifier: IdentifierOverride5Class.$Identifier,
-  ): purify.Either<Error, IdentifierOverride5Class> {
-    return this.identifierOverride5ClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async identifierOverride5ClassIdentifiers(
@@ -68329,19 +67746,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   identifierOverride5ClassIdentifiersSync(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      IdentifierOverride5Class,
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >(
-      [
-        {
-          $filter: IdentifierOverride5Class.$filter,
-          $fromRdf: IdentifierOverride5Class.$fromRdf,
-          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
-        },
-      ],
-      query,
+    return this.identifierOverride5ClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68349,25 +67755,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>> {
     return this.identifierOverride5ClassesSync(query);
-  }
-
-  identifierOverride5ClassesSync(
-    query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
-  ): purify.Either<Error, readonly IdentifierOverride5Class[]> {
-    return this.$objectsSync<
-      IdentifierOverride5Class,
-      IdentifierOverride5Class.$Filter,
-      IdentifierOverride5Class.$Identifier
-    >(
-      [
-        {
-          $filter: IdentifierOverride5Class.$filter,
-          $fromRdf: IdentifierOverride5Class.$fromRdf,
-          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async identifierOverride5ClassesCount(
@@ -68379,18 +67766,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   identifierOverride5ClassesCountSync(
     query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.identifierOverride5ClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  identifierOverride5ClassSync(
+    identifier: IdentifierOverride5Class.$Identifier,
+  ): purify.Either<Error, IdentifierOverride5Class> {
+    return this.identifierOverride5ClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  identifierOverride5ClassesSync(
+    query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
+  ): purify.Either<Error, readonly IdentifierOverride5Class[]> {
+    return this.$objectsSync<
       IdentifierOverride5Class,
       IdentifierOverride5Class.$Filter,
       IdentifierOverride5Class.$Identifier
     >(
-      [
-        {
-          $filter: IdentifierOverride5Class.$filter,
-          $fromRdf: IdentifierOverride5Class.$fromRdf,
-          $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
-        },
-      ],
+      {
+        $filter: IdentifierOverride5Class.$filter,
+        $fromRdf: IdentifierOverride5Class.$fromRdf,
+        $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
+      },
       query,
     );
   }
@@ -68399,14 +67800,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<purify.Either<Error, IndirectRecursiveClass>> {
     return this.indirectRecursiveClassSync(identifier);
-  }
-
-  indirectRecursiveClassSync(
-    identifier: IndirectRecursiveClass.$Identifier,
-  ): purify.Either<Error, IndirectRecursiveClass> {
-    return this.indirectRecursiveClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async indirectRecursiveClassIdentifiers(
@@ -68420,19 +67813,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   indirectRecursiveClassIdentifiersSync(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      IndirectRecursiveClass,
-      IndirectRecursiveClass.$Filter,
-      IndirectRecursiveClass.$Identifier
-    >(
-      [
-        {
-          $filter: IndirectRecursiveClass.$filter,
-          $fromRdf: IndirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.indirectRecursiveClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68440,25 +67822,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IndirectRecursiveClass[]>> {
     return this.indirectRecursiveClassesSync(query);
-  }
-
-  indirectRecursiveClassesSync(
-    query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
-  ): purify.Either<Error, readonly IndirectRecursiveClass[]> {
-    return this.$objectsSync<
-      IndirectRecursiveClass,
-      IndirectRecursiveClass.$Filter,
-      IndirectRecursiveClass.$Identifier
-    >(
-      [
-        {
-          $filter: IndirectRecursiveClass.$filter,
-          $fromRdf: IndirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async indirectRecursiveClassesCount(
@@ -68470,18 +67833,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   indirectRecursiveClassesCountSync(
     query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.indirectRecursiveClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  indirectRecursiveClassSync(
+    identifier: IndirectRecursiveClass.$Identifier,
+  ): purify.Either<Error, IndirectRecursiveClass> {
+    return this.indirectRecursiveClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  indirectRecursiveClassesSync(
+    query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
+  ): purify.Either<Error, readonly IndirectRecursiveClass[]> {
+    return this.$objectsSync<
       IndirectRecursiveClass,
       IndirectRecursiveClass.$Filter,
       IndirectRecursiveClass.$Identifier
     >(
-      [
-        {
-          $filter: IndirectRecursiveClass.$filter,
-          $fromRdf: IndirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: IndirectRecursiveClass.$filter,
+        $fromRdf: IndirectRecursiveClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -68490,14 +67867,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IndirectRecursiveHelperClass.$Identifier,
   ): Promise<purify.Either<Error, IndirectRecursiveHelperClass>> {
     return this.indirectRecursiveHelperClassSync(identifier);
-  }
-
-  indirectRecursiveHelperClassSync(
-    identifier: IndirectRecursiveHelperClass.$Identifier,
-  ): purify.Either<Error, IndirectRecursiveHelperClass> {
-    return this.indirectRecursiveHelperClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async indirectRecursiveHelperClassIdentifiers(
@@ -68511,19 +67880,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   indirectRecursiveHelperClassIdentifiersSync(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      IndirectRecursiveHelperClass,
-      IndirectRecursiveHelperClass.$Filter,
-      IndirectRecursiveHelperClass.$Identifier
-    >(
-      [
-        {
-          $filter: IndirectRecursiveHelperClass.$filter,
-          $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.indirectRecursiveHelperClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68531,25 +67889,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IndirectRecursiveHelperClass[]>> {
     return this.indirectRecursiveHelperClassesSync(query);
-  }
-
-  indirectRecursiveHelperClassesSync(
-    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
-  ): purify.Either<Error, readonly IndirectRecursiveHelperClass[]> {
-    return this.$objectsSync<
-      IndirectRecursiveHelperClass,
-      IndirectRecursiveHelperClass.$Filter,
-      IndirectRecursiveHelperClass.$Identifier
-    >(
-      [
-        {
-          $filter: IndirectRecursiveHelperClass.$filter,
-          $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async indirectRecursiveHelperClassesCount(
@@ -68567,18 +67906,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.indirectRecursiveHelperClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  indirectRecursiveHelperClassSync(
+    identifier: IndirectRecursiveHelperClass.$Identifier,
+  ): purify.Either<Error, IndirectRecursiveHelperClass> {
+    return this.indirectRecursiveHelperClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  indirectRecursiveHelperClassesSync(
+    query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
+  ): purify.Either<Error, readonly IndirectRecursiveHelperClass[]> {
+    return this.$objectsSync<
       IndirectRecursiveHelperClass,
       IndirectRecursiveHelperClass.$Filter,
       IndirectRecursiveHelperClass.$Identifier
     >(
-      [
-        {
-          $filter: IndirectRecursiveHelperClass.$filter,
-          $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: IndirectRecursiveHelperClass.$filter,
+        $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -68587,14 +67940,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: InIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, InIdentifierClass>> {
     return this.inIdentifierClassSync(identifier);
-  }
-
-  inIdentifierClassSync(
-    identifier: InIdentifierClass.$Identifier,
-  ): purify.Either<Error, InIdentifierClass> {
-    return this.inIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async inIdentifierClassIdentifiers(
@@ -68606,19 +67951,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   inIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): purify.Either<Error, readonly InIdentifierClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InIdentifierClass,
-      InIdentifierClass.$Filter,
-      InIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: InIdentifierClass.$filter,
-          $fromRdf: InIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.inIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68626,25 +67960,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InIdentifierClass[]>> {
     return this.inIdentifierClassesSync(query);
-  }
-
-  inIdentifierClassesSync(
-    query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly InIdentifierClass[]> {
-    return this.$objectsSync<
-      InIdentifierClass,
-      InIdentifierClass.$Filter,
-      InIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: InIdentifierClass.$filter,
-          $fromRdf: InIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async inIdentifierClassesCount(
@@ -68656,18 +67971,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   inIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.inIdentifierClassesSync(query).map((objects) => objects.length);
+  }
+
+  inIdentifierClassSync(
+    identifier: InIdentifierClass.$Identifier,
+  ): purify.Either<Error, InIdentifierClass> {
+    return this.inIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  inIdentifierClassesSync(
+    query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly InIdentifierClass[]> {
+    return this.$objectsSync<
       InIdentifierClass,
       InIdentifierClass.$Filter,
       InIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: InIdentifierClass.$filter,
-          $fromRdf: InIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: InIdentifierClass.$filter,
+        $fromRdf: InIdentifierClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -68676,14 +68003,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: InPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, InPropertiesClass>> {
     return this.inPropertiesClassSync(identifier);
-  }
-
-  inPropertiesClassSync(
-    identifier: InPropertiesClass.$Identifier,
-  ): purify.Either<Error, InPropertiesClass> {
-    return this.inPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async inPropertiesClassIdentifiers(
@@ -68695,19 +68014,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   inPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly InPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InPropertiesClass,
-      InPropertiesClass.$Filter,
-      InPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: InPropertiesClass.$filter,
-          $fromRdf: InPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.inPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68715,25 +68023,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InPropertiesClass[]>> {
     return this.inPropertiesClassesSync(query);
-  }
-
-  inPropertiesClassesSync(
-    query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly InPropertiesClass[]> {
-    return this.$objectsSync<
-      InPropertiesClass,
-      InPropertiesClass.$Filter,
-      InPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: InPropertiesClass.$filter,
-          $fromRdf: InPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async inPropertiesClassesCount(
@@ -68745,18 +68034,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   inPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.inPropertiesClassesSync(query).map((objects) => objects.length);
+  }
+
+  inPropertiesClassSync(
+    identifier: InPropertiesClass.$Identifier,
+  ): purify.Either<Error, InPropertiesClass> {
+    return this.inPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  inPropertiesClassesSync(
+    query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly InPropertiesClass[]> {
+    return this.$objectsSync<
       InPropertiesClass,
       InPropertiesClass.$Filter,
       InPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: InPropertiesClass.$filter,
-          $fromRdf: InPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: InPropertiesClass.$filter,
+        $fromRdf: InPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -68765,14 +68066,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: Interface.$Identifier,
   ): Promise<purify.Either<Error, Interface>> {
     return this.interfaceSync(identifier);
-  }
-
-  interfaceSync(
-    identifier: Interface.$Identifier,
-  ): purify.Either<Error, Interface> {
-    return this.interfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async interfaceIdentifiers(
@@ -68784,19 +68077,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceIdentifiersSync(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): purify.Either<Error, readonly Interface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      Interface,
-      Interface.$Filter,
-      Interface.$Identifier
-    >(
-      [
-        {
-          $filter: Interface.$filter,
-          $fromRdf: Interface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.interfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68804,25 +68086,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Promise<purify.Either<Error, readonly Interface[]>> {
     return this.interfacesSync(query);
-  }
-
-  interfacesSync(
-    query?: $ObjectSet.Query<Interface.$Filter>,
-  ): purify.Either<Error, readonly Interface[]> {
-    return this.$objectsSync<
-      Interface,
-      Interface.$Filter,
-      Interface.$Identifier
-    >(
-      [
-        {
-          $filter: Interface.$filter,
-          $fromRdf: Interface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async interfacesCount(
@@ -68834,18 +68097,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfacesCountSync(
     query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.interfacesSync(query).map((objects) => objects.length);
+  }
+
+  interfaceSync(
+    identifier: Interface.$Identifier,
+  ): purify.Either<Error, Interface> {
+    return this.interfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  interfacesSync(
+    query?: $ObjectSet.Query<Interface.$Filter>,
+  ): purify.Either<Error, readonly Interface[]> {
+    return this.$objectsSync<
       Interface,
       Interface.$Filter,
       Interface.$Identifier
     >(
-      [
-        {
-          $filter: Interface.$filter,
-          $fromRdf: Interface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: Interface.$filter,
+        $fromRdf: Interface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -68854,14 +68129,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: InterfaceUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, InterfaceUnionMember1>> {
     return this.interfaceUnionMember1Sync(identifier);
-  }
-
-  interfaceUnionMember1Sync(
-    identifier: InterfaceUnionMember1.$Identifier,
-  ): purify.Either<Error, InterfaceUnionMember1> {
-    return this.interfaceUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember1Identifiers(
@@ -68875,19 +68142,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): purify.Either<Error, readonly InterfaceUnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InterfaceUnionMember1,
-      InterfaceUnionMember1.$Filter,
-      InterfaceUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember1.$filter,
-          $fromRdf: InterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
+    return this.interfaceUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68895,25 +68151,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnionMember1[]>> {
     return this.interfaceUnionMember1sSync(query);
-  }
-
-  interfaceUnionMember1sSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly InterfaceUnionMember1[]> {
-    return this.$objectsSync<
-      InterfaceUnionMember1,
-      InterfaceUnionMember1.$Filter,
-      InterfaceUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember1.$filter,
-          $fromRdf: InterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async interfaceUnionMember1sCount(
@@ -68925,18 +68162,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceUnionMember1sCountSync(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.interfaceUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  interfaceUnionMember1Sync(
+    identifier: InterfaceUnionMember1.$Identifier,
+  ): purify.Either<Error, InterfaceUnionMember1> {
+    return this.interfaceUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  interfaceUnionMember1sSync(
+    query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly InterfaceUnionMember1[]> {
+    return this.$objectsSync<
       InterfaceUnionMember1,
       InterfaceUnionMember1.$Filter,
       InterfaceUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: InterfaceUnionMember1.$filter,
-          $fromRdf: InterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
-        },
-      ],
+      {
+        $filter: InterfaceUnionMember1.$filter,
+        $fromRdf: InterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -68945,14 +68196,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: InterfaceUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, InterfaceUnionMember2>> {
     return this.interfaceUnionMember2Sync(identifier);
-  }
-
-  interfaceUnionMember2Sync(
-    identifier: InterfaceUnionMember2.$Identifier,
-  ): purify.Either<Error, InterfaceUnionMember2> {
-    return this.interfaceUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async interfaceUnionMember2Identifiers(
@@ -68966,19 +68209,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InterfaceUnionMember2,
-      InterfaceUnionMember2.$Filter,
-      InterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember2.$filter,
-          $fromRdf: InterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.interfaceUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -68986,25 +68218,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
     return this.interfaceUnionMember2sSync(query);
-  }
-
-  interfaceUnionMember2sSync(
-    query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly InterfaceUnionMember2[]> {
-    return this.$objectsSync<
-      InterfaceUnionMember2,
-      InterfaceUnionMember2.$Filter,
-      InterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember2.$filter,
-          $fromRdf: InterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async interfaceUnionMember2sCount(
@@ -69016,18 +68229,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceUnionMember2sCountSync(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.interfaceUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  interfaceUnionMember2Sync(
+    identifier: InterfaceUnionMember2.$Identifier,
+  ): purify.Either<Error, InterfaceUnionMember2> {
+    return this.interfaceUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  interfaceUnionMember2sSync(
+    query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly InterfaceUnionMember2[]> {
+    return this.$objectsSync<
       InterfaceUnionMember2,
       InterfaceUnionMember2.$Filter,
       InterfaceUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: InterfaceUnionMember2.$filter,
-          $fromRdf: InterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-      ],
+      {
+        $filter: InterfaceUnionMember2.$filter,
+        $fromRdf: InterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -69036,14 +68263,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IriIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, IriIdentifierClass>> {
     return this.iriIdentifierClassSync(identifier);
-  }
-
-  iriIdentifierClassSync(
-    identifier: IriIdentifierClass.$Identifier,
-  ): purify.Either<Error, IriIdentifierClass> {
-    return this.iriIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async iriIdentifierClassIdentifiers(
@@ -69055,19 +68274,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   iriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): purify.Either<Error, readonly IriIdentifierClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      IriIdentifierClass,
-      IriIdentifierClass.$Filter,
-      IriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: IriIdentifierClass.$filter,
-          $fromRdf: IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.iriIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69075,25 +68283,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>> {
     return this.iriIdentifierClassesSync(query);
-  }
-
-  iriIdentifierClassesSync(
-    query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly IriIdentifierClass[]> {
-    return this.$objectsSync<
-      IriIdentifierClass,
-      IriIdentifierClass.$Filter,
-      IriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: IriIdentifierClass.$filter,
-          $fromRdf: IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async iriIdentifierClassesCount(
@@ -69105,18 +68294,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   iriIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.iriIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  iriIdentifierClassSync(
+    identifier: IriIdentifierClass.$Identifier,
+  ): purify.Either<Error, IriIdentifierClass> {
+    return this.iriIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  iriIdentifierClassesSync(
+    query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly IriIdentifierClass[]> {
+    return this.$objectsSync<
       IriIdentifierClass,
       IriIdentifierClass.$Filter,
       IriIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: IriIdentifierClass.$filter,
-          $fromRdf: IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: IriIdentifierClass.$filter,
+        $fromRdf: IriIdentifierClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -69125,14 +68328,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: IriIdentifierInterface.$Identifier,
   ): Promise<purify.Either<Error, IriIdentifierInterface>> {
     return this.iriIdentifierInterfaceSync(identifier);
-  }
-
-  iriIdentifierInterfaceSync(
-    identifier: IriIdentifierInterface.$Identifier,
-  ): purify.Either<Error, IriIdentifierInterface> {
-    return this.iriIdentifierInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async iriIdentifierInterfaceIdentifiers(
@@ -69146,19 +68341,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   iriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      IriIdentifierInterface,
-      IriIdentifierInterface.$Filter,
-      IriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: IriIdentifierInterface.$filter,
-          $fromRdf: IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.iriIdentifierInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69166,25 +68350,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>> {
     return this.iriIdentifierInterfacesSync(query);
-  }
-
-  iriIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
-  ): purify.Either<Error, readonly IriIdentifierInterface[]> {
-    return this.$objectsSync<
-      IriIdentifierInterface,
-      IriIdentifierInterface.$Filter,
-      IriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: IriIdentifierInterface.$filter,
-          $fromRdf: IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async iriIdentifierInterfacesCount(
@@ -69196,18 +68361,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   iriIdentifierInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.iriIdentifierInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  iriIdentifierInterfaceSync(
+    identifier: IriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, IriIdentifierInterface> {
+    return this.iriIdentifierInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  iriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
+  ): purify.Either<Error, readonly IriIdentifierInterface[]> {
+    return this.$objectsSync<
       IriIdentifierInterface,
       IriIdentifierInterface.$Filter,
       IriIdentifierInterface.$Identifier
     >(
-      [
-        {
-          $filter: IriIdentifierInterface.$filter,
-          $fromRdf: IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: IriIdentifierInterface.$filter,
+        $fromRdf: IriIdentifierInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -69216,14 +68395,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
   ): Promise<purify.Either<Error, JsPrimitiveUnionPropertyClass>> {
     return this.jsPrimitiveUnionPropertyClassSync(identifier);
-  }
-
-  jsPrimitiveUnionPropertyClassSync(
-    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
-  ): purify.Either<Error, JsPrimitiveUnionPropertyClass> {
-    return this.jsPrimitiveUnionPropertyClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async jsPrimitiveUnionPropertyClassIdentifiers(
@@ -69240,19 +68411,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly JsPrimitiveUnionPropertyClass.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      JsPrimitiveUnionPropertyClass,
-      JsPrimitiveUnionPropertyClass.$Filter,
-      JsPrimitiveUnionPropertyClass.$Identifier
-    >(
-      [
-        {
-          $filter: JsPrimitiveUnionPropertyClass.$filter,
-          $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.jsPrimitiveUnionPropertyClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69260,25 +68420,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
     return this.jsPrimitiveUnionPropertyClassesSync(query);
-  }
-
-  jsPrimitiveUnionPropertyClassesSync(
-    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
-  ): purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]> {
-    return this.$objectsSync<
-      JsPrimitiveUnionPropertyClass,
-      JsPrimitiveUnionPropertyClass.$Filter,
-      JsPrimitiveUnionPropertyClass.$Identifier
-    >(
-      [
-        {
-          $filter: JsPrimitiveUnionPropertyClass.$filter,
-          $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async jsPrimitiveUnionPropertyClassesCount(
@@ -69296,18 +68437,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.jsPrimitiveUnionPropertyClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  jsPrimitiveUnionPropertyClassSync(
+    identifier: JsPrimitiveUnionPropertyClass.$Identifier,
+  ): purify.Either<Error, JsPrimitiveUnionPropertyClass> {
+    return this.jsPrimitiveUnionPropertyClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  jsPrimitiveUnionPropertyClassesSync(
+    query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
+  ): purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]> {
+    return this.$objectsSync<
       JsPrimitiveUnionPropertyClass,
       JsPrimitiveUnionPropertyClass.$Filter,
       JsPrimitiveUnionPropertyClass.$Identifier
     >(
-      [
-        {
-          $filter: JsPrimitiveUnionPropertyClass.$filter,
-          $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: JsPrimitiveUnionPropertyClass.$filter,
+        $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -69316,14 +68471,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LanguageInPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, LanguageInPropertiesClass>> {
     return this.languageInPropertiesClassSync(identifier);
-  }
-
-  languageInPropertiesClassSync(
-    identifier: LanguageInPropertiesClass.$Identifier,
-  ): purify.Either<Error, LanguageInPropertiesClass> {
-    return this.languageInPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async languageInPropertiesClassIdentifiers(
@@ -69337,19 +68484,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   languageInPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly LanguageInPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      LanguageInPropertiesClass,
-      LanguageInPropertiesClass.$Filter,
-      LanguageInPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: LanguageInPropertiesClass.$filter,
-          $fromRdf: LanguageInPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.languageInPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69357,25 +68493,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly LanguageInPropertiesClass[]>> {
     return this.languageInPropertiesClassesSync(query);
-  }
-
-  languageInPropertiesClassesSync(
-    query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly LanguageInPropertiesClass[]> {
-    return this.$objectsSync<
-      LanguageInPropertiesClass,
-      LanguageInPropertiesClass.$Filter,
-      LanguageInPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: LanguageInPropertiesClass.$filter,
-          $fromRdf: LanguageInPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async languageInPropertiesClassesCount(
@@ -69387,18 +68504,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   languageInPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.languageInPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  languageInPropertiesClassSync(
+    identifier: LanguageInPropertiesClass.$Identifier,
+  ): purify.Either<Error, LanguageInPropertiesClass> {
+    return this.languageInPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  languageInPropertiesClassesSync(
+    query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly LanguageInPropertiesClass[]> {
+    return this.$objectsSync<
       LanguageInPropertiesClass,
       LanguageInPropertiesClass.$Filter,
       LanguageInPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: LanguageInPropertiesClass.$filter,
-          $fromRdf: LanguageInPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: LanguageInPropertiesClass.$filter,
+        $fromRdf: LanguageInPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -69409,14 +68540,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassSync(identifier);
-  }
-
-  lazilyResolvedBlankNodeOrIriIdentifierClassSync(
-    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
-    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
@@ -69438,21 +68561,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedBlankNodeOrIriIdentifierClass,
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$filter,
-          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync(query).map(
+      (objects) => objects.map((object) => object.$identifier),
     );
   }
 
@@ -69462,30 +68572,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]>
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync(query);
-  }
-
-  lazilyResolvedBlankNodeOrIriIdentifierClassesSync(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
-  ): purify.Either<
-    Error,
-    readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]
-  > {
-    return this.$objectsSync<
-      LazilyResolvedBlankNodeOrIriIdentifierClass,
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$filter,
-          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
@@ -69503,20 +68589,37 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierClassSync(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
+    return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierClassesSync(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
+  ): purify.Either<
+    Error,
+    readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]
+  > {
+    return this.$objectsSync<
       LazilyResolvedBlankNodeOrIriIdentifierClass,
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$filter,
-          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$filter,
+        $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
+        $fromRdfTypes: [
+          LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -69527,14 +68630,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(identifier);
-  }
-
-  lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(
-    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
-  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
-    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
@@ -69556,21 +68651,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedBlankNodeOrIriIdentifierInterface,
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter,
-          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(query).map(
+      (objects) => objects.map((object) => object.$identifier),
     );
   }
 
@@ -69583,30 +68665,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     >
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(query);
-  }
-
-  lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
-  ): purify.Either<
-    Error,
-    readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
-  > {
-    return this.$objectsSync<
-      LazilyResolvedBlankNodeOrIriIdentifierInterface,
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter,
-          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
-          ],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
@@ -69626,20 +68684,37 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(
+    identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
+    return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
+  ): purify.Either<
+    Error,
+    readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
+  > {
+    return this.$objectsSync<
       LazilyResolvedBlankNodeOrIriIdentifierInterface,
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter,
-          $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [
-            LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
-          ],
-        },
-      ],
+      {
+        $filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter,
+        $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
+        $fromRdfTypes: [
+          LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
+        ],
+      },
       query,
     );
   }
@@ -69648,14 +68723,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedClassUnionMember1>> {
     return this.lazilyResolvedClassUnionMember1Sync(identifier);
-  }
-
-  lazilyResolvedClassUnionMember1Sync(
-    identifier: LazilyResolvedClassUnionMember1.$Identifier,
-  ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
-    return this.lazilyResolvedClassUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedClassUnionMember1Identifiers(
@@ -69672,19 +68739,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedClassUnionMember1.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedClassUnionMember1,
-      LazilyResolvedClassUnionMember1.$Filter,
-      LazilyResolvedClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember1.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
+    return this.lazilyResolvedClassUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69692,25 +68748,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember1[]>> {
     return this.lazilyResolvedClassUnionMember1sSync(query);
-  }
-
-  lazilyResolvedClassUnionMember1sSync(
-    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedClassUnionMember1[]> {
-    return this.$objectsSync<
-      LazilyResolvedClassUnionMember1,
-      LazilyResolvedClassUnionMember1.$Filter,
-      LazilyResolvedClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember1.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedClassUnionMember1sCount(
@@ -69728,18 +68765,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedClassUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedClassUnionMember1Sync(
+    identifier: LazilyResolvedClassUnionMember1.$Identifier,
+  ): purify.Either<Error, LazilyResolvedClassUnionMember1> {
+    return this.lazilyResolvedClassUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedClassUnionMember1sSync(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedClassUnionMember1[]> {
+    return this.$objectsSync<
       LazilyResolvedClassUnionMember1,
       LazilyResolvedClassUnionMember1.$Filter,
       LazilyResolvedClassUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember1.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
-        },
-      ],
+      {
+        $filter: LazilyResolvedClassUnionMember1.$filter,
+        $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -69748,14 +68799,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedClassUnionMember2>> {
     return this.lazilyResolvedClassUnionMember2Sync(identifier);
-  }
-
-  lazilyResolvedClassUnionMember2Sync(
-    identifier: LazilyResolvedClassUnionMember2.$Identifier,
-  ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
-    return this.lazilyResolvedClassUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedClassUnionMember2Identifiers(
@@ -69772,19 +68815,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedClassUnionMember2.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedClassUnionMember2,
-      LazilyResolvedClassUnionMember2.$Filter,
-      LazilyResolvedClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember2.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.lazilyResolvedClassUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69792,25 +68824,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember2[]>> {
     return this.lazilyResolvedClassUnionMember2sSync(query);
-  }
-
-  lazilyResolvedClassUnionMember2sSync(
-    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedClassUnionMember2[]> {
-    return this.$objectsSync<
-      LazilyResolvedClassUnionMember2,
-      LazilyResolvedClassUnionMember2.$Filter,
-      LazilyResolvedClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember2.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedClassUnionMember2sCount(
@@ -69828,18 +68841,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedClassUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedClassUnionMember2Sync(
+    identifier: LazilyResolvedClassUnionMember2.$Identifier,
+  ): purify.Either<Error, LazilyResolvedClassUnionMember2> {
+    return this.lazilyResolvedClassUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedClassUnionMember2sSync(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedClassUnionMember2[]> {
+    return this.$objectsSync<
       LazilyResolvedClassUnionMember2,
       LazilyResolvedClassUnionMember2.$Filter,
       LazilyResolvedClassUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember2.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
-        },
-      ],
+      {
+        $filter: LazilyResolvedClassUnionMember2.$filter,
+        $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -69848,14 +68875,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedInterfaceUnionMember1>> {
     return this.lazilyResolvedInterfaceUnionMember1Sync(identifier);
-  }
-
-  lazilyResolvedInterfaceUnionMember1Sync(
-    identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
-  ): purify.Either<Error, LazilyResolvedInterfaceUnionMember1> {
-    return this.lazilyResolvedInterfaceUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedInterfaceUnionMember1Identifiers(
@@ -69875,19 +68894,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedInterfaceUnionMember1.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedInterfaceUnionMember1,
-      LazilyResolvedInterfaceUnionMember1.$Filter,
-      LazilyResolvedInterfaceUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember1.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
+    return this.lazilyResolvedInterfaceUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -69897,25 +68905,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]>
   > {
     return this.lazilyResolvedInterfaceUnionMember1sSync(query);
-  }
-
-  lazilyResolvedInterfaceUnionMember1sSync(
-    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]> {
-    return this.$objectsSync<
-      LazilyResolvedInterfaceUnionMember1,
-      LazilyResolvedInterfaceUnionMember1.$Filter,
-      LazilyResolvedInterfaceUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember1.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedInterfaceUnionMember1sCount(
@@ -69933,18 +68922,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedInterfaceUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedInterfaceUnionMember1Sync(
+    identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
+  ): purify.Either<Error, LazilyResolvedInterfaceUnionMember1> {
+    return this.lazilyResolvedInterfaceUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedInterfaceUnionMember1sSync(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]> {
+    return this.$objectsSync<
       LazilyResolvedInterfaceUnionMember1,
       LazilyResolvedInterfaceUnionMember1.$Filter,
       LazilyResolvedInterfaceUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember1.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
-        },
-      ],
+      {
+        $filter: LazilyResolvedInterfaceUnionMember1.$filter,
+        $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -69953,14 +68956,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedInterfaceUnionMember2>> {
     return this.lazilyResolvedInterfaceUnionMember2Sync(identifier);
-  }
-
-  lazilyResolvedInterfaceUnionMember2Sync(
-    identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
-  ): purify.Either<Error, LazilyResolvedInterfaceUnionMember2> {
-    return this.lazilyResolvedInterfaceUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedInterfaceUnionMember2Identifiers(
@@ -69980,19 +68975,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedInterfaceUnionMember2.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedInterfaceUnionMember2,
-      LazilyResolvedInterfaceUnionMember2.$Filter,
-      LazilyResolvedInterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember2.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.lazilyResolvedInterfaceUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70002,25 +68986,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]>
   > {
     return this.lazilyResolvedInterfaceUnionMember2sSync(query);
-  }
-
-  lazilyResolvedInterfaceUnionMember2sSync(
-    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]> {
-    return this.$objectsSync<
-      LazilyResolvedInterfaceUnionMember2,
-      LazilyResolvedInterfaceUnionMember2.$Filter,
-      LazilyResolvedInterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember2.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedInterfaceUnionMember2sCount(
@@ -70038,18 +69003,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedInterfaceUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedInterfaceUnionMember2Sync(
+    identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
+  ): purify.Either<Error, LazilyResolvedInterfaceUnionMember2> {
+    return this.lazilyResolvedInterfaceUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedInterfaceUnionMember2sSync(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]> {
+    return this.$objectsSync<
       LazilyResolvedInterfaceUnionMember2,
       LazilyResolvedInterfaceUnionMember2.$Filter,
       LazilyResolvedInterfaceUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember2.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
+      {
+        $filter: LazilyResolvedInterfaceUnionMember2.$filter,
+        $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -70058,14 +69037,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierClass>> {
     return this.lazilyResolvedIriIdentifierClassSync(identifier);
-  }
-
-  lazilyResolvedIriIdentifierClassSync(
-    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
-  ): purify.Either<Error, LazilyResolvedIriIdentifierClass> {
-    return this.lazilyResolvedIriIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedIriIdentifierClassIdentifiers(
@@ -70085,19 +69056,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedIriIdentifierClass.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedIriIdentifierClass,
-      LazilyResolvedIriIdentifierClass.$Filter,
-      LazilyResolvedIriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedIriIdentifierClass.$filter,
-          $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.lazilyResolvedIriIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70107,25 +69067,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]>
   > {
     return this.lazilyResolvedIriIdentifierClassesSync(query);
-  }
-
-  lazilyResolvedIriIdentifierClassesSync(
-    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]> {
-    return this.$objectsSync<
-      LazilyResolvedIriIdentifierClass,
-      LazilyResolvedIriIdentifierClass.$Filter,
-      LazilyResolvedIriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedIriIdentifierClass.$filter,
-          $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedIriIdentifierClassesCount(
@@ -70143,18 +69084,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedIriIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedIriIdentifierClassSync(
+    identifier: LazilyResolvedIriIdentifierClass.$Identifier,
+  ): purify.Either<Error, LazilyResolvedIriIdentifierClass> {
+    return this.lazilyResolvedIriIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedIriIdentifierClassesSync(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]> {
+    return this.$objectsSync<
       LazilyResolvedIriIdentifierClass,
       LazilyResolvedIriIdentifierClass.$Filter,
       LazilyResolvedIriIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedIriIdentifierClass.$filter,
-          $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: LazilyResolvedIriIdentifierClass.$filter,
+        $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70163,14 +69118,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedIriIdentifierInterface>> {
     return this.lazilyResolvedIriIdentifierInterfaceSync(identifier);
-  }
-
-  lazilyResolvedIriIdentifierInterfaceSync(
-    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
-  ): purify.Either<Error, LazilyResolvedIriIdentifierInterface> {
-    return this.lazilyResolvedIriIdentifierInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedIriIdentifierInterfaceIdentifiers(
@@ -70190,19 +69137,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     Error,
     readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
   > {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedIriIdentifierInterface,
-      LazilyResolvedIriIdentifierInterface.$Filter,
-      LazilyResolvedIriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedIriIdentifierInterface.$filter,
-          $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.lazilyResolvedIriIdentifierInterfacesSync(query).map(
+      (objects) => objects.map((object) => object.$identifier),
     );
   }
 
@@ -70212,25 +69148,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>
   > {
     return this.lazilyResolvedIriIdentifierInterfacesSync(query);
-  }
-
-  lazilyResolvedIriIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]> {
-    return this.$objectsSync<
-      LazilyResolvedIriIdentifierInterface,
-      LazilyResolvedIriIdentifierInterface.$Filter,
-      LazilyResolvedIriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedIriIdentifierInterface.$filter,
-          $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedIriIdentifierInterfacesCount(
@@ -70248,18 +69165,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedIriIdentifierInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedIriIdentifierInterfaceSync(
+    identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, LazilyResolvedIriIdentifierInterface> {
+    return this.lazilyResolvedIriIdentifierInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazilyResolvedIriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedIriIdentifierInterface[]> {
+    return this.$objectsSync<
       LazilyResolvedIriIdentifierInterface,
       LazilyResolvedIriIdentifierInterface.$Filter,
       LazilyResolvedIriIdentifierInterface.$Identifier
     >(
-      [
-        {
-          $filter: LazilyResolvedIriIdentifierInterface.$filter,
-          $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: LazilyResolvedIriIdentifierInterface.$filter,
+        $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70268,14 +69199,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazyPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, LazyPropertiesClass>> {
     return this.lazyPropertiesClassSync(identifier);
-  }
-
-  lazyPropertiesClassSync(
-    identifier: LazyPropertiesClass.$Identifier,
-  ): purify.Either<Error, LazyPropertiesClass> {
-    return this.lazyPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazyPropertiesClassIdentifiers(
@@ -70287,19 +69210,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazyPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly LazyPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      LazyPropertiesClass,
-      LazyPropertiesClass.$Filter,
-      LazyPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: LazyPropertiesClass.$filter,
-          $fromRdf: LazyPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.lazyPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70307,25 +69219,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly LazyPropertiesClass[]>> {
     return this.lazyPropertiesClassesSync(query);
-  }
-
-  lazyPropertiesClassesSync(
-    query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly LazyPropertiesClass[]> {
-    return this.$objectsSync<
-      LazyPropertiesClass,
-      LazyPropertiesClass.$Filter,
-      LazyPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: LazyPropertiesClass.$filter,
-          $fromRdf: LazyPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async lazyPropertiesClassesCount(
@@ -70337,18 +69230,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazyPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazyPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazyPropertiesClassSync(
+    identifier: LazyPropertiesClass.$Identifier,
+  ): purify.Either<Error, LazyPropertiesClass> {
+    return this.lazyPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazyPropertiesClassesSync(
+    query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly LazyPropertiesClass[]> {
+    return this.$objectsSync<
       LazyPropertiesClass,
       LazyPropertiesClass.$Filter,
       LazyPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: LazyPropertiesClass.$filter,
-          $fromRdf: LazyPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: LazyPropertiesClass.$filter,
+        $fromRdf: LazyPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70357,14 +69264,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: LazyPropertiesInterface.$Identifier,
   ): Promise<purify.Either<Error, LazyPropertiesInterface>> {
     return this.lazyPropertiesInterfaceSync(identifier);
-  }
-
-  lazyPropertiesInterfaceSync(
-    identifier: LazyPropertiesInterface.$Identifier,
-  ): purify.Either<Error, LazyPropertiesInterface> {
-    return this.lazyPropertiesInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazyPropertiesInterfaceIdentifiers(
@@ -70378,19 +69277,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazyPropertiesInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): purify.Either<Error, readonly LazyPropertiesInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      LazyPropertiesInterface,
-      LazyPropertiesInterface.$Filter,
-      LazyPropertiesInterface.$Identifier
-    >(
-      [
-        {
-          $filter: LazyPropertiesInterface.$filter,
-          $fromRdf: LazyPropertiesInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.lazyPropertiesInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70398,25 +69286,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly LazyPropertiesInterface[]>> {
     return this.lazyPropertiesInterfacesSync(query);
-  }
-
-  lazyPropertiesInterfacesSync(
-    query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
-  ): purify.Either<Error, readonly LazyPropertiesInterface[]> {
-    return this.$objectsSync<
-      LazyPropertiesInterface,
-      LazyPropertiesInterface.$Filter,
-      LazyPropertiesInterface.$Identifier
-    >(
-      [
-        {
-          $filter: LazyPropertiesInterface.$filter,
-          $fromRdf: LazyPropertiesInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async lazyPropertiesInterfacesCount(
@@ -70428,18 +69297,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazyPropertiesInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazyPropertiesInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazyPropertiesInterfaceSync(
+    identifier: LazyPropertiesInterface.$Identifier,
+  ): purify.Either<Error, LazyPropertiesInterface> {
+    return this.lazyPropertiesInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  lazyPropertiesInterfacesSync(
+    query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
+  ): purify.Either<Error, readonly LazyPropertiesInterface[]> {
+    return this.$objectsSync<
       LazyPropertiesInterface,
       LazyPropertiesInterface.$Filter,
       LazyPropertiesInterface.$Identifier
     >(
-      [
-        {
-          $filter: LazyPropertiesInterface.$filter,
-          $fromRdf: LazyPropertiesInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: LazyPropertiesInterface.$filter,
+        $fromRdf: LazyPropertiesInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70448,14 +69331,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ListPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, ListPropertiesClass>> {
     return this.listPropertiesClassSync(identifier);
-  }
-
-  listPropertiesClassSync(
-    identifier: ListPropertiesClass.$Identifier,
-  ): purify.Either<Error, ListPropertiesClass> {
-    return this.listPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async listPropertiesClassIdentifiers(
@@ -70467,19 +69342,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   listPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly ListPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ListPropertiesClass,
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: ListPropertiesClass.$filter,
-          $fromRdf: ListPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.listPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70487,25 +69351,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ListPropertiesClass[]>> {
     return this.listPropertiesClassesSync(query);
-  }
-
-  listPropertiesClassesSync(
-    query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly ListPropertiesClass[]> {
-    return this.$objectsSync<
-      ListPropertiesClass,
-      ListPropertiesClass.$Filter,
-      ListPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: ListPropertiesClass.$filter,
-          $fromRdf: ListPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async listPropertiesClassesCount(
@@ -70517,18 +69362,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   listPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.listPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  listPropertiesClassSync(
+    identifier: ListPropertiesClass.$Identifier,
+  ): purify.Either<Error, ListPropertiesClass> {
+    return this.listPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  listPropertiesClassesSync(
+    query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly ListPropertiesClass[]> {
+    return this.$objectsSync<
       ListPropertiesClass,
       ListPropertiesClass.$Filter,
       ListPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: ListPropertiesClass.$filter,
-          $fromRdf: ListPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: ListPropertiesClass.$filter,
+        $fromRdf: ListPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70537,14 +69396,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: MutablePropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, MutablePropertiesClass>> {
     return this.mutablePropertiesClassSync(identifier);
-  }
-
-  mutablePropertiesClassSync(
-    identifier: MutablePropertiesClass.$Identifier,
-  ): purify.Either<Error, MutablePropertiesClass> {
-    return this.mutablePropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async mutablePropertiesClassIdentifiers(
@@ -70558,19 +69409,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   mutablePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): purify.Either<Error, readonly MutablePropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      MutablePropertiesClass,
-      MutablePropertiesClass.$Filter,
-      MutablePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: MutablePropertiesClass.$filter,
-          $fromRdf: MutablePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.mutablePropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70578,25 +69418,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly MutablePropertiesClass[]>> {
     return this.mutablePropertiesClassesSync(query);
-  }
-
-  mutablePropertiesClassesSync(
-    query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly MutablePropertiesClass[]> {
-    return this.$objectsSync<
-      MutablePropertiesClass,
-      MutablePropertiesClass.$Filter,
-      MutablePropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: MutablePropertiesClass.$filter,
-          $fromRdf: MutablePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async mutablePropertiesClassesCount(
@@ -70608,18 +69429,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   mutablePropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.mutablePropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  mutablePropertiesClassSync(
+    identifier: MutablePropertiesClass.$Identifier,
+  ): purify.Either<Error, MutablePropertiesClass> {
+    return this.mutablePropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  mutablePropertiesClassesSync(
+    query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly MutablePropertiesClass[]> {
+    return this.$objectsSync<
       MutablePropertiesClass,
       MutablePropertiesClass.$Filter,
       MutablePropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: MutablePropertiesClass.$filter,
-          $fromRdf: MutablePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: MutablePropertiesClass.$filter,
+        $fromRdf: MutablePropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70628,14 +69463,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: NonClass.$Identifier,
   ): Promise<purify.Either<Error, NonClass>> {
     return this.nonClassSync(identifier);
-  }
-
-  nonClassSync(
-    identifier: NonClass.$Identifier,
-  ): purify.Either<Error, NonClass> {
-    return this.nonClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async nonClassIdentifiers(
@@ -70647,19 +69474,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   nonClassIdentifiersSync(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): purify.Either<Error, readonly NonClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      NonClass,
-      NonClass.$Filter,
-      NonClass.$Identifier
-    >(
-      [
-        {
-          $filter: NonClass.$filter,
-          $fromRdf: NonClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.nonClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70667,21 +69483,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Promise<purify.Either<Error, readonly NonClass[]>> {
     return this.nonClassesSync(query);
-  }
-
-  nonClassesSync(
-    query?: $ObjectSet.Query<NonClass.$Filter>,
-  ): purify.Either<Error, readonly NonClass[]> {
-    return this.$objectsSync<NonClass, NonClass.$Filter, NonClass.$Identifier>(
-      [
-        {
-          $filter: NonClass.$filter,
-          $fromRdf: NonClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async nonClassesCount(
@@ -70693,18 +69494,26 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   nonClassesCountSync(
     query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      NonClass,
-      NonClass.$Filter,
-      NonClass.$Identifier
-    >(
-      [
-        {
-          $filter: NonClass.$filter,
-          $fromRdf: NonClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+    return this.nonClassesSync(query).map((objects) => objects.length);
+  }
+
+  nonClassSync(
+    identifier: NonClass.$Identifier,
+  ): purify.Either<Error, NonClass> {
+    return this.nonClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  nonClassesSync(
+    query?: $ObjectSet.Query<NonClass.$Filter>,
+  ): purify.Either<Error, readonly NonClass[]> {
+    return this.$objectsSync<NonClass, NonClass.$Filter, NonClass.$Identifier>(
+      {
+        $filter: NonClass.$filter,
+        $fromRdf: NonClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70713,14 +69522,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember1>> {
     return this.noRdfTypeClassUnionMember1Sync(identifier);
-  }
-
-  noRdfTypeClassUnionMember1Sync(
-    identifier: NoRdfTypeClassUnionMember1.$Identifier,
-  ): purify.Either<Error, NoRdfTypeClassUnionMember1> {
-    return this.noRdfTypeClassUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async noRdfTypeClassUnionMember1Identifiers(
@@ -70734,19 +69535,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   noRdfTypeClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      NoRdfTypeClassUnionMember1,
-      NoRdfTypeClassUnionMember1.$Filter,
-      NoRdfTypeClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember1.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.noRdfTypeClassUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70754,25 +69544,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
     return this.noRdfTypeClassUnionMember1sSync(query);
-  }
-
-  noRdfTypeClassUnionMember1sSync(
-    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]> {
-    return this.$objectsSync<
-      NoRdfTypeClassUnionMember1,
-      NoRdfTypeClassUnionMember1.$Filter,
-      NoRdfTypeClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember1.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async noRdfTypeClassUnionMember1sCount(
@@ -70790,18 +69561,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.noRdfTypeClassUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  noRdfTypeClassUnionMember1Sync(
+    identifier: NoRdfTypeClassUnionMember1.$Identifier,
+  ): purify.Either<Error, NoRdfTypeClassUnionMember1> {
+    return this.noRdfTypeClassUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  noRdfTypeClassUnionMember1sSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]> {
+    return this.$objectsSync<
       NoRdfTypeClassUnionMember1,
       NoRdfTypeClassUnionMember1.$Filter,
       NoRdfTypeClassUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember1.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: NoRdfTypeClassUnionMember1.$filter,
+        $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70810,14 +69595,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, NoRdfTypeClassUnionMember2>> {
     return this.noRdfTypeClassUnionMember2Sync(identifier);
-  }
-
-  noRdfTypeClassUnionMember2Sync(
-    identifier: NoRdfTypeClassUnionMember2.$Identifier,
-  ): purify.Either<Error, NoRdfTypeClassUnionMember2> {
-    return this.noRdfTypeClassUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async noRdfTypeClassUnionMember2Identifiers(
@@ -70831,19 +69608,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   noRdfTypeClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      NoRdfTypeClassUnionMember2,
-      NoRdfTypeClassUnionMember2.$Filter,
-      NoRdfTypeClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember2.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.noRdfTypeClassUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70851,25 +69617,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
     return this.noRdfTypeClassUnionMember2sSync(query);
-  }
-
-  noRdfTypeClassUnionMember2sSync(
-    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]> {
-    return this.$objectsSync<
-      NoRdfTypeClassUnionMember2,
-      NoRdfTypeClassUnionMember2.$Filter,
-      NoRdfTypeClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember2.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async noRdfTypeClassUnionMember2sCount(
@@ -70887,18 +69634,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.noRdfTypeClassUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  noRdfTypeClassUnionMember2Sync(
+    identifier: NoRdfTypeClassUnionMember2.$Identifier,
+  ): purify.Either<Error, NoRdfTypeClassUnionMember2> {
+    return this.noRdfTypeClassUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  noRdfTypeClassUnionMember2sSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]> {
+    return this.$objectsSync<
       NoRdfTypeClassUnionMember2,
       NoRdfTypeClassUnionMember2.$Filter,
       NoRdfTypeClassUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember2.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: NoRdfTypeClassUnionMember2.$filter,
+        $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70907,14 +69668,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, OrderedPropertiesClass>> {
     return this.orderedPropertiesClassSync(identifier);
-  }
-
-  orderedPropertiesClassSync(
-    identifier: OrderedPropertiesClass.$Identifier,
-  ): purify.Either<Error, OrderedPropertiesClass> {
-    return this.orderedPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async orderedPropertiesClassIdentifiers(
@@ -70928,19 +69681,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   orderedPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly OrderedPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      OrderedPropertiesClass,
-      OrderedPropertiesClass.$Filter,
-      OrderedPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: OrderedPropertiesClass.$filter,
-          $fromRdf: OrderedPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.orderedPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -70948,25 +69690,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly OrderedPropertiesClass[]>> {
     return this.orderedPropertiesClassesSync(query);
-  }
-
-  orderedPropertiesClassesSync(
-    query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly OrderedPropertiesClass[]> {
-    return this.$objectsSync<
-      OrderedPropertiesClass,
-      OrderedPropertiesClass.$Filter,
-      OrderedPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: OrderedPropertiesClass.$filter,
-          $fromRdf: OrderedPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async orderedPropertiesClassesCount(
@@ -70978,18 +69701,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   orderedPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.orderedPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  orderedPropertiesClassSync(
+    identifier: OrderedPropertiesClass.$Identifier,
+  ): purify.Either<Error, OrderedPropertiesClass> {
+    return this.orderedPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  orderedPropertiesClassesSync(
+    query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly OrderedPropertiesClass[]> {
+    return this.$objectsSync<
       OrderedPropertiesClass,
       OrderedPropertiesClass.$Filter,
       OrderedPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: OrderedPropertiesClass.$filter,
-          $fromRdf: OrderedPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: OrderedPropertiesClass.$filter,
+        $fromRdf: OrderedPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -70998,14 +69735,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PartialClass.$Identifier,
   ): Promise<purify.Either<Error, PartialClass>> {
     return this.partialClassSync(identifier);
-  }
-
-  partialClassSync(
-    identifier: PartialClass.$Identifier,
-  ): purify.Either<Error, PartialClass> {
-    return this.partialClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialClassIdentifiers(
@@ -71017,19 +69746,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassIdentifiersSync(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): purify.Either<Error, readonly PartialClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialClass,
-      PartialClass.$Filter,
-      PartialClass.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClass.$filter,
-          $fromRdf: PartialClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.partialClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71037,25 +69755,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClass[]>> {
     return this.partialClassesSync(query);
-  }
-
-  partialClassesSync(
-    query?: $ObjectSet.Query<PartialClass.$Filter>,
-  ): purify.Either<Error, readonly PartialClass[]> {
-    return this.$objectsSync<
-      PartialClass,
-      PartialClass.$Filter,
-      PartialClass.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClass.$filter,
-          $fromRdf: PartialClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async partialClassesCount(
@@ -71067,18 +69766,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassesCountSync(
     query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialClassesSync(query).map((objects) => objects.length);
+  }
+
+  partialClassSync(
+    identifier: PartialClass.$Identifier,
+  ): purify.Either<Error, PartialClass> {
+    return this.partialClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  partialClassesSync(
+    query?: $ObjectSet.Query<PartialClass.$Filter>,
+  ): purify.Either<Error, readonly PartialClass[]> {
+    return this.$objectsSync<
       PartialClass,
       PartialClass.$Filter,
       PartialClass.$Identifier
     >(
-      [
-        {
-          $filter: PartialClass.$filter,
-          $fromRdf: PartialClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: PartialClass.$filter,
+        $fromRdf: PartialClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -71087,14 +69798,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PartialClassUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, PartialClassUnionMember1>> {
     return this.partialClassUnionMember1Sync(identifier);
-  }
-
-  partialClassUnionMember1Sync(
-    identifier: PartialClassUnionMember1.$Identifier,
-  ): purify.Either<Error, PartialClassUnionMember1> {
-    return this.partialClassUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialClassUnionMember1Identifiers(
@@ -71108,19 +69811,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): purify.Either<Error, readonly PartialClassUnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialClassUnionMember1,
-      PartialClassUnionMember1.$Filter,
-      PartialClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember1.$filter,
-          $fromRdf: PartialClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
+    return this.partialClassUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71128,25 +69820,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnionMember1[]>> {
     return this.partialClassUnionMember1sSync(query);
-  }
-
-  partialClassUnionMember1sSync(
-    query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly PartialClassUnionMember1[]> {
-    return this.$objectsSync<
-      PartialClassUnionMember1,
-      PartialClassUnionMember1.$Filter,
-      PartialClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember1.$filter,
-          $fromRdf: PartialClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async partialClassUnionMember1sCount(
@@ -71158,18 +69831,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassUnionMember1sCountSync(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialClassUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  partialClassUnionMember1Sync(
+    identifier: PartialClassUnionMember1.$Identifier,
+  ): purify.Either<Error, PartialClassUnionMember1> {
+    return this.partialClassUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  partialClassUnionMember1sSync(
+    query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly PartialClassUnionMember1[]> {
+    return this.$objectsSync<
       PartialClassUnionMember1,
       PartialClassUnionMember1.$Filter,
       PartialClassUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: PartialClassUnionMember1.$filter,
-          $fromRdf: PartialClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
-        },
-      ],
+      {
+        $filter: PartialClassUnionMember1.$filter,
+        $fromRdf: PartialClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -71178,14 +69865,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PartialClassUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, PartialClassUnionMember2>> {
     return this.partialClassUnionMember2Sync(identifier);
-  }
-
-  partialClassUnionMember2Sync(
-    identifier: PartialClassUnionMember2.$Identifier,
-  ): purify.Either<Error, PartialClassUnionMember2> {
-    return this.partialClassUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialClassUnionMember2Identifiers(
@@ -71199,19 +69878,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): purify.Either<Error, readonly PartialClassUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialClassUnionMember2,
-      PartialClassUnionMember2.$Filter,
-      PartialClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember2.$filter,
-          $fromRdf: PartialClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.partialClassUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71219,25 +69887,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnionMember2[]>> {
     return this.partialClassUnionMember2sSync(query);
-  }
-
-  partialClassUnionMember2sSync(
-    query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly PartialClassUnionMember2[]> {
-    return this.$objectsSync<
-      PartialClassUnionMember2,
-      PartialClassUnionMember2.$Filter,
-      PartialClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember2.$filter,
-          $fromRdf: PartialClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async partialClassUnionMember2sCount(
@@ -71249,18 +69898,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassUnionMember2sCountSync(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialClassUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  partialClassUnionMember2Sync(
+    identifier: PartialClassUnionMember2.$Identifier,
+  ): purify.Either<Error, PartialClassUnionMember2> {
+    return this.partialClassUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  partialClassUnionMember2sSync(
+    query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly PartialClassUnionMember2[]> {
+    return this.$objectsSync<
       PartialClassUnionMember2,
       PartialClassUnionMember2.$Filter,
       PartialClassUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: PartialClassUnionMember2.$filter,
-          $fromRdf: PartialClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
-        },
-      ],
+      {
+        $filter: PartialClassUnionMember2.$filter,
+        $fromRdf: PartialClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -71269,14 +69932,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PartialInterface.$Identifier,
   ): Promise<purify.Either<Error, PartialInterface>> {
     return this.partialInterfaceSync(identifier);
-  }
-
-  partialInterfaceSync(
-    identifier: PartialInterface.$Identifier,
-  ): purify.Either<Error, PartialInterface> {
-    return this.partialInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialInterfaceIdentifiers(
@@ -71288,19 +69943,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): purify.Either<Error, readonly PartialInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialInterface,
-      PartialInterface.$Filter,
-      PartialInterface.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterface.$filter,
-          $fromRdf: PartialInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.partialInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71308,25 +69952,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterface[]>> {
     return this.partialInterfacesSync(query);
-  }
-
-  partialInterfacesSync(
-    query?: $ObjectSet.Query<PartialInterface.$Filter>,
-  ): purify.Either<Error, readonly PartialInterface[]> {
-    return this.$objectsSync<
-      PartialInterface,
-      PartialInterface.$Filter,
-      PartialInterface.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterface.$filter,
-          $fromRdf: PartialInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async partialInterfacesCount(
@@ -71338,18 +69963,30 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialInterfacesSync(query).map((objects) => objects.length);
+  }
+
+  partialInterfaceSync(
+    identifier: PartialInterface.$Identifier,
+  ): purify.Either<Error, PartialInterface> {
+    return this.partialInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  partialInterfacesSync(
+    query?: $ObjectSet.Query<PartialInterface.$Filter>,
+  ): purify.Either<Error, readonly PartialInterface[]> {
+    return this.$objectsSync<
       PartialInterface,
       PartialInterface.$Filter,
       PartialInterface.$Identifier
     >(
-      [
-        {
-          $filter: PartialInterface.$filter,
-          $fromRdf: PartialInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: PartialInterface.$filter,
+        $fromRdf: PartialInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -71358,14 +69995,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PartialInterfaceUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, PartialInterfaceUnionMember1>> {
     return this.partialInterfaceUnionMember1Sync(identifier);
-  }
-
-  partialInterfaceUnionMember1Sync(
-    identifier: PartialInterfaceUnionMember1.$Identifier,
-  ): purify.Either<Error, PartialInterfaceUnionMember1> {
-    return this.partialInterfaceUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialInterfaceUnionMember1Identifiers(
@@ -71379,19 +70008,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialInterfaceUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): purify.Either<Error, readonly PartialInterfaceUnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialInterfaceUnionMember1,
-      PartialInterfaceUnionMember1.$Filter,
-      PartialInterfaceUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember1.$filter,
-          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
+    return this.partialInterfaceUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71399,25 +70017,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnionMember1[]>> {
     return this.partialInterfaceUnionMember1sSync(query);
-  }
-
-  partialInterfaceUnionMember1sSync(
-    query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly PartialInterfaceUnionMember1[]> {
-    return this.$objectsSync<
-      PartialInterfaceUnionMember1,
-      PartialInterfaceUnionMember1.$Filter,
-      PartialInterfaceUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember1.$filter,
-          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async partialInterfaceUnionMember1sCount(
@@ -71435,18 +70034,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialInterfaceUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  partialInterfaceUnionMember1Sync(
+    identifier: PartialInterfaceUnionMember1.$Identifier,
+  ): purify.Either<Error, PartialInterfaceUnionMember1> {
+    return this.partialInterfaceUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  partialInterfaceUnionMember1sSync(
+    query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly PartialInterfaceUnionMember1[]> {
+    return this.$objectsSync<
       PartialInterfaceUnionMember1,
       PartialInterfaceUnionMember1.$Filter,
       PartialInterfaceUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember1.$filter,
-          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
-        },
-      ],
+      {
+        $filter: PartialInterfaceUnionMember1.$filter,
+        $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
+        $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
+      },
       query,
     );
   }
@@ -71455,14 +70068,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PartialInterfaceUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, PartialInterfaceUnionMember2>> {
     return this.partialInterfaceUnionMember2Sync(identifier);
-  }
-
-  partialInterfaceUnionMember2Sync(
-    identifier: PartialInterfaceUnionMember2.$Identifier,
-  ): purify.Either<Error, PartialInterfaceUnionMember2> {
-    return this.partialInterfaceUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialInterfaceUnionMember2Identifiers(
@@ -71476,19 +70081,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialInterfaceUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): purify.Either<Error, readonly PartialInterfaceUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialInterfaceUnionMember2,
-      PartialInterfaceUnionMember2.$Filter,
-      PartialInterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember2.$filter,
-          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.partialInterfaceUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71496,25 +70090,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnionMember2[]>> {
     return this.partialInterfaceUnionMember2sSync(query);
-  }
-
-  partialInterfaceUnionMember2sSync(
-    query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly PartialInterfaceUnionMember2[]> {
-    return this.$objectsSync<
-      PartialInterfaceUnionMember2,
-      PartialInterfaceUnionMember2.$Filter,
-      PartialInterfaceUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember2.$filter,
-          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async partialInterfaceUnionMember2sCount(
@@ -71532,18 +70107,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialInterfaceUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  partialInterfaceUnionMember2Sync(
+    identifier: PartialInterfaceUnionMember2.$Identifier,
+  ): purify.Either<Error, PartialInterfaceUnionMember2> {
+    return this.partialInterfaceUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  partialInterfaceUnionMember2sSync(
+    query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly PartialInterfaceUnionMember2[]> {
+    return this.$objectsSync<
       PartialInterfaceUnionMember2,
       PartialInterfaceUnionMember2.$Filter,
       PartialInterfaceUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember2.$filter,
-          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
+      {
+        $filter: PartialInterfaceUnionMember2.$filter,
+        $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
+        $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
+      },
       query,
     );
   }
@@ -71552,14 +70141,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PropertyCardinalitiesClass.$Identifier,
   ): Promise<purify.Either<Error, PropertyCardinalitiesClass>> {
     return this.propertyCardinalitiesClassSync(identifier);
-  }
-
-  propertyCardinalitiesClassSync(
-    identifier: PropertyCardinalitiesClass.$Identifier,
-  ): purify.Either<Error, PropertyCardinalitiesClass> {
-    return this.propertyCardinalitiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async propertyCardinalitiesClassIdentifiers(
@@ -71573,19 +70154,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   propertyCardinalitiesClassIdentifiersSync(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PropertyCardinalitiesClass,
-      PropertyCardinalitiesClass.$Filter,
-      PropertyCardinalitiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: PropertyCardinalitiesClass.$filter,
-          $fromRdf: PropertyCardinalitiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.propertyCardinalitiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71593,25 +70163,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
     return this.propertyCardinalitiesClassesSync(query);
-  }
-
-  propertyCardinalitiesClassesSync(
-    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
-  ): purify.Either<Error, readonly PropertyCardinalitiesClass[]> {
-    return this.$objectsSync<
-      PropertyCardinalitiesClass,
-      PropertyCardinalitiesClass.$Filter,
-      PropertyCardinalitiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: PropertyCardinalitiesClass.$filter,
-          $fromRdf: PropertyCardinalitiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async propertyCardinalitiesClassesCount(
@@ -71629,18 +70180,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.propertyCardinalitiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  propertyCardinalitiesClassSync(
+    identifier: PropertyCardinalitiesClass.$Identifier,
+  ): purify.Either<Error, PropertyCardinalitiesClass> {
+    return this.propertyCardinalitiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  propertyCardinalitiesClassesSync(
+    query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
+  ): purify.Either<Error, readonly PropertyCardinalitiesClass[]> {
+    return this.$objectsSync<
       PropertyCardinalitiesClass,
       PropertyCardinalitiesClass.$Filter,
       PropertyCardinalitiesClass.$Identifier
     >(
-      [
-        {
-          $filter: PropertyCardinalitiesClass.$filter,
-          $fromRdf: PropertyCardinalitiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: PropertyCardinalitiesClass.$filter,
+        $fromRdf: PropertyCardinalitiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -71649,14 +70214,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: PropertyVisibilitiesClass.$Identifier,
   ): Promise<purify.Either<Error, PropertyVisibilitiesClass>> {
     return this.propertyVisibilitiesClassSync(identifier);
-  }
-
-  propertyVisibilitiesClassSync(
-    identifier: PropertyVisibilitiesClass.$Identifier,
-  ): purify.Either<Error, PropertyVisibilitiesClass> {
-    return this.propertyVisibilitiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async propertyVisibilitiesClassIdentifiers(
@@ -71670,19 +70227,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   propertyVisibilitiesClassIdentifiersSync(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PropertyVisibilitiesClass,
-      PropertyVisibilitiesClass.$Filter,
-      PropertyVisibilitiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: PropertyVisibilitiesClass.$filter,
-          $fromRdf: PropertyVisibilitiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.propertyVisibilitiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71690,25 +70236,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
     return this.propertyVisibilitiesClassesSync(query);
-  }
-
-  propertyVisibilitiesClassesSync(
-    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
-  ): purify.Either<Error, readonly PropertyVisibilitiesClass[]> {
-    return this.$objectsSync<
-      PropertyVisibilitiesClass,
-      PropertyVisibilitiesClass.$Filter,
-      PropertyVisibilitiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: PropertyVisibilitiesClass.$filter,
-          $fromRdf: PropertyVisibilitiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async propertyVisibilitiesClassesCount(
@@ -71720,18 +70247,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   propertyVisibilitiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.propertyVisibilitiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  propertyVisibilitiesClassSync(
+    identifier: PropertyVisibilitiesClass.$Identifier,
+  ): purify.Either<Error, PropertyVisibilitiesClass> {
+    return this.propertyVisibilitiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  propertyVisibilitiesClassesSync(
+    query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
+  ): purify.Either<Error, readonly PropertyVisibilitiesClass[]> {
+    return this.$objectsSync<
       PropertyVisibilitiesClass,
       PropertyVisibilitiesClass.$Filter,
       PropertyVisibilitiesClass.$Identifier
     >(
-      [
-        {
-          $filter: PropertyVisibilitiesClass.$filter,
-          $fromRdf: PropertyVisibilitiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: PropertyVisibilitiesClass.$filter,
+        $fromRdf: PropertyVisibilitiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -71740,14 +70281,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: RecursiveClassUnionMember1.$Identifier,
   ): Promise<purify.Either<Error, RecursiveClassUnionMember1>> {
     return this.recursiveClassUnionMember1Sync(identifier);
-  }
-
-  recursiveClassUnionMember1Sync(
-    identifier: RecursiveClassUnionMember1.$Identifier,
-  ): purify.Either<Error, RecursiveClassUnionMember1> {
-    return this.recursiveClassUnionMember1sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async recursiveClassUnionMember1Identifiers(
@@ -71761,19 +70294,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   recursiveClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      RecursiveClassUnionMember1,
-      RecursiveClassUnionMember1.$Filter,
-      RecursiveClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember1.$filter,
-          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.recursiveClassUnionMember1sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71781,25 +70303,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>> {
     return this.recursiveClassUnionMember1sSync(query);
-  }
-
-  recursiveClassUnionMember1sSync(
-    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
-  ): purify.Either<Error, readonly RecursiveClassUnionMember1[]> {
-    return this.$objectsSync<
-      RecursiveClassUnionMember1,
-      RecursiveClassUnionMember1.$Filter,
-      RecursiveClassUnionMember1.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember1.$filter,
-          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async recursiveClassUnionMember1sCount(
@@ -71817,18 +70320,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.recursiveClassUnionMember1sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  recursiveClassUnionMember1Sync(
+    identifier: RecursiveClassUnionMember1.$Identifier,
+  ): purify.Either<Error, RecursiveClassUnionMember1> {
+    return this.recursiveClassUnionMember1sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  recursiveClassUnionMember1sSync(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
+  ): purify.Either<Error, readonly RecursiveClassUnionMember1[]> {
+    return this.$objectsSync<
       RecursiveClassUnionMember1,
       RecursiveClassUnionMember1.$Filter,
       RecursiveClassUnionMember1.$Identifier
     >(
-      [
-        {
-          $filter: RecursiveClassUnionMember1.$filter,
-          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: RecursiveClassUnionMember1.$filter,
+        $fromRdf: RecursiveClassUnionMember1.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -71837,14 +70354,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: RecursiveClassUnionMember2.$Identifier,
   ): Promise<purify.Either<Error, RecursiveClassUnionMember2>> {
     return this.recursiveClassUnionMember2Sync(identifier);
-  }
-
-  recursiveClassUnionMember2Sync(
-    identifier: RecursiveClassUnionMember2.$Identifier,
-  ): purify.Either<Error, RecursiveClassUnionMember2> {
-    return this.recursiveClassUnionMember2sSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async recursiveClassUnionMember2Identifiers(
@@ -71858,19 +70367,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   recursiveClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      RecursiveClassUnionMember2,
-      RecursiveClassUnionMember2.$Filter,
-      RecursiveClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember2.$filter,
-          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.recursiveClassUnionMember2sSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71878,25 +70376,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>> {
     return this.recursiveClassUnionMember2sSync(query);
-  }
-
-  recursiveClassUnionMember2sSync(
-    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
-  ): purify.Either<Error, readonly RecursiveClassUnionMember2[]> {
-    return this.$objectsSync<
-      RecursiveClassUnionMember2,
-      RecursiveClassUnionMember2.$Filter,
-      RecursiveClassUnionMember2.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember2.$filter,
-          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async recursiveClassUnionMember2sCount(
@@ -71914,18 +70393,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.recursiveClassUnionMember2sSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  recursiveClassUnionMember2Sync(
+    identifier: RecursiveClassUnionMember2.$Identifier,
+  ): purify.Either<Error, RecursiveClassUnionMember2> {
+    return this.recursiveClassUnionMember2sSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  recursiveClassUnionMember2sSync(
+    query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
+  ): purify.Either<Error, readonly RecursiveClassUnionMember2[]> {
+    return this.$objectsSync<
       RecursiveClassUnionMember2,
       RecursiveClassUnionMember2.$Filter,
       RecursiveClassUnionMember2.$Identifier
     >(
-      [
-        {
-          $filter: RecursiveClassUnionMember2.$filter,
-          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: RecursiveClassUnionMember2.$filter,
+        $fromRdf: RecursiveClassUnionMember2.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -71934,14 +70427,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: Sha256IriIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, Sha256IriIdentifierClass>> {
     return this.sha256IriIdentifierClassSync(identifier);
-  }
-
-  sha256IriIdentifierClassSync(
-    identifier: Sha256IriIdentifierClass.$Identifier,
-  ): purify.Either<Error, Sha256IriIdentifierClass> {
-    return this.sha256IriIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async sha256IriIdentifierClassIdentifiers(
@@ -71955,19 +70440,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   sha256IriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      Sha256IriIdentifierClass,
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: Sha256IriIdentifierClass.$filter,
-          $fromRdf: Sha256IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.sha256IriIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -71975,25 +70449,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>> {
     return this.sha256IriIdentifierClassesSync(query);
-  }
-
-  sha256IriIdentifierClassesSync(
-    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly Sha256IriIdentifierClass[]> {
-    return this.$objectsSync<
-      Sha256IriIdentifierClass,
-      Sha256IriIdentifierClass.$Filter,
-      Sha256IriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: Sha256IriIdentifierClass.$filter,
-          $fromRdf: Sha256IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async sha256IriIdentifierClassesCount(
@@ -72005,18 +70460,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   sha256IriIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.sha256IriIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  sha256IriIdentifierClassSync(
+    identifier: Sha256IriIdentifierClass.$Identifier,
+  ): purify.Either<Error, Sha256IriIdentifierClass> {
+    return this.sha256IriIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  sha256IriIdentifierClassesSync(
+    query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly Sha256IriIdentifierClass[]> {
+    return this.$objectsSync<
       Sha256IriIdentifierClass,
       Sha256IriIdentifierClass.$Filter,
       Sha256IriIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: Sha256IriIdentifierClass.$filter,
-          $fromRdf: Sha256IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: Sha256IriIdentifierClass.$filter,
+        $fromRdf: Sha256IriIdentifierClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -72025,14 +70494,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<purify.Either<Error, TermPropertiesClass>> {
     return this.termPropertiesClassSync(identifier);
-  }
-
-  termPropertiesClassSync(
-    identifier: TermPropertiesClass.$Identifier,
-  ): purify.Either<Error, TermPropertiesClass> {
-    return this.termPropertiesClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async termPropertiesClassIdentifiers(
@@ -72044,19 +70505,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   termPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): purify.Either<Error, readonly TermPropertiesClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      TermPropertiesClass,
-      TermPropertiesClass.$Filter,
-      TermPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: TermPropertiesClass.$filter,
-          $fromRdf: TermPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.termPropertiesClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72064,25 +70514,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly TermPropertiesClass[]>> {
     return this.termPropertiesClassesSync(query);
-  }
-
-  termPropertiesClassesSync(
-    query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
-  ): purify.Either<Error, readonly TermPropertiesClass[]> {
-    return this.$objectsSync<
-      TermPropertiesClass,
-      TermPropertiesClass.$Filter,
-      TermPropertiesClass.$Identifier
-    >(
-      [
-        {
-          $filter: TermPropertiesClass.$filter,
-          $fromRdf: TermPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async termPropertiesClassesCount(
@@ -72094,18 +70525,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   termPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.termPropertiesClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  termPropertiesClassSync(
+    identifier: TermPropertiesClass.$Identifier,
+  ): purify.Either<Error, TermPropertiesClass> {
+    return this.termPropertiesClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  termPropertiesClassesSync(
+    query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
+  ): purify.Either<Error, readonly TermPropertiesClass[]> {
+    return this.$objectsSync<
       TermPropertiesClass,
       TermPropertiesClass.$Filter,
       TermPropertiesClass.$Identifier
     >(
-      [
-        {
-          $filter: TermPropertiesClass.$filter,
-          $fromRdf: TermPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: TermPropertiesClass.$filter,
+        $fromRdf: TermPropertiesClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -72114,14 +70559,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: UnionDiscriminantsClass.$Identifier,
   ): Promise<purify.Either<Error, UnionDiscriminantsClass>> {
     return this.unionDiscriminantsClassSync(identifier);
-  }
-
-  unionDiscriminantsClassSync(
-    identifier: UnionDiscriminantsClass.$Identifier,
-  ): purify.Either<Error, UnionDiscriminantsClass> {
-    return this.unionDiscriminantsClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async unionDiscriminantsClassIdentifiers(
@@ -72135,19 +70572,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   unionDiscriminantsClassIdentifiersSync(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      UnionDiscriminantsClass,
-      UnionDiscriminantsClass.$Filter,
-      UnionDiscriminantsClass.$Identifier
-    >(
-      [
-        {
-          $filter: UnionDiscriminantsClass.$filter,
-          $fromRdf: UnionDiscriminantsClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.unionDiscriminantsClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72155,25 +70581,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>> {
     return this.unionDiscriminantsClassesSync(query);
-  }
-
-  unionDiscriminantsClassesSync(
-    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
-  ): purify.Either<Error, readonly UnionDiscriminantsClass[]> {
-    return this.$objectsSync<
-      UnionDiscriminantsClass,
-      UnionDiscriminantsClass.$Filter,
-      UnionDiscriminantsClass.$Identifier
-    >(
-      [
-        {
-          $filter: UnionDiscriminantsClass.$filter,
-          $fromRdf: UnionDiscriminantsClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async unionDiscriminantsClassesCount(
@@ -72185,18 +70592,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   unionDiscriminantsClassesCountSync(
     query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.unionDiscriminantsClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  unionDiscriminantsClassSync(
+    identifier: UnionDiscriminantsClass.$Identifier,
+  ): purify.Either<Error, UnionDiscriminantsClass> {
+    return this.unionDiscriminantsClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  unionDiscriminantsClassesSync(
+    query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
+  ): purify.Either<Error, readonly UnionDiscriminantsClass[]> {
+    return this.$objectsSync<
       UnionDiscriminantsClass,
       UnionDiscriminantsClass.$Filter,
       UnionDiscriminantsClass.$Identifier
     >(
-      [
-        {
-          $filter: UnionDiscriminantsClass.$filter,
-          $fromRdf: UnionDiscriminantsClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: UnionDiscriminantsClass.$filter,
+        $fromRdf: UnionDiscriminantsClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -72205,14 +70626,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: UuidV4IriIdentifierClass.$Identifier,
   ): Promise<purify.Either<Error, UuidV4IriIdentifierClass>> {
     return this.uuidV4IriIdentifierClassSync(identifier);
-  }
-
-  uuidV4IriIdentifierClassSync(
-    identifier: UuidV4IriIdentifierClass.$Identifier,
-  ): purify.Either<Error, UuidV4IriIdentifierClass> {
-    return this.uuidV4IriIdentifierClassesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async uuidV4IriIdentifierClassIdentifiers(
@@ -72226,19 +70639,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   uuidV4IriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      UuidV4IriIdentifierClass,
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: UuidV4IriIdentifierClass.$filter,
-          $fromRdf: UuidV4IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.uuidV4IriIdentifierClassesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72246,25 +70648,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>> {
     return this.uuidV4IriIdentifierClassesSync(query);
-  }
-
-  uuidV4IriIdentifierClassesSync(
-    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
-  ): purify.Either<Error, readonly UuidV4IriIdentifierClass[]> {
-    return this.$objectsSync<
-      UuidV4IriIdentifierClass,
-      UuidV4IriIdentifierClass.$Filter,
-      UuidV4IriIdentifierClass.$Identifier
-    >(
-      [
-        {
-          $filter: UuidV4IriIdentifierClass.$filter,
-          $fromRdf: UuidV4IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async uuidV4IriIdentifierClassesCount(
@@ -72276,18 +70659,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   uuidV4IriIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.uuidV4IriIdentifierClassesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  uuidV4IriIdentifierClassSync(
+    identifier: UuidV4IriIdentifierClass.$Identifier,
+  ): purify.Either<Error, UuidV4IriIdentifierClass> {
+    return this.uuidV4IriIdentifierClassesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  uuidV4IriIdentifierClassesSync(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
+  ): purify.Either<Error, readonly UuidV4IriIdentifierClass[]> {
+    return this.$objectsSync<
       UuidV4IriIdentifierClass,
       UuidV4IriIdentifierClass.$Filter,
       UuidV4IriIdentifierClass.$Identifier
     >(
-      [
-        {
-          $filter: UuidV4IriIdentifierClass.$filter,
-          $fromRdf: UuidV4IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: UuidV4IriIdentifierClass.$filter,
+        $fromRdf: UuidV4IriIdentifierClass.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -72296,14 +70693,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: UuidV4IriIdentifierInterface.$Identifier,
   ): Promise<purify.Either<Error, UuidV4IriIdentifierInterface>> {
     return this.uuidV4IriIdentifierInterfaceSync(identifier);
-  }
-
-  uuidV4IriIdentifierInterfaceSync(
-    identifier: UuidV4IriIdentifierInterface.$Identifier,
-  ): purify.Either<Error, UuidV4IriIdentifierInterface> {
-    return this.uuidV4IriIdentifierInterfacesSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async uuidV4IriIdentifierInterfaceIdentifiers(
@@ -72317,19 +70706,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   uuidV4IriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      UuidV4IriIdentifierInterface,
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: UuidV4IriIdentifierInterface.$filter,
-          $fromRdf: UuidV4IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.uuidV4IriIdentifierInterfacesSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72337,25 +70715,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
     return this.uuidV4IriIdentifierInterfacesSync(query);
-  }
-
-  uuidV4IriIdentifierInterfacesSync(
-    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
-  ): purify.Either<Error, readonly UuidV4IriIdentifierInterface[]> {
-    return this.$objectsSync<
-      UuidV4IriIdentifierInterface,
-      UuidV4IriIdentifierInterface.$Filter,
-      UuidV4IriIdentifierInterface.$Identifier
-    >(
-      [
-        {
-          $filter: UuidV4IriIdentifierInterface.$filter,
-          $fromRdf: UuidV4IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async uuidV4IriIdentifierInterfacesCount(
@@ -72373,18 +70732,32 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.uuidV4IriIdentifierInterfacesSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  uuidV4IriIdentifierInterfaceSync(
+    identifier: UuidV4IriIdentifierInterface.$Identifier,
+  ): purify.Either<Error, UuidV4IriIdentifierInterface> {
+    return this.uuidV4IriIdentifierInterfacesSync({
+      filter: { $identifier: { in: [identifier] } },
+    }).map((objects) => objects[0]);
+  }
+
+  uuidV4IriIdentifierInterfacesSync(
+    query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
+  ): purify.Either<Error, readonly UuidV4IriIdentifierInterface[]> {
+    return this.$objectsSync<
       UuidV4IriIdentifierInterface,
       UuidV4IriIdentifierInterface.$Filter,
       UuidV4IriIdentifierInterface.$Identifier
     >(
-      [
-        {
-          $filter: UuidV4IriIdentifierInterface.$filter,
-          $fromRdf: UuidV4IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
+      {
+        $filter: UuidV4IriIdentifierInterface.$filter,
+        $fromRdf: UuidV4IriIdentifierInterface.$fromRdf,
+        $fromRdfTypes: [],
+      },
       query,
     );
   }
@@ -72393,14 +70766,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     identifier: ClassUnion.$Identifier,
   ): Promise<purify.Either<Error, ClassUnion>> {
     return this.classUnionSync(identifier);
-  }
-
-  classUnionSync(
-    identifier: ClassUnion.$Identifier,
-  ): purify.Either<Error, ClassUnion> {
-    return this.classUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async classUnionIdentifiers(
@@ -72412,24 +70777,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   classUnionIdentifiersSync(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): purify.Either<Error, readonly ClassUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      ClassUnion,
-      ClassUnion.$Filter,
-      ClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.classUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72437,30 +70786,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnion[]>> {
     return this.classUnionsSync(query);
-  }
-
-  classUnionsSync(
-    query?: $ObjectSet.Query<ClassUnion.$Filter>,
-  ): purify.Either<Error, readonly ClassUnion[]> {
-    return this.$objectsSync<
-      ClassUnion,
-      ClassUnion.$Filter,
-      ClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async classUnionsCount(
@@ -72472,39 +70797,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   classUnionsCountSync(
     query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.classUnionsSync(query).map((objects) => objects.length);
+  }
+
+  classUnionsSync(
+    query?: $ObjectSet.Query<ClassUnion.$Filter>,
+  ): purify.Either<Error, readonly ClassUnion[]> {
+    return this.$objectUnionsSync<
       ClassUnion,
       ClassUnion.$Filter,
       ClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
   ): Promise<purify.Either<Error, FlattenClassUnion>> {
     return this.flattenClassUnionSync(identifier);
-  }
-
-  flattenClassUnionSync(
-    identifier: FlattenClassUnion.$Identifier,
-  ): purify.Either<Error, FlattenClassUnion> {
-    return this.flattenClassUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async flattenClassUnionIdentifiers(
@@ -72516,29 +70825,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   flattenClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): purify.Either<Error, readonly FlattenClassUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      FlattenClassUnion,
-      FlattenClassUnion.$Filter,
-      FlattenClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-        {
-          $filter: FlattenClassUnionMember3.$filter,
-          $fromRdf: FlattenClassUnionMember3.$fromRdf,
-          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
-        },
-      ],
-      query,
+    return this.flattenClassUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72546,35 +70834,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>> {
     return this.flattenClassUnionsSync(query);
-  }
-
-  flattenClassUnionsSync(
-    query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
-  ): purify.Either<Error, readonly FlattenClassUnion[]> {
-    return this.$objectsSync<
-      FlattenClassUnion,
-      FlattenClassUnion.$Filter,
-      FlattenClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-        {
-          $filter: FlattenClassUnionMember3.$filter,
-          $fromRdf: FlattenClassUnionMember3.$fromRdf,
-          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async flattenClassUnionsCount(
@@ -72586,44 +70845,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   flattenClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.flattenClassUnionsSync(query).map((objects) => objects.length);
+  }
+
+  flattenClassUnionsSync(
+    query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
+  ): purify.Either<Error, readonly FlattenClassUnion[]> {
+    return this.$objectUnionsSync<
       FlattenClassUnion,
       FlattenClassUnion.$Filter,
       FlattenClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: ClassUnionMember1.$filter,
-          $fromRdf: ClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: ClassUnionMember2.$filter,
-          $fromRdf: ClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
-        },
-        {
-          $filter: FlattenClassUnionMember3.$filter,
-          $fromRdf: FlattenClassUnionMember3.$fromRdf,
-          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
   ): Promise<purify.Either<Error, InterfaceUnion>> {
     return this.interfaceUnionSync(identifier);
-  }
-
-  interfaceUnionSync(
-    identifier: InterfaceUnion.$Identifier,
-  ): purify.Either<Error, InterfaceUnion> {
-    return this.interfaceUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async interfaceUnionIdentifiers(
@@ -72635,24 +70873,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceUnionIdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): purify.Either<Error, readonly InterfaceUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      InterfaceUnion,
-      InterfaceUnion.$Filter,
-      InterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember1.$filter,
-          $fromRdf: InterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: InterfaceUnionMember2.$filter,
-          $fromRdf: InterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.interfaceUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72660,30 +70882,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnion[]>> {
     return this.interfaceUnionsSync(query);
-  }
-
-  interfaceUnionsSync(
-    query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
-  ): purify.Either<Error, readonly InterfaceUnion[]> {
-    return this.$objectsSync<
-      InterfaceUnion,
-      InterfaceUnion.$Filter,
-      InterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember1.$filter,
-          $fromRdf: InterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: InterfaceUnionMember2.$filter,
-          $fromRdf: InterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async interfaceUnionsCount(
@@ -72695,39 +70893,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   interfaceUnionsCountSync(
     query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.interfaceUnionsSync(query).map((objects) => objects.length);
+  }
+
+  interfaceUnionsSync(
+    query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
+  ): purify.Either<Error, readonly InterfaceUnion[]> {
+    return this.$objectUnionsSync<
       InterfaceUnion,
       InterfaceUnion.$Filter,
       InterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: InterfaceUnionMember1.$filter,
-          $fromRdf: InterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: InterfaceUnionMember2.$filter,
-          $fromRdf: InterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedClassUnion>> {
     return this.lazilyResolvedClassUnionSync(identifier);
-  }
-
-  lazilyResolvedClassUnionSync(
-    identifier: LazilyResolvedClassUnion.$Identifier,
-  ): purify.Either<Error, LazilyResolvedClassUnion> {
-    return this.lazilyResolvedClassUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedClassUnionIdentifiers(
@@ -72741,24 +70923,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazilyResolvedClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): purify.Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedClassUnion,
-      LazilyResolvedClassUnion.$Filter,
-      LazilyResolvedClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember1.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: LazilyResolvedClassUnionMember2.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.lazilyResolvedClassUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72766,30 +70932,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnion[]>> {
     return this.lazilyResolvedClassUnionsSync(query);
-  }
-
-  lazilyResolvedClassUnionsSync(
-    query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedClassUnion[]> {
-    return this.$objectsSync<
-      LazilyResolvedClassUnion,
-      LazilyResolvedClassUnion.$Filter,
-      LazilyResolvedClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember1.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: LazilyResolvedClassUnionMember2.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedClassUnionsCount(
@@ -72801,39 +70943,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazilyResolvedClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedClassUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedClassUnionsSync(
+    query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedClassUnion[]> {
+    return this.$objectUnionsSync<
       LazilyResolvedClassUnion,
       LazilyResolvedClassUnion.$Filter,
       LazilyResolvedClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedClassUnionMember1.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: LazilyResolvedClassUnionMember2.$filter,
-          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
   ): Promise<purify.Either<Error, LazilyResolvedInterfaceUnion>> {
     return this.lazilyResolvedInterfaceUnionSync(identifier);
-  }
-
-  lazilyResolvedInterfaceUnionSync(
-    identifier: LazilyResolvedInterfaceUnion.$Identifier,
-  ): purify.Either<Error, LazilyResolvedInterfaceUnion> {
-    return this.lazilyResolvedInterfaceUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async lazilyResolvedInterfaceUnionIdentifiers(
@@ -72847,24 +70975,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   lazilyResolvedInterfaceUnionIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): purify.Either<Error, readonly LazilyResolvedInterfaceUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      LazilyResolvedInterfaceUnion,
-      LazilyResolvedInterfaceUnion.$Filter,
-      LazilyResolvedInterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember1.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: LazilyResolvedInterfaceUnionMember2.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.lazilyResolvedInterfaceUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72872,30 +70984,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly LazilyResolvedInterfaceUnion[]>> {
     return this.lazilyResolvedInterfaceUnionsSync(query);
-  }
-
-  lazilyResolvedInterfaceUnionsSync(
-    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
-  ): purify.Either<Error, readonly LazilyResolvedInterfaceUnion[]> {
-    return this.$objectsSync<
-      LazilyResolvedInterfaceUnion,
-      LazilyResolvedInterfaceUnion.$Filter,
-      LazilyResolvedInterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember1.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: LazilyResolvedInterfaceUnionMember2.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async lazilyResolvedInterfaceUnionsCount(
@@ -72913,39 +71001,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       "filter"
     >,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.lazilyResolvedInterfaceUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  lazilyResolvedInterfaceUnionsSync(
+    query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
+  ): purify.Either<Error, readonly LazilyResolvedInterfaceUnion[]> {
+    return this.$objectUnionsSync<
       LazilyResolvedInterfaceUnion,
       LazilyResolvedInterfaceUnion.$Filter,
       LazilyResolvedInterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: LazilyResolvedInterfaceUnionMember1.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: LazilyResolvedInterfaceUnionMember2.$filter,
-          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
   ): Promise<purify.Either<Error, NoRdfTypeClassUnion>> {
     return this.noRdfTypeClassUnionSync(identifier);
-  }
-
-  noRdfTypeClassUnionSync(
-    identifier: NoRdfTypeClassUnion.$Identifier,
-  ): purify.Either<Error, NoRdfTypeClassUnion> {
-    return this.noRdfTypeClassUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async noRdfTypeClassUnionIdentifiers(
@@ -72957,24 +71031,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   noRdfTypeClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      NoRdfTypeClassUnion,
-      NoRdfTypeClassUnion.$Filter,
-      NoRdfTypeClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember1.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: NoRdfTypeClassUnionMember2.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.noRdfTypeClassUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -72982,30 +71040,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>> {
     return this.noRdfTypeClassUnionsSync(query);
-  }
-
-  noRdfTypeClassUnionsSync(
-    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
-  ): purify.Either<Error, readonly NoRdfTypeClassUnion[]> {
-    return this.$objectsSync<
-      NoRdfTypeClassUnion,
-      NoRdfTypeClassUnion.$Filter,
-      NoRdfTypeClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember1.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: NoRdfTypeClassUnionMember2.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async noRdfTypeClassUnionsCount(
@@ -73017,39 +71051,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   noRdfTypeClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.noRdfTypeClassUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  noRdfTypeClassUnionsSync(
+    query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
+  ): purify.Either<Error, readonly NoRdfTypeClassUnion[]> {
+    return this.$objectUnionsSync<
       NoRdfTypeClassUnion,
       NoRdfTypeClassUnion.$Filter,
       NoRdfTypeClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: NoRdfTypeClassUnionMember1.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: NoRdfTypeClassUnionMember2.$filter,
-          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
   ): Promise<purify.Either<Error, PartialClassUnion>> {
     return this.partialClassUnionSync(identifier);
-  }
-
-  partialClassUnionSync(
-    identifier: PartialClassUnion.$Identifier,
-  ): purify.Either<Error, PartialClassUnion> {
-    return this.partialClassUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialClassUnionIdentifiers(
@@ -73061,24 +71081,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): purify.Either<Error, readonly PartialClassUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialClassUnion,
-      PartialClassUnion.$Filter,
-      PartialClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember1.$filter,
-          $fromRdf: PartialClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: PartialClassUnionMember2.$filter,
-          $fromRdf: PartialClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.partialClassUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -73086,30 +71090,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnion[]>> {
     return this.partialClassUnionsSync(query);
-  }
-
-  partialClassUnionsSync(
-    query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
-  ): purify.Either<Error, readonly PartialClassUnion[]> {
-    return this.$objectsSync<
-      PartialClassUnion,
-      PartialClassUnion.$Filter,
-      PartialClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember1.$filter,
-          $fromRdf: PartialClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: PartialClassUnionMember2.$filter,
-          $fromRdf: PartialClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async partialClassUnionsCount(
@@ -73121,39 +71101,23 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialClassUnionsSync(query).map((objects) => objects.length);
+  }
+
+  partialClassUnionsSync(
+    query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
+  ): purify.Either<Error, readonly PartialClassUnion[]> {
+    return this.$objectUnionsSync<
       PartialClassUnion,
       PartialClassUnion.$Filter,
       PartialClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: PartialClassUnionMember1.$filter,
-          $fromRdf: PartialClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: PartialClassUnionMember2.$filter,
-          $fromRdf: PartialClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
   ): Promise<purify.Either<Error, PartialInterfaceUnion>> {
     return this.partialInterfaceUnionSync(identifier);
-  }
-
-  partialInterfaceUnionSync(
-    identifier: PartialInterfaceUnion.$Identifier,
-  ): purify.Either<Error, PartialInterfaceUnion> {
-    return this.partialInterfaceUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async partialInterfaceUnionIdentifiers(
@@ -73167,24 +71131,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialInterfaceUnionIdentifiersSync(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): purify.Either<Error, readonly PartialInterfaceUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      PartialInterfaceUnion,
-      PartialInterfaceUnion.$Filter,
-      PartialInterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember1.$filter,
-          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: PartialInterfaceUnionMember2.$filter,
-          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
+    return this.partialInterfaceUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -73192,30 +71140,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnion[]>> {
     return this.partialInterfaceUnionsSync(query);
-  }
-
-  partialInterfaceUnionsSync(
-    query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
-  ): purify.Either<Error, readonly PartialInterfaceUnion[]> {
-    return this.$objectsSync<
-      PartialInterfaceUnion,
-      PartialInterfaceUnion.$Filter,
-      PartialInterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember1.$filter,
-          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: PartialInterfaceUnionMember2.$filter,
-          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
   }
 
   async partialInterfaceUnionsCount(
@@ -73227,39 +71151,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   partialInterfaceUnionsCountSync(
     query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
+    return this.partialInterfaceUnionsSync(query).map(
+      (objects) => objects.length,
+    );
+  }
+
+  partialInterfaceUnionsSync(
+    query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
+  ): purify.Either<Error, readonly PartialInterfaceUnion[]> {
+    return this.$objectUnionsSync<
       PartialInterfaceUnion,
       PartialInterfaceUnion.$Filter,
       PartialInterfaceUnion.$Identifier
-    >(
-      [
-        {
-          $filter: PartialInterfaceUnionMember1.$filter,
-          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
-        },
-        {
-          $filter: PartialInterfaceUnionMember2.$filter,
-          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
-          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
-        },
-      ],
-      query,
-    );
+    >([], query);
   }
 
   async recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
   ): Promise<purify.Either<Error, RecursiveClassUnion>> {
     return this.recursiveClassUnionSync(identifier);
-  }
-
-  recursiveClassUnionSync(
-    identifier: RecursiveClassUnion.$Identifier,
-  ): purify.Either<Error, RecursiveClassUnion> {
-    return this.recursiveClassUnionsSync({
-      filter: { $identifier: { in: [identifier] } },
-    }).map((objects) => objects[0]);
   }
 
   async recursiveClassUnionIdentifiers(
@@ -73271,24 +71181,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   recursiveClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]> {
-    return this.$objectIdentifiersSync<
-      RecursiveClassUnion,
-      RecursiveClassUnion.$Filter,
-      RecursiveClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember1.$filter,
-          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: RecursiveClassUnionMember2.$filter,
-          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.recursiveClassUnionsSync(query).map((objects) =>
+      objects.map((object) => object.$identifier),
     );
   }
 
@@ -73296,30 +71190,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>> {
     return this.recursiveClassUnionsSync(query);
-  }
-
-  recursiveClassUnionsSync(
-    query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
-  ): purify.Either<Error, readonly RecursiveClassUnion[]> {
-    return this.$objectsSync<
-      RecursiveClassUnion,
-      RecursiveClassUnion.$Filter,
-      RecursiveClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember1.$filter,
-          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: RecursiveClassUnionMember2.$filter,
-          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
-    );
   }
 
   async recursiveClassUnionsCount(
@@ -73331,61 +71201,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   recursiveClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
-    return this.$objectsCountSync<
-      RecursiveClassUnion,
-      RecursiveClassUnion.$Filter,
-      RecursiveClassUnion.$Identifier
-    >(
-      [
-        {
-          $filter: RecursiveClassUnionMember1.$filter,
-          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: RecursiveClassUnionMember2.$filter,
-          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
-        },
-      ],
-      query,
+    return this.recursiveClassUnionsSync(query).map(
+      (objects) => objects.length,
     );
   }
 
-  protected $objectIdentifiersSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends
-      | {
-          readonly $identifier?: {
-            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-          };
-        }
-      | {
-          readonly on?: Record<
-            string,
-            {
-              readonly $identifier?: {
-                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-              };
-            }
-          >;
-        },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectTypes: readonly {
-      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectFilterT>,
-  ): purify.Either<Error, readonly ObjectIdentifierT[]> {
-    return this.$objectsSync<ObjectT, ObjectFilterT, ObjectIdentifierT>(
-      objectTypes,
-      query,
-    ).map((objects) => objects.map((object) => object.$identifier));
+  recursiveClassUnionsSync(
+    query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
+  ): purify.Either<Error, readonly RecursiveClassUnion[]> {
+    return this.$objectUnionsSync<
+      RecursiveClassUnion,
+      RecursiveClassUnion.$Filter,
+      RecursiveClassUnion.$Identifier
+    >([], query);
   }
 
   protected $objectsSync<
@@ -73408,14 +71236,14 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
-    objectTypes: readonly {
+    objectType: {
       $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
       $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
+    },
     query?: $ObjectSet.Query<ObjectFilterT>,
   ): purify.Either<Error, readonly ObjectT[]> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
@@ -73428,196 +71256,72 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    // First pass: gather all resources that meet the where filters.
-    // We don't limit + offset here because the resources aren't sorted and limit + offset should be deterministic.
-    const resources: {
-      object?: ObjectT;
-      objectType?: {
-        $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-        $fromRdf: (
-          resource: rdfjsResource.Resource,
-          options: { objectSet: $ObjectSet },
-        ) => purify.Either<Error, ObjectT>;
-        $fromRdfTypes: readonly rdfjs.NamedNode[];
-      };
-      resource: rdfjsResource.Resource;
-    }[] = [];
-    const where = query?.where ?? { type: "type" };
-    switch (where.type) {
-      case "identifiers": {
-        for (const identifier of where.identifiers) {
-          // Don't deduplicate
-          resources.push({ resource: this.resourceSet.resource(identifier) });
-        }
-        break;
-      }
-
-      case "triple-objects": {
-        for (const quad of this.resourceSet.dataset.match(
-          where.subject,
-          where.predicate,
-          null,
-        )) {
-          if (
-            where.objectTermType &&
-            quad.object.termType !== where.objectTermType
-          ) {
-            continue;
-          }
-
-          switch (quad.object.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              break;
-            default:
-              return purify.Left(
-                new Error(
-                  `subject=${where.subject?.value} predicate=${where.predicate.value} pattern matches non-identifier (${quad.object.termType}) object`,
-                ),
-              );
-          }
-
-          const resource = this.resourceSet.resource(quad.object);
-          if (
-            !resources.some(({ resource: existingResource }) =>
-              existingResource.identifier.equals(resource.identifier),
-            )
-          ) {
+    let resources: { object?: ObjectT; resource: rdfjsResource.Resource };
+    let sortResources: boolean;
+    if (query.filter?.$identifier?.in) {
+      resources = query.filter.$identifier.in.map((identifier) => ({
+        resource: this.resourceSet.resource(identifier),
+      }));
+      sortResources = false;
+    } else if (objectType.fromRdfTypes.length > 0) {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      for (const fromRdfType of objectType.fromRdfTypes) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          if (!identifierSet.has(resource.identifier)) {
+            identifierSet.add(resource.identifier);
             resources.push({ resource });
           }
         }
-        break;
       }
-
-      case "triple-subjects": {
-        for (const quad of this.resourceSet.dataset.match(
-          null,
-          where.predicate,
-          where.object,
-        )) {
-          if (
-            where.subjectTermType &&
-            quad.subject.termType !== where.subjectTermType
-          ) {
+      sortResources = true;
+    } else {
+      resources = [];
+      for (const quad of this.resourceSet.dataset) {
+        switch (quad.subject.termType) {
+          case "BlankNode":
+          case "NamedNode":
+            break;
+          default:
             continue;
-          }
-
-          switch (quad.subject.termType) {
-            case "BlankNode":
-            case "NamedNode":
-              break;
-            default:
-              return purify.Left(
-                new Error(
-                  `predicate=${where.predicate.value} object=${where.object?.value} pattern matches non-identifier (${quad.subject.termType}) subject`,
-                ),
-              );
-          }
-
-          const resource = this.resourceSet.resource(quad.subject);
-          if (
-            !resources.some(({ resource: existingResource }) =>
-              existingResource.identifier.equals(resource.identifier),
-            )
-          ) {
-            resources.push({ resource });
-          }
-        }
-        break;
-      }
-
-      case "type": {
-        for (const objectType of objectTypes) {
-          if (objectType.$fromRdfTypes.length > 0) {
-            for (const fromRdfType of objectType.$fromRdfTypes) {
-              for (const resource of where.identifierType === "NamedNode"
-                ? this.resourceSet.namedInstancesOf(fromRdfType)
-                : this.resourceSet.instancesOf(fromRdfType)) {
-                if (
-                  !resources.some(({ resource: existingResource }) =>
-                    existingResource.identifier.equals(resource.identifier),
-                  )
-                ) {
-                  resources.push({ objectType, resource });
-                }
-              }
-            }
-          } else {
-            // The objectType has no fromRdfType
-            // Try to deserialize every resource in the dataset
-            const blankNodeSubjects = new Set<string>();
-            const namedNodeSubjects = new Set<string>();
-            for (const quad of this.resourceSet.dataset) {
-              let resource: rdfjsResource.Resource;
-              switch (quad.subject.termType) {
-                case "BlankNode": {
-                  if (blankNodeSubjects.has(quad.subject.value)) {
-                    continue;
-                  }
-                  resource = this.resourceSet.resource(quad.subject);
-                  blankNodeSubjects.add(quad.subject.value);
-                  break;
-                }
-                case "NamedNode": {
-                  if (namedNodeSubjects.has(quad.subject.value)) {
-                    continue;
-                  }
-                  resource = this.resourceSet.namedResource(quad.subject);
-                  namedNodeSubjects.add(quad.subject.value);
-                  break;
-                }
-                default:
-                  continue;
-              }
-              objectType
-                .$fromRdf(resource, { objectSet: this })
-                .ifRight((object) => {
-                  resources.push({ object, objectType, resource });
-                });
-            }
-          }
         }
 
-        break;
+        if (identifierSet.has(quad.subject)) {
+          continue;
+        }
+        identifierSet.add(resource.identifier);
+        // Eagerly eliminate the majority of resources that won't match the object type
+        objectType.$fromRdf(resource, { objectSet: this }).ifRight((object) => {
+          resources.push({ object, resource });
+        });
       }
+      sortResources = true;
     }
 
-    // Sort resources by identifier so limit and offset are deterministic
-    resources.sort((left, right) =>
-      left.resource.identifier.value.localeCompare(
-        right.resource.identifier.value,
-      ),
-    );
+    if (sortResources) {
+      // Sort resources by identifier so limit and offset are deterministic
+      resources.sort((left, right) =>
+        left.resource.identifier.value.localeCompare(
+          right.resource.identifier.value,
+        ),
+      );
+    }
 
     let objectI = 0;
     const objects: ObjectT[] = [];
-    for (let { object, objectType, resource } of resources) {
-      if (object) {
-        objects.push(object);
+    for (let { object, resource } of resources) {
+      if (!object) {
+        const objectEither = objectType.$fromRdf(resource, { objectSet: this });
+        if (objectEither.isLeft()) {
+          return objectEither;
+        }
+        object = objectEither.unsafeCoerce();
+      }
+
+      if (query.filter && !objectType.filter(query.filter, object)) {
         continue;
       }
 
-      let objectEither: purify.Either<Error, ObjectT>;
-      if (objectType) {
-        objectEither = objectType.$fromRdf(resource, { objectSet: this });
-      } else {
-        for (const tryObjectType of objectTypes) {
-          objectEither = tryObjectType.$fromRdf(resource, { objectSet: this });
-          if (objectEither.isRight()) {
-            objectType = tryObjectType;
-            break;
-          }
-        }
-      }
-
-      if (objectEither!.isLeft()) {
-        // Doesn't appear to belong to any of the known object types, just assume the first
-        return objectEither as unknown as purify.Either<
-          Error,
-          readonly ObjectT[]
-        >;
-      }
-      object = objectEither!.unsafeCoerce();
       if (objectI++ >= offset) {
         objects.push(object);
         if (objects.length === limit) {
@@ -73625,44 +71329,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
       }
     }
-
     return purify.Either.of(objects);
-  }
-
-  protected $objectsCountSync<
-    ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends
-      | {
-          readonly $identifier?: {
-            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-          };
-        }
-      | {
-          readonly on?: Record<
-            string,
-            {
-              readonly $identifier?: {
-                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-              };
-            }
-          >;
-        },
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  >(
-    objectTypes: readonly {
-      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-      $fromRdf: (
-        resource: rdfjsResource.Resource,
-        options: { objectSet: $ObjectSet },
-      ) => purify.Either<Error, ObjectT>;
-      $fromRdfTypes: readonly rdfjs.NamedNode[];
-    }[],
-    query?: $ObjectSet.Query<ObjectFilterT>,
-  ): purify.Either<Error, number> {
-    return this.$objectsSync<ObjectT, ObjectFilterT, ObjectIdentifierT>(
-      objectTypes,
-      query,
-    ).map((objects) => objects.length);
   }
 }
 
