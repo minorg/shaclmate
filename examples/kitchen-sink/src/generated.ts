@@ -431,7 +431,7 @@ function $filterIdentifier(
 ) {
   if (
     typeof filter.in !== "undefined" &&
-    !filter.in.some((inValue) => inValue === value.value)
+    !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
   }
@@ -486,7 +486,7 @@ function $filterMaybe<ItemT, ItemFilterT>(
 function $filterNamedNode(filter: $NamedNodeFilter, value: rdfjs.NamedNode) {
   if (
     typeof filter.in !== "undefined" &&
-    !filter.in.some((inValue) => inValue === value.value)
+    !filter.in.some((inValue) => inValue.equals(value))
   ) {
     return false;
   }
@@ -565,8 +565,8 @@ function $filterTerm(
   if (
     typeof filter.datatypeIn !== "undefined" &&
     (value.termType !== "Literal" ||
-      !filter.datatypeIn.some(
-        (inDatatype) => inDatatype === value.datatype.value,
+      !filter.datatypeIn.some((inDatatype) =>
+        inDatatype.equals(value.datatype),
       ))
   ) {
     return false;
@@ -574,32 +574,7 @@ function $filterTerm(
 
   if (
     typeof filter.in !== "undefined" &&
-    !filter.in.some((inTerm) => {
-      if (
-        typeof inTerm.datatype !== "undefined" &&
-        (value.termType !== "Literal" ||
-          value.datatype.value !== inTerm.datatype)
-      ) {
-        return false;
-      }
-
-      if (
-        typeof inTerm.language !== "undefined" &&
-        (value.termType !== "Literal" || value.language !== inTerm.language)
-      ) {
-        return false;
-      }
-
-      if (value.termType !== inTerm.type) {
-        return false;
-      }
-
-      if (value.value !== inTerm.value) {
-        return false;
-      }
-
-      return true;
-    })
+    !filter.in.some((inTerm) => inTerm.equals(value))
   ) {
     return false;
   }
@@ -677,7 +652,7 @@ function $fromRdfPreferredLanguages({
 }
 
 interface $IdentifierFilter {
-  readonly in?: readonly string[];
+  readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
   readonly type?: "BlankNode" | "NamedNode";
 }
 
@@ -700,7 +675,7 @@ namespace $IdentifierFilter {
           operator: "in",
           args: [
             value,
-            filter.in.map((inValue) => dataFactory.namedNode(inValue)),
+            filter.in.filter((inValue) => inValue.termType === "NamedNode"),
           ],
         },
       });
@@ -878,11 +853,7 @@ export class $LazyObjectSet<
 }
 
 interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
-  readonly in?: readonly {
-    readonly datatype?: string;
-    readonly language?: string;
-    readonly value: string;
-  }[];
+  readonly in?: readonly rdfjs.Literal[];
 }
 
 namespace $LiteralFilter {
@@ -890,20 +861,7 @@ namespace $LiteralFilter {
     filter: $LiteralFilter | undefined,
     value: rdfjs.Variable,
   ) {
-    return $TermFilter.$sparqlWherePatterns(
-      filter
-        ? {
-            ...filter,
-            in: filter.in
-              ? filter.in.map((inLiteral) => ({
-                  ...inLiteral,
-                  type: "Literal" as const,
-                }))
-              : undefined,
-          }
-        : undefined,
-      value,
-    );
+    return $TermFilter.$sparqlWherePatterns(filter, value);
   }
 }
 
@@ -964,7 +922,7 @@ namespace $MaybeFilter {
 }
 
 interface $NamedNodeFilter {
-  readonly in?: readonly string[];
+  readonly in?: readonly rdfjs.NamedNode[];
 }
 
 namespace $NamedNodeFilter {
@@ -984,10 +942,7 @@ namespace $NamedNodeFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [
-            value,
-            filter.in.map((inValue) => dataFactory.namedNode(inValue)),
-          ],
+          args: [value, filter.in.concat()],
         },
       });
     }
@@ -1331,13 +1286,8 @@ namespace $StringFilter {
 }
 
 interface $TermFilter {
-  readonly datatypeIn?: readonly string[];
-  readonly in?: readonly {
-    readonly datatype?: string;
-    readonly language?: string;
-    readonly type: "Literal" | "NamedNode";
-    readonly value: string;
-  }[];
+  readonly datatypeIn?: readonly rdfjs.NamedNode[];
+  readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }
@@ -1361,7 +1311,7 @@ namespace $TermFilter {
           operator: "in",
           args: [
             { args: [value], operator: "datatype", type: "operation" },
-            filter.datatypeIn.map(dataFactory.namedNode),
+            filter.datatypeIn.concat(),
           ],
         },
       });
@@ -1373,29 +1323,7 @@ namespace $TermFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [
-            value,
-            filter.in.map((inTerm) => {
-              if (typeof inTerm.datatype !== "undefined") {
-                return dataFactory.literal(
-                  inTerm.value,
-                  dataFactory.namedNode(inTerm.datatype),
-                );
-              }
-              if (typeof inTerm.language !== "undefined") {
-                return dataFactory.literal(inTerm.value, inTerm.language);
-              }
-              switch (inTerm.type) {
-                case "Literal":
-                  return dataFactory.literal(inTerm.value);
-                case "NamedNode":
-                  return dataFactory.namedNode(inTerm.value);
-                default:
-                  inTerm.type satisfies never;
-                  throw new RangeError(inTerm.type);
-              }
-            }),
-          ],
+          args: [value, filter.in.concat()],
         },
       });
     }
@@ -64042,9 +63970,7 @@ export interface $ObjectSet {
 export namespace $ObjectSet {
   export type Query<
     FilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-      };
+      readonly $identifier?: { readonly in?: readonly string[] };
     },
   > = {
     readonly filter?: FilterT;

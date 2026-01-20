@@ -105,29 +105,11 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     `${syntheticNamePrefix}filterTerm`,
     `\
   function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {  
-    if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value))) {
+    if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype.equals(value.datatype)))) {
       return false;
     }
 
-    if (typeof filter.in !== "undefined" && !filter.in.some(inTerm => {
-      if (typeof inTerm.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== inTerm.datatype)) {
-        return false;
-      }
-  
-      if (typeof inTerm.language !== "undefined" && (value.termType !== "Literal" || value.language !== inTerm.language)) {
-        return false;
-      }
-  
-      if (value.termType !== inTerm.type) {
-        return false;
-      }
-  
-      if (value.value !== inTerm.value) {
-        return false;
-      }
-  
-      return true;
-    })) {
+    if (typeof filter.in !== "undefined" && !filter.in.some(inTerm => inTerm.equals(value))) {
       return false;
     }
 
@@ -298,8 +280,8 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
     `${syntheticNamePrefix}TermFilter`,
     `\
 interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly string[];
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type: "Literal" | "NamedNode"; readonly value: string; }[];
+  readonly datatypeIn?: readonly rdfjs.NamedNode[];
+  readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }`,
@@ -322,7 +304,7 @@ namespace ${syntheticNamePrefix}TermFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [{ args: [value], operator: "datatype", type: "operation" }, filter.datatypeIn.map(dataFactory.namedNode)]
+          args: [{ args: [value], operator: "datatype", type: "operation" }, filter.datatypeIn.concat()]
         }
       });
     }
@@ -333,23 +315,7 @@ namespace ${syntheticNamePrefix}TermFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [value, filter.in.map(inTerm => {
-            if (typeof inTerm.datatype !== "undefined") {
-              return dataFactory.literal(inTerm.value, dataFactory.namedNode(inTerm.datatype));
-            }
-            if (typeof inTerm.language !== "undefined") {
-              return dataFactory.literal(inTerm.value, inTerm.language);
-            }
-            switch (inTerm.type) {
-              case "Literal":
-                return dataFactory.literal(inTerm.value);
-              case "NamedNode":
-                return dataFactory.namedNode(inTerm.value);
-              default:
-                inTerm.type satisfies never;
-                throw new RangeError(inTerm.type);
-            }
-          })],
+          args: [value, filter.in.concat()],
         }
       });
     }

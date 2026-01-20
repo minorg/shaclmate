@@ -298,7 +298,7 @@ namespace ${syntheticNamePrefix}BlankNodeFilter {
           `${syntheticNamePrefix}filterNamedNode`,
           `\
 function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}NamedNodeFilter, value: rdfjs.NamedNode) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value.value)) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
 
@@ -309,7 +309,7 @@ function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}Nam
           `${syntheticNamePrefix}NamedNodeFilter`,
           `\
 interface ${syntheticNamePrefix}NamedNodeFilter {
-  readonly in?: readonly string[];
+  readonly in?: readonly rdfjs.NamedNode[];
 }`,
         ),
         parameters.features.has("sparql")
@@ -330,7 +330,7 @@ namespace ${syntheticNamePrefix}NamedNodeFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [value, filter.in.map(inValue => dataFactory.namedNode(inValue))],
+          args: [value, filter.in.concat()],
         }
       });
     }
@@ -348,7 +348,7 @@ namespace ${syntheticNamePrefix}NamedNodeFilter {
           `${syntheticNamePrefix}filterIdentifier`,
           `\
 function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}IdentifierFilter, value: rdfjs.BlankNode | rdfjs.NamedNode) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value.value)) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
 
@@ -363,7 +363,7 @@ function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}Id
           `${syntheticNamePrefix}IdentifierFilter`,
           `\
 interface ${syntheticNamePrefix}IdentifierFilter {
-  readonly in?: readonly string[];
+  readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
   readonly type?: "BlankNode" | "NamedNode";
 }`,
         ),
@@ -385,7 +385,7 @@ namespace ${syntheticNamePrefix}IdentifierFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [value, filter.in.map(inValue => dataFactory.namedNode(inValue))],
+          args: [value, filter.in.filter(inValue => inValue.termType === "NamedNode")],
         }
       });
     }

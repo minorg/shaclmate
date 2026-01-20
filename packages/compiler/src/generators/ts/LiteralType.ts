@@ -120,7 +120,7 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
         `${syntheticNamePrefix}LiteralFilter`,
         `\
 interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix}TermFilter, "in" | "type"> {
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value: string; }[];
+  readonly in?: readonly rdfjs.Literal[];
 }`,
       ),
       parameters.features.has("sparql")
@@ -129,10 +129,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
             `\
 namespace ${syntheticNamePrefix}LiteralFilter {
   export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable) {
-    return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter ? {
-      ...filter,
-      in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
-    } : undefined, value);
+    return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter, value);
   }
 }`,
           )
