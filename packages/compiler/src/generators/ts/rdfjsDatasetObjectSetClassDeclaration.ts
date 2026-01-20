@@ -28,12 +28,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
     ObjectFilterT: {
       constraint:
-        "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } } | { readonly on?: Record<string, { readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }> }",
-      name: "ObjectFilterT",
-    },
-    ObjectUnionFilterT: {
-      constraint:
-        "{ readonly on?: Record<string, { readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }> }",
+        "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }",
       name: "ObjectFilterT",
     },
     ObjectIdentifierT: {
@@ -44,7 +39,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
   const objectTypeType = `\
 {
-  ${syntheticNamePrefix}filter: (value: ${typeParameters.ObjectT.name}) => boolean;
+  ${syntheticNamePrefix}filter: (filter: ${typeParameters.ObjectFilterT.name}, value: ${typeParameters.ObjectT.name}) => boolean;
   ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
   ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[]
 }`;
@@ -80,12 +75,13 @@ if (offset < 0) { offset = 0; }
 
 let resources: { object?: ${typeParameters.ObjectT.name}, resource: rdfjsResource.Resource };
 let sortResources: boolean;
-if (query.filter?.${syntheticNamePrefix}identifier?.in) {
+if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
   resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
   sortResources = false;
 } else if (objectType.fromRdfTypes.length > 0) {
   const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
   resources = [];
+  sortResources = true;
   for (const fromRdfType of objectType.fromRdfTypes) {
     for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
       if (!identifierSet.has(resource.identifier)) {
@@ -94,9 +90,10 @@ if (query.filter?.${syntheticNamePrefix}identifier?.in) {
       }
     }
   }
-  sortResources = true;
 } else {
+  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
   resources = [];
+  sortResources = true;
   for (const quad of this.resourceSet.dataset) {
     switch (quad.subject.termType) {
       case "BlankNode":
@@ -115,7 +112,6 @@ if (query.filter?.${syntheticNamePrefix}identifier?.in) {
       resources.push({ object, resource });
     });
   }
-  sortResources = true;
 }
 
 if (sortResources) {
@@ -134,7 +130,7 @@ for (let { object, resource } of resources) {
     object = objectEither.unsafeCoerce();
   }
 
-  if (query.filter && !objectType.filter(query.filter, object)) {
+  if (query?.filter && !objectType.filter(query.filter, object)) {
     continue;
   }
 
@@ -156,6 +152,120 @@ return purify.Either.of(objects);`,
   }
 
   if (objectUnionTypes.length > 0) {
+    reusableMethods.push({
+      kind: StructureKind.Method,
+      name: `${syntheticNamePrefix}objectUnionsSync`,
+      parameters: [
+        {
+          name: "objectTypes",
+          type: `readonly ${objectTypeType}[]`,
+        },
+        reusableMethodParameters.query,
+      ],
+      returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
+      scope: Scope.Protected,
+      statements: [
+        `\
+const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+if (limit <= 0) { return purify.Either.of([]); }
+
+let offset = query?.offset ?? 0;
+if (offset < 0) { offset = 0; }
+
+let resources: { object?: ${typeParameters.ObjectT.name}, objectType?: ${objectTypeType}, resource: rdfjsResource.Resource };
+let sortResources: boolean;
+if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
+  resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+  sortResources = false;
+} else if (objectTypes.every(objectType => objectType.fromRdfTypes.length > 0)) {
+  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
+  resources = [];
+  sortResources = true;
+  for (const objectType of objectTypes) {
+    for (const fromRdfType of objectType.fromRdfTypes) {
+      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        if (!identifierSet.has(resource.identifier)) {
+          identifierSet.add(resource.identifier);
+          resources.push({ objectType, resource });
+        }
+      }
+    }
+  }
+} else {
+  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
+  resources = [];
+  sortResources = true;
+  for (const quad of this.resourceSet.dataset) {
+    switch (quad.subject.termType) {
+      case "BlankNode":
+      case "NamedNode":
+        break;
+      default:
+        continue;
+    }
+
+    if (identifierSet.has(quad.subject)) {
+      continue;
+    }
+    identifierSet.add(resource.identifier);
+    // Eagerly eliminate the majority of resources that won't match the object types
+
+    for (const objectType of objectTypes) {
+      if (objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
+        resources.push({ object, objectType, resource });
+      }).isRight()) {
+        break;
+      }
+    }
+  }
+}
+
+if (sortResources) {
+  // Sort resources by identifier so limit and offset are deterministic
+  resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
+}
+
+let objectI = 0;
+const objects: ${typeParameters.ObjectT.name}[] = [];
+for (let { object, objectType, resource } of resources) {
+  if (!object) {
+    let objectEither: purify.Either<Error, ${typeParameters.ObjectT.name}>;
+    if (objectType) {
+      objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+    } else {
+      objectEither = purify.Left(new Error("no object types"));
+      for (const objectType of objectTypes) {
+        objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+        if (objectEither.isRight()) {
+          break;
+        }
+      }
+    }
+    if (objectEither.isLeft()) {
+      return objectEither;
+    }
+    object = objectEither.unsafeCoerce();
+  }
+
+  if (query?.filter && !objectType.filter(query.filter, object)) {
+    continue;
+  }
+
+  if (objectI++ >= offset) {
+    objects.push(object);
+    if (objects.length === limit) {
+      return purify.Either.of(objects);
+    }
+  }
+}
+return purify.Either.of(objects);`,
+      ],
+      typeParameters: [
+        typeParameters.ObjectT,
+        typeParameters.ObjectFilterT,
+        typeParameters.ObjectIdentifierT,
+      ],
+    });
   }
 
   return {
@@ -272,7 +382,7 @@ return purify.Either.of(objects);`,
               name: `${methodSignatures.objects.name}Sync`,
               returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
               statements: [
-                `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(`(value: ${objectType.name}) => ${reusableMethodParameters.query.name}?.filter ? ${objectType.staticModuleName}.${syntheticNamePrefix}filter(${reusableMethodParameters.query.name}?.filter, value) : true`, objectType)}, query);`,
+                `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(`${objectType.staticModuleName}.${syntheticNamePrefix}filter`, objectType)}, query);`,
               ],
             });
           }
@@ -283,7 +393,7 @@ return purify.Either.of(objects);`,
               name: `${methodSignatures.objects.name}Sync`,
               returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
               statements: [
-                `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([], query);`,
+                `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([${objectType.memberTypes.map((memberType) => runtimeObjectType(`${objectType.staticModuleName}.${syntheticNamePrefix}filter`, memberType)).join(", ")}], query);`,
               ],
             });
           default:

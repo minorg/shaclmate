@@ -66275,10 +66275,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BaseInterfaceWithoutPropertiesStatic.$Identifier
     >(
       {
-        $filter: (value: BaseInterfaceWithoutProperties) =>
-          query?.filter
-            ? BaseInterfaceWithoutPropertiesStatic.$filter(query?.filter, value)
-            : true,
+        $filter: BaseInterfaceWithoutPropertiesStatic.$filter,
         $fromRdf: BaseInterfaceWithoutPropertiesStatic.$fromRdf,
         $fromRdfTypes: [
           BaseInterfaceWithoutPropertiesStatic.$fromRdfType,
@@ -66361,10 +66358,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BaseInterfaceWithPropertiesStatic.$Identifier
     >(
       {
-        $filter: (value: BaseInterfaceWithProperties) =>
-          query?.filter
-            ? BaseInterfaceWithPropertiesStatic.$filter(query?.filter, value)
-            : true,
+        $filter: BaseInterfaceWithPropertiesStatic.$filter,
         $fromRdf: BaseInterfaceWithPropertiesStatic.$fromRdf,
         $fromRdfTypes: [
           BaseInterfaceWithPropertiesStatic.$fromRdfType,
@@ -66436,10 +66430,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: BlankNodeIdentifierClass) =>
-          query?.filter
-            ? BlankNodeIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: BlankNodeIdentifierClass.$filter,
         $fromRdf: BlankNodeIdentifierClass.$fromRdf,
         $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
       },
@@ -66512,10 +66503,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeIdentifierInterface.$Identifier
     >(
       {
-        $filter: (value: BlankNodeIdentifierInterface) =>
-          query?.filter
-            ? BlankNodeIdentifierInterface.$filter(query?.filter, value)
-            : true,
+        $filter: BlankNodeIdentifierInterface.$filter,
         $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -66591,10 +66579,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: BlankNodeOrIriIdentifierClass) =>
-          query?.filter
-            ? BlankNodeOrIriIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: BlankNodeOrIriIdentifierClass.$filter,
         $fromRdf: BlankNodeOrIriIdentifierClass.$fromRdf,
         $fromRdfTypes: [BlankNodeOrIriIdentifierClass.$fromRdfType],
       },
@@ -66675,10 +66660,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierInterface.$Identifier
     >(
       {
-        $filter: (value: BlankNodeOrIriIdentifierInterface) =>
-          query?.filter
-            ? BlankNodeOrIriIdentifierInterface.$filter(query?.filter, value)
-            : true,
+        $filter: BlankNodeOrIriIdentifierInterface.$filter,
         $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -66741,10 +66723,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ClassUnionMember1.$Identifier
     >(
       {
-        $filter: (value: ClassUnionMember1) =>
-          query?.filter
-            ? ClassUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: ClassUnionMember1.$filter,
         $fromRdf: ClassUnionMember1.$fromRdf,
         $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
       },
@@ -66807,10 +66786,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ClassUnionMember2.$Identifier
     >(
       {
-        $filter: (value: ClassUnionMember2) =>
-          query?.filter
-            ? ClassUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: ClassUnionMember2.$filter,
         $fromRdf: ClassUnionMember2.$fromRdf,
         $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
       },
@@ -66875,10 +66851,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConcreteChildClass.$Identifier
     >(
       {
-        $filter: (value: ConcreteChildClass) =>
-          query?.filter
-            ? ConcreteChildClass.$filter(query?.filter, value)
-            : true,
+        $filter: ConcreteChildClass.$filter,
         $fromRdf: ConcreteChildClass.$fromRdf,
         $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
       },
@@ -66945,10 +66918,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConcreteChildInterface.$Identifier
     >(
       {
-        $filter: (value: ConcreteChildInterface) =>
-          query?.filter
-            ? ConcreteChildInterface.$filter(query?.filter, value)
-            : true,
+        $filter: ConcreteChildInterface.$filter,
         $fromRdf: ConcreteChildInterface.$fromRdf,
         $fromRdfTypes: [ConcreteChildInterface.$fromRdfType],
       },
@@ -67015,10 +66985,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConcreteParentClassStatic.$Identifier
     >(
       {
-        $filter: (value: ConcreteParentClass) =>
-          query?.filter
-            ? ConcreteParentClassStatic.$filter(query?.filter, value)
-            : true,
+        $filter: ConcreteParentClassStatic.$filter,
         $fromRdf: ConcreteParentClassStatic.$fromRdf,
         $fromRdfTypes: [
           ConcreteParentClassStatic.$fromRdfType,
@@ -67097,10 +67064,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConcreteParentInterfaceStatic.$Identifier
     >(
       {
-        $filter: (value: ConcreteParentInterface) =>
-          query?.filter
-            ? ConcreteParentInterfaceStatic.$filter(query?.filter, value)
-            : true,
+        $filter: ConcreteParentInterfaceStatic.$filter,
         $fromRdf: ConcreteParentInterfaceStatic.$fromRdf,
         $fromRdfTypes: [
           ConcreteParentInterfaceStatic.$fromRdfType,
@@ -67179,10 +67143,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ConvertibleTypePropertiesClass.$Identifier
     >(
       {
-        $filter: (value: ConvertibleTypePropertiesClass) =>
-          query?.filter
-            ? ConvertibleTypePropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: ConvertibleTypePropertiesClass.$filter,
         $fromRdf: ConvertibleTypePropertiesClass.$fromRdf,
         $fromRdfTypes: [ConvertibleTypePropertiesClass.$fromRdfType],
       },
@@ -67249,10 +67210,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DateUnionPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: DateUnionPropertiesClass) =>
-          query?.filter
-            ? DateUnionPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: DateUnionPropertiesClass.$filter,
         $fromRdf: DateUnionPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -67325,10 +67283,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DefaultValuePropertiesClass.$Identifier
     >(
       {
-        $filter: (value: DefaultValuePropertiesClass) =>
-          query?.filter
-            ? DefaultValuePropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: DefaultValuePropertiesClass.$filter,
         $fromRdf: DefaultValuePropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -67395,10 +67350,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       DirectRecursiveClass.$Identifier
     >(
       {
-        $filter: (value: DirectRecursiveClass) =>
-          query?.filter
-            ? DirectRecursiveClass.$filter(query?.filter, value)
-            : true,
+        $filter: DirectRecursiveClass.$filter,
         $fromRdf: DirectRecursiveClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -67471,10 +67423,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitFromToRdfTypesClass.$Identifier
     >(
       {
-        $filter: (value: ExplicitFromToRdfTypesClass) =>
-          query?.filter
-            ? ExplicitFromToRdfTypesClass.$filter(query?.filter, value)
-            : true,
+        $filter: ExplicitFromToRdfTypesClass.$filter,
         $fromRdf: ExplicitFromToRdfTypesClass.$fromRdf,
         $fromRdfTypes: [ExplicitFromToRdfTypesClass.$fromRdfType],
       },
@@ -67541,10 +67490,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExplicitRdfTypeClass.$Identifier
     >(
       {
-        $filter: (value: ExplicitRdfTypeClass) =>
-          query?.filter
-            ? ExplicitRdfTypeClass.$filter(query?.filter, value)
-            : true,
+        $filter: ExplicitRdfTypeClass.$filter,
         $fromRdf: ExplicitRdfTypeClass.$fromRdf,
         $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
       },
@@ -67611,10 +67557,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ExternClassPropertyClass.$Identifier
     >(
       {
-        $filter: (value: ExternClassPropertyClass) =>
-          query?.filter
-            ? ExternClassPropertyClass.$filter(query?.filter, value)
-            : true,
+        $filter: ExternClassPropertyClass.$filter,
         $fromRdf: ExternClassPropertyClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -67681,10 +67624,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       FlattenClassUnionMember3.$Identifier
     >(
       {
-        $filter: (value: FlattenClassUnionMember3) =>
-          query?.filter
-            ? FlattenClassUnionMember3.$filter(query?.filter, value)
-            : true,
+        $filter: FlattenClassUnionMember3.$filter,
         $fromRdf: FlattenClassUnionMember3.$fromRdf,
         $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
       },
@@ -67751,10 +67691,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       HasValuePropertiesClass.$Identifier
     >(
       {
-        $filter: (value: HasValuePropertiesClass) =>
-          query?.filter
-            ? HasValuePropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: HasValuePropertiesClass.$filter,
         $fromRdf: HasValuePropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -67830,10 +67767,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IdentifierOverride3ClassStatic.$Identifier
     >(
       {
-        $filter: (value: IdentifierOverride3Class) =>
-          query?.filter
-            ? IdentifierOverride3ClassStatic.$filter(query?.filter, value)
-            : true,
+        $filter: IdentifierOverride3ClassStatic.$filter,
         $fromRdf: IdentifierOverride3ClassStatic.$fromRdf,
         $fromRdfTypes: [
           IdentifierOverride3ClassStatic.$fromRdfType,
@@ -67913,10 +67847,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IdentifierOverride4ClassStatic.$Identifier
     >(
       {
-        $filter: (value: IdentifierOverride4Class) =>
-          query?.filter
-            ? IdentifierOverride4ClassStatic.$filter(query?.filter, value)
-            : true,
+        $filter: IdentifierOverride4ClassStatic.$filter,
         $fromRdf: IdentifierOverride4ClassStatic.$fromRdf,
         $fromRdfTypes: [
           IdentifierOverride4ClassStatic.$fromRdfType,
@@ -67986,10 +67917,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IdentifierOverride5Class.$Identifier
     >(
       {
-        $filter: (value: IdentifierOverride5Class) =>
-          query?.filter
-            ? IdentifierOverride5Class.$filter(query?.filter, value)
-            : true,
+        $filter: IdentifierOverride5Class.$filter,
         $fromRdf: IdentifierOverride5Class.$fromRdf,
         $fromRdfTypes: [IdentifierOverride5Class.$fromRdfType],
       },
@@ -68056,10 +67984,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IndirectRecursiveClass.$Identifier
     >(
       {
-        $filter: (value: IndirectRecursiveClass) =>
-          query?.filter
-            ? IndirectRecursiveClass.$filter(query?.filter, value)
-            : true,
+        $filter: IndirectRecursiveClass.$filter,
         $fromRdf: IndirectRecursiveClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68132,10 +68057,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IndirectRecursiveHelperClass.$Identifier
     >(
       {
-        $filter: (value: IndirectRecursiveHelperClass) =>
-          query?.filter
-            ? IndirectRecursiveHelperClass.$filter(query?.filter, value)
-            : true,
+        $filter: IndirectRecursiveHelperClass.$filter,
         $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68198,10 +68120,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: InIdentifierClass) =>
-          query?.filter
-            ? InIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: InIdentifierClass.$filter,
         $fromRdf: InIdentifierClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68264,10 +68183,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: InPropertiesClass) =>
-          query?.filter
-            ? InPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: InPropertiesClass.$filter,
         $fromRdf: InPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68330,8 +68246,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       Interface.$Identifier
     >(
       {
-        $filter: (value: Interface) =>
-          query?.filter ? Interface.$filter(query?.filter, value) : true,
+        $filter: Interface.$filter,
         $fromRdf: Interface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68398,10 +68313,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnionMember1.$Identifier
     >(
       {
-        $filter: (value: InterfaceUnionMember1) =>
-          query?.filter
-            ? InterfaceUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: InterfaceUnionMember1.$filter,
         $fromRdf: InterfaceUnionMember1.$fromRdf,
         $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
       },
@@ -68468,10 +68380,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnionMember2.$Identifier
     >(
       {
-        $filter: (value: InterfaceUnionMember2) =>
-          query?.filter
-            ? InterfaceUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: InterfaceUnionMember2.$filter,
         $fromRdf: InterfaceUnionMember2.$fromRdf,
         $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
       },
@@ -68536,10 +68445,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IriIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: IriIdentifierClass) =>
-          query?.filter
-            ? IriIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: IriIdentifierClass.$filter,
         $fromRdf: IriIdentifierClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68606,10 +68512,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       IriIdentifierInterface.$Identifier
     >(
       {
-        $filter: (value: IriIdentifierInterface) =>
-          query?.filter
-            ? IriIdentifierInterface.$filter(query?.filter, value)
-            : true,
+        $filter: IriIdentifierInterface.$filter,
         $fromRdf: IriIdentifierInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68685,10 +68588,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       JsPrimitiveUnionPropertyClass.$Identifier
     >(
       {
-        $filter: (value: JsPrimitiveUnionPropertyClass) =>
-          query?.filter
-            ? JsPrimitiveUnionPropertyClass.$filter(query?.filter, value)
-            : true,
+        $filter: JsPrimitiveUnionPropertyClass.$filter,
         $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68755,10 +68655,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LanguageInPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: LanguageInPropertiesClass) =>
-          query?.filter
-            ? LanguageInPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: LanguageInPropertiesClass.$filter,
         $fromRdf: LanguageInPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -68846,13 +68743,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedBlankNodeOrIriIdentifierClass) =>
-          query?.filter
-            ? LazilyResolvedBlankNodeOrIriIdentifierClass.$filter(
-                query?.filter,
-                value,
-              )
-            : true,
+        $filter: LazilyResolvedBlankNodeOrIriIdentifierClass.$filter,
         $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdf,
         $fromRdfTypes: [
           LazilyResolvedBlankNodeOrIriIdentifierClass.$fromRdfType,
@@ -68947,13 +68838,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedBlankNodeOrIriIdentifierInterface) =>
-          query?.filter
-            ? LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter(
-                query?.filter,
-                value,
-              )
-            : true,
+        $filter: LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter,
         $fromRdf: LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdf,
         $fromRdfTypes: [
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$fromRdfType,
@@ -69031,10 +68916,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedClassUnionMember1.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedClassUnionMember1) =>
-          query?.filter
-            ? LazilyResolvedClassUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: LazilyResolvedClassUnionMember1.$filter,
         $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
         $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
       },
@@ -69110,10 +68992,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedClassUnionMember2.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedClassUnionMember2) =>
-          query?.filter
-            ? LazilyResolvedClassUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: LazilyResolvedClassUnionMember2.$filter,
         $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
         $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
       },
@@ -69194,10 +69073,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnionMember1.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedInterfaceUnionMember1) =>
-          query?.filter
-            ? LazilyResolvedInterfaceUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: LazilyResolvedInterfaceUnionMember1.$filter,
         $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
         $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
       },
@@ -69278,10 +69154,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnionMember2.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedInterfaceUnionMember2) =>
-          query?.filter
-            ? LazilyResolvedInterfaceUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: LazilyResolvedInterfaceUnionMember2.$filter,
         $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
         $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
       },
@@ -69362,10 +69235,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedIriIdentifierClass) =>
-          query?.filter
-            ? LazilyResolvedIriIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: LazilyResolvedIriIdentifierClass.$filter,
         $fromRdf: LazilyResolvedIriIdentifierClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69446,10 +69316,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierInterface.$Identifier
     >(
       {
-        $filter: (value: LazilyResolvedIriIdentifierInterface) =>
-          query?.filter
-            ? LazilyResolvedIriIdentifierInterface.$filter(query?.filter, value)
-            : true,
+        $filter: LazilyResolvedIriIdentifierInterface.$filter,
         $fromRdf: LazilyResolvedIriIdentifierInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69514,10 +69381,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazyPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: LazyPropertiesClass) =>
-          query?.filter
-            ? LazyPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: LazyPropertiesClass.$filter,
         $fromRdf: LazyPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69584,10 +69448,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazyPropertiesInterface.$Identifier
     >(
       {
-        $filter: (value: LazyPropertiesInterface) =>
-          query?.filter
-            ? LazyPropertiesInterface.$filter(query?.filter, value)
-            : true,
+        $filter: LazyPropertiesInterface.$filter,
         $fromRdf: LazyPropertiesInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69652,10 +69513,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ListPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: ListPropertiesClass) =>
-          query?.filter
-            ? ListPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: ListPropertiesClass.$filter,
         $fromRdf: ListPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69722,10 +69580,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       MutablePropertiesClass.$Identifier
     >(
       {
-        $filter: (value: MutablePropertiesClass) =>
-          query?.filter
-            ? MutablePropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: MutablePropertiesClass.$filter,
         $fromRdf: MutablePropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69784,8 +69639,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): purify.Either<Error, readonly NonClass[]> {
     return this.$objectsSync<NonClass, NonClass.$Filter, NonClass.$Identifier>(
       {
-        $filter: (value: NonClass) =>
-          query?.filter ? NonClass.$filter(query?.filter, value) : true,
+        $filter: NonClass.$filter,
         $fromRdf: NonClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69858,10 +69712,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember1.$Identifier
     >(
       {
-        $filter: (value: NoRdfTypeClassUnionMember1) =>
-          query?.filter
-            ? NoRdfTypeClassUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: NoRdfTypeClassUnionMember1.$filter,
         $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -69934,10 +69785,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember2.$Identifier
     >(
       {
-        $filter: (value: NoRdfTypeClassUnionMember2) =>
-          query?.filter
-            ? NoRdfTypeClassUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: NoRdfTypeClassUnionMember2.$filter,
         $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70004,10 +69852,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       OrderedPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: OrderedPropertiesClass) =>
-          query?.filter
-            ? OrderedPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: OrderedPropertiesClass.$filter,
         $fromRdf: OrderedPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70070,8 +69915,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialClass.$Identifier
     >(
       {
-        $filter: (value: PartialClass) =>
-          query?.filter ? PartialClass.$filter(query?.filter, value) : true,
+        $filter: PartialClass.$filter,
         $fromRdf: PartialClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70138,10 +69982,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialClassUnionMember1.$Identifier
     >(
       {
-        $filter: (value: PartialClassUnionMember1) =>
-          query?.filter
-            ? PartialClassUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: PartialClassUnionMember1.$filter,
         $fromRdf: PartialClassUnionMember1.$fromRdf,
         $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
       },
@@ -70208,10 +70049,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialClassUnionMember2.$Identifier
     >(
       {
-        $filter: (value: PartialClassUnionMember2) =>
-          query?.filter
-            ? PartialClassUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: PartialClassUnionMember2.$filter,
         $fromRdf: PartialClassUnionMember2.$fromRdf,
         $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
       },
@@ -70274,8 +70112,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialInterface.$Identifier
     >(
       {
-        $filter: (value: PartialInterface) =>
-          query?.filter ? PartialInterface.$filter(query?.filter, value) : true,
+        $filter: PartialInterface.$filter,
         $fromRdf: PartialInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70348,10 +70185,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialInterfaceUnionMember1.$Identifier
     >(
       {
-        $filter: (value: PartialInterfaceUnionMember1) =>
-          query?.filter
-            ? PartialInterfaceUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: PartialInterfaceUnionMember1.$filter,
         $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
         $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
       },
@@ -70424,10 +70258,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialInterfaceUnionMember2.$Identifier
     >(
       {
-        $filter: (value: PartialInterfaceUnionMember2) =>
-          query?.filter
-            ? PartialInterfaceUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: PartialInterfaceUnionMember2.$filter,
         $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
         $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
       },
@@ -70500,10 +70331,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyCardinalitiesClass.$Identifier
     >(
       {
-        $filter: (value: PropertyCardinalitiesClass) =>
-          query?.filter
-            ? PropertyCardinalitiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: PropertyCardinalitiesClass.$filter,
         $fromRdf: PropertyCardinalitiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70570,10 +70398,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PropertyVisibilitiesClass.$Identifier
     >(
       {
-        $filter: (value: PropertyVisibilitiesClass) =>
-          query?.filter
-            ? PropertyVisibilitiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: PropertyVisibilitiesClass.$filter,
         $fromRdf: PropertyVisibilitiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70646,10 +70471,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveClassUnionMember1.$Identifier
     >(
       {
-        $filter: (value: RecursiveClassUnionMember1) =>
-          query?.filter
-            ? RecursiveClassUnionMember1.$filter(query?.filter, value)
-            : true,
+        $filter: RecursiveClassUnionMember1.$filter,
         $fromRdf: RecursiveClassUnionMember1.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70722,10 +70544,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveClassUnionMember2.$Identifier
     >(
       {
-        $filter: (value: RecursiveClassUnionMember2) =>
-          query?.filter
-            ? RecursiveClassUnionMember2.$filter(query?.filter, value)
-            : true,
+        $filter: RecursiveClassUnionMember2.$filter,
         $fromRdf: RecursiveClassUnionMember2.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70792,10 +70611,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       Sha256IriIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: Sha256IriIdentifierClass) =>
-          query?.filter
-            ? Sha256IriIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: Sha256IriIdentifierClass.$filter,
         $fromRdf: Sha256IriIdentifierClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70860,10 +70676,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       TermPropertiesClass.$Identifier
     >(
       {
-        $filter: (value: TermPropertiesClass) =>
-          query?.filter
-            ? TermPropertiesClass.$filter(query?.filter, value)
-            : true,
+        $filter: TermPropertiesClass.$filter,
         $fromRdf: TermPropertiesClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -70930,10 +70743,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       UnionDiscriminantsClass.$Identifier
     >(
       {
-        $filter: (value: UnionDiscriminantsClass) =>
-          query?.filter
-            ? UnionDiscriminantsClass.$filter(query?.filter, value)
-            : true,
+        $filter: UnionDiscriminantsClass.$filter,
         $fromRdf: UnionDiscriminantsClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -71000,10 +70810,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       UuidV4IriIdentifierClass.$Identifier
     >(
       {
-        $filter: (value: UuidV4IriIdentifierClass) =>
-          query?.filter
-            ? UuidV4IriIdentifierClass.$filter(query?.filter, value)
-            : true,
+        $filter: UuidV4IriIdentifierClass.$filter,
         $fromRdf: UuidV4IriIdentifierClass.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -71076,10 +70883,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       UuidV4IriIdentifierInterface.$Identifier
     >(
       {
-        $filter: (value: UuidV4IriIdentifierInterface) =>
-          query?.filter
-            ? UuidV4IriIdentifierInterface.$filter(query?.filter, value)
-            : true,
+        $filter: UuidV4IriIdentifierInterface.$filter,
         $fromRdf: UuidV4IriIdentifierInterface.$fromRdf,
         $fromRdfTypes: [],
       },
@@ -71140,7 +70944,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       ClassUnion,
       ClassUnion.$Filter,
       ClassUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: ClassUnion.$filter,
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: ClassUnion.$filter,
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async flattenClassUnion(
@@ -71196,7 +71014,26 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       FlattenClassUnion,
       FlattenClassUnion.$Filter,
       FlattenClassUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: FlattenClassUnion.$filter,
+          $fromRdf: ClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: FlattenClassUnion.$filter,
+          $fromRdf: ClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [ClassUnionMember2.$fromRdfType],
+        },
+        {
+          $filter: FlattenClassUnion.$filter,
+          $fromRdf: FlattenClassUnionMember3.$fromRdf,
+          $fromRdfTypes: [FlattenClassUnionMember3.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async interfaceUnion(
@@ -71252,7 +71089,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       InterfaceUnion,
       InterfaceUnion.$Filter,
       InterfaceUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: InterfaceUnion.$filter,
+          $fromRdf: InterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: InterfaceUnion.$filter,
+          $fromRdf: InterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async lazilyResolvedClassUnion(
@@ -71312,7 +71163,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedClassUnion,
       LazilyResolvedClassUnion.$Filter,
       LazilyResolvedClassUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: LazilyResolvedClassUnion.$filter,
+          $fromRdf: LazilyResolvedClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: LazilyResolvedClassUnion.$filter,
+          $fromRdf: LazilyResolvedClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedClassUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async lazilyResolvedInterfaceUnion(
@@ -71378,7 +71243,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnion,
       LazilyResolvedInterfaceUnion.$Filter,
       LazilyResolvedInterfaceUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: LazilyResolvedInterfaceUnion.$filter,
+          $fromRdf: LazilyResolvedInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: LazilyResolvedInterfaceUnion.$filter,
+          $fromRdf: LazilyResolvedInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [LazilyResolvedInterfaceUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async noRdfTypeClassUnion(
@@ -71436,7 +71315,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       NoRdfTypeClassUnion,
       NoRdfTypeClassUnion.$Filter,
       NoRdfTypeClassUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: NoRdfTypeClassUnion.$filter,
+          $fromRdf: NoRdfTypeClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [],
+        },
+        {
+          $filter: NoRdfTypeClassUnion.$filter,
+          $fromRdf: NoRdfTypeClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
+      query,
+    );
   }
 
   async partialClassUnion(
@@ -71492,7 +71385,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialClassUnion,
       PartialClassUnion.$Filter,
       PartialClassUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: PartialClassUnion.$filter,
+          $fromRdf: PartialClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [PartialClassUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: PartialClassUnion.$filter,
+          $fromRdf: PartialClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [PartialClassUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async partialInterfaceUnion(
@@ -71552,7 +71459,21 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       PartialInterfaceUnion,
       PartialInterfaceUnion.$Filter,
       PartialInterfaceUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: PartialInterfaceUnion.$filter,
+          $fromRdf: PartialInterfaceUnionMember1.$fromRdf,
+          $fromRdfTypes: [PartialInterfaceUnionMember1.$fromRdfType],
+        },
+        {
+          $filter: PartialInterfaceUnion.$filter,
+          $fromRdf: PartialInterfaceUnionMember2.$fromRdf,
+          $fromRdfTypes: [PartialInterfaceUnionMember2.$fromRdfType],
+        },
+      ],
+      query,
+    );
   }
 
   async recursiveClassUnion(
@@ -71610,31 +71531,34 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       RecursiveClassUnion,
       RecursiveClassUnion.$Filter,
       RecursiveClassUnion.$Identifier
-    >([], query);
+    >(
+      [
+        {
+          $filter: RecursiveClassUnion.$filter,
+          $fromRdf: RecursiveClassUnionMember1.$fromRdf,
+          $fromRdfTypes: [],
+        },
+        {
+          $filter: RecursiveClassUnion.$filter,
+          $fromRdf: RecursiveClassUnionMember2.$fromRdf,
+          $fromRdfTypes: [],
+        },
+      ],
+      query,
+    );
   }
 
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends
-      | {
-          readonly $identifier?: {
-            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-          };
-        }
-      | {
-          readonly on?: Record<
-            string,
-            {
-              readonly $identifier?: {
-                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-              };
-            }
-          >;
-        },
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
-      $filter: (value: ObjectT) => boolean;
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
@@ -71655,7 +71579,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
     let resources: { object?: ObjectT; resource: rdfjsResource.Resource };
     let sortResources: boolean;
-    if (query.filter?.$identifier?.in) {
+    if (query?.filter?.$identifier?.in) {
       resources = query.filter.$identifier.in.map((identifier) => ({
         resource: this.resourceSet.resource(identifier),
       }));
@@ -71663,6 +71587,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     } else if (objectType.fromRdfTypes.length > 0) {
       const identifierSet = new $IdentifierSet();
       resources = [];
+      sortResources = true;
       for (const fromRdfType of objectType.fromRdfTypes) {
         for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
           if (!identifierSet.has(resource.identifier)) {
@@ -71671,9 +71596,10 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           }
         }
       }
-      sortResources = true;
     } else {
+      const identifierSet = new $IdentifierSet();
       resources = [];
+      sortResources = true;
       for (const quad of this.resourceSet.dataset) {
         switch (quad.subject.termType) {
           case "BlankNode":
@@ -71692,7 +71618,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           resources.push({ object, resource });
         });
       }
-      sortResources = true;
     }
 
     if (sortResources) {
@@ -71715,7 +71640,149 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         object = objectEither.unsafeCoerce();
       }
 
-      if (query.filter && !objectType.filter(query.filter, object)) {
+      if (query?.filter && !objectType.filter(query.filter, object)) {
+        continue;
+      }
+
+      if (objectI++ >= offset) {
+        objects.push(object);
+        if (objects.length === limit) {
+          return purify.Either.of(objects);
+        }
+      }
+    }
+    return purify.Either.of(objects);
+  }
+
+  protected $objectUnionsSync<
+    ObjectT extends { readonly $identifier: ObjectIdentifierT },
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
+    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+  >(
+    objectTypes: readonly {
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+      $fromRdf: (
+        resource: rdfjsResource.Resource,
+        options: { objectSet: $ObjectSet },
+      ) => purify.Either<Error, ObjectT>;
+      $fromRdfTypes: readonly rdfjs.NamedNode[];
+    }[],
+    query?: $ObjectSet.Query<ObjectFilterT>,
+  ): purify.Either<Error, readonly ObjectT[]> {
+    const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return purify.Either.of([]);
+    }
+
+    let offset = query?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    let resources: {
+      object?: ObjectT;
+      objectType?: {
+        $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+        $fromRdf: (
+          resource: rdfjsResource.Resource,
+          options: { objectSet: $ObjectSet },
+        ) => purify.Either<Error, ObjectT>;
+        $fromRdfTypes: readonly rdfjs.NamedNode[];
+      };
+      resource: rdfjsResource.Resource;
+    };
+    let sortResources: boolean;
+    if (query?.filter?.$identifier?.in) {
+      resources = query.filter.$identifier.in.map((identifier) => ({
+        resource: this.resourceSet.resource(identifier),
+      }));
+      sortResources = false;
+    } else if (
+      objectTypes.every((objectType) => objectType.fromRdfTypes.length > 0)
+    ) {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      sortResources = true;
+      for (const objectType of objectTypes) {
+        for (const fromRdfType of objectType.fromRdfTypes) {
+          for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+            if (!identifierSet.has(resource.identifier)) {
+              identifierSet.add(resource.identifier);
+              resources.push({ objectType, resource });
+            }
+          }
+        }
+      }
+    } else {
+      const identifierSet = new $IdentifierSet();
+      resources = [];
+      sortResources = true;
+      for (const quad of this.resourceSet.dataset) {
+        switch (quad.subject.termType) {
+          case "BlankNode":
+          case "NamedNode":
+            break;
+          default:
+            continue;
+        }
+
+        if (identifierSet.has(quad.subject)) {
+          continue;
+        }
+        identifierSet.add(resource.identifier);
+        // Eagerly eliminate the majority of resources that won't match the object types
+
+        for (const objectType of objectTypes) {
+          if (
+            objectType
+              .$fromRdf(resource, { objectSet: this })
+              .ifRight((object) => {
+                resources.push({ object, objectType, resource });
+              })
+              .isRight()
+          ) {
+            break;
+          }
+        }
+      }
+    }
+
+    if (sortResources) {
+      // Sort resources by identifier so limit and offset are deterministic
+      resources.sort((left, right) =>
+        left.resource.identifier.value.localeCompare(
+          right.resource.identifier.value,
+        ),
+      );
+    }
+
+    let objectI = 0;
+    const objects: ObjectT[] = [];
+    for (let { object, objectType, resource } of resources) {
+      if (!object) {
+        let objectEither: purify.Either<Error, ObjectT>;
+        if (objectType) {
+          objectEither = objectType.$fromRdf(resource, { objectSet: this });
+        } else {
+          objectEither = purify.Left(new Error("no object types"));
+          for (const objectType of objectTypes) {
+            objectEither = objectType.$fromRdf(resource, { objectSet: this });
+            if (objectEither.isRight()) {
+              break;
+            }
+          }
+        }
+        if (objectEither.isLeft()) {
+          return objectEither;
+        }
+        object = objectEither.unsafeCoerce();
+      }
+
+      if (query?.filter && !objectType.filter(query.filter, object)) {
         continue;
       }
 
