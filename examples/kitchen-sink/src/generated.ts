@@ -64104,22 +64104,11 @@ export interface $ObjectSet {
 
 export namespace $ObjectSet {
   export type Query<
-    ObjectFilterT extends
-      | {
-          readonly $identifier?: {
-            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-          };
-        }
-      | {
-          readonly on?: Record<
-            string,
-            {
-              readonly $identifier?: {
-                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-              };
-            }
-          >;
-        },
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
   > = {
     readonly filter?: ObjectFilterT;
     readonly limit?: number;
@@ -71577,18 +71566,18 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    let resources: { object?: ObjectT; resource: rdfjsResource.Resource };
+    let resources: { object?: ObjectT; resource: rdfjsResource.Resource }[];
     let sortResources: boolean;
     if (query?.filter?.$identifier?.in) {
       resources = query.filter.$identifier.in.map((identifier) => ({
         resource: this.resourceSet.resource(identifier),
       }));
       sortResources = false;
-    } else if (objectType.fromRdfTypes.length > 0) {
+    } else if (objectType.$fromRdfTypes.length > 0) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
-      for (const fromRdfType of objectType.fromRdfTypes) {
+      for (const fromRdfType of objectType.$fromRdfTypes) {
         for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
           if (!identifierSet.has(resource.identifier)) {
             identifierSet.add(resource.identifier);
@@ -71612,7 +71601,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         if (identifierSet.has(quad.subject)) {
           continue;
         }
-        identifierSet.add(resource.identifier);
+        identifierSet.add(quad.subject);
+        const resource = this.resourceSet.resource(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object type
         objectType.$fromRdf(resource, { objectSet: this }).ifRight((object) => {
           resources.push({ object, resource });
@@ -71640,7 +71630,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         object = objectEither.unsafeCoerce();
       }
 
-      if (query?.filter && !objectType.filter(query.filter, object)) {
+      if (query?.filter && !objectType.$filter(query.filter, object)) {
         continue;
       }
 
@@ -71694,7 +71684,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         $fromRdfTypes: readonly rdfjs.NamedNode[];
       };
       resource: rdfjsResource.Resource;
-    };
+    }[];
     let sortResources: boolean;
     if (query?.filter?.$identifier?.in) {
       resources = query.filter.$identifier.in.map((identifier) => ({
@@ -71702,13 +71692,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       }));
       sortResources = false;
     } else if (
-      objectTypes.every((objectType) => objectType.fromRdfTypes.length > 0)
+      objectTypes.every((objectType) => objectType.$fromRdfTypes.length > 0)
     ) {
       const identifierSet = new $IdentifierSet();
       resources = [];
       sortResources = true;
       for (const objectType of objectTypes) {
-        for (const fromRdfType of objectType.fromRdfTypes) {
+        for (const fromRdfType of objectType.$fromRdfTypes) {
           for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
             if (!identifierSet.has(resource.identifier)) {
               identifierSet.add(resource.identifier);
@@ -71733,9 +71723,9 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         if (identifierSet.has(quad.subject)) {
           continue;
         }
-        identifierSet.add(resource.identifier);
+        identifierSet.add(quad.subject);
         // Eagerly eliminate the majority of resources that won't match the object types
-
+        const resource = this.resourceSet.resource(quad.subject);
         for (const objectType of objectTypes) {
           if (
             objectType
@@ -71769,9 +71759,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           objectEither = objectType.$fromRdf(resource, { objectSet: this });
         } else {
           objectEither = purify.Left(new Error("no object types"));
-          for (const objectType of objectTypes) {
-            objectEither = objectType.$fromRdf(resource, { objectSet: this });
+          for (const tryObjectType of objectTypes) {
+            objectEither = tryObjectType.$fromRdf(resource, {
+              objectSet: this,
+            });
             if (objectEither.isRight()) {
+              objectType = tryObjectType;
               break;
             }
           }
@@ -71781,8 +71774,11 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         }
         object = objectEither.unsafeCoerce();
       }
+      if (!objectType) {
+        throw new Error("objectType should be set here");
+      }
 
-      if (query?.filter && !objectType.filter(query.filter, object)) {
+      if (query?.filter && !objectType.$filter(query.filter, object)) {
         continue;
       }
 
@@ -71837,10 +71833,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly BaseInterfaceWithoutPropertiesStatic.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<BaseInterfaceWithoutPropertiesStatic.$Identifier>(
-      BaseInterfaceWithoutPropertiesStatic,
-      query,
-    );
+    return this.$objectIdentifiers<
+      BaseInterfaceWithoutPropertiesStatic.$Filter,
+      BaseInterfaceWithoutPropertiesStatic.$Identifier
+    >(BaseInterfaceWithoutPropertiesStatic, query);
   }
 
   async baseInterfaceWithoutPropertieses(
@@ -71848,6 +71844,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly BaseInterfaceWithoutProperties[]>> {
     return this.$objects<
       BaseInterfaceWithoutProperties,
+      BaseInterfaceWithoutPropertiesStatic.$Filter,
       BaseInterfaceWithoutPropertiesStatic.$Identifier
     >(BaseInterfaceWithoutPropertiesStatic, query);
   }
@@ -71858,7 +71855,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BaseInterfaceWithoutPropertiesStatic.$Identifier>(
+    return this.$objectsCount<BaseInterfaceWithoutPropertiesStatic.$Filter>(
       BaseInterfaceWithoutPropertiesStatic,
       query,
     );
@@ -71882,10 +71879,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly BaseInterfaceWithPropertiesStatic.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<BaseInterfaceWithPropertiesStatic.$Identifier>(
-      BaseInterfaceWithPropertiesStatic,
-      query,
-    );
+    return this.$objectIdentifiers<
+      BaseInterfaceWithPropertiesStatic.$Filter,
+      BaseInterfaceWithPropertiesStatic.$Identifier
+    >(BaseInterfaceWithPropertiesStatic, query);
   }
 
   async baseInterfaceWithPropertieses(
@@ -71893,6 +71890,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly BaseInterfaceWithProperties[]>> {
     return this.$objects<
       BaseInterfaceWithProperties,
+      BaseInterfaceWithPropertiesStatic.$Filter,
       BaseInterfaceWithPropertiesStatic.$Identifier
     >(BaseInterfaceWithPropertiesStatic, query);
   }
@@ -71903,7 +71901,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BaseInterfaceWithPropertiesStatic.$Identifier>(
+    return this.$objectsCount<BaseInterfaceWithPropertiesStatic.$Filter>(
       BaseInterfaceWithPropertiesStatic,
       query,
     );
@@ -71924,10 +71922,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<BlankNodeIdentifierClass.$Identifier>(
-      BlankNodeIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      BlankNodeIdentifierClass.$Filter,
+      BlankNodeIdentifierClass.$Identifier
+    >(BlankNodeIdentifierClass, query);
   }
 
   async blankNodeIdentifierClasses(
@@ -71935,6 +71933,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>> {
     return this.$objects<
       BlankNodeIdentifierClass,
+      BlankNodeIdentifierClass.$Filter,
       BlankNodeIdentifierClass.$Identifier
     >(BlankNodeIdentifierClass, query);
   }
@@ -71945,7 +71944,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BlankNodeIdentifierClass.$Identifier>(
+    return this.$objectsCount<BlankNodeIdentifierClass.$Filter>(
       BlankNodeIdentifierClass,
       query,
     );
@@ -71966,10 +71965,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]>
   > {
-    return this.$objectIdentifiers<BlankNodeIdentifierInterface.$Identifier>(
-      BlankNodeIdentifierInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      BlankNodeIdentifierInterface.$Filter,
+      BlankNodeIdentifierInterface.$Identifier
+    >(BlankNodeIdentifierInterface, query);
   }
 
   async blankNodeIdentifierInterfaces(
@@ -71977,6 +71976,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>> {
     return this.$objects<
       BlankNodeIdentifierInterface,
+      BlankNodeIdentifierInterface.$Filter,
       BlankNodeIdentifierInterface.$Identifier
     >(BlankNodeIdentifierInterface, query);
   }
@@ -71987,7 +71987,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BlankNodeIdentifierInterface.$Identifier>(
+    return this.$objectsCount<BlankNodeIdentifierInterface.$Filter>(
       BlankNodeIdentifierInterface,
       query,
     );
@@ -72008,10 +72008,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<BlankNodeOrIriIdentifierClass.$Identifier>(
-      BlankNodeOrIriIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      BlankNodeOrIriIdentifierClass.$Filter,
+      BlankNodeOrIriIdentifierClass.$Identifier
+    >(BlankNodeOrIriIdentifierClass, query);
   }
 
   async blankNodeOrIriIdentifierClasses(
@@ -72019,6 +72019,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
     return this.$objects<
       BlankNodeOrIriIdentifierClass,
+      BlankNodeOrIriIdentifierClass.$Filter,
       BlankNodeOrIriIdentifierClass.$Identifier
     >(BlankNodeOrIriIdentifierClass, query);
   }
@@ -72029,7 +72030,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BlankNodeOrIriIdentifierClass.$Identifier>(
+    return this.$objectsCount<BlankNodeOrIriIdentifierClass.$Filter>(
       BlankNodeOrIriIdentifierClass,
       query,
     );
@@ -72053,10 +72054,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly BlankNodeOrIriIdentifierInterface.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<BlankNodeOrIriIdentifierInterface.$Identifier>(
-      BlankNodeOrIriIdentifierInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      BlankNodeOrIriIdentifierInterface.$Filter,
+      BlankNodeOrIriIdentifierInterface.$Identifier
+    >(BlankNodeOrIriIdentifierInterface, query);
   }
 
   async blankNodeOrIriIdentifierInterfaces(
@@ -72066,6 +72067,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       BlankNodeOrIriIdentifierInterface,
+      BlankNodeOrIriIdentifierInterface.$Filter,
       BlankNodeOrIriIdentifierInterface.$Identifier
     >(BlankNodeOrIriIdentifierInterface, query);
   }
@@ -72076,7 +72078,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<BlankNodeOrIriIdentifierInterface.$Identifier>(
+    return this.$objectsCount<BlankNodeOrIriIdentifierInterface.$Filter>(
       BlankNodeOrIriIdentifierInterface,
       query,
     );
@@ -72095,25 +72097,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async classUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember1.$Identifier[]>> {
-    return this.$objectIdentifiers<ClassUnionMember1.$Identifier>(
-      ClassUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ClassUnionMember1.$Filter,
+      ClassUnionMember1.$Identifier
+    >(ClassUnionMember1, query);
   }
 
   async classUnionMember1s(
     query?: $SparqlObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember1[]>> {
-    return this.$objects<ClassUnionMember1, ClassUnionMember1.$Identifier>(
+    return this.$objects<
       ClassUnionMember1,
-      query,
-    );
+      ClassUnionMember1.$Filter,
+      ClassUnionMember1.$Identifier
+    >(ClassUnionMember1, query);
   }
 
   async classUnionMember1sCount(
     query?: Pick<$SparqlObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ClassUnionMember1.$Identifier>(
+    return this.$objectsCount<ClassUnionMember1.$Filter>(
       ClassUnionMember1,
       query,
     );
@@ -72132,25 +72135,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async classUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember2.$Identifier[]>> {
-    return this.$objectIdentifiers<ClassUnionMember2.$Identifier>(
-      ClassUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ClassUnionMember2.$Filter,
+      ClassUnionMember2.$Identifier
+    >(ClassUnionMember2, query);
   }
 
   async classUnionMember2s(
     query?: $SparqlObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember2[]>> {
-    return this.$objects<ClassUnionMember2, ClassUnionMember2.$Identifier>(
+    return this.$objects<
       ClassUnionMember2,
-      query,
-    );
+      ClassUnionMember2.$Filter,
+      ClassUnionMember2.$Identifier
+    >(ClassUnionMember2, query);
   }
 
   async classUnionMember2sCount(
     query?: Pick<$SparqlObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ClassUnionMember2.$Identifier>(
+    return this.$objectsCount<ClassUnionMember2.$Filter>(
       ClassUnionMember2,
       query,
     );
@@ -72169,25 +72173,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async concreteChildClassIdentifiers(
     query?: $SparqlObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteChildClass.$Identifier[]>> {
-    return this.$objectIdentifiers<ConcreteChildClass.$Identifier>(
-      ConcreteChildClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ConcreteChildClass.$Filter,
+      ConcreteChildClass.$Identifier
+    >(ConcreteChildClass, query);
   }
 
   async concreteChildClasses(
     query?: $SparqlObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteChildClass[]>> {
-    return this.$objects<ConcreteChildClass, ConcreteChildClass.$Identifier>(
+    return this.$objects<
       ConcreteChildClass,
-      query,
-    );
+      ConcreteChildClass.$Filter,
+      ConcreteChildClass.$Identifier
+    >(ConcreteChildClass, query);
   }
 
   async concreteChildClassesCount(
     query?: Pick<$SparqlObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ConcreteChildClass.$Identifier>(
+    return this.$objectsCount<ConcreteChildClass.$Filter>(
       ConcreteChildClass,
       query,
     );
@@ -72208,10 +72213,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ConcreteChildInterface.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ConcreteChildInterface.$Identifier>(
-      ConcreteChildInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ConcreteChildInterface.$Filter,
+      ConcreteChildInterface.$Identifier
+    >(ConcreteChildInterface, query);
   }
 
   async concreteChildInterfaces(
@@ -72219,6 +72224,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ConcreteChildInterface[]>> {
     return this.$objects<
       ConcreteChildInterface,
+      ConcreteChildInterface.$Filter,
       ConcreteChildInterface.$Identifier
     >(ConcreteChildInterface, query);
   }
@@ -72229,7 +72235,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ConcreteChildInterface.$Identifier>(
+    return this.$objectsCount<ConcreteChildInterface.$Filter>(
       ConcreteChildInterface,
       query,
     );
@@ -72250,10 +72256,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ConcreteParentClassStatic.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ConcreteParentClassStatic.$Identifier>(
-      ConcreteParentClassStatic,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ConcreteParentClassStatic.$Filter,
+      ConcreteParentClassStatic.$Identifier
+    >(ConcreteParentClassStatic, query);
   }
 
   async concreteParentClasses(
@@ -72261,6 +72267,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ConcreteParentClass[]>> {
     return this.$objects<
       ConcreteParentClass,
+      ConcreteParentClassStatic.$Filter,
       ConcreteParentClassStatic.$Identifier
     >(ConcreteParentClassStatic, query);
   }
@@ -72271,7 +72278,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ConcreteParentClassStatic.$Identifier>(
+    return this.$objectsCount<ConcreteParentClassStatic.$Filter>(
       ConcreteParentClassStatic,
       query,
     );
@@ -72292,10 +72299,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ConcreteParentInterfaceStatic.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ConcreteParentInterfaceStatic.$Identifier>(
-      ConcreteParentInterfaceStatic,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ConcreteParentInterfaceStatic.$Filter,
+      ConcreteParentInterfaceStatic.$Identifier
+    >(ConcreteParentInterfaceStatic, query);
   }
 
   async concreteParentInterfaces(
@@ -72303,6 +72310,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ConcreteParentInterface[]>> {
     return this.$objects<
       ConcreteParentInterface,
+      ConcreteParentInterfaceStatic.$Filter,
       ConcreteParentInterfaceStatic.$Identifier
     >(ConcreteParentInterfaceStatic, query);
   }
@@ -72313,7 +72321,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ConcreteParentInterfaceStatic.$Identifier>(
+    return this.$objectsCount<ConcreteParentInterfaceStatic.$Filter>(
       ConcreteParentInterfaceStatic,
       query,
     );
@@ -72334,10 +72342,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ConvertibleTypePropertiesClass.$Identifier>(
-      ConvertibleTypePropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ConvertibleTypePropertiesClass.$Filter,
+      ConvertibleTypePropertiesClass.$Identifier
+    >(ConvertibleTypePropertiesClass, query);
   }
 
   async convertibleTypePropertiesClasses(
@@ -72345,6 +72353,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
     return this.$objects<
       ConvertibleTypePropertiesClass,
+      ConvertibleTypePropertiesClass.$Filter,
       ConvertibleTypePropertiesClass.$Identifier
     >(ConvertibleTypePropertiesClass, query);
   }
@@ -72355,7 +72364,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ConvertibleTypePropertiesClass.$Identifier>(
+    return this.$objectsCount<ConvertibleTypePropertiesClass.$Filter>(
       ConvertibleTypePropertiesClass,
       query,
     );
@@ -72376,10 +72385,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<DateUnionPropertiesClass.$Identifier>(
-      DateUnionPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      DateUnionPropertiesClass.$Filter,
+      DateUnionPropertiesClass.$Identifier
+    >(DateUnionPropertiesClass, query);
   }
 
   async dateUnionPropertiesClasses(
@@ -72387,6 +72396,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>> {
     return this.$objects<
       DateUnionPropertiesClass,
+      DateUnionPropertiesClass.$Filter,
       DateUnionPropertiesClass.$Identifier
     >(DateUnionPropertiesClass, query);
   }
@@ -72397,7 +72407,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<DateUnionPropertiesClass.$Identifier>(
+    return this.$objectsCount<DateUnionPropertiesClass.$Filter>(
       DateUnionPropertiesClass,
       query,
     );
@@ -72418,10 +72428,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly DefaultValuePropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<DefaultValuePropertiesClass.$Identifier>(
-      DefaultValuePropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      DefaultValuePropertiesClass.$Filter,
+      DefaultValuePropertiesClass.$Identifier
+    >(DefaultValuePropertiesClass, query);
   }
 
   async defaultValuePropertiesClasses(
@@ -72429,6 +72439,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly DefaultValuePropertiesClass[]>> {
     return this.$objects<
       DefaultValuePropertiesClass,
+      DefaultValuePropertiesClass.$Filter,
       DefaultValuePropertiesClass.$Identifier
     >(DefaultValuePropertiesClass, query);
   }
@@ -72439,7 +72450,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<DefaultValuePropertiesClass.$Identifier>(
+    return this.$objectsCount<DefaultValuePropertiesClass.$Filter>(
       DefaultValuePropertiesClass,
       query,
     );
@@ -72460,10 +72471,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly DirectRecursiveClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<DirectRecursiveClass.$Identifier>(
-      DirectRecursiveClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      DirectRecursiveClass.$Filter,
+      DirectRecursiveClass.$Identifier
+    >(DirectRecursiveClass, query);
   }
 
   async directRecursiveClasses(
@@ -72471,6 +72482,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly DirectRecursiveClass[]>> {
     return this.$objects<
       DirectRecursiveClass,
+      DirectRecursiveClass.$Filter,
       DirectRecursiveClass.$Identifier
     >(DirectRecursiveClass, query);
   }
@@ -72481,7 +72493,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<DirectRecursiveClass.$Identifier>(
+    return this.$objectsCount<DirectRecursiveClass.$Filter>(
       DirectRecursiveClass,
       query,
     );
@@ -72502,10 +72514,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ExplicitFromToRdfTypesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ExplicitFromToRdfTypesClass.$Identifier>(
-      ExplicitFromToRdfTypesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ExplicitFromToRdfTypesClass.$Filter,
+      ExplicitFromToRdfTypesClass.$Identifier
+    >(ExplicitFromToRdfTypesClass, query);
   }
 
   async explicitFromToRdfTypesClasses(
@@ -72513,6 +72525,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ExplicitFromToRdfTypesClass[]>> {
     return this.$objects<
       ExplicitFromToRdfTypesClass,
+      ExplicitFromToRdfTypesClass.$Filter,
       ExplicitFromToRdfTypesClass.$Identifier
     >(ExplicitFromToRdfTypesClass, query);
   }
@@ -72523,7 +72536,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ExplicitFromToRdfTypesClass.$Identifier>(
+    return this.$objectsCount<ExplicitFromToRdfTypesClass.$Filter>(
       ExplicitFromToRdfTypesClass,
       query,
     );
@@ -72544,10 +72557,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ExplicitRdfTypeClass.$Identifier>(
-      ExplicitRdfTypeClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ExplicitRdfTypeClass.$Filter,
+      ExplicitRdfTypeClass.$Identifier
+    >(ExplicitRdfTypeClass, query);
   }
 
   async explicitRdfTypeClasses(
@@ -72555,6 +72568,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ExplicitRdfTypeClass[]>> {
     return this.$objects<
       ExplicitRdfTypeClass,
+      ExplicitRdfTypeClass.$Filter,
       ExplicitRdfTypeClass.$Identifier
     >(ExplicitRdfTypeClass, query);
   }
@@ -72565,7 +72579,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ExplicitRdfTypeClass.$Identifier>(
+    return this.$objectsCount<ExplicitRdfTypeClass.$Filter>(
       ExplicitRdfTypeClass,
       query,
     );
@@ -72586,10 +72600,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly ExternClassPropertyClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<ExternClassPropertyClass.$Identifier>(
-      ExternClassPropertyClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ExternClassPropertyClass.$Filter,
+      ExternClassPropertyClass.$Identifier
+    >(ExternClassPropertyClass, query);
   }
 
   async externClassPropertyClasses(
@@ -72597,6 +72611,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>> {
     return this.$objects<
       ExternClassPropertyClass,
+      ExternClassPropertyClass.$Filter,
       ExternClassPropertyClass.$Identifier
     >(ExternClassPropertyClass, query);
   }
@@ -72607,7 +72622,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ExternClassPropertyClass.$Identifier>(
+    return this.$objectsCount<ExternClassPropertyClass.$Filter>(
       ExternClassPropertyClass,
       query,
     );
@@ -72628,10 +72643,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>
   > {
-    return this.$objectIdentifiers<FlattenClassUnionMember3.$Identifier>(
-      FlattenClassUnionMember3,
-      query,
-    );
+    return this.$objectIdentifiers<
+      FlattenClassUnionMember3.$Filter,
+      FlattenClassUnionMember3.$Identifier
+    >(FlattenClassUnionMember3, query);
   }
 
   async flattenClassUnionMember3s(
@@ -72639,6 +72654,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>> {
     return this.$objects<
       FlattenClassUnionMember3,
+      FlattenClassUnionMember3.$Filter,
       FlattenClassUnionMember3.$Identifier
     >(FlattenClassUnionMember3, query);
   }
@@ -72649,7 +72665,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<FlattenClassUnionMember3.$Identifier>(
+    return this.$objectsCount<FlattenClassUnionMember3.$Filter>(
       FlattenClassUnionMember3,
       query,
     );
@@ -72670,10 +72686,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly HasValuePropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<HasValuePropertiesClass.$Identifier>(
-      HasValuePropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      HasValuePropertiesClass.$Filter,
+      HasValuePropertiesClass.$Identifier
+    >(HasValuePropertiesClass, query);
   }
 
   async hasValuePropertiesClasses(
@@ -72681,6 +72697,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly HasValuePropertiesClass[]>> {
     return this.$objects<
       HasValuePropertiesClass,
+      HasValuePropertiesClass.$Filter,
       HasValuePropertiesClass.$Identifier
     >(HasValuePropertiesClass, query);
   }
@@ -72691,7 +72708,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<HasValuePropertiesClass.$Identifier>(
+    return this.$objectsCount<HasValuePropertiesClass.$Filter>(
       HasValuePropertiesClass,
       query,
     );
@@ -72712,10 +72729,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
   > {
-    return this.$objectIdentifiers<IdentifierOverride3ClassStatic.$Identifier>(
-      IdentifierOverride3ClassStatic,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IdentifierOverride3ClassStatic.$Filter,
+      IdentifierOverride3ClassStatic.$Identifier
+    >(IdentifierOverride3ClassStatic, query);
   }
 
   async identifierOverride3Classes(
@@ -72723,6 +72740,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>> {
     return this.$objects<
       IdentifierOverride3Class,
+      IdentifierOverride3ClassStatic.$Filter,
       IdentifierOverride3ClassStatic.$Identifier
     >(IdentifierOverride3ClassStatic, query);
   }
@@ -72733,7 +72751,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IdentifierOverride3ClassStatic.$Identifier>(
+    return this.$objectsCount<IdentifierOverride3ClassStatic.$Filter>(
       IdentifierOverride3ClassStatic,
       query,
     );
@@ -72754,10 +72772,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
   > {
-    return this.$objectIdentifiers<IdentifierOverride4ClassStatic.$Identifier>(
-      IdentifierOverride4ClassStatic,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IdentifierOverride4ClassStatic.$Filter,
+      IdentifierOverride4ClassStatic.$Identifier
+    >(IdentifierOverride4ClassStatic, query);
   }
 
   async identifierOverride4Classes(
@@ -72765,6 +72783,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>> {
     return this.$objects<
       IdentifierOverride4Class,
+      IdentifierOverride4ClassStatic.$Filter,
       IdentifierOverride4ClassStatic.$Identifier
     >(IdentifierOverride4ClassStatic, query);
   }
@@ -72775,7 +72794,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IdentifierOverride4ClassStatic.$Identifier>(
+    return this.$objectsCount<IdentifierOverride4ClassStatic.$Filter>(
       IdentifierOverride4ClassStatic,
       query,
     );
@@ -72796,10 +72815,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly IdentifierOverride5Class.$Identifier[]>
   > {
-    return this.$objectIdentifiers<IdentifierOverride5Class.$Identifier>(
-      IdentifierOverride5Class,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IdentifierOverride5Class.$Filter,
+      IdentifierOverride5Class.$Identifier
+    >(IdentifierOverride5Class, query);
   }
 
   async identifierOverride5Classes(
@@ -72807,6 +72826,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>> {
     return this.$objects<
       IdentifierOverride5Class,
+      IdentifierOverride5Class.$Filter,
       IdentifierOverride5Class.$Identifier
     >(IdentifierOverride5Class, query);
   }
@@ -72817,7 +72837,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IdentifierOverride5Class.$Identifier>(
+    return this.$objectsCount<IdentifierOverride5Class.$Filter>(
       IdentifierOverride5Class,
       query,
     );
@@ -72838,10 +72858,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly IndirectRecursiveClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<IndirectRecursiveClass.$Identifier>(
-      IndirectRecursiveClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IndirectRecursiveClass.$Filter,
+      IndirectRecursiveClass.$Identifier
+    >(IndirectRecursiveClass, query);
   }
 
   async indirectRecursiveClasses(
@@ -72849,6 +72869,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly IndirectRecursiveClass[]>> {
     return this.$objects<
       IndirectRecursiveClass,
+      IndirectRecursiveClass.$Filter,
       IndirectRecursiveClass.$Identifier
     >(IndirectRecursiveClass, query);
   }
@@ -72859,7 +72880,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IndirectRecursiveClass.$Identifier>(
+    return this.$objectsCount<IndirectRecursiveClass.$Filter>(
       IndirectRecursiveClass,
       query,
     );
@@ -72880,10 +72901,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<IndirectRecursiveHelperClass.$Identifier>(
-      IndirectRecursiveHelperClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IndirectRecursiveHelperClass.$Filter,
+      IndirectRecursiveHelperClass.$Identifier
+    >(IndirectRecursiveHelperClass, query);
   }
 
   async indirectRecursiveHelperClasses(
@@ -72891,6 +72912,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly IndirectRecursiveHelperClass[]>> {
     return this.$objects<
       IndirectRecursiveHelperClass,
+      IndirectRecursiveHelperClass.$Filter,
       IndirectRecursiveHelperClass.$Identifier
     >(IndirectRecursiveHelperClass, query);
   }
@@ -72901,7 +72923,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IndirectRecursiveHelperClass.$Identifier>(
+    return this.$objectsCount<IndirectRecursiveHelperClass.$Filter>(
       IndirectRecursiveHelperClass,
       query,
     );
@@ -72920,25 +72942,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async inIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InIdentifierClass.$Identifier[]>> {
-    return this.$objectIdentifiers<InIdentifierClass.$Identifier>(
-      InIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      InIdentifierClass.$Filter,
+      InIdentifierClass.$Identifier
+    >(InIdentifierClass, query);
   }
 
   async inIdentifierClasses(
     query?: $SparqlObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InIdentifierClass[]>> {
-    return this.$objects<InIdentifierClass, InIdentifierClass.$Identifier>(
+    return this.$objects<
       InIdentifierClass,
-      query,
-    );
+      InIdentifierClass.$Filter,
+      InIdentifierClass.$Identifier
+    >(InIdentifierClass, query);
   }
 
   async inIdentifierClassesCount(
     query?: Pick<$SparqlObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InIdentifierClass.$Identifier>(
+    return this.$objectsCount<InIdentifierClass.$Filter>(
       InIdentifierClass,
       query,
     );
@@ -72957,25 +72980,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async inPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InPropertiesClass.$Identifier[]>> {
-    return this.$objectIdentifiers<InPropertiesClass.$Identifier>(
-      InPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      InPropertiesClass.$Filter,
+      InPropertiesClass.$Identifier
+    >(InPropertiesClass, query);
   }
 
   async inPropertiesClasses(
     query?: $SparqlObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InPropertiesClass[]>> {
-    return this.$objects<InPropertiesClass, InPropertiesClass.$Identifier>(
+    return this.$objects<
       InPropertiesClass,
-      query,
-    );
+      InPropertiesClass.$Filter,
+      InPropertiesClass.$Identifier
+    >(InPropertiesClass, query);
   }
 
   async inPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InPropertiesClass.$Identifier>(
+    return this.$objectsCount<InPropertiesClass.$Filter>(
       InPropertiesClass,
       query,
     );
@@ -72992,19 +73016,25 @@ export class $SparqlObjectSet implements $ObjectSet {
   async interfaceIdentifiers(
     query?: $SparqlObjectSet.Query<Interface.$Filter>,
   ): Promise<purify.Either<Error, readonly Interface.$Identifier[]>> {
-    return this.$objectIdentifiers<Interface.$Identifier>(Interface, query);
+    return this.$objectIdentifiers<Interface.$Filter, Interface.$Identifier>(
+      Interface,
+      query,
+    );
   }
 
   async interfaces(
     query?: $SparqlObjectSet.Query<Interface.$Filter>,
   ): Promise<purify.Either<Error, readonly Interface[]>> {
-    return this.$objects<Interface, Interface.$Identifier>(Interface, query);
+    return this.$objects<Interface, Interface.$Filter, Interface.$Identifier>(
+      Interface,
+      query,
+    );
   }
 
   async interfacesCount(
     query?: Pick<$SparqlObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<Interface.$Identifier>(Interface, query);
+    return this.$objectsCount<Interface.$Filter>(Interface, query);
   }
 
   async interfaceUnionMember1(
@@ -73022,10 +73052,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly InterfaceUnionMember1.$Identifier[]>
   > {
-    return this.$objectIdentifiers<InterfaceUnionMember1.$Identifier>(
-      InterfaceUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      InterfaceUnionMember1.$Filter,
+      InterfaceUnionMember1.$Identifier
+    >(InterfaceUnionMember1, query);
   }
 
   async interfaceUnionMember1s(
@@ -73033,6 +73063,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly InterfaceUnionMember1[]>> {
     return this.$objects<
       InterfaceUnionMember1,
+      InterfaceUnionMember1.$Filter,
       InterfaceUnionMember1.$Identifier
     >(InterfaceUnionMember1, query);
   }
@@ -73043,7 +73074,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InterfaceUnionMember1.$Identifier>(
+    return this.$objectsCount<InterfaceUnionMember1.$Filter>(
       InterfaceUnionMember1,
       query,
     );
@@ -73064,10 +73095,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly InterfaceUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<InterfaceUnionMember2.$Identifier>(
-      InterfaceUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      InterfaceUnionMember2.$Filter,
+      InterfaceUnionMember2.$Identifier
+    >(InterfaceUnionMember2, query);
   }
 
   async interfaceUnionMember2s(
@@ -73075,6 +73106,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>> {
     return this.$objects<
       InterfaceUnionMember2,
+      InterfaceUnionMember2.$Filter,
       InterfaceUnionMember2.$Identifier
     >(InterfaceUnionMember2, query);
   }
@@ -73085,7 +73117,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InterfaceUnionMember2.$Identifier>(
+    return this.$objectsCount<InterfaceUnionMember2.$Filter>(
       InterfaceUnionMember2,
       query,
     );
@@ -73104,25 +73136,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async iriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IriIdentifierClass.$Identifier[]>> {
-    return this.$objectIdentifiers<IriIdentifierClass.$Identifier>(
-      IriIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IriIdentifierClass.$Filter,
+      IriIdentifierClass.$Identifier
+    >(IriIdentifierClass, query);
   }
 
   async iriIdentifierClasses(
     query?: $SparqlObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>> {
-    return this.$objects<IriIdentifierClass, IriIdentifierClass.$Identifier>(
+    return this.$objects<
       IriIdentifierClass,
-      query,
-    );
+      IriIdentifierClass.$Filter,
+      IriIdentifierClass.$Identifier
+    >(IriIdentifierClass, query);
   }
 
   async iriIdentifierClassesCount(
     query?: Pick<$SparqlObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IriIdentifierClass.$Identifier>(
+    return this.$objectsCount<IriIdentifierClass.$Filter>(
       IriIdentifierClass,
       query,
     );
@@ -73143,10 +73176,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly IriIdentifierInterface.$Identifier[]>
   > {
-    return this.$objectIdentifiers<IriIdentifierInterface.$Identifier>(
-      IriIdentifierInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      IriIdentifierInterface.$Filter,
+      IriIdentifierInterface.$Identifier
+    >(IriIdentifierInterface, query);
   }
 
   async iriIdentifierInterfaces(
@@ -73154,6 +73187,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>> {
     return this.$objects<
       IriIdentifierInterface,
+      IriIdentifierInterface.$Filter,
       IriIdentifierInterface.$Identifier
     >(IriIdentifierInterface, query);
   }
@@ -73164,7 +73198,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<IriIdentifierInterface.$Identifier>(
+    return this.$objectsCount<IriIdentifierInterface.$Filter>(
       IriIdentifierInterface,
       query,
     );
@@ -73185,10 +73219,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<JsPrimitiveUnionPropertyClass.$Identifier>(
-      JsPrimitiveUnionPropertyClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      JsPrimitiveUnionPropertyClass.$Filter,
+      JsPrimitiveUnionPropertyClass.$Identifier
+    >(JsPrimitiveUnionPropertyClass, query);
   }
 
   async jsPrimitiveUnionPropertyClasses(
@@ -73196,6 +73230,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
     return this.$objects<
       JsPrimitiveUnionPropertyClass,
+      JsPrimitiveUnionPropertyClass.$Filter,
       JsPrimitiveUnionPropertyClass.$Identifier
     >(JsPrimitiveUnionPropertyClass, query);
   }
@@ -73206,7 +73241,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<JsPrimitiveUnionPropertyClass.$Identifier>(
+    return this.$objectsCount<JsPrimitiveUnionPropertyClass.$Filter>(
       JsPrimitiveUnionPropertyClass,
       query,
     );
@@ -73227,10 +73262,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly LanguageInPropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<LanguageInPropertiesClass.$Identifier>(
-      LanguageInPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LanguageInPropertiesClass.$Filter,
+      LanguageInPropertiesClass.$Identifier
+    >(LanguageInPropertiesClass, query);
   }
 
   async languageInPropertiesClasses(
@@ -73238,6 +73273,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly LanguageInPropertiesClass[]>> {
     return this.$objects<
       LanguageInPropertiesClass,
+      LanguageInPropertiesClass.$Filter,
       LanguageInPropertiesClass.$Identifier
     >(LanguageInPropertiesClass, query);
   }
@@ -73248,7 +73284,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LanguageInPropertiesClass.$Identifier>(
+    return this.$objectsCount<LanguageInPropertiesClass.$Filter>(
       LanguageInPropertiesClass,
       query,
     );
@@ -73274,10 +73310,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>(
-      LazilyResolvedBlankNodeOrIriIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifierClass, query);
   }
 
   async lazilyResolvedBlankNodeOrIriIdentifierClasses(
@@ -73287,6 +73323,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       LazilyResolvedBlankNodeOrIriIdentifierClass,
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter,
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierClass, query);
   }
@@ -73297,7 +73334,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>(
+    return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>(
       LazilyResolvedBlankNodeOrIriIdentifierClass,
       query,
     );
@@ -73323,10 +73360,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>(
-      LazilyResolvedBlankNodeOrIriIdentifierInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
+    >(LazilyResolvedBlankNodeOrIriIdentifierInterface, query);
   }
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
@@ -73339,6 +73376,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       LazilyResolvedBlankNodeOrIriIdentifierInterface,
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter,
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierInterface, query);
   }
@@ -73349,7 +73387,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>(
+    return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>(
       LazilyResolvedBlankNodeOrIriIdentifierInterface,
       query,
     );
@@ -73370,10 +73408,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly LazilyResolvedClassUnionMember1.$Identifier[]>
   > {
-    return this.$objectIdentifiers<LazilyResolvedClassUnionMember1.$Identifier>(
-      LazilyResolvedClassUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedClassUnionMember1.$Filter,
+      LazilyResolvedClassUnionMember1.$Identifier
+    >(LazilyResolvedClassUnionMember1, query);
   }
 
   async lazilyResolvedClassUnionMember1s(
@@ -73381,6 +73419,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember1[]>> {
     return this.$objects<
       LazilyResolvedClassUnionMember1,
+      LazilyResolvedClassUnionMember1.$Filter,
       LazilyResolvedClassUnionMember1.$Identifier
     >(LazilyResolvedClassUnionMember1, query);
   }
@@ -73391,7 +73430,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedClassUnionMember1.$Identifier>(
+    return this.$objectsCount<LazilyResolvedClassUnionMember1.$Filter>(
       LazilyResolvedClassUnionMember1,
       query,
     );
@@ -73412,10 +73451,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly LazilyResolvedClassUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<LazilyResolvedClassUnionMember2.$Identifier>(
-      LazilyResolvedClassUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedClassUnionMember2.$Filter,
+      LazilyResolvedClassUnionMember2.$Identifier
+    >(LazilyResolvedClassUnionMember2, query);
   }
 
   async lazilyResolvedClassUnionMember2s(
@@ -73423,6 +73462,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember2[]>> {
     return this.$objects<
       LazilyResolvedClassUnionMember2,
+      LazilyResolvedClassUnionMember2.$Filter,
       LazilyResolvedClassUnionMember2.$Identifier
     >(LazilyResolvedClassUnionMember2, query);
   }
@@ -73433,7 +73473,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedClassUnionMember2.$Identifier>(
+    return this.$objectsCount<LazilyResolvedClassUnionMember2.$Filter>(
       LazilyResolvedClassUnionMember2,
       query,
     );
@@ -73457,10 +73497,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly LazilyResolvedInterfaceUnionMember1.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedInterfaceUnionMember1.$Identifier>(
-      LazilyResolvedInterfaceUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedInterfaceUnionMember1.$Filter,
+      LazilyResolvedInterfaceUnionMember1.$Identifier
+    >(LazilyResolvedInterfaceUnionMember1, query);
   }
 
   async lazilyResolvedInterfaceUnionMember1s(
@@ -73470,6 +73510,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       LazilyResolvedInterfaceUnionMember1,
+      LazilyResolvedInterfaceUnionMember1.$Filter,
       LazilyResolvedInterfaceUnionMember1.$Identifier
     >(LazilyResolvedInterfaceUnionMember1, query);
   }
@@ -73480,7 +73521,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedInterfaceUnionMember1.$Identifier>(
+    return this.$objectsCount<LazilyResolvedInterfaceUnionMember1.$Filter>(
       LazilyResolvedInterfaceUnionMember1,
       query,
     );
@@ -73504,10 +73545,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly LazilyResolvedInterfaceUnionMember2.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedInterfaceUnionMember2.$Identifier>(
-      LazilyResolvedInterfaceUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedInterfaceUnionMember2.$Filter,
+      LazilyResolvedInterfaceUnionMember2.$Identifier
+    >(LazilyResolvedInterfaceUnionMember2, query);
   }
 
   async lazilyResolvedInterfaceUnionMember2s(
@@ -73517,6 +73558,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       LazilyResolvedInterfaceUnionMember2,
+      LazilyResolvedInterfaceUnionMember2.$Filter,
       LazilyResolvedInterfaceUnionMember2.$Identifier
     >(LazilyResolvedInterfaceUnionMember2, query);
   }
@@ -73527,7 +73569,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedInterfaceUnionMember2.$Identifier>(
+    return this.$objectsCount<LazilyResolvedInterfaceUnionMember2.$Filter>(
       LazilyResolvedInterfaceUnionMember2,
       query,
     );
@@ -73551,10 +73593,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly LazilyResolvedIriIdentifierClass.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedIriIdentifierClass.$Identifier>(
-      LazilyResolvedIriIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedIriIdentifierClass.$Filter,
+      LazilyResolvedIriIdentifierClass.$Identifier
+    >(LazilyResolvedIriIdentifierClass, query);
   }
 
   async lazilyResolvedIriIdentifierClasses(
@@ -73564,6 +73606,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       LazilyResolvedIriIdentifierClass,
+      LazilyResolvedIriIdentifierClass.$Filter,
       LazilyResolvedIriIdentifierClass.$Identifier
     >(LazilyResolvedIriIdentifierClass, query);
   }
@@ -73574,7 +73617,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedIriIdentifierClass.$Identifier>(
+    return this.$objectsCount<LazilyResolvedIriIdentifierClass.$Filter>(
       LazilyResolvedIriIdentifierClass,
       query,
     );
@@ -73598,10 +73641,10 @@ export class $SparqlObjectSet implements $ObjectSet {
       readonly LazilyResolvedIriIdentifierInterface.$Identifier[]
     >
   > {
-    return this.$objectIdentifiers<LazilyResolvedIriIdentifierInterface.$Identifier>(
-      LazilyResolvedIriIdentifierInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedIriIdentifierInterface.$Filter,
+      LazilyResolvedIriIdentifierInterface.$Identifier
+    >(LazilyResolvedIriIdentifierInterface, query);
   }
 
   async lazilyResolvedIriIdentifierInterfaces(
@@ -73611,6 +73654,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   > {
     return this.$objects<
       LazilyResolvedIriIdentifierInterface,
+      LazilyResolvedIriIdentifierInterface.$Filter,
       LazilyResolvedIriIdentifierInterface.$Identifier
     >(LazilyResolvedIriIdentifierInterface, query);
   }
@@ -73621,7 +73665,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedIriIdentifierInterface.$Identifier>(
+    return this.$objectsCount<LazilyResolvedIriIdentifierInterface.$Filter>(
       LazilyResolvedIriIdentifierInterface,
       query,
     );
@@ -73640,25 +73684,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async lazyPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly LazyPropertiesClass.$Identifier[]>> {
-    return this.$objectIdentifiers<LazyPropertiesClass.$Identifier>(
-      LazyPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazyPropertiesClass.$Filter,
+      LazyPropertiesClass.$Identifier
+    >(LazyPropertiesClass, query);
   }
 
   async lazyPropertiesClasses(
     query?: $SparqlObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly LazyPropertiesClass[]>> {
-    return this.$objects<LazyPropertiesClass, LazyPropertiesClass.$Identifier>(
+    return this.$objects<
       LazyPropertiesClass,
-      query,
-    );
+      LazyPropertiesClass.$Filter,
+      LazyPropertiesClass.$Identifier
+    >(LazyPropertiesClass, query);
   }
 
   async lazyPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazyPropertiesClass.$Identifier>(
+    return this.$objectsCount<LazyPropertiesClass.$Filter>(
       LazyPropertiesClass,
       query,
     );
@@ -73679,10 +73724,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly LazyPropertiesInterface.$Identifier[]>
   > {
-    return this.$objectIdentifiers<LazyPropertiesInterface.$Identifier>(
-      LazyPropertiesInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazyPropertiesInterface.$Filter,
+      LazyPropertiesInterface.$Identifier
+    >(LazyPropertiesInterface, query);
   }
 
   async lazyPropertiesInterfaces(
@@ -73690,6 +73735,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazyPropertiesInterface[]>> {
     return this.$objects<
       LazyPropertiesInterface,
+      LazyPropertiesInterface.$Filter,
       LazyPropertiesInterface.$Identifier
     >(LazyPropertiesInterface, query);
   }
@@ -73700,7 +73746,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazyPropertiesInterface.$Identifier>(
+    return this.$objectsCount<LazyPropertiesInterface.$Filter>(
       LazyPropertiesInterface,
       query,
     );
@@ -73719,25 +73765,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async listPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ListPropertiesClass.$Identifier[]>> {
-    return this.$objectIdentifiers<ListPropertiesClass.$Identifier>(
-      ListPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      ListPropertiesClass.$Filter,
+      ListPropertiesClass.$Identifier
+    >(ListPropertiesClass, query);
   }
 
   async listPropertiesClasses(
     query?: $SparqlObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ListPropertiesClass[]>> {
-    return this.$objects<ListPropertiesClass, ListPropertiesClass.$Identifier>(
+    return this.$objects<
       ListPropertiesClass,
-      query,
-    );
+      ListPropertiesClass.$Filter,
+      ListPropertiesClass.$Identifier
+    >(ListPropertiesClass, query);
   }
 
   async listPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ListPropertiesClass.$Identifier>(
+    return this.$objectsCount<ListPropertiesClass.$Filter>(
       ListPropertiesClass,
       query,
     );
@@ -73758,10 +73805,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly MutablePropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<MutablePropertiesClass.$Identifier>(
-      MutablePropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      MutablePropertiesClass.$Filter,
+      MutablePropertiesClass.$Identifier
+    >(MutablePropertiesClass, query);
   }
 
   async mutablePropertiesClasses(
@@ -73769,6 +73816,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly MutablePropertiesClass[]>> {
     return this.$objects<
       MutablePropertiesClass,
+      MutablePropertiesClass.$Filter,
       MutablePropertiesClass.$Identifier
     >(MutablePropertiesClass, query);
   }
@@ -73779,7 +73827,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<MutablePropertiesClass.$Identifier>(
+    return this.$objectsCount<MutablePropertiesClass.$Filter>(
       MutablePropertiesClass,
       query,
     );
@@ -73796,19 +73844,25 @@ export class $SparqlObjectSet implements $ObjectSet {
   async nonClassIdentifiers(
     query?: $SparqlObjectSet.Query<NonClass.$Filter>,
   ): Promise<purify.Either<Error, readonly NonClass.$Identifier[]>> {
-    return this.$objectIdentifiers<NonClass.$Identifier>(NonClass, query);
+    return this.$objectIdentifiers<NonClass.$Filter, NonClass.$Identifier>(
+      NonClass,
+      query,
+    );
   }
 
   async nonClasses(
     query?: $SparqlObjectSet.Query<NonClass.$Filter>,
   ): Promise<purify.Either<Error, readonly NonClass[]>> {
-    return this.$objects<NonClass, NonClass.$Identifier>(NonClass, query);
+    return this.$objects<NonClass, NonClass.$Filter, NonClass.$Identifier>(
+      NonClass,
+      query,
+    );
   }
 
   async nonClassesCount(
     query?: Pick<$SparqlObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<NonClass.$Identifier>(NonClass, query);
+    return this.$objectsCount<NonClass.$Filter>(NonClass, query);
   }
 
   async noRdfTypeClassUnionMember1(
@@ -73826,10 +73880,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>
   > {
-    return this.$objectIdentifiers<NoRdfTypeClassUnionMember1.$Identifier>(
-      NoRdfTypeClassUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      NoRdfTypeClassUnionMember1.$Filter,
+      NoRdfTypeClassUnionMember1.$Identifier
+    >(NoRdfTypeClassUnionMember1, query);
   }
 
   async noRdfTypeClassUnionMember1s(
@@ -73837,6 +73891,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
     return this.$objects<
       NoRdfTypeClassUnionMember1,
+      NoRdfTypeClassUnionMember1.$Filter,
       NoRdfTypeClassUnionMember1.$Identifier
     >(NoRdfTypeClassUnionMember1, query);
   }
@@ -73847,7 +73902,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<NoRdfTypeClassUnionMember1.$Identifier>(
+    return this.$objectsCount<NoRdfTypeClassUnionMember1.$Filter>(
       NoRdfTypeClassUnionMember1,
       query,
     );
@@ -73868,10 +73923,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<NoRdfTypeClassUnionMember2.$Identifier>(
-      NoRdfTypeClassUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      NoRdfTypeClassUnionMember2.$Filter,
+      NoRdfTypeClassUnionMember2.$Identifier
+    >(NoRdfTypeClassUnionMember2, query);
   }
 
   async noRdfTypeClassUnionMember2s(
@@ -73879,6 +73934,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
     return this.$objects<
       NoRdfTypeClassUnionMember2,
+      NoRdfTypeClassUnionMember2.$Filter,
       NoRdfTypeClassUnionMember2.$Identifier
     >(NoRdfTypeClassUnionMember2, query);
   }
@@ -73889,7 +73945,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<NoRdfTypeClassUnionMember2.$Identifier>(
+    return this.$objectsCount<NoRdfTypeClassUnionMember2.$Filter>(
       NoRdfTypeClassUnionMember2,
       query,
     );
@@ -73910,10 +73966,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly OrderedPropertiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<OrderedPropertiesClass.$Identifier>(
-      OrderedPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      OrderedPropertiesClass.$Filter,
+      OrderedPropertiesClass.$Identifier
+    >(OrderedPropertiesClass, query);
   }
 
   async orderedPropertiesClasses(
@@ -73921,6 +73977,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly OrderedPropertiesClass[]>> {
     return this.$objects<
       OrderedPropertiesClass,
+      OrderedPropertiesClass.$Filter,
       OrderedPropertiesClass.$Identifier
     >(OrderedPropertiesClass, query);
   }
@@ -73931,7 +73988,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<OrderedPropertiesClass.$Identifier>(
+    return this.$objectsCount<OrderedPropertiesClass.$Filter>(
       OrderedPropertiesClass,
       query,
     );
@@ -73950,25 +74007,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async partialClassIdentifiers(
     query?: $SparqlObjectSet.Query<PartialClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClass.$Identifier[]>> {
-    return this.$objectIdentifiers<PartialClass.$Identifier>(
-      PartialClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialClass.$Filter,
+      PartialClass.$Identifier
+    >(PartialClass, query);
   }
 
   async partialClasses(
     query?: $SparqlObjectSet.Query<PartialClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClass[]>> {
-    return this.$objects<PartialClass, PartialClass.$Identifier>(
+    return this.$objects<
       PartialClass,
-      query,
-    );
+      PartialClass.$Filter,
+      PartialClass.$Identifier
+    >(PartialClass, query);
   }
 
   async partialClassesCount(
     query?: Pick<$SparqlObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialClass.$Identifier>(PartialClass, query);
+    return this.$objectsCount<PartialClass.$Filter>(PartialClass, query);
   }
 
   async partialClassUnionMember1(
@@ -73986,10 +74044,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PartialClassUnionMember1.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PartialClassUnionMember1.$Identifier>(
-      PartialClassUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialClassUnionMember1.$Filter,
+      PartialClassUnionMember1.$Identifier
+    >(PartialClassUnionMember1, query);
   }
 
   async partialClassUnionMember1s(
@@ -73997,6 +74055,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialClassUnionMember1[]>> {
     return this.$objects<
       PartialClassUnionMember1,
+      PartialClassUnionMember1.$Filter,
       PartialClassUnionMember1.$Identifier
     >(PartialClassUnionMember1, query);
   }
@@ -74007,7 +74066,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialClassUnionMember1.$Identifier>(
+    return this.$objectsCount<PartialClassUnionMember1.$Filter>(
       PartialClassUnionMember1,
       query,
     );
@@ -74028,10 +74087,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PartialClassUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PartialClassUnionMember2.$Identifier>(
-      PartialClassUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialClassUnionMember2.$Filter,
+      PartialClassUnionMember2.$Identifier
+    >(PartialClassUnionMember2, query);
   }
 
   async partialClassUnionMember2s(
@@ -74039,6 +74098,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialClassUnionMember2[]>> {
     return this.$objects<
       PartialClassUnionMember2,
+      PartialClassUnionMember2.$Filter,
       PartialClassUnionMember2.$Identifier
     >(PartialClassUnionMember2, query);
   }
@@ -74049,7 +74109,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialClassUnionMember2.$Identifier>(
+    return this.$objectsCount<PartialClassUnionMember2.$Filter>(
       PartialClassUnionMember2,
       query,
     );
@@ -74068,25 +74128,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async partialInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterface.$Identifier[]>> {
-    return this.$objectIdentifiers<PartialInterface.$Identifier>(
-      PartialInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialInterface.$Filter,
+      PartialInterface.$Identifier
+    >(PartialInterface, query);
   }
 
   async partialInterfaces(
     query?: $SparqlObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterface[]>> {
-    return this.$objects<PartialInterface, PartialInterface.$Identifier>(
+    return this.$objects<
       PartialInterface,
-      query,
-    );
+      PartialInterface.$Filter,
+      PartialInterface.$Identifier
+    >(PartialInterface, query);
   }
 
   async partialInterfacesCount(
     query?: Pick<$SparqlObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialInterface.$Identifier>(
+    return this.$objectsCount<PartialInterface.$Filter>(
       PartialInterface,
       query,
     );
@@ -74107,10 +74168,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PartialInterfaceUnionMember1.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PartialInterfaceUnionMember1.$Identifier>(
-      PartialInterfaceUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialInterfaceUnionMember1.$Filter,
+      PartialInterfaceUnionMember1.$Identifier
+    >(PartialInterfaceUnionMember1, query);
   }
 
   async partialInterfaceUnionMember1s(
@@ -74118,6 +74179,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnionMember1[]>> {
     return this.$objects<
       PartialInterfaceUnionMember1,
+      PartialInterfaceUnionMember1.$Filter,
       PartialInterfaceUnionMember1.$Identifier
     >(PartialInterfaceUnionMember1, query);
   }
@@ -74128,7 +74190,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialInterfaceUnionMember1.$Identifier>(
+    return this.$objectsCount<PartialInterfaceUnionMember1.$Filter>(
       PartialInterfaceUnionMember1,
       query,
     );
@@ -74149,10 +74211,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PartialInterfaceUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PartialInterfaceUnionMember2.$Identifier>(
-      PartialInterfaceUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialInterfaceUnionMember2.$Filter,
+      PartialInterfaceUnionMember2.$Identifier
+    >(PartialInterfaceUnionMember2, query);
   }
 
   async partialInterfaceUnionMember2s(
@@ -74160,6 +74222,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnionMember2[]>> {
     return this.$objects<
       PartialInterfaceUnionMember2,
+      PartialInterfaceUnionMember2.$Filter,
       PartialInterfaceUnionMember2.$Identifier
     >(PartialInterfaceUnionMember2, query);
   }
@@ -74170,7 +74233,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialInterfaceUnionMember2.$Identifier>(
+    return this.$objectsCount<PartialInterfaceUnionMember2.$Filter>(
       PartialInterfaceUnionMember2,
       query,
     );
@@ -74191,10 +74254,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PropertyCardinalitiesClass.$Identifier>(
-      PropertyCardinalitiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PropertyCardinalitiesClass.$Filter,
+      PropertyCardinalitiesClass.$Identifier
+    >(PropertyCardinalitiesClass, query);
   }
 
   async propertyCardinalitiesClasses(
@@ -74202,6 +74265,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>> {
     return this.$objects<
       PropertyCardinalitiesClass,
+      PropertyCardinalitiesClass.$Filter,
       PropertyCardinalitiesClass.$Identifier
     >(PropertyCardinalitiesClass, query);
   }
@@ -74212,7 +74276,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PropertyCardinalitiesClass.$Identifier>(
+    return this.$objectsCount<PropertyCardinalitiesClass.$Filter>(
       PropertyCardinalitiesClass,
       query,
     );
@@ -74233,10 +74297,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PropertyVisibilitiesClass.$Identifier>(
-      PropertyVisibilitiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PropertyVisibilitiesClass.$Filter,
+      PropertyVisibilitiesClass.$Identifier
+    >(PropertyVisibilitiesClass, query);
   }
 
   async propertyVisibilitiesClasses(
@@ -74244,6 +74308,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>> {
     return this.$objects<
       PropertyVisibilitiesClass,
+      PropertyVisibilitiesClass.$Filter,
       PropertyVisibilitiesClass.$Identifier
     >(PropertyVisibilitiesClass, query);
   }
@@ -74254,7 +74319,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PropertyVisibilitiesClass.$Identifier>(
+    return this.$objectsCount<PropertyVisibilitiesClass.$Filter>(
       PropertyVisibilitiesClass,
       query,
     );
@@ -74275,10 +74340,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>
   > {
-    return this.$objectIdentifiers<RecursiveClassUnionMember1.$Identifier>(
-      RecursiveClassUnionMember1,
-      query,
-    );
+    return this.$objectIdentifiers<
+      RecursiveClassUnionMember1.$Filter,
+      RecursiveClassUnionMember1.$Identifier
+    >(RecursiveClassUnionMember1, query);
   }
 
   async recursiveClassUnionMember1s(
@@ -74286,6 +74351,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>> {
     return this.$objects<
       RecursiveClassUnionMember1,
+      RecursiveClassUnionMember1.$Filter,
       RecursiveClassUnionMember1.$Identifier
     >(RecursiveClassUnionMember1, query);
   }
@@ -74296,7 +74362,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<RecursiveClassUnionMember1.$Identifier>(
+    return this.$objectsCount<RecursiveClassUnionMember1.$Filter>(
       RecursiveClassUnionMember1,
       query,
     );
@@ -74317,10 +74383,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>
   > {
-    return this.$objectIdentifiers<RecursiveClassUnionMember2.$Identifier>(
-      RecursiveClassUnionMember2,
-      query,
-    );
+    return this.$objectIdentifiers<
+      RecursiveClassUnionMember2.$Filter,
+      RecursiveClassUnionMember2.$Identifier
+    >(RecursiveClassUnionMember2, query);
   }
 
   async recursiveClassUnionMember2s(
@@ -74328,6 +74394,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>> {
     return this.$objects<
       RecursiveClassUnionMember2,
+      RecursiveClassUnionMember2.$Filter,
       RecursiveClassUnionMember2.$Identifier
     >(RecursiveClassUnionMember2, query);
   }
@@ -74338,7 +74405,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<RecursiveClassUnionMember2.$Identifier>(
+    return this.$objectsCount<RecursiveClassUnionMember2.$Filter>(
       RecursiveClassUnionMember2,
       query,
     );
@@ -74359,10 +74426,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<Sha256IriIdentifierClass.$Identifier>(
-      Sha256IriIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      Sha256IriIdentifierClass.$Filter,
+      Sha256IriIdentifierClass.$Identifier
+    >(Sha256IriIdentifierClass, query);
   }
 
   async sha256IriIdentifierClasses(
@@ -74370,6 +74437,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>> {
     return this.$objects<
       Sha256IriIdentifierClass,
+      Sha256IriIdentifierClass.$Filter,
       Sha256IriIdentifierClass.$Identifier
     >(Sha256IriIdentifierClass, query);
   }
@@ -74380,7 +74448,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<Sha256IriIdentifierClass.$Identifier>(
+    return this.$objectsCount<Sha256IriIdentifierClass.$Filter>(
       Sha256IriIdentifierClass,
       query,
     );
@@ -74399,25 +74467,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async termPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly TermPropertiesClass.$Identifier[]>> {
-    return this.$objectIdentifiers<TermPropertiesClass.$Identifier>(
-      TermPropertiesClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      TermPropertiesClass.$Filter,
+      TermPropertiesClass.$Identifier
+    >(TermPropertiesClass, query);
   }
 
   async termPropertiesClasses(
     query?: $SparqlObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly TermPropertiesClass[]>> {
-    return this.$objects<TermPropertiesClass, TermPropertiesClass.$Identifier>(
+    return this.$objects<
       TermPropertiesClass,
-      query,
-    );
+      TermPropertiesClass.$Filter,
+      TermPropertiesClass.$Identifier
+    >(TermPropertiesClass, query);
   }
 
   async termPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<TermPropertiesClass.$Identifier>(
+    return this.$objectsCount<TermPropertiesClass.$Filter>(
       TermPropertiesClass,
       query,
     );
@@ -74438,10 +74507,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<UnionDiscriminantsClass.$Identifier>(
-      UnionDiscriminantsClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      UnionDiscriminantsClass.$Filter,
+      UnionDiscriminantsClass.$Identifier
+    >(UnionDiscriminantsClass, query);
   }
 
   async unionDiscriminantsClasses(
@@ -74449,6 +74518,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>> {
     return this.$objects<
       UnionDiscriminantsClass,
+      UnionDiscriminantsClass.$Filter,
       UnionDiscriminantsClass.$Identifier
     >(UnionDiscriminantsClass, query);
   }
@@ -74459,7 +74529,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<UnionDiscriminantsClass.$Identifier>(
+    return this.$objectsCount<UnionDiscriminantsClass.$Filter>(
       UnionDiscriminantsClass,
       query,
     );
@@ -74480,10 +74550,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>
   > {
-    return this.$objectIdentifiers<UuidV4IriIdentifierClass.$Identifier>(
-      UuidV4IriIdentifierClass,
-      query,
-    );
+    return this.$objectIdentifiers<
+      UuidV4IriIdentifierClass.$Filter,
+      UuidV4IriIdentifierClass.$Identifier
+    >(UuidV4IriIdentifierClass, query);
   }
 
   async uuidV4IriIdentifierClasses(
@@ -74491,6 +74561,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>> {
     return this.$objects<
       UuidV4IriIdentifierClass,
+      UuidV4IriIdentifierClass.$Filter,
       UuidV4IriIdentifierClass.$Identifier
     >(UuidV4IriIdentifierClass, query);
   }
@@ -74501,7 +74572,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<UuidV4IriIdentifierClass.$Identifier>(
+    return this.$objectsCount<UuidV4IriIdentifierClass.$Filter>(
       UuidV4IriIdentifierClass,
       query,
     );
@@ -74522,10 +74593,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
   > {
-    return this.$objectIdentifiers<UuidV4IriIdentifierInterface.$Identifier>(
-      UuidV4IriIdentifierInterface,
-      query,
-    );
+    return this.$objectIdentifiers<
+      UuidV4IriIdentifierInterface.$Filter,
+      UuidV4IriIdentifierInterface.$Identifier
+    >(UuidV4IriIdentifierInterface, query);
   }
 
   async uuidV4IriIdentifierInterfaces(
@@ -74533,6 +74604,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
     return this.$objects<
       UuidV4IriIdentifierInterface,
+      UuidV4IriIdentifierInterface.$Filter,
       UuidV4IriIdentifierInterface.$Identifier
     >(UuidV4IriIdentifierInterface, query);
   }
@@ -74543,7 +74615,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<UuidV4IriIdentifierInterface.$Identifier>(
+    return this.$objectsCount<UuidV4IriIdentifierInterface.$Filter>(
       UuidV4IriIdentifierInterface,
       query,
     );
@@ -74560,19 +74632,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async classUnionIdentifiers(
     query?: $SparqlObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnion.$Identifier[]>> {
-    return this.$objectIdentifiers<ClassUnion.$Identifier>(ClassUnion, query);
+    return this.$objectIdentifiers<ClassUnion.$Filter, ClassUnion.$Identifier>(
+      ClassUnion,
+      query,
+    );
   }
 
   async classUnions(
     query?: $SparqlObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnion[]>> {
-    return this.$objects<ClassUnion, ClassUnion.$Identifier>(ClassUnion, query);
+    return this.$objects<
+      ClassUnion,
+      ClassUnion.$Filter,
+      ClassUnion.$Identifier
+    >(ClassUnion, query);
   }
 
   async classUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<ClassUnion.$Identifier>(ClassUnion, query);
+    return this.$objectsCount<ClassUnion.$Filter>(ClassUnion, query);
   }
 
   async flattenClassUnion(
@@ -74588,25 +74667,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async flattenClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly FlattenClassUnion.$Identifier[]>> {
-    return this.$objectIdentifiers<FlattenClassUnion.$Identifier>(
-      FlattenClassUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      FlattenClassUnion.$Filter,
+      FlattenClassUnion.$Identifier
+    >(FlattenClassUnion, query);
   }
 
   async flattenClassUnions(
     query?: $SparqlObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>> {
-    return this.$objects<FlattenClassUnion, FlattenClassUnion.$Identifier>(
+    return this.$objects<
       FlattenClassUnion,
-      query,
-    );
+      FlattenClassUnion.$Filter,
+      FlattenClassUnion.$Identifier
+    >(FlattenClassUnion, query);
   }
 
   async flattenClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<FlattenClassUnion.$Identifier>(
+    return this.$objectsCount<FlattenClassUnion.$Filter>(
       FlattenClassUnion,
       query,
     );
@@ -74625,28 +74705,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async interfaceUnionIdentifiers(
     query?: $SparqlObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnion.$Identifier[]>> {
-    return this.$objectIdentifiers<InterfaceUnion.$Identifier>(
-      InterfaceUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      InterfaceUnion.$Filter,
+      InterfaceUnion.$Identifier
+    >(InterfaceUnion, query);
   }
 
   async interfaceUnions(
     query?: $SparqlObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnion[]>> {
-    return this.$objects<InterfaceUnion, InterfaceUnion.$Identifier>(
+    return this.$objects<
       InterfaceUnion,
-      query,
-    );
+      InterfaceUnion.$Filter,
+      InterfaceUnion.$Identifier
+    >(InterfaceUnion, query);
   }
 
   async interfaceUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<InterfaceUnion.$Identifier>(
-      InterfaceUnion,
-      query,
-    );
+    return this.$objectsCount<InterfaceUnion.$Filter>(InterfaceUnion, query);
   }
 
   async lazilyResolvedClassUnion(
@@ -74664,10 +74742,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]>
   > {
-    return this.$objectIdentifiers<LazilyResolvedClassUnion.$Identifier>(
-      LazilyResolvedClassUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedClassUnion.$Filter,
+      LazilyResolvedClassUnion.$Identifier
+    >(LazilyResolvedClassUnion, query);
   }
 
   async lazilyResolvedClassUnions(
@@ -74675,6 +74753,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnion[]>> {
     return this.$objects<
       LazilyResolvedClassUnion,
+      LazilyResolvedClassUnion.$Filter,
       LazilyResolvedClassUnion.$Identifier
     >(LazilyResolvedClassUnion, query);
   }
@@ -74685,7 +74764,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedClassUnion.$Identifier>(
+    return this.$objectsCount<LazilyResolvedClassUnion.$Filter>(
       LazilyResolvedClassUnion,
       query,
     );
@@ -74706,10 +74785,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly LazilyResolvedInterfaceUnion.$Identifier[]>
   > {
-    return this.$objectIdentifiers<LazilyResolvedInterfaceUnion.$Identifier>(
-      LazilyResolvedInterfaceUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      LazilyResolvedInterfaceUnion.$Filter,
+      LazilyResolvedInterfaceUnion.$Identifier
+    >(LazilyResolvedInterfaceUnion, query);
   }
 
   async lazilyResolvedInterfaceUnions(
@@ -74717,6 +74796,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedInterfaceUnion[]>> {
     return this.$objects<
       LazilyResolvedInterfaceUnion,
+      LazilyResolvedInterfaceUnion.$Filter,
       LazilyResolvedInterfaceUnion.$Identifier
     >(LazilyResolvedInterfaceUnion, query);
   }
@@ -74727,7 +74807,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<LazilyResolvedInterfaceUnion.$Identifier>(
+    return this.$objectsCount<LazilyResolvedInterfaceUnion.$Filter>(
       LazilyResolvedInterfaceUnion,
       query,
     );
@@ -74746,25 +74826,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async noRdfTypeClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>> {
-    return this.$objectIdentifiers<NoRdfTypeClassUnion.$Identifier>(
-      NoRdfTypeClassUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      NoRdfTypeClassUnion.$Filter,
+      NoRdfTypeClassUnion.$Identifier
+    >(NoRdfTypeClassUnion, query);
   }
 
   async noRdfTypeClassUnions(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>> {
-    return this.$objects<NoRdfTypeClassUnion, NoRdfTypeClassUnion.$Identifier>(
+    return this.$objects<
       NoRdfTypeClassUnion,
-      query,
-    );
+      NoRdfTypeClassUnion.$Filter,
+      NoRdfTypeClassUnion.$Identifier
+    >(NoRdfTypeClassUnion, query);
   }
 
   async noRdfTypeClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<NoRdfTypeClassUnion.$Identifier>(
+    return this.$objectsCount<NoRdfTypeClassUnion.$Filter>(
       NoRdfTypeClassUnion,
       query,
     );
@@ -74783,25 +74864,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async partialClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnion.$Identifier[]>> {
-    return this.$objectIdentifiers<PartialClassUnion.$Identifier>(
-      PartialClassUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialClassUnion.$Filter,
+      PartialClassUnion.$Identifier
+    >(PartialClassUnion, query);
   }
 
   async partialClassUnions(
     query?: $SparqlObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnion[]>> {
-    return this.$objects<PartialClassUnion, PartialClassUnion.$Identifier>(
+    return this.$objects<
       PartialClassUnion,
-      query,
-    );
+      PartialClassUnion.$Filter,
+      PartialClassUnion.$Identifier
+    >(PartialClassUnion, query);
   }
 
   async partialClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialClassUnion.$Identifier>(
+    return this.$objectsCount<PartialClassUnion.$Filter>(
       PartialClassUnion,
       query,
     );
@@ -74822,10 +74904,10 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<
     purify.Either<Error, readonly PartialInterfaceUnion.$Identifier[]>
   > {
-    return this.$objectIdentifiers<PartialInterfaceUnion.$Identifier>(
-      PartialInterfaceUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      PartialInterfaceUnion.$Filter,
+      PartialInterfaceUnion.$Identifier
+    >(PartialInterfaceUnion, query);
   }
 
   async partialInterfaceUnions(
@@ -74833,6 +74915,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnion[]>> {
     return this.$objects<
       PartialInterfaceUnion,
+      PartialInterfaceUnion.$Filter,
       PartialInterfaceUnion.$Identifier
     >(PartialInterfaceUnion, query);
   }
@@ -74843,7 +74926,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<PartialInterfaceUnion.$Identifier>(
+    return this.$objectsCount<PartialInterfaceUnion.$Filter>(
       PartialInterfaceUnion,
       query,
     );
@@ -74862,25 +74945,26 @@ export class $SparqlObjectSet implements $ObjectSet {
   async recursiveClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly RecursiveClassUnion.$Identifier[]>> {
-    return this.$objectIdentifiers<RecursiveClassUnion.$Identifier>(
-      RecursiveClassUnion,
-      query,
-    );
+    return this.$objectIdentifiers<
+      RecursiveClassUnion.$Filter,
+      RecursiveClassUnion.$Identifier
+    >(RecursiveClassUnion, query);
   }
 
   async recursiveClassUnions(
     query?: $SparqlObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>> {
-    return this.$objects<RecursiveClassUnion, RecursiveClassUnion.$Identifier>(
+    return this.$objects<
       RecursiveClassUnion,
-      query,
-    );
+      RecursiveClassUnion.$Filter,
+      RecursiveClassUnion.$Identifier
+    >(RecursiveClassUnion, query);
   }
 
   async recursiveClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
-    return this.$objectsCount<RecursiveClassUnion.$Identifier>(
+    return this.$objectsCount<RecursiveClassUnion.$Filter>(
       RecursiveClassUnion,
       query,
     );
@@ -74934,14 +75018,20 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   protected async $objectIdentifiers<
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
       $sparqlWherePatterns: (parameters?: {
+        filter?: ObjectFilterT;
         subject?: sparqljs.Triple["subject"];
       }) => readonly sparqljs.Pattern[];
     },
-    query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectFilterT>,
   ): Promise<purify.Either<Error, readonly ObjectIdentifierT[]>> {
     const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
@@ -74953,7 +75043,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    const wherePatterns = this.$wherePatterns(objectType, query?.where).filter(
+    const wherePatterns = this.$wherePatterns(objectType, query).filter(
       (pattern) => pattern.type !== "optional",
     );
     if (wherePatterns.length === 0) {
@@ -74987,6 +75077,11 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async $objects<
     ObjectT,
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectType: {
@@ -74995,21 +75090,25 @@ export class $SparqlObjectSet implements $ObjectSet {
         options: { objectSet: $ObjectSet },
       ) => purify.Either<Error, ObjectT>;
       $sparqlConstructQueryString: (
-        parameters?: { subject?: sparqljs.Triple["subject"] } & Omit<
-          sparqljs.ConstructQuery,
-          "prefixes" | "queryType" | "type"
-        > &
+        parameters?: {
+          filter?: ObjectFilterT;
+          subject?: sparqljs.Triple["subject"];
+        } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
           sparqljs.GeneratorOptions,
       ) => string;
       $sparqlWherePatterns: (parameters?: {
+        filter?: ObjectFilterT;
         subject?: sparqljs.Triple["subject"];
       }) => readonly sparqljs.Pattern[];
     },
-    query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectFilterT>,
   ): Promise<purify.Either<Error, readonly ObjectT[]>> {
     return purify.EitherAsync(async ({ liftEither }) => {
       const identifiers = await liftEither(
-        await this.$objectIdentifiers<ObjectIdentifierT>(objectType, query),
+        await this.$objectIdentifiers<ObjectFilterT, ObjectIdentifierT>(
+          objectType,
+          query,
+        ),
       );
       if (identifiers.length === 0) {
         return [];
@@ -75051,16 +75150,21 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   protected async $objectsCount<
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
   >(
     objectType: {
       $sparqlWherePatterns: (parameters?: {
+        filter?: ObjectFilterT;
         subject?: sparqljs.Triple["subject"];
       }) => readonly sparqljs.Pattern[];
     },
-    query?: $SparqlObjectSet.Query<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectFilterT>,
   ): Promise<purify.Either<Error, number>> {
-    const wherePatterns = this.$wherePatterns(objectType, query?.where).filter(
+    const wherePatterns = this.$wherePatterns(objectType, query).filter(
       (pattern) => pattern.type !== "optional",
     );
     if (wherePatterns.length === 0) {
@@ -75098,109 +75202,32 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   protected $wherePatterns<
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
   >(
     objectType: {
       $sparqlWherePatterns: (parameters?: {
+        filter?: ObjectFilterT;
         subject?: sparqljs.Triple["subject"];
       }) => readonly sparqljs.Pattern[];
     },
-    where?: $SparqlObjectSet.Where<ObjectIdentifierT>,
+    query?: $SparqlObjectSet.Query<ObjectFilterT>,
   ): readonly sparqljs.Pattern[] {
     // Patterns should be most to least specific.
     const patterns: sparqljs.Pattern[] = [];
 
-    const where_ = where ?? { type: "type" };
-    switch (where_.type) {
-      case "identifiers": {
-        const valuePatternRowKey = `?${this.$objectVariable.value}`;
-        patterns.push({
-          type: "values" as const,
-          values: where_.identifiers.map((identifier) => {
-            const valuePatternRow: sparqljs.ValuePatternRow = {};
-            valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
-            return valuePatternRow;
-          }),
-        });
-        break;
-      }
-
-      case "sparql-patterns": {
-        patterns.push(...where_.sparqlPatterns(this.$objectVariable));
-        break;
-      }
-
-      case "triple-objects": {
-        patterns.push({
-          triples: [
-            {
-              subject: where_.subject ?? dataFactory.blankNode(),
-              predicate: where_.predicate,
-              object: this.$objectVariable,
-            },
-          ],
-          type: "bgp",
-        });
-
-        if (where_.objectTermType === "NamedNode") {
-          patterns.push({
-            type: "filter" as const,
-            expression: {
-              type: "operation" as const,
-              operator: "isIRI",
-              args: [this.$objectVariable],
-            },
-          });
-        }
-
-        break;
-      }
-
-      case "triple-subjects": {
-        patterns.push({
-          triples: [
-            {
-              subject: this.$objectVariable,
-              predicate: where_.predicate,
-              object: where_.object ?? dataFactory.blankNode(),
-            },
-          ],
-          type: "bgp",
-        });
-
-        if (where_.subjectTermType === "NamedNode") {
-          patterns.push({
-            type: "filter" as const,
-            expression: {
-              type: "operation" as const,
-              operator: "isIRI",
-              args: [this.$objectVariable],
-            },
-          });
-        }
-
-        break;
-      }
-
-      case "type": {
-        // The type patterns are always added below.
-
-        if (where_.identifierType === "NamedNode") {
-          patterns.push({
-            type: "filter" as const,
-            expression: {
-              type: "operation" as const,
-              operator: "isIRI",
-              args: [this.$objectVariable],
-            },
-          });
-        }
-        break;
-      }
+    if (query?.where) {
+      patterns.push(...query.where(this.$objectVariable));
     }
 
     patterns.push(
-      ...objectType.$sparqlWherePatterns({ subject: this.$objectVariable }),
+      ...objectType.$sparqlWherePatterns({
+        filter: query?.filter,
+        subject: this.$objectVariable,
+      }),
     );
 
     return $insertSeedSparqlWherePattern(
@@ -75211,21 +75238,17 @@ export class $SparqlObjectSet implements $ObjectSet {
 
 export namespace $SparqlObjectSet {
   export type Query<
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  > = Omit<$ObjectSet.Query<ObjectIdentifierT>, "where"> & {
+    ObjectFilterT extends {
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
+    },
+  > = $ObjectSet.Query<ObjectFilterT> & {
     readonly order?: (
       objectVariable: rdfjs.Variable,
     ) => readonly sparqljs.Ordering[];
-    readonly where?: Where<ObjectIdentifierT>;
+    readonly where?: (
+      objectVariable: rdfjs.Variable,
+    ) => readonly sparqljs.Pattern[];
   };
-  export type Where<
-    ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
-  > =
-    | $ObjectSet.Where<ObjectIdentifierT>
-    | {
-        readonly sparqlPatterns: (
-          objectVariable: rdfjs.Variable,
-        ) => readonly sparqljs.Pattern[];
-        readonly type: "sparql-patterns";
-      };
 }

@@ -73,16 +73,16 @@ if (limit <= 0) { return purify.Either.of([]); }
 let offset = query?.offset ?? 0;
 if (offset < 0) { offset = 0; }
 
-let resources: { object?: ${typeParameters.ObjectT.name}, resource: rdfjsResource.Resource };
+let resources: { object?: ${typeParameters.ObjectT.name}, resource: rdfjsResource.Resource }[];
 let sortResources: boolean;
 if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
   resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
   sortResources = false;
-} else if (objectType.fromRdfTypes.length > 0) {
+} else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
   const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
   resources = [];
   sortResources = true;
-  for (const fromRdfType of objectType.fromRdfTypes) {
+  for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
     for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
       if (!identifierSet.has(resource.identifier)) {
         identifierSet.add(resource.identifier);
@@ -106,7 +106,8 @@ if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
     if (identifierSet.has(quad.subject)) {
       continue;
     }
-    identifierSet.add(resource.identifier);
+    identifierSet.add(quad.subject);
+    const resource = this.resourceSet.resource(quad.subject);
     // Eagerly eliminate the majority of resources that won't match the object type
     objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
       resources.push({ object, resource });
@@ -130,7 +131,7 @@ for (let { object, resource } of resources) {
     object = objectEither.unsafeCoerce();
   }
 
-  if (query?.filter && !objectType.filter(query.filter, object)) {
+  if (query?.filter && !objectType.${syntheticNamePrefix}filter(query.filter, object)) {
     continue;
   }
 
@@ -172,17 +173,17 @@ if (limit <= 0) { return purify.Either.of([]); }
 let offset = query?.offset ?? 0;
 if (offset < 0) { offset = 0; }
 
-let resources: { object?: ${typeParameters.ObjectT.name}, objectType?: ${objectTypeType}, resource: rdfjsResource.Resource };
+let resources: { object?: ${typeParameters.ObjectT.name}, objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[];
 let sortResources: boolean;
 if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
   resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
   sortResources = false;
-} else if (objectTypes.every(objectType => objectType.fromRdfTypes.length > 0)) {
+} else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
   const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
   resources = [];
   sortResources = true;
   for (const objectType of objectTypes) {
-    for (const fromRdfType of objectType.fromRdfTypes) {
+    for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
       for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
         if (!identifierSet.has(resource.identifier)) {
           identifierSet.add(resource.identifier);
@@ -207,9 +208,9 @@ if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
     if (identifierSet.has(quad.subject)) {
       continue;
     }
-    identifierSet.add(resource.identifier);
+    identifierSet.add(quad.subject);
     // Eagerly eliminate the majority of resources that won't match the object types
-
+    const resource = this.resourceSet.resource(quad.subject);
     for (const objectType of objectTypes) {
       if (objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
         resources.push({ object, objectType, resource });
@@ -234,9 +235,10 @@ for (let { object, objectType, resource } of resources) {
       objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
     } else {
       objectEither = purify.Left(new Error("no object types"));
-      for (const objectType of objectTypes) {
-        objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+      for (const tryObjectType of objectTypes) {
+        objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
         if (objectEither.isRight()) {
+          objectType = tryObjectType;
           break;
         }
       }
@@ -246,8 +248,11 @@ for (let { object, objectType, resource } of resources) {
     }
     object = objectEither.unsafeCoerce();
   }
+  if (!objectType) {
+    throw new Error("objectType should be set here");
+  }
 
-  if (query?.filter && !objectType.filter(query.filter, object)) {
+  if (query?.filter && !objectType.${syntheticNamePrefix}filter(query.filter, object)) {
     continue;
   }
 
