@@ -59,7 +59,7 @@ export function objectSetMethodSignatures(parameters: {
         {
           hasQuestionToken: true,
           name: "query",
-          type: `Pick<${queryT}<${objectType.identifierTypeAlias}>, "where">`,
+          type: `Pick<${queryT}<${objectType.filterType}>, "filter">`,
         },
       ],
       returnType: "Promise<purify.Either<Error, number>>",

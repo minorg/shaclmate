@@ -45,7 +45,7 @@ export function objectSetInterfaceDeclaration({
           typeParameters: [
             {
               constraint:
-                "{ readonly $identifier?: { readonly in?: readonly string[] } }",
+                "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }",
               name: "FilterT",
             },
           ],

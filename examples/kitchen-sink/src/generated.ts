@@ -673,10 +673,7 @@ namespace $IdentifierFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [
-            value,
-            filter.in.filter((inValue) => inValue.termType === "NamedNode"),
-          ],
+          args: [value, filter.in],
         },
       });
     }
@@ -62791,8 +62788,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly BaseInterfaceWithoutProperties[]>>;
   baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   baseInterfaceWithProperties(
@@ -62811,8 +62808,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly BaseInterfaceWithProperties[]>>;
   baseInterfaceWithPropertiesesCount(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   blankNodeIdentifierClass(
@@ -62827,10 +62824,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly BlankNodeIdentifierClass[]>>;
   blankNodeIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
@@ -62845,8 +62839,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly BlankNodeIdentifierInterface[]>>;
   blankNodeIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   blankNodeOrIriIdentifierClass(
@@ -62862,8 +62856,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly BlankNodeOrIriIdentifierClass[]>>;
   blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   blankNodeOrIriIdentifierInterface(
@@ -62884,8 +62878,8 @@ export interface $ObjectSet {
   >;
   blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   classUnionMember1(
@@ -62898,7 +62892,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember1[]>>;
   classUnionMember1sCount(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
@@ -62910,7 +62904,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnionMember2[]>>;
   classUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
@@ -62922,7 +62916,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteChildClass[]>>;
   concreteChildClassesCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
@@ -62936,7 +62930,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteChildInterface[]>>;
   concreteChildInterfacesCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
@@ -62950,10 +62944,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<purify.Either<Error, readonly ConcreteParentClass[]>>;
   concreteParentClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
@@ -62968,8 +62959,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ConcreteParentInterface[]>>;
   concreteParentInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   convertibleTypePropertiesClass(
@@ -62985,8 +62976,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ConvertibleTypePropertiesClass[]>>;
   convertibleTypePropertiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   dateUnionPropertiesClass(
@@ -63001,10 +62992,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly DateUnionPropertiesClass[]>>;
   dateUnionPropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
@@ -63019,8 +63007,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly DefaultValuePropertiesClass[]>>;
   defaultValuePropertiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   directRecursiveClass(
@@ -63033,7 +63021,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<purify.Either<Error, readonly DirectRecursiveClass[]>>;
   directRecursiveClassesCount(
-    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
@@ -63048,8 +63036,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly ExplicitFromToRdfTypesClass[]>>;
   explicitFromToRdfTypesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   explicitRdfTypeClass(
@@ -63062,7 +63050,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ExplicitRdfTypeClass[]>>;
   explicitRdfTypeClassesCount(
-    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
@@ -63076,10 +63064,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ExternClassPropertyClass[]>>;
   externClassPropertyClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
@@ -63093,10 +63078,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<purify.Either<Error, readonly FlattenClassUnionMember3[]>>;
   flattenClassUnionMember3sCount(
-    query?: Pick<
-      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
@@ -63110,10 +63092,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly HasValuePropertiesClass[]>>;
   hasValuePropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
@@ -63128,8 +63107,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly IdentifierOverride3Class[]>>;
   identifierOverride3ClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   identifierOverride4Class(
@@ -63145,8 +63124,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly IdentifierOverride4Class[]>>;
   identifierOverride4ClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   identifierOverride5Class(
@@ -63161,10 +63140,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<purify.Either<Error, readonly IdentifierOverride5Class[]>>;
   identifierOverride5ClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
@@ -63178,7 +63154,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IndirectRecursiveClass[]>>;
   indirectRecursiveClassesCount(
-    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
@@ -63193,8 +63169,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly IndirectRecursiveHelperClass[]>>;
   indirectRecursiveHelperClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   inIdentifierClass(
@@ -63207,7 +63183,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InIdentifierClass[]>>;
   inIdentifierClassesCount(
-    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
@@ -63219,7 +63195,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly InPropertiesClass[]>>;
   inPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   interface(
     identifier: Interface.$Identifier,
@@ -63231,7 +63207,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Promise<purify.Either<Error, readonly Interface[]>>;
   interfacesCount(
-    query?: Pick<$ObjectSet.Query<Interface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
@@ -63245,7 +63221,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnionMember1[]>>;
   interfaceUnionMember1sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
@@ -63259,7 +63235,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnionMember2[]>>;
   interfaceUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
@@ -63271,7 +63247,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly IriIdentifierClass[]>>;
   iriIdentifierClassesCount(
-    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
@@ -63285,7 +63261,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly IriIdentifierInterface[]>>;
   iriIdentifierInterfacesCount(
-    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
@@ -63300,8 +63276,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly JsPrimitiveUnionPropertyClass[]>>;
   jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
-      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   languageInPropertiesClass(
@@ -63316,10 +63292,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly LanguageInPropertiesClass[]>>;
   languageInPropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
@@ -63339,8 +63312,8 @@ export interface $ObjectSet {
   >;
   lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedBlankNodeOrIriIdentifierInterface(
@@ -63366,8 +63339,8 @@ export interface $ObjectSet {
   >;
   lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedClassUnionMember1(
@@ -63383,8 +63356,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember1[]>>;
   lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedClassUnionMember2(
@@ -63400,8 +63373,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnionMember2[]>>;
   lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedInterfaceUnionMember1(
@@ -63422,8 +63395,8 @@ export interface $ObjectSet {
   >;
   lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedInterfaceUnionMember2(
@@ -63444,8 +63417,8 @@ export interface $ObjectSet {
   >;
   lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedIriIdentifierClass(
@@ -63464,8 +63437,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedIriIdentifierClass[]>>;
   lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedIriIdentifierInterface(
@@ -63486,8 +63459,8 @@ export interface $ObjectSet {
   >;
   lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   lazyPropertiesClass(
@@ -63500,7 +63473,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly LazyPropertiesClass[]>>;
   lazyPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
@@ -63514,10 +63487,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly LazyPropertiesInterface[]>>;
   lazyPropertiesInterfacesCount(
-    query?: Pick<
-      $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
@@ -63529,7 +63499,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly ListPropertiesClass[]>>;
   listPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
@@ -63543,7 +63513,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly MutablePropertiesClass[]>>;
   mutablePropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   nonClass(
     identifier: NonClass.$Identifier,
@@ -63555,7 +63525,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Promise<purify.Either<Error, readonly NonClass[]>>;
   nonClassesCount(
-    query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
@@ -63570,8 +63540,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember1[]>>;
   noRdfTypeClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   noRdfTypeClassUnionMember2(
@@ -63587,8 +63557,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnionMember2[]>>;
   noRdfTypeClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   orderedPropertiesClass(
@@ -63603,7 +63573,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly OrderedPropertiesClass[]>>;
   orderedPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialClass(
     identifier: PartialClass.$Identifier,
@@ -63615,7 +63585,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClass[]>>;
   partialClassesCount(
-    query?: Pick<$ObjectSet.Query<PartialClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
@@ -63629,10 +63599,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnionMember1[]>>;
   partialClassUnionMember1sCount(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember1.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
@@ -63646,10 +63613,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnionMember2[]>>;
   partialClassUnionMember2sCount(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember2.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialInterface(
     identifier: PartialInterface.$Identifier,
@@ -63661,7 +63625,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterface[]>>;
   partialInterfacesCount(
-    query?: Pick<$ObjectSet.Query<PartialInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
@@ -63676,8 +63640,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnionMember1[]>>;
   partialInterfaceUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   partialInterfaceUnionMember2(
@@ -63693,8 +63657,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnionMember2[]>>;
   partialInterfaceUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   propertyCardinalitiesClass(
@@ -63710,8 +63674,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly PropertyCardinalitiesClass[]>>;
   propertyCardinalitiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   propertyVisibilitiesClass(
@@ -63726,10 +63690,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly PropertyVisibilitiesClass[]>>;
   propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
@@ -63744,8 +63705,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember1[]>>;
   recursiveClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   recursiveClassUnionMember2(
@@ -63761,8 +63722,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly RecursiveClassUnionMember2[]>>;
   recursiveClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   sha256IriIdentifierClass(
@@ -63777,10 +63738,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly Sha256IriIdentifierClass[]>>;
   sha256IriIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
@@ -63792,7 +63750,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<purify.Either<Error, readonly TermPropertiesClass[]>>;
   termPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
@@ -63806,10 +63764,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<purify.Either<Error, readonly UnionDiscriminantsClass[]>>;
   unionDiscriminantsClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
@@ -63823,10 +63778,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierClass[]>>;
   uuidV4IriIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
@@ -63841,8 +63793,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly UuidV4IriIdentifierInterface[]>>;
   uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   classUnion(
@@ -63855,7 +63807,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly ClassUnion[]>>;
   classUnionsCount(
-    query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
@@ -63867,7 +63819,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly FlattenClassUnion[]>>;
   flattenClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
@@ -63879,7 +63831,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly InterfaceUnion[]>>;
   interfaceUnionsCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
@@ -63893,10 +63845,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly LazilyResolvedClassUnion[]>>;
   lazilyResolvedClassUnionsCount(
-    query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
@@ -63911,8 +63860,8 @@ export interface $ObjectSet {
   ): Promise<purify.Either<Error, readonly LazilyResolvedInterfaceUnion[]>>;
   lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>>;
   noRdfTypeClassUnion(
@@ -63925,7 +63874,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly NoRdfTypeClassUnion[]>>;
   noRdfTypeClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
@@ -63937,7 +63886,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialClassUnion[]>>;
   partialClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
@@ -63951,7 +63900,7 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly PartialInterfaceUnion[]>>;
   partialInterfaceUnionsCount(
-    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
   recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
@@ -63963,14 +63912,16 @@ export interface $ObjectSet {
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<purify.Either<Error, readonly RecursiveClassUnion[]>>;
   recursiveClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>>;
 }
 
 export namespace $ObjectSet {
   export type Query<
     FilterT extends {
-      readonly $identifier?: { readonly in?: readonly string[] };
+      readonly $identifier?: {
+        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+      };
     },
   > = {
     readonly filter?: FilterT;
@@ -64007,8 +63958,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.baseInterfaceWithoutPropertiesesCount(query);
@@ -64039,8 +63990,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   baseInterfaceWithPropertiesesCount(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.baseInterfaceWithPropertiesesCount(query);
@@ -64067,10 +64018,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   blankNodeIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.blankNodeIdentifierClassesCount(query);
   }
@@ -64097,8 +64045,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   blankNodeIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.blankNodeIdentifierInterfacesCount(query);
@@ -64126,8 +64074,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.blankNodeOrIriIdentifierClassesCount(query);
@@ -64160,8 +64108,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.blankNodeOrIriIdentifierInterfacesCount(query);
@@ -64186,7 +64134,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   classUnionMember1sCount(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.classUnionMember1sCount(query);
   }
@@ -64210,7 +64158,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   classUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.classUnionMember2sCount(query);
   }
@@ -64234,7 +64182,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   concreteChildClassesCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.concreteChildClassesCount(query);
   }
@@ -64260,7 +64208,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   concreteChildInterfacesCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.concreteChildInterfacesCount(query);
   }
@@ -64286,10 +64234,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   concreteParentClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.concreteParentClassesCount(query);
   }
@@ -64316,8 +64261,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   concreteParentInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.concreteParentInterfacesCount(query);
@@ -64345,8 +64290,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   convertibleTypePropertiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.convertibleTypePropertiesClassesCount(query);
@@ -64373,10 +64318,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   dateUnionPropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.dateUnionPropertiesClassesCount(query);
   }
@@ -64403,8 +64345,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   defaultValuePropertiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.defaultValuePropertiesClassesCount(query);
@@ -64431,7 +64373,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   directRecursiveClassesCount(
-    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.directRecursiveClassesCount(query);
   }
@@ -64458,8 +64400,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   explicitFromToRdfTypesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.explicitFromToRdfTypesClassesCount(query);
@@ -64486,7 +64428,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   explicitRdfTypeClassesCount(
-    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.explicitRdfTypeClassesCount(query);
   }
@@ -64512,10 +64454,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   externClassPropertyClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.externClassPropertyClassesCount(query);
   }
@@ -64541,10 +64480,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   flattenClassUnionMember3sCount(
-    query?: Pick<
-      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.flattenClassUnionMember3sCount(query);
   }
@@ -64570,10 +64506,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   hasValuePropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.hasValuePropertiesClassesCount(query);
   }
@@ -64600,8 +64533,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   identifierOverride3ClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.identifierOverride3ClassesCount(query);
@@ -64629,8 +64562,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   identifierOverride4ClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.identifierOverride4ClassesCount(query);
@@ -64657,10 +64590,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   identifierOverride5ClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.identifierOverride5ClassesCount(query);
   }
@@ -64686,7 +64616,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   indirectRecursiveClassesCount(
-    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.indirectRecursiveClassesCount(query);
   }
@@ -64713,8 +64643,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   indirectRecursiveHelperClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.indirectRecursiveHelperClassesCount(query);
@@ -64739,7 +64669,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   inIdentifierClassesCount(
-    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.inIdentifierClassesCount(query);
   }
@@ -64763,7 +64693,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   inPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.inPropertiesClassesCount(query);
   }
@@ -64787,7 +64717,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   interfacesCount(
-    query?: Pick<$ObjectSet.Query<Interface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.interfacesCount(query);
   }
@@ -64813,7 +64743,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   interfaceUnionMember1sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.interfaceUnionMember1sCount(query);
   }
@@ -64839,7 +64769,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   interfaceUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.interfaceUnionMember2sCount(query);
   }
@@ -64863,7 +64793,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   iriIdentifierClassesCount(
-    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.iriIdentifierClassesCount(query);
   }
@@ -64889,7 +64819,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   iriIdentifierInterfacesCount(
-    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.iriIdentifierInterfacesCount(query);
   }
@@ -64916,8 +64846,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
-      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.jsPrimitiveUnionPropertyClassesCount(query);
@@ -64944,10 +64874,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   languageInPropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.languageInPropertiesClassesCount(query);
   }
@@ -64985,8 +64912,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
@@ -65032,8 +64959,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
@@ -65063,8 +64990,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedClassUnionMember1sCount(query);
@@ -65092,8 +65019,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedClassUnionMember2sCount(query);
@@ -65126,8 +65053,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedInterfaceUnionMember1sCount(query);
@@ -65160,8 +65087,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedInterfaceUnionMember2sCount(query);
@@ -65194,8 +65121,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedIriIdentifierClassesCount(query);
@@ -65230,8 +65157,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedIriIdentifierInterfacesCount(query);
@@ -65256,7 +65183,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   lazyPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazyPropertiesClassesCount(query);
   }
@@ -65282,10 +65209,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   lazyPropertiesInterfacesCount(
-    query?: Pick<
-      $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazyPropertiesInterfacesCount(query);
   }
@@ -65309,7 +65233,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   listPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.listPropertiesClassesCount(query);
   }
@@ -65335,7 +65259,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   mutablePropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.mutablePropertiesClassesCount(query);
   }
@@ -65359,7 +65283,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   nonClassesCount(
-    query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.nonClassesCount(query);
   }
@@ -65386,8 +65310,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   noRdfTypeClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.noRdfTypeClassUnionMember1sCount(query);
@@ -65415,8 +65339,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   noRdfTypeClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.noRdfTypeClassUnionMember2sCount(query);
@@ -65443,7 +65367,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   orderedPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.orderedPropertiesClassesCount(query);
   }
@@ -65467,7 +65391,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   partialClassesCount(
-    query?: Pick<$ObjectSet.Query<PartialClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialClassesCount(query);
   }
@@ -65493,10 +65417,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   partialClassUnionMember1sCount(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember1.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialClassUnionMember1sCount(query);
   }
@@ -65522,10 +65443,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   partialClassUnionMember2sCount(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember2.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialClassUnionMember2sCount(query);
   }
@@ -65549,7 +65467,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   partialInterfacesCount(
-    query?: Pick<$ObjectSet.Query<PartialInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialInterfacesCount(query);
   }
@@ -65576,8 +65494,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   partialInterfaceUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialInterfaceUnionMember1sCount(query);
@@ -65605,8 +65523,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   partialInterfaceUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialInterfaceUnionMember2sCount(query);
@@ -65634,8 +65552,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   propertyCardinalitiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.propertyCardinalitiesClassesCount(query);
@@ -65662,10 +65580,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.propertyVisibilitiesClassesCount(query);
   }
@@ -65692,8 +65607,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   recursiveClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.recursiveClassUnionMember1sCount(query);
@@ -65721,8 +65636,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   recursiveClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.recursiveClassUnionMember2sCount(query);
@@ -65749,10 +65664,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   sha256IriIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.sha256IriIdentifierClassesCount(query);
   }
@@ -65776,7 +65688,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   termPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.termPropertiesClassesCount(query);
   }
@@ -65802,10 +65714,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   unionDiscriminantsClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.unionDiscriminantsClassesCount(query);
   }
@@ -65831,10 +65740,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   uuidV4IriIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.uuidV4IriIdentifierClassesCount(query);
   }
@@ -65861,8 +65767,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.uuidV4IriIdentifierInterfacesCount(query);
@@ -65887,7 +65793,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   classUnionsCount(
-    query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.classUnionsCount(query);
   }
@@ -65911,7 +65817,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   flattenClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.flattenClassUnionsCount(query);
   }
@@ -65935,7 +65841,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   interfaceUnionsCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.interfaceUnionsCount(query);
   }
@@ -65961,10 +65867,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   lazilyResolvedClassUnionsCount(
-    query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedClassUnionsCount(query);
   }
@@ -65991,8 +65894,8 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
 
   lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.lazilyResolvedInterfaceUnionsCount(query);
@@ -66017,7 +65920,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   noRdfTypeClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.noRdfTypeClassUnionsCount(query);
   }
@@ -66041,7 +65944,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   partialClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialClassUnionsCount(query);
   }
@@ -66067,7 +65970,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   partialInterfaceUnionsCount(
-    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.partialInterfaceUnionsCount(query);
   }
@@ -66091,7 +65994,7 @@ export abstract class $ForwardingObjectSet implements $ObjectSet {
   }
 
   recursiveClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$delegate.recursiveClassUnionsCount(query);
   }
@@ -66182,8 +66085,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.baseInterfaceWithoutPropertiesesCountSync(query);
@@ -66191,8 +66094,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   baseInterfaceWithoutPropertiesesCountSync(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -66293,8 +66196,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async baseInterfaceWithPropertiesesCount(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.baseInterfaceWithPropertiesesCountSync(query);
@@ -66302,8 +66205,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   baseInterfaceWithPropertiesesCountSync(
     query?: Pick<
-      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -66388,19 +66291,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async blankNodeIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.blankNodeIdentifierClassesCountSync(query);
   }
 
   blankNodeIdentifierClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       BlankNodeIdentifierClass,
@@ -66470,8 +66367,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.blankNodeIdentifierInterfacesCountSync(query);
@@ -66479,8 +66376,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   blankNodeIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -66559,8 +66456,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.blankNodeOrIriIdentifierClassesCountSync(query);
@@ -66568,8 +66465,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   blankNodeOrIriIdentifierClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -66658,8 +66555,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.blankNodeOrIriIdentifierInterfacesCountSync(query);
@@ -66667,8 +66564,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   blankNodeOrIriIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -66743,13 +66640,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async classUnionMember1sCount(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.classUnionMember1sCountSync(query);
   }
 
   classUnionMember1sCountSync(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ClassUnionMember1,
@@ -66823,13 +66720,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async classUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.classUnionMember2sCountSync(query);
   }
 
   classUnionMember2sCountSync(
-    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ClassUnionMember2,
@@ -66906,13 +66803,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildClassesCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteChildClassesCountSync(query);
   }
 
   concreteChildClassesCountSync(
-    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteChildClass,
@@ -66991,13 +66888,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteChildInterfacesCount(
-    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteChildInterfacesCountSync(query);
   }
 
   concreteChildInterfacesCountSync(
-    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteChildInterface,
@@ -67082,19 +66979,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async concreteParentClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteParentClassesCountSync(query);
   }
 
   concreteParentClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ConcreteParentClass,
@@ -67186,8 +67077,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async concreteParentInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.concreteParentInterfacesCountSync(query);
@@ -67195,8 +67086,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   concreteParentInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -67283,8 +67174,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async convertibleTypePropertiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.convertibleTypePropertiesClassesCountSync(query);
@@ -67292,8 +67183,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   convertibleTypePropertiesClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -67363,19 +67254,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async dateUnionPropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.dateUnionPropertiesClassesCountSync(query);
   }
 
   dateUnionPropertiesClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       DateUnionPropertiesClass,
@@ -67440,8 +67325,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async defaultValuePropertiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.defaultValuePropertiesClassesCountSync(query);
@@ -67449,8 +67334,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   defaultValuePropertiesClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -67509,13 +67394,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async directRecursiveClassesCount(
-    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.directRecursiveClassesCountSync(query);
   }
 
   directRecursiveClassesCountSync(
-    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       DirectRecursiveClass,
@@ -67587,8 +67472,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async explicitFromToRdfTypesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.explicitFromToRdfTypesClassesCountSync(query);
@@ -67596,8 +67481,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   explicitFromToRdfTypesClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -67677,13 +67562,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async explicitRdfTypeClassesCount(
-    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.explicitRdfTypeClassesCountSync(query);
   }
 
   explicitRdfTypeClassesCountSync(
-    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ExplicitRdfTypeClass,
@@ -67752,19 +67637,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async externClassPropertyClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.externClassPropertyClassesCountSync(query);
   }
 
   externClassPropertyClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<ExternClassPropertyClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ExternClassPropertyClass,
@@ -67838,19 +67717,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async flattenClassUnionMember3sCount(
-    query?: Pick<
-      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.flattenClassUnionMember3sCountSync(query);
   }
 
   flattenClassUnionMember3sCountSync(
-    query?: Pick<
-      $ObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       FlattenClassUnionMember3,
@@ -67919,19 +67792,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async hasValuePropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.hasValuePropertiesClassesCountSync(query);
   }
 
   hasValuePropertiesClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<HasValuePropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       HasValuePropertiesClass,
@@ -68017,8 +67884,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride3ClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.identifierOverride3ClassesCountSync(query);
@@ -68026,8 +67893,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   identifierOverride3ClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -68121,8 +67988,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async identifierOverride4ClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.identifierOverride4ClassesCountSync(query);
@@ -68130,8 +67997,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   identifierOverride4ClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
-      "where"
+      $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -68214,19 +68081,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async identifierOverride5ClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.identifierOverride5ClassesCountSync(query);
   }
 
   identifierOverride5ClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<IdentifierOverride5Class.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       IdentifierOverride5Class,
@@ -68295,13 +68156,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async indirectRecursiveClassesCount(
-    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.indirectRecursiveClassesCountSync(query);
   }
 
   indirectRecursiveClassesCountSync(
-    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       IndirectRecursiveClass,
@@ -68366,8 +68227,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async indirectRecursiveHelperClassesCount(
     query?: Pick<
-      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.indirectRecursiveHelperClassesCountSync(query);
@@ -68375,8 +68236,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   indirectRecursiveHelperClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -68433,13 +68294,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async inIdentifierClassesCount(
-    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.inIdentifierClassesCountSync(query);
   }
 
   inIdentifierClassesCountSync(
-    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InIdentifierClass,
@@ -68492,13 +68353,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async inPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.inPropertiesClassesCountSync(query);
   }
 
   inPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InPropertiesClass,
@@ -68551,13 +68412,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfacesCount(
-    query?: Pick<$ObjectSet.Query<Interface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.interfacesCountSync(query);
   }
 
   interfacesCountSync(
-    query?: Pick<$ObjectSet.Query<Interface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<Interface, Interface.$Identifier>(
       [{ $fromRdf: Interface.$fromRdf, $fromRdfTypes: [] }],
@@ -68628,13 +68489,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionMember1sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.interfaceUnionMember1sCountSync(query);
   }
 
   interfaceUnionMember1sCountSync(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InterfaceUnionMember1,
@@ -68713,13 +68574,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionMember2sCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.interfaceUnionMember2sCountSync(query);
   }
 
   interfaceUnionMember2sCountSync(
-    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       InterfaceUnionMember2,
@@ -68780,13 +68641,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async iriIdentifierClassesCount(
-    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.iriIdentifierClassesCountSync(query);
   }
 
   iriIdentifierClassesCountSync(
-    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       IriIdentifierClass,
@@ -68847,13 +68708,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async iriIdentifierInterfacesCount(
-    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.iriIdentifierInterfacesCountSync(query);
   }
 
   iriIdentifierInterfacesCountSync(
-    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       IriIdentifierInterface,
@@ -68921,8 +68782,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
-      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.jsPrimitiveUnionPropertyClassesCountSync(query);
@@ -68930,8 +68791,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   jsPrimitiveUnionPropertyClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -68996,19 +68857,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async languageInPropertiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.languageInPropertiesClassesCountSync(query);
   }
 
   languageInPropertiesClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       LanguageInPropertiesClass,
@@ -69102,8 +68957,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassesCountSync(query);
@@ -69111,8 +68966,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedBlankNodeOrIriIdentifierClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69217,8 +69072,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesCountSync(
@@ -69228,8 +69083,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedBlankNodeOrIriIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69315,8 +69170,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedClassUnionMember1sCountSync(query);
@@ -69324,8 +69179,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedClassUnionMember1sCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69409,8 +69264,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedClassUnionMember2sCountSync(query);
@@ -69418,8 +69273,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedClassUnionMember2sCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69508,8 +69363,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedInterfaceUnionMember1sCountSync(query);
@@ -69517,8 +69372,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedInterfaceUnionMember1sCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69607,8 +69462,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedInterfaceUnionMember2sCountSync(query);
@@ -69616,8 +69471,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedInterfaceUnionMember2sCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69706,8 +69561,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedIriIdentifierClassesCountSync(query);
@@ -69715,8 +69570,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedIriIdentifierClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69805,8 +69660,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedIriIdentifierInterfacesCountSync(query);
@@ -69814,8 +69669,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedIriIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -69877,13 +69732,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async lazyPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.lazyPropertiesClassesCountSync(query);
   }
 
   lazyPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       LazyPropertiesClass,
@@ -69944,19 +69799,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async lazyPropertiesInterfacesCount(
-    query?: Pick<
-      $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.lazyPropertiesInterfacesCountSync(query);
   }
 
   lazyPropertiesInterfacesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<LazyPropertiesInterface.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       LazyPropertiesInterface,
@@ -70012,13 +69861,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async listPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.listPropertiesClassesCountSync(query);
   }
 
   listPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       ListPropertiesClass,
@@ -70079,13 +69928,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async mutablePropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.mutablePropertiesClassesCountSync(query);
   }
 
   mutablePropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       MutablePropertiesClass,
@@ -70141,13 +69990,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async nonClassesCount(
-    query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.nonClassesCountSync(query);
   }
 
   nonClassesCountSync(
-    query?: Pick<$ObjectSet.Query<NonClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<NonClass, NonClass.$Identifier>(
       [{ $fromRdf: NonClass.$fromRdf, $fromRdfTypes: [] }],
@@ -70209,8 +70058,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.noRdfTypeClassUnionMember1sCountSync(query);
@@ -70218,8 +70067,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   noRdfTypeClassUnionMember1sCountSync(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -70285,8 +70134,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.noRdfTypeClassUnionMember2sCountSync(query);
@@ -70294,8 +70143,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   noRdfTypeClassUnionMember2sCountSync(
     query?: Pick<
-      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -70360,13 +70209,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async orderedPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.orderedPropertiesClassesCountSync(query);
   }
 
   orderedPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       OrderedPropertiesClass,
@@ -70422,13 +70271,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async partialClassesCount(
-    query?: Pick<$ObjectSet.Query<PartialClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.partialClassesCountSync(query);
   }
 
   partialClassesCountSync(
-    query?: Pick<$ObjectSet.Query<PartialClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<PartialClass, PartialClass.$Identifier>(
       [{ $fromRdf: PartialClass.$fromRdf, $fromRdfTypes: [] }],
@@ -70499,19 +70348,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async partialClassUnionMember1sCount(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember1.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.partialClassUnionMember1sCountSync(query);
   }
 
   partialClassUnionMember1sCountSync(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember1.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PartialClassUnionMember1,
@@ -70590,19 +70433,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async partialClassUnionMember2sCount(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember2.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.partialClassUnionMember2sCountSync(query);
   }
 
   partialClassUnionMember2sCountSync(
-    query?: Pick<
-      $ObjectSet.Query<PartialClassUnionMember2.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PartialClassUnionMember2,
@@ -70663,13 +70500,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async partialInterfacesCount(
-    query?: Pick<$ObjectSet.Query<PartialInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.partialInterfacesCountSync(query);
   }
 
   partialInterfacesCountSync(
-    query?: Pick<$ObjectSet.Query<PartialInterface.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PartialInterface,
@@ -70741,8 +70578,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.partialInterfaceUnionMember1sCountSync(query);
@@ -70750,8 +70587,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   partialInterfaceUnionMember1sCountSync(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -70832,8 +70669,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.partialInterfaceUnionMember2sCountSync(query);
@@ -70841,8 +70678,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   partialInterfaceUnionMember2sCountSync(
     query?: Pick<
-      $ObjectSet.Query<PartialInterfaceUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -70913,8 +70750,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async propertyCardinalitiesClassesCount(
     query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.propertyCardinalitiesClassesCountSync(query);
@@ -70922,8 +70759,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   propertyCardinalitiesClassesCountSync(
     query?: Pick<
-      $ObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
+      $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -70988,19 +70825,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async propertyVisibilitiesClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.propertyVisibilitiesClassesCountSync(query);
   }
 
   propertyVisibilitiesClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PropertyVisibilitiesClass,
@@ -71065,8 +70896,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember1sCount(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.recursiveClassUnionMember1sCountSync(query);
@@ -71074,8 +70905,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   recursiveClassUnionMember1sCountSync(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -71141,8 +70972,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember2sCount(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.recursiveClassUnionMember2sCountSync(query);
@@ -71150,8 +70981,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   recursiveClassUnionMember2sCountSync(
     query?: Pick<
-      $ObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
-      "where"
+      $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -71216,19 +71047,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async sha256IriIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.sha256IriIdentifierClassesCountSync(query);
   }
 
   sha256IriIdentifierClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       Sha256IriIdentifierClass,
@@ -71284,13 +71109,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async termPropertiesClassesCount(
-    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.termPropertiesClassesCountSync(query);
   }
 
   termPropertiesClassesCountSync(
-    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       TermPropertiesClass,
@@ -71351,19 +71176,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async unionDiscriminantsClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.unionDiscriminantsClassesCountSync(query);
   }
 
   unionDiscriminantsClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       UnionDiscriminantsClass,
@@ -71427,19 +71246,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async uuidV4IriIdentifierClassesCount(
-    query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.uuidV4IriIdentifierClassesCountSync(query);
   }
 
   uuidV4IriIdentifierClassesCountSync(
-    query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       UuidV4IriIdentifierClass,
@@ -71504,8 +71317,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.uuidV4IriIdentifierInterfacesCountSync(query);
@@ -71513,8 +71326,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   uuidV4IriIdentifierInterfacesCountSync(
     query?: Pick<
-      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
-      "where"
+      $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -71589,13 +71402,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async classUnionsCount(
-    query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.classUnionsCountSync(query);
   }
 
   classUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<ClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<ClassUnion, ClassUnion.$Identifier>(
       [
@@ -71686,13 +71499,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async flattenClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.flattenClassUnionsCountSync(query);
   }
 
   flattenClassUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       FlattenClassUnion,
@@ -71782,13 +71595,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionsCount(
-    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.interfaceUnionsCountSync(query);
   }
 
   interfaceUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<InterfaceUnion, InterfaceUnion.$Identifier>(
       [
@@ -71876,19 +71689,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async lazilyResolvedClassUnionsCount(
-    query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedClassUnionsCountSync(query);
   }
 
   lazilyResolvedClassUnionsCountSync(
-    query?: Pick<
-      $ObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       LazilyResolvedClassUnion,
@@ -71980,8 +71787,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.lazilyResolvedInterfaceUnionsCountSync(query);
@@ -71989,8 +71796,8 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   lazilyResolvedInterfaceUnionsCountSync(
     query?: Pick<
-      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
-      "where"
+      $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
+      "filter"
     >,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
@@ -72068,13 +71875,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async noRdfTypeClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.noRdfTypeClassUnionsCountSync(query);
   }
 
   noRdfTypeClassUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       NoRdfTypeClassUnion,
@@ -72154,13 +71961,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async partialClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.partialClassUnionsCountSync(query);
   }
 
   partialClassUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PartialClassUnion,
@@ -72251,13 +72058,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async partialInterfaceUnionsCount(
-    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.partialInterfaceUnionsCountSync(query);
   }
 
   partialInterfaceUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       PartialInterfaceUnion,
@@ -72334,13 +72141,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   }
 
   async recursiveClassUnionsCount(
-    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.recursiveClassUnionsCountSync(query);
   }
 
   recursiveClassUnionsCountSync(
-    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Identifier>, "where">,
+    query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): purify.Either<Error, number> {
     return this.$objectsCountSync<
       RecursiveClassUnion,
@@ -72673,8 +72480,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BaseInterfaceWithoutPropertiesStatic.$Identifier>(
@@ -72718,8 +72525,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async baseInterfaceWithPropertiesesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BaseInterfaceWithPropertiesStatic.$Identifier>(
@@ -72760,8 +72567,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BlankNodeIdentifierClass.$Identifier>(
@@ -72802,8 +72609,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BlankNodeIdentifierInterface.$Identifier>(
@@ -72844,8 +72651,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BlankNodeOrIriIdentifierClass.$Identifier>(
@@ -72891,8 +72698,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<BlankNodeOrIriIdentifierInterface.$Identifier>(
@@ -72930,10 +72737,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async classUnionMember1sCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ClassUnionMember1.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ClassUnionMember1.$Identifier>(
       ClassUnionMember1,
@@ -72970,10 +72774,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async classUnionMember2sCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ClassUnionMember2.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ClassUnionMember2.$Identifier>(
       ClassUnionMember2,
@@ -73010,10 +72811,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async concreteChildClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ConcreteChildClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConcreteChildClass.$Identifier>(
       ConcreteChildClass,
@@ -73053,8 +72851,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteChildInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ConcreteChildInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ConcreteChildInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConcreteChildInterface.$Identifier>(
@@ -73095,8 +72893,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteParentClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ConcreteParentClassStatic.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ConcreteParentClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConcreteParentClassStatic.$Identifier>(
@@ -73137,8 +72935,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async concreteParentInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ConcreteParentInterfaceStatic.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConcreteParentInterfaceStatic.$Identifier>(
@@ -73179,8 +72977,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async convertibleTypePropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ConvertibleTypePropertiesClass.$Identifier>(
@@ -73221,8 +73019,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async dateUnionPropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<DateUnionPropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<DateUnionPropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<DateUnionPropertiesClass.$Identifier>(
@@ -73263,8 +73061,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async defaultValuePropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<DefaultValuePropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<DefaultValuePropertiesClass.$Identifier>(
@@ -73305,8 +73103,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async directRecursiveClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<DirectRecursiveClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<DirectRecursiveClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<DirectRecursiveClass.$Identifier>(
@@ -73347,8 +73145,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async explicitFromToRdfTypesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ExplicitFromToRdfTypesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ExplicitFromToRdfTypesClass.$Identifier>(
@@ -73389,8 +73187,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async explicitRdfTypeClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ExplicitRdfTypeClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ExplicitRdfTypeClass.$Identifier>(
@@ -73431,8 +73229,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async externClassPropertyClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<ExternClassPropertyClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<ExternClassPropertyClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ExternClassPropertyClass.$Identifier>(
@@ -73473,8 +73271,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async flattenClassUnionMember3sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<FlattenClassUnionMember3.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<FlattenClassUnionMember3.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<FlattenClassUnionMember3.$Identifier>(
@@ -73515,8 +73313,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async hasValuePropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<HasValuePropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<HasValuePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<HasValuePropertiesClass.$Identifier>(
@@ -73557,8 +73355,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async identifierOverride3ClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IdentifierOverride3ClassStatic.$Identifier>(
@@ -73599,8 +73397,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async identifierOverride4ClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IdentifierOverride4ClassStatic.$Identifier>(
@@ -73641,8 +73439,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async identifierOverride5ClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<IdentifierOverride5Class.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<IdentifierOverride5Class.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IdentifierOverride5Class.$Identifier>(
@@ -73683,8 +73481,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async indirectRecursiveClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<IndirectRecursiveClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<IndirectRecursiveClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IndirectRecursiveClass.$Identifier>(
@@ -73725,8 +73523,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async indirectRecursiveHelperClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IndirectRecursiveHelperClass.$Identifier>(
@@ -73764,10 +73562,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inIdentifierClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<InIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<InIdentifierClass.$Identifier>(
       InIdentifierClass,
@@ -73804,10 +73599,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async inPropertiesClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<InPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<InPropertiesClass.$Identifier>(
       InPropertiesClass,
@@ -73838,7 +73630,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfacesCount(
-    query?: Pick<$SparqlObjectSet.Query<Interface.$Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<Interface.$Identifier>(Interface, query);
   }
@@ -73875,8 +73667,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async interfaceUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<InterfaceUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<InterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<InterfaceUnionMember1.$Identifier>(
@@ -73917,8 +73709,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async interfaceUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<InterfaceUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<InterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<InterfaceUnionMember2.$Identifier>(
@@ -73956,10 +73748,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async iriIdentifierClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<IriIdentifierClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IriIdentifierClass.$Identifier>(
       IriIdentifierClass,
@@ -73999,8 +73788,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async iriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<IriIdentifierInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<IriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<IriIdentifierInterface.$Identifier>(
@@ -74041,8 +73830,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<JsPrimitiveUnionPropertyClass.$Identifier>(
@@ -74083,8 +73872,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async languageInPropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LanguageInPropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LanguageInPropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LanguageInPropertiesClass.$Identifier>(
@@ -74132,8 +73921,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier>(
@@ -74184,8 +73973,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier>(
@@ -74226,8 +74015,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedClassUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedClassUnionMember1.$Identifier>(
@@ -74268,8 +74057,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedClassUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedClassUnionMember2.$Identifier>(
@@ -74315,8 +74104,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedInterfaceUnionMember1.$Identifier>(
@@ -74362,8 +74151,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedInterfaceUnionMember2.$Identifier>(
@@ -74409,8 +74198,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedIriIdentifierClass.$Identifier>(
@@ -74456,8 +74245,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedIriIdentifierInterface.$Identifier>(
@@ -74495,10 +74284,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async lazyPropertiesClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<LazyPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazyPropertiesClass.$Identifier>(
       LazyPropertiesClass,
@@ -74538,8 +74324,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazyPropertiesInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazyPropertiesInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazyPropertiesInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazyPropertiesInterface.$Identifier>(
@@ -74577,10 +74363,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async listPropertiesClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<ListPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ListPropertiesClass.$Identifier>(
       ListPropertiesClass,
@@ -74620,8 +74403,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async mutablePropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<MutablePropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<MutablePropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<MutablePropertiesClass.$Identifier>(
@@ -74653,7 +74436,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async nonClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<NonClass.$Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<NonClass.$Identifier>(NonClass, query);
   }
@@ -74690,8 +74473,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<NoRdfTypeClassUnionMember1.$Identifier>(
@@ -74732,8 +74515,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async noRdfTypeClassUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<NoRdfTypeClassUnionMember2.$Identifier>(
@@ -74774,8 +74557,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async orderedPropertiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<OrderedPropertiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<OrderedPropertiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<OrderedPropertiesClass.$Identifier>(
@@ -74813,7 +74596,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async partialClassesCount(
-    query?: Pick<$SparqlObjectSet.Query<PartialClass.$Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialClass.$Identifier>(PartialClass, query);
   }
@@ -74850,8 +74633,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialClassUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PartialClassUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PartialClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialClassUnionMember1.$Identifier>(
@@ -74892,8 +74675,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialClassUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PartialClassUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PartialClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialClassUnionMember2.$Identifier>(
@@ -74931,7 +74714,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async partialInterfacesCount(
-    query?: Pick<$SparqlObjectSet.Query<PartialInterface.$Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialInterface.$Identifier>(
       PartialInterface,
@@ -74971,8 +74754,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PartialInterfaceUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialInterfaceUnionMember1.$Identifier>(
@@ -75013,8 +74796,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PartialInterfaceUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialInterfaceUnionMember2.$Identifier>(
@@ -75055,8 +74838,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async propertyCardinalitiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PropertyCardinalitiesClass.$Identifier>(
@@ -75097,8 +74880,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async propertyVisibilitiesClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PropertyVisibilitiesClass.$Identifier>(
@@ -75139,8 +74922,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember1sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<RecursiveClassUnionMember1.$Identifier>(
@@ -75181,8 +74964,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async recursiveClassUnionMember2sCount(
     query?: Pick<
-      $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<RecursiveClassUnionMember2.$Identifier>(
@@ -75223,8 +75006,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async sha256IriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<Sha256IriIdentifierClass.$Identifier>(
@@ -75262,10 +75045,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async termPropertiesClassesCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<TermPropertiesClass.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<TermPropertiesClass.$Identifier>(
       TermPropertiesClass,
@@ -75305,8 +75085,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async unionDiscriminantsClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<UnionDiscriminantsClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<UnionDiscriminantsClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<UnionDiscriminantsClass.$Identifier>(
@@ -75347,8 +75127,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierClassesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<UuidV4IriIdentifierClass.$Identifier>(
@@ -75389,8 +75169,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
-      $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<UuidV4IriIdentifierInterface.$Identifier>(
@@ -75422,7 +75202,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async classUnionsCount(
-    query?: Pick<$SparqlObjectSet.Query<ClassUnion.$Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<ClassUnion.$Identifier>(ClassUnion, query);
   }
@@ -75456,10 +75236,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async flattenClassUnionsCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<FlattenClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<FlattenClassUnion.$Identifier>(
       FlattenClassUnion,
@@ -75496,7 +75273,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async interfaceUnionsCount(
-    query?: Pick<$SparqlObjectSet.Query<InterfaceUnion.$Identifier>, "where">,
+    query?: Pick<$SparqlObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<InterfaceUnion.$Identifier>(
       InterfaceUnion,
@@ -75536,8 +75313,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedClassUnionsCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedClassUnion.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedClassUnion.$Identifier>(
@@ -75578,8 +75355,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
-      $SparqlObjectSet.Query<LazilyResolvedInterfaceUnion.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<LazilyResolvedInterfaceUnion.$Identifier>(
@@ -75617,10 +75394,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async noRdfTypeClassUnionsCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<NoRdfTypeClassUnion.$Identifier>(
       NoRdfTypeClassUnion,
@@ -75657,10 +75431,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async partialClassUnionsCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<PartialClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialClassUnion.$Identifier>(
       PartialClassUnion,
@@ -75700,8 +75471,8 @@ export class $SparqlObjectSet implements $ObjectSet {
 
   async partialInterfaceUnionsCount(
     query?: Pick<
-      $SparqlObjectSet.Query<PartialInterfaceUnion.$Identifier>,
-      "where"
+      $SparqlObjectSet.Query<PartialInterfaceUnion.$Filter>,
+      "filter"
     >,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<PartialInterfaceUnion.$Identifier>(
@@ -75739,10 +75510,7 @@ export class $SparqlObjectSet implements $ObjectSet {
   }
 
   async recursiveClassUnionsCount(
-    query?: Pick<
-      $SparqlObjectSet.Query<RecursiveClassUnion.$Identifier>,
-      "where"
-    >,
+    query?: Pick<$SparqlObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<purify.Either<Error, number>> {
     return this.$objectsCount<RecursiveClassUnion.$Identifier>(
       RecursiveClassUnion,
