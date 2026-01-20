@@ -44,7 +44,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 
   const objectTypeType = `\
 {
-  ${syntheticNamePrefix}filter: (filter: ${typeParameters.ObjectFilterT.name}, value: ${typeParameters.ObjectT.name}) => boolean;
+  ${syntheticNamePrefix}filter: (value: ${typeParameters.ObjectT.name}) => boolean;
   ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
   ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[]
 }`;
@@ -196,6 +196,15 @@ return purify.Either.of(objects);`,
             ],
           },
           {
+            ...methodSignatures.object,
+            kind: StructureKind.Method,
+            name: `${methodSignatures.object.name}Sync`,
+            returnType: `purify.Either<Error, ${objectType.name}>`,
+            statements: [
+              `return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);`,
+            ],
+          },
+          {
             ...methodSignatures.objectIdentifiers,
             isAsync: true,
             kind: StructureKind.Method,
@@ -237,12 +246,15 @@ return purify.Either.of(objects);`,
           },
         ];
 
-        const runtimeObjectType = (objectType: {
-          descendantFromRdfTypeVariables: readonly string[];
-          staticModuleName: string;
-          fromRdfTypeVariable: Maybe<string>;
-        }) =>
-          `{ ${syntheticNamePrefix}filter: ${objectType.staticModuleName}.${syntheticNamePrefix}filter, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
+        const runtimeObjectType = (
+          filterFunction: string,
+          objectType: {
+            descendantFromRdfTypeVariables: readonly string[];
+            staticModuleName: string;
+            fromRdfTypeVariable: Maybe<string>;
+          },
+        ) =>
+          `{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
         // switch (objectType.kind) {
         //   case "ObjectType":
         //     runtimeObjectTypes = `[${runtimeObjectType(objectType)}]`;
@@ -254,48 +266,26 @@ return purify.Either.of(objects);`,
 
         switch (objectType.kind) {
           case "ObjectType": {
-            return delegatingMethods.concat(
-              {
-                ...methodSignatures.object,
-                kind: StructureKind.Method,
-                name: `${methodSignatures.object.name}Sync`,
-                returnType: `purify.Either<Error, ${objectType.name}>`,
-                statements: [
-                  `return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);`,
-                ],
-              },
-              {
-                ...methodSignatures.objects,
-                kind: StructureKind.Method,
-                name: `${methodSignatures.objects.name}Sync`,
-                returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
-                statements: [
-                  `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(objectType)}, query);`,
-                ],
-              },
-            );
+            return delegatingMethods.concat({
+              ...methodSignatures.objects,
+              kind: StructureKind.Method,
+              name: `${methodSignatures.objects.name}Sync`,
+              returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
+              statements: [
+                `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(`(value: ${objectType.name}) => ${reusableMethodParameters.query.name}?.filter ? ${objectType.staticModuleName}.${syntheticNamePrefix}filter(${reusableMethodParameters.query.name}?.filter, value) : true`, objectType)}, query);`,
+              ],
+            });
           }
           case "ObjectUnionType":
-            return delegatingMethods.concat(
-              // {
-              //   ...methodSignatures.object,
-              //   kind: StructureKind.Method,
-              //   name: `${methodSignatures.object.name}Sync`,
-              //   returnType: `purify.Either<Error, ${objectType.name}>`,
-              //   statements: [
-              //     `return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);`,
-              //   ],
-              // },
-              {
-                ...methodSignatures.objects,
-                kind: StructureKind.Method,
-                name: `${methodSignatures.objects.name}Sync`,
-                returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
-                statements: [
-                  `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([], query);`,
-                ],
-              },
-            );
+            return delegatingMethods.concat({
+              ...methodSignatures.objects,
+              kind: StructureKind.Method,
+              name: `${methodSignatures.objects.name}Sync`,
+              returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
+              statements: [
+                `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([], query);`,
+              ],
+            });
           default:
             objectType satisfies never;
             return [];
