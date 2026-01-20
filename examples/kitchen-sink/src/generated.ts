@@ -63930,11 +63930,22 @@ export interface $ObjectSet {
 
 export namespace $ObjectSet {
   export type Query<
-    ObjectFilterT extends {
-      readonly $identifier?: {
-        readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
-      };
-    },
+    ObjectFilterT extends
+      | {
+          readonly $identifier?: {
+            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+          };
+        }
+      | {
+          readonly on?: Record<
+            string,
+            {
+              readonly $identifier?: {
+                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+              };
+            }
+          >;
+        },
   > = {
     readonly filter?: ObjectFilterT;
     readonly limit?: number;
@@ -73323,13 +73334,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   protected $objectIdentifiersSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
-    },
+    ObjectFilterT extends
+      | {
+          readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
+        }
+      | {
+          readonly on?: Record<
+            string,
+            {
+              readonly $identifier?: {
+                readonly in?: readonly ObjectIdentifierT[];
+              };
+            }
+          >;
+        },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      $filter?: ObjectFilterT;
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
@@ -73346,13 +73368,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
-    },
+    ObjectFilterT extends
+      | {
+          readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
+        }
+      | {
+          readonly on?: Record<
+            string,
+            {
+              readonly $identifier?: {
+                readonly in?: readonly ObjectIdentifierT[];
+              };
+            }
+          >;
+        },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      $filter?: ObjectFilterT;
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },
@@ -73376,7 +73409,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     const resources: {
       object?: ObjectT;
       objectType?: {
-        $filter?: ObjectFilterT;
+        $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
         $fromRdf: (
           resource: rdfjsResource.Resource,
           options: { objectSet: $ObjectSet },
@@ -73574,13 +73607,24 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
 
   protected $objectsCountSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
-    ObjectFilterT extends {
-      readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
-    },
+    ObjectFilterT extends
+      | {
+          readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
+        }
+      | {
+          readonly on?: Record<
+            string,
+            {
+              readonly $identifier?: {
+                readonly in?: readonly ObjectIdentifierT[];
+              };
+            }
+          >;
+        },
     ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.NamedNode,
   >(
     objectTypes: readonly {
-      $filter?: ObjectFilterT;
+      $filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
       $fromRdf: (
         resource: rdfjsResource.Resource,
         options: { objectSet: $ObjectSet },

@@ -28,7 +28,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
     ObjectFilterT: {
       constraint:
-        "{ readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] } }",
+        "{ readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] } } | { readonly on?: Record<string, { readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] } }> }",
       name: "ObjectFilterT",
     },
     ObjectIdentifierT: {
@@ -37,7 +37,12 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const objectTypeType = `{ ${syntheticNamePrefix}filter?: ${typeParameters.ObjectFilterT.name}; ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>; ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[] }`;
+  const objectTypeType = `\
+{
+  ${syntheticNamePrefix}filter: (filter: ${typeParameters.ObjectFilterT.name}, value: ${typeParameters.ObjectT.name}) => boolean;
+  ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
+  ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[]
+}`;
   const reusableMethodParameters = {
     objectTypes: {
       name: "objectTypes",
