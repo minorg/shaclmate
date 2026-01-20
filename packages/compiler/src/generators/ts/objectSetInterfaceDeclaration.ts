@@ -41,12 +41,12 @@ export function objectSetInterfaceDeclaration({
           kind: StructureKind.TypeAlias,
           isExported: true,
           name: "Query",
-          type: `{ readonly filter?: FilterT; readonly limit?: number; readonly offset?: number; }`,
+          type: `{ readonly filter?: ObjectFilterT; readonly limit?: number; readonly offset?: number; }`,
           typeParameters: [
             {
               constraint:
                 "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }",
-              name: "FilterT",
+              name: "ObjectFilterT",
             },
           ],
         },

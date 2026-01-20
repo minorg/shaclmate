@@ -136,7 +136,7 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs
     parameters: Parameters<Super["fromRdfExpression"]>[0],
   ): string {
     const { variables } = parameters;
-    return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ where: { identifiers, type: "identifiers" } }) })))`;
+    return `${this.partialType.fromRdfExpression(parameters)}.map(values => values.map(${this.runtimeClass.partialPropertyName} => new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}, resolver: (identifiers) => ${variables.objectSet}.${this.resolvedType.itemType.objectSetMethodNames.objects}({ filter: { ${syntheticNamePrefix}identifier: { in: identifiers } } }) })))`;
   }
 
   override graphqlResolveExpression({

@@ -26,13 +26,18 @@ export function rdfjsDatasetObjectSetClassDeclaration({
       constraint: "{ readonly $identifier: ObjectIdentifierT }",
       name: "ObjectT",
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
+    ObjectFilterT: {
+      constraint:
+        "{ readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] } }",
+      name: "ObjectFilterT",
+    },
     ObjectIdentifierT: {
       constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
       name: "ObjectIdentifierT",
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const objectTypeType = `{ ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>; ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[] }`;
+  const objectTypeType = `{ ${syntheticNamePrefix}filter?: ${typeParameters.ObjectFilterT.name}; ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>; ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[] }`;
   const reusableMethodParameters = {
     objectTypes: {
       name: "objectTypes",
@@ -41,7 +46,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     query: {
       hasQuestionToken: true,
       name: "query",
-      type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+      type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectFilterT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 
@@ -79,7 +84,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
           staticModuleName: string;
           fromRdfTypeVariable: Maybe<string>;
         }) =>
-          `{ ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
+          `{ ${syntheticNamePrefix}filter: ${objectType.staticModuleName}.${syntheticNamePrefix}filter, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
         switch (objectType.kind) {
           case "ObjectType":
             runtimeObjectTypes = `[${runtimeObjectType(objectType)}]`;
@@ -104,7 +109,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.object.name}Sync`,
             returnType: `purify.Either<Error, ${objectType.name}>`,
             statements: [
-              `return this.${methodSignatures.objects.name}Sync({ where: { identifiers: [identifier], type: "identifiers" } }).map(objects => objects[0]);`,
+              `return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);`,
             ],
           },
           {
@@ -120,7 +125,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             kind: StructureKind.Method,
             name: `${methodSignatures.objectIdentifiers.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: `return this.${syntheticNamePrefix}objectIdentifiersSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
+            statements: `return this.${syntheticNamePrefix}objectIdentifiersSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
           },
           {
             ...methodSignatures.objects,
@@ -136,7 +141,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.objects.name}Sync`,
             returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
             statements: [
-              `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
+              `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
             ],
           },
           {
@@ -153,7 +158,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
             name: `${methodSignatures.objectsCount.name}Sync`,
             returnType: "purify.Either<Error, number>",
             statements: [
-              `return this.${syntheticNamePrefix}objectsCountSync<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
+              `return this.${syntheticNamePrefix}objectsCountSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectTypes}, query);`,
             ],
           },
         ];
@@ -170,10 +175,11 @@ export function rdfjsDatasetObjectSetClassDeclaration({
         scope: Scope.Protected,
         statements: [
           `\
-return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${reusableMethodParameters.objectTypes.name}, ${reusableMethodParameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
+return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectFilterT.name}, ${typeParameters.ObjectIdentifierT.name}>(${reusableMethodParameters.objectTypes.name}, ${reusableMethodParameters.query.name}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
+          typeParameters.ObjectFilterT,
           typeParameters.ObjectIdentifierT,
         ],
       },
@@ -340,6 +346,7 @@ return purify.Either.of(objects);`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
+          typeParameters.ObjectFilterT,
           typeParameters.ObjectIdentifierT,
         ],
       },
@@ -353,10 +360,11 @@ return purify.Either.of(objects);`,
         returnType: "purify.Either<Error, number>",
         scope: Scope.Protected,
         statements: [
-          `return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectIdentifierT.name}>(${reusableMethodParameters.objectTypes.name}, ${reusableMethodParameters.query.name}).map(objects => objects.length);`,
+          `return this.${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT.name}, ${typeParameters.ObjectFilterT.name}, ${typeParameters.ObjectIdentifierT.name}>(${reusableMethodParameters.objectTypes.name}, ${reusableMethodParameters.query.name}).map(objects => objects.length);`,
         ],
         typeParameters: [
           typeParameters.ObjectT,
+          typeParameters.ObjectFilterT,
           typeParameters.ObjectIdentifierT,
         ],
       },

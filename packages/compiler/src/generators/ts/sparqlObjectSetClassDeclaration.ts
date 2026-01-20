@@ -99,7 +99,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return (await this.${methodSignatures.objects.name}({ where: { identifiers: [identifier], type: "identifiers" } })).map(objects => objects[0]);`,
+                `return (await this.${methodSignatures.objects.name}({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } })).map(objects => objects[0]);`,
               ],
             },
             {

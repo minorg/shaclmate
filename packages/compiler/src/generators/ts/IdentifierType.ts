@@ -385,7 +385,7 @@ namespace ${syntheticNamePrefix}IdentifierFilter {
         expression: {
           type: "operation",
           operator: "in",
-          args: [value, filter.in],
+          args: [value, filter.in.filter(identifier => identifier.termType === "NamedNode")],
         }
       });
     }
