@@ -35306,6 +35306,7 @@ export namespace InterfaceUnionMember2 {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly interfaceUnionMember2Property?: $StringFilter;
   } & InterfaceUnionMemberCommonParentStatic.$Filter;
 
@@ -35923,6 +35924,7 @@ export namespace InterfaceUnionMember1 {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly interfaceUnionMember1Property?: $StringFilter;
   } & InterfaceUnionMemberCommonParentStatic.$Filter;
 
@@ -40315,7 +40317,9 @@ export namespace IdentifierOverride2ClassStatic {
     return true;
   }
 
-  export type $Filter = IdentifierOverride1ClassStatic.$Filter;
+  export type $Filter = {
+    readonly $identifier?: $NamedNodeFilter;
+  } & IdentifierOverride1ClassStatic.$Filter;
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -40603,7 +40607,9 @@ export namespace IdentifierOverride3ClassStatic {
     return true;
   }
 
-  export type $Filter = IdentifierOverride2ClassStatic.$Filter;
+  export type $Filter = {
+    readonly $identifier?: $NamedNodeFilter;
+  } & IdentifierOverride2ClassStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -41045,7 +41051,9 @@ export namespace IdentifierOverride4ClassStatic {
     return true;
   }
 
-  export type $Filter = IdentifierOverride3ClassStatic.$Filter;
+  export type $Filter = {
+    readonly $identifier?: $NamedNodeFilter;
+  } & IdentifierOverride3ClassStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -41480,7 +41488,9 @@ export namespace IdentifierOverride5Class {
     return true;
   }
 
-  export type $Filter = IdentifierOverride4ClassStatic.$Filter;
+  export type $Filter = {
+    readonly $identifier?: $NamedNodeFilter;
+  } & IdentifierOverride4ClassStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -52087,7 +52097,9 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     return true;
   }
 
-  export type $Filter = BaseInterfaceWithPropertiesStatic.$Filter;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & BaseInterfaceWithPropertiesStatic.$Filter;
 
   export function $fromJson(
     json: unknown,
@@ -52610,6 +52622,7 @@ export namespace ConcreteParentInterfaceStatic {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly concreteParentInterfaceProperty?: $StringFilter;
   } & BaseInterfaceWithoutPropertiesStatic.$Filter;
 
@@ -53251,6 +53264,7 @@ export namespace ConcreteChildInterface {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly concreteChildInterfaceProperty?: $StringFilter;
   } & ConcreteParentInterfaceStatic.$Filter;
 
@@ -54375,7 +54389,9 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     return true;
   }
 
-  export type $Filter = AbstractBaseClassWithPropertiesStatic.$Filter;
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+  } & AbstractBaseClassWithPropertiesStatic.$Filter;
   export type $Identifier = AbstractBaseClassWithPropertiesStatic.$Identifier;
   export const $Identifier = AbstractBaseClassWithPropertiesStatic.$Identifier;
   export type $Json = AbstractBaseClassWithPropertiesStatic.$Json;
@@ -54723,6 +54739,7 @@ export namespace ConcreteParentClassStatic {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly concreteParentClassProperty?: $StringFilter;
   } & AbstractBaseClassWithoutPropertiesStatic.$Filter;
 
@@ -55338,6 +55355,7 @@ export namespace ConcreteChildClass {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly concreteChildClassProperty?: $StringFilter;
   } & ConcreteParentClassStatic.$Filter;
 
@@ -56391,6 +56409,7 @@ export namespace ClassUnionMember2 {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly classUnionMember2Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
 
@@ -56965,6 +56984,7 @@ export namespace ClassUnionMember1 {
   }
 
   export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
     readonly classUnionMember1Property?: $StringFilter;
   } & ClassUnionMemberCommonParentStatic.$Filter;
 
