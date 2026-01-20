@@ -73356,14 +73356,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectFilterT extends
       | {
-          readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
+          readonly $identifier?: {
+            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+          };
         }
       | {
           readonly on?: Record<
             string,
             {
               readonly $identifier?: {
-                readonly in?: readonly ObjectIdentifierT[];
+                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
               };
             }
           >;
@@ -73390,14 +73392,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectFilterT extends
       | {
-          readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
+          readonly $identifier?: {
+            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+          };
         }
       | {
           readonly on?: Record<
             string,
             {
               readonly $identifier?: {
-                readonly in?: readonly ObjectIdentifierT[];
+                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
               };
             }
           >;
@@ -73629,14 +73633,16 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectFilterT extends
       | {
-          readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] };
+          readonly $identifier?: {
+            readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
+          };
         }
       | {
           readonly on?: Record<
             string,
             {
               readonly $identifier?: {
-                readonly in?: readonly ObjectIdentifierT[];
+                readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[];
               };
             }
           >;

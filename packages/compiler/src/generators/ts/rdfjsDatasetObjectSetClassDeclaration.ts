@@ -28,7 +28,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
     ObjectFilterT: {
       constraint:
-        "{ readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] } } | { readonly on?: Record<string, { readonly $identifier?: { readonly in?: readonly ObjectIdentifierT[] } }> }",
+        "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } } | { readonly on?: Record<string, { readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }> }",
       name: "ObjectFilterT",
     },
     ObjectIdentifierT: {
