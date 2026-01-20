@@ -9,6 +9,10 @@ export function filterTypeDeclaration(
     isExported: true,
     kind: StructureKind.TypeAlias,
     name: `${syntheticNamePrefix}Filter`,
-    type: `{ readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.name}?: ${memberType.filterType}`).join(";")} } }`,
+    type: `\
+{
+  readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType};
+  readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.name}?: Omit<${memberType.filterType}, "${syntheticNamePrefix}identifier">`).join(";")} }
+}`,
   };
 }
