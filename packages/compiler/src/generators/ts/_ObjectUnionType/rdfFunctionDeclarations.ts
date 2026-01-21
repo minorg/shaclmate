@@ -22,7 +22,7 @@ function fromRdfFunctionDeclaration(
     ],
     returnType: `purify.Either<Error, ${this.name}>`,
     statements: [
-      `return ${this.memberTypes.reduce((expression, memberType) => {
+      `return ${this.concreteMemberTypes.reduce((expression, memberType) => {
         const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as purify.Either<Error, ${this.name}>)`;
         return expression.length > 0
           ? `${expression}.altLazy(() => ${memberTypeExpression})`
@@ -67,7 +67,7 @@ function toRdfFunctionDeclaration(
     ],
     returnType: (() => {
       let returnType: string | undefined;
-      for (const memberType of this.memberTypes) {
+      for (const memberType of this.concreteMemberTypes) {
         const memberRdfjsResourceType = memberType.toRdfjsResourceType;
 
         if (typeof returnType === "undefined") {
@@ -79,7 +79,7 @@ function toRdfFunctionDeclaration(
       // The types agree
       return returnType!;
     })(),
-    statements: this.memberTypes
+    statements: this.concreteMemberTypes
       .map((memberType) => {
         let returnExpression: string;
         switch (memberType.declarationType) {

@@ -30,7 +30,7 @@ export function sparqlFunctionDeclarations(
       ],
       returnType: "readonly sparqljs.Triple[]",
       statements: [
-        `return [${this.memberTypes
+        `return [${this.concreteMemberTypes
           .map(
             (memberType) =>
               `...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
@@ -52,7 +52,7 @@ export function sparqlFunctionDeclarations(
       ],
       returnType: "readonly sparqljs.Pattern[]",
       statements: [
-        `return [{ patterns: [${this.memberTypes
+        `return [{ patterns: [${this.concreteMemberTypes
           .map((memberType) =>
             objectInitializer({
               patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,

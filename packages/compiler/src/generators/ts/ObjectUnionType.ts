@@ -63,6 +63,11 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
+  protected get concreteMemberTypes(): readonly _ObjectUnionType.MemberType[] {
+    return this.memberTypes.filter((memberType) => !memberType.abstract);
+  }
+
+  @Memoize()
   override get conversions(): readonly AbstractDeclaredType.Conversion[] {
     return [
       {
@@ -91,7 +96,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
       ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectUnionType.jsonDeclarations.bind(this)(),
-      _ObjectUnionType.isTypeFunctionDeclaration.bind(this)(),
+      ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.propertiesVariableStatement.bind(this)().toList(),
       ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
       ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),

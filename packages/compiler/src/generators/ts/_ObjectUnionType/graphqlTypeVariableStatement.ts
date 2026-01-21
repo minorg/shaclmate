@@ -25,7 +25,7 @@ export function graphqlTypeVariableStatement(
           description: this.comment.map(JSON.stringify).extract(),
           name: `"${this.name}"`,
           resolveType: `(value: ${this.name}) => value.${syntheticNamePrefix}type`,
-          types: `[${this.memberTypes.map((memberType) => memberType.graphqlType.nullableName).join(", ")}]`,
+          types: `[${this.concreteMemberTypes.map((memberType) => memberType.graphqlType.nullableName).join(", ")}]`,
         })})`,
       },
     ],

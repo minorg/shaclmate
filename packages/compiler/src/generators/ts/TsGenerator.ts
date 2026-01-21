@@ -107,7 +107,7 @@ export class TsGenerator implements Generator {
     );
 
     const uberObjectUnionType = synthesizeUberObjectUnionType({
-      objectTypes: objectTypes.toReversed(), // Order is important
+      objectTypes: objectTypes.toReversed(), // Reverse topological order so children ane before parents
     });
     sourceFile.addStatements(uberObjectUnionType.declarations);
 

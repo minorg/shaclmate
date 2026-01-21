@@ -370,14 +370,6 @@ return purify.Either.of(objects);`,
           },
         ) =>
           `{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
-        // switch (objectType.kind) {
-        //   case "ObjectType":
-        //     runtimeObjectTypes = `[${runtimeObjectType(objectType)}]`;
-        //     break;
-        //   case "ObjectUnionType":
-        //     runtimeObjectTypes = `[${objectType.memberTypes.map((memberType) => runtimeObjectType(memberType)).join(", ")}]`;
-        //     break;
-        // }
 
         switch (objectType.kind) {
           case "ObjectType": {
@@ -398,7 +390,15 @@ return purify.Either.of(objects);`,
               name: `${methodSignatures.objects.name}Sync`,
               returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
               statements: [
-                `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([${objectType.memberTypes.map((memberType) => runtimeObjectType(`${objectType.staticModuleName}.${syntheticNamePrefix}filter`, memberType)).join(", ")}], query);`,
+                `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([${objectType.memberTypes
+                  .filter((memberType) => !memberType.abstract)
+                  .map((memberType) =>
+                    runtimeObjectType(
+                      `${objectType.staticModuleName}.${syntheticNamePrefix}filter`,
+                      memberType,
+                    ),
+                  )
+                  .join(", ")}], query);`,
               ],
             });
           default:

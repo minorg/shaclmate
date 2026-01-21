@@ -25,7 +25,7 @@ export function filterFunctionDeclaration(
 if (typeof filter.${syntheticNamePrefix}identifier !== "undefined" && !${this.identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
   return false;
 }`,
-      ...this.memberTypes.map(
+      ...this.concreteMemberTypes.map(
         (memberType) => `\
 if (${memberType.staticModuleName}.is${memberType.name}(value)) {
   return filter.on?.${memberType.name} ? ${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name}) : true;

@@ -63329,19 +63329,6 @@ export namespace $Object {
       return false;
     }
 
-    if (
-      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-        value,
-      )
-    ) {
-      return filter.on?.AbstractBaseClassForExternClass
-        ? AbstractBaseClassForExternClassStatic.$filter(
-            filter.on.AbstractBaseClassForExternClass,
-            value as AbstractBaseClassForExternClass,
-          )
-        : true;
-    }
-
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
       return filter.on?.BlankNodeIdentifierClass
         ? BlankNodeIdentifierClass.$filter(
@@ -63400,17 +63387,6 @@ export namespace $Object {
         : true;
     }
 
-    if (
-      ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(value)
-    ) {
-      return filter.on?.ClassUnionMemberCommonParent
-        ? ClassUnionMemberCommonParentStatic.$filter(
-            filter.on.ClassUnionMemberCommonParent,
-            value as ClassUnionMemberCommonParent,
-          )
-        : true;
-    }
-
     if (ConcreteChildClass.isConcreteChildClass(value)) {
       return filter.on?.ConcreteChildClass
         ? ConcreteChildClass.$filter(
@@ -63425,32 +63401,6 @@ export namespace $Object {
         ? ConcreteParentClassStatic.$filter(
             filter.on.ConcreteParentClass,
             value as ConcreteParentClass,
-          )
-        : true;
-    }
-
-    if (
-      AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-        value,
-      )
-    ) {
-      return filter.on?.AbstractBaseClassWithoutProperties
-        ? AbstractBaseClassWithoutPropertiesStatic.$filter(
-            filter.on.AbstractBaseClassWithoutProperties,
-            value as AbstractBaseClassWithoutProperties,
-          )
-        : true;
-    }
-
-    if (
-      AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
-        value,
-      )
-    ) {
-      return filter.on?.AbstractBaseClassWithProperties
-        ? AbstractBaseClassWithPropertiesStatic.$filter(
-            filter.on.AbstractBaseClassWithProperties,
-            value as AbstractBaseClassWithProperties,
           )
         : true;
     }
@@ -63613,24 +63563,6 @@ export namespace $Object {
         : true;
     }
 
-    if (IdentifierOverride2ClassStatic.isIdentifierOverride2Class(value)) {
-      return filter.on?.IdentifierOverride2Class
-        ? IdentifierOverride2ClassStatic.$filter(
-            filter.on.IdentifierOverride2Class,
-            value as IdentifierOverride2Class,
-          )
-        : true;
-    }
-
-    if (IdentifierOverride1ClassStatic.isIdentifierOverride1Class(value)) {
-      return filter.on?.IdentifierOverride1Class
-        ? IdentifierOverride1ClassStatic.$filter(
-            filter.on.IdentifierOverride1Class,
-            value as IdentifierOverride1Class,
-          )
-        : true;
-    }
-
     if (InIdentifierClass.isInIdentifierClass(value)) {
       return filter.on?.InIdentifierClass
         ? InIdentifierClass.$filter(
@@ -63687,19 +63619,6 @@ export namespace $Object {
         ? InterfaceUnionMember2.$filter(
             filter.on.InterfaceUnionMember2,
             value as InterfaceUnionMember2,
-          )
-        : true;
-    }
-
-    if (
-      InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
-        value,
-      )
-    ) {
-      return filter.on?.InterfaceUnionMemberCommonParent
-        ? InterfaceUnionMemberCommonParentStatic.$filter(
-            filter.on.InterfaceUnionMemberCommonParent,
-            value as InterfaceUnionMemberCommonParent,
           )
         : true;
     }
@@ -64064,10 +63983,6 @@ export namespace $Object {
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
     readonly on?: {
-      readonly AbstractBaseClassForExternClass?: Omit<
-        AbstractBaseClassForExternClassStatic.$Filter,
-        "$identifier"
-      >;
       readonly BlankNodeIdentifierClass?: Omit<
         BlankNodeIdentifierClass.$Filter,
         "$identifier"
@@ -64092,24 +64007,12 @@ export namespace $Object {
         ClassUnionMember2.$Filter,
         "$identifier"
       >;
-      readonly ClassUnionMemberCommonParent?: Omit<
-        ClassUnionMemberCommonParentStatic.$Filter,
-        "$identifier"
-      >;
       readonly ConcreteChildClass?: Omit<
         ConcreteChildClass.$Filter,
         "$identifier"
       >;
       readonly ConcreteParentClass?: Omit<
         ConcreteParentClassStatic.$Filter,
-        "$identifier"
-      >;
-      readonly AbstractBaseClassWithoutProperties?: Omit<
-        AbstractBaseClassWithoutPropertiesStatic.$Filter,
-        "$identifier"
-      >;
-      readonly AbstractBaseClassWithProperties?: Omit<
-        AbstractBaseClassWithPropertiesStatic.$Filter,
         "$identifier"
       >;
       readonly ConcreteChildInterface?: Omit<
@@ -64177,14 +64080,6 @@ export namespace $Object {
         IdentifierOverride3ClassStatic.$Filter,
         "$identifier"
       >;
-      readonly IdentifierOverride2Class?: Omit<
-        IdentifierOverride2ClassStatic.$Filter,
-        "$identifier"
-      >;
-      readonly IdentifierOverride1Class?: Omit<
-        IdentifierOverride1ClassStatic.$Filter,
-        "$identifier"
-      >;
       readonly InIdentifierClass?: Omit<
         InIdentifierClass.$Filter,
         "$identifier"
@@ -64208,10 +64103,6 @@ export namespace $Object {
       >;
       readonly InterfaceUnionMember2?: Omit<
         InterfaceUnionMember2.$Filter,
-        "$identifier"
-      >;
-      readonly InterfaceUnionMemberCommonParent?: Omit<
-        InterfaceUnionMemberCommonParentStatic.$Filter,
         "$identifier"
       >;
       readonly IriIdentifierClass?: Omit<
@@ -64357,18 +64248,11 @@ export namespace $Object {
     json: unknown,
   ): purify.Either<zod.ZodError, $Object> {
     return (
-      AbstractBaseClassForExternClassStatic.$fromJson(json) as purify.Either<
+      BlankNodeIdentifierClass.$fromJson(json) as purify.Either<
         zod.ZodError,
         $Object
       >
     )
-      .altLazy(
-        () =>
-          BlankNodeIdentifierClass.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            $Object
-          >,
-      )
       .altLazy(
         () =>
           BlankNodeIdentifierInterface.$fromJson(json) as purify.Either<
@@ -64406,13 +64290,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          ClassUnionMemberCommonParentStatic.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            $Object
-          >,
-      )
-      .altLazy(
-        () =>
           ConcreteChildClass.$fromJson(json) as purify.Either<
             zod.ZodError,
             $Object
@@ -64424,18 +64301,6 @@ export namespace $Object {
             zod.ZodError,
             $Object
           >,
-      )
-      .altLazy(
-        () =>
-          AbstractBaseClassWithoutPropertiesStatic.$fromJson(
-            json,
-          ) as purify.Either<zod.ZodError, $Object>,
-      )
-      .altLazy(
-        () =>
-          AbstractBaseClassWithPropertiesStatic.$fromJson(
-            json,
-          ) as purify.Either<zod.ZodError, $Object>,
       )
       .altLazy(
         () =>
@@ -64555,20 +64420,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          IdentifierOverride2ClassStatic.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            $Object
-          >,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride1ClassStatic.$fromJson(json) as purify.Either<
-            zod.ZodError,
-            $Object
-          >,
-      )
-      .altLazy(
-        () =>
           InIdentifierClass.$fromJson(json) as purify.Either<
             zod.ZodError,
             $Object
@@ -64611,12 +64462,6 @@ export namespace $Object {
             zod.ZodError,
             $Object
           >,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionMemberCommonParentStatic.$fromJson(
-            json,
-          ) as purify.Either<zod.ZodError, $Object>,
       )
       .altLazy(
         () =>
@@ -64880,18 +64725,11 @@ export namespace $Object {
     },
   ): purify.Either<Error, $Object> {
     return (
-      AbstractBaseClassForExternClassStatic.$fromRdf(resource, {
+      BlankNodeIdentifierClass.$fromRdf(resource, {
         ...options,
         ignoreRdfType: false,
       }) as purify.Either<Error, $Object>
     )
-      .altLazy(
-        () =>
-          BlankNodeIdentifierClass.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
       .altLazy(
         () =>
           BlankNodeIdentifierInterface.$fromRdf(resource, {
@@ -64929,13 +64767,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          ClassUnionMemberCommonParentStatic.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
           ConcreteChildClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -64944,20 +64775,6 @@ export namespace $Object {
       .altLazy(
         () =>
           ConcreteParentClassStatic.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          AbstractBaseClassWithoutPropertiesStatic.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          AbstractBaseClassWithPropertiesStatic.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
           }) as purify.Either<Error, $Object>,
@@ -65083,20 +64900,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          IdentifierOverride2ClassStatic.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          IdentifierOverride1ClassStatic.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
           InIdentifierClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -65140,13 +64943,6 @@ export namespace $Object {
       .altLazy(
         () =>
           InterfaceUnionMember2.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
-          InterfaceUnionMemberCommonParentStatic.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
           }) as purify.Either<Error, $Object>,
@@ -65417,14 +65213,6 @@ export namespace $Object {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_object: $Object, _hasher: HasherT): HasherT {
-    if (
-      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-        _object,
-      )
-    ) {
-      return _object.$hash(_hasher);
-    }
-
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
       return _object.$hash(_hasher);
     }
@@ -65455,33 +65243,11 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
 
-    if (
-      ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(_object)
-    ) {
-      return _object.$hash(_hasher);
-    }
-
     if (ConcreteChildClass.isConcreteChildClass(_object)) {
       return _object.$hash(_hasher);
     }
 
     if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
-      return _object.$hash(_hasher);
-    }
-
-    if (
-      AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-        _object,
-      )
-    ) {
-      return _object.$hash(_hasher);
-    }
-
-    if (
-      AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
-        _object,
-      )
-    ) {
       return _object.$hash(_hasher);
     }
 
@@ -65561,14 +65327,6 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
 
-    if (IdentifierOverride2ClassStatic.isIdentifierOverride2Class(_object)) {
-      return _object.$hash(_hasher);
-    }
-
-    if (IdentifierOverride1ClassStatic.isIdentifierOverride1Class(_object)) {
-      return _object.$hash(_hasher);
-    }
-
     if (InIdentifierClass.isInIdentifierClass(_object)) {
       return _object.$hash(_hasher);
     }
@@ -65595,14 +65353,6 @@ export namespace $Object {
 
     if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
       return InterfaceUnionMember2.$hash(_object, _hasher);
-    }
-
-    if (
-      InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
-        _object,
-      )
-    ) {
-      return InterfaceUnionMemberCommonParentStatic.$hash(_object, _hasher);
     }
 
     if (IriIdentifierClass.isIriIdentifierClass(_object)) {
@@ -65809,18 +65559,14 @@ export namespace $Object {
   }
 
   export type $Json =
-    | AbstractBaseClassForExternClassStatic.$Json
     | BlankNodeIdentifierClass.$Json
     | BlankNodeIdentifierInterface.$Json
     | BlankNodeOrIriIdentifierClass.$Json
     | BlankNodeOrIriIdentifierInterface.$Json
     | ClassUnionMember1.$Json
     | ClassUnionMember2.$Json
-    | ClassUnionMemberCommonParentStatic.$Json
     | ConcreteChildClass.$Json
     | ConcreteParentClassStatic.$Json
-    | AbstractBaseClassWithoutPropertiesStatic.$Json
-    | AbstractBaseClassWithPropertiesStatic.$Json
     | ConcreteChildInterface.$Json
     | ConcreteParentInterfaceStatic.$Json
     | BaseInterfaceWithoutPropertiesStatic.$Json
@@ -65838,8 +65584,6 @@ export namespace $Object {
     | IdentifierOverride5Class.$Json
     | IdentifierOverride4ClassStatic.$Json
     | IdentifierOverride3ClassStatic.$Json
-    | IdentifierOverride2ClassStatic.$Json
-    | IdentifierOverride1ClassStatic.$Json
     | InIdentifierClass.$Json
     | InPropertiesClass.$Json
     | IndirectRecursiveClass.$Json
@@ -65847,7 +65591,6 @@ export namespace $Object {
     | Interface.$Json
     | InterfaceUnionMember1.$Json
     | InterfaceUnionMember2.$Json
-    | InterfaceUnionMemberCommonParentStatic.$Json
     | IriIdentifierClass.$Json
     | IriIdentifierInterface.$Json
     | JsPrimitiveUnionPropertyClass.$Json
@@ -65888,18 +65631,14 @@ export namespace $Object {
 
   export function $jsonZodSchema() {
     return zod.discriminatedUnion("$type", [
-      AbstractBaseClassForExternClassStatic.$jsonZodSchema(),
       BlankNodeIdentifierClass.$jsonZodSchema(),
       BlankNodeIdentifierInterface.$jsonZodSchema(),
       BlankNodeOrIriIdentifierClass.$jsonZodSchema(),
       BlankNodeOrIriIdentifierInterface.$jsonZodSchema(),
       ClassUnionMember1.$jsonZodSchema(),
       ClassUnionMember2.$jsonZodSchema(),
-      ClassUnionMemberCommonParentStatic.$jsonZodSchema(),
       ConcreteChildClass.$jsonZodSchema(),
       ConcreteParentClassStatic.$jsonZodSchema(),
-      AbstractBaseClassWithoutPropertiesStatic.$jsonZodSchema(),
-      AbstractBaseClassWithPropertiesStatic.$jsonZodSchema(),
       ConcreteChildInterface.$jsonZodSchema(),
       ConcreteParentInterfaceStatic.$jsonZodSchema(),
       BaseInterfaceWithoutPropertiesStatic.$jsonZodSchema(),
@@ -65917,8 +65656,6 @@ export namespace $Object {
       IdentifierOverride5Class.$jsonZodSchema(),
       IdentifierOverride4ClassStatic.$jsonZodSchema(),
       IdentifierOverride3ClassStatic.$jsonZodSchema(),
-      IdentifierOverride2ClassStatic.$jsonZodSchema(),
-      IdentifierOverride1ClassStatic.$jsonZodSchema(),
       InIdentifierClass.$jsonZodSchema(),
       InPropertiesClass.$jsonZodSchema(),
       IndirectRecursiveClass.$jsonZodSchema(),
@@ -65926,7 +65663,6 @@ export namespace $Object {
       Interface.$jsonZodSchema(),
       InterfaceUnionMember1.$jsonZodSchema(),
       InterfaceUnionMember2.$jsonZodSchema(),
-      InterfaceUnionMemberCommonParentStatic.$jsonZodSchema(),
       IriIdentifierClass.$jsonZodSchema(),
       IriIdentifierInterface.$jsonZodSchema(),
       JsPrimitiveUnionPropertyClass.$jsonZodSchema(),
@@ -66028,14 +65764,6 @@ export namespace $Object {
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
     return [
-      ...AbstractBaseClassForExternClassStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectAbstractBaseClassForExternClass"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}AbstractBaseClassForExternClass`
-          : "objectAbstractBaseClassForExternClass",
-      }).concat(),
       ...BlankNodeIdentifierClass.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
@@ -66084,14 +65812,6 @@ export namespace $Object {
           ? `${parameters.variablePrefix}ClassUnionMember2`
           : "objectClassUnionMember2",
       }).concat(),
-      ...ClassUnionMemberCommonParentStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectClassUnionMemberCommonParent"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}ClassUnionMemberCommonParent`
-          : "objectClassUnionMemberCommonParent",
-      }).concat(),
       ...ConcreteChildClass.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
@@ -66107,22 +65827,6 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ConcreteParentClass`
           : "objectConcreteParentClass",
-      }).concat(),
-      ...AbstractBaseClassWithoutPropertiesStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectAbstractBaseClassWithoutProperties"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}AbstractBaseClassWithoutProperties`
-          : "objectAbstractBaseClassWithoutProperties",
-      }).concat(),
-      ...AbstractBaseClassWithPropertiesStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectAbstractBaseClassWithProperties"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}AbstractBaseClassWithProperties`
-          : "objectAbstractBaseClassWithProperties",
       }).concat(),
       ...ConcreteChildInterface.$sparqlConstructTriples({
         subject:
@@ -66259,22 +65963,6 @@ export namespace $Object {
           ? `${parameters.variablePrefix}IdentifierOverride3Class`
           : "objectIdentifierOverride3Class",
       }).concat(),
-      ...IdentifierOverride2ClassStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectIdentifierOverride2Class"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}IdentifierOverride2Class`
-          : "objectIdentifierOverride2Class",
-      }).concat(),
-      ...IdentifierOverride1ClassStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectIdentifierOverride1Class"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}IdentifierOverride1Class`
-          : "objectIdentifierOverride1Class",
-      }).concat(),
       ...InIdentifierClass.$sparqlConstructTriples({
         subject:
           parameters?.subject ??
@@ -66329,14 +66017,6 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}InterfaceUnionMember2`
           : "objectInterfaceUnionMember2",
-      }).concat(),
-      ...InterfaceUnionMemberCommonParentStatic.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ??
-          dataFactory.variable!("objectInterfaceUnionMemberCommonParent"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}InterfaceUnionMemberCommonParent`
-          : "objectInterfaceUnionMemberCommonParent",
       }).concat(),
       ...IriIdentifierClass.$sparqlConstructTriples({
         subject:
@@ -66655,21 +66335,6 @@ export namespace $Object {
       {
         patterns: [
           {
-            patterns:
-              AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
-                filter: parameters?.filter?.on?.AbstractBaseClassForExternClass,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!(
-                    "objectAbstractBaseClassForExternClass",
-                  ),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}AbstractBaseClassForExternClass`
-                  : "objectAbstractBaseClassForExternClass",
-              }).concat(),
-            type: "group",
-          },
-          {
             patterns: BlankNodeIdentifierClass.$sparqlWherePatterns({
               filter: parameters?.filter?.on?.BlankNodeIdentifierClass,
               subject:
@@ -66744,18 +66409,6 @@ export namespace $Object {
             type: "group",
           },
           {
-            patterns: ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMemberCommonParent,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectClassUnionMemberCommonParent"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMemberCommonParent`
-                : "objectClassUnionMemberCommonParent",
-            }).concat(),
-            type: "group",
-          },
-          {
             patterns: ConcreteChildClass.$sparqlWherePatterns({
               filter: parameters?.filter?.on?.ConcreteChildClass,
               subject:
@@ -66777,37 +66430,6 @@ export namespace $Object {
                 ? `${parameters.variablePrefix}ConcreteParentClass`
                 : "objectConcreteParentClass",
             }).concat(),
-            type: "group",
-          },
-          {
-            patterns:
-              AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
-                filter:
-                  parameters?.filter?.on?.AbstractBaseClassWithoutProperties,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!(
-                    "objectAbstractBaseClassWithoutProperties",
-                  ),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}AbstractBaseClassWithoutProperties`
-                  : "objectAbstractBaseClassWithoutProperties",
-              }).concat(),
-            type: "group",
-          },
-          {
-            patterns:
-              AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
-                filter: parameters?.filter?.on?.AbstractBaseClassWithProperties,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!(
-                    "objectAbstractBaseClassWithProperties",
-                  ),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}AbstractBaseClassWithProperties`
-                  : "objectAbstractBaseClassWithProperties",
-              }).concat(),
             type: "group",
           },
           {
@@ -67017,30 +66639,6 @@ export namespace $Object {
             type: "group",
           },
           {
-            patterns: IdentifierOverride2ClassStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IdentifierOverride2Class,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIdentifierOverride2Class"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IdentifierOverride2Class`
-                : "objectIdentifierOverride2Class",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IdentifierOverride1ClassStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IdentifierOverride1Class,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIdentifierOverride1Class"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IdentifierOverride1Class`
-                : "objectIdentifierOverride1Class",
-            }).concat(),
-            type: "group",
-          },
-          {
             patterns: InIdentifierClass.$sparqlWherePatterns({
               filter: parameters?.filter?.on?.InIdentifierClass,
               subject:
@@ -67121,22 +66719,6 @@ export namespace $Object {
                 ? `${parameters.variablePrefix}InterfaceUnionMember2`
                 : "objectInterfaceUnionMember2",
             }).concat(),
-            type: "group",
-          },
-          {
-            patterns:
-              InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
-                filter:
-                  parameters?.filter?.on?.InterfaceUnionMemberCommonParent,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!(
-                    "objectInterfaceUnionMemberCommonParent",
-                  ),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}InterfaceUnionMemberCommonParent`
-                  : "objectInterfaceUnionMemberCommonParent",
-              }).concat(),
             type: "group",
           },
           {
@@ -67694,14 +67276,6 @@ export namespace $Object {
     | UuidV4IriIdentifierInterface.$Json
     | $DefaultPartial.$Json
     | $NamedDefaultPartial.$Json {
-    if (
-      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-        _object,
-      )
-    ) {
-      return _object.$toJson();
-    }
-
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
       return _object.$toJson();
     }
@@ -67732,33 +67306,11 @@ export namespace $Object {
       return _object.$toJson();
     }
 
-    if (
-      ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(_object)
-    ) {
-      return _object.$toJson();
-    }
-
     if (ConcreteChildClass.isConcreteChildClass(_object)) {
       return _object.$toJson();
     }
 
     if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
-      return _object.$toJson();
-    }
-
-    if (
-      AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-        _object,
-      )
-    ) {
-      return _object.$toJson();
-    }
-
-    if (
-      AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
-        _object,
-      )
-    ) {
       return _object.$toJson();
     }
 
@@ -67838,14 +67390,6 @@ export namespace $Object {
       return _object.$toJson();
     }
 
-    if (IdentifierOverride2ClassStatic.isIdentifierOverride2Class(_object)) {
-      return _object.$toJson();
-    }
-
-    if (IdentifierOverride1ClassStatic.isIdentifierOverride1Class(_object)) {
-      return _object.$toJson();
-    }
-
     if (InIdentifierClass.isInIdentifierClass(_object)) {
       return _object.$toJson();
     }
@@ -67872,14 +67416,6 @@ export namespace $Object {
 
     if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
       return InterfaceUnionMember2.$toJson(_object);
-    }
-
-    if (
-      InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
-        _object,
-      )
-    ) {
-      return InterfaceUnionMemberCommonParentStatic.$toJson(_object);
     }
 
     if (IriIdentifierClass.isIriIdentifierClass(_object)) {
@@ -68071,14 +67607,6 @@ export namespace $Object {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.Resource {
-    if (
-      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-        _object,
-      )
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-
     if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(_object)) {
       return _object.$toRdf(_parameters);
     }
@@ -68109,33 +67637,11 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
 
-    if (
-      ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(_object)
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-
     if (ConcreteChildClass.isConcreteChildClass(_object)) {
       return _object.$toRdf(_parameters);
     }
 
     if (ConcreteParentClassStatic.isConcreteParentClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-
-    if (
-      AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-        _object,
-      )
-    ) {
-      return _object.$toRdf(_parameters);
-    }
-
-    if (
-      AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
-        _object,
-      )
-    ) {
       return _object.$toRdf(_parameters);
     }
 
@@ -68215,14 +67721,6 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
 
-    if (IdentifierOverride2ClassStatic.isIdentifierOverride2Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-
-    if (IdentifierOverride1ClassStatic.isIdentifierOverride1Class(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-
     if (InIdentifierClass.isInIdentifierClass(_object)) {
       return _object.$toRdf(_parameters);
     }
@@ -68249,17 +67747,6 @@ export namespace $Object {
 
     if (InterfaceUnionMember2.isInterfaceUnionMember2(_object)) {
       return InterfaceUnionMember2.$toRdf(_object, _parameters);
-    }
-
-    if (
-      InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
-        _object,
-      )
-    ) {
-      return InterfaceUnionMemberCommonParentStatic.$toRdf(
-        _object,
-        _parameters,
-      );
     }
 
     if (IriIdentifierClass.isIriIdentifierClass(_object)) {
@@ -68445,117 +67932,6 @@ export namespace $Object {
 
     _object satisfies never;
     throw new Error("unrecognized type");
-  }
-
-  export function is$Object(object: $Object): object is $Object {
-    return (
-      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-        object,
-      ) ||
-      BlankNodeIdentifierClass.isBlankNodeIdentifierClass(object) ||
-      BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(object) ||
-      BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(object) ||
-      BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
-        object,
-      ) ||
-      ClassUnionMember1.isClassUnionMember1(object) ||
-      ClassUnionMember2.isClassUnionMember2(object) ||
-      ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(
-        object,
-      ) ||
-      ConcreteChildClass.isConcreteChildClass(object) ||
-      ConcreteParentClassStatic.isConcreteParentClass(object) ||
-      AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-        object,
-      ) ||
-      AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
-        object,
-      ) ||
-      ConcreteChildInterface.isConcreteChildInterface(object) ||
-      ConcreteParentInterfaceStatic.isConcreteParentInterface(object) ||
-      BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
-        object,
-      ) ||
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(object) ||
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(object) ||
-      DateUnionPropertiesClass.isDateUnionPropertiesClass(object) ||
-      DefaultValuePropertiesClass.isDefaultValuePropertiesClass(object) ||
-      DirectRecursiveClass.isDirectRecursiveClass(object) ||
-      ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(object) ||
-      ExplicitRdfTypeClass.isExplicitRdfTypeClass(object) ||
-      ExternClass.isExternClass(object) ||
-      ExternClassPropertyClass.isExternClassPropertyClass(object) ||
-      FlattenClassUnionMember3.isFlattenClassUnionMember3(object) ||
-      HasValuePropertiesClass.isHasValuePropertiesClass(object) ||
-      IdentifierOverride5Class.isIdentifierOverride5Class(object) ||
-      IdentifierOverride4ClassStatic.isIdentifierOverride4Class(object) ||
-      IdentifierOverride3ClassStatic.isIdentifierOverride3Class(object) ||
-      IdentifierOverride2ClassStatic.isIdentifierOverride2Class(object) ||
-      IdentifierOverride1ClassStatic.isIdentifierOverride1Class(object) ||
-      InIdentifierClass.isInIdentifierClass(object) ||
-      InPropertiesClass.isInPropertiesClass(object) ||
-      IndirectRecursiveClass.isIndirectRecursiveClass(object) ||
-      IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(object) ||
-      Interface.isInterface(object) ||
-      InterfaceUnionMember1.isInterfaceUnionMember1(object) ||
-      InterfaceUnionMember2.isInterfaceUnionMember2(object) ||
-      InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
-        object,
-      ) ||
-      IriIdentifierClass.isIriIdentifierClass(object) ||
-      IriIdentifierInterface.isIriIdentifierInterface(object) ||
-      JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(object) ||
-      LanguageInPropertiesClass.isLanguageInPropertiesClass(object) ||
-      LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
-        object,
-      ) ||
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
-        object,
-      ) ||
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
-        object,
-      ) ||
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
-        object,
-      ) ||
-      LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
-        object,
-      ) ||
-      LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
-        object,
-      ) ||
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
-        object,
-      ) ||
-      LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
-        object,
-      ) ||
-      LazyPropertiesClass.isLazyPropertiesClass(object) ||
-      PartialClass.isPartialClass(object) ||
-      LazyPropertiesInterface.isLazyPropertiesInterface(object) ||
-      PartialInterface.isPartialInterface(object) ||
-      ListPropertiesClass.isListPropertiesClass(object) ||
-      MutablePropertiesClass.isMutablePropertiesClass(object) ||
-      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(object) ||
-      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(object) ||
-      NonClass.isNonClass(object) ||
-      OrderedPropertiesClass.isOrderedPropertiesClass(object) ||
-      PartialClassUnionMember1.isPartialClassUnionMember1(object) ||
-      PartialClassUnionMember2.isPartialClassUnionMember2(object) ||
-      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(object) ||
-      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(object) ||
-      PropertyCardinalitiesClass.isPropertyCardinalitiesClass(object) ||
-      PropertyVisibilitiesClass.isPropertyVisibilitiesClass(object) ||
-      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(object) ||
-      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(object) ||
-      Sha256IriIdentifierClass.isSha256IriIdentifierClass(object) ||
-      TermPropertiesClass.isTermPropertiesClass(object) ||
-      UnionDiscriminantsClass.isUnionDiscriminantsClass(object) ||
-      UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(object) ||
-      UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(object) ||
-      $DefaultPartial.is$DefaultPartial(object) ||
-      $NamedDefaultPartial.is$NamedDefaultPartial(object)
-    );
   }
 }
 export interface $ObjectSet {
@@ -77229,11 +76605,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       [
         {
           $filter: $Object.$filter,
-          $fromRdf: AbstractBaseClassForExternClassStatic.$fromRdf,
-          $fromRdfTypes: [],
-        },
-        {
-          $filter: $Object.$filter,
           $fromRdf: BlankNodeIdentifierClass.$fromRdf,
           $fromRdfTypes: [BlankNodeIdentifierClass.$fromRdfType],
         },
@@ -77264,36 +76635,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdf: ClassUnionMemberCommonParentStatic.$fromRdf,
-          $fromRdfTypes: [
-            ClassUnionMember1.$fromRdfType,
-            ClassUnionMember2.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
           $fromRdf: ConcreteChildClass.$fromRdf,
           $fromRdfTypes: [ConcreteChildClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: ConcreteParentClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentClassStatic.$fromRdfType,
-            ConcreteChildClass.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: AbstractBaseClassWithoutPropertiesStatic.$fromRdf,
-          $fromRdfTypes: [
-            ConcreteParentClassStatic.$fromRdfType,
-            ConcreteChildClass.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: AbstractBaseClassWithPropertiesStatic.$fromRdf,
           $fromRdfTypes: [
             ConcreteParentClassStatic.$fromRdfType,
             ConcreteChildClass.$fromRdfType,
@@ -77405,24 +76752,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         },
         {
           $filter: $Object.$filter,
-          $fromRdf: IdentifierOverride2ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: IdentifierOverride1ClassStatic.$fromRdf,
-          $fromRdfTypes: [
-            IdentifierOverride3ClassStatic.$fromRdfType,
-            IdentifierOverride4ClassStatic.$fromRdfType,
-            IdentifierOverride5Class.$fromRdfType,
-          ],
-        },
-        {
-          $filter: $Object.$filter,
           $fromRdf: InIdentifierClass.$fromRdf,
           $fromRdfTypes: [],
         },
@@ -77455,14 +76784,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: InterfaceUnionMember2.$fromRdf,
           $fromRdfTypes: [InterfaceUnionMember2.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: InterfaceUnionMemberCommonParentStatic.$fromRdf,
-          $fromRdfTypes: [
-            InterfaceUnionMember1.$fromRdfType,
-            InterfaceUnionMember2.$fromRdfType,
-          ],
         },
         {
           $filter: $Object.$filter,

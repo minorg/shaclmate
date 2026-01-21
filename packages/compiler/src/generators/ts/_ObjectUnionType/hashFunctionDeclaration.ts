@@ -28,7 +28,7 @@ export function hashFunctionDeclaration(
       },
     ],
     returnType: "HasherT",
-    statements: this.memberTypes
+    statements: this.concreteMemberTypes
       .map((memberType) => {
         let returnExpression: string;
         switch (memberType.declarationType) {

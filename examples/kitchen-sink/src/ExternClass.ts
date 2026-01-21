@@ -4,6 +4,7 @@ import * as N3 from "n3";
 import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
 import {
+  type $Object,
   type $ObjectSet,
   AbstractBaseClassForExternClass,
   AbstractBaseClassForExternClassStatic,
@@ -100,6 +101,10 @@ export namespace ExternClass {
   >(instance: ExternClass, hasher: HasherT): HasherT {
     instance.$hash(hasher);
     return hasher;
+  }
+
+  export function isExternClass(object: $Object): object is ExternClass {
+    return object.$type === "ExternClass";
   }
 
   export const $filter = AbstractBaseClassForExternClassStatic.$filter;
