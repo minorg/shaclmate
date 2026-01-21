@@ -11,7 +11,7 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
-import { objectTypeAliasDeclaration } from "./objectTypeAliasDeclaration.js";
+import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 
 export class TsGenerator implements Generator {
@@ -101,24 +101,28 @@ export class TsGenerator implements Generator {
     const objectTypesSortedByName = objectTypes.toSorted((left, right) =>
       left.name.localeCompare(right.name),
     );
-    sourceFile.addStatements([
-      objectTypeAliasDeclaration({ objectTypes: objectTypesSortedByName }),
-    ]);
 
     const objectUnionTypesSortedByName = objectUnionTypes.toSorted(
       (left, right) => left.name.localeCompare(right.name),
     );
 
+    const uberObjectUnionType = synthesizeUberObjectUnionType({
+      objectTypes: objectTypes.toReversed(), // Order is important
+    });
+    sourceFile.addStatements(uberObjectUnionType.declarations);
+
     sourceFile.addStatements(
       objectSetDeclarations({
         objectTypes: objectTypesSortedByName,
-        objectUnionTypes: objectUnionTypesSortedByName,
+        objectUnionTypes:
+          objectUnionTypesSortedByName.concat(uberObjectUnionType),
       }),
     );
     sourceFile.addVariableStatements(
       graphqlSchemaVariableStatement({
         objectTypes: objectTypesSortedByName,
-        objectUnionTypes: objectUnionTypesSortedByName,
+        objectUnionTypes:
+          objectUnionTypesSortedByName.concat(uberObjectUnionType),
       }).toList(),
     );
   }

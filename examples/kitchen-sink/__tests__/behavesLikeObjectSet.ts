@@ -113,15 +113,9 @@ const testData = {
   }) as readonly kitchenSink.NoRdfTypeClassUnion[],
 };
 
-export function behavesLikeObjectSet<
-  ObjectSetT extends kitchenSink.$ObjectSet,
->({
-  addQuad,
-  objectSet,
-}: {
-  addQuad: (quad: Quad) => void;
-  objectSet: ObjectSetT;
-}) {
+export function behavesLikeObjectSet<ObjectSetT extends kitchenSink.$ObjectSet>(
+  createObjectSet: (...instances: kitchenSink.$Object[]) => ObjectSetT,
+) {
   beforeAll(() => {
     const dataset = new N3.Store();
     const mutateGraph = N3.DataFactory.defaultGraph();
