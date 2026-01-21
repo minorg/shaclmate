@@ -1,5 +1,9 @@
 import { Maybe } from "purify-ts";
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import {
+  type FunctionDeclarationStructure,
+  StructureKind,
+  type TypeAliasDeclarationStructure,
+} from "ts-morph";
 
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -123,6 +127,33 @@ function jsonSchemaFunctionDeclaration(
   };
 }
 
+export function jsonTypeAliasDeclaration(
+  this: ObjectType,
+): TypeAliasDeclarationStructure {
+  const members: string[] = [];
+  if (this.ownProperties.length > 0) {
+    members.push(
+      `{ ${this.ownProperties
+        .flatMap((property) => property.jsonPropertySignature.toList())
+        .map(
+          (propertySignature) =>
+            `readonly "${propertySignature.name}"${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
+        )
+        .join("; ")} }`,
+    );
+  }
+  for (const parentObjectType of this.parentObjectTypes) {
+    members.push(parentObjectType.jsonType().name);
+  }
+
+  return {
+    isExported: true,
+    kind: StructureKind.TypeAlias,
+    name: `${syntheticNamePrefix}Json`,
+    type: members.length > 0 ? members.join(" & ") : "object",
+  };
+}
+
 function jsonUiSchemaFunctionDeclaration(
   this: ObjectType,
 ): FunctionDeclarationStructure {
@@ -212,9 +243,9 @@ function toJsonFunctionDeclaration(
     }));
 }
 
-export function jsonFunctionDeclarations(
+export function jsonDeclarations(
   this: ObjectType,
-): readonly FunctionDeclarationStructure[] {
+): readonly (FunctionDeclarationStructure | TypeAliasDeclarationStructure)[] {
   if (!this.features.has("json")) {
     return [];
   }
@@ -224,6 +255,7 @@ export function jsonFunctionDeclarations(
   }
 
   return [
+    jsonTypeAliasDeclaration.bind(this)(),
     ...fromJsonFunctionDeclarations.bind(this)(),
     jsonSchemaFunctionDeclaration.bind(this)(),
     jsonUiSchemaFunctionDeclaration.bind(this)(),
