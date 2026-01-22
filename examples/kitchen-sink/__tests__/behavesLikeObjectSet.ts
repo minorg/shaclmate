@@ -2,7 +2,7 @@ import type { Quad } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
-import { beforeAll, it } from "vitest";
+import { beforeAll, describe, it } from "vitest";
 
 const testData = {
   blankNodeOrIriIdentifierClasses: [...new Array(4)].map(
@@ -113,288 +113,259 @@ const testData = {
   }) as readonly kitchenSink.NoRdfTypeClassUnion[],
 };
 
-export function behavesLikeObjectSet<ObjectSetT extends kitchenSink.$ObjectSet>(
-  createObjectSet: (...instances: kitchenSink.$Object[]) => ObjectSetT,
+export function behavesLikeObjectSet(
+  createObjectSet: (
+    ...instances: kitchenSink.$Object[]
+  ) => kitchenSink.$ObjectSet,
 ) {
-  beforeAll(() => {
-    const dataset = new N3.Store();
-    const mutateGraph = N3.DataFactory.defaultGraph();
-    const resourceSet = new MutableResourceSet({
-      dataFactory: N3.DataFactory,
-      dataset,
-    });
-    for (const object of testData.blankNodeOrIriIdentifierClasses) {
-      object.$toRdf({ resourceSet, mutateGraph });
-    }
-    for (const object of testData.classUnions) {
-      object.$toRdf({ resourceSet, mutateGraph });
-    }
-    for (const object of testData.concreteChildClasses) {
-      object.$toRdf({ resourceSet, mutateGraph });
-    }
-    for (const object of testData.directRecursiveClasses) {
-      object.$toRdf({ resourceSet, mutateGraph });
-    }
-    for (const object of testData.interfaceUnions) {
-      kitchenSink.InterfaceUnion.$toRdf(object, {
-        resourceSet,
-        mutateGraph,
-      });
-    }
-    for (const object of testData.noRdfTypeClassUnions) {
-      object.$toRdf({ resourceSet, mutateGraph });
-    }
-    for (const quad of dataset) {
-      addQuad(quad);
-    }
-  });
+  // beforeAll(() => {
+  //   const dataset = new N3.Store();
+  //   const mutateGraph = N3.DataFactory.defaultGraph();
+  //   const resourceSet = new MutableResourceSet({
+  //     dataFactory: N3.DataFactory,
+  //     dataset,
+  //   });
+  //   for (const object of testData.blankNodeOrIriIdentifierClasses) {
+  //     object.$toRdf({ resourceSet, mutateGraph });
+  //   }
+  //   for (const object of testData.classUnions) {
+  //     object.$toRdf({ resourceSet, mutateGraph });
+  //   }
+  //   for (const object of testData.concreteChildClasses) {
+  //     object.$toRdf({ resourceSet, mutateGraph });
+  //   }
+  //   for (const object of testData.directRecursiveClasses) {
+  //     object.$toRdf({ resourceSet, mutateGraph });
+  //   }
+  //   for (const object of testData.interfaceUnions) {
+  //     kitchenSink.InterfaceUnion.$toRdf(object, {
+  //       resourceSet,
+  //       mutateGraph,
+  //     });
+  //   }
+  //   for (const object of testData.noRdfTypeClassUnions) {
+  //     object.$toRdf({ resourceSet, mutateGraph });
+  //   }
+  //   for (const quad of dataset) {
+  //     addQuad(quad);
+  //   }
+  // });
 
-  it("object (concrete child class)", async ({ expect }) => {
-    expect(
-      (
-        await objectSet.concreteChildClass(
-          testData.concreteChildClasses[0].$identifier,
-        )
-      )
-        .unsafeCoerce()
-        .$equals(testData.concreteChildClasses[0])
-        .unsafeCoerce(),
-    ).toBe(true);
-  });
-
-  it("object (concrete parent class)", async ({ expect }) => {
-    const expectedObject = testData.concreteChildClasses[0];
-    const actualObject = (
-      await objectSet.concreteParentClass(expectedObject.$identifier)
-    ).unsafeCoerce();
-    expect(actualObject).toBeInstanceOf(kitchenSink.ConcreteParentClass);
-    expect(actualObject).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
-    expect(actualObject.abstractBaseClassWithPropertiesProperty).toStrictEqual(
-      expectedObject.abstractBaseClassWithPropertiesProperty,
-    );
-    expect(actualObject.concreteParentClassProperty).toStrictEqual(
-      expectedObject.concreteParentClassProperty,
-    );
-  });
-
-  it("objectIdentifiers (no options)", async ({ expect }) => {
-    expect(
-      (await objectSet.concreteChildClassIdentifiers())
-        .unsafeCoerce()
-        .map((identifier) => identifier.value),
-    ).toStrictEqual(
-      testData.concreteChildClasses.map((object) => object.$identifier.value),
-    );
-  });
-
-  it("objectIdentifiers (limit 1)", async ({ expect }) => {
-    expect(
-      (await objectSet.concreteChildClassIdentifiers({ limit: 1 }))
-        .unsafeCoerce()
-        .map((identifier) => identifier.value),
-    ).toStrictEqual([testData.concreteChildClasses[0].$identifier.value]);
-  });
-
-  it("objectIdentifiers (offset 1)", async ({ expect }) => {
-    expect(
-      (
-        await objectSet.concreteChildClassIdentifiers({
-          offset: 1,
-        })
-      )
-        .unsafeCoerce()
-        .map((identifier) => identifier.value),
-    ).toStrictEqual(
-      testData.concreteChildClasses
-        .slice(1)
-        .map((object) => object.$identifier.value),
-    );
-  });
-
-  it("objectIdentifiers (limit 2 offset 1)", async ({ expect }) => {
-    expect(
-      (
-        await objectSet.concreteChildClassIdentifiers({
-          limit: 2,
-          offset: 1,
-        })
-      )
-        .unsafeCoerce()
-        .map((identifier) => identifier.value)
-        .sort(),
-    ).toStrictEqual([
-      testData.concreteChildClasses[1].$identifier.value,
-      testData.concreteChildClasses[2].$identifier.value,
-    ]);
-  });
-
-  it("objectIdentifiers (triple-objects)", async ({ expect }) => {
-    for (const directRecursiveClass of testData.directRecursiveClasses) {
+  describe("object", () => {
+    it("concrete child class", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
       expect(
         (
-          await objectSet.directRecursiveClassIdentifiers({
-            where: {
-              subject: directRecursiveClass.$identifier,
-              predicate:
-                kitchenSink.DirectRecursiveClass.$properties
-                  .directRecursiveProperty.identifier,
-              type: "triple-objects",
-            },
+          await objectSet.concreteChildClass(
+            testData.concreteChildClasses[0].$identifier,
+          )
+        )
+          .unsafeCoerce()
+          .$equals(testData.concreteChildClasses[0])
+          .unsafeCoerce(),
+      ).toBe(true);
+    });
+
+    it("concrete parent class", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
+      const expectedObject = testData.concreteChildClasses[0];
+      const actualObject = (
+        await objectSet.concreteParentClass(expectedObject.$identifier)
+      ).unsafeCoerce();
+      expect(actualObject).toBeInstanceOf(kitchenSink.ConcreteParentClass);
+      expect(actualObject).not.toBeInstanceOf(kitchenSink.ConcreteChildClass);
+      expect(
+        actualObject.abstractBaseClassWithPropertiesProperty,
+      ).toStrictEqual(expectedObject.abstractBaseClassWithPropertiesProperty);
+      expect(actualObject.concreteParentClassProperty).toStrictEqual(
+        expectedObject.concreteParentClassProperty,
+      );
+    });
+  });
+
+  describe("objectIdentifiers", () => {
+    it("no options", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
+      expect(
+        (await objectSet.concreteChildClassIdentifiers())
+          .unsafeCoerce()
+          .map((identifier) => identifier.value),
+      ).toStrictEqual(
+        testData.concreteChildClasses.map((object) => object.$identifier.value),
+      );
+    });
+
+    it("limit 1", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
+      expect(
+        (await objectSet.concreteChildClassIdentifiers({ limit: 1 }))
+          .unsafeCoerce()
+          .map((identifier) => identifier.value),
+      ).toStrictEqual([testData.concreteChildClasses[0].$identifier.value]);
+    });
+
+    it("offset 1", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
+      expect(
+        (
+          await objectSet.concreteChildClassIdentifiers({
+            offset: 1,
+          })
+        )
+          .unsafeCoerce()
+          .map((identifier) => identifier.value),
+      ).toStrictEqual(
+        testData.concreteChildClasses
+          .slice(1)
+          .map((object) => object.$identifier.value),
+      );
+    });
+
+    it("limit 2 offset 1", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
+      expect(
+        (
+          await objectSet.concreteChildClassIdentifiers({
+            limit: 2,
+            offset: 1,
           })
         )
           .unsafeCoerce()
           .map((identifier) => identifier.value)
           .sort(),
       ).toStrictEqual([
-        directRecursiveClass.directRecursiveProperty.unsafeCoerce().$identifier
-          .value,
+        testData.concreteChildClasses[1].$identifier.value,
+        testData.concreteChildClasses[2].$identifier.value,
       ]);
-    }
+    });
+
+    it("union with fromRdfType", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.classUnions);
+      for (const expectedClassUnion of testData.classUnions) {
+        expect(
+          (await objectSet.classUnion(expectedClassUnion.$identifier))
+            .unsafeCoerce()
+            .$equals(expectedClassUnion as any)
+            .unsafeCoerce(),
+        ).toBe(true);
+      }
+    });
+
+    it("union without fromRdfType", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.noRdfTypeClassUnions);
+      for (const expectedClassUnion of testData.noRdfTypeClassUnions) {
+        const actualClassUnion = (
+          await objectSet.noRdfTypeClassUnion(expectedClassUnion.$identifier)
+        ).unsafeCoerce();
+        const equalsResult = kitchenSink.NoRdfTypeClassUnion.$equals(
+          expectedClassUnion,
+          actualClassUnion,
+        );
+        expect(equalsResult.unsafeCoerce()).toBe(true);
+      }
+    });
   });
 
-  it("objectIdentifiers (triple-subjects)", async ({ expect }) => {
-    for (const directRecursiveClass of testData.directRecursiveClasses) {
-      expect(
-        (
-          await objectSet.directRecursiveClassIdentifiers({
-            where: {
-              predicate:
-                kitchenSink.DirectRecursiveClass.$properties
-                  .directRecursiveProperty.identifier,
-              object:
-                directRecursiveClass.directRecursiveProperty.unsafeCoerce()
-                  .$identifier,
-              type: "triple-subjects",
-            },
-          })
-        )
-          .unsafeCoerce()
-          .map((identifier) => identifier.value)
-          .sort(),
-      ).toStrictEqual([directRecursiveClass.$identifier.value]);
-    }
-  });
-
-  it("objects (all identifiers)", async ({ expect }) => {
-    const actualObjects = (
-      await objectSet.concreteChildClasses({
-        where: {
-          identifiers: testData.concreteChildClasses.map(
-            (object) => object.$identifier,
-          ),
-          type: "identifiers",
-        },
-      })
-    ).unsafeCoerce();
-    expect(actualObjects).toHaveLength(testData.concreteChildClasses.length);
-    for (const expectedObject of testData.concreteChildClasses) {
-      expect(
-        actualObjects.some((actualObject) =>
-          actualObject.$equals(expectedObject).isRight(),
-        ),
-      );
-    }
-  });
-
-  it("objects (subset of identifiers)", async ({ expect }) => {
-    const sliceStart = 2;
-    const actualObjects = (
-      await objectSet.concreteChildClasses({
-        where: {
-          identifiers: testData.concreteChildClasses
-            .slice(sliceStart)
-            .map((object) => object.$identifier),
-          type: "identifiers",
-        },
-      })
-    ).unsafeCoerce();
-    expect(actualObjects).toHaveLength(
-      testData.concreteChildClasses.slice(sliceStart).length,
-    );
-    for (const expectedObject of testData.concreteChildClasses.slice(
-      sliceStart,
-    )) {
-      expect(
-        actualObjects.some((actualObject) =>
-          actualObject.$equals(expectedObject).isRight(),
-        ),
-      );
-    }
-  });
-
-  it("objects (known subclasses)", async ({ expect }) => {
-    const parentClasses = (
-      await objectSet.concreteParentClasses()
-    ).unsafeCoerce();
-    expect(parentClasses).toHaveLength(testData.concreteChildClasses.length);
-    for (const childClass of testData.concreteChildClasses) {
-      // parentClass may be an instance of the parent class rather than the child class, depending on the implementation
-      expect(
-        parentClasses.some((parentClass) =>
-          parentClass.$equals(childClass).isRight(),
-        ),
-      );
-    }
-  });
-
-  it("objects (identifier type)", async ({ expect }) => {
-    if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
-      return;
-    }
-
-    {
+  describe("objects", () => {
+    it("all identifiers", async ({ expect }) => {
       const actualObjects = (
-        await objectSet.blankNodeOrIriIdentifierClasses()
-      ).unsafeCoerce();
-      expect(actualObjects).toHaveLength(4);
-      expect(
-        actualObjects.filter(
-          (actualObject) => actualObject.$identifier.termType === "BlankNode",
-        ),
-      ).toHaveLength(2);
-    }
-
-    {
-      const actualObjects = (
-        await objectSet.blankNodeOrIriIdentifierClasses({
-          where: { identifierType: "NamedNode", type: "type" },
+        await objectSet.concreteChildClasses({
+          where: {
+            identifiers: testData.concreteChildClasses.map(
+              (object) => object.$identifier,
+            ),
+            type: "identifiers",
+          },
         })
       ).unsafeCoerce();
-      expect(actualObjects).toHaveLength(2);
-      for (const actualObject of actualObjects) {
-        expect(actualObject.$identifier.termType).toStrictEqual("NamedNode");
+      expect(actualObjects).toHaveLength(testData.concreteChildClasses.length);
+      for (const expectedObject of testData.concreteChildClasses) {
+        expect(
+          actualObjects.some((actualObject) =>
+            actualObject.$equals(expectedObject).isRight(),
+          ),
+        );
       }
-    }
+    });
+
+    it("subset of identifiers", async ({ expect }) => {
+      const sliceStart = 2;
+      const actualObjects = (
+        await objectSet.concreteChildClasses({
+          where: {
+            identifiers: testData.concreteChildClasses
+              .slice(sliceStart)
+              .map((object) => object.$identifier),
+            type: "identifiers",
+          },
+        })
+      ).unsafeCoerce();
+      expect(actualObjects).toHaveLength(
+        testData.concreteChildClasses.slice(sliceStart).length,
+      );
+      for (const expectedObject of testData.concreteChildClasses.slice(
+        sliceStart,
+      )) {
+        expect(
+          actualObjects.some((actualObject) =>
+            actualObject.$equals(expectedObject).isRight(),
+          ),
+        );
+      }
+    });
+
+    it("known subclasses", async ({ expect }) => {
+      const objectSet = createObjectSet(...testData.concreteChildClasses);
+      const parentClasses = (
+        await objectSet.concreteParentClasses()
+      ).unsafeCoerce();
+      expect(parentClasses).toHaveLength(testData.concreteChildClasses.length);
+      for (const childClass of testData.concreteChildClasses) {
+        // parentClass may be an instance of the parent class rather than the child class, depending on the implementation
+        expect(
+          parentClasses.some((parentClass) =>
+            parentClass.$equals(childClass).isRight(),
+          ),
+        );
+      }
+    });
+
+    it("objects (identifier type)", async ({ expect }) => {
+      if (objectSet instanceof kitchenSink.$SparqlObjectSet) {
+        return;
+      }
+
+      {
+        const actualObjects = (
+          await objectSet.blankNodeOrIriIdentifierClasses()
+        ).unsafeCoerce();
+        expect(actualObjects).toHaveLength(4);
+        expect(
+          actualObjects.filter(
+            (actualObject) => actualObject.$identifier.termType === "BlankNode",
+          ),
+        ).toHaveLength(2);
+      }
+
+      {
+        const actualObjects = (
+          await objectSet.blankNodeOrIriIdentifierClasses({
+            where: { identifierType: "NamedNode", type: "type" },
+          })
+        ).unsafeCoerce();
+        expect(actualObjects).toHaveLength(2);
+        for (const actualObject of actualObjects) {
+          expect(actualObject.$identifier.termType).toStrictEqual("NamedNode");
+        }
+      }
+    });
   });
 
   it("objectsCount", async ({ expect }) => {
+    const objectSet = createObjectSet(...testData.concreteChildClasses);
     expect(
       (await objectSet.concreteChildClassesCount()).unsafeCoerce(),
     ).toStrictEqual(testData.concreteChildClasses.length);
-  });
-
-  it("objectUnion (class with fromRdfType)", async ({ expect }) => {
-    for (const expectedClassUnion of testData.classUnions) {
-      expect(
-        (await objectSet.classUnion(expectedClassUnion.$identifier))
-          .unsafeCoerce()
-          .$equals(expectedClassUnion as any)
-          .unsafeCoerce(),
-      ).toBe(true);
-    }
-  });
-
-  it("objectUnion (class without fromRdfType)", async ({ expect }) => {
-    for (const expectedClassUnion of testData.noRdfTypeClassUnions) {
-      const actualClassUnion = (
-        await objectSet.noRdfTypeClassUnion(expectedClassUnion.$identifier)
-      ).unsafeCoerce();
-      const equalsResult = kitchenSink.NoRdfTypeClassUnion.$equals(
-        expectedClassUnion,
-        actualClassUnion,
-      );
-      expect(equalsResult.unsafeCoerce()).toBe(true);
-    }
   });
 
   it("objectUnionIdentifiers (no options)", async ({ expect }) => {
