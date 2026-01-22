@@ -340,7 +340,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     shaclmate:extern true ;
     shaclmate:tsFeatureExclude shaclmate:_TsFeature_Sparql ;
     shaclmate:tsImport "import { ExternClass } from \"./ExternClass.js\";" ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "An extern object type in TypeScript" ;
     rdfs:subClassOf :AbstractBaseClassForExternClass .
 
