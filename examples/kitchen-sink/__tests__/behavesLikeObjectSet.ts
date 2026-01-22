@@ -1,3 +1,4 @@
+import type { BlankNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3, { DataFactory, type NamedNode } from "n3";
 import { describe, it } from "vitest";
@@ -247,10 +248,192 @@ export function behavesLikeObjectSet(
     });
 
     describe("filter", () => {
-      describe("number", () => {
-        const identifiers = [...new Array(3)].map((_, i) =>
-          DataFactory.namedNode(`http://example.com/${i}`),
+      const identifiers = [...new Array(10)].map((_, i) =>
+        DataFactory.namedNode(`http://example.com/${i}`),
+      );
+
+      describe("blank node", () => {
+        const objectSet = createObjectSet(
+          new kitchenSink.TermPropertiesClass({
+            blankNodeTermProperty: DataFactory.blankNode(),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[1],
+            stringTermProperty: "test",
+          }),
         );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          present: [{ blankNodeTermProperty: {} }, [identifiers[0]]],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe("boolean", () => {
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                booleanTermProperty: i === 0,
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          valueFalse: [
+            { booleanTermProperty: { value: false } },
+            [identifiers[1]],
+          ],
+          valueTrue: [
+            { booleanTermProperty: { value: true } },
+            [identifiers[0]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe.skip("Date", () => {
+        const baseValue = new Date(1523268000000);
+
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                dateTermProperty: new Date(baseValue.getTime() + i * 1000),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          in: [{ dateTermProperty: { in: [baseValue] } }, [identifiers[0]]],
+          maxExclusive: [
+            {
+              dateTermProperty: {
+                maxExclusive: new Date(baseValue.getTime() + 1000),
+              },
+            },
+            [identifiers[0]],
+          ],
+          maxInclusive: [
+            { dateTermProperty: { maxInclusive: baseValue } },
+            [identifiers[0]],
+          ],
+          minExclusive: [
+            { dateTermProperty: { minExclusive: baseValue } },
+            [identifiers[1]],
+          ],
+          minInclusive: [
+            { dateTermProperty: { minInclusive: baseValue } },
+            [identifiers[0], identifiers[1]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe("identifier", () => {
+        const blankNodeIdentifier = DataFactory.blankNode();
+        const namedNodeIdentifier = DataFactory.namedNode("http://example.com");
+
+        const objectSet = createObjectSet(
+          new kitchenSink.TermPropertiesClass({
+            $identifier: blankNodeIdentifier,
+            stringTermProperty: "ignored",
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: namedNodeIdentifier,
+            stringTermProperty: "ignored",
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          in: [
+            { $identifier: { in: [namedNodeIdentifier] } },
+            [namedNodeIdentifier],
+          ],
+          typeBlankNode: [
+            { $identifier: { type: "BlankNode" } },
+            [blankNodeIdentifier],
+          ],
+          typeNamedNode: [
+            { $identifier: { type: "NamedNode" } },
+            [namedNodeIdentifier],
+          ],
+        } satisfies Record<
+          string,
+          [
+            kitchenSink.TermPropertiesClass.$Filter,
+            readonly (BlankNode | NamedNode)[],
+          ]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              if (expected[i].termType === "NamedNode") {
+                expect(expected[i].equals(actual[i]));
+              }
+            }
+          });
+        }
+      });
+
+      describe("number", () => {
         const objectSet = createObjectSet(
           ...[...new Array(2)].map(
             (_, i) =>
@@ -302,9 +485,6 @@ export function behavesLikeObjectSet(
       });
 
       describe("string", () => {
-        const identifiers = [...new Array(3)].map((_, i) =>
-          DataFactory.namedNode(`http://example.com/${i}`),
-        );
         const objectSet = createObjectSet(
           ...[...new Array(2)].map(
             (_, i) =>
