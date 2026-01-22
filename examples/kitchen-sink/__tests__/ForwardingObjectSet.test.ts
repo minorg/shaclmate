@@ -14,11 +14,10 @@ class TestForwardingObjectSet extends kitchenSink.$ForwardingObjectSet {
 
 describe("ForwardingObjectSet", () => {
   behavesLikeObjectSet((...instances: readonly kitchenSink.$Object[]) => {
-    const dataset = new N3.Store();
     const objectSet = new TestForwardingObjectSet();
     const resourceSet = new MutableResourceSet({
       dataFactory: N3.DataFactory,
-      dataset,
+      dataset: objectSet.dataset,
     });
     for (const instance of instances) {
       kitchenSink.$Object.$toRdf(instance, { resourceSet });

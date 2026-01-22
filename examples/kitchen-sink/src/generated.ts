@@ -444,18 +444,7 @@ function $filterIdentifier(
 }
 
 function $filterLiteral(filter: $LiteralFilter, value: rdfjs.Literal): boolean {
-  return $filterTerm(
-    {
-      ...filter,
-      in: filter.in
-        ? filter.in.map((inLiteral) => ({
-            ...inLiteral,
-            type: "Literal" as const,
-          }))
-        : undefined,
-    },
-    value,
-  );
+  return $filterTerm(filter, value);
 }
 
 function $filterMaybe<ItemT, ItemFilterT>(

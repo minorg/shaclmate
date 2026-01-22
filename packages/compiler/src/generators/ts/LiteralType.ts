@@ -109,10 +109,7 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  return ${syntheticNamePrefix}filterTerm({
-    ...filter,
-    in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
-  }, value);
+  return ${syntheticNamePrefix}filterTerm(filter, value);
 }`,
       ),
       sharedSnippetDeclarations.filterTerm,
