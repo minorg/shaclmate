@@ -1,9 +1,11 @@
 import { camelCase, pascalCase } from "change-case";
+import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { objectInitializer } from "../objectInitializer.js";
+import { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlFunctionDeclarations(
@@ -52,14 +54,35 @@ export function sparqlFunctionDeclarations(
       ],
       returnType: "readonly sparqljs.Pattern[]",
       statements: [
-        `return [{ patterns: [${this.concreteMemberTypes
+        `const patterns: sparqljs.Pattern[] = [];`,
+        `\
+const subject = parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}");
+if (subject.termType === "Variable") {
+  patterns.push(${this.identifierType
+    .sparqlWherePatterns({
+      allowIgnoreRdfType: false,
+      propertyPatterns: [],
+      variables: {
+        filter: Maybe.of(
+          `parameters?.filter?.${syntheticNamePrefix}identifier`,
+        ),
+        preferredLanguages: "parameters?.preferredLanguages",
+        valueVariable: "subject",
+        variablePrefix: "don't need",
+      },
+    })
+    .map(Sparql.Pattern.stringify)
+    .join(", ")});
+}`,
+        `patterns.push({ patterns: [${this.concreteMemberTypes
           .map((memberType) =>
             objectInitializer({
               patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
               type: '"group"',
             }),
           )
-          .join(", ")}], type: "union" }];`,
+          .join(", ")}], type: "union" });`,
+        `return patterns;`,
       ],
     },
   ];

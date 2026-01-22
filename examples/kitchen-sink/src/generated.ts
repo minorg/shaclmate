@@ -59855,37 +59855,47 @@ export namespace ClassUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: ClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("classUnionClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMember1`
-                : "classUnionClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("classUnionClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMember2`
-                : "classUnionClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject = parameters?.subject ?? dataFactory.variable!("classUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: ClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("classUnionClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassUnionMember1`
+              : "classUnionClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("classUnionClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassUnionMember2`
+              : "classUnionClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -60223,51 +60233,62 @@ export namespace FlattenClassUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: ClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("flattenClassUnionClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMember1`
-                : "flattenClassUnionClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("flattenClassUnionClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMember2`
-                : "flattenClassUnionClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.FlattenClassUnionMember3,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "flattenClassUnionFlattenClassUnionMember3",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}FlattenClassUnionMember3`
-                : "flattenClassUnionFlattenClassUnionMember3",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("flattenClassUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: ClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("flattenClassUnionClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassUnionMember1`
+              : "flattenClassUnionClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("flattenClassUnionClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassUnionMember2`
+              : "flattenClassUnionClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.FlattenClassUnionMember3,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "flattenClassUnionFlattenClassUnionMember3",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}FlattenClassUnionMember3`
+              : "flattenClassUnionFlattenClassUnionMember3",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -60582,37 +60603,48 @@ export namespace InterfaceUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: InterfaceUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.InterfaceUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("interfaceUnionInterfaceUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember1`
-                : "interfaceUnionInterfaceUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InterfaceUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.InterfaceUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember2`
-                : "interfaceUnionInterfaceUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("interfaceUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: InterfaceUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.InterfaceUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("interfaceUnionInterfaceUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}InterfaceUnionMember1`
+              : "interfaceUnionInterfaceUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InterfaceUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.InterfaceUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("interfaceUnionInterfaceUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}InterfaceUnionMember2`
+              : "interfaceUnionInterfaceUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -60937,41 +60969,52 @@ export namespace LazilyResolvedClassUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
-                : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2`
-                : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
+              : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2`
+              : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -61330,43 +61373,53 @@ export namespace LazilyResolvedInterfaceUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1`
-                : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2`
-                : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("lazilyResolvedInterfaceUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1`
+              : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2`
+              : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -61699,41 +61752,52 @@ export namespace PartialClassUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: PartialClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "partialClassUnionPartialClassUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialClassUnionMember1`
-                : "partialClassUnionPartialClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "partialClassUnionPartialClassUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialClassUnionMember2`
-                : "partialClassUnionPartialClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("partialClassUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: PartialClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "partialClassUnionPartialClassUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialClassUnionMember1`
+              : "partialClassUnionPartialClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "partialClassUnionPartialClassUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialClassUnionMember2`
+              : "partialClassUnionPartialClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -62065,41 +62129,52 @@ export namespace PartialInterfaceUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: PartialInterfaceUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "partialInterfaceUnionPartialInterfaceUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
-                : "partialInterfaceUnionPartialInterfaceUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialInterfaceUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "partialInterfaceUnionPartialInterfaceUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialInterfaceUnionMember2`
-                : "partialInterfaceUnionPartialInterfaceUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("partialInterfaceUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: PartialInterfaceUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "partialInterfaceUnionPartialInterfaceUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
+              : "partialInterfaceUnionPartialInterfaceUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterfaceUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "partialInterfaceUnionPartialInterfaceUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialInterfaceUnionMember2`
+              : "partialInterfaceUnionPartialInterfaceUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -62422,41 +62497,52 @@ export namespace NoRdfTypeClassUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
-                : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
-                : "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
+              : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
+              : "noRdfTypeClassUnionNoRdfTypeClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -62773,41 +62859,52 @@ export namespace RecursiveClassUnion {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "recursiveClassUnionRecursiveClassUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
-                : "recursiveClassUnionRecursiveClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "recursiveClassUnionRecursiveClassUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
-                : "recursiveClassUnionRecursiveClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("recursiveClassUnion");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "recursiveClassUnionRecursiveClassUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
+              : "recursiveClassUnionRecursiveClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "recursiveClassUnionRecursiveClassUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
+              : "recursiveClassUnionRecursiveClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
@@ -66504,870 +66601,871 @@ export namespace $Object {
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Pattern[] {
-    return [
-      {
-        patterns: [
-          {
-            patterns: BlankNodeIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.BlankNodeIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectBlankNodeIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}BlankNodeIdentifierClass`
-                : "objectBlankNodeIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: BlankNodeIdentifierInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.BlankNodeIdentifierInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectBlankNodeIdentifierInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}BlankNodeIdentifierInterface`
-                : "objectBlankNodeIdentifierInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectBlankNodeOrIriIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierClass`
-                : "objectBlankNodeOrIriIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierInterface,
+    const patterns: sparqljs.Pattern[] = [];
+    const subject = parameters?.subject ?? dataFactory.variable!("object");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push({
+      patterns: [
+        {
+          patterns: BlankNodeIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.BlankNodeIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectBlankNodeIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}BlankNodeIdentifierClass`
+              : "objectBlankNodeIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeIdentifierInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.BlankNodeIdentifierInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectBlankNodeIdentifierInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}BlankNodeIdentifierInterface`
+              : "objectBlankNodeIdentifierInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectBlankNodeOrIriIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierClass`
+              : "objectBlankNodeOrIriIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.BlankNodeOrIriIdentifierInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectBlankNodeOrIriIdentifierInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface`
+              : "objectBlankNodeOrIriIdentifierInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassUnionMember1`
+              : "objectClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ClassUnionMember2`
+              : "objectClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteChildClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ConcreteChildClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectConcreteChildClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ConcreteChildClass`
+              : "objectConcreteChildClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteParentClassStatic.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ConcreteParentClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectConcreteParentClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ConcreteParentClass`
+              : "objectConcreteParentClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteChildInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ConcreteChildInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectConcreteChildInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ConcreteChildInterface`
+              : "objectConcreteChildInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConcreteParentInterfaceStatic.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ConcreteParentInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectConcreteParentInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ConcreteParentInterface`
+              : "objectConcreteParentInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.BaseInterfaceWithoutProperties,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectBaseInterfaceWithoutProperties"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}BaseInterfaceWithoutProperties`
+              : "objectBaseInterfaceWithoutProperties",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.BaseInterfaceWithProperties,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectBaseInterfaceWithProperties"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}BaseInterfaceWithProperties`
+              : "objectBaseInterfaceWithProperties",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ConvertibleTypePropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ConvertibleTypePropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectConvertibleTypePropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ConvertibleTypePropertiesClass`
+              : "objectConvertibleTypePropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DateUnionPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.DateUnionPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectDateUnionPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}DateUnionPropertiesClass`
+              : "objectDateUnionPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DefaultValuePropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.DefaultValuePropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectDefaultValuePropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}DefaultValuePropertiesClass`
+              : "objectDefaultValuePropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: DirectRecursiveClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.DirectRecursiveClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectDirectRecursiveClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}DirectRecursiveClass`
+              : "objectDirectRecursiveClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ExplicitFromToRdfTypesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectExplicitFromToRdfTypesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ExplicitFromToRdfTypesClass`
+              : "objectExplicitFromToRdfTypesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExplicitRdfTypeClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ExplicitRdfTypeClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectExplicitRdfTypeClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ExplicitRdfTypeClass`
+              : "objectExplicitRdfTypeClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExternClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ExternClass,
+            subject:
+              parameters?.subject ?? dataFactory.variable!("objectExternClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ExternClass`
+              : "objectExternClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ExternClassPropertyClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ExternClassPropertyClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectExternClassPropertyClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ExternClassPropertyClass`
+              : "objectExternClassPropertyClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.FlattenClassUnionMember3,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectFlattenClassUnionMember3"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}FlattenClassUnionMember3`
+              : "objectFlattenClassUnionMember3",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: HasValuePropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.HasValuePropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectHasValuePropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}HasValuePropertiesClass`
+              : "objectHasValuePropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IdentifierOverride5Class.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IdentifierOverride5Class,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIdentifierOverride5Class"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IdentifierOverride5Class`
+              : "objectIdentifierOverride5Class",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IdentifierOverride4ClassStatic.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IdentifierOverride4Class,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIdentifierOverride4Class"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IdentifierOverride4Class`
+              : "objectIdentifierOverride4Class",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IdentifierOverride3ClassStatic.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IdentifierOverride3Class,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIdentifierOverride3Class"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IdentifierOverride3Class`
+              : "objectIdentifierOverride3Class",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.InIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectInIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}InIdentifierClass`
+              : "objectInIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.InPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectInPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}InPropertiesClass`
+              : "objectInPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IndirectRecursiveClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IndirectRecursiveClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIndirectRecursiveClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IndirectRecursiveClass`
+              : "objectIndirectRecursiveClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IndirectRecursiveHelperClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IndirectRecursiveHelperClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIndirectRecursiveHelperClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IndirectRecursiveHelperClass`
+              : "objectIndirectRecursiveHelperClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: Interface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.Interface,
+            subject:
+              parameters?.subject ?? dataFactory.variable!("objectInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}Interface`
+              : "objectInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InterfaceUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.InterfaceUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectInterfaceUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}InterfaceUnionMember1`
+              : "objectInterfaceUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: InterfaceUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.InterfaceUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectInterfaceUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}InterfaceUnionMember2`
+              : "objectInterfaceUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IriIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IriIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIriIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IriIdentifierClass`
+              : "objectIriIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: IriIdentifierInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.IriIdentifierInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectIriIdentifierInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}IriIdentifierInterface`
+              : "objectIriIdentifierInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.JsPrimitiveUnionPropertyClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectJsPrimitiveUnionPropertyClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}JsPrimitiveUnionPropertyClass`
+              : "objectJsPrimitiveUnionPropertyClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LanguageInPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LanguageInPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectLanguageInPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LanguageInPropertiesClass`
+              : "objectLanguageInPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
+              filter:
+                parameters?.filter?.on
+                  ?.LazilyResolvedBlankNodeOrIriIdentifierClass,
               subject:
                 parameters?.subject ??
                 dataFactory.variable!(
-                  "objectBlankNodeOrIriIdentifierInterface",
+                  "objectLazilyResolvedBlankNodeOrIriIdentifierClass",
                 ),
               variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface`
-                : "objectBlankNodeOrIriIdentifierInterface",
+                ? `${parameters.variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass`
+                : "objectLazilyResolvedBlankNodeOrIriIdentifierClass",
             }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMember1`
-                : "objectClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ClassUnionMember2`
-                : "objectClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ConcreteChildClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ConcreteChildClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectConcreteChildClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ConcreteChildClass`
-                : "objectConcreteChildClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ConcreteParentClassStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ConcreteParentClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectConcreteParentClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ConcreteParentClass`
-                : "objectConcreteParentClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ConcreteChildInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ConcreteChildInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectConcreteChildInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ConcreteChildInterface`
-                : "objectConcreteChildInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ConcreteParentInterfaceStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ConcreteParentInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectConcreteParentInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ConcreteParentInterface`
-                : "objectConcreteParentInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns(
+          type: "group",
+        },
+        {
+          patterns:
+            LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns(
               {
-                filter: parameters?.filter?.on?.BaseInterfaceWithoutProperties,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!("objectBaseInterfaceWithoutProperties"),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}BaseInterfaceWithoutProperties`
-                  : "objectBaseInterfaceWithoutProperties",
-              },
-            ).concat(),
-            type: "group",
-          },
-          {
-            patterns: BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.BaseInterfaceWithProperties,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectBaseInterfaceWithProperties"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}BaseInterfaceWithProperties`
-                : "objectBaseInterfaceWithProperties",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ConvertibleTypePropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ConvertibleTypePropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectConvertibleTypePropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ConvertibleTypePropertiesClass`
-                : "objectConvertibleTypePropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: DateUnionPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.DateUnionPropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectDateUnionPropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}DateUnionPropertiesClass`
-                : "objectDateUnionPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: DefaultValuePropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.DefaultValuePropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectDefaultValuePropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}DefaultValuePropertiesClass`
-                : "objectDefaultValuePropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: DirectRecursiveClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.DirectRecursiveClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectDirectRecursiveClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}DirectRecursiveClass`
-                : "objectDirectRecursiveClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ExplicitFromToRdfTypesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectExplicitFromToRdfTypesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ExplicitFromToRdfTypesClass`
-                : "objectExplicitFromToRdfTypesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ExplicitRdfTypeClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ExplicitRdfTypeClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectExplicitRdfTypeClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ExplicitRdfTypeClass`
-                : "objectExplicitRdfTypeClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ExternClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ExternClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectExternClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ExternClass`
-                : "objectExternClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ExternClassPropertyClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ExternClassPropertyClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectExternClassPropertyClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ExternClassPropertyClass`
-                : "objectExternClassPropertyClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: FlattenClassUnionMember3.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.FlattenClassUnionMember3,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectFlattenClassUnionMember3"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}FlattenClassUnionMember3`
-                : "objectFlattenClassUnionMember3",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: HasValuePropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.HasValuePropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectHasValuePropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}HasValuePropertiesClass`
-                : "objectHasValuePropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IdentifierOverride5Class.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IdentifierOverride5Class,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIdentifierOverride5Class"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IdentifierOverride5Class`
-                : "objectIdentifierOverride5Class",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IdentifierOverride4ClassStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IdentifierOverride4Class,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIdentifierOverride4Class"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IdentifierOverride4Class`
-                : "objectIdentifierOverride4Class",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IdentifierOverride3ClassStatic.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IdentifierOverride3Class,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIdentifierOverride3Class"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IdentifierOverride3Class`
-                : "objectIdentifierOverride3Class",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.InIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectInIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InIdentifierClass`
-                : "objectInIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.InPropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectInPropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InPropertiesClass`
-                : "objectInPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IndirectRecursiveClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IndirectRecursiveClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIndirectRecursiveClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IndirectRecursiveClass`
-                : "objectIndirectRecursiveClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IndirectRecursiveHelperClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IndirectRecursiveHelperClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIndirectRecursiveHelperClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IndirectRecursiveHelperClass`
-                : "objectIndirectRecursiveHelperClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: Interface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.Interface,
-              subject:
-                parameters?.subject ?? dataFactory.variable!("objectInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}Interface`
-                : "objectInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InterfaceUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.InterfaceUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectInterfaceUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember1`
-                : "objectInterfaceUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: InterfaceUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.InterfaceUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectInterfaceUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}InterfaceUnionMember2`
-                : "objectInterfaceUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IriIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IriIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIriIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IriIdentifierClass`
-                : "objectIriIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: IriIdentifierInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.IriIdentifierInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectIriIdentifierInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}IriIdentifierInterface`
-                : "objectIriIdentifierInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.JsPrimitiveUnionPropertyClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectJsPrimitiveUnionPropertyClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}JsPrimitiveUnionPropertyClass`
-                : "objectJsPrimitiveUnionPropertyClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LanguageInPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LanguageInPropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectLanguageInPropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LanguageInPropertiesClass`
-                : "objectLanguageInPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns:
-              LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
                 filter:
                   parameters?.filter?.on
-                    ?.LazilyResolvedBlankNodeOrIriIdentifierClass,
+                    ?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
                 subject:
                   parameters?.subject ??
                   dataFactory.variable!(
-                    "objectLazilyResolvedBlankNodeOrIriIdentifierClass",
+                    "objectLazilyResolvedBlankNodeOrIriIdentifierInterface",
                   ),
                 variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass`
-                  : "objectLazilyResolvedBlankNodeOrIriIdentifierClass",
-              }).concat(),
-            type: "group",
-          },
-          {
-            patterns:
-              LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns(
-                {
-                  filter:
-                    parameters?.filter?.on
-                      ?.LazilyResolvedBlankNodeOrIriIdentifierInterface,
-                  subject:
-                    parameters?.subject ??
-                    dataFactory.variable!(
-                      "objectLazilyResolvedBlankNodeOrIriIdentifierInterface",
-                    ),
-                  variablePrefix: parameters?.variablePrefix
-                    ? `${parameters.variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface`
-                    : "objectLazilyResolvedBlankNodeOrIriIdentifierInterface",
-                },
-              ).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectLazilyResolvedClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
-                : "objectLazilyResolvedClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectLazilyResolvedClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2`
-                : "objectLazilyResolvedClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "objectLazilyResolvedInterfaceUnionMember1",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1`
-                : "objectLazilyResolvedInterfaceUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
-              filter:
-                parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!(
-                  "objectLazilyResolvedInterfaceUnionMember2",
-                ),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2`
-                : "objectLazilyResolvedInterfaceUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectLazilyResolvedIriIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierClass`
-                : "objectLazilyResolvedIriIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns(
-              {
-                filter:
-                  parameters?.filter?.on?.LazilyResolvedIriIdentifierInterface,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!(
-                    "objectLazilyResolvedIriIdentifierInterface",
-                  ),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierInterface`
-                  : "objectLazilyResolvedIriIdentifierInterface",
+                  ? `${parameters.variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface`
+                  : "objectLazilyResolvedBlankNodeOrIriIdentifierInterface",
               },
             ).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazyPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazyPropertiesClass,
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectLazilyResolvedClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1`
+              : "objectLazilyResolvedClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectLazilyResolvedClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2`
+              : "objectLazilyResolvedClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "objectLazilyResolvedInterfaceUnionMember1",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1`
+              : "objectLazilyResolvedInterfaceUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedInterfaceUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "objectLazilyResolvedInterfaceUnionMember2",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2`
+              : "objectLazilyResolvedInterfaceUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazilyResolvedIriIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectLazilyResolvedIriIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierClass`
+              : "objectLazilyResolvedIriIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
+            filter:
+              parameters?.filter?.on?.LazilyResolvedIriIdentifierInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!(
+                "objectLazilyResolvedIriIdentifierInterface",
+              ),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierInterface`
+              : "objectLazilyResolvedIriIdentifierInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazyPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazyPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectLazyPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazyPropertiesClass`
+              : "objectLazyPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPartialClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialClass`
+              : "objectPartialClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: LazyPropertiesInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.LazyPropertiesInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectLazyPropertiesInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}LazyPropertiesInterface`
+              : "objectLazyPropertiesInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPartialInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialInterface`
+              : "objectPartialInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: ListPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.ListPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectListPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}ListPropertiesClass`
+              : "objectListPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: MutablePropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.MutablePropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectMutablePropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}MutablePropertiesClass`
+              : "objectMutablePropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectNoRdfTypeClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
+              : "objectNoRdfTypeClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectNoRdfTypeClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
+              : "objectNoRdfTypeClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: NonClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.NonClass,
+            subject:
+              parameters?.subject ?? dataFactory.variable!("objectNonClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}NonClass`
+              : "objectNonClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: OrderedPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.OrderedPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectOrderedPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}OrderedPropertiesClass`
+              : "objectOrderedPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPartialClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialClassUnionMember1`
+              : "objectPartialClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPartialClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialClassUnionMember2`
+              : "objectPartialClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterfaceUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPartialInterfaceUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
+              : "objectPartialInterfaceUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PartialInterfaceUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPartialInterfaceUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PartialInterfaceUnionMember2`
+              : "objectPartialInterfaceUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyCardinalitiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PropertyCardinalitiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPropertyCardinalitiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
+              : "objectPropertyCardinalitiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: PropertyVisibilitiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.PropertyVisibilitiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectPropertyVisibilitiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}PropertyVisibilitiesClass`
+              : "objectPropertyVisibilitiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectRecursiveClassUnionMember1"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
+              : "objectRecursiveClassUnionMember1",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectRecursiveClassUnionMember2"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
+              : "objectRecursiveClassUnionMember2",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: Sha256IriIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.Sha256IriIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectSha256IriIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}Sha256IriIdentifierClass`
+              : "objectSha256IriIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: TermPropertiesClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.TermPropertiesClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectTermPropertiesClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}TermPropertiesClass`
+              : "objectTermPropertiesClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UnionDiscriminantsClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.UnionDiscriminantsClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectUnionDiscriminantsClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}UnionDiscriminantsClass`
+              : "objectUnionDiscriminantsClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UuidV4IriIdentifierClass.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.UuidV4IriIdentifierClass,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectUuidV4IriIdentifierClass"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}UuidV4IriIdentifierClass`
+              : "objectUuidV4IriIdentifierClass",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: UuidV4IriIdentifierInterface.$sparqlWherePatterns({
+            filter: parameters?.filter?.on?.UuidV4IriIdentifierInterface,
+            subject:
+              parameters?.subject ??
+              dataFactory.variable!("objectUuidV4IriIdentifierInterface"),
+            variablePrefix: parameters?.variablePrefix
+              ? `${parameters.variablePrefix}UuidV4IriIdentifierInterface`
+              : "objectUuidV4IriIdentifierInterface",
+          }).concat(),
+          type: "group",
+        },
+        {
+          patterns: $DefaultPartial
+            .$sparqlWherePatterns({
+              filter: parameters?.filter?.on?.$DefaultPartial,
               subject:
                 parameters?.subject ??
-                dataFactory.variable!("objectLazyPropertiesClass"),
+                dataFactory.variable!("objectDefaultPartial"),
               variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazyPropertiesClass`
-                : "objectLazyPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialClass,
+                ? `${parameters.variablePrefix}DefaultPartial`
+                : "objectDefaultPartial",
+            })
+            .concat(),
+          type: "group",
+        },
+        {
+          patterns: $NamedDefaultPartial
+            .$sparqlWherePatterns({
+              filter: parameters?.filter?.on?.$NamedDefaultPartial,
               subject:
                 parameters?.subject ??
-                dataFactory.variable!("objectPartialClass"),
+                dataFactory.variable!("objectNamedDefaultPartial"),
               variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialClass`
-                : "objectPartialClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: LazyPropertiesInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.LazyPropertiesInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectLazyPropertiesInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}LazyPropertiesInterface`
-                : "objectLazyPropertiesInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPartialInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialInterface`
-                : "objectPartialInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: ListPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.ListPropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectListPropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}ListPropertiesClass`
-                : "objectListPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: MutablePropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.MutablePropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectMutablePropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}MutablePropertiesClass`
-                : "objectMutablePropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectNoRdfTypeClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1`
-                : "objectNoRdfTypeClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.NoRdfTypeClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectNoRdfTypeClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2`
-                : "objectNoRdfTypeClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: NonClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.NonClass,
-              subject:
-                parameters?.subject ?? dataFactory.variable!("objectNonClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}NonClass`
-                : "objectNonClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: OrderedPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.OrderedPropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectOrderedPropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}OrderedPropertiesClass`
-                : "objectOrderedPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPartialClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialClassUnionMember1`
-                : "objectPartialClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPartialClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialClassUnionMember2`
-                : "objectPartialClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialInterfaceUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialInterfaceUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPartialInterfaceUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialInterfaceUnionMember1`
-                : "objectPartialInterfaceUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PartialInterfaceUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PartialInterfaceUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPartialInterfaceUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PartialInterfaceUnionMember2`
-                : "objectPartialInterfaceUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PropertyCardinalitiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PropertyCardinalitiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPropertyCardinalitiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PropertyCardinalitiesClass`
-                : "objectPropertyCardinalitiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: PropertyVisibilitiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.PropertyVisibilitiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectPropertyVisibilitiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}PropertyVisibilitiesClass`
-                : "objectPropertyVisibilitiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: RecursiveClassUnionMember1.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.RecursiveClassUnionMember1,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectRecursiveClassUnionMember1"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}RecursiveClassUnionMember1`
-                : "objectRecursiveClassUnionMember1",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: RecursiveClassUnionMember2.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.RecursiveClassUnionMember2,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectRecursiveClassUnionMember2"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}RecursiveClassUnionMember2`
-                : "objectRecursiveClassUnionMember2",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: Sha256IriIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.Sha256IriIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectSha256IriIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}Sha256IriIdentifierClass`
-                : "objectSha256IriIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: TermPropertiesClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.TermPropertiesClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectTermPropertiesClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}TermPropertiesClass`
-                : "objectTermPropertiesClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: UnionDiscriminantsClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.UnionDiscriminantsClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectUnionDiscriminantsClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}UnionDiscriminantsClass`
-                : "objectUnionDiscriminantsClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: UuidV4IriIdentifierClass.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.UuidV4IriIdentifierClass,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectUuidV4IriIdentifierClass"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}UuidV4IriIdentifierClass`
-                : "objectUuidV4IriIdentifierClass",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: UuidV4IriIdentifierInterface.$sparqlWherePatterns({
-              filter: parameters?.filter?.on?.UuidV4IriIdentifierInterface,
-              subject:
-                parameters?.subject ??
-                dataFactory.variable!("objectUuidV4IriIdentifierInterface"),
-              variablePrefix: parameters?.variablePrefix
-                ? `${parameters.variablePrefix}UuidV4IriIdentifierInterface`
-                : "objectUuidV4IriIdentifierInterface",
-            }).concat(),
-            type: "group",
-          },
-          {
-            patterns: $DefaultPartial
-              .$sparqlWherePatterns({
-                filter: parameters?.filter?.on?.$DefaultPartial,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!("objectDefaultPartial"),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}DefaultPartial`
-                  : "objectDefaultPartial",
-              })
-              .concat(),
-            type: "group",
-          },
-          {
-            patterns: $NamedDefaultPartial
-              .$sparqlWherePatterns({
-                filter: parameters?.filter?.on?.$NamedDefaultPartial,
-                subject:
-                  parameters?.subject ??
-                  dataFactory.variable!("objectNamedDefaultPartial"),
-                variablePrefix: parameters?.variablePrefix
-                  ? `${parameters.variablePrefix}NamedDefaultPartial`
-                  : "objectNamedDefaultPartial",
-              })
-              .concat(),
-            type: "group",
-          },
-        ],
-        type: "union",
-      },
-    ];
+                ? `${parameters.variablePrefix}NamedDefaultPartial`
+                : "objectNamedDefaultPartial",
+            })
+            .concat(),
+          type: "group",
+        },
+      ],
+      type: "union",
+    });
+    return patterns;
   }
 
   export function $toJson(
