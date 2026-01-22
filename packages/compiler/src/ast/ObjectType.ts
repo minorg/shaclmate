@@ -561,9 +561,14 @@ export namespace ObjectType {
       const objectTypeShapeIdentifier = Resource.Identifier.toString(
         objectType.shapeIdentifier,
       );
+      invariant(!objectTypesByShapeIdentifier[objectTypeShapeIdentifier]);
       objectTypesByShapeIdentifier[objectTypeShapeIdentifier] = objectType;
       objectTypeGraphNodes.push(objectTypeShapeIdentifier);
       for (const parentAstObjectType of objectType.parentObjectTypes) {
+        // console.log(
+        //   objectTypeShapeIdentifier,
+        //   Resource.Identifier.toString(parentAstObjectType.shapeIdentifier),
+        // );
         objectTypeGraphEdges.push([
           objectTypeShapeIdentifier,
           Resource.Identifier.toString(parentAstObjectType.shapeIdentifier),

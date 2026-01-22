@@ -108,6 +108,9 @@ export namespace ExternClass {
   }
 
   export const $filter = AbstractBaseClassForExternClassStatic.$filter;
+  export const $fromRdfType = N3.DataFactory.namedNode(
+    "http://example.com/ExternClass",
+  );
   export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
   export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
   export type $Json = AbstractBaseClassForExternClassStatic.$Json;

@@ -958,6 +958,13 @@
               "kind": "ObjectType",
               "comment": "An extern object type in TypeScript",
               "shapeIdentifier": "<http://example.com/ExternClass>",
+              "fromRdfType": {
+                "termType": "NamedNode",
+                "value": "http://example.com/ExternClass"
+              },
+              "parentObjectTypes": [
+                "<http://example.com/AbstractBaseClassForExternClass>"
+              ],
               "identifierMintingStrategy": "blankNode",
               "identifierType": {
                 "kind": "IdentifierType",
@@ -966,7 +973,13 @@
                   "BlankNode",
                   "NamedNode"
                 ]
-              }
+              },
+              "toRdfTypes": [
+                {
+                  "termType": "NamedNode",
+                  "value": "http://example.com/ExternClass"
+                }
+              ]
             }
           },
           "visibility": "public"

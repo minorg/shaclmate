@@ -43622,6 +43622,490 @@ export namespace ExternClassPropertyClass {
   }
 }
 /**
+ * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
+ */
+export abstract class AbstractBaseClassForExternClass {
+  protected _$identifier?: AbstractBaseClassForExternClassStatic.$Identifier;
+  abstract readonly $type: "ExternClass";
+  readonly abstractBaseClassForExternClassProperty: string;
+
+  constructor(parameters: {
+    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
+    readonly abstractBaseClassForExternClassProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
+
+    this.abstractBaseClassForExternClassProperty =
+      parameters.abstractBaseClassForExternClassProperty;
+  }
+
+  get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
+    if (typeof this._$identifier === "undefined") {
+      this._$identifier = dataFactory.blankNode();
+    }
+
+    return this._$identifier;
+  }
+
+  $equals(other: AbstractBaseClassForExternClass): $EqualsResult {
+    return $booleanEquals(this.$identifier, other.$identifier)
+      .mapLeft((propertyValuesUnequal) => ({
+        left: this,
+        right: other,
+        propertyName: "$identifier",
+        propertyValuesUnequal,
+        type: "Property" as const,
+      }))
+      .chain(() =>
+        $strictEquals(this.$type, other.$type).mapLeft(
+          (propertyValuesUnequal) => ({
+            left: this,
+            right: other,
+            propertyName: "$type",
+            propertyValuesUnequal,
+            type: "Property" as const,
+          }),
+        ),
+      )
+      .chain(() =>
+        $strictEquals(
+          this.abstractBaseClassForExternClassProperty,
+          other.abstractBaseClassForExternClassProperty,
+        ).mapLeft((propertyValuesUnequal) => ({
+          left: this,
+          right: other,
+          propertyName: "abstractBaseClassForExternClassProperty",
+          propertyValuesUnequal,
+          type: "Property" as const,
+        })),
+      );
+  }
+
+  $hash<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.$identifier.value);
+    _hasher.update(this.$type);
+    this.$hashShaclProperties(_hasher);
+    return _hasher;
+  }
+
+  protected $hashShaclProperties<
+    HasherT extends {
+      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
+    },
+  >(_hasher: HasherT): HasherT {
+    _hasher.update(this.abstractBaseClassForExternClassProperty);
+    return _hasher;
+  }
+
+  $toJson(): AbstractBaseClassForExternClassStatic.$Json {
+    return JSON.parse(
+      JSON.stringify({
+        "@id":
+          this.$identifier.termType === "BlankNode"
+            ? `_:${this.$identifier.value}`
+            : this.$identifier.value,
+        $type: this.$type,
+        abstractBaseClassForExternClassProperty:
+          this.abstractBaseClassForExternClassProperty,
+      } satisfies AbstractBaseClassForExternClassStatic.$Json),
+    );
+  }
+
+  $toRdf(options?: {
+    ignoreRdfType?: boolean;
+    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
+    resourceSet?: rdfjsResource.MutableResourceSet;
+  }): rdfjsResource.MutableResource {
+    const mutateGraph = options?.mutateGraph;
+    const resourceSet =
+      options?.resourceSet ??
+      new rdfjsResource.MutableResourceSet({
+        dataFactory,
+        dataset: datasetFactory.dataset(),
+      });
+    const resource = resourceSet.mutableResource(this.$identifier, {
+      mutateGraph,
+    });
+    resource.add(
+      AbstractBaseClassForExternClassStatic.$properties
+        .abstractBaseClassForExternClassProperty["identifier"],
+      ...[this.abstractBaseClassForExternClassProperty],
+    );
+    return resource;
+  }
+
+  toString(): string {
+    return JSON.stringify(this.$toJson());
+  }
+}
+
+export namespace AbstractBaseClassForExternClassStatic {
+  export function $filter(
+    filter: AbstractBaseClassForExternClassStatic.$Filter,
+    value: AbstractBaseClassForExternClass,
+  ): boolean {
+    if (
+      typeof filter.$identifier !== "undefined" &&
+      !$filterIdentifier(filter.$identifier, value.$identifier)
+    ) {
+      return false;
+    }
+
+    if (
+      typeof filter.abstractBaseClassForExternClassProperty !== "undefined" &&
+      !$filterString(
+        filter.abstractBaseClassForExternClassProperty,
+        value.abstractBaseClassForExternClassProperty,
+      )
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  export type $Filter = {
+    readonly $identifier?: $IdentifierFilter;
+    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
+  };
+  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
+
+  export namespace $Identifier {
+    export function fromString(
+      identifier: string,
+    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
+      return purify.Either.encase(() =>
+        rdfjsResource.Resource.Identifier.fromString({
+          dataFactory,
+          identifier,
+        }),
+      );
+    }
+
+    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+      toString = rdfjsResource.Resource.Identifier.toString;
+  }
+
+  export type $Json = {
+    readonly "@id": string;
+    readonly $type: "ExternClass";
+    readonly abstractBaseClassForExternClassProperty: string;
+  };
+
+  export function $jsonSchema() {
+    return zod.toJSONSchema($jsonZodSchema());
+  }
+
+  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
+    const scopePrefix = parameters?.scopePrefix ?? "#";
+    return {
+      elements: [
+        {
+          label: "Identifier",
+          scope: `${scopePrefix}/properties/@id`,
+          type: "Control",
+        },
+        {
+          rule: {
+            condition: {
+              schema: { const: "AbstractBaseClassForExternClass" },
+              scope: `${scopePrefix}/properties/$type`,
+            },
+            effect: "HIDE",
+          },
+          scope: `${scopePrefix}/properties/$type`,
+          type: "Control",
+        },
+        {
+          scope: `${scopePrefix}/properties/abstractBaseClassForExternClassProperty`,
+          type: "Control",
+        },
+      ],
+      label: "AbstractBaseClassForExternClass",
+      type: "Group",
+    };
+  }
+
+  export function $jsonZodSchema() {
+    return zod.object({
+      "@id": zod.string().min(1),
+      $type: zod.literal("ExternClass"),
+      abstractBaseClassForExternClassProperty: zod.string(),
+    }) satisfies zod.ZodType<$Json>;
+  }
+
+  export const $properties = {
+    abstractBaseClassForExternClassProperty: {
+      identifier: dataFactory.namedNode(
+        "http://example.com/abstractBaseClassForExternClassProperty",
+      ),
+    },
+  };
+
+  export function $propertiesFromJson(_json: unknown): purify.Either<
+    zod.ZodError,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      abstractBaseClassForExternClassProperty: string;
+    }
+  > {
+    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
+    if (!$jsonSafeParseResult.success) {
+      return purify.Left($jsonSafeParseResult.error);
+    }
+
+    const $jsonObject = $jsonSafeParseResult.data;
+    const $identifier = $jsonObject["@id"].startsWith("_:")
+      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
+      : dataFactory.namedNode($jsonObject["@id"]);
+    const abstractBaseClassForExternClassProperty =
+      $jsonObject["abstractBaseClassForExternClassProperty"];
+    return purify.Either.of({
+      $identifier,
+      abstractBaseClassForExternClassProperty,
+    });
+  }
+
+  export function $propertiesFromRdf($parameters: {
+    context?: any;
+    ignoreRdfType: boolean;
+    objectSet: $ObjectSet;
+    preferredLanguages?: readonly string[];
+    resource: rdfjsResource.Resource;
+  }): purify.Either<
+    Error,
+    {
+      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
+      abstractBaseClassForExternClassProperty: string;
+    }
+  > {
+    return purify.Either.of<
+      Error,
+      AbstractBaseClassForExternClassStatic.$Identifier
+    >(
+      $parameters.resource
+        .identifier as AbstractBaseClassForExternClassStatic.$Identifier,
+    ).chain(($identifier) =>
+      purify.Either.of<
+        Error,
+        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+      >(
+        $parameters.resource.values(
+          $properties.abstractBaseClassForExternClassProperty["identifier"],
+          { unique: true },
+        ),
+      )
+        .chain((values) =>
+          $fromRdfPreferredLanguages({
+            focusResource: $parameters.resource,
+            predicate:
+              AbstractBaseClassForExternClassStatic.$properties
+                .abstractBaseClassForExternClassProperty["identifier"],
+            preferredLanguages: $parameters.preferredLanguages,
+            values,
+          }),
+        )
+        .chain((values) => values.chainMap((value) => value.toString()))
+        .chain((values) => values.head())
+        .map((abstractBaseClassForExternClassProperty) => ({
+          $identifier,
+          abstractBaseClassForExternClassProperty,
+        })),
+    );
+  }
+
+  export function $sparqlConstructQuery(
+    parameters?: {
+      filter?: AbstractBaseClassForExternClassStatic.$Filter;
+      ignoreRdfType?: boolean;
+      prefixes?: { [prefix: string]: string };
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
+  ): sparqljs.ConstructQuery {
+    const {
+      filter,
+      ignoreRdfType,
+      preferredLanguages,
+      subject,
+      ...queryParameters
+    } = parameters ?? {};
+
+    return {
+      ...queryParameters,
+      prefixes: parameters?.prefixes ?? {},
+      queryType: "CONSTRUCT",
+      template: (queryParameters.template ?? []).concat(
+        AbstractBaseClassForExternClassStatic.$sparqlConstructTriples({
+          ignoreRdfType,
+          subject,
+        }),
+      ),
+      type: "query",
+      where: (queryParameters.where ?? []).concat(
+        $insertSeedSparqlWherePattern(
+          $optimizeSparqlWherePatterns(
+            AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
+              filter,
+              ignoreRdfType,
+              preferredLanguages,
+              subject,
+            }),
+          ),
+        ),
+      ),
+    };
+  }
+
+  export function $sparqlConstructQueryString(
+    parameters?: {
+      filter?: AbstractBaseClassForExternClassStatic.$Filter;
+      ignoreRdfType?: boolean;
+      preferredLanguages?: readonly string[];
+      subject?: sparqljs.Triple["subject"];
+      variablePrefix?: string;
+    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
+      sparqljs.GeneratorOptions,
+  ): string {
+    return new sparqljs.Generator(parameters).stringify(
+      AbstractBaseClassForExternClassStatic.$sparqlConstructQuery(parameters),
+    );
+  }
+
+  export function $sparqlConstructTriples(parameters?: {
+    ignoreRdfType?: boolean;
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Triple[] {
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("abstractBaseClassForExternClass");
+    const triples: sparqljs.Triple[] = [];
+    triples.push({
+      object: dataFactory.variable!(
+        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
+      ),
+      predicate:
+        AbstractBaseClassForExternClassStatic.$properties
+          .abstractBaseClassForExternClassProperty["identifier"],
+      subject,
+    });
+    return triples;
+  }
+
+  export function $sparqlWherePatterns(parameters?: {
+    filter?: AbstractBaseClassForExternClassStatic.$Filter;
+    ignoreRdfType?: boolean;
+    preferredLanguages?: readonly string[];
+    subject?: sparqljs.Triple["subject"];
+    variablePrefix?: string;
+  }): readonly sparqljs.Pattern[] {
+    const patterns: sparqljs.Pattern[] = [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("abstractBaseClassForExternClass");
+    if (subject.termType === "Variable") {
+      patterns.push({
+        patterns: $IdentifierFilter
+          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
+          .concat(),
+        type: "group",
+      });
+    }
+
+    patterns.push(
+      {
+        triples: [
+          {
+            object: dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
+            ),
+            predicate:
+              AbstractBaseClassForExternClassStatic.$properties
+                .abstractBaseClassForExternClassProperty["identifier"],
+            subject: subject,
+          },
+        ],
+        type: "bgp",
+      },
+      {
+        patterns: [parameters?.preferredLanguages ?? []]
+          .filter((languages) => languages.length > 0)
+          .map((languages) =>
+            languages.map((language) => ({
+              type: "operation" as const,
+              operator: "=",
+              args: [
+                {
+                  type: "operation" as const,
+                  operator: "lang",
+                  args: [
+                    dataFactory.variable!(
+                      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
+                    ),
+                  ],
+                },
+                dataFactory.literal(language),
+              ],
+            })),
+          )
+          .map((langEqualsExpressions) => ({
+            type: "filter" as const,
+            expression: langEqualsExpressions.reduce(
+              (reducedExpression, langEqualsExpression) => {
+                if (reducedExpression === null) {
+                  return langEqualsExpression;
+                }
+                return {
+                  type: "operation" as const,
+                  operator: "||",
+                  args: [reducedExpression, langEqualsExpression],
+                };
+              },
+              null as sparqljs.Expression | null,
+            ) as sparqljs.Expression,
+          }))
+          .concat(),
+        type: "group",
+      },
+      {
+        patterns: $StringFilter
+          .$sparqlWherePatterns(
+            parameters?.filter?.abstractBaseClassForExternClassProperty,
+            dataFactory.variable!(
+              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
+            ),
+          )
+          .concat(),
+        type: "group",
+      },
+    );
+    return patterns;
+  }
+
+  export function isAbstractBaseClassForExternClass(
+    object: $Object,
+  ): object is AbstractBaseClassForExternClass {
+    switch (object.$type) {
+      case "ExternClass":
+        return true;
+      default:
+        return false;
+    }
+  }
+}
+/**
  * Shape with custom rdf:type's.
  *
  * The shaclmate:rdfType is expected on deserialization and added on serialization.
@@ -59126,490 +59610,6 @@ export namespace BlankNodeIdentifierClass {
   }
 }
 /**
- * An abstract base class that will be inherited by the extern object type, showing how to mix generated and hand-written code.
- */
-export abstract class AbstractBaseClassForExternClass {
-  protected _$identifier?: AbstractBaseClassForExternClassStatic.$Identifier;
-  abstract readonly $type: "ExternClass";
-  readonly abstractBaseClassForExternClassProperty: string;
-
-  constructor(parameters: {
-    readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
-    readonly abstractBaseClassForExternClassProperty: string;
-  }) {
-    if (typeof parameters.$identifier === "object") {
-      this._$identifier = parameters.$identifier;
-    } else if (typeof parameters.$identifier === "string") {
-      this._$identifier = dataFactory.namedNode(parameters.$identifier);
-    } else if (typeof parameters.$identifier === "undefined") {
-    } else {
-      this._$identifier = parameters.$identifier satisfies never;
-    }
-
-    this.abstractBaseClassForExternClassProperty =
-      parameters.abstractBaseClassForExternClassProperty;
-  }
-
-  get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
-    if (typeof this._$identifier === "undefined") {
-      this._$identifier = dataFactory.blankNode();
-    }
-
-    return this._$identifier;
-  }
-
-  $equals(other: AbstractBaseClassForExternClass): $EqualsResult {
-    return $booleanEquals(this.$identifier, other.$identifier)
-      .mapLeft((propertyValuesUnequal) => ({
-        left: this,
-        right: other,
-        propertyName: "$identifier",
-        propertyValuesUnequal,
-        type: "Property" as const,
-      }))
-      .chain(() =>
-        $strictEquals(this.$type, other.$type).mapLeft(
-          (propertyValuesUnequal) => ({
-            left: this,
-            right: other,
-            propertyName: "$type",
-            propertyValuesUnequal,
-            type: "Property" as const,
-          }),
-        ),
-      )
-      .chain(() =>
-        $strictEquals(
-          this.abstractBaseClassForExternClassProperty,
-          other.abstractBaseClassForExternClassProperty,
-        ).mapLeft((propertyValuesUnequal) => ({
-          left: this,
-          right: other,
-          propertyName: "abstractBaseClassForExternClassProperty",
-          propertyValuesUnequal,
-          type: "Property" as const,
-        })),
-      );
-  }
-
-  $hash<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.$identifier.value);
-    _hasher.update(this.$type);
-    this.$hashShaclProperties(_hasher);
-    return _hasher;
-  }
-
-  protected $hashShaclProperties<
-    HasherT extends {
-      update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
-    },
-  >(_hasher: HasherT): HasherT {
-    _hasher.update(this.abstractBaseClassForExternClassProperty);
-    return _hasher;
-  }
-
-  $toJson(): AbstractBaseClassForExternClassStatic.$Json {
-    return JSON.parse(
-      JSON.stringify({
-        "@id":
-          this.$identifier.termType === "BlankNode"
-            ? `_:${this.$identifier.value}`
-            : this.$identifier.value,
-        $type: this.$type,
-        abstractBaseClassForExternClassProperty:
-          this.abstractBaseClassForExternClassProperty,
-      } satisfies AbstractBaseClassForExternClassStatic.$Json),
-    );
-  }
-
-  $toRdf(options?: {
-    ignoreRdfType?: boolean;
-    mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
-    resourceSet?: rdfjsResource.MutableResourceSet;
-  }): rdfjsResource.MutableResource {
-    const mutateGraph = options?.mutateGraph;
-    const resourceSet =
-      options?.resourceSet ??
-      new rdfjsResource.MutableResourceSet({
-        dataFactory,
-        dataset: datasetFactory.dataset(),
-      });
-    const resource = resourceSet.mutableResource(this.$identifier, {
-      mutateGraph,
-    });
-    resource.add(
-      AbstractBaseClassForExternClassStatic.$properties
-        .abstractBaseClassForExternClassProperty["identifier"],
-      ...[this.abstractBaseClassForExternClassProperty],
-    );
-    return resource;
-  }
-
-  toString(): string {
-    return JSON.stringify(this.$toJson());
-  }
-}
-
-export namespace AbstractBaseClassForExternClassStatic {
-  export function $filter(
-    filter: AbstractBaseClassForExternClassStatic.$Filter,
-    value: AbstractBaseClassForExternClass,
-  ): boolean {
-    if (
-      typeof filter.$identifier !== "undefined" &&
-      !$filterIdentifier(filter.$identifier, value.$identifier)
-    ) {
-      return false;
-    }
-
-    if (
-      typeof filter.abstractBaseClassForExternClassProperty !== "undefined" &&
-      !$filterString(
-        filter.abstractBaseClassForExternClassProperty,
-        value.abstractBaseClassForExternClassProperty,
-      )
-    ) {
-      return false;
-    }
-
-    return true;
-  }
-
-  export type $Filter = {
-    readonly $identifier?: $IdentifierFilter;
-    readonly abstractBaseClassForExternClassProperty?: $StringFilter;
-  };
-  export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
-
-  export namespace $Identifier {
-    export function fromString(
-      identifier: string,
-    ): purify.Either<Error, rdfjsResource.Resource.Identifier> {
-      return purify.Either.encase(() =>
-        rdfjsResource.Resource.Identifier.fromString({
-          dataFactory,
-          identifier,
-        }),
-      );
-    }
-
-    export const // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-      toString = rdfjsResource.Resource.Identifier.toString;
-  }
-
-  export type $Json = {
-    readonly "@id": string;
-    readonly $type: "ExternClass";
-    readonly abstractBaseClassForExternClassProperty: string;
-  };
-
-  export function $jsonSchema() {
-    return zod.toJSONSchema($jsonZodSchema());
-  }
-
-  export function $jsonUiSchema(parameters?: { scopePrefix?: string }): any {
-    const scopePrefix = parameters?.scopePrefix ?? "#";
-    return {
-      elements: [
-        {
-          label: "Identifier",
-          scope: `${scopePrefix}/properties/@id`,
-          type: "Control",
-        },
-        {
-          rule: {
-            condition: {
-              schema: { const: "AbstractBaseClassForExternClass" },
-              scope: `${scopePrefix}/properties/$type`,
-            },
-            effect: "HIDE",
-          },
-          scope: `${scopePrefix}/properties/$type`,
-          type: "Control",
-        },
-        {
-          scope: `${scopePrefix}/properties/abstractBaseClassForExternClassProperty`,
-          type: "Control",
-        },
-      ],
-      label: "AbstractBaseClassForExternClass",
-      type: "Group",
-    };
-  }
-
-  export function $jsonZodSchema() {
-    return zod.object({
-      "@id": zod.string().min(1),
-      $type: zod.literal("ExternClass"),
-      abstractBaseClassForExternClassProperty: zod.string(),
-    }) satisfies zod.ZodType<$Json>;
-  }
-
-  export const $properties = {
-    abstractBaseClassForExternClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/abstractBaseClassForExternClassProperty",
-      ),
-    },
-  };
-
-  export function $propertiesFromJson(_json: unknown): purify.Either<
-    zod.ZodError,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      abstractBaseClassForExternClassProperty: string;
-    }
-  > {
-    const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
-    if (!$jsonSafeParseResult.success) {
-      return purify.Left($jsonSafeParseResult.error);
-    }
-
-    const $jsonObject = $jsonSafeParseResult.data;
-    const $identifier = $jsonObject["@id"].startsWith("_:")
-      ? dataFactory.blankNode($jsonObject["@id"].substring(2))
-      : dataFactory.namedNode($jsonObject["@id"]);
-    const abstractBaseClassForExternClassProperty =
-      $jsonObject["abstractBaseClassForExternClassProperty"];
-    return purify.Either.of({
-      $identifier,
-      abstractBaseClassForExternClassProperty,
-    });
-  }
-
-  export function $propertiesFromRdf($parameters: {
-    context?: any;
-    ignoreRdfType: boolean;
-    objectSet: $ObjectSet;
-    preferredLanguages?: readonly string[];
-    resource: rdfjsResource.Resource;
-  }): purify.Either<
-    Error,
-    {
-      $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      abstractBaseClassForExternClassProperty: string;
-    }
-  > {
-    return purify.Either.of<
-      Error,
-      AbstractBaseClassForExternClassStatic.$Identifier
-    >(
-      $parameters.resource
-        .identifier as AbstractBaseClassForExternClassStatic.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.abstractBaseClassForExternClassProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          $fromRdfPreferredLanguages({
-            focusResource: $parameters.resource,
-            predicate:
-              AbstractBaseClassForExternClassStatic.$properties
-                .abstractBaseClassForExternClassProperty["identifier"],
-            preferredLanguages: $parameters.preferredLanguages,
-            values,
-          }),
-        )
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .chain((values) => values.head())
-        .map((abstractBaseClassForExternClassProperty) => ({
-          $identifier,
-          abstractBaseClassForExternClassProperty,
-        })),
-    );
-  }
-
-  export function $sparqlConstructQuery(
-    parameters?: {
-      filter?: AbstractBaseClassForExternClassStatic.$Filter;
-      ignoreRdfType?: boolean;
-      prefixes?: { [prefix: string]: string };
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">,
-  ): sparqljs.ConstructQuery {
-    const {
-      filter,
-      ignoreRdfType,
-      preferredLanguages,
-      subject,
-      ...queryParameters
-    } = parameters ?? {};
-
-    return {
-      ...queryParameters,
-      prefixes: parameters?.prefixes ?? {},
-      queryType: "CONSTRUCT",
-      template: (queryParameters.template ?? []).concat(
-        AbstractBaseClassForExternClassStatic.$sparqlConstructTriples({
-          ignoreRdfType,
-          subject,
-        }),
-      ),
-      type: "query",
-      where: (queryParameters.where ?? []).concat(
-        $insertSeedSparqlWherePattern(
-          $optimizeSparqlWherePatterns(
-            AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
-              filter,
-              ignoreRdfType,
-              preferredLanguages,
-              subject,
-            }),
-          ),
-        ),
-      ),
-    };
-  }
-
-  export function $sparqlConstructQueryString(
-    parameters?: {
-      filter?: AbstractBaseClassForExternClassStatic.$Filter;
-      ignoreRdfType?: boolean;
-      preferredLanguages?: readonly string[];
-      subject?: sparqljs.Triple["subject"];
-      variablePrefix?: string;
-    } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> &
-      sparqljs.GeneratorOptions,
-  ): string {
-    return new sparqljs.Generator(parameters).stringify(
-      AbstractBaseClassForExternClassStatic.$sparqlConstructQuery(parameters),
-    );
-  }
-
-  export function $sparqlConstructTriples(parameters?: {
-    ignoreRdfType?: boolean;
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Triple[] {
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("abstractBaseClassForExternClass");
-    const triples: sparqljs.Triple[] = [];
-    triples.push({
-      object: dataFactory.variable!(
-        `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
-      ),
-      predicate:
-        AbstractBaseClassForExternClassStatic.$properties
-          .abstractBaseClassForExternClassProperty["identifier"],
-      subject,
-    });
-    return triples;
-  }
-
-  export function $sparqlWherePatterns(parameters?: {
-    filter?: AbstractBaseClassForExternClassStatic.$Filter;
-    ignoreRdfType?: boolean;
-    preferredLanguages?: readonly string[];
-    subject?: sparqljs.Triple["subject"];
-    variablePrefix?: string;
-  }): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
-    const subject =
-      parameters?.subject ??
-      dataFactory.variable!("abstractBaseClassForExternClass");
-    if (subject.termType === "Variable") {
-      patterns.push({
-        patterns: $IdentifierFilter
-          .$sparqlWherePatterns(parameters?.filter?.$identifier, subject)
-          .concat(),
-        type: "group",
-      });
-    }
-
-    patterns.push(
-      {
-        triples: [
-          {
-            object: dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
-            ),
-            predicate:
-              AbstractBaseClassForExternClassStatic.$properties
-                .abstractBaseClassForExternClassProperty["identifier"],
-            subject: subject,
-          },
-        ],
-        type: "bgp",
-      },
-      {
-        patterns: [parameters?.preferredLanguages ?? []]
-          .filter((languages) => languages.length > 0)
-          .map((languages) =>
-            languages.map((language) => ({
-              type: "operation" as const,
-              operator: "=",
-              args: [
-                {
-                  type: "operation" as const,
-                  operator: "lang",
-                  args: [
-                    dataFactory.variable!(
-                      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
-                    ),
-                  ],
-                },
-                dataFactory.literal(language),
-              ],
-            })),
-          )
-          .map((langEqualsExpressions) => ({
-            type: "filter" as const,
-            expression: langEqualsExpressions.reduce(
-              (reducedExpression, langEqualsExpression) => {
-                if (reducedExpression === null) {
-                  return langEqualsExpression;
-                }
-                return {
-                  type: "operation" as const,
-                  operator: "||",
-                  args: [reducedExpression, langEqualsExpression],
-                };
-              },
-              null as sparqljs.Expression | null,
-            ) as sparqljs.Expression,
-          }))
-          .concat(),
-        type: "group",
-      },
-      {
-        patterns: $StringFilter
-          .$sparqlWherePatterns(
-            parameters?.filter?.abstractBaseClassForExternClassProperty,
-            dataFactory.variable!(
-              `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
-            ),
-          )
-          .concat(),
-        type: "group",
-      },
-    );
-    return patterns;
-  }
-
-  export function isAbstractBaseClassForExternClass(
-    object: $Object,
-  ): object is AbstractBaseClassForExternClass {
-    switch (object.$type) {
-      case "ExternClass":
-        return true;
-      default:
-        return false;
-    }
-  }
-}
-/**
  * Node shape sh:xone's other node shapes. This will usually be generated as a discriminated union.
  */
 export type ClassUnion = ClassUnionMember1 | ClassUnionMember2;
@@ -59623,8 +59623,7 @@ export namespace ClassUnion {
       if (ClassUnionMember2.isClassUnionMember2(left)) {
         return left.$equals(right as unknown as ClassUnionMember2);
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -59639,26 +59638,29 @@ export namespace ClassUnion {
       return false;
     }
 
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return filter.on?.ClassUnionMember1
-        ? ClassUnionMember1.$filter(
-            filter.on.ClassUnionMember1,
-            value as ClassUnionMember1,
-          )
-        : true;
+    if (
+      ClassUnionMember1.isClassUnionMember1(value) &&
+      filter.on?.ClassUnionMember1 &&
+      !ClassUnionMember1.$filter(
+        filter.on.ClassUnionMember1,
+        value as ClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return filter.on?.ClassUnionMember2
-        ? ClassUnionMember2.$filter(
-            filter.on.ClassUnionMember2,
-            value as ClassUnionMember2,
-          )
-        : true;
+    if (
+      ClassUnionMember2.isClassUnionMember2(value) &&
+      filter.on?.ClassUnionMember2 &&
+      !ClassUnionMember2.$filter(
+        filter.on.ClassUnionMember2,
+        value as ClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -59728,7 +59730,6 @@ export namespace ClassUnion {
       return _classUnion.$hash(_hasher);
     }
 
-    _classUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -59898,7 +59899,6 @@ export namespace ClassUnion {
       return _classUnion.$toJson();
     }
 
-    _classUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -59917,7 +59917,6 @@ export namespace ClassUnion {
       return _classUnion.$toRdf(_parameters);
     }
 
-    _classUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -59951,8 +59950,7 @@ export namespace FlattenClassUnion {
       if (FlattenClassUnionMember3.isFlattenClassUnionMember3(left)) {
         return left.$equals(right as unknown as FlattenClassUnionMember3);
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -59967,35 +59965,40 @@ export namespace FlattenClassUnion {
       return false;
     }
 
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return filter.on?.ClassUnionMember1
-        ? ClassUnionMember1.$filter(
-            filter.on.ClassUnionMember1,
-            value as ClassUnionMember1,
-          )
-        : true;
+    if (
+      ClassUnionMember1.isClassUnionMember1(value) &&
+      filter.on?.ClassUnionMember1 &&
+      !ClassUnionMember1.$filter(
+        filter.on.ClassUnionMember1,
+        value as ClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return filter.on?.ClassUnionMember2
-        ? ClassUnionMember2.$filter(
-            filter.on.ClassUnionMember2,
-            value as ClassUnionMember2,
-          )
-        : true;
+    if (
+      ClassUnionMember2.isClassUnionMember2(value) &&
+      filter.on?.ClassUnionMember2 &&
+      !ClassUnionMember2.$filter(
+        filter.on.ClassUnionMember2,
+        value as ClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return filter.on?.FlattenClassUnionMember3
-        ? FlattenClassUnionMember3.$filter(
-            filter.on.FlattenClassUnionMember3,
-            value as FlattenClassUnionMember3,
-          )
-        : true;
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(value) &&
+      filter.on?.FlattenClassUnionMember3 &&
+      !FlattenClassUnionMember3.$filter(
+        filter.on.FlattenClassUnionMember3,
+        value as FlattenClassUnionMember3,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -60091,7 +60094,6 @@ export namespace FlattenClassUnion {
       return _flattenClassUnion.$hash(_hasher);
     }
 
-    _flattenClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60288,7 +60290,6 @@ export namespace FlattenClassUnion {
       return _flattenClassUnion.$toJson();
     }
 
-    _flattenClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60313,7 +60314,6 @@ export namespace FlattenClassUnion {
       return _flattenClassUnion.$toRdf(_parameters);
     }
 
-    _flattenClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60350,8 +60350,7 @@ export namespace InterfaceUnion {
           right as unknown as InterfaceUnionMember2,
         );
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -60366,26 +60365,29 @@ export namespace InterfaceUnion {
       return false;
     }
 
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return filter.on?.InterfaceUnionMember1
-        ? InterfaceUnionMember1.$filter(
-            filter.on.InterfaceUnionMember1,
-            value as InterfaceUnionMember1,
-          )
-        : true;
+    if (
+      InterfaceUnionMember1.isInterfaceUnionMember1(value) &&
+      filter.on?.InterfaceUnionMember1 &&
+      !InterfaceUnionMember1.$filter(
+        filter.on.InterfaceUnionMember1,
+        value as InterfaceUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return filter.on?.InterfaceUnionMember2
-        ? InterfaceUnionMember2.$filter(
-            filter.on.InterfaceUnionMember2,
-            value as InterfaceUnionMember2,
-          )
-        : true;
+    if (
+      InterfaceUnionMember2.isInterfaceUnionMember2(value) &&
+      filter.on?.InterfaceUnionMember2 &&
+      !InterfaceUnionMember2.$filter(
+        filter.on.InterfaceUnionMember2,
+        value as InterfaceUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -60455,7 +60457,6 @@ export namespace InterfaceUnion {
       return InterfaceUnionMember2.$hash(_interfaceUnion, _hasher);
     }
 
-    _interfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60625,7 +60626,6 @@ export namespace InterfaceUnion {
       return InterfaceUnionMember2.$toJson(_interfaceUnion);
     }
 
-    _interfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60644,7 +60644,6 @@ export namespace InterfaceUnion {
       return InterfaceUnionMember2.$toRdf(_interfaceUnion, _parameters);
     }
 
-    _interfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60682,8 +60681,7 @@ export namespace LazilyResolvedClassUnion {
           right as unknown as LazilyResolvedClassUnionMember2,
         );
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -60699,29 +60697,32 @@ export namespace LazilyResolvedClassUnion {
     }
 
     if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        value,
+      ) &&
+      filter.on?.LazilyResolvedClassUnionMember1 &&
+      !LazilyResolvedClassUnionMember1.$filter(
+        filter.on.LazilyResolvedClassUnionMember1,
+        value as LazilyResolvedClassUnionMember1,
+      )
     ) {
-      return filter.on?.LazilyResolvedClassUnionMember1
-        ? LazilyResolvedClassUnionMember1.$filter(
-            filter.on.LazilyResolvedClassUnionMember1,
-            value as LazilyResolvedClassUnionMember1,
-          )
-        : true;
+      return false;
     }
 
     if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        value,
+      ) &&
+      filter.on?.LazilyResolvedClassUnionMember2 &&
+      !LazilyResolvedClassUnionMember2.$filter(
+        filter.on.LazilyResolvedClassUnionMember2,
+        value as LazilyResolvedClassUnionMember2,
+      )
     ) {
-      return filter.on?.LazilyResolvedClassUnionMember2
-        ? LazilyResolvedClassUnionMember2.$filter(
-            filter.on.LazilyResolvedClassUnionMember2,
-            value as LazilyResolvedClassUnionMember2,
-          )
-        : true;
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -60802,7 +60803,6 @@ export namespace LazilyResolvedClassUnion {
       return _lazilyResolvedClassUnion.$hash(_hasher);
     }
 
-    _lazilyResolvedClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -60995,7 +60995,6 @@ export namespace LazilyResolvedClassUnion {
       return _lazilyResolvedClassUnion.$toJson();
     }
 
-    _lazilyResolvedClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61022,7 +61021,6 @@ export namespace LazilyResolvedClassUnion {
       return _lazilyResolvedClassUnion.$toRdf(_parameters);
     }
 
-    _lazilyResolvedClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61070,8 +61068,7 @@ export namespace LazilyResolvedInterfaceUnion {
           right as unknown as LazilyResolvedInterfaceUnionMember2,
         );
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -61089,31 +61086,30 @@ export namespace LazilyResolvedInterfaceUnion {
     if (
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
         value,
+      ) &&
+      filter.on?.LazilyResolvedInterfaceUnionMember1 &&
+      !LazilyResolvedInterfaceUnionMember1.$filter(
+        filter.on.LazilyResolvedInterfaceUnionMember1,
+        value as LazilyResolvedInterfaceUnionMember1,
       )
     ) {
-      return filter.on?.LazilyResolvedInterfaceUnionMember1
-        ? LazilyResolvedInterfaceUnionMember1.$filter(
-            filter.on.LazilyResolvedInterfaceUnionMember1,
-            value as LazilyResolvedInterfaceUnionMember1,
-          )
-        : true;
+      return false;
     }
 
     if (
       LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
         value,
+      ) &&
+      filter.on?.LazilyResolvedInterfaceUnionMember2 &&
+      !LazilyResolvedInterfaceUnionMember2.$filter(
+        filter.on.LazilyResolvedInterfaceUnionMember2,
+        value as LazilyResolvedInterfaceUnionMember2,
       )
     ) {
-      return filter.on?.LazilyResolvedInterfaceUnionMember2
-        ? LazilyResolvedInterfaceUnionMember2.$filter(
-            filter.on.LazilyResolvedInterfaceUnionMember2,
-            value as LazilyResolvedInterfaceUnionMember2,
-          )
-        : true;
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -61200,7 +61196,6 @@ export namespace LazilyResolvedInterfaceUnion {
       );
     }
 
-    _lazilyResolvedInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61399,7 +61394,6 @@ export namespace LazilyResolvedInterfaceUnion {
       );
     }
 
-    _lazilyResolvedInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61432,7 +61426,6 @@ export namespace LazilyResolvedInterfaceUnion {
       );
     }
 
-    _lazilyResolvedInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61468,8 +61461,7 @@ export namespace PartialClassUnion {
       if (PartialClassUnionMember2.isPartialClassUnionMember2(left)) {
         return left.$equals(right as unknown as PartialClassUnionMember2);
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -61484,26 +61476,29 @@ export namespace PartialClassUnion {
       return false;
     }
 
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return filter.on?.PartialClassUnionMember1
-        ? PartialClassUnionMember1.$filter(
-            filter.on.PartialClassUnionMember1,
-            value as PartialClassUnionMember1,
-          )
-        : true;
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(value) &&
+      filter.on?.PartialClassUnionMember1 &&
+      !PartialClassUnionMember1.$filter(
+        filter.on.PartialClassUnionMember1,
+        value as PartialClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return filter.on?.PartialClassUnionMember2
-        ? PartialClassUnionMember2.$filter(
-            filter.on.PartialClassUnionMember2,
-            value as PartialClassUnionMember2,
-          )
-        : true;
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(value) &&
+      filter.on?.PartialClassUnionMember2 &&
+      !PartialClassUnionMember2.$filter(
+        filter.on.PartialClassUnionMember2,
+        value as PartialClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -61577,7 +61572,6 @@ export namespace PartialClassUnion {
       return _partialClassUnion.$hash(_hasher);
     }
 
-    _partialClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61757,7 +61751,6 @@ export namespace PartialClassUnion {
       return _partialClassUnion.$toJson();
     }
 
-    _partialClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61780,7 +61773,6 @@ export namespace PartialClassUnion {
       return _partialClassUnion.$toRdf(_parameters);
     }
 
-    _partialClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -61818,8 +61810,7 @@ export namespace PartialInterfaceUnion {
           right as unknown as PartialInterfaceUnionMember2,
         );
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -61834,26 +61825,29 @@ export namespace PartialInterfaceUnion {
       return false;
     }
 
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return filter.on?.PartialInterfaceUnionMember1
-        ? PartialInterfaceUnionMember1.$filter(
-            filter.on.PartialInterfaceUnionMember1,
-            value as PartialInterfaceUnionMember1,
-          )
-        : true;
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value) &&
+      filter.on?.PartialInterfaceUnionMember1 &&
+      !PartialInterfaceUnionMember1.$filter(
+        filter.on.PartialInterfaceUnionMember1,
+        value as PartialInterfaceUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return filter.on?.PartialInterfaceUnionMember2
-        ? PartialInterfaceUnionMember2.$filter(
-            filter.on.PartialInterfaceUnionMember2,
-            value as PartialInterfaceUnionMember2,
-          )
-        : true;
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value) &&
+      filter.on?.PartialInterfaceUnionMember2 &&
+      !PartialInterfaceUnionMember2.$filter(
+        filter.on.PartialInterfaceUnionMember2,
+        value as PartialInterfaceUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -61937,7 +61931,6 @@ export namespace PartialInterfaceUnion {
       );
     }
 
-    _partialInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62128,7 +62121,6 @@ export namespace PartialInterfaceUnion {
       return PartialInterfaceUnionMember2.$toJson(_partialInterfaceUnion);
     }
 
-    _partialInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62161,7 +62153,6 @@ export namespace PartialInterfaceUnion {
       );
     }
 
-    _partialInterfaceUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62193,8 +62184,7 @@ export namespace NoRdfTypeClassUnion {
       if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(left)) {
         return left.$equals(right as unknown as NoRdfTypeClassUnionMember2);
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -62209,26 +62199,29 @@ export namespace NoRdfTypeClassUnion {
       return false;
     }
 
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return filter.on?.NoRdfTypeClassUnionMember1
-        ? NoRdfTypeClassUnionMember1.$filter(
-            filter.on.NoRdfTypeClassUnionMember1,
-            value as NoRdfTypeClassUnionMember1,
-          )
-        : true;
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value) &&
+      filter.on?.NoRdfTypeClassUnionMember1 &&
+      !NoRdfTypeClassUnionMember1.$filter(
+        filter.on.NoRdfTypeClassUnionMember1,
+        value as NoRdfTypeClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return filter.on?.NoRdfTypeClassUnionMember2
-        ? NoRdfTypeClassUnionMember2.$filter(
-            filter.on.NoRdfTypeClassUnionMember2,
-            value as NoRdfTypeClassUnionMember2,
-          )
-        : true;
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value) &&
+      filter.on?.NoRdfTypeClassUnionMember2 &&
+      !NoRdfTypeClassUnionMember2.$filter(
+        filter.on.NoRdfTypeClassUnionMember2,
+        value as NoRdfTypeClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -62306,7 +62299,6 @@ export namespace NoRdfTypeClassUnion {
       return _noRdfTypeClassUnion.$hash(_hasher);
     }
 
-    _noRdfTypeClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62486,7 +62478,6 @@ export namespace NoRdfTypeClassUnion {
       return _noRdfTypeClassUnion.$toJson();
     }
 
-    _noRdfTypeClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62513,7 +62504,6 @@ export namespace NoRdfTypeClassUnion {
       return _noRdfTypeClassUnion.$toRdf(_parameters);
     }
 
-    _noRdfTypeClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62545,8 +62535,7 @@ export namespace RecursiveClassUnion {
       if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(left)) {
         return left.$equals(right as unknown as RecursiveClassUnionMember2);
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -62561,26 +62550,29 @@ export namespace RecursiveClassUnion {
       return false;
     }
 
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return filter.on?.RecursiveClassUnionMember1
-        ? RecursiveClassUnionMember1.$filter(
-            filter.on.RecursiveClassUnionMember1,
-            value as RecursiveClassUnionMember1,
-          )
-        : true;
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value) &&
+      filter.on?.RecursiveClassUnionMember1 &&
+      !RecursiveClassUnionMember1.$filter(
+        filter.on.RecursiveClassUnionMember1,
+        value as RecursiveClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return filter.on?.RecursiveClassUnionMember2
-        ? RecursiveClassUnionMember2.$filter(
-            filter.on.RecursiveClassUnionMember2,
-            value as RecursiveClassUnionMember2,
-          )
-        : true;
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value) &&
+      filter.on?.RecursiveClassUnionMember2 &&
+      !RecursiveClassUnionMember2.$filter(
+        filter.on.RecursiveClassUnionMember2,
+        value as RecursiveClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -62658,7 +62650,6 @@ export namespace RecursiveClassUnion {
       return _recursiveClassUnion.$hash(_hasher);
     }
 
-    _recursiveClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62838,7 +62829,6 @@ export namespace RecursiveClassUnion {
       return _recursiveClassUnion.$toJson();
     }
 
-    _recursiveClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62865,7 +62855,6 @@ export namespace RecursiveClassUnion {
       return _recursiveClassUnion.$toRdf(_parameters);
     }
 
-    _recursiveClassUnion satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -62879,7 +62868,6 @@ export namespace RecursiveClassUnion {
   }
 }
 export type $Object =
-  | AbstractBaseClassForExternClass
   | BlankNodeIdentifierClass
   | BlankNodeIdentifierInterface
   | BlankNodeOrIriIdentifierClass
@@ -62902,6 +62890,7 @@ export type $Object =
   | ExplicitFromToRdfTypesClass
   | ExplicitRdfTypeClass
   | ExternClass
+  | AbstractBaseClassForExternClass
   | ExternClassPropertyClass
   | FlattenClassUnionMember3
   | HasValuePropertiesClass
@@ -62959,15 +62948,6 @@ export type $Object =
 export namespace $Object {
   export function $equals(left: $Object, right: $Object): $EqualsResult {
     return $strictEquals(left.$type, right.$type).chain(() => {
-      if (
-        AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
-          left,
-        )
-      ) {
-        return left.$equals(
-          right as unknown as AbstractBaseClassForExternClass,
-        );
-      }
       if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(left)) {
         return left.$equals(right as unknown as BlankNodeIdentifierClass);
       }
@@ -62996,34 +62976,11 @@ export namespace $Object {
       if (ClassUnionMember2.isClassUnionMember2(left)) {
         return left.$equals(right as unknown as ClassUnionMember2);
       }
-      if (
-        ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(left)
-      ) {
-        return left.$equals(right as unknown as ClassUnionMemberCommonParent);
-      }
       if (ConcreteChildClass.isConcreteChildClass(left)) {
         return left.$equals(right as unknown as ConcreteChildClass);
       }
       if (ConcreteParentClassStatic.isConcreteParentClass(left)) {
         return left.$equals(right as unknown as ConcreteParentClass);
-      }
-      if (
-        AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
-          left,
-        )
-      ) {
-        return left.$equals(
-          right as unknown as AbstractBaseClassWithoutProperties,
-        );
-      }
-      if (
-        AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
-          left,
-        )
-      ) {
-        return left.$equals(
-          right as unknown as AbstractBaseClassWithProperties,
-        );
       }
       if (ConcreteChildInterface.isConcreteChildInterface(left)) {
         return ConcreteChildInterface.$equals(
@@ -63096,12 +63053,6 @@ export namespace $Object {
       if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(left)) {
         return left.$equals(right as unknown as IdentifierOverride3Class);
       }
-      if (IdentifierOverride2ClassStatic.isIdentifierOverride2Class(left)) {
-        return left.$equals(right as unknown as IdentifierOverride2Class);
-      }
-      if (IdentifierOverride1ClassStatic.isIdentifierOverride1Class(left)) {
-        return left.$equals(right as unknown as IdentifierOverride1Class);
-      }
       if (InIdentifierClass.isInIdentifierClass(left)) {
         return left.$equals(right as unknown as InIdentifierClass);
       }
@@ -63127,16 +63078,6 @@ export namespace $Object {
         return InterfaceUnionMember2.$equals(
           left,
           right as unknown as InterfaceUnionMember2,
-        );
-      }
-      if (
-        InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
-          left,
-        )
-      ) {
-        return InterfaceUnionMemberCommonParentStatic.$equals(
-          left,
-          right as unknown as InterfaceUnionMemberCommonParent,
         );
       }
       if (IriIdentifierClass.isIriIdentifierClass(left)) {
@@ -63316,8 +63257,7 @@ export namespace $Object {
       if ($NamedDefaultPartial.is$NamedDefaultPartial(left)) {
         return left.$equals(right as unknown as $NamedDefaultPartial);
       }
-      left satisfies never;
-      throw new Error("unrecognized type");
+      return $EqualsResult.Equal;
     });
   }
 
@@ -63329,655 +63269,861 @@ export namespace $Object {
       return false;
     }
 
-    if (BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value)) {
-      return filter.on?.BlankNodeIdentifierClass
-        ? BlankNodeIdentifierClass.$filter(
-            filter.on.BlankNodeIdentifierClass,
-            value as BlankNodeIdentifierClass,
-          )
-        : true;
+    if (
+      BlankNodeIdentifierClass.isBlankNodeIdentifierClass(value) &&
+      filter.on?.BlankNodeIdentifierClass &&
+      !BlankNodeIdentifierClass.$filter(
+        filter.on.BlankNodeIdentifierClass,
+        value as BlankNodeIdentifierClass,
+      )
+    ) {
+      return false;
     }
 
-    if (BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value)) {
-      return filter.on?.BlankNodeIdentifierInterface
-        ? BlankNodeIdentifierInterface.$filter(
-            filter.on.BlankNodeIdentifierInterface,
-            value as BlankNodeIdentifierInterface,
-          )
-        : true;
+    if (
+      BlankNodeIdentifierInterface.isBlankNodeIdentifierInterface(value) &&
+      filter.on?.BlankNodeIdentifierInterface &&
+      !BlankNodeIdentifierInterface.$filter(
+        filter.on.BlankNodeIdentifierInterface,
+        value as BlankNodeIdentifierInterface,
+      )
+    ) {
+      return false;
     }
 
-    if (BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value)) {
-      return filter.on?.BlankNodeOrIriIdentifierClass
-        ? BlankNodeOrIriIdentifierClass.$filter(
-            filter.on.BlankNodeOrIriIdentifierClass,
-            value as BlankNodeOrIriIdentifierClass,
-          )
-        : true;
+    if (
+      BlankNodeOrIriIdentifierClass.isBlankNodeOrIriIdentifierClass(value) &&
+      filter.on?.BlankNodeOrIriIdentifierClass &&
+      !BlankNodeOrIriIdentifierClass.$filter(
+        filter.on.BlankNodeOrIriIdentifierClass,
+        value as BlankNodeOrIriIdentifierClass,
+      )
+    ) {
+      return false;
     }
 
     if (
       BlankNodeOrIriIdentifierInterface.isBlankNodeOrIriIdentifierInterface(
         value,
+      ) &&
+      filter.on?.BlankNodeOrIriIdentifierInterface &&
+      !BlankNodeOrIriIdentifierInterface.$filter(
+        filter.on.BlankNodeOrIriIdentifierInterface,
+        value as BlankNodeOrIriIdentifierInterface,
       )
     ) {
-      return filter.on?.BlankNodeOrIriIdentifierInterface
-        ? BlankNodeOrIriIdentifierInterface.$filter(
-            filter.on.BlankNodeOrIriIdentifierInterface,
-            value as BlankNodeOrIriIdentifierInterface,
-          )
-        : true;
+      return false;
     }
 
-    if (ClassUnionMember1.isClassUnionMember1(value)) {
-      return filter.on?.ClassUnionMember1
-        ? ClassUnionMember1.$filter(
-            filter.on.ClassUnionMember1,
-            value as ClassUnionMember1,
-          )
-        : true;
+    if (
+      ClassUnionMember1.isClassUnionMember1(value) &&
+      filter.on?.ClassUnionMember1 &&
+      !ClassUnionMember1.$filter(
+        filter.on.ClassUnionMember1,
+        value as ClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (ClassUnionMember2.isClassUnionMember2(value)) {
-      return filter.on?.ClassUnionMember2
-        ? ClassUnionMember2.$filter(
-            filter.on.ClassUnionMember2,
-            value as ClassUnionMember2,
-          )
-        : true;
+    if (
+      ClassUnionMember2.isClassUnionMember2(value) &&
+      filter.on?.ClassUnionMember2 &&
+      !ClassUnionMember2.$filter(
+        filter.on.ClassUnionMember2,
+        value as ClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (ConcreteChildClass.isConcreteChildClass(value)) {
-      return filter.on?.ConcreteChildClass
-        ? ConcreteChildClass.$filter(
-            filter.on.ConcreteChildClass,
-            value as ConcreteChildClass,
-          )
-        : true;
+    if (
+      ClassUnionMemberCommonParentStatic.isClassUnionMemberCommonParent(
+        value,
+      ) &&
+      filter.on?.ClassUnionMemberCommonParent &&
+      !ClassUnionMemberCommonParentStatic.$filter(
+        filter.on.ClassUnionMemberCommonParent,
+        value as ClassUnionMemberCommonParent,
+      )
+    ) {
+      return false;
     }
 
-    if (ConcreteParentClassStatic.isConcreteParentClass(value)) {
-      return filter.on?.ConcreteParentClass
-        ? ConcreteParentClassStatic.$filter(
-            filter.on.ConcreteParentClass,
-            value as ConcreteParentClass,
-          )
-        : true;
+    if (
+      ConcreteChildClass.isConcreteChildClass(value) &&
+      filter.on?.ConcreteChildClass &&
+      !ConcreteChildClass.$filter(
+        filter.on.ConcreteChildClass,
+        value as ConcreteChildClass,
+      )
+    ) {
+      return false;
     }
 
-    if (ConcreteChildInterface.isConcreteChildInterface(value)) {
-      return filter.on?.ConcreteChildInterface
-        ? ConcreteChildInterface.$filter(
-            filter.on.ConcreteChildInterface,
-            value as ConcreteChildInterface,
-          )
-        : true;
+    if (
+      ConcreteParentClassStatic.isConcreteParentClass(value) &&
+      filter.on?.ConcreteParentClass &&
+      !ConcreteParentClassStatic.$filter(
+        filter.on.ConcreteParentClass,
+        value as ConcreteParentClass,
+      )
+    ) {
+      return false;
     }
 
-    if (ConcreteParentInterfaceStatic.isConcreteParentInterface(value)) {
-      return filter.on?.ConcreteParentInterface
-        ? ConcreteParentInterfaceStatic.$filter(
-            filter.on.ConcreteParentInterface,
-            value as ConcreteParentInterface,
-          )
-        : true;
+    if (
+      AbstractBaseClassWithoutPropertiesStatic.isAbstractBaseClassWithoutProperties(
+        value,
+      ) &&
+      filter.on?.AbstractBaseClassWithoutProperties &&
+      !AbstractBaseClassWithoutPropertiesStatic.$filter(
+        filter.on.AbstractBaseClassWithoutProperties,
+        value as AbstractBaseClassWithoutProperties,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      AbstractBaseClassWithPropertiesStatic.isAbstractBaseClassWithProperties(
+        value,
+      ) &&
+      filter.on?.AbstractBaseClassWithProperties &&
+      !AbstractBaseClassWithPropertiesStatic.$filter(
+        filter.on.AbstractBaseClassWithProperties,
+        value as AbstractBaseClassWithProperties,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      ConcreteChildInterface.isConcreteChildInterface(value) &&
+      filter.on?.ConcreteChildInterface &&
+      !ConcreteChildInterface.$filter(
+        filter.on.ConcreteChildInterface,
+        value as ConcreteChildInterface,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      ConcreteParentInterfaceStatic.isConcreteParentInterface(value) &&
+      filter.on?.ConcreteParentInterface &&
+      !ConcreteParentInterfaceStatic.$filter(
+        filter.on.ConcreteParentInterface,
+        value as ConcreteParentInterface,
+      )
+    ) {
+      return false;
     }
 
     if (
       BaseInterfaceWithoutPropertiesStatic.isBaseInterfaceWithoutProperties(
         value,
+      ) &&
+      filter.on?.BaseInterfaceWithoutProperties &&
+      !BaseInterfaceWithoutPropertiesStatic.$filter(
+        filter.on.BaseInterfaceWithoutProperties,
+        value as BaseInterfaceWithoutProperties,
       )
     ) {
-      return filter.on?.BaseInterfaceWithoutProperties
-        ? BaseInterfaceWithoutPropertiesStatic.$filter(
-            filter.on.BaseInterfaceWithoutProperties,
-            value as BaseInterfaceWithoutProperties,
-          )
-        : true;
+      return false;
     }
 
     if (
-      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value)
+      BaseInterfaceWithPropertiesStatic.isBaseInterfaceWithProperties(value) &&
+      filter.on?.BaseInterfaceWithProperties &&
+      !BaseInterfaceWithPropertiesStatic.$filter(
+        filter.on.BaseInterfaceWithProperties,
+        value as BaseInterfaceWithProperties,
+      )
     ) {
-      return filter.on?.BaseInterfaceWithProperties
-        ? BaseInterfaceWithPropertiesStatic.$filter(
-            filter.on.BaseInterfaceWithProperties,
-            value as BaseInterfaceWithProperties,
-          )
-        : true;
+      return false;
     }
 
     if (
-      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value)
+      ConvertibleTypePropertiesClass.isConvertibleTypePropertiesClass(value) &&
+      filter.on?.ConvertibleTypePropertiesClass &&
+      !ConvertibleTypePropertiesClass.$filter(
+        filter.on.ConvertibleTypePropertiesClass,
+        value as ConvertibleTypePropertiesClass,
+      )
     ) {
-      return filter.on?.ConvertibleTypePropertiesClass
-        ? ConvertibleTypePropertiesClass.$filter(
-            filter.on.ConvertibleTypePropertiesClass,
-            value as ConvertibleTypePropertiesClass,
-          )
-        : true;
+      return false;
     }
 
-    if (DateUnionPropertiesClass.isDateUnionPropertiesClass(value)) {
-      return filter.on?.DateUnionPropertiesClass
-        ? DateUnionPropertiesClass.$filter(
-            filter.on.DateUnionPropertiesClass,
-            value as DateUnionPropertiesClass,
-          )
-        : true;
+    if (
+      DateUnionPropertiesClass.isDateUnionPropertiesClass(value) &&
+      filter.on?.DateUnionPropertiesClass &&
+      !DateUnionPropertiesClass.$filter(
+        filter.on.DateUnionPropertiesClass,
+        value as DateUnionPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value)) {
-      return filter.on?.DefaultValuePropertiesClass
-        ? DefaultValuePropertiesClass.$filter(
-            filter.on.DefaultValuePropertiesClass,
-            value as DefaultValuePropertiesClass,
-          )
-        : true;
+    if (
+      DefaultValuePropertiesClass.isDefaultValuePropertiesClass(value) &&
+      filter.on?.DefaultValuePropertiesClass &&
+      !DefaultValuePropertiesClass.$filter(
+        filter.on.DefaultValuePropertiesClass,
+        value as DefaultValuePropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (DirectRecursiveClass.isDirectRecursiveClass(value)) {
-      return filter.on?.DirectRecursiveClass
-        ? DirectRecursiveClass.$filter(
-            filter.on.DirectRecursiveClass,
-            value as DirectRecursiveClass,
-          )
-        : true;
+    if (
+      DirectRecursiveClass.isDirectRecursiveClass(value) &&
+      filter.on?.DirectRecursiveClass &&
+      !DirectRecursiveClass.$filter(
+        filter.on.DirectRecursiveClass,
+        value as DirectRecursiveClass,
+      )
+    ) {
+      return false;
     }
 
-    if (ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value)) {
-      return filter.on?.ExplicitFromToRdfTypesClass
-        ? ExplicitFromToRdfTypesClass.$filter(
-            filter.on.ExplicitFromToRdfTypesClass,
-            value as ExplicitFromToRdfTypesClass,
-          )
-        : true;
+    if (
+      ExplicitFromToRdfTypesClass.isExplicitFromToRdfTypesClass(value) &&
+      filter.on?.ExplicitFromToRdfTypesClass &&
+      !ExplicitFromToRdfTypesClass.$filter(
+        filter.on.ExplicitFromToRdfTypesClass,
+        value as ExplicitFromToRdfTypesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(value)) {
-      return filter.on?.ExplicitRdfTypeClass
-        ? ExplicitRdfTypeClass.$filter(
-            filter.on.ExplicitRdfTypeClass,
-            value as ExplicitRdfTypeClass,
-          )
-        : true;
+    if (
+      ExplicitRdfTypeClass.isExplicitRdfTypeClass(value) &&
+      filter.on?.ExplicitRdfTypeClass &&
+      !ExplicitRdfTypeClass.$filter(
+        filter.on.ExplicitRdfTypeClass,
+        value as ExplicitRdfTypeClass,
+      )
+    ) {
+      return false;
     }
 
-    if (ExternClass.isExternClass(value)) {
-      return filter.on?.ExternClass
-        ? ExternClass.$filter(filter.on.ExternClass, value as ExternClass)
-        : true;
+    if (
+      ExternClass.isExternClass(value) &&
+      filter.on?.ExternClass &&
+      !ExternClass.$filter(filter.on.ExternClass, value as ExternClass)
+    ) {
+      return false;
     }
 
-    if (ExternClassPropertyClass.isExternClassPropertyClass(value)) {
-      return filter.on?.ExternClassPropertyClass
-        ? ExternClassPropertyClass.$filter(
-            filter.on.ExternClassPropertyClass,
-            value as ExternClassPropertyClass,
-          )
-        : true;
+    if (
+      AbstractBaseClassForExternClassStatic.isAbstractBaseClassForExternClass(
+        value,
+      ) &&
+      filter.on?.AbstractBaseClassForExternClass &&
+      !AbstractBaseClassForExternClassStatic.$filter(
+        filter.on.AbstractBaseClassForExternClass,
+        value as AbstractBaseClassForExternClass,
+      )
+    ) {
+      return false;
     }
 
-    if (FlattenClassUnionMember3.isFlattenClassUnionMember3(value)) {
-      return filter.on?.FlattenClassUnionMember3
-        ? FlattenClassUnionMember3.$filter(
-            filter.on.FlattenClassUnionMember3,
-            value as FlattenClassUnionMember3,
-          )
-        : true;
+    if (
+      ExternClassPropertyClass.isExternClassPropertyClass(value) &&
+      filter.on?.ExternClassPropertyClass &&
+      !ExternClassPropertyClass.$filter(
+        filter.on.ExternClassPropertyClass,
+        value as ExternClassPropertyClass,
+      )
+    ) {
+      return false;
     }
 
-    if (HasValuePropertiesClass.isHasValuePropertiesClass(value)) {
-      return filter.on?.HasValuePropertiesClass
-        ? HasValuePropertiesClass.$filter(
-            filter.on.HasValuePropertiesClass,
-            value as HasValuePropertiesClass,
-          )
-        : true;
+    if (
+      FlattenClassUnionMember3.isFlattenClassUnionMember3(value) &&
+      filter.on?.FlattenClassUnionMember3 &&
+      !FlattenClassUnionMember3.$filter(
+        filter.on.FlattenClassUnionMember3,
+        value as FlattenClassUnionMember3,
+      )
+    ) {
+      return false;
     }
 
-    if (IdentifierOverride5Class.isIdentifierOverride5Class(value)) {
-      return filter.on?.IdentifierOverride5Class
-        ? IdentifierOverride5Class.$filter(
-            filter.on.IdentifierOverride5Class,
-            value as IdentifierOverride5Class,
-          )
-        : true;
+    if (
+      HasValuePropertiesClass.isHasValuePropertiesClass(value) &&
+      filter.on?.HasValuePropertiesClass &&
+      !HasValuePropertiesClass.$filter(
+        filter.on.HasValuePropertiesClass,
+        value as HasValuePropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value)) {
-      return filter.on?.IdentifierOverride4Class
-        ? IdentifierOverride4ClassStatic.$filter(
-            filter.on.IdentifierOverride4Class,
-            value as IdentifierOverride4Class,
-          )
-        : true;
+    if (
+      IdentifierOverride5Class.isIdentifierOverride5Class(value) &&
+      filter.on?.IdentifierOverride5Class &&
+      !IdentifierOverride5Class.$filter(
+        filter.on.IdentifierOverride5Class,
+        value as IdentifierOverride5Class,
+      )
+    ) {
+      return false;
     }
 
-    if (IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value)) {
-      return filter.on?.IdentifierOverride3Class
-        ? IdentifierOverride3ClassStatic.$filter(
-            filter.on.IdentifierOverride3Class,
-            value as IdentifierOverride3Class,
-          )
-        : true;
+    if (
+      IdentifierOverride4ClassStatic.isIdentifierOverride4Class(value) &&
+      filter.on?.IdentifierOverride4Class &&
+      !IdentifierOverride4ClassStatic.$filter(
+        filter.on.IdentifierOverride4Class,
+        value as IdentifierOverride4Class,
+      )
+    ) {
+      return false;
     }
 
-    if (InIdentifierClass.isInIdentifierClass(value)) {
-      return filter.on?.InIdentifierClass
-        ? InIdentifierClass.$filter(
-            filter.on.InIdentifierClass,
-            value as InIdentifierClass,
-          )
-        : true;
+    if (
+      IdentifierOverride3ClassStatic.isIdentifierOverride3Class(value) &&
+      filter.on?.IdentifierOverride3Class &&
+      !IdentifierOverride3ClassStatic.$filter(
+        filter.on.IdentifierOverride3Class,
+        value as IdentifierOverride3Class,
+      )
+    ) {
+      return false;
     }
 
-    if (InPropertiesClass.isInPropertiesClass(value)) {
-      return filter.on?.InPropertiesClass
-        ? InPropertiesClass.$filter(
-            filter.on.InPropertiesClass,
-            value as InPropertiesClass,
-          )
-        : true;
+    if (
+      IdentifierOverride2ClassStatic.isIdentifierOverride2Class(value) &&
+      filter.on?.IdentifierOverride2Class &&
+      !IdentifierOverride2ClassStatic.$filter(
+        filter.on.IdentifierOverride2Class,
+        value as IdentifierOverride2Class,
+      )
+    ) {
+      return false;
     }
 
-    if (IndirectRecursiveClass.isIndirectRecursiveClass(value)) {
-      return filter.on?.IndirectRecursiveClass
-        ? IndirectRecursiveClass.$filter(
-            filter.on.IndirectRecursiveClass,
-            value as IndirectRecursiveClass,
-          )
-        : true;
+    if (
+      IdentifierOverride1ClassStatic.isIdentifierOverride1Class(value) &&
+      filter.on?.IdentifierOverride1Class &&
+      !IdentifierOverride1ClassStatic.$filter(
+        filter.on.IdentifierOverride1Class,
+        value as IdentifierOverride1Class,
+      )
+    ) {
+      return false;
     }
 
-    if (IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value)) {
-      return filter.on?.IndirectRecursiveHelperClass
-        ? IndirectRecursiveHelperClass.$filter(
-            filter.on.IndirectRecursiveHelperClass,
-            value as IndirectRecursiveHelperClass,
-          )
-        : true;
+    if (
+      InIdentifierClass.isInIdentifierClass(value) &&
+      filter.on?.InIdentifierClass &&
+      !InIdentifierClass.$filter(
+        filter.on.InIdentifierClass,
+        value as InIdentifierClass,
+      )
+    ) {
+      return false;
     }
 
-    if (Interface.isInterface(value)) {
-      return filter.on?.Interface
-        ? Interface.$filter(filter.on.Interface, value as Interface)
-        : true;
+    if (
+      InPropertiesClass.isInPropertiesClass(value) &&
+      filter.on?.InPropertiesClass &&
+      !InPropertiesClass.$filter(
+        filter.on.InPropertiesClass,
+        value as InPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (InterfaceUnionMember1.isInterfaceUnionMember1(value)) {
-      return filter.on?.InterfaceUnionMember1
-        ? InterfaceUnionMember1.$filter(
-            filter.on.InterfaceUnionMember1,
-            value as InterfaceUnionMember1,
-          )
-        : true;
+    if (
+      IndirectRecursiveClass.isIndirectRecursiveClass(value) &&
+      filter.on?.IndirectRecursiveClass &&
+      !IndirectRecursiveClass.$filter(
+        filter.on.IndirectRecursiveClass,
+        value as IndirectRecursiveClass,
+      )
+    ) {
+      return false;
     }
 
-    if (InterfaceUnionMember2.isInterfaceUnionMember2(value)) {
-      return filter.on?.InterfaceUnionMember2
-        ? InterfaceUnionMember2.$filter(
-            filter.on.InterfaceUnionMember2,
-            value as InterfaceUnionMember2,
-          )
-        : true;
+    if (
+      IndirectRecursiveHelperClass.isIndirectRecursiveHelperClass(value) &&
+      filter.on?.IndirectRecursiveHelperClass &&
+      !IndirectRecursiveHelperClass.$filter(
+        filter.on.IndirectRecursiveHelperClass,
+        value as IndirectRecursiveHelperClass,
+      )
+    ) {
+      return false;
     }
 
-    if (IriIdentifierClass.isIriIdentifierClass(value)) {
-      return filter.on?.IriIdentifierClass
-        ? IriIdentifierClass.$filter(
-            filter.on.IriIdentifierClass,
-            value as IriIdentifierClass,
-          )
-        : true;
+    if (
+      Interface.isInterface(value) &&
+      filter.on?.Interface &&
+      !Interface.$filter(filter.on.Interface, value as Interface)
+    ) {
+      return false;
     }
 
-    if (IriIdentifierInterface.isIriIdentifierInterface(value)) {
-      return filter.on?.IriIdentifierInterface
-        ? IriIdentifierInterface.$filter(
-            filter.on.IriIdentifierInterface,
-            value as IriIdentifierInterface,
-          )
-        : true;
+    if (
+      InterfaceUnionMember1.isInterfaceUnionMember1(value) &&
+      filter.on?.InterfaceUnionMember1 &&
+      !InterfaceUnionMember1.$filter(
+        filter.on.InterfaceUnionMember1,
+        value as InterfaceUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value)) {
-      return filter.on?.JsPrimitiveUnionPropertyClass
-        ? JsPrimitiveUnionPropertyClass.$filter(
-            filter.on.JsPrimitiveUnionPropertyClass,
-            value as JsPrimitiveUnionPropertyClass,
-          )
-        : true;
+    if (
+      InterfaceUnionMember2.isInterfaceUnionMember2(value) &&
+      filter.on?.InterfaceUnionMember2 &&
+      !InterfaceUnionMember2.$filter(
+        filter.on.InterfaceUnionMember2,
+        value as InterfaceUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (LanguageInPropertiesClass.isLanguageInPropertiesClass(value)) {
-      return filter.on?.LanguageInPropertiesClass
-        ? LanguageInPropertiesClass.$filter(
-            filter.on.LanguageInPropertiesClass,
-            value as LanguageInPropertiesClass,
-          )
-        : true;
+    if (
+      InterfaceUnionMemberCommonParentStatic.isInterfaceUnionMemberCommonParent(
+        value,
+      ) &&
+      filter.on?.InterfaceUnionMemberCommonParent &&
+      !InterfaceUnionMemberCommonParentStatic.$filter(
+        filter.on.InterfaceUnionMemberCommonParent,
+        value as InterfaceUnionMemberCommonParent,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      IriIdentifierClass.isIriIdentifierClass(value) &&
+      filter.on?.IriIdentifierClass &&
+      !IriIdentifierClass.$filter(
+        filter.on.IriIdentifierClass,
+        value as IriIdentifierClass,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      IriIdentifierInterface.isIriIdentifierInterface(value) &&
+      filter.on?.IriIdentifierInterface &&
+      !IriIdentifierInterface.$filter(
+        filter.on.IriIdentifierInterface,
+        value as IriIdentifierInterface,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      JsPrimitiveUnionPropertyClass.isJsPrimitiveUnionPropertyClass(value) &&
+      filter.on?.JsPrimitiveUnionPropertyClass &&
+      !JsPrimitiveUnionPropertyClass.$filter(
+        filter.on.JsPrimitiveUnionPropertyClass,
+        value as JsPrimitiveUnionPropertyClass,
+      )
+    ) {
+      return false;
+    }
+
+    if (
+      LanguageInPropertiesClass.isLanguageInPropertiesClass(value) &&
+      filter.on?.LanguageInPropertiesClass &&
+      !LanguageInPropertiesClass.$filter(
+        filter.on.LanguageInPropertiesClass,
+        value as LanguageInPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
     if (
       LazilyResolvedBlankNodeOrIriIdentifierClass.isLazilyResolvedBlankNodeOrIriIdentifierClass(
         value,
+      ) &&
+      filter.on?.LazilyResolvedBlankNodeOrIriIdentifierClass &&
+      !LazilyResolvedBlankNodeOrIriIdentifierClass.$filter(
+        filter.on.LazilyResolvedBlankNodeOrIriIdentifierClass,
+        value as LazilyResolvedBlankNodeOrIriIdentifierClass,
       )
     ) {
-      return filter.on?.LazilyResolvedBlankNodeOrIriIdentifierClass
-        ? LazilyResolvedBlankNodeOrIriIdentifierClass.$filter(
-            filter.on.LazilyResolvedBlankNodeOrIriIdentifierClass,
-            value as LazilyResolvedBlankNodeOrIriIdentifierClass,
-          )
-        : true;
+      return false;
     }
 
     if (
       LazilyResolvedBlankNodeOrIriIdentifierInterface.isLazilyResolvedBlankNodeOrIriIdentifierInterface(
         value,
+      ) &&
+      filter.on?.LazilyResolvedBlankNodeOrIriIdentifierInterface &&
+      !LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter(
+        filter.on.LazilyResolvedBlankNodeOrIriIdentifierInterface,
+        value as LazilyResolvedBlankNodeOrIriIdentifierInterface,
       )
     ) {
-      return filter.on?.LazilyResolvedBlankNodeOrIriIdentifierInterface
-        ? LazilyResolvedBlankNodeOrIriIdentifierInterface.$filter(
-            filter.on.LazilyResolvedBlankNodeOrIriIdentifierInterface,
-            value as LazilyResolvedBlankNodeOrIriIdentifierInterface,
-          )
-        : true;
+      return false;
     }
 
     if (
-      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(value)
+      LazilyResolvedClassUnionMember1.isLazilyResolvedClassUnionMember1(
+        value,
+      ) &&
+      filter.on?.LazilyResolvedClassUnionMember1 &&
+      !LazilyResolvedClassUnionMember1.$filter(
+        filter.on.LazilyResolvedClassUnionMember1,
+        value as LazilyResolvedClassUnionMember1,
+      )
     ) {
-      return filter.on?.LazilyResolvedClassUnionMember1
-        ? LazilyResolvedClassUnionMember1.$filter(
-            filter.on.LazilyResolvedClassUnionMember1,
-            value as LazilyResolvedClassUnionMember1,
-          )
-        : true;
+      return false;
     }
 
     if (
-      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(value)
+      LazilyResolvedClassUnionMember2.isLazilyResolvedClassUnionMember2(
+        value,
+      ) &&
+      filter.on?.LazilyResolvedClassUnionMember2 &&
+      !LazilyResolvedClassUnionMember2.$filter(
+        filter.on.LazilyResolvedClassUnionMember2,
+        value as LazilyResolvedClassUnionMember2,
+      )
     ) {
-      return filter.on?.LazilyResolvedClassUnionMember2
-        ? LazilyResolvedClassUnionMember2.$filter(
-            filter.on.LazilyResolvedClassUnionMember2,
-            value as LazilyResolvedClassUnionMember2,
-          )
-        : true;
+      return false;
     }
 
     if (
       LazilyResolvedInterfaceUnionMember1.isLazilyResolvedInterfaceUnionMember1(
         value,
+      ) &&
+      filter.on?.LazilyResolvedInterfaceUnionMember1 &&
+      !LazilyResolvedInterfaceUnionMember1.$filter(
+        filter.on.LazilyResolvedInterfaceUnionMember1,
+        value as LazilyResolvedInterfaceUnionMember1,
       )
     ) {
-      return filter.on?.LazilyResolvedInterfaceUnionMember1
-        ? LazilyResolvedInterfaceUnionMember1.$filter(
-            filter.on.LazilyResolvedInterfaceUnionMember1,
-            value as LazilyResolvedInterfaceUnionMember1,
-          )
-        : true;
+      return false;
     }
 
     if (
       LazilyResolvedInterfaceUnionMember2.isLazilyResolvedInterfaceUnionMember2(
         value,
+      ) &&
+      filter.on?.LazilyResolvedInterfaceUnionMember2 &&
+      !LazilyResolvedInterfaceUnionMember2.$filter(
+        filter.on.LazilyResolvedInterfaceUnionMember2,
+        value as LazilyResolvedInterfaceUnionMember2,
       )
     ) {
-      return filter.on?.LazilyResolvedInterfaceUnionMember2
-        ? LazilyResolvedInterfaceUnionMember2.$filter(
-            filter.on.LazilyResolvedInterfaceUnionMember2,
-            value as LazilyResolvedInterfaceUnionMember2,
-          )
-        : true;
+      return false;
     }
 
     if (
-      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(value)
+      LazilyResolvedIriIdentifierClass.isLazilyResolvedIriIdentifierClass(
+        value,
+      ) &&
+      filter.on?.LazilyResolvedIriIdentifierClass &&
+      !LazilyResolvedIriIdentifierClass.$filter(
+        filter.on.LazilyResolvedIriIdentifierClass,
+        value as LazilyResolvedIriIdentifierClass,
+      )
     ) {
-      return filter.on?.LazilyResolvedIriIdentifierClass
-        ? LazilyResolvedIriIdentifierClass.$filter(
-            filter.on.LazilyResolvedIriIdentifierClass,
-            value as LazilyResolvedIriIdentifierClass,
-          )
-        : true;
+      return false;
     }
 
     if (
       LazilyResolvedIriIdentifierInterface.isLazilyResolvedIriIdentifierInterface(
         value,
+      ) &&
+      filter.on?.LazilyResolvedIriIdentifierInterface &&
+      !LazilyResolvedIriIdentifierInterface.$filter(
+        filter.on.LazilyResolvedIriIdentifierInterface,
+        value as LazilyResolvedIriIdentifierInterface,
       )
     ) {
-      return filter.on?.LazilyResolvedIriIdentifierInterface
-        ? LazilyResolvedIriIdentifierInterface.$filter(
-            filter.on.LazilyResolvedIriIdentifierInterface,
-            value as LazilyResolvedIriIdentifierInterface,
-          )
-        : true;
+      return false;
     }
 
-    if (LazyPropertiesClass.isLazyPropertiesClass(value)) {
-      return filter.on?.LazyPropertiesClass
-        ? LazyPropertiesClass.$filter(
-            filter.on.LazyPropertiesClass,
-            value as LazyPropertiesClass,
-          )
-        : true;
+    if (
+      LazyPropertiesClass.isLazyPropertiesClass(value) &&
+      filter.on?.LazyPropertiesClass &&
+      !LazyPropertiesClass.$filter(
+        filter.on.LazyPropertiesClass,
+        value as LazyPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialClass.isPartialClass(value)) {
-      return filter.on?.PartialClass
-        ? PartialClass.$filter(filter.on.PartialClass, value as PartialClass)
-        : true;
+    if (
+      PartialClass.isPartialClass(value) &&
+      filter.on?.PartialClass &&
+      !PartialClass.$filter(filter.on.PartialClass, value as PartialClass)
+    ) {
+      return false;
     }
 
-    if (LazyPropertiesInterface.isLazyPropertiesInterface(value)) {
-      return filter.on?.LazyPropertiesInterface
-        ? LazyPropertiesInterface.$filter(
-            filter.on.LazyPropertiesInterface,
-            value as LazyPropertiesInterface,
-          )
-        : true;
+    if (
+      LazyPropertiesInterface.isLazyPropertiesInterface(value) &&
+      filter.on?.LazyPropertiesInterface &&
+      !LazyPropertiesInterface.$filter(
+        filter.on.LazyPropertiesInterface,
+        value as LazyPropertiesInterface,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialInterface.isPartialInterface(value)) {
-      return filter.on?.PartialInterface
-        ? PartialInterface.$filter(
-            filter.on.PartialInterface,
-            value as PartialInterface,
-          )
-        : true;
+    if (
+      PartialInterface.isPartialInterface(value) &&
+      filter.on?.PartialInterface &&
+      !PartialInterface.$filter(
+        filter.on.PartialInterface,
+        value as PartialInterface,
+      )
+    ) {
+      return false;
     }
 
-    if (ListPropertiesClass.isListPropertiesClass(value)) {
-      return filter.on?.ListPropertiesClass
-        ? ListPropertiesClass.$filter(
-            filter.on.ListPropertiesClass,
-            value as ListPropertiesClass,
-          )
-        : true;
+    if (
+      ListPropertiesClass.isListPropertiesClass(value) &&
+      filter.on?.ListPropertiesClass &&
+      !ListPropertiesClass.$filter(
+        filter.on.ListPropertiesClass,
+        value as ListPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (MutablePropertiesClass.isMutablePropertiesClass(value)) {
-      return filter.on?.MutablePropertiesClass
-        ? MutablePropertiesClass.$filter(
-            filter.on.MutablePropertiesClass,
-            value as MutablePropertiesClass,
-          )
-        : true;
+    if (
+      MutablePropertiesClass.isMutablePropertiesClass(value) &&
+      filter.on?.MutablePropertiesClass &&
+      !MutablePropertiesClass.$filter(
+        filter.on.MutablePropertiesClass,
+        value as MutablePropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value)) {
-      return filter.on?.NoRdfTypeClassUnionMember1
-        ? NoRdfTypeClassUnionMember1.$filter(
-            filter.on.NoRdfTypeClassUnionMember1,
-            value as NoRdfTypeClassUnionMember1,
-          )
-        : true;
+    if (
+      NoRdfTypeClassUnionMember1.isNoRdfTypeClassUnionMember1(value) &&
+      filter.on?.NoRdfTypeClassUnionMember1 &&
+      !NoRdfTypeClassUnionMember1.$filter(
+        filter.on.NoRdfTypeClassUnionMember1,
+        value as NoRdfTypeClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value)) {
-      return filter.on?.NoRdfTypeClassUnionMember2
-        ? NoRdfTypeClassUnionMember2.$filter(
-            filter.on.NoRdfTypeClassUnionMember2,
-            value as NoRdfTypeClassUnionMember2,
-          )
-        : true;
+    if (
+      NoRdfTypeClassUnionMember2.isNoRdfTypeClassUnionMember2(value) &&
+      filter.on?.NoRdfTypeClassUnionMember2 &&
+      !NoRdfTypeClassUnionMember2.$filter(
+        filter.on.NoRdfTypeClassUnionMember2,
+        value as NoRdfTypeClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (NonClass.isNonClass(value)) {
-      return filter.on?.NonClass
-        ? NonClass.$filter(filter.on.NonClass, value as NonClass)
-        : true;
+    if (
+      NonClass.isNonClass(value) &&
+      filter.on?.NonClass &&
+      !NonClass.$filter(filter.on.NonClass, value as NonClass)
+    ) {
+      return false;
     }
 
-    if (OrderedPropertiesClass.isOrderedPropertiesClass(value)) {
-      return filter.on?.OrderedPropertiesClass
-        ? OrderedPropertiesClass.$filter(
-            filter.on.OrderedPropertiesClass,
-            value as OrderedPropertiesClass,
-          )
-        : true;
+    if (
+      OrderedPropertiesClass.isOrderedPropertiesClass(value) &&
+      filter.on?.OrderedPropertiesClass &&
+      !OrderedPropertiesClass.$filter(
+        filter.on.OrderedPropertiesClass,
+        value as OrderedPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialClassUnionMember1.isPartialClassUnionMember1(value)) {
-      return filter.on?.PartialClassUnionMember1
-        ? PartialClassUnionMember1.$filter(
-            filter.on.PartialClassUnionMember1,
-            value as PartialClassUnionMember1,
-          )
-        : true;
+    if (
+      PartialClassUnionMember1.isPartialClassUnionMember1(value) &&
+      filter.on?.PartialClassUnionMember1 &&
+      !PartialClassUnionMember1.$filter(
+        filter.on.PartialClassUnionMember1,
+        value as PartialClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialClassUnionMember2.isPartialClassUnionMember2(value)) {
-      return filter.on?.PartialClassUnionMember2
-        ? PartialClassUnionMember2.$filter(
-            filter.on.PartialClassUnionMember2,
-            value as PartialClassUnionMember2,
-          )
-        : true;
+    if (
+      PartialClassUnionMember2.isPartialClassUnionMember2(value) &&
+      filter.on?.PartialClassUnionMember2 &&
+      !PartialClassUnionMember2.$filter(
+        filter.on.PartialClassUnionMember2,
+        value as PartialClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value)) {
-      return filter.on?.PartialInterfaceUnionMember1
-        ? PartialInterfaceUnionMember1.$filter(
-            filter.on.PartialInterfaceUnionMember1,
-            value as PartialInterfaceUnionMember1,
-          )
-        : true;
+    if (
+      PartialInterfaceUnionMember1.isPartialInterfaceUnionMember1(value) &&
+      filter.on?.PartialInterfaceUnionMember1 &&
+      !PartialInterfaceUnionMember1.$filter(
+        filter.on.PartialInterfaceUnionMember1,
+        value as PartialInterfaceUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value)) {
-      return filter.on?.PartialInterfaceUnionMember2
-        ? PartialInterfaceUnionMember2.$filter(
-            filter.on.PartialInterfaceUnionMember2,
-            value as PartialInterfaceUnionMember2,
-          )
-        : true;
+    if (
+      PartialInterfaceUnionMember2.isPartialInterfaceUnionMember2(value) &&
+      filter.on?.PartialInterfaceUnionMember2 &&
+      !PartialInterfaceUnionMember2.$filter(
+        filter.on.PartialInterfaceUnionMember2,
+        value as PartialInterfaceUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value)) {
-      return filter.on?.PropertyCardinalitiesClass
-        ? PropertyCardinalitiesClass.$filter(
-            filter.on.PropertyCardinalitiesClass,
-            value as PropertyCardinalitiesClass,
-          )
-        : true;
+    if (
+      PropertyCardinalitiesClass.isPropertyCardinalitiesClass(value) &&
+      filter.on?.PropertyCardinalitiesClass &&
+      !PropertyCardinalitiesClass.$filter(
+        filter.on.PropertyCardinalitiesClass,
+        value as PropertyCardinalitiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value)) {
-      return filter.on?.PropertyVisibilitiesClass
-        ? PropertyVisibilitiesClass.$filter(
-            filter.on.PropertyVisibilitiesClass,
-            value as PropertyVisibilitiesClass,
-          )
-        : true;
+    if (
+      PropertyVisibilitiesClass.isPropertyVisibilitiesClass(value) &&
+      filter.on?.PropertyVisibilitiesClass &&
+      !PropertyVisibilitiesClass.$filter(
+        filter.on.PropertyVisibilitiesClass,
+        value as PropertyVisibilitiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value)) {
-      return filter.on?.RecursiveClassUnionMember1
-        ? RecursiveClassUnionMember1.$filter(
-            filter.on.RecursiveClassUnionMember1,
-            value as RecursiveClassUnionMember1,
-          )
-        : true;
+    if (
+      RecursiveClassUnionMember1.isRecursiveClassUnionMember1(value) &&
+      filter.on?.RecursiveClassUnionMember1 &&
+      !RecursiveClassUnionMember1.$filter(
+        filter.on.RecursiveClassUnionMember1,
+        value as RecursiveClassUnionMember1,
+      )
+    ) {
+      return false;
     }
 
-    if (RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value)) {
-      return filter.on?.RecursiveClassUnionMember2
-        ? RecursiveClassUnionMember2.$filter(
-            filter.on.RecursiveClassUnionMember2,
-            value as RecursiveClassUnionMember2,
-          )
-        : true;
+    if (
+      RecursiveClassUnionMember2.isRecursiveClassUnionMember2(value) &&
+      filter.on?.RecursiveClassUnionMember2 &&
+      !RecursiveClassUnionMember2.$filter(
+        filter.on.RecursiveClassUnionMember2,
+        value as RecursiveClassUnionMember2,
+      )
+    ) {
+      return false;
     }
 
-    if (Sha256IriIdentifierClass.isSha256IriIdentifierClass(value)) {
-      return filter.on?.Sha256IriIdentifierClass
-        ? Sha256IriIdentifierClass.$filter(
-            filter.on.Sha256IriIdentifierClass,
-            value as Sha256IriIdentifierClass,
-          )
-        : true;
+    if (
+      Sha256IriIdentifierClass.isSha256IriIdentifierClass(value) &&
+      filter.on?.Sha256IriIdentifierClass &&
+      !Sha256IriIdentifierClass.$filter(
+        filter.on.Sha256IriIdentifierClass,
+        value as Sha256IriIdentifierClass,
+      )
+    ) {
+      return false;
     }
 
-    if (TermPropertiesClass.isTermPropertiesClass(value)) {
-      return filter.on?.TermPropertiesClass
-        ? TermPropertiesClass.$filter(
-            filter.on.TermPropertiesClass,
-            value as TermPropertiesClass,
-          )
-        : true;
+    if (
+      TermPropertiesClass.isTermPropertiesClass(value) &&
+      filter.on?.TermPropertiesClass &&
+      !TermPropertiesClass.$filter(
+        filter.on.TermPropertiesClass,
+        value as TermPropertiesClass,
+      )
+    ) {
+      return false;
     }
 
-    if (UnionDiscriminantsClass.isUnionDiscriminantsClass(value)) {
-      return filter.on?.UnionDiscriminantsClass
-        ? UnionDiscriminantsClass.$filter(
-            filter.on.UnionDiscriminantsClass,
-            value as UnionDiscriminantsClass,
-          )
-        : true;
+    if (
+      UnionDiscriminantsClass.isUnionDiscriminantsClass(value) &&
+      filter.on?.UnionDiscriminantsClass &&
+      !UnionDiscriminantsClass.$filter(
+        filter.on.UnionDiscriminantsClass,
+        value as UnionDiscriminantsClass,
+      )
+    ) {
+      return false;
     }
 
-    if (UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value)) {
-      return filter.on?.UuidV4IriIdentifierClass
-        ? UuidV4IriIdentifierClass.$filter(
-            filter.on.UuidV4IriIdentifierClass,
-            value as UuidV4IriIdentifierClass,
-          )
-        : true;
+    if (
+      UuidV4IriIdentifierClass.isUuidV4IriIdentifierClass(value) &&
+      filter.on?.UuidV4IriIdentifierClass &&
+      !UuidV4IriIdentifierClass.$filter(
+        filter.on.UuidV4IriIdentifierClass,
+        value as UuidV4IriIdentifierClass,
+      )
+    ) {
+      return false;
     }
 
-    if (UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value)) {
-      return filter.on?.UuidV4IriIdentifierInterface
-        ? UuidV4IriIdentifierInterface.$filter(
-            filter.on.UuidV4IriIdentifierInterface,
-            value as UuidV4IriIdentifierInterface,
-          )
-        : true;
+    if (
+      UuidV4IriIdentifierInterface.isUuidV4IriIdentifierInterface(value) &&
+      filter.on?.UuidV4IriIdentifierInterface &&
+      !UuidV4IriIdentifierInterface.$filter(
+        filter.on.UuidV4IriIdentifierInterface,
+        value as UuidV4IriIdentifierInterface,
+      )
+    ) {
+      return false;
     }
 
-    if ($DefaultPartial.is$DefaultPartial(value)) {
-      return filter.on?.$DefaultPartial
-        ? $DefaultPartial.$filter(
-            filter.on.$DefaultPartial,
-            value as $DefaultPartial,
-          )
-        : true;
+    if (
+      $DefaultPartial.is$DefaultPartial(value) &&
+      filter.on?.$DefaultPartial &&
+      !$DefaultPartial.$filter(
+        filter.on.$DefaultPartial,
+        value as $DefaultPartial,
+      )
+    ) {
+      return false;
     }
 
-    if ($NamedDefaultPartial.is$NamedDefaultPartial(value)) {
-      return filter.on?.$NamedDefaultPartial
-        ? $NamedDefaultPartial.$filter(
-            filter.on.$NamedDefaultPartial,
-            value as $NamedDefaultPartial,
-          )
-        : true;
+    if (
+      $NamedDefaultPartial.is$NamedDefaultPartial(value) &&
+      filter.on?.$NamedDefaultPartial &&
+      !$NamedDefaultPartial.$filter(
+        filter.on.$NamedDefaultPartial,
+        value as $NamedDefaultPartial,
+      )
+    ) {
+      return false;
     }
 
-    value satisfies never;
-    throw new Error("unrecognized type");
+    return true;
   }
 
   export type $Filter = {
@@ -64007,12 +64153,24 @@ export namespace $Object {
         ClassUnionMember2.$Filter,
         "$identifier"
       >;
+      readonly ClassUnionMemberCommonParent?: Omit<
+        ClassUnionMemberCommonParentStatic.$Filter,
+        "$identifier"
+      >;
       readonly ConcreteChildClass?: Omit<
         ConcreteChildClass.$Filter,
         "$identifier"
       >;
       readonly ConcreteParentClass?: Omit<
         ConcreteParentClassStatic.$Filter,
+        "$identifier"
+      >;
+      readonly AbstractBaseClassWithoutProperties?: Omit<
+        AbstractBaseClassWithoutPropertiesStatic.$Filter,
+        "$identifier"
+      >;
+      readonly AbstractBaseClassWithProperties?: Omit<
+        AbstractBaseClassWithPropertiesStatic.$Filter,
         "$identifier"
       >;
       readonly ConcreteChildInterface?: Omit<
@@ -64056,6 +64214,10 @@ export namespace $Object {
         "$identifier"
       >;
       readonly ExternClass?: Omit<ExternClass.$Filter, "$identifier">;
+      readonly AbstractBaseClassForExternClass?: Omit<
+        AbstractBaseClassForExternClassStatic.$Filter,
+        "$identifier"
+      >;
       readonly ExternClassPropertyClass?: Omit<
         ExternClassPropertyClass.$Filter,
         "$identifier"
@@ -64078,6 +64240,14 @@ export namespace $Object {
       >;
       readonly IdentifierOverride3Class?: Omit<
         IdentifierOverride3ClassStatic.$Filter,
+        "$identifier"
+      >;
+      readonly IdentifierOverride2Class?: Omit<
+        IdentifierOverride2ClassStatic.$Filter,
+        "$identifier"
+      >;
+      readonly IdentifierOverride1Class?: Omit<
+        IdentifierOverride1ClassStatic.$Filter,
         "$identifier"
       >;
       readonly InIdentifierClass?: Omit<
@@ -64103,6 +64273,10 @@ export namespace $Object {
       >;
       readonly InterfaceUnionMember2?: Omit<
         InterfaceUnionMember2.$Filter,
+        "$identifier"
+      >;
+      readonly InterfaceUnionMemberCommonParent?: Omit<
+        InterfaceUnionMemberCommonParentStatic.$Filter,
         "$identifier"
       >;
       readonly IriIdentifierClass?: Omit<
@@ -65536,7 +65710,6 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
 
-    _object satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -67200,7 +67373,6 @@ export namespace $Object {
   export function $toJson(
     _object: $Object,
   ):
-    | AbstractBaseClassForExternClassStatic.$Json
     | BlankNodeIdentifierClass.$Json
     | BlankNodeIdentifierInterface.$Json
     | BlankNodeOrIriIdentifierClass.$Json
@@ -67223,6 +67395,7 @@ export namespace $Object {
     | ExplicitFromToRdfTypesClass.$Json
     | ExplicitRdfTypeClass.$Json
     | ExternClass.$Json
+    | AbstractBaseClassForExternClassStatic.$Json
     | ExternClassPropertyClass.$Json
     | FlattenClassUnionMember3.$Json
     | HasValuePropertiesClass.$Json
@@ -67596,7 +67769,6 @@ export namespace $Object {
       return _object.$toJson();
     }
 
-    _object satisfies never;
     throw new Error("unrecognized type");
   }
 
@@ -67930,7 +68102,6 @@ export namespace $Object {
       return _object.$toRdf(_parameters);
     }
 
-    _object satisfies never;
     throw new Error("unrecognized type");
   }
 }
@@ -76711,7 +76882,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: ExternClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [ExternClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,

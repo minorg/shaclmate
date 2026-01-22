@@ -25,13 +25,13 @@ export function filterFunctionDeclaration(
 if (typeof filter.${syntheticNamePrefix}identifier !== "undefined" && !${this.identifierType.filterFunction}(filter.${syntheticNamePrefix}identifier, value.${syntheticNamePrefix}identifier)) {
   return false;
 }`,
-      ...this.concreteMemberTypes.map(
+      ...this.memberTypes.map(
         (memberType) => `\
-if (${memberType.staticModuleName}.is${memberType.name}(value)) {
-  return filter.on?.${memberType.name} ? ${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name}) : true;
+if (${memberType.staticModuleName}.is${memberType.name}(value) && filter.on?.${memberType.name} && !${memberType.filterFunction}(filter.on.${memberType.name}, value as ${memberType.name})) {
+  return false;
 }`,
       ),
-      `value satisfies never; throw new Error("unrecognized type");`,
+      `return true;`,
     ],
   };
 }

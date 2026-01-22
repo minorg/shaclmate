@@ -368,8 +368,12 @@ return purify.Either.of(objects);`,
             staticModuleName: string;
             fromRdfTypeVariable: Maybe<string>;
           },
-        ) =>
-          `{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: [${objectType.fromRdfTypeVariable.toList().concat(objectType.descendantFromRdfTypeVariables).join(", ")}] }`;
+        ) => {
+          const fromRdfTypes = objectType.fromRdfTypeVariable
+            .toList()
+            .concat(objectType.descendantFromRdfTypeVariables);
+          return `{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? `[${fromRdfTypes.join(", ")}]` : "[]"} }`;
+        };
 
         switch (objectType.kind) {
           case "ObjectType": {

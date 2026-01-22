@@ -12,7 +12,7 @@ export function filterTypeDeclaration(
     type: `\
 {
   readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType};
-  readonly on?: { ${this.concreteMemberTypes.map((memberType) => `readonly ${memberType.name}?: Omit<${memberType.filterType}, "${syntheticNamePrefix}identifier">`).join(";")} }
+  readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.name}?: Omit<${memberType.filterType}, "${syntheticNamePrefix}identifier">`).join(";")} }
 }`,
   };
 }

@@ -27,7 +27,7 @@ export function equalsFunctionDeclaration(
     returnType: `${syntheticNamePrefix}EqualsResult`,
     statements: `\
     return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
-      ${this.memberTypes
+      ${this.concreteMemberTypes
         .map((memberType) => {
           let returnExpression: string;
           switch (memberType.declarationType) {
@@ -40,7 +40,7 @@ export function equalsFunctionDeclaration(
           }
           return `if (${memberType.staticModuleName}.is${memberType.name}(left)) { return ${returnExpression}; }`;
         })
-        .concat('left satisfies never; throw new Error("unrecognized type");')
+        .concat(`return ${syntheticNamePrefix}EqualsResult.Equal;`)
         .join("\n")}
     })`,
   });
