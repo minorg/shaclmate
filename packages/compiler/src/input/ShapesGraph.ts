@@ -2,6 +2,7 @@ import { ShapesGraph as _ShapesGraph } from "@shaclmate/shacl-ast";
 import { owl, rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { Either } from "purify-ts";
 import type { Resource } from "rdfjs-resource";
+import { logger } from "../logger.js";
 import { ancestorClassIris } from "./ancestorClassIris.js";
 import { descendantClassIris } from "./descendantClassIris.js";
 import * as generated from "./generated.js";
@@ -39,27 +40,42 @@ export namespace ShapesGraph {
       return generated.ShaclmateNodeShape.$fromRdf(resource, {
         ignoreRdfType: true,
         preferredLanguages: this.preferredLanguages,
-      }).map(
-        (generatedShape) =>
-          new NodeShape({
-            ancestorClassIris: ancestorClassIris(
-              resource,
-              Number.MAX_SAFE_INTEGER,
-            ),
-            childClassIris: descendantClassIris(resource, 1),
-            descendantClassIris: descendantClassIris(
-              resource,
-              Number.MAX_SAFE_INTEGER,
-            ),
-            generatedShaclmateNodeShape: generatedShape,
-            isClass:
-              resource.isInstanceOf(owl.Class) ||
-              resource.isInstanceOf(rdfs.Class),
-            isList: resource.isSubClassOf(rdf.List),
-            parentClassIris: ancestorClassIris(resource, 1),
-            shapesGraph,
-          }),
-      );
+      }).map((generatedShape) => {
+        let isClass =
+          resource.isInstanceOf(owl.Class) || resource.isInstanceOf(rdfs.Class);
+
+        const isList = resource.isSubClassOf(rdf.List);
+        if (isList) {
+          isClass = true; // RDFS entailment: if A rdfs:subClassOf rdf:List then A is an rdfs:Class
+        }
+
+        const ancestorClassIris_ = ancestorClassIris(
+          resource,
+          Number.MAX_SAFE_INTEGER,
+        );
+        if (ancestorClassIris_.length > 0) {
+          isClass = true; // RDFS entailment: if A rdfs:subClassOf B then both A and B are rdfs:Class's
+        }
+
+        const descendantClassIris_ = descendantClassIris(
+          resource,
+          Number.MAX_SAFE_INTEGER,
+        );
+        if (descendantClassIris_.length > 0) {
+          isClass = true; // RDFS entailment, see above
+        }
+
+        return new NodeShape({
+          ancestorClassIris: ancestorClassIris_,
+          childClassIris: descendantClassIris(resource, 1),
+          descendantClassIris: descendantClassIris_,
+          generatedShaclmateNodeShape: generatedShape,
+          isClass,
+          isList,
+          parentClassIris: ancestorClassIris(resource, 1),
+          shapesGraph,
+        });
+      });
     }
 
     protected override createOntology({
