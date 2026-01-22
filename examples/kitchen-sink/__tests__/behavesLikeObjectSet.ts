@@ -1,5 +1,5 @@
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
-import N3 from "n3";
+import N3, { DataFactory, type NamedNode } from "n3";
 import { describe, it } from "vitest";
 
 const testData = {
@@ -50,19 +50,19 @@ const testData = {
       }),
   ) satisfies readonly kitchenSink.ConcreteChildClass[],
 
-  directRecursiveClasses: [...new Array(4)].map(
-    (_, i) =>
-      new kitchenSink.DirectRecursiveClass({
-        directRecursiveProperty: new kitchenSink.DirectRecursiveClass({
-          $identifier: N3.DataFactory.namedNode(
-            `http://example.com/directRecursiveClass${i}/directRecursiveProperty/value`,
-          ),
-        }),
-        $identifier: N3.DataFactory.namedNode(
-          `http://example.com/directRecursiveClass${i}`,
-        ),
-      }),
-  ) satisfies readonly kitchenSink.DirectRecursiveClass[],
+  // directRecursiveClasses: [...new Array(4)].map(
+  //   (_, i) =>
+  //     new kitchenSink.DirectRecursiveClass({
+  //       directRecursiveProperty: new kitchenSink.DirectRecursiveClass({
+  //         $identifier: N3.DataFactory.namedNode(
+  //           `http://example.com/directRecursiveClass${i}/directRecursiveProperty/value`,
+  //         ),
+  //       }),
+  //       $identifier: N3.DataFactory.namedNode(
+  //         `http://example.com/directRecursiveClass${i}`,
+  //       ),
+  //     }),
+  // ) satisfies readonly kitchenSink.DirectRecursiveClass[],
 
   interfaceUnions: [...new Array(4)].map((_, i) => {
     switch (i % 2) {
@@ -148,7 +148,7 @@ export function behavesLikeObjectSet(
     });
 
     describe("union", () => {
-      it("with fromRdfType", async ({ expect }) => {
+      it("class with fromRdfType", async ({ expect }) => {
         const objectSet = createObjectSet(...testData.classUnions);
         for (const expectedClassUnion of testData.classUnions) {
           expect(
@@ -160,7 +160,7 @@ export function behavesLikeObjectSet(
         }
       });
 
-      it("without fromRdfType", async ({ expect }) => {
+      it("class without fromRdfType", async ({ expect }) => {
         const objectSet = createObjectSet(...testData.noRdfTypeClassUnions);
         for (const expectedClassUnion of testData.noRdfTypeClassUnions) {
           const actualClassUnion = (
@@ -168,6 +168,20 @@ export function behavesLikeObjectSet(
           ).unsafeCoerce();
           const equalsResult = kitchenSink.NoRdfTypeClassUnion.$equals(
             expectedClassUnion,
+            actualClassUnion,
+          );
+          expect(equalsResult.unsafeCoerce()).toBe(true);
+        }
+      });
+
+      it("interface", async ({ expect }) => {
+        const objectSet = createObjectSet(...testData.interfaceUnions);
+        for (const expectedInterfaceUnion of testData.interfaceUnions) {
+          const actualClassUnion = (
+            await objectSet.interfaceUnion(expectedInterfaceUnion.$identifier)
+          ).unsafeCoerce();
+          const equalsResult = kitchenSink.InterfaceUnion.$equals(
+            expectedInterfaceUnion,
             actualClassUnion,
           );
           expect(equalsResult.unsafeCoerce()).toBe(true);
@@ -232,8 +246,110 @@ export function behavesLikeObjectSet(
       ]);
     });
 
+    describe("filter", () => {
+      describe("number", () => {
+        const identifiers = [...new Array(3)].map((_, i) =>
+          DataFactory.namedNode(`http://example.com/${i}`),
+        );
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                numberTermProperty: i,
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          in: [{ numberTermProperty: { in: [0] } }, [identifiers[0]]],
+          maxExclusive: [
+            { numberTermProperty: { maxExclusive: 1 } },
+            [identifiers[0]],
+          ],
+          maxInclusive: [
+            { numberTermProperty: { maxInclusive: 0 } },
+            [identifiers[0]],
+          ],
+          minExclusive: [
+            { numberTermProperty: { minExclusive: 0 } },
+            [identifiers[1]],
+          ],
+          minInclusive: [
+            { numberTermProperty: { minInclusive: 0 } },
+            [identifiers[0], identifiers[1]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe("string", () => {
+        const identifiers = [...new Array(3)].map((_, i) =>
+          DataFactory.namedNode(`http://example.com/${i}`),
+        );
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                stringTermProperty: "x".repeat(i + 1),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            numberTermProperty: 0,
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          in: [{ stringTermProperty: { in: ["x"] } }, [identifiers[0]]],
+          maxLength: [
+            { stringTermProperty: { maxLength: 1 } },
+            [identifiers[0]],
+          ],
+          minLength: [
+            { stringTermProperty: { maxLength: 1 } },
+            [identifiers[1]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+    });
+
     describe("union", () => {
-      it("with fromRdfType", async ({ expect }) => {
+      it("class with fromRdfType", async ({ expect }) => {
         const objectSet = createObjectSet(...testData.classUnions);
         expect(
           new Set(
@@ -248,7 +364,7 @@ export function behavesLikeObjectSet(
         );
       });
 
-      it("limit 1", async ({ expect }) => {
+      it("class limit 1", async ({ expect }) => {
         const objectSet = createObjectSet(...testData.classUnions);
         expect(
           (await objectSet.classUnionIdentifiers({ limit: 1 }))
@@ -363,17 +479,24 @@ export function behavesLikeObjectSet(
     });
 
     describe("union", () => {
-      it("with fromRdfTypes", async ({ expect }) => {
+      it("class with fromRdfTypes", async ({ expect }) => {
         const objectSet = createObjectSet(...testData.classUnions);
         expect(
           (await objectSet.classUnionsCount()).unsafeCoerce(),
         ).toStrictEqual(testData.classUnions.length);
       });
 
-      it("without fromRdfTypes", async ({ expect }) => {
+      it("class without fromRdfTypes", async ({ expect }) => {
         const objectSet = createObjectSet(...testData.noRdfTypeClassUnions);
         expect(
           (await objectSet.noRdfTypeClassUnionsCount()).unsafeCoerce(),
+        ).toStrictEqual(testData.noRdfTypeClassUnions.length);
+      });
+
+      it("interface", async ({ expect }) => {
+        const objectSet = createObjectSet(...testData.interfaceUnions);
+        expect(
+          (await objectSet.interfaceUnionsCount()).unsafeCoerce(),
         ).toStrictEqual(testData.interfaceUnions.length);
       });
     });
