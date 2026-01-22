@@ -1,7 +1,9 @@
 import type { BlankNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import N3, { DataFactory, type NamedNode } from "n3";
 import { describe, it } from "vitest";
+import { harnesses } from "./harnesses.js";
 
 const testData = {
   blankNodeOrIriIdentifierClasses: [...new Array(4)].map(
@@ -433,6 +435,97 @@ export function behavesLikeObjectSet(
         }
       });
 
+      describe("literal", () => {
+        const objectSet = createObjectSet(
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[0],
+            literalTermProperty: DataFactory.literal("test"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[1],
+            literalTermProperty: DataFactory.literal("test", "en"),
+          }),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            literalTermProperty: DataFactory.literal(1, xsd.integer),
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          datatypeIn: [
+            { literalTermProperty: { datatypeIn: [xsd.integer] } },
+            [identifiers[2]],
+          ],
+          in: [
+            { literalTermProperty: { in: [DataFactory.literal("test")] } },
+            [identifiers[0]],
+          ],
+          languageIn: [
+            { literalTermProperty: { languageIn: ["en"] } },
+            [identifiers[1]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe("named node", () => {
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.TermPropertiesClass({
+                $identifier: identifiers[i],
+                iriTermProperty: DataFactory.namedNode(
+                  `http://example.com/prop${i}`,
+                ),
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            stringTermProperty: "test",
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          in: [
+            {
+              iriTermProperty: {
+                in: [DataFactory.namedNode("http://example.com/prop0")],
+              },
+            },
+            [identifiers[0]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.TermPropertiesClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
       describe("number", () => {
         const objectSet = createObjectSet(
           ...[...new Array(2)].map(
@@ -473,6 +566,152 @@ export function behavesLikeObjectSet(
           it(id, async ({ expect }) => {
             const actual = (
               await objectSet.termPropertiesClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe("object", () => {
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map(
+            (_, i) =>
+              new kitchenSink.ConcreteChildClass({
+                abstractBaseClassWithPropertiesProperty: `test${i}`,
+                $identifier: identifiers[i],
+                concreteChildClassProperty: `test${i}`,
+                concreteParentClassProperty: `test${i}`,
+              }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            numberTermProperty: 0,
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          childProperty: [
+            { concreteChildClassProperty: { in: ["test1"] } },
+            [identifiers[1]],
+          ],
+          identifier: [
+            { $identifier: { in: [identifiers[1]] } },
+            [identifiers[1]],
+          ],
+          parentProperty: [
+            { concreteParentClassProperty: { in: ["test0"] } },
+            [identifiers[0]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.ConcreteChildClass.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.concreteChildClassIdentifiers({
+                filter,
+              })
+            ).unsafeCoerce();
+            expect(actual).toHaveLength(expected.length);
+            for (let i = 0; i < expected.length; i++) {
+              expect(expected[i].equals(actual[i]));
+            }
+          });
+        }
+      });
+
+      describe("object union", () => {
+        const objectSet = createObjectSet(
+          ...[...new Array(2)].map((_, i) =>
+            i === 0
+              ? new kitchenSink.ClassUnionMember1({
+                  $identifier: identifiers[i],
+                  classUnionMember1Property: `test${i}`,
+                  classUnionMemberCommonParentProperty: `test${i}`,
+                })
+              : new kitchenSink.ClassUnionMember2({
+                  $identifier: identifiers[i],
+                  classUnionMember2Property: `test${i}`,
+                  classUnionMemberCommonParentProperty: `test${i}`,
+                }),
+          ),
+          new kitchenSink.TermPropertiesClass({
+            $identifier: identifiers[2],
+            numberTermProperty: 0,
+          }),
+        );
+
+        for (const [id, [filter, expected]] of Object.entries({
+          identifier: [
+            { $identifier: { in: [identifiers[0]] } },
+            [identifiers[0]],
+          ],
+          noOn: [{}, [identifiers[0], identifiers[1]]],
+          onBothMembersPositive: [
+            {
+              on: {
+                ClassUnionMember1: {
+                  classUnionMemberCommonParentProperty: { in: ["test0"] },
+                },
+                ClassUnionMember2: {
+                  classUnionMemberCommonParentProperty: { in: ["test1"] },
+                },
+              },
+            },
+            [identifiers[0], identifiers[1]],
+          ],
+          onMember1Negative: [
+            {
+              on: {
+                ClassUnionMember1: {
+                  classUnionMemberCommonParentProperty: { in: ["test1"] },
+                },
+              },
+            },
+            [],
+          ],
+          onMember1Positive: [
+            {
+              on: {
+                ClassUnionMember1: {
+                  classUnionMemberCommonParentProperty: { in: ["test0"] },
+                },
+              },
+            },
+            [identifiers[0]],
+          ],
+          onMember2Negative: [
+            {
+              on: {
+                ClassUnionMember2: {
+                  classUnionMemberCommonParentProperty: { in: ["test0"] },
+                },
+              },
+            },
+            [],
+          ],
+          onMember2Positive: [
+            {
+              on: {
+                ClassUnionMember2: {
+                  classUnionMemberCommonParentProperty: { in: ["test1"] },
+                },
+              },
+            },
+            [identifiers[1]],
+          ],
+        } satisfies Record<
+          string,
+          [kitchenSink.ClassUnion.$Filter, readonly NamedNode[]]
+        >)) {
+          it(id, async ({ expect }) => {
+            const actual = (
+              await objectSet.classUnionIdentifiers({
                 filter,
               })
             ).unsafeCoerce();
