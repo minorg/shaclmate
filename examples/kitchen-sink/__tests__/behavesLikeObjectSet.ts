@@ -673,7 +673,7 @@ export function behavesLikeObjectSet(
                 },
               },
             },
-            [],
+            [identifiers[1]],
           ],
           onMember1Positive: [
             {
@@ -683,7 +683,7 @@ export function behavesLikeObjectSet(
                 },
               },
             },
-            [identifiers[0]],
+            [identifiers[0], identifiers[1]],
           ],
           onMember2Negative: [
             {
@@ -693,7 +693,7 @@ export function behavesLikeObjectSet(
                 },
               },
             },
-            [],
+            [identifiers[0]],
           ],
           onMember2Positive: [
             {
@@ -703,7 +703,7 @@ export function behavesLikeObjectSet(
                 },
               },
             },
-            [identifiers[1]],
+            [identifiers[1], identifiers[1]],
           ],
         } satisfies Record<
           string,
