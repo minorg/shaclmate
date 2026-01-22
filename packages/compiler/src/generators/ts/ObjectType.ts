@@ -193,6 +193,10 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   get declarations() {
+    if (this.extern) {
+      return [];
+    }
+
     const declarations: (
       | ClassDeclarationStructure
       | InterfaceDeclarationStructure
@@ -205,16 +209,16 @@ export class ObjectType extends AbstractDeclaredType {
     const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.filterFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.filterTypeDeclaration.bind(this)().toList(),
+      _ObjectType.filterFunctionDeclaration.bind(this)(),
+      _ObjectType.filterTypeDeclaration.bind(this)(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectType.jsonDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
-      ..._ObjectType.isTypeFunctionDeclaration.bind(this)().toList(),
+      _ObjectType.isTypeFunctionDeclaration.bind(this)(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-      ..._ObjectType.propertiesVariableStatement.bind(this)().toList(),
+      _ObjectType.propertiesVariableStatement.bind(this)(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
     ];
 

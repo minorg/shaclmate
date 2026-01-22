@@ -10,10 +10,6 @@ export function jsonTypeAliasDeclaration(
     return Maybe.empty();
   }
 
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
   const members: string[] = [];
   if (this.ownProperties.length > 0) {
     members.push(

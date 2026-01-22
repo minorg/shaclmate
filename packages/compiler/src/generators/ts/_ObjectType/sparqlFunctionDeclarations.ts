@@ -16,10 +16,6 @@ export function sparqlFunctionDeclarations(
     return [];
   }
 
-  if (this.extern) {
-    return [];
-  }
-
   const subjectDefault = camelCase(this.name);
 
   const variables = {

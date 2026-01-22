@@ -5,11 +5,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function filterTypeDeclaration(
   this: ObjectType,
-): Maybe<TypeAliasDeclarationStructure> {
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
+): TypeAliasDeclarationStructure {
   const members: string[] = [];
   if (this.properties.length > 0) {
     const filterProperties: Record<string, string> = {};
@@ -32,10 +28,10 @@ export function filterTypeDeclaration(
     );
   }
 
-  return Maybe.of({
+  return {
     isExported: true,
     kind: StructureKind.TypeAlias,
     name: `${syntheticNamePrefix}Filter`,
     type: members.length > 0 ? members.join(" & ") : "object",
-  });
+  };
 }

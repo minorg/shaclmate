@@ -250,10 +250,6 @@ export function jsonDeclarations(
     return [];
   }
 
-  if (this.extern) {
-    return [];
-  }
-
   return [
     jsonTypeAliasDeclaration.bind(this)(),
     ...fromJsonFunctionDeclarations.bind(this)(),

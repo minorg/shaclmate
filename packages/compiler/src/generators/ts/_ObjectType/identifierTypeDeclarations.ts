@@ -19,10 +19,6 @@ type IdentifierTypeDeclarations = readonly (
 export function identifierTypeDeclarations(
   this: ObjectType,
 ): IdentifierTypeDeclarations {
-  if (this.extern) {
-    return [];
-  }
-
   const ancestorObjectTypeWithSameIdentifierType =
     this.ancestorObjectTypes.find(
       (ancestorObjectType) =>

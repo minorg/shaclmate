@@ -16,10 +16,6 @@ export function fromRdfTypeVariableStatement(
     return Maybe.empty();
   }
 
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
   if (this.fromRdfType.isNothing()) {
     return Maybe.empty();
   }

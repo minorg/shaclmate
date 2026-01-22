@@ -12,11 +12,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function propertiesVariableStatement(
   this: ObjectType,
-): Maybe<VariableStatementStructure> {
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
+): VariableStatementStructure {
   const propertiesObject: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertiesObject.push(
@@ -33,7 +29,7 @@ export function propertiesVariableStatement(
     );
   }
 
-  return Maybe.of({
+  return {
     declarationKind: VariableDeclarationKind.Const,
     kind: StructureKind.VariableStatement,
     declarations: [
@@ -43,5 +39,5 @@ export function propertiesVariableStatement(
       },
     ],
     isExported: true,
-  } satisfies VariableStatementStructure);
+  };
 }

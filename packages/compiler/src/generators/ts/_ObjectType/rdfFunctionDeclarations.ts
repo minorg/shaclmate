@@ -164,10 +164,6 @@ export function rdfFunctionDeclarations(
     return [];
   }
 
-  if (this.extern) {
-    return [];
-  }
-
   return [
     ...fromRdfFunctionDeclaration.bind(this)().toList(),
     propertiesFromRdfFunctionDeclaration.bind(this)(),
