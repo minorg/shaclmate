@@ -171,10 +171,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             $identifier: {
-              in: [
-                iriInstance.$identifier.value,
-                blankNodeInstance.$identifier.value,
-              ],
+              in: [iriInstance.$identifier, blankNodeInstance.$identifier],
             },
           },
           iriInstance,
@@ -183,7 +180,15 @@ describe("filter", () => {
 
       expect(
         TermPropertiesClass.$filter(
-          { $identifier: { in: [iriInstance.$identifier.value.concat("x")] } },
+          {
+            $identifier: {
+              in: [
+                DataFactory.namedNode(
+                  iriInstance.$identifier.value.concat("x"),
+                ),
+              ],
+            },
+          },
           iriInstance,
         ),
       ).toStrictEqual(false);
@@ -228,7 +233,7 @@ describe("filter", () => {
               $identifier: {
                 in: [
                   instance.requiredLazyToResolvedClassProperty.partial
-                    .$identifier.value,
+                    .$identifier,
                 ],
               },
             },
@@ -261,8 +266,8 @@ describe("filter", () => {
           {
             literalTermProperty: {
               datatypeIn: [
-                value.datatype.value.concat("x"),
-                value.datatype.value,
+                DataFactory.namedNode(value.datatype.value.concat("x")),
+                value.datatype,
               ],
             },
           },
@@ -274,7 +279,9 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              datatypeIn: [value.datatype.value.concat("x")],
+              datatypeIn: [
+                DataFactory.namedNode(value.datatype.value.concat("x")),
+              ],
             },
           },
           instance,
@@ -289,12 +296,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              in: [
-                {
-                  datatype: xsd.string.value,
-                  value: value.value,
-                },
-              ],
+              in: [value],
             },
           },
           instance,
@@ -305,12 +307,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             literalTermProperty: {
-              in: [
-                {
-                  datatype: xsd.integer.value,
-                  value: value.value,
-                },
-              ],
+              in: [DataFactory.literal(1)],
             },
           },
           instance,
@@ -354,14 +351,23 @@ describe("filter", () => {
     it("in", ({ expect }) => {
       expect(
         TermPropertiesClass.$filter(
-          { iriTermProperty: { in: [value.concat("x"), value] } },
+          {
+            iriTermProperty: {
+              in: [
+                DataFactory.namedNode(value.concat("x")),
+                DataFactory.namedNode(value),
+              ],
+            },
+          },
           instance,
         ),
       ).toStrictEqual(true);
 
       expect(
         TermPropertiesClass.$filter(
-          { iriTermProperty: { in: [value.concat("x")] } },
+          {
+            iriTermProperty: { in: [DataFactory.namedNode(value.concat("x"))] },
+          },
           instance,
         ),
       ).toStrictEqual(false);
@@ -461,7 +467,7 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             $identifier: {
-              in: [instance.$identifier.value],
+              in: [instance.$identifier],
             },
           },
           instance,
@@ -472,7 +478,9 @@ describe("filter", () => {
         ConcreteChildClass.$filter(
           {
             $identifier: {
-              in: [instance.$identifier.value.concat("x")],
+              in: [
+                DataFactory.namedNode(instance.$identifier.value.concat("x")),
+              ],
             },
           },
           instance,
@@ -761,8 +769,8 @@ describe("filter", () => {
           {
             termProperty: {
               datatypeIn: [
-                value.datatype.value.concat("x"),
-                value.datatype.value,
+                DataFactory.namedNode(value.datatype.value.concat("x")),
+                value.datatype,
               ],
             },
           },
@@ -774,7 +782,9 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              datatypeIn: [value.datatype.value.concat("x")],
+              datatypeIn: [
+                DataFactory.namedNode(value.datatype.value.concat("x")),
+              ],
             },
           },
           instance,
@@ -789,13 +799,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              in: [
-                {
-                  datatype: xsd.string.value,
-                  type: "Literal",
-                  value: value.value,
-                },
-              ],
+              in: [value],
             },
           },
           instance,
@@ -806,13 +810,7 @@ describe("filter", () => {
         TermPropertiesClass.$filter(
           {
             termProperty: {
-              in: [
-                {
-                  datatype: xsd.integer.value,
-                  type: "Literal",
-                  value: value.value,
-                },
-              ],
+              in: [DataFactory.literal(1)],
             },
           },
           instance,
@@ -877,10 +875,12 @@ describe("filter", () => {
     const instance = new UnionDiscriminantsClass({
       requiredClassOrClassOrStringProperty: {
         type: "2-string",
-        value: "test",
+        value: "http://example.com/test",
       },
-      requiredIriOrLiteralProperty: DataFactory.namedNode("http://example.com"),
-      requiredIriOrStringProperty: "test",
+      requiredIriOrLiteralProperty: DataFactory.namedNode(
+        "http://example.com/test",
+      ),
+      requiredIriOrStringProperty: "http://example.com/test",
     });
 
     it("no filters", ({ expect }) => {
@@ -894,12 +894,16 @@ describe("filter", () => {
             requiredClassOrClassOrStringProperty: {
               on: {
                 "0-ClassUnionMember1": {
-                  classUnionMember1Property: { in: ["test"] },
+                  classUnionMember1Property: {
+                    in: ["http://example.com/test"],
+                  },
                 },
                 "1-ClassUnionMember2": {
-                  classUnionMember2Property: { in: ["test"] },
+                  classUnionMember2Property: {
+                    in: ["http://example.com/test"],
+                  },
                 },
-                "2-string": { in: ["test"] },
+                "2-string": { in: ["http://example.com/test"] },
               },
             },
           },
@@ -913,10 +917,14 @@ describe("filter", () => {
             requiredClassOrClassOrStringProperty: {
               on: {
                 "0-ClassUnionMember1": {
-                  classUnionMember1Property: { in: ["test"] },
+                  classUnionMember1Property: {
+                    in: ["http://example.com/test"],
+                  },
                 },
                 "1-ClassUnionMember2": {
-                  classUnionMember2Property: { in: ["test"] },
+                  classUnionMember2Property: {
+                    in: ["http://example.com/test"],
+                  },
                 },
                 "2-string": { in: ["testx"] },
               },
@@ -933,8 +941,12 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { in: [{ value: "test" }] },
-                NamedNode: { in: ["http://example.com"] },
+                Literal: {
+                  in: [DataFactory.literal("http://example.com/test")],
+                },
+                NamedNode: {
+                  in: [DataFactory.namedNode("http://example.com/test")],
+                },
               },
             },
           },
@@ -947,8 +959,12 @@ describe("filter", () => {
           {
             requiredIriOrLiteralProperty: {
               on: {
-                Literal: { in: [{ value: "test" }] },
-                NamedNode: { in: ["http://example.comXXX"] },
+                Literal: {
+                  in: [DataFactory.literal("http://example.com/test")],
+                },
+                NamedNode: {
+                  in: [DataFactory.namedNode("http://example.com/testXXX")],
+                },
               },
             },
           },
@@ -963,8 +979,10 @@ describe("filter", () => {
           {
             requiredIriOrStringProperty: {
               on: {
-                object: { in: ["test"] },
-                string: { in: ["test"] },
+                object: {
+                  in: [DataFactory.namedNode("http://example.com/test")],
+                },
+                string: { in: ["http://example.com/test"] },
               },
             },
           },
@@ -977,8 +995,10 @@ describe("filter", () => {
           {
             requiredIriOrStringProperty: {
               on: {
-                object: { in: ["test"] },
-                string: { in: ["testx"] },
+                object: {
+                  in: [DataFactory.namedNode("http://example.com/test")],
+                },
+                string: { in: ["http://example.com/testx"] },
               },
             },
           },
