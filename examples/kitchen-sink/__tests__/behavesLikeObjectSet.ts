@@ -325,7 +325,7 @@ export function behavesLikeObjectSet(
         }
       });
 
-      describe.skip("Date", () => {
+      describe("Date", () => {
         const baseValue = new Date(1523268000000);
 
         const objectSet = createObjectSet(
@@ -333,7 +333,7 @@ export function behavesLikeObjectSet(
             (_, i) =>
               new kitchenSink.TermPropertiesClass({
                 $identifier: identifiers[i],
-                dateTermProperty: new Date(baseValue.getTime() + i * 1000),
+                dateTimeTermProperty: new Date(baseValue.getTime() + i * 1000),
               }),
           ),
           new kitchenSink.TermPropertiesClass({
@@ -343,25 +343,25 @@ export function behavesLikeObjectSet(
         );
 
         for (const [id, [filter, expected]] of Object.entries({
-          in: [{ dateTermProperty: { in: [baseValue] } }, [identifiers[0]]],
+          in: [{ dateTimeTermProperty: { in: [baseValue] } }, [identifiers[0]]],
           maxExclusive: [
             {
-              dateTermProperty: {
+              dateTimeTermProperty: {
                 maxExclusive: new Date(baseValue.getTime() + 1000),
               },
             },
             [identifiers[0]],
           ],
           maxInclusive: [
-            { dateTermProperty: { maxInclusive: baseValue } },
+            { dateTimeTermProperty: { maxInclusive: baseValue } },
             [identifiers[0]],
           ],
           minExclusive: [
-            { dateTermProperty: { minExclusive: baseValue } },
+            { dateTimeTermProperty: { minExclusive: baseValue } },
             [identifiers[1]],
           ],
           minInclusive: [
-            { dateTermProperty: { minInclusive: baseValue } },
+            { dateTimeTermProperty: { minInclusive: baseValue } },
             [identifiers[0], identifiers[1]],
           ],
         } satisfies Record<
