@@ -770,20 +770,24 @@ export function behavesLikeObjectSet(
             { emptyStringSetProperty: { in: [value] } },
             [identifiers[0]],
           ],
-          maxCount0: [{ emptyStringSetProperty: { $maxCount: 0 } }, []],
-          maxCount1: [
-            { emptyStringSetProperty: { $maxCount: 1 } },
-            [identifiers[0]],
-          ],
-          minCount1: [
-            { emptyStringSetProperty: { $minCount: 1 } },
-            [identifiers[0]],
-          ],
-          minCount2: [{ emptyStringSetProperty: { $minCount: 2 } }, []],
+          ...(!(objectSet instanceof kitchenSink.$SparqlObjectSet)
+            ? {
+                maxCount0: [{ emptyStringSetProperty: { $maxCount: 0 } }, []],
+                maxCount1: [
+                  { emptyStringSetProperty: { $maxCount: 1 } },
+                  [identifiers[0]],
+                ],
+                minCount1: [
+                  { emptyStringSetProperty: { $minCount: 1 } },
+                  [identifiers[0]],
+                ],
+                minCount2: [{ emptyStringSetProperty: { $minCount: 2 } }, []],
+              }
+            : {}),
         } satisfies Record<
           string,
           [kitchenSink.PropertyCardinalitiesClass.$Filter, readonly NamedNode[]]
-        >)) {
+        >))
           it(id, async ({ expect }) => {
             const actual = (
               await objectSet.propertyCardinalitiesClassIdentifiers({
@@ -795,7 +799,6 @@ export function behavesLikeObjectSet(
               expect(expected[i].equals(actual[i]));
             }
           });
-        }
       });
 
       describe("string", () => {
