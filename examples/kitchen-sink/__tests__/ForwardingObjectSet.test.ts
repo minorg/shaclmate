@@ -2,7 +2,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { describe } from "vitest";
-import { behavesLikeObjectSet } from "./behavesLikeObjectSet.js";
+import { testObjectSet } from "./testObjectSet.js";
 
 class TestForwardingObjectSet extends kitchenSink.$ForwardingObjectSet {
   readonly dataset = new N3.Store();
@@ -13,7 +13,7 @@ class TestForwardingObjectSet extends kitchenSink.$ForwardingObjectSet {
 }
 
 describe("ForwardingObjectSet", () => {
-  behavesLikeObjectSet((...instances: readonly kitchenSink.$Object[]) => {
+  testObjectSet((...instances: readonly kitchenSink.$Object[]) => {
     const objectSet = new TestForwardingObjectSet();
     const resourceSet = new MutableResourceSet({
       dataFactory: N3.DataFactory,

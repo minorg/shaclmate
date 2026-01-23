@@ -3,10 +3,10 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import * as oxigraph from "oxigraph";
 import { describe } from "vitest";
-import { behavesLikeObjectSet } from "./behavesLikeObjectSet.js";
+import { testObjectSet } from "./testObjectSet.js";
 
 describe("SparqlObjectSet", () => {
-  behavesLikeObjectSet((...instances: readonly kitchenSink.$Object[]) => {
+  testObjectSet((...instances: readonly kitchenSink.$Object[]) => {
     const oxigraphStore = new oxigraph.Store();
     const objectSet = new kitchenSink.$SparqlObjectSet({
       sparqlClient: new OxigraphSparqlClient({
