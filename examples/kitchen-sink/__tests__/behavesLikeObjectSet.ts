@@ -910,23 +910,28 @@ export function behavesLikeObjectSet(
                 $identifier: DataFactory.namedNode(
                   "http://example.com/classUnionMember1",
                 ),
-                classUnionMember1Property: "test",
-                classUnionMemberCommonParentProperty: "test",
+                classUnionMember1Property: "http://example.com/test0",
+                classUnionMemberCommonParentProperty:
+                  "http://example.com/test0",
               }),
             },
-            requiredIriOrLiteralProperty:
-              DataFactory.namedNode("http://example.com"),
-            requiredIriOrStringProperty:
-              DataFactory.namedNode("http://example.com"),
+            requiredIriOrLiteralProperty: DataFactory.namedNode(
+              "http://example.com/test0",
+            ),
+            requiredIriOrStringProperty: DataFactory.namedNode(
+              "http://example.com/test0",
+            ),
           }),
           new kitchenSink.UnionDiscriminantsClass({
             $identifier: identifiers[1],
             requiredClassOrClassOrStringProperty: {
               type: "2-string",
-              value: "test",
+              value: "http://example.com/test1",
             },
-            requiredIriOrLiteralProperty: DataFactory.literal("test"),
-            requiredIriOrStringProperty: "test",
+            requiredIriOrLiteralProperty: DataFactory.literal(
+              "http://example.com/test1",
+            ),
+            requiredIriOrStringProperty: "http://example.com/test1",
           }),
         );
 
@@ -937,15 +942,15 @@ export function behavesLikeObjectSet(
                 on: {
                   "0-ClassUnionMember1": {
                     classUnionMember1Property: {
-                      in: ["http://example.com/test"],
+                      in: ["http://example.com/test0"],
                     },
                   },
                   "1-ClassUnionMember2": {
                     classUnionMember2Property: {
-                      in: ["http://example.com/test"],
+                      in: ["http://example.com/test0"],
                     },
                   },
-                  "2-string": { in: ["http://example.com/test"] },
+                  "2-string": { in: ["http://example.com/test0"] },
                 },
               },
             },
@@ -957,15 +962,15 @@ export function behavesLikeObjectSet(
                 on: {
                   "0-ClassUnionMember1": {
                     classUnionMember1Property: {
-                      in: ["http://example.com/test"],
+                      in: ["http://example.com/testx"],
                     },
                   },
                   "1-ClassUnionMember2": {
                     classUnionMember2Property: {
-                      in: ["http://example.com/test"],
+                      in: ["http://example.com/testx"],
                     },
                   },
-                  "2-string": { in: ["testx"] },
+                  "2-string": { in: ["http://example.com/testx"] },
                 },
               },
             },
@@ -976,10 +981,10 @@ export function behavesLikeObjectSet(
               requiredIriOrLiteralProperty: {
                 on: {
                   Literal: {
-                    in: [DataFactory.literal("http://example.com/test")],
+                    in: [DataFactory.literal("http://example.com/test0")],
                   },
                   NamedNode: {
-                    in: [DataFactory.namedNode("http://example.com/test")],
+                    in: [DataFactory.namedNode("http://example.com/test0")],
                   },
                 },
               },
@@ -991,7 +996,7 @@ export function behavesLikeObjectSet(
               requiredIriOrLiteralProperty: {
                 on: {
                   Literal: {
-                    in: [DataFactory.literal("http://example.com/test")],
+                    in: [DataFactory.literal("http://example.com/testXXX")],
                   },
                   NamedNode: {
                     in: [DataFactory.namedNode("http://example.com/testXXX")],
@@ -1006,9 +1011,9 @@ export function behavesLikeObjectSet(
               requiredIriOrStringProperty: {
                 on: {
                   object: {
-                    in: [DataFactory.namedNode("http://example.com/test")],
+                    in: [DataFactory.namedNode("http://example.com/test0")],
                   },
-                  string: { in: ["http://example.com/test"] },
+                  string: { in: ["http://example.com/test0"] },
                 },
               },
             },
@@ -1019,7 +1024,7 @@ export function behavesLikeObjectSet(
               requiredIriOrStringProperty: {
                 on: {
                   object: {
-                    in: [DataFactory.namedNode("http://example.com/test")],
+                    in: [DataFactory.namedNode("http://example.com/testx")],
                   },
                   string: { in: ["http://example.com/testx"] },
                 },
@@ -1033,7 +1038,7 @@ export function behavesLikeObjectSet(
         >)) {
           it(id, async ({ expect }) => {
             const actual = (
-              await objectSet.termPropertiesClassIdentifiers({
+              await objectSet.unionDiscriminantsClassIdentifiers({
                 filter,
               })
             ).unsafeCoerce();
