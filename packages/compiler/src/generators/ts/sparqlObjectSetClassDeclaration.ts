@@ -215,9 +215,9 @@ if (offset < 0) {
   offset = 0;
 }
 
-const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query).filter(pattern => pattern.type !== "optional");
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
 if (wherePatterns.length === 0) {
-  return purify.Left(new Error("no required SPARQL WHERE patterns for identifiers"));
+  return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
 }
 
 const selectQueryString = \
@@ -296,9 +296,9 @@ return purify.EitherAsync(async ({ liftEither }) => {
           scope: Scope.Protected,
           statements: [
             `\
-const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query).filter(pattern => pattern.type !== "optional");
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
 if (wherePatterns.length === 0) {
-  return purify.Left(new Error("no required SPARQL WHERE patterns for count"));
+  return purify.Left(new Error("no SPARQL WHERE patterns for count"));
 }
 
 const selectQueryString = \

@@ -80775,13 +80775,9 @@ export class $SparqlObjectSet implements $ObjectSet {
       offset = 0;
     }
 
-    const wherePatterns = this.$wherePatterns(objectType, query).filter(
-      (pattern) => pattern.type !== "optional",
-    );
+    const wherePatterns = this.$wherePatterns(objectType, query);
     if (wherePatterns.length === 0) {
-      return purify.Left(
-        new Error("no required SPARQL WHERE patterns for identifiers"),
-      );
+      return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
     }
 
     const selectQueryString = this.$sparqlGenerator.stringify({
@@ -80896,13 +80892,9 @@ export class $SparqlObjectSet implements $ObjectSet {
     },
     query?: $SparqlObjectSet.Query<ObjectFilterT>,
   ): Promise<purify.Either<Error, number>> {
-    const wherePatterns = this.$wherePatterns(objectType, query).filter(
-      (pattern) => pattern.type !== "optional",
-    );
+    const wherePatterns = this.$wherePatterns(objectType, query);
     if (wherePatterns.length === 0) {
-      return purify.Left(
-        new Error("no required SPARQL WHERE patterns for count"),
-      );
+      return purify.Left(new Error("no SPARQL WHERE patterns for count"));
     }
 
     const selectQueryString = this.$sparqlGenerator.stringify({
