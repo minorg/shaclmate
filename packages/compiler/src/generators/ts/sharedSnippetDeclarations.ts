@@ -4,23 +4,6 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export const sharedSnippetDeclarations = {
-  deduplicateSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}deduplicateSparqlWherePatterns`,
-    `\
-function ${syntheticNamePrefix}deduplicateSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  const deduplicatedPatterns: sparqljs.Pattern[] = [];
-  const deduplicatePatternStrings = new Set<string>();
-  for (const pattern of patterns) {
-    const patternString = JSON.stringify(pattern);
-    if (!deduplicatePatternStrings.has(patternString)) {
-      deduplicatePatternStrings.add(patternString);
-      deduplicatedPatterns.push(pattern);
-    }
-  }
-  return deduplicatedPatterns;
-}`,
-  ),
-
   EqualsResult: singleEntryRecord(
     `${syntheticNamePrefix}EqualsResult`,
     `\
@@ -155,112 +138,171 @@ class ${syntheticNamePrefix}IdentifierSet {
 }`,
   ),
 
-  insertSeedSparqlWherePattern: singleEntryRecord(
-    `${syntheticNamePrefix}insertSeedSparqlWherePattern`,
-    `\
-/**
- * Insert a seed SPARQL where pattern if necessary.
- * 
- * A SPARQL WHERE block that solely consists of OPTIONAL blocks won't match anything. OPTIONAL is a left join.
- * In that situation the solution is to insert a VALUES () { () } seed as the first pattern in order to match the entire store.
- */
-function ${syntheticNamePrefix}insertSeedSparqlWherePattern(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  if (patterns.every(pattern => pattern.type === "optional")) {
-    return [{ values: [{}], type: "values" }, ...patterns];
-  }
-  return patterns;
-}`,
-  ),
-
   optimizeSparqlWherePatterns: singleEntryRecord(
     `${syntheticNamePrefix}optimizeSparqlWherePatterns`,
     `\
 function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  if (patterns.length === 0) {
-    return patterns;
-  }
+  function optimizePatternsRecursive(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+    if (patterns.length === 0) {
+      return patterns;
+    }
 
-  const filterPatterns: sparqljs.Pattern[] = [];
-  const valuesPatterns: sparqljs.Pattern[] = [];
-  const otherPatterns: sparqljs.Pattern[] = [];
-
-  for (const pattern of patterns) {
-    switch (pattern.type) {
-      case "bgp": {
-        if (pattern.triples.length === 0) {
-          continue;
-        }
-        const lastPattern = otherPatterns.at(-1);
-        if (lastPattern && lastPattern.type === "bgp") {
-          // Coalesce adjacent BGP patterns
-          lastPattern.triples.push(...pattern.triples);
-        } else {
-          otherPatterns.push(pattern);
-        }
-        break;
+    function deduplicatePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+      if (patterns.length === 0) {
+        return patterns;
       }
-      case "bind":
-      case "query":
-        otherPatterns.push(pattern);
-        break;
-      case "filter":
-        filterPatterns.push(pattern);
-        break;
-      case "group":
-        // Flatten groups outside unions
-        otherPatterns.push(...${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns));
-        break;
-      case "values":
-        valuesPatterns.push(pattern);
-        break;
-      case "graph":
-      case "minus":
-      case "optional":
-      case "service": {
-        const optimizedPatterns = ${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns);
-        if (optimizedPatterns.length > 0) {
-          otherPatterns.push({ ...pattern, patterns: optimizedPatterns.concat() });
-        }
-        break;
-      }
-      case "union": {
-        const unionPatterns = ${syntheticNamePrefix}deduplicateSparqlWherePatterns(pattern.patterns.flatMap(pattern => {
-          switch (pattern.type) {
-            case "group":
-              // Don't flatten the groups in a union
-            case "graph":
-            case "minus":
-            case "optional":
-            case "service": {
-              const optimizedPatterns = ${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns);
-              if (optimizedPatterns.length > 0) {
-                return [{ ...pattern, patterns: optimizedPatterns.concat() }];
-              }
-              return [] as sparqljs.Pattern[];
-            }
-            default:
-              return [pattern];
-          }
-        }));
 
-        switch (unionPatterns.length) {
-          case 0:
+      const deduplicatedPatterns: sparqljs.Pattern[] = [];
+      const deduplicatePatternStrings = new Set<string>();
+      for (const pattern of patterns) {
+        const patternString = JSON.stringify(pattern);
+        if (!deduplicatePatternStrings.has(patternString)) {
+          deduplicatePatternStrings.add(patternString);
+          deduplicatedPatterns.push(pattern);
+        }
+      }
+      return deduplicatedPatterns;
+    }
+
+    function sortPatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+      const filterPatterns: sparqljs.Pattern[] = [];
+      const otherPatterns: sparqljs.Pattern[] = [];
+      const valuesPatterns: sparqljs.Pattern[] = [];
+
+      for (const pattern of patterns) {
+        switch (pattern.type) {
+          case "filter":
+            filterPatterns.push(pattern);
             break;
-          case 1:
-            otherPatterns.push(...${syntheticNamePrefix}optimizeSparqlWherePatterns([unionPatterns[0]]));
+          case "values":
+            valuesPatterns.push(pattern);
             break;
           default:
-            otherPatterns.push({...pattern, patterns: unionPatterns.concat() });
+            otherPatterns.push(pattern);
             break;
         }
-        break;
       }
-      default:
-        pattern satisfies never;
+
+      return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+    }    
+
+    const compactedPatterns: sparqljs.Pattern[] = [];
+    for (const pattern of deduplicatePatterns(patterns)) {
+      switch (pattern.type) {
+        case "bgp": {
+          if (pattern.triples.length === 0) {
+            continue;
+          }
+          const lastPattern = compactedPatterns.at(-1);
+          if (lastPattern && lastPattern.type === "bgp") {
+            // Coalesce adjacent BGP patterns
+            lastPattern.triples.push(...pattern.triples);
+          } else {
+            compactedPatterns.push(pattern);
+          }
+          break;
+        }
+        case "bind":
+        case "filter":
+        case "query":
+        case "values":
+          compactedPatterns.push(pattern);
+          break;
+        case "group":
+          // Flatten groups outside unions
+          compactedPatterns.push(...optimizePatternsRecursive(pattern.patterns));
+          break;
+        case "graph":
+        case "minus":
+        case "optional":
+        case "service": {
+          const patterns_ = optimizePatternsRecursive(pattern.patterns);
+          if (patterns_.length > 0) {
+            compactedPatterns.push({ ...pattern, patterns: patterns_.concat() });
+          }
+          break;
+        }
+        case "union": {
+          const unionPatterns = deduplicatePatterns(pattern.patterns.flatMap(pattern => {
+            switch (pattern.type) {
+              case "group":
+                // Don't flatten the groups in a union
+              case "graph":
+              case "minus":
+              case "optional":
+              case "service": {
+                const patterns_ = optimizePatternsRecursive(pattern.patterns);
+                if (patterns_.length > 0) {
+                  return [{ ...pattern, patterns: patterns_.concat() }];
+                }
+                return [] as sparqljs.Pattern[];
+              }
+              default:
+                return [pattern];
+            }
+          }));
+
+          switch (unionPatterns.length) {
+            case 0:
+              break;
+            case 1:
+              compactedPatterns.push(...optimizePatternsRecursive([unionPatterns[0]]));
+              break;
+            default:
+              compactedPatterns.push({ ...pattern, patterns: unionPatterns.concat() });
+              break;
+          }
+          break;
+        }
+        default:
+          pattern satisfies never;
+      }
     }
+
+    return sortPatterns(deduplicatePatterns(compactedPatterns));
   }
 
-  return ${syntheticNamePrefix}deduplicateSparqlWherePatterns(valuesPatterns.concat(otherPatterns).concat(filterPatterns));
+  /**
+   * Insert a seed SPARQL where pattern if necessary.
+   * 
+   * A SPARQL WHERE block that solely consists of OPTIONAL blocks won't match anything. OPTIONAL is a left join.
+   * In that situation the solution is to insert a VALUES () { () } seed as the first pattern in order to match the entire store.
+   */
+  function insertSeedPattern(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+    function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
+      switch (pattern.type) {
+        case "bind":
+        case "bgp":        
+        case "service":
+        case "values":
+          return true;
+        
+        case "graph":
+        case "group":
+          return pattern.patterns.some(isSolutionGeneratingPattern);
+
+        case "filter":
+        case "minus":
+        case "optional":
+          return false;
+
+        case "union":
+          // A union pattern is solution-generating if every branch is solution-generating
+          return pattern.patterns.every(isSolutionGeneratingPattern);
+
+        default:
+          throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
+      }
+    }
+
+    if (!patterns.some(isSolutionGeneratingPattern)) {
+      return [{ values: [{}], type: "values" }, ...patterns];
+    }
+
+    return patterns;
+  }  
+
+  return insertSeedPattern(optimizePatternsRecursive(patterns));
 }`,
   ),
 

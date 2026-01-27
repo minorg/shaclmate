@@ -317,7 +317,7 @@ const selectQueryString = \
         variable: this.${syntheticNamePrefix}countVariable,
       },
     ],
-    where: wherePatterns
+    where: wherePatterns.concat()
   });
 
 return purify.EitherAsync(async ({ liftEither }) =>
@@ -348,7 +348,7 @@ if (query?.where) {
 
 patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
 
-return ${syntheticNamePrefix}insertSeedSparqlWherePattern(${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns));`,
+return ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns);`,
           ],
           typeParameters: [typeParameters.ObjectFilterT],
         },
