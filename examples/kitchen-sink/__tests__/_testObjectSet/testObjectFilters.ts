@@ -178,6 +178,9 @@ export function testObjectFilters(
         ]
       >)) {
         it(id, async ({ expect }) => {
+          if (id === "typeBlankNode") {
+            console.log("testing blank node");
+          }
           const actual = (
             await objectSet.termPropertiesClassIdentifiers({
               filter,
