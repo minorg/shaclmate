@@ -138,11 +138,11 @@ class ${syntheticNamePrefix}IdentifierSet {
 }`,
   ),
 
-  optimizeSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}optimizeSparqlWherePatterns`,
+  normalizeSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
     `\
-function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  function optimizePatternsRecursive(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+  function normalizePatternsRecursive(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
     if (patterns.length === 0) {
       return patterns;
     }
@@ -210,13 +210,13 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
           break;
         case "group":
           // Flatten groups outside unions
-          compactedPatterns.push(...optimizePatternsRecursive(pattern.patterns));
+          compactedPatterns.push(...normalizePatternsRecursive(pattern.patterns));
           break;
         case "graph":
         case "minus":
         case "optional":
         case "service": {
-          const patterns_ = optimizePatternsRecursive(pattern.patterns);
+          const patterns_ = normalizePatternsRecursive(pattern.patterns);
           if (patterns_.length > 0) {
             compactedPatterns.push({ ...pattern, patterns: patterns_.concat() });
           }
@@ -231,7 +231,7 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
               case "minus":
               case "optional":
               case "service": {
-                const patterns_ = optimizePatternsRecursive(pattern.patterns);
+                const patterns_ = normalizePatternsRecursive(pattern.patterns);
                 if (patterns_.length > 0) {
                   return [{ ...pattern, patterns: patterns_.concat() }];
                 }
@@ -246,7 +246,7 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
             case 0:
               break;
             case 1:
-              compactedPatterns.push(...optimizePatternsRecursive([unionPatterns[0]]));
+              compactedPatterns.push(...normalizePatternsRecursive([unionPatterns[0]]));
               break;
             default:
               compactedPatterns.push({ ...pattern, patterns: unionPatterns.concat() });
@@ -288,12 +288,12 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
     }
   }
 
-  const optimizedPatterns = optimizePatternsRecursive(patterns);
-  if (!optimizedPatterns.some(isSolutionGeneratingPattern)) {
+  const normalizedPatterns = normalizePatternsRecursive(patterns);
+  if (!normalizedPatterns.some(isSolutionGeneratingPattern)) {
     throw new Error("SPARQL WHERE patterns must have at least one solution-generating pattern");
   }
 
-  return optimizedPatterns;
+  return normalizedPatterns;
 }`,
   ),
 

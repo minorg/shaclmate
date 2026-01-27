@@ -937,6 +937,187 @@ namespace $NamedNodeFilter {
   }
 }
 
+function $normalizeSparqlWherePatterns(
+  patterns: readonly sparqljs.Pattern[],
+): readonly sparqljs.Pattern[] {
+  function normalizePatternsRecursive(
+    patterns: readonly sparqljs.Pattern[],
+  ): readonly sparqljs.Pattern[] {
+    if (patterns.length === 0) {
+      return patterns;
+    }
+
+    function deduplicatePatterns(
+      patterns: readonly sparqljs.Pattern[],
+    ): readonly sparqljs.Pattern[] {
+      if (patterns.length === 0) {
+        return patterns;
+      }
+
+      const deduplicatedPatterns: sparqljs.Pattern[] = [];
+      const deduplicatePatternStrings = new Set<string>();
+      for (const pattern of patterns) {
+        const patternString = JSON.stringify(pattern);
+        if (!deduplicatePatternStrings.has(patternString)) {
+          deduplicatePatternStrings.add(patternString);
+          deduplicatedPatterns.push(pattern);
+        }
+      }
+      return deduplicatedPatterns;
+    }
+
+    function sortPatterns(
+      patterns: readonly sparqljs.Pattern[],
+    ): readonly sparqljs.Pattern[] {
+      const filterPatterns: sparqljs.Pattern[] = [];
+      const otherPatterns: sparqljs.Pattern[] = [];
+      const valuesPatterns: sparqljs.Pattern[] = [];
+
+      for (const pattern of patterns) {
+        switch (pattern.type) {
+          case "filter":
+            filterPatterns.push(pattern);
+            break;
+          case "values":
+            valuesPatterns.push(pattern);
+            break;
+          default:
+            otherPatterns.push(pattern);
+            break;
+        }
+      }
+
+      return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+    }
+
+    const compactedPatterns: sparqljs.Pattern[] = [];
+    for (const pattern of deduplicatePatterns(patterns)) {
+      switch (pattern.type) {
+        case "bgp": {
+          if (pattern.triples.length === 0) {
+            continue;
+          }
+          const lastPattern = compactedPatterns.at(-1);
+          if (lastPattern && lastPattern.type === "bgp") {
+            // Coalesce adjacent BGP patterns
+            lastPattern.triples.push(...pattern.triples);
+          } else {
+            compactedPatterns.push(pattern);
+          }
+          break;
+        }
+        case "bind":
+        case "filter":
+        case "query":
+        case "values":
+          compactedPatterns.push(pattern);
+          break;
+        case "group":
+          // Flatten groups outside unions
+          compactedPatterns.push(
+            ...normalizePatternsRecursive(pattern.patterns),
+          );
+          break;
+        case "graph":
+        case "minus":
+        case "optional":
+        case "service": {
+          const patterns_ = normalizePatternsRecursive(pattern.patterns);
+          if (patterns_.length > 0) {
+            compactedPatterns.push({
+              ...pattern,
+              patterns: patterns_.concat(),
+            });
+          }
+          break;
+        }
+        case "union": {
+          const unionPatterns = deduplicatePatterns(
+            pattern.patterns.flatMap((pattern) => {
+              switch (pattern.type) {
+                case "group":
+                // Don't flatten the groups in a union
+                case "graph":
+                case "minus":
+                case "optional":
+                case "service": {
+                  const patterns_ = normalizePatternsRecursive(
+                    pattern.patterns,
+                  );
+                  if (patterns_.length > 0) {
+                    return [{ ...pattern, patterns: patterns_.concat() }];
+                  }
+                  return [] as sparqljs.Pattern[];
+                }
+                default:
+                  return [pattern];
+              }
+            }),
+          );
+
+          switch (unionPatterns.length) {
+            case 0:
+              break;
+            case 1:
+              compactedPatterns.push(
+                ...normalizePatternsRecursive([unionPatterns[0]]),
+              );
+              break;
+            default:
+              compactedPatterns.push({
+                ...pattern,
+                patterns: unionPatterns.concat(),
+              });
+              break;
+          }
+          break;
+        }
+        default:
+          pattern satisfies never;
+      }
+    }
+
+    return sortPatterns(deduplicatePatterns(compactedPatterns));
+  }
+
+  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":
+      case "service":
+      case "values":
+        return true;
+
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGeneratingPattern);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGeneratingPattern);
+
+      default:
+        throw new RangeError(
+          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
+        );
+    }
+  }
+
+  const normalizedPatterns = normalizePatternsRecursive(patterns);
+  if (!normalizedPatterns.some(isSolutionGeneratingPattern)) {
+    throw new Error(
+      "SPARQL WHERE patterns must have at least one solution-generating pattern",
+    );
+  }
+
+  return normalizedPatterns;
+}
+
 interface $NumberFilter {
   readonly in?: readonly number[];
   readonly maxExclusive?: number;
@@ -1013,185 +1194,6 @@ namespace $NumberFilter {
 
     return patterns;
   }
-}
-
-function $optimizeSparqlWherePatterns(
-  patterns: readonly sparqljs.Pattern[],
-): readonly sparqljs.Pattern[] {
-  function optimizePatternsRecursive(
-    patterns: readonly sparqljs.Pattern[],
-  ): readonly sparqljs.Pattern[] {
-    if (patterns.length === 0) {
-      return patterns;
-    }
-
-    function deduplicatePatterns(
-      patterns: readonly sparqljs.Pattern[],
-    ): readonly sparqljs.Pattern[] {
-      if (patterns.length === 0) {
-        return patterns;
-      }
-
-      const deduplicatedPatterns: sparqljs.Pattern[] = [];
-      const deduplicatePatternStrings = new Set<string>();
-      for (const pattern of patterns) {
-        const patternString = JSON.stringify(pattern);
-        if (!deduplicatePatternStrings.has(patternString)) {
-          deduplicatePatternStrings.add(patternString);
-          deduplicatedPatterns.push(pattern);
-        }
-      }
-      return deduplicatedPatterns;
-    }
-
-    function sortPatterns(
-      patterns: readonly sparqljs.Pattern[],
-    ): readonly sparqljs.Pattern[] {
-      const filterPatterns: sparqljs.Pattern[] = [];
-      const otherPatterns: sparqljs.Pattern[] = [];
-      const valuesPatterns: sparqljs.Pattern[] = [];
-
-      for (const pattern of patterns) {
-        switch (pattern.type) {
-          case "filter":
-            filterPatterns.push(pattern);
-            break;
-          case "values":
-            valuesPatterns.push(pattern);
-            break;
-          default:
-            otherPatterns.push(pattern);
-            break;
-        }
-      }
-
-      return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
-    }
-
-    const compactedPatterns: sparqljs.Pattern[] = [];
-    for (const pattern of deduplicatePatterns(patterns)) {
-      switch (pattern.type) {
-        case "bgp": {
-          if (pattern.triples.length === 0) {
-            continue;
-          }
-          const lastPattern = compactedPatterns.at(-1);
-          if (lastPattern && lastPattern.type === "bgp") {
-            // Coalesce adjacent BGP patterns
-            lastPattern.triples.push(...pattern.triples);
-          } else {
-            compactedPatterns.push(pattern);
-          }
-          break;
-        }
-        case "bind":
-        case "filter":
-        case "query":
-        case "values":
-          compactedPatterns.push(pattern);
-          break;
-        case "group":
-          // Flatten groups outside unions
-          compactedPatterns.push(
-            ...optimizePatternsRecursive(pattern.patterns),
-          );
-          break;
-        case "graph":
-        case "minus":
-        case "optional":
-        case "service": {
-          const patterns_ = optimizePatternsRecursive(pattern.patterns);
-          if (patterns_.length > 0) {
-            compactedPatterns.push({
-              ...pattern,
-              patterns: patterns_.concat(),
-            });
-          }
-          break;
-        }
-        case "union": {
-          const unionPatterns = deduplicatePatterns(
-            pattern.patterns.flatMap((pattern) => {
-              switch (pattern.type) {
-                case "group":
-                // Don't flatten the groups in a union
-                case "graph":
-                case "minus":
-                case "optional":
-                case "service": {
-                  const patterns_ = optimizePatternsRecursive(pattern.patterns);
-                  if (patterns_.length > 0) {
-                    return [{ ...pattern, patterns: patterns_.concat() }];
-                  }
-                  return [] as sparqljs.Pattern[];
-                }
-                default:
-                  return [pattern];
-              }
-            }),
-          );
-
-          switch (unionPatterns.length) {
-            case 0:
-              break;
-            case 1:
-              compactedPatterns.push(
-                ...optimizePatternsRecursive([unionPatterns[0]]),
-              );
-              break;
-            default:
-              compactedPatterns.push({
-                ...pattern,
-                patterns: unionPatterns.concat(),
-              });
-              break;
-          }
-          break;
-        }
-        default:
-          pattern satisfies never;
-      }
-    }
-
-    return sortPatterns(deduplicatePatterns(compactedPatterns));
-  }
-
-  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-    switch (pattern.type) {
-      case "bind":
-      case "bgp":
-      case "service":
-      case "values":
-        return true;
-
-      case "graph":
-      case "group":
-        return pattern.patterns.some(isSolutionGeneratingPattern);
-
-      case "filter":
-      case "minus":
-      case "optional":
-        return false;
-
-      case "union":
-        // A union pattern is solution-generating if every branch is solution-generating
-        return pattern.patterns.every(isSolutionGeneratingPattern);
-
-      default:
-        throw new RangeError(
-          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
-        );
-    }
-  }
-
-  const optimizedPatterns = optimizePatternsRecursive(patterns);
-  if (!optimizedPatterns.some(isSolutionGeneratingPattern)) {
-    throw new Error(
-      "SPARQL WHERE patterns must have at least one solution-generating pattern",
-    );
-  }
-
-  return optimizedPatterns;
 }
 
 namespace $RdfVocabularies {
@@ -1776,7 +1778,7 @@ export namespace $NamedDefaultPartial {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           $NamedDefaultPartial.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -2109,7 +2111,7 @@ export namespace $DefaultPartial {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           $DefaultPartial.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -2522,7 +2524,7 @@ export namespace UuidV4IriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           UuidV4IriIdentifierInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -3096,7 +3098,7 @@ export namespace UuidV4IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           UuidV4IriIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -6378,7 +6380,7 @@ export namespace UnionDiscriminantsClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           UnionDiscriminantsClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -9071,7 +9073,7 @@ export namespace TermPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           TermPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -10062,7 +10064,7 @@ export namespace Sha256IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           Sha256IriIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -10668,7 +10670,7 @@ export namespace RecursiveClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           RecursiveClassUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -11264,7 +11266,7 @@ export namespace RecursiveClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           RecursiveClassUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -11867,7 +11869,7 @@ export namespace PropertyVisibilitiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PropertyVisibilitiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -12746,7 +12748,7 @@ export namespace PropertyCardinalitiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PropertyCardinalitiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -13513,7 +13515,7 @@ export namespace PartialInterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialInterfaceUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -14153,7 +14155,7 @@ export namespace PartialInterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialInterfaceUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -14823,7 +14825,7 @@ export namespace PartialClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialClassUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -15438,7 +15440,7 @@ export namespace PartialClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialClassUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -16138,7 +16140,7 @@ export namespace OrderedPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           OrderedPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -16769,7 +16771,7 @@ export namespace NonClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           NonClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -17272,7 +17274,7 @@ export namespace NoRdfTypeClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           NoRdfTypeClassUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -17785,7 +17787,7 @@ export namespace NoRdfTypeClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           NoRdfTypeClassUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -18692,7 +18694,7 @@ export namespace MutablePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           MutablePropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -20119,7 +20121,7 @@ export namespace ListPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ListPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -21206,7 +21208,7 @@ export namespace PartialInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -23909,7 +23911,7 @@ export namespace LazyPropertiesInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazyPropertiesInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -25069,7 +25071,7 @@ export namespace PartialClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -27744,7 +27746,7 @@ export namespace LazyPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazyPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -28706,7 +28708,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedIriIdentifierInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -29254,7 +29256,7 @@ export namespace LazilyResolvedIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedIriIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -29777,7 +29779,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedInterfaceUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -30418,7 +30420,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedInterfaceUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -31088,7 +31090,7 @@ export namespace LazilyResolvedClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedClassUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -31704,7 +31706,7 @@ export namespace LazilyResolvedClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedClassUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -32304,7 +32306,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -32988,7 +32990,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -33648,7 +33650,7 @@ export namespace LanguageInPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LanguageInPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -34384,7 +34386,7 @@ export namespace JsPrimitiveUnionPropertyClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           JsPrimitiveUnionPropertyClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -34980,7 +34982,7 @@ export namespace IriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IriIdentifierInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -35469,7 +35471,7 @@ export namespace IriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IriIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -35903,7 +35905,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -36435,7 +36437,7 @@ export namespace InterfaceUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           InterfaceUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -37051,7 +37053,7 @@ export namespace InterfaceUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           InterfaceUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -37639,7 +37641,7 @@ export namespace Interface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           Interface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -38263,7 +38265,7 @@ export namespace IndirectRecursiveHelperClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IndirectRecursiveHelperClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -38856,7 +38858,7 @@ export namespace IndirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IndirectRecursiveClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -39971,7 +39973,7 @@ export namespace InPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           InPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -40840,7 +40842,7 @@ export namespace InIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           InIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -41395,7 +41397,7 @@ export namespace IdentifierOverride1ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IdentifierOverride1ClassStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -41745,7 +41747,7 @@ export namespace IdentifierOverride2ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IdentifierOverride2ClassStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -42084,7 +42086,7 @@ export namespace IdentifierOverride3ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IdentifierOverride3ClassStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -42524,7 +42526,7 @@ export namespace IdentifierOverride4ClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IdentifierOverride4ClassStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -42955,7 +42957,7 @@ export namespace IdentifierOverride5Class {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           IdentifierOverride5Class.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -43555,7 +43557,7 @@ export namespace HasValuePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           HasValuePropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -44143,7 +44145,7 @@ export namespace FlattenClassUnionMember3 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           FlattenClassUnionMember3.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -44794,7 +44796,7 @@ export namespace ExternClassPropertyClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ExternClassPropertyClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -45316,7 +45318,7 @@ export namespace AbstractBaseClassForExternClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           AbstractBaseClassForExternClassStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -45868,7 +45870,7 @@ export namespace ExplicitRdfTypeClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ExplicitRdfTypeClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -46491,7 +46493,7 @@ export namespace ExplicitFromToRdfTypesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ExplicitFromToRdfTypesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -47150,7 +47152,7 @@ export namespace DirectRecursiveClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           DirectRecursiveClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -48176,7 +48178,7 @@ export namespace DefaultValuePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           DefaultValuePropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -49980,7 +49982,7 @@ export namespace DateUnionPropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           DateUnionPropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -52656,7 +52658,7 @@ export namespace ConvertibleTypePropertiesClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ConvertibleTypePropertiesClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -53826,7 +53828,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -54398,7 +54400,7 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -54959,7 +54961,7 @@ export namespace ConcreteParentInterfaceStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ConcreteParentInterfaceStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -55595,7 +55597,7 @@ export namespace ConcreteChildInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ConcreteChildInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -56231,7 +56233,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -56567,7 +56569,7 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -57033,7 +57035,7 @@ export namespace ConcreteParentClassStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ConcreteParentClassStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -57633,7 +57635,7 @@ export namespace ConcreteChildClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ConcreteChildClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -58188,7 +58190,7 @@ export namespace ClassUnionMemberCommonParentStatic {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -58686,7 +58688,7 @@ export namespace ClassUnionMember2 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ClassUnionMember2.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -59259,7 +59261,7 @@ export namespace ClassUnionMember1 {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ClassUnionMember1.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -59782,7 +59784,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           BlankNodeOrIriIdentifierInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -60288,7 +60290,7 @@ export namespace BlankNodeOrIriIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           BlankNodeOrIriIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -60724,7 +60726,7 @@ export namespace BlankNodeIdentifierInterface {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           BlankNodeIdentifierInterface.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -61229,7 +61231,7 @@ export namespace BlankNodeIdentifierClass {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           BlankNodeIdentifierClass.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -61549,7 +61551,7 @@ export namespace ClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           ClassUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -61917,7 +61919,7 @@ export namespace FlattenClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           FlattenClassUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -62293,7 +62295,7 @@ export namespace InterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           InterfaceUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -62653,7 +62655,7 @@ export namespace LazilyResolvedClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedClassUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -63055,7 +63057,7 @@ export namespace LazilyResolvedInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           LazilyResolvedInterfaceUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -63436,7 +63438,7 @@ export namespace PartialClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialClassUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -63807,7 +63809,7 @@ export namespace PartialInterfaceUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           PartialInterfaceUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -64173,7 +64175,7 @@ export namespace NoRdfTypeClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           NoRdfTypeClassUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -64533,7 +64535,7 @@ export namespace RecursiveClassUnion {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           RecursiveClassUnion.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -67736,7 +67738,7 @@ export namespace $Object {
       ),
       type: "query",
       where: (queryParameters.where ?? []).concat(
-        $optimizeSparqlWherePatterns(
+        $normalizeSparqlWherePatterns(
           $Object.$sparqlWherePatterns({
             filter,
             ignoreRdfType,
@@ -82700,7 +82702,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       }),
     );
 
-    return $optimizeSparqlWherePatterns(patterns);
+    return $normalizeSparqlWherePatterns(patterns);
   }
 }
 

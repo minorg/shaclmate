@@ -348,7 +348,7 @@ if (query?.where) {
 
 patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
 
-return ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns);`,
+return ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns);`,
           ],
           typeParameters: [typeParameters.ObjectFilterT],
         },
