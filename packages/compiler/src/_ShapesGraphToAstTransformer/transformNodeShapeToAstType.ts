@@ -1,3 +1,4 @@
+import type { NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
@@ -316,17 +317,30 @@ export function transformNodeShapeToAstType(
         });
       }
 
-      const fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-      const toRdfTypes = nodeShape.toRdfTypes.concat();
-      if (toRdfTypes.length === 0) {
-        toRdfTypes.push(...nodeShape.rdfType.toList());
-      }
-      // Ensure toRdfTypes has fromRdfType
-      fromRdfType.ifJust((fromRdfType) => {
-        if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
-          toRdfTypes.push(fromRdfType);
+      let fromRdfType: Maybe<NamedNode>;
+      let toRdfTypes: NamedNode[];
+      if (!nodeShape.abstract && nodeShape.isClass) {
+        fromRdfType = nodeShape.fromRdfType
+          .alt(nodeShape.rdfType)
+          .alt(
+            nodeShape.identifier.termType === "NamedNode"
+              ? Maybe.of(nodeShape.identifier)
+              : Maybe.empty(),
+          );
+        toRdfTypes = nodeShape.toRdfTypes.concat();
+        if (toRdfTypes.length === 0) {
+          toRdfTypes.push(...nodeShape.rdfType.toList());
         }
-      });
+        // Ensure toRdfTypes has fromRdfType
+        fromRdfType.ifJust((fromRdfType) => {
+          if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
+            toRdfTypes.push(fromRdfType);
+          }
+        });
+      } else {
+        fromRdfType = Maybe.empty();
+        toRdfTypes = [];
+      }
 
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
@@ -398,6 +412,7 @@ export function transformNodeShapeToAstType(
         }
 
         if (
+          !objectType.abstract &&
           objectType.fromRdfType.isNothing() &&
           !objectType.properties.some((property) => {
             switch (property.type.kind) {
