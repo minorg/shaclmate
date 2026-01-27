@@ -87,7 +87,7 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
       .extract();
     expect(error).toBeInstanceOf(Error);
     invariant(error instanceof Error);
-    expect(error.message).includes("no such node shape");
+    expect(error.message).includes("no required properties");
   });
 
   it("undefined parent class", ({ expect }) => {

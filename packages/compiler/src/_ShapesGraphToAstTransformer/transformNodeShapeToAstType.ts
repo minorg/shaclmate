@@ -8,7 +8,6 @@ import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
-import { logger } from "../logger.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
@@ -385,21 +384,38 @@ export function transformNodeShapeToAstType(
 
         // Populate properties
         for (const propertyShape of propertyShapes) {
-          this.transformPropertyShapeToAstObjectTypeProperty({
-            objectType,
-            propertyShape,
-          })
-            .ifLeft((error) => {
-              logger.warn(
-                "error transforming %s %s: %s",
-                nodeShape,
-                propertyShape,
-                error.message,
-              );
-            })
-            .ifRight((property) => {
-              objectType.addProperties(property);
+          const propertyEither =
+            this.transformPropertyShapeToAstObjectTypeProperty({
+              objectType,
+              propertyShape,
             });
+          if (propertyEither.isLeft()) {
+            return propertyEither;
+          }
+          propertyEither.ifRight((property) => {
+            objectType.addProperties(property);
+          });
+        }
+
+        if (
+          objectType.fromRdfType.isNothing() &&
+          !objectType.properties.some((property) => {
+            switch (property.type.kind) {
+              case "LazyObjectOptionType":
+              case "OptionType":
+                return false;
+              case "SetType":
+                return property.type.minCount > 0;
+              default:
+                return true; // Required property
+            }
+          })
+        ) {
+          return Left(
+            new Error(
+              `${nodeShape} has no required properties and no implicitly required rdf:type`,
+            ),
+          );
         }
 
         objectType.sortProperties();
