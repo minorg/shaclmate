@@ -262,47 +262,38 @@ function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sp
     return sortPatterns(deduplicatePatterns(compactedPatterns));
   }
 
-  /**
-   * Insert a seed SPARQL where pattern if necessary.
-   * 
-   * A SPARQL WHERE block that solely consists of OPTIONAL blocks won't match anything. OPTIONAL is a left join.
-   * In that situation the solution is to insert a VALUES () { () } seed as the first pattern in order to match the entire store.
-   */
-  function insertSeedPattern(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-    function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-      switch (pattern.type) {
-        case "bind":
-        case "bgp":        
-        case "service":
-        case "values":
-          return true;
-        
-        case "graph":
-        case "group":
-          return pattern.patterns.some(isSolutionGeneratingPattern);
+  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":        
+      case "service":
+      case "values":
+        return true;
+      
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGeneratingPattern);
 
-        case "filter":
-        case "minus":
-        case "optional":
-          return false;
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
 
-        case "union":
-          // A union pattern is solution-generating if every branch is solution-generating
-          return pattern.patterns.every(isSolutionGeneratingPattern);
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGeneratingPattern);
 
-        default:
-          throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
-      }
+      default:
+        throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
     }
+  }
 
-    if (!patterns.some(isSolutionGeneratingPattern)) {
-      return [{ values: [{}], type: "values" }, ...patterns];
-    }
+  const optimizedPatterns = optimizePatternsRecursive(patterns);
+  if (!optimizedPatterns.some(isSolutionGeneratingPattern)) {
+    throw new Error("SPARQL WHERE patterns must have at least one solution-generating pattern");
+  }
 
-    return patterns;
-  }  
-
-  return insertSeedPattern(optimizePatternsRecursive(patterns));
+  return optimizedPatterns;
 }`,
   ),
 
