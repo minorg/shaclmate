@@ -284,7 +284,7 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
               `${syntheticNamePrefix}BlankNodeFilter.sparqlWherePatterns`,
               `\
 namespace ${syntheticNamePrefix}BlankNodeFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(_filter: ${syntheticNamePrefix}BlankNodeFilter | undefined, _value: rdfjs.Variable) {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(_filter: ${syntheticNamePrefix}BlankNodeFilter | undefined, _value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
     return [];
   }
 }`,
@@ -317,8 +317,8 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
               `${syntheticNamePrefix}NamedNodeFilter.sparqlWherePatterns`,
               `\
 namespace ${syntheticNamePrefix}NamedNodeFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NamedNodeFilter | undefined, value: rdfjs.Variable) {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NamedNodeFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -372,8 +372,8 @@ interface ${syntheticNamePrefix}IdentifierFilter {
               `${syntheticNamePrefix}IdentifierFilter.sparqlWherePatterns`,
               `\
 namespace ${syntheticNamePrefix}IdentifierFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}IdentifierFilter | undefined, value: rdfjs.Variable) {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}IdentifierFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;

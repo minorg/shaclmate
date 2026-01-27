@@ -142,6 +142,32 @@ class ${syntheticNamePrefix}IdentifierSet {
     `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
     `\
 function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":        
+      case "service":
+      case "values":
+        return true;
+      
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGeneratingPattern);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGeneratingPattern);
+
+      default:
+        throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
+    }
+  }
+
   function normalizePatternsRecursive(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
     if (patterns.length === 0) {
       return patterns;
@@ -162,32 +188,6 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly s
         }
       }
       return deduplicatedPatterns;
-    }
-
-    function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-      switch (pattern.type) {
-        case "bind":
-        case "bgp":        
-        case "service":
-        case "values":
-          return true;
-        
-        case "graph":
-        case "group":
-          return pattern.patterns.some(isSolutionGeneratingPattern);
-
-        case "filter":
-        case "minus":
-        case "optional":
-          return false;
-
-        case "union":
-          // A union pattern is solution-generating if every branch is solution-generating
-          return pattern.patterns.every(isSolutionGeneratingPattern);
-
-        default:
-          throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
-      }
     }
 
     function sortPatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
@@ -353,8 +353,8 @@ interface ${syntheticNamePrefix}TermFilter {
     `${syntheticNamePrefix}TermFilter.sparqlWherePatterns`,
     `\
 namespace ${syntheticNamePrefix}TermFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}TermFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}TermFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;

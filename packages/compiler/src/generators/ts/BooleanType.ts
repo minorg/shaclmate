@@ -116,8 +116,8 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
             `${syntheticNamePrefix}BooleanFilter.sparqlWherePatterns`,
             `\
 namespace ${syntheticNamePrefix}BooleanFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, value: rdfjs.Variable) {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;

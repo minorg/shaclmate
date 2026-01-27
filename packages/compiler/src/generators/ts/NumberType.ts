@@ -153,8 +153,8 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
               `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
               `\
 namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;

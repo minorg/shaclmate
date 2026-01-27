@@ -114,7 +114,7 @@ namespace $BlankNodeFilter {
   export function $sparqlWherePatterns(
     _filter: $BlankNodeFilter | undefined,
     _value: rdfjs.Variable,
-  ) {
+  ): readonly sparqljs.FilterPattern[] {
     return [];
   }
 }
@@ -137,8 +137,8 @@ namespace $BooleanFilter {
   export function $sparqlWherePatterns(
     filter: $BooleanFilter | undefined,
     value: rdfjs.Variable,
-  ) {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -186,8 +186,8 @@ namespace $DateFilter {
   export function $sparqlWherePatterns(
     filter: $DateFilter | undefined,
     value: rdfjs.Variable,
-  ): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -634,8 +634,8 @@ namespace $IdentifierFilter {
   export function $sparqlWherePatterns(
     filter: $IdentifierFilter | undefined,
     value: rdfjs.Variable,
-  ) {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -846,7 +846,7 @@ namespace $LiteralFilter {
   export function $sparqlWherePatterns(
     filter: $LiteralFilter | undefined,
     value: rdfjs.Variable,
-  ) {
+  ): readonly sparqljs.FilterPattern[] {
     return $TermFilter.$sparqlWherePatterns(filter, value);
   }
 }
@@ -915,8 +915,8 @@ namespace $NamedNodeFilter {
   export function $sparqlWherePatterns(
     filter: $NamedNodeFilter | undefined,
     value: rdfjs.Variable,
-  ) {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -940,6 +940,34 @@ namespace $NamedNodeFilter {
 function $normalizeSparqlWherePatterns(
   patterns: readonly sparqljs.Pattern[],
 ): readonly sparqljs.Pattern[] {
+  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":
+      case "service":
+      case "values":
+        return true;
+
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGeneratingPattern);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGeneratingPattern);
+
+      default:
+        throw new RangeError(
+          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
+        );
+    }
+  }
+
   function normalizePatternsRecursive(
     patterns: readonly sparqljs.Pattern[],
   ): readonly sparqljs.Pattern[] {
@@ -1080,34 +1108,6 @@ function $normalizeSparqlWherePatterns(
     return sortPatterns(deduplicatePatterns(compactedPatterns));
   }
 
-  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-    switch (pattern.type) {
-      case "bind":
-      case "bgp":
-      case "service":
-      case "values":
-        return true;
-
-      case "graph":
-      case "group":
-        return pattern.patterns.some(isSolutionGeneratingPattern);
-
-      case "filter":
-      case "minus":
-      case "optional":
-        return false;
-
-      case "union":
-        // A union pattern is solution-generating if every branch is solution-generating
-        return pattern.patterns.every(isSolutionGeneratingPattern);
-
-      default:
-        throw new RangeError(
-          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
-        );
-    }
-  }
-
   const normalizedPatterns = normalizePatternsRecursive(patterns);
   if (!normalizedPatterns.some(isSolutionGeneratingPattern)) {
     throw new Error(
@@ -1130,8 +1130,8 @@ namespace $NumberFilter {
   export function $sparqlWherePatterns(
     filter: $NumberFilter | undefined,
     value: rdfjs.Variable,
-  ): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -1296,8 +1296,8 @@ namespace $StringFilter {
   export function $sparqlWherePatterns(
     filter: $StringFilter | undefined,
     value: rdfjs.Variable,
-  ) {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
@@ -1357,8 +1357,8 @@ namespace $TermFilter {
   export function $sparqlWherePatterns(
     filter: $TermFilter | undefined,
     value: rdfjs.Variable,
-  ): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
+  ): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;

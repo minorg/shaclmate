@@ -182,8 +182,8 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
               `${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns`,
               `\
 namespace ${syntheticNamePrefix}DateFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}DateFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}DateFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;

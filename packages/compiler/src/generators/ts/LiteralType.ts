@@ -125,7 +125,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
             `${syntheticNamePrefix}LiteralFilter.sparqlWherePatterns`,
             `\
 namespace ${syntheticNamePrefix}LiteralFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable) {
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
     return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter, value);
   }
 }`,

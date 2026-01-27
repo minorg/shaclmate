@@ -136,8 +136,8 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
             `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
             `\
 namespace ${syntheticNamePrefix}StringFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter | undefined, value: rdfjs.Variable) {
-    const patterns: sparqljs.Pattern[] = [];
+  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
+    const patterns: sparqljs.FilterPattern[] = [];
 
     if (!filter) {
       return patterns;
