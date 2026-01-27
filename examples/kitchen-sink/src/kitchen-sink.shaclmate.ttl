@@ -72,7 +72,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :BlankNodeIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can only have a blank node as an identifier" ;
     sh:nodeKind sh:BlankNode .
 
@@ -82,7 +82,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
 
 :BlankNodeOrIriIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that can have a blank node or IRI as an identifier" .
 
 :ClassUnion
@@ -218,7 +218,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :DateUnionPropertiesClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:xone (union) properties related to dates and date-times. Unions of these and strings are common in actual models." ;
     sh:property [
         sh:maxCount 1 ;
@@ -301,7 +301,7 @@ Common pattern: put the minting strategy and nodeKind on an ABC.
     ] .
 
 :DirectRecursiveClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
         sh:node :DirectRecursiveClass ;
@@ -345,7 +345,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     rdfs:subClassOf :AbstractBaseClassForExternClass .
 
 :ExternClassPropertyClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Node shape that references the ExternClass in a property." ;
     sh:property [
         sh:maxCount 1 ;
@@ -423,7 +423,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     sh:nodeKind sh:IRI .
 
 :InIdentifierClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in constraining its identifier." ;
     sh:in (:InIdentifierInstance1
         :InIdentifierInstance2
@@ -435,7 +435,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :InPropertiesClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:in properties." ;
     sh:property [
         sh:in (true
@@ -468,7 +468,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :IndirectRecursiveClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
         sh:node :IndirectRecursiveHelperClass ;
@@ -476,7 +476,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :IndirectRecursiveHelperClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
         sh:node :IndirectRecursiveClass ;
@@ -536,13 +536,13 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :IriIdentifierClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI .
 
 :IriIdentifierInterface
     shaclmate:tsObjectDeclarationType shaclmate:_TsObjectDeclarationType_Interface ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "A node shape that only allows IRI identifiers." ;
     sh:nodeKind sh:IRI .
 
@@ -585,7 +585,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :JsPrimitiveUnionPropertyClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with sh:xone (union) properties with JavaScript primitive types (e.g., boolean, number, et al.). Unions of these are common in actual models." ;
     sh:property [
         sh:path :jsPrimitiveUnionProperty ;
@@ -826,7 +826,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :ListPropertiesClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape that uses the list shapes in properties." ;
     sh:property [
         sh:maxCount 1 ;
@@ -844,7 +844,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
 
 :MutablePropertiesClass
     shaclmate:identifierMintingStrategy shaclmate:_IdentifierMintingStrategy_SHA256 ;
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with shaclmate:mutable properties." ;
     sh:property [
         shaclmate:mutable true ;
@@ -1097,7 +1097,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :RecursiveClassUnionMember1
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
         sh:node :RecursiveClassUnion ;
@@ -1105,7 +1105,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ] .
 
 :RecursiveClassUnionMember2
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     sh:property [
         sh:maxCount 1 ;
         sh:node :RecursiveClassUnion ;
@@ -1147,7 +1147,7 @@ The shaclmate:rdfType is expected on deserialization and added on serialization.
     ) .
 
 :TermPropertiesClass
-    a sh:NodeShape ;
+    a owl:Class, sh:NodeShape ;
     rdfs:comment "Shape with properties that are not nested objects" ;
     sh:property [
         sh:maxCount 1 ;

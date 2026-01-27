@@ -319,7 +319,7 @@ export function transformNodeShapeToAstType(
 
       let fromRdfType: Maybe<NamedNode>;
       let toRdfTypes: NamedNode[];
-      if (!nodeShape.abstract && nodeShape.isClass) {
+      if (!abstract && nodeShape.isClass) {
         fromRdfType = nodeShape.fromRdfType
           .alt(nodeShape.rdfType)
           .alt(
@@ -413,6 +413,7 @@ export function transformNodeShapeToAstType(
 
         if (
           !objectType.abstract &&
+          !objectType.extern &&
           objectType.fromRdfType.isNothing() &&
           !objectType.properties.some((property) => {
             switch (property.type.kind) {

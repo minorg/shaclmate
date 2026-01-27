@@ -8156,6 +8156,7 @@ export class TermPropertiesClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -8166,6 +8167,15 @@ export class TermPropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/TermPropertiesClass",
+        ),
+      );
+    }
+
     resource.add(
       TermPropertiesClass.$properties.blankNodeTermProperty["identifier"],
       ...this.blankNodeTermProperty.toList(),
@@ -8382,6 +8392,9 @@ export namespace TermPropertiesClass {
     }).map((properties) => new TermPropertiesClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/TermPropertiesClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -8680,318 +8693,355 @@ export namespace TermPropertiesClass {
       >;
     }
   > {
-    return purify.Either.of<Error, TermPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as TermPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.blankNodeTermProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) => values.chainMap((value) => value.toBlankNode()))
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<rdfjs.BlankNode>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  TermPropertiesClass.$properties.blankNodeTermProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .chain((blankNodeTermProperty) =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $parameters.resource.values(
-              $properties.booleanTermProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => values.chainMap((value) => value.toBoolean()))
-            .map((values) =>
-              values.length > 0
-                ? values.map((value) => purify.Maybe.of(value))
-                : rdfjsResource.Resource.Values.fromValue<
-                    purify.Maybe<boolean>
-                  >({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      TermPropertiesClass.$properties.booleanTermProperty[
-                        "identifier"
-                      ],
-                    value: purify.Maybe.empty(),
-                  }),
-            )
-            .chain((values) => values.head())
-            .chain((booleanTermProperty) =>
-              purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                $parameters.resource.values(
-                  $properties.dateTermProperty["identifier"],
-                  { unique: true },
-                ),
-              )
-                .chain((values) => values.chainMap((value) => value.toDate()))
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => purify.Maybe.of(value))
-                    : rdfjsResource.Resource.Values.fromValue<
-                        purify.Maybe<Date>
-                      >({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          TermPropertiesClass.$properties.dateTermProperty[
-                            "identifier"
-                          ],
-                        value: purify.Maybe.empty(),
-                      }),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/TermPropertiesClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  TermPropertiesClass.$fromRdfType,
                 )
-                .chain((values) => values.head())
-                .chain((dateTermProperty) =>
-                  purify.Either.of<
-                    Error,
-                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                  >(
-                    $parameters.resource.values(
-                      $properties.dateTimeTermProperty["identifier"],
-                      { unique: true },
-                    ),
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/TermPropertiesClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, TermPropertiesClass.$Identifier>(
+        $parameters.resource.identifier as TermPropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.blankNodeTermProperty["identifier"],
+            { unique: true },
+          ),
+        )
+          .chain((values) => values.chainMap((value) => value.toBlankNode()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<rdfjs.BlankNode>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    TermPropertiesClass.$properties.blankNodeTermProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .chain((blankNodeTermProperty) =>
+            purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+            >(
+              $parameters.resource.values(
+                $properties.booleanTermProperty["identifier"],
+                { unique: true },
+              ),
+            )
+              .chain((values) => values.chainMap((value) => value.toBoolean()))
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => purify.Maybe.of(value))
+                  : rdfjsResource.Resource.Values.fromValue<
+                      purify.Maybe<boolean>
+                    >({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        TermPropertiesClass.$properties.booleanTermProperty[
+                          "identifier"
+                        ],
+                      value: purify.Maybe.empty(),
+                    }),
+              )
+              .chain((values) => values.head())
+              .chain((booleanTermProperty) =>
+                purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  $parameters.resource.values(
+                    $properties.dateTermProperty["identifier"],
+                    { unique: true },
+                  ),
+                )
+                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => purify.Maybe.of(value))
+                      : rdfjsResource.Resource.Values.fromValue<
+                          purify.Maybe<Date>
+                        >({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            TermPropertiesClass.$properties.dateTermProperty[
+                              "identifier"
+                            ],
+                          value: purify.Maybe.empty(),
+                        }),
                   )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toDate()),
+                  .chain((values) => values.head())
+                  .chain((dateTermProperty) =>
+                    purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      $parameters.resource.values(
+                        $properties.dateTimeTermProperty["identifier"],
+                        { unique: true },
+                      ),
                     )
-                    .map((values) =>
-                      values.length > 0
-                        ? values.map((value) => purify.Maybe.of(value))
-                        : rdfjsResource.Resource.Values.fromValue<
-                            purify.Maybe<Date>
-                          >({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              TermPropertiesClass.$properties
-                                .dateTimeTermProperty["identifier"],
-                            value: purify.Maybe.empty(),
-                          }),
-                    )
-                    .chain((values) => values.head())
-                    .chain((dateTimeTermProperty) =>
-                      purify.Either.of<
-                        Error,
-                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                      >(
-                        $parameters.resource.values(
-                          $properties.iriTermProperty["identifier"],
-                          { unique: true },
-                        ),
+                      .chain((values) =>
+                        values.chainMap((value) => value.toDate()),
                       )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toIri()),
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => purify.Maybe.of(value))
+                          : rdfjsResource.Resource.Values.fromValue<
+                              purify.Maybe<Date>
+                            >({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                TermPropertiesClass.$properties
+                                  .dateTimeTermProperty["identifier"],
+                              value: purify.Maybe.empty(),
+                            }),
+                      )
+                      .chain((values) => values.head())
+                      .chain((dateTimeTermProperty) =>
+                        purify.Either.of<
+                          Error,
+                          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                        >(
+                          $parameters.resource.values(
+                            $properties.iriTermProperty["identifier"],
+                            { unique: true },
+                          ),
                         )
-                        .map((values) =>
-                          values.length > 0
-                            ? values.map((value) => purify.Maybe.of(value))
-                            : rdfjsResource.Resource.Values.fromValue<
-                                purify.Maybe<rdfjs.NamedNode>
-                              >({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  TermPropertiesClass.$properties
-                                    .iriTermProperty["identifier"],
-                                value: purify.Maybe.empty(),
-                              }),
-                        )
-                        .chain((values) => values.head())
-                        .chain((iriTermProperty) =>
-                          purify.Either.of<
-                            Error,
-                            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                          >(
-                            $parameters.resource.values(
-                              $properties.literalTermProperty["identifier"],
-                              { unique: true },
-                            ),
+                          .chain((values) =>
+                            values.chainMap((value) => value.toIri()),
                           )
-                            .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  TermPropertiesClass.$properties
-                                    .literalTermProperty["identifier"],
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => purify.Maybe.of(value))
+                              : rdfjsResource.Resource.Values.fromValue<
+                                  purify.Maybe<rdfjs.NamedNode>
+                                >({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    TermPropertiesClass.$properties
+                                      .iriTermProperty["identifier"],
+                                  value: purify.Maybe.empty(),
+                                }),
+                          )
+                          .chain((values) => values.head())
+                          .chain((iriTermProperty) =>
+                            purify.Either.of<
+                              Error,
+                              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                            >(
+                              $parameters.resource.values(
+                                $properties.literalTermProperty["identifier"],
+                                { unique: true },
+                              ),
                             )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toLiteral()),
-                            )
-                            .map((values) =>
-                              values.length > 0
-                                ? values.map((value) => purify.Maybe.of(value))
-                                : rdfjsResource.Resource.Values.fromValue<
-                                    purify.Maybe<rdfjs.Literal>
-                                  >({
-                                    focusResource: $parameters.resource,
-                                    predicate:
-                                      TermPropertiesClass.$properties
-                                        .literalTermProperty["identifier"],
-                                    value: purify.Maybe.empty(),
-                                  }),
-                            )
-                            .chain((values) => values.head())
-                            .chain((literalTermProperty) =>
-                              purify.Either.of<
-                                Error,
-                                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                              >(
-                                $parameters.resource.values(
-                                  $properties.numberTermProperty["identifier"],
-                                  { unique: true },
-                                ),
+                              .chain((values) =>
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    TermPropertiesClass.$properties
+                                      .literalTermProperty["identifier"],
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
                               )
-                                .chain((values) =>
-                                  values.chainMap((value) => value.toNumber()),
+                              .chain((values) =>
+                                values.chainMap((value) => value.toLiteral()),
+                              )
+                              .map((values) =>
+                                values.length > 0
+                                  ? values.map((value) =>
+                                      purify.Maybe.of(value),
+                                    )
+                                  : rdfjsResource.Resource.Values.fromValue<
+                                      purify.Maybe<rdfjs.Literal>
+                                    >({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        TermPropertiesClass.$properties
+                                          .literalTermProperty["identifier"],
+                                      value: purify.Maybe.empty(),
+                                    }),
+                              )
+                              .chain((values) => values.head())
+                              .chain((literalTermProperty) =>
+                                purify.Either.of<
+                                  Error,
+                                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                                >(
+                                  $parameters.resource.values(
+                                    $properties.numberTermProperty[
+                                      "identifier"
+                                    ],
+                                    { unique: true },
+                                  ),
                                 )
-                                .map((values) =>
-                                  values.length > 0
-                                    ? values.map((value) =>
-                                        purify.Maybe.of(value),
-                                      )
-                                    : rdfjsResource.Resource.Values.fromValue<
-                                        purify.Maybe<number>
-                                      >({
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          TermPropertiesClass.$properties
-                                            .numberTermProperty["identifier"],
-                                        value: purify.Maybe.empty(),
-                                      }),
-                                )
-                                .chain((values) => values.head())
-                                .chain((numberTermProperty) =>
-                                  purify.Either.of<
-                                    Error,
-                                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                                  >(
-                                    $parameters.resource.values(
-                                      $properties.stringTermProperty[
-                                        "identifier"
-                                      ],
-                                      { unique: true },
+                                  .chain((values) =>
+                                    values.chainMap((value) =>
+                                      value.toNumber(),
                                     ),
                                   )
-                                    .chain((values) =>
-                                      $fromRdfPreferredLanguages({
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          TermPropertiesClass.$properties
-                                            .stringTermProperty["identifier"],
-                                        preferredLanguages:
-                                          $parameters.preferredLanguages,
-                                        values,
-                                      }),
-                                    )
-                                    .chain((values) =>
-                                      values.chainMap((value) =>
-                                        value.toString(),
+                                  .map((values) =>
+                                    values.length > 0
+                                      ? values.map((value) =>
+                                          purify.Maybe.of(value),
+                                        )
+                                      : rdfjsResource.Resource.Values.fromValue<
+                                          purify.Maybe<number>
+                                        >({
+                                          focusResource: $parameters.resource,
+                                          predicate:
+                                            TermPropertiesClass.$properties
+                                              .numberTermProperty["identifier"],
+                                          value: purify.Maybe.empty(),
+                                        }),
+                                  )
+                                  .chain((values) => values.head())
+                                  .chain((numberTermProperty) =>
+                                    purify.Either.of<
+                                      Error,
+                                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                                    >(
+                                      $parameters.resource.values(
+                                        $properties.stringTermProperty[
+                                          "identifier"
+                                        ],
+                                        { unique: true },
                                       ),
                                     )
-                                    .map((values) =>
-                                      values.length > 0
-                                        ? values.map((value) =>
-                                            purify.Maybe.of(value),
-                                          )
-                                        : rdfjsResource.Resource.Values.fromValue<
-                                            purify.Maybe<string>
-                                          >({
-                                            focusResource: $parameters.resource,
-                                            predicate:
-                                              TermPropertiesClass.$properties
-                                                .stringTermProperty[
-                                                "identifier"
-                                              ],
-                                            value: purify.Maybe.empty(),
-                                          }),
-                                    )
-                                    .chain((values) => values.head())
-                                    .chain((stringTermProperty) =>
-                                      purify.Either.of<
-                                        Error,
-                                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                                      >(
-                                        $parameters.resource.values(
-                                          $properties.termProperty[
-                                            "identifier"
-                                          ],
-                                          { unique: true },
+                                      .chain((values) =>
+                                        $fromRdfPreferredLanguages({
+                                          focusResource: $parameters.resource,
+                                          predicate:
+                                            TermPropertiesClass.$properties
+                                              .stringTermProperty["identifier"],
+                                          preferredLanguages:
+                                            $parameters.preferredLanguages,
+                                          values,
+                                        }),
+                                      )
+                                      .chain((values) =>
+                                        values.chainMap((value) =>
+                                          value.toString(),
                                         ),
                                       )
-                                        .chain((values) =>
-                                          values.chainMap((value) =>
-                                            purify.Either.of<
-                                              Error,
-                                              | rdfjs.BlankNode
-                                              | rdfjs.Literal
-                                              | rdfjs.NamedNode
-                                            >(value.toTerm()),
+                                      .map((values) =>
+                                        values.length > 0
+                                          ? values.map((value) =>
+                                              purify.Maybe.of(value),
+                                            )
+                                          : rdfjsResource.Resource.Values.fromValue<
+                                              purify.Maybe<string>
+                                            >({
+                                              focusResource:
+                                                $parameters.resource,
+                                              predicate:
+                                                TermPropertiesClass.$properties
+                                                  .stringTermProperty[
+                                                  "identifier"
+                                                ],
+                                              value: purify.Maybe.empty(),
+                                            }),
+                                      )
+                                      .chain((values) => values.head())
+                                      .chain((stringTermProperty) =>
+                                        purify.Either.of<
+                                          Error,
+                                          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                                        >(
+                                          $parameters.resource.values(
+                                            $properties.termProperty[
+                                              "identifier"
+                                            ],
+                                            { unique: true },
                                           ),
                                         )
-                                        .map((values) =>
-                                          values.length > 0
-                                            ? values.map((value) =>
-                                                purify.Maybe.of(value),
-                                              )
-                                            : rdfjsResource.Resource.Values.fromValue<
-                                                purify.Maybe<
-                                                  | rdfjs.BlankNode
-                                                  | rdfjs.Literal
-                                                  | rdfjs.NamedNode
-                                                >
-                                              >({
-                                                focusResource:
-                                                  $parameters.resource,
-                                                predicate:
-                                                  TermPropertiesClass
-                                                    .$properties.termProperty[
-                                                    "identifier"
-                                                  ],
-                                                value: purify.Maybe.empty(),
-                                              }),
-                                        )
-                                        .chain((values) => values.head())
-                                        .map((termProperty) => ({
-                                          $identifier,
-                                          blankNodeTermProperty,
-                                          booleanTermProperty,
-                                          dateTermProperty,
-                                          dateTimeTermProperty,
-                                          iriTermProperty,
-                                          literalTermProperty,
-                                          numberTermProperty,
-                                          stringTermProperty,
-                                          termProperty,
-                                        })),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
+                                          .chain((values) =>
+                                            values.chainMap((value) =>
+                                              purify.Either.of<
+                                                Error,
+                                                | rdfjs.BlankNode
+                                                | rdfjs.Literal
+                                                | rdfjs.NamedNode
+                                              >(value.toTerm()),
+                                            ),
+                                          )
+                                          .map((values) =>
+                                            values.length > 0
+                                              ? values.map((value) =>
+                                                  purify.Maybe.of(value),
+                                                )
+                                              : rdfjsResource.Resource.Values.fromValue<
+                                                  purify.Maybe<
+                                                    | rdfjs.BlankNode
+                                                    | rdfjs.Literal
+                                                    | rdfjs.NamedNode
+                                                  >
+                                                >({
+                                                  focusResource:
+                                                    $parameters.resource,
+                                                  predicate:
+                                                    TermPropertiesClass
+                                                      .$properties.termProperty[
+                                                      "identifier"
+                                                    ],
+                                                  value: purify.Maybe.empty(),
+                                                }),
+                                          )
+                                          .chain((values) => values.head())
+                                          .map((termProperty) => ({
+                                            $identifier,
+                                            blankNodeTermProperty,
+                                            booleanTermProperty,
+                                            dateTermProperty,
+                                            dateTimeTermProperty,
+                                            iriTermProperty,
+                                            literalTermProperty,
+                                            numberTermProperty,
+                                            stringTermProperty,
+                                            termProperty,
+                                          })),
+                                      ),
+                                  ),
+                              ),
+                          ),
+                      ),
+                  ),
+              ),
+          ),
+      ),
     );
   }
 
@@ -9056,6 +9106,27 @@ export namespace TermPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
@@ -9138,6 +9209,49 @@ export namespace TermPropertiesClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: TermPropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -10220,6 +10334,7 @@ export class RecursiveClassUnionMember2 {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -10230,6 +10345,15 @@ export class RecursiveClassUnionMember2 {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/RecursiveClassUnionMember2",
+        ),
+      );
+    }
+
     resource.add(
       RecursiveClassUnionMember2.$properties.recursiveClassUnionMember2Property[
         "identifier"
@@ -10317,6 +10441,9 @@ export namespace RecursiveClassUnionMember2 {
     }).map((properties) => new RecursiveClassUnionMember2(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RecursiveClassUnionMember2",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -10436,48 +10563,79 @@ export namespace RecursiveClassUnionMember2 {
       recursiveClassUnionMember2Property: purify.Maybe<RecursiveClassUnion>;
     }
   > {
-    return purify.Either.of<Error, RecursiveClassUnionMember2.$Identifier>(
-      $parameters.resource.identifier as RecursiveClassUnionMember2.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.recursiveClassUnionMember2Property["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toResource().chain((resource) =>
-              RecursiveClassUnion.$fromRdf(resource, {
-                context: $parameters.context,
-                ignoreRdfType: false,
-                objectSet: $parameters.objectSet,
-                preferredLanguages: $parameters.preferredLanguages,
-              }),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/RecursiveClassUnionMember2":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  RecursiveClassUnionMember2.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveClassUnionMember2)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, RecursiveClassUnionMember2.$Identifier>(
+        $parameters.resource
+          .identifier as RecursiveClassUnionMember2.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.recursiveClassUnionMember2Property["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<RecursiveClassUnion>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  RecursiveClassUnionMember2.$properties
-                    .recursiveClassUnionMember2Property["identifier"],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((recursiveClassUnionMember2Property) => ({
-          $identifier,
-          recursiveClassUnionMember2Property,
-        })),
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                RecursiveClassUnion.$fromRdf(resource, {
+                  context: $parameters.context,
+                  ignoreRdfType: false,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
+                }),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<RecursiveClassUnion>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    RecursiveClassUnionMember2.$properties
+                      .recursiveClassUnionMember2Property["identifier"],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((recursiveClassUnionMember2Property) => ({
+            $identifier,
+            recursiveClassUnionMember2Property,
+          })),
+      ),
     );
   }
 
@@ -10537,12 +10695,37 @@ export namespace RecursiveClassUnionMember2 {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("recursiveClassUnionMember2");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -10556,6 +10739,49 @@ export namespace RecursiveClassUnionMember2 {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("recursiveClassUnionMember2");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: RecursiveClassUnionMember2.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -10704,6 +10930,7 @@ export class RecursiveClassUnionMember1 {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -10714,6 +10941,15 @@ export class RecursiveClassUnionMember1 {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/RecursiveClassUnionMember1",
+        ),
+      );
+    }
+
     resource.add(
       RecursiveClassUnionMember1.$properties.recursiveClassUnionMember1Property[
         "identifier"
@@ -10801,6 +11037,9 @@ export namespace RecursiveClassUnionMember1 {
     }).map((properties) => new RecursiveClassUnionMember1(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/RecursiveClassUnionMember1",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -10920,48 +11159,79 @@ export namespace RecursiveClassUnionMember1 {
       recursiveClassUnionMember1Property: purify.Maybe<RecursiveClassUnion>;
     }
   > {
-    return purify.Either.of<Error, RecursiveClassUnionMember1.$Identifier>(
-      $parameters.resource.identifier as RecursiveClassUnionMember1.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.recursiveClassUnionMember1Property["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toResource().chain((resource) =>
-              RecursiveClassUnion.$fromRdf(resource, {
-                context: $parameters.context,
-                ignoreRdfType: false,
-                objectSet: $parameters.objectSet,
-                preferredLanguages: $parameters.preferredLanguages,
-              }),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/RecursiveClassUnionMember1":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  RecursiveClassUnionMember1.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/RecursiveClassUnionMember1)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, RecursiveClassUnionMember1.$Identifier>(
+        $parameters.resource
+          .identifier as RecursiveClassUnionMember1.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.recursiveClassUnionMember1Property["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<RecursiveClassUnion>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  RecursiveClassUnionMember1.$properties
-                    .recursiveClassUnionMember1Property["identifier"],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((recursiveClassUnionMember1Property) => ({
-          $identifier,
-          recursiveClassUnionMember1Property,
-        })),
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                RecursiveClassUnion.$fromRdf(resource, {
+                  context: $parameters.context,
+                  ignoreRdfType: false,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
+                }),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<RecursiveClassUnion>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    RecursiveClassUnionMember1.$properties
+                      .recursiveClassUnionMember1Property["identifier"],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((recursiveClassUnionMember1Property) => ({
+            $identifier,
+            recursiveClassUnionMember1Property,
+          })),
+      ),
     );
   }
 
@@ -11021,12 +11291,37 @@ export namespace RecursiveClassUnionMember1 {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("recursiveClassUnionMember1");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -11040,6 +11335,49 @@ export namespace RecursiveClassUnionMember1 {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("recursiveClassUnionMember1");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: RecursiveClassUnionMember1.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -17810,6 +18148,7 @@ export class MutablePropertiesClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -17820,6 +18159,15 @@ export class MutablePropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/MutablePropertiesClass",
+        ),
+      );
+    }
+
     resource.add(
       MutablePropertiesClass.$properties.mutableListProperty["identifier"],
       ...this.mutableListProperty.toList().flatMap((value) => [
@@ -17978,6 +18326,9 @@ export namespace MutablePropertiesClass {
     }).map((properties) => new MutablePropertiesClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/MutablePropertiesClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -18138,142 +18489,177 @@ export namespace MutablePropertiesClass {
       mutableStringProperty: purify.Maybe<string>;
     }
   > {
-    return purify.Either.of<Error, MutablePropertiesClass.$Identifier>(
-      $parameters.resource.identifier as MutablePropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.mutableListProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) => values.chainMap((value) => value.toList()))
-        .chain((valueLists) =>
-          valueLists.chainMap((valueList) =>
-            purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-            >(
-              rdfjsResource.Resource.Values.fromArray({
-                focusResource: $parameters.resource,
-                predicate:
-                  MutablePropertiesClass.$properties.mutableListProperty[
-                    "identifier"
-                  ],
-                values: valueList,
-              }),
-            )
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/MutablePropertiesClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  MutablePropertiesClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/MutablePropertiesClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, MutablePropertiesClass.$Identifier>(
+        $parameters.resource.identifier as MutablePropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.mutableListProperty["identifier"],
+            { unique: true },
+          ),
+        )
+          .chain((values) => values.chainMap((value) => value.toList()))
+          .chain((valueLists) =>
+            valueLists.chainMap((valueList) =>
+              purify.Either.of<
+                Error,
+                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+              >(
+                rdfjsResource.Resource.Values.fromArray({
                   focusResource: $parameters.resource,
                   predicate:
                     MutablePropertiesClass.$properties.mutableListProperty[
                       "identifier"
                     ],
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
+                  values: valueList,
                 }),
-              )
-              .chain((values) => values.chainMap((value) => value.toString())),
-          ),
-        )
-        .map((valueLists) =>
-          valueLists.map((valueList) => valueList.toArray().concat()),
-        )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string[]>>({
-                focusResource: $parameters.resource,
-                predicate:
-                  MutablePropertiesClass.$properties.mutableListProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .chain((mutableListProperty) =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $parameters.resource.values(
-              $properties.mutableSetProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) =>
-              $fromRdfPreferredLanguages({
-                focusResource: $parameters.resource,
-                predicate:
-                  MutablePropertiesClass.$properties.mutableSetProperty[
-                    "identifier"
-                  ],
-                preferredLanguages: $parameters.preferredLanguages,
-                values,
-              }),
-            )
-            .chain((values) => values.chainMap((value) => value.toString()))
-            .map((values) => values.toArray().concat())
-            .map((valuesArray) =>
-              rdfjsResource.Resource.Values.fromValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  MutablePropertiesClass.$properties.mutableSetProperty[
-                    "identifier"
-                  ],
-                value: valuesArray,
-              }),
-            )
-            .chain((values) => values.head())
-            .chain((mutableSetProperty) =>
-              purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                $parameters.resource.values(
-                  $properties.mutableStringProperty["identifier"],
-                  { unique: true },
-                ),
               )
                 .chain((values) =>
                   $fromRdfPreferredLanguages({
                     focusResource: $parameters.resource,
                     predicate:
-                      MutablePropertiesClass.$properties.mutableStringProperty[
+                      MutablePropertiesClass.$properties.mutableListProperty[
                         "identifier"
                       ],
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
                   }),
                 )
-                .chain((values) => values.chainMap((value) => value.toString()))
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => purify.Maybe.of(value))
-                    : rdfjsResource.Resource.Values.fromValue<
-                        purify.Maybe<string>
-                      >({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          MutablePropertiesClass.$properties
-                            .mutableStringProperty["identifier"],
-                        value: purify.Maybe.empty(),
-                      }),
-                )
-                .chain((values) => values.head())
-                .map((mutableStringProperty) => ({
-                  $identifier,
-                  mutableListProperty,
-                  mutableSetProperty,
-                  mutableStringProperty,
-                })),
+                .chain((values) =>
+                  values.chainMap((value) => value.toString()),
+                ),
             ),
-        ),
+          )
+          .map((valueLists) =>
+            valueLists.map((valueList) => valueList.toArray().concat()),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string[]>>(
+                  {
+                    focusResource: $parameters.resource,
+                    predicate:
+                      MutablePropertiesClass.$properties.mutableListProperty[
+                        "identifier"
+                      ],
+                    value: purify.Maybe.empty(),
+                  },
+                ),
+          )
+          .chain((values) => values.head())
+          .chain((mutableListProperty) =>
+            purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+            >(
+              $parameters.resource.values(
+                $properties.mutableSetProperty["identifier"],
+                { unique: true },
+              ),
+            )
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    MutablePropertiesClass.$properties.mutableSetProperty[
+                      "identifier"
+                    ],
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toString()))
+              .map((values) => values.toArray().concat())
+              .map((valuesArray) =>
+                rdfjsResource.Resource.Values.fromValue({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    MutablePropertiesClass.$properties.mutableSetProperty[
+                      "identifier"
+                    ],
+                  value: valuesArray,
+                }),
+              )
+              .chain((values) => values.head())
+              .chain((mutableSetProperty) =>
+                purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  $parameters.resource.values(
+                    $properties.mutableStringProperty["identifier"],
+                    { unique: true },
+                  ),
+                )
+                  .chain((values) =>
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        MutablePropertiesClass.$properties
+                          .mutableStringProperty["identifier"],
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toString()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => purify.Maybe.of(value))
+                      : rdfjsResource.Resource.Values.fromValue<
+                          purify.Maybe<string>
+                        >({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            MutablePropertiesClass.$properties
+                              .mutableStringProperty["identifier"],
+                          value: purify.Maybe.empty(),
+                        }),
+                  )
+                  .chain((values) => values.head())
+                  .map((mutableStringProperty) => ({
+                    $identifier,
+                    mutableListProperty,
+                    mutableSetProperty,
+                    mutableStringProperty,
+                  })),
+              ),
+          ),
+      ),
     );
   }
 
@@ -18341,6 +18727,27 @@ export namespace MutablePropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
@@ -18414,6 +18821,49 @@ export namespace MutablePropertiesClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: MutablePropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -18995,6 +19445,7 @@ export class ListPropertiesClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -19005,6 +19456,15 @@ export class ListPropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/ListPropertiesClass",
+        ),
+      );
+    }
+
     resource.add(
       ListPropertiesClass.$properties.iriListProperty["identifier"],
       ...this.iriListProperty.toList().flatMap((value) => [
@@ -19272,6 +19732,9 @@ export namespace ListPropertiesClass {
     }).map((properties) => new ListPropertiesClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ListPropertiesClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -19425,172 +19888,208 @@ export namespace ListPropertiesClass {
       stringListProperty: purify.Maybe<readonly string[]>;
     }
   > {
-    return purify.Either.of<Error, ListPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as ListPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values($properties.iriListProperty["identifier"], {
-          unique: true,
-        }),
-      )
-        .chain((values) => values.chainMap((value) => value.toList()))
-        .chain((valueLists) =>
-          valueLists.chainMap((valueList) =>
-            purify.Either.of<
-              Error,
-              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-            >(
-              rdfjsResource.Resource.Values.fromArray({
-                focusResource: $parameters.resource,
-                predicate:
-                  ListPropertiesClass.$properties.iriListProperty["identifier"],
-                values: valueList,
-              }),
-            ).chain((values) => values.chainMap((value) => value.toIri())),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ListPropertiesClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  ListPropertiesClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ListPropertiesClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, ListPropertiesClass.$Identifier>(
+        $parameters.resource.identifier as ListPropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.iriListProperty["identifier"],
+            { unique: true },
           ),
         )
-        .map((valueLists) => valueLists.map((valueList) => valueList.toArray()))
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<readonly rdfjs.NamedNode[]>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  ListPropertiesClass.$properties.iriListProperty["identifier"],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .chain((iriListProperty) =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $parameters.resource.values(
-              $properties.objectListProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) => values.chainMap((value) => value.toList()))
-            .chain((valueLists) =>
-              valueLists.chainMap((valueList) =>
-                purify.Either.of<
-                  Error,
-                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                >(
-                  rdfjsResource.Resource.Values.fromArray({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ListPropertiesClass.$properties.objectListProperty[
-                        "identifier"
-                      ],
-                    values: valueList,
-                  }),
-                ).chain((values) =>
-                  values.chainMap((value) =>
-                    value.toResource().chain((resource) =>
-                      NonClass.$fromRdf(resource, {
-                        context: $parameters.context,
-                        ignoreRdfType: true,
-                        objectSet: $parameters.objectSet,
-                        preferredLanguages: $parameters.preferredLanguages,
-                      }),
-                    ),
-                  ),
-                ),
-              ),
-            )
-            .map((valueLists) =>
-              valueLists.map((valueList) => valueList.toArray()),
-            )
-            .map((values) =>
-              values.length > 0
-                ? values.map((value) => purify.Maybe.of(value))
-                : rdfjsResource.Resource.Values.fromValue<
-                    purify.Maybe<readonly NonClass[]>
-                  >({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      ListPropertiesClass.$properties.objectListProperty[
-                        "identifier"
-                      ],
-                    value: purify.Maybe.empty(),
-                  }),
-            )
-            .chain((values) => values.head())
-            .chain((objectListProperty) =>
+          .chain((values) => values.chainMap((value) => value.toList()))
+          .chain((valueLists) =>
+            valueLists.chainMap((valueList) =>
               purify.Either.of<
                 Error,
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
-                $parameters.resource.values(
-                  $properties.stringListProperty["identifier"],
-                  { unique: true },
+                rdfjsResource.Resource.Values.fromArray({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    ListPropertiesClass.$properties.iriListProperty[
+                      "identifier"
+                    ],
+                  values: valueList,
+                }),
+              ).chain((values) => values.chainMap((value) => value.toIri())),
+            ),
+          )
+          .map((valueLists) =>
+            valueLists.map((valueList) => valueList.toArray()),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<readonly rdfjs.NamedNode[]>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    ListPropertiesClass.$properties.iriListProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .chain((iriListProperty) =>
+            purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+            >(
+              $parameters.resource.values(
+                $properties.objectListProperty["identifier"],
+                { unique: true },
+              ),
+            )
+              .chain((values) => values.chainMap((value) => value.toList()))
+              .chain((valueLists) =>
+                valueLists.chainMap((valueList) =>
+                  purify.Either.of<
+                    Error,
+                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                  >(
+                    rdfjsResource.Resource.Values.fromArray({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        ListPropertiesClass.$properties.objectListProperty[
+                          "identifier"
+                        ],
+                      values: valueList,
+                    }),
+                  ).chain((values) =>
+                    values.chainMap((value) =>
+                      value.toResource().chain((resource) =>
+                        NonClass.$fromRdf(resource, {
+                          context: $parameters.context,
+                          ignoreRdfType: true,
+                          objectSet: $parameters.objectSet,
+                          preferredLanguages: $parameters.preferredLanguages,
+                        }),
+                      ),
+                    ),
+                  ),
                 ),
               )
-                .chain((values) => values.chainMap((value) => value.toList()))
-                .chain((valueLists) =>
-                  valueLists.chainMap((valueList) =>
-                    purify.Either.of<
-                      Error,
-                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                    >(
-                      rdfjsResource.Resource.Values.fromArray({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          ListPropertiesClass.$properties.stringListProperty[
-                            "identifier"
-                          ],
-                        values: valueList,
-                      }),
-                    )
-                      .chain((values) =>
-                        $fromRdfPreferredLanguages({
+              .map((valueLists) =>
+                valueLists.map((valueList) => valueList.toArray()),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => purify.Maybe.of(value))
+                  : rdfjsResource.Resource.Values.fromValue<
+                      purify.Maybe<readonly NonClass[]>
+                    >({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        ListPropertiesClass.$properties.objectListProperty[
+                          "identifier"
+                        ],
+                      value: purify.Maybe.empty(),
+                    }),
+              )
+              .chain((values) => values.head())
+              .chain((objectListProperty) =>
+                purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  $parameters.resource.values(
+                    $properties.stringListProperty["identifier"],
+                    { unique: true },
+                  ),
+                )
+                  .chain((values) => values.chainMap((value) => value.toList()))
+                  .chain((valueLists) =>
+                    valueLists.chainMap((valueList) =>
+                      purify.Either.of<
+                        Error,
+                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                      >(
+                        rdfjsResource.Resource.Values.fromArray({
                           focusResource: $parameters.resource,
                           predicate:
                             ListPropertiesClass.$properties.stringListProperty[
                               "identifier"
                             ],
-                          preferredLanguages: $parameters.preferredLanguages,
-                          values,
+                          values: valueList,
                         }),
                       )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toString()),
-                      ),
-                  ),
-                )
-                .map((valueLists) =>
-                  valueLists.map((valueList) => valueList.toArray()),
-                )
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => purify.Maybe.of(value))
-                    : rdfjsResource.Resource.Values.fromValue<
-                        purify.Maybe<readonly string[]>
-                      >({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          ListPropertiesClass.$properties.stringListProperty[
-                            "identifier"
-                          ],
-                        value: purify.Maybe.empty(),
-                      }),
-                )
-                .chain((values) => values.head())
-                .map((stringListProperty) => ({
-                  $identifier,
-                  iriListProperty,
-                  objectListProperty,
-                  stringListProperty,
-                })),
-            ),
-        ),
+                        .chain((values) =>
+                          $fromRdfPreferredLanguages({
+                            focusResource: $parameters.resource,
+                            predicate:
+                              ListPropertiesClass.$properties
+                                .stringListProperty["identifier"],
+                            preferredLanguages: $parameters.preferredLanguages,
+                            values,
+                          }),
+                        )
+                        .chain((values) =>
+                          values.chainMap((value) => value.toString()),
+                        ),
+                    ),
+                  )
+                  .map((valueLists) =>
+                    valueLists.map((valueList) => valueList.toArray()),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => purify.Maybe.of(value))
+                      : rdfjsResource.Resource.Values.fromValue<
+                          purify.Maybe<readonly string[]>
+                        >({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            ListPropertiesClass.$properties.stringListProperty[
+                              "identifier"
+                            ],
+                          value: purify.Maybe.empty(),
+                        }),
+                  )
+                  .chain((values) => values.head())
+                  .map((stringListProperty) => ({
+                    $identifier,
+                    iriListProperty,
+                    objectListProperty,
+                    stringListProperty,
+                  })),
+              ),
+          ),
+      ),
     );
   }
 
@@ -19655,6 +20154,27 @@ export namespace ListPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
@@ -19817,6 +20337,49 @@ export namespace ListPropertiesClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ListPropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -33403,6 +33966,7 @@ export class JsPrimitiveUnionPropertyClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -33413,6 +33977,15 @@ export class JsPrimitiveUnionPropertyClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/JsPrimitiveUnionPropertyClass",
+        ),
+      );
+    }
+
     resource.add(
       JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
         "identifier"
@@ -33565,6 +34138,9 @@ export namespace JsPrimitiveUnionPropertyClass {
     }).map((properties) => new JsPrimitiveUnionPropertyClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/JsPrimitiveUnionPropertyClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -33675,77 +34251,107 @@ export namespace JsPrimitiveUnionPropertyClass {
       jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
     }
   > {
-    return purify.Either.of<Error, JsPrimitiveUnionPropertyClass.$Identifier>(
-      $parameters.resource
-        .identifier as JsPrimitiveUnionPropertyClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.jsPrimitiveUnionProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) => {
-            const valueAsValues = purify.Either.of(value.toValues());
-            return (
-              valueAsValues.chain((values) =>
-                values.chainMap((value) => value.toBoolean()),
-              ) as purify.Either<
-                Error,
-                rdfjsResource.Resource.Values<boolean | number | string>
-              >
-            )
-              .altLazy(
-                () =>
-                  valueAsValues.chain((values) =>
-                    values.chainMap((value) => value.toNumber()),
-                  ) as purify.Either<
-                    Error,
-                    rdfjsResource.Resource.Values<boolean | number | string>
-                  >,
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/JsPrimitiveUnionPropertyClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  JsPrimitiveUnionPropertyClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/JsPrimitiveUnionPropertyClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, JsPrimitiveUnionPropertyClass.$Identifier>(
+        $parameters.resource
+          .identifier as JsPrimitiveUnionPropertyClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.jsPrimitiveUnionProperty["identifier"],
+            { unique: true },
+          ),
+        )
+          .chain((values) =>
+            values.chainMap((value) => {
+              const valueAsValues = purify.Either.of(value.toValues());
+              return (
+                valueAsValues.chain((values) =>
+                  values.chainMap((value) => value.toBoolean()),
+                ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<boolean | number | string>
+                >
               )
-              .altLazy(
-                () =>
-                  valueAsValues
-                    .chain((values) =>
-                      $fromRdfPreferredLanguages({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          JsPrimitiveUnionPropertyClass.$properties
-                            .jsPrimitiveUnionProperty["identifier"],
-                        preferredLanguages: $parameters.preferredLanguages,
-                        values,
-                      }),
-                    )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toString()),
+                .altLazy(
+                  () =>
+                    valueAsValues.chain((values) =>
+                      values.chainMap((value) => value.toNumber()),
                     ) as purify.Either<
-                    Error,
-                    rdfjsResource.Resource.Values<boolean | number | string>
-                  >,
-              )
-              .chain((values) => values.head());
-          }),
-        )
-        .map((values) => values.toArray())
-        .map((valuesArray) =>
-          rdfjsResource.Resource.Values.fromValue({
-            focusResource: $parameters.resource,
-            predicate:
-              JsPrimitiveUnionPropertyClass.$properties
-                .jsPrimitiveUnionProperty["identifier"],
-            value: valuesArray,
-          }),
-        )
-        .chain((values) => values.head())
-        .map((jsPrimitiveUnionProperty) => ({
-          $identifier,
-          jsPrimitiveUnionProperty,
-        })),
+                      Error,
+                      rdfjsResource.Resource.Values<boolean | number | string>
+                    >,
+                )
+                .altLazy(
+                  () =>
+                    valueAsValues
+                      .chain((values) =>
+                        $fromRdfPreferredLanguages({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            JsPrimitiveUnionPropertyClass.$properties
+                              .jsPrimitiveUnionProperty["identifier"],
+                          preferredLanguages: $parameters.preferredLanguages,
+                          values,
+                        }),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toString()),
+                      ) as purify.Either<
+                      Error,
+                      rdfjsResource.Resource.Values<boolean | number | string>
+                    >,
+                )
+                .chain((values) => values.head());
+            }),
+          )
+          .map((values) => values.toArray())
+          .map((valuesArray) =>
+            rdfjsResource.Resource.Values.fromValue({
+              focusResource: $parameters.resource,
+              predicate:
+                JsPrimitiveUnionPropertyClass.$properties
+                  .jsPrimitiveUnionProperty["identifier"],
+              value: valuesArray,
+            }),
+          )
+          .chain((values) => values.head())
+          .map((jsPrimitiveUnionProperty) => ({
+            $identifier,
+            jsPrimitiveUnionProperty,
+          })),
+      ),
     );
   }
 
@@ -33814,6 +34420,27 @@ export namespace JsPrimitiveUnionPropertyClass {
       parameters?.subject ??
       dataFactory.variable!("jsPrimitiveUnionPropertyClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}JsPrimitiveUnionProperty`,
@@ -33838,6 +34465,49 @@ export namespace JsPrimitiveUnionPropertyClass {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("jsPrimitiveUnionPropertyClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: JsPrimitiveUnionPropertyClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -34107,6 +34777,10 @@ export namespace IriIdentifierInterface {
     });
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IriIdentifierInterface",
+  );
+
   export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -34229,7 +34903,35 @@ export namespace IriIdentifierInterface {
     { $identifier: rdfjs.NamedNode; $type: "IriIdentifierInterface" }
   > {
     return (
-      $parameters.resource.identifier.termType === "NamedNode"
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/IriIdentifierInterface":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  IriIdentifierInterface.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifierInterface)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      ($parameters.resource.identifier.termType === "NamedNode"
         ? purify.Either.of<Error, IriIdentifierInterface.$Identifier>(
             $parameters.resource.identifier,
           )
@@ -34241,10 +34943,11 @@ export namespace IriIdentifierInterface {
               predicate: $RdfVocabularies.rdf.subject,
             }),
           )
-    ).chain(($identifier) =>
-      purify.Either.of<Error, "IriIdentifierInterface">(
-        "IriIdentifierInterface",
-      ).map(($type) => ({ $identifier, $type })),
+      ).chain(($identifier) =>
+        purify.Either.of<Error, "IriIdentifierInterface">(
+          "IriIdentifierInterface",
+        ).map(($type) => ({ $identifier, $type })),
+      ),
     );
   }
 
@@ -34304,12 +35007,36 @@ export namespace IriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("iriIdentifierInterface");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -34322,6 +35049,49 @@ export namespace IriIdentifierInterface {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("iriIdentifierInterface");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IriIdentifierInterface.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $NamedNodeFilter
@@ -34353,6 +35123,7 @@ export namespace IriIdentifierInterface {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -34364,6 +35135,15 @@ export namespace IriIdentifierInterface {
       _iriIdentifierInterface.$identifier,
       { mutateGraph },
     );
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/IriIdentifierInterface",
+        ),
+      );
+    }
+
     return resource;
   }
 
@@ -34450,6 +35230,7 @@ export class IriIdentifierClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -34460,6 +35241,13 @@ export class IriIdentifierClass {
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode("http://example.com/IriIdentifierClass"),
+      );
+    }
+
     return resource;
   }
 
@@ -34521,6 +35309,9 @@ export namespace IriIdentifierClass {
     }).map((properties) => new IriIdentifierClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IriIdentifierClass",
+  );
   export type $Identifier = rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -34608,7 +35399,35 @@ export namespace IriIdentifierClass {
     resource: rdfjsResource.Resource;
   }): purify.Either<Error, { $identifier: rdfjs.NamedNode }> {
     return (
-      $parameters.resource.identifier.termType === "NamedNode"
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/IriIdentifierClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  IriIdentifierClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IriIdentifierClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      ($parameters.resource.identifier.termType === "NamedNode"
         ? purify.Either.of<Error, IriIdentifierClass.$Identifier>(
             $parameters.resource.identifier,
           )
@@ -34620,7 +35439,8 @@ export namespace IriIdentifierClass {
               predicate: $RdfVocabularies.rdf.subject,
             }),
           )
-    ).map(($identifier) => ({ $identifier }));
+      ).map(($identifier) => ({ $identifier })),
+    );
   }
 
   export function $sparqlConstructQuery(
@@ -34676,12 +35496,36 @@ export namespace IriIdentifierClass {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("iriIdentifierClass");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -34694,6 +35538,49 @@ export namespace IriIdentifierClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("iriIdentifierClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IriIdentifierClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $NamedNodeFilter
@@ -37051,6 +37938,7 @@ export class IndirectRecursiveHelperClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -37061,6 +37949,15 @@ export class IndirectRecursiveHelperClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/IndirectRecursiveHelperClass",
+        ),
+      );
+    }
+
     resource.add(
       IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
         "identifier"
@@ -37145,6 +38042,9 @@ export namespace IndirectRecursiveHelperClass {
     }).map((properties) => new IndirectRecursiveHelperClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IndirectRecursiveHelperClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -37258,49 +38158,79 @@ export namespace IndirectRecursiveHelperClass {
       indirectRecursiveProperty: purify.Maybe<IndirectRecursiveClass>;
     }
   > {
-    return purify.Either.of<Error, IndirectRecursiveHelperClass.$Identifier>(
-      $parameters.resource
-        .identifier as IndirectRecursiveHelperClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.indirectRecursiveProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toResource().chain((resource) =>
-              IndirectRecursiveClass.$fromRdf(resource, {
-                context: $parameters.context,
-                ignoreRdfType: true,
-                objectSet: $parameters.objectSet,
-                preferredLanguages: $parameters.preferredLanguages,
-              }),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/IndirectRecursiveHelperClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  IndirectRecursiveHelperClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveHelperClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, IndirectRecursiveHelperClass.$Identifier>(
+        $parameters.resource
+          .identifier as IndirectRecursiveHelperClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.indirectRecursiveProperty["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<IndirectRecursiveClass>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  IndirectRecursiveHelperClass.$properties
-                    .indirectRecursiveProperty["identifier"],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((indirectRecursiveProperty) => ({
-          $identifier,
-          indirectRecursiveProperty,
-        })),
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                IndirectRecursiveClass.$fromRdf(resource, {
+                  context: $parameters.context,
+                  ignoreRdfType: true,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
+                }),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<IndirectRecursiveClass>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    IndirectRecursiveHelperClass.$properties
+                      .indirectRecursiveProperty["identifier"],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((indirectRecursiveProperty) => ({
+            $identifier,
+            indirectRecursiveProperty,
+          })),
+      ),
     );
   }
 
@@ -37360,12 +38290,37 @@ export namespace IndirectRecursiveHelperClass {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("indirectRecursiveHelperClass");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -37379,6 +38334,49 @@ export namespace IndirectRecursiveHelperClass {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("indirectRecursiveHelperClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IndirectRecursiveHelperClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -37528,6 +38526,7 @@ export class IndirectRecursiveClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -37538,6 +38537,15 @@ export class IndirectRecursiveClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/IndirectRecursiveClass",
+        ),
+      );
+    }
+
     resource.add(
       IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
         "identifier"
@@ -37626,6 +38634,9 @@ export namespace IndirectRecursiveClass {
     }).map((properties) => new IndirectRecursiveClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/IndirectRecursiveClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -37741,48 +38752,78 @@ export namespace IndirectRecursiveClass {
       indirectRecursiveHelperProperty: purify.Maybe<IndirectRecursiveHelperClass>;
     }
   > {
-    return purify.Either.of<Error, IndirectRecursiveClass.$Identifier>(
-      $parameters.resource.identifier as IndirectRecursiveClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.indirectRecursiveHelperProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toResource().chain((resource) =>
-              IndirectRecursiveHelperClass.$fromRdf(resource, {
-                context: $parameters.context,
-                ignoreRdfType: true,
-                objectSet: $parameters.objectSet,
-                preferredLanguages: $parameters.preferredLanguages,
-              }),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/IndirectRecursiveClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  IndirectRecursiveClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/IndirectRecursiveClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, IndirectRecursiveClass.$Identifier>(
+        $parameters.resource.identifier as IndirectRecursiveClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.indirectRecursiveHelperProperty["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<IndirectRecursiveHelperClass>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  IndirectRecursiveClass.$properties
-                    .indirectRecursiveHelperProperty["identifier"],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((indirectRecursiveHelperProperty) => ({
-          $identifier,
-          indirectRecursiveHelperProperty,
-        })),
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                IndirectRecursiveHelperClass.$fromRdf(resource, {
+                  context: $parameters.context,
+                  ignoreRdfType: true,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
+                }),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<IndirectRecursiveHelperClass>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    IndirectRecursiveClass.$properties
+                      .indirectRecursiveHelperProperty["identifier"],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((indirectRecursiveHelperProperty) => ({
+            $identifier,
+            indirectRecursiveHelperProperty,
+          })),
+      ),
     );
   }
 
@@ -37842,12 +38883,36 @@ export namespace IndirectRecursiveClass {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -37860,6 +38925,49 @@ export namespace IndirectRecursiveClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: IndirectRecursiveClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -38146,6 +39254,7 @@ export class InPropertiesClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -38156,6 +39265,13 @@ export class InPropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode("http://example.com/InPropertiesClass"),
+      );
+    }
+
     resource.add(
       InPropertiesClass.$properties.inBooleansProperty["identifier"],
       ...this.inBooleansProperty.toList(),
@@ -38308,6 +39424,9 @@ export namespace InPropertiesClass {
     }).map((properties) => new InPropertiesClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InPropertiesClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -38500,295 +39619,329 @@ export namespace InPropertiesClass {
       inStringsProperty: purify.Maybe<"text" | "html">;
     }
   > {
-    return purify.Either.of<Error, InPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as InPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.inBooleansProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toBoolean().chain((primitiveValue) =>
-              primitiveValue === true
-                ? purify.Either.of<Error, true>(primitiveValue)
-                : purify.Left<Error, true>(
-                    new rdfjsResource.Resource.MistypedTermValueError({
-                      actualValue: value.toTerm(),
-                      expectedValueType: "true",
-                      focusResource: $parameters.resource,
-                      predicate:
-                        InPropertiesClass.$properties.inBooleansProperty[
-                          "identifier"
-                        ],
-                    }),
-                  ),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/InPropertiesClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  InPropertiesClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InPropertiesClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, InPropertiesClass.$Identifier>(
+        $parameters.resource.identifier as InPropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.inBooleansProperty["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({
-                focusResource: $parameters.resource,
-                predicate:
-                  InPropertiesClass.$properties.inBooleansProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .chain((inBooleansProperty) =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $parameters.resource.values(
-              $properties.inDateTimesProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) =>
-              values.chainMap((value) =>
-                value.toDate().chain((primitiveValue) => {
-                  if (primitiveValue.getTime() === 1523268000000) {
-                    return purify.Either.of<Error, Date>(primitiveValue);
-                  }
-                  return purify.Left<Error, Date>(
-                    new rdfjsResource.Resource.MistypedTermValueError({
-                      actualValue: value.toTerm(),
-                      expectedValueType: "Date",
-                      focusResource: $parameters.resource,
-                      predicate:
-                        InPropertiesClass.$properties.inDateTimesProperty[
-                          "identifier"
-                        ],
-                    }),
-                  );
-                }),
-              ),
-            )
-            .map((values) =>
-              values.length > 0
-                ? values.map((value) => purify.Maybe.of(value))
-                : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      InPropertiesClass.$properties.inDateTimesProperty[
-                        "identifier"
-                      ],
-                    value: purify.Maybe.empty(),
-                  }),
-            )
-            .chain((values) => values.head())
-            .chain((inDateTimesProperty) =>
-              purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                $parameters.resource.values(
-                  $properties.inIrisProperty["identifier"],
-                  { unique: true },
-                ),
-              )
-                .chain((values) =>
-                  values.chainMap((value) =>
-                    value.toIri().chain((iri) => {
-                      switch (iri.value) {
-                        case "http://example.com/InPropertiesIri1":
-                          return purify.Either.of<
-                            Error,
-                            rdfjs.NamedNode<
-                              | "http://example.com/InPropertiesIri1"
-                              | "http://example.com/InPropertiesIri2"
-                            >
-                          >(
-                            iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">,
-                          );
-                        case "http://example.com/InPropertiesIri2":
-                          return purify.Either.of<
-                            Error,
-                            rdfjs.NamedNode<
-                              | "http://example.com/InPropertiesIri1"
-                              | "http://example.com/InPropertiesIri2"
-                            >
-                          >(
-                            iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">,
-                          );
-                        default:
-                          return purify.Left<
-                            Error,
-                            rdfjs.NamedNode<
-                              | "http://example.com/InPropertiesIri1"
-                              | "http://example.com/InPropertiesIri2"
-                            >
-                          >(
-                            new rdfjsResource.Resource.MistypedTermValueError({
-                              actualValue: iri,
-                              expectedValueType:
-                                'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
-                              focusResource: $parameters.resource,
-                              predicate:
-                                InPropertiesClass.$properties.inIrisProperty[
-                                  "identifier"
-                                ],
-                            }),
-                          );
-                      }
-                    }),
-                  ),
-                )
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => purify.Maybe.of(value))
-                    : rdfjsResource.Resource.Values.fromValue<
-                        purify.Maybe<
-                          rdfjs.NamedNode<
-                            | "http://example.com/InPropertiesIri1"
-                            | "http://example.com/InPropertiesIri2"
-                          >
-                        >
-                      >({
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toBoolean().chain((primitiveValue) =>
+                primitiveValue === true
+                  ? purify.Either.of<Error, true>(primitiveValue)
+                  : purify.Left<Error, true>(
+                      new rdfjsResource.Resource.MistypedTermValueError({
+                        actualValue: value.toTerm(),
+                        expectedValueType: "true",
                         focusResource: $parameters.resource,
                         predicate:
-                          InPropertiesClass.$properties.inIrisProperty[
+                          InPropertiesClass.$properties.inBooleansProperty[
+                            "identifier"
+                          ],
+                      }),
+                    ),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    InPropertiesClass.$properties.inBooleansProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .chain((inBooleansProperty) =>
+            purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+            >(
+              $parameters.resource.values(
+                $properties.inDateTimesProperty["identifier"],
+                { unique: true },
+              ),
+            )
+              .chain((values) =>
+                values.chainMap((value) =>
+                  value.toDate().chain((primitiveValue) => {
+                    if (primitiveValue.getTime() === 1523268000000) {
+                      return purify.Either.of<Error, Date>(primitiveValue);
+                    }
+                    return purify.Left<Error, Date>(
+                      new rdfjsResource.Resource.MistypedTermValueError({
+                        actualValue: value.toTerm(),
+                        expectedValueType: "Date",
+                        focusResource: $parameters.resource,
+                        predicate:
+                          InPropertiesClass.$properties.inDateTimesProperty[
+                            "identifier"
+                          ],
+                      }),
+                    );
+                  }),
+                ),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => purify.Maybe.of(value))
+                  : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>(
+                      {
+                        focusResource: $parameters.resource,
+                        predicate:
+                          InPropertiesClass.$properties.inDateTimesProperty[
                             "identifier"
                           ],
                         value: purify.Maybe.empty(),
-                      }),
+                      },
+                    ),
+              )
+              .chain((values) => values.head())
+              .chain((inDateTimesProperty) =>
+                purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  $parameters.resource.values(
+                    $properties.inIrisProperty["identifier"],
+                    { unique: true },
+                  ),
                 )
-                .chain((values) => values.head())
-                .chain((inIrisProperty) =>
-                  purify.Either.of<
-                    Error,
-                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                  >(
-                    $parameters.resource.values(
-                      $properties.inNumbersProperty["identifier"],
-                      { unique: true },
+                  .chain((values) =>
+                    values.chainMap((value) =>
+                      value.toIri().chain((iri) => {
+                        switch (iri.value) {
+                          case "http://example.com/InPropertiesIri1":
+                            return purify.Either.of<
+                              Error,
+                              rdfjs.NamedNode<
+                                | "http://example.com/InPropertiesIri1"
+                                | "http://example.com/InPropertiesIri2"
+                              >
+                            >(
+                              iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">,
+                            );
+                          case "http://example.com/InPropertiesIri2":
+                            return purify.Either.of<
+                              Error,
+                              rdfjs.NamedNode<
+                                | "http://example.com/InPropertiesIri1"
+                                | "http://example.com/InPropertiesIri2"
+                              >
+                            >(
+                              iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">,
+                            );
+                          default:
+                            return purify.Left<
+                              Error,
+                              rdfjs.NamedNode<
+                                | "http://example.com/InPropertiesIri1"
+                                | "http://example.com/InPropertiesIri2"
+                              >
+                            >(
+                              new rdfjsResource.Resource.MistypedTermValueError(
+                                {
+                                  actualValue: iri,
+                                  expectedValueType:
+                                    'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    InPropertiesClass.$properties
+                                      .inIrisProperty["identifier"],
+                                },
+                              ),
+                            );
+                        }
+                      }),
                     ),
                   )
-                    .chain((values) =>
-                      values.chainMap((value) =>
-                        value.toNumber().chain((primitiveValue) => {
-                          switch (primitiveValue) {
-                            case 1:
-                            case 2:
-                              return purify.Either.of<Error, 1 | 2>(
-                                primitiveValue,
-                              );
-                            default:
-                              return purify.Left<Error, 1 | 2>(
-                                new rdfjsResource.Resource.MistypedTermValueError(
-                                  {
-                                    actualValue: value.toTerm(),
-                                    expectedValueType: "1 | 2",
-                                    focusResource: $parameters.resource,
-                                    predicate:
-                                      InPropertiesClass.$properties
-                                        .inNumbersProperty["identifier"],
-                                  },
-                                ),
-                              );
-                          }
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => purify.Maybe.of(value))
+                      : rdfjsResource.Resource.Values.fromValue<
+                          purify.Maybe<
+                            rdfjs.NamedNode<
+                              | "http://example.com/InPropertiesIri1"
+                              | "http://example.com/InPropertiesIri2"
+                            >
+                          >
+                        >({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            InPropertiesClass.$properties.inIrisProperty[
+                              "identifier"
+                            ],
+                          value: purify.Maybe.empty(),
                         }),
+                  )
+                  .chain((values) => values.head())
+                  .chain((inIrisProperty) =>
+                    purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      $parameters.resource.values(
+                        $properties.inNumbersProperty["identifier"],
+                        { unique: true },
                       ),
                     )
-                    .map((values) =>
-                      values.length > 0
-                        ? values.map((value) => purify.Maybe.of(value))
-                        : rdfjsResource.Resource.Values.fromValue<
-                            purify.Maybe<1 | 2>
-                          >({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              InPropertiesClass.$properties.inNumbersProperty[
-                                "identifier"
-                              ],
-                            value: purify.Maybe.empty(),
+                      .chain((values) =>
+                        values.chainMap((value) =>
+                          value.toNumber().chain((primitiveValue) => {
+                            switch (primitiveValue) {
+                              case 1:
+                              case 2:
+                                return purify.Either.of<Error, 1 | 2>(
+                                  primitiveValue,
+                                );
+                              default:
+                                return purify.Left<Error, 1 | 2>(
+                                  new rdfjsResource.Resource.MistypedTermValueError(
+                                    {
+                                      actualValue: value.toTerm(),
+                                      expectedValueType: "1 | 2",
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        InPropertiesClass.$properties
+                                          .inNumbersProperty["identifier"],
+                                    },
+                                  ),
+                                );
+                            }
                           }),
-                    )
-                    .chain((values) => values.head())
-                    .chain((inNumbersProperty) =>
-                      purify.Either.of<
-                        Error,
-                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                      >(
-                        $parameters.resource.values(
-                          $properties.inStringsProperty["identifier"],
-                          { unique: true },
                         ),
                       )
-                        .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              InPropertiesClass.$properties.inStringsProperty[
-                                "identifier"
-                              ],
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) =>
-                            value.toString().chain((string_) => {
-                              switch (string_) {
-                                case "text":
-                                case "html":
-                                  return purify.Either.of<
-                                    Error,
-                                    "text" | "html"
-                                  >(string_);
-                                default:
-                                  return purify.Left<Error, "text" | "html">(
-                                    new rdfjsResource.Resource.MistypedTermValueError(
-                                      {
-                                        actualValue: value.toTerm(),
-                                        expectedValueType: '"text" | "html"',
-                                        focusResource: $parameters.resource,
-                                        predicate:
-                                          InPropertiesClass.$properties
-                                            .inStringsProperty["identifier"],
-                                      },
-                                    ),
-                                  );
-                              }
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => purify.Maybe.of(value))
+                          : rdfjsResource.Resource.Values.fromValue<
+                              purify.Maybe<1 | 2>
+                            >({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                InPropertiesClass.$properties.inNumbersProperty[
+                                  "identifier"
+                                ],
+                              value: purify.Maybe.empty(),
                             }),
+                      )
+                      .chain((values) => values.head())
+                      .chain((inNumbersProperty) =>
+                        purify.Either.of<
+                          Error,
+                          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                        >(
+                          $parameters.resource.values(
+                            $properties.inStringsProperty["identifier"],
+                            { unique: true },
                           ),
                         )
-                        .map((values) =>
-                          values.length > 0
-                            ? values.map((value) => purify.Maybe.of(value))
-                            : rdfjsResource.Resource.Values.fromValue<
-                                purify.Maybe<"text" | "html">
-                              >({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  InPropertiesClass.$properties
-                                    .inStringsProperty["identifier"],
-                                value: purify.Maybe.empty(),
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                InPropertiesClass.$properties.inStringsProperty[
+                                  "identifier"
+                                ],
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                              values,
+                            }),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) =>
+                              value.toString().chain((string_) => {
+                                switch (string_) {
+                                  case "text":
+                                  case "html":
+                                    return purify.Either.of<
+                                      Error,
+                                      "text" | "html"
+                                    >(string_);
+                                  default:
+                                    return purify.Left<Error, "text" | "html">(
+                                      new rdfjsResource.Resource.MistypedTermValueError(
+                                        {
+                                          actualValue: value.toTerm(),
+                                          expectedValueType: '"text" | "html"',
+                                          focusResource: $parameters.resource,
+                                          predicate:
+                                            InPropertiesClass.$properties
+                                              .inStringsProperty["identifier"],
+                                        },
+                                      ),
+                                    );
+                                }
                               }),
-                        )
-                        .chain((values) => values.head())
-                        .map((inStringsProperty) => ({
-                          $identifier,
-                          inBooleansProperty,
-                          inDateTimesProperty,
-                          inIrisProperty,
-                          inNumbersProperty,
-                          inStringsProperty,
-                        })),
-                    ),
-                ),
-            ),
-        ),
+                            ),
+                          )
+                          .map((values) =>
+                            values.length > 0
+                              ? values.map((value) => purify.Maybe.of(value))
+                              : rdfjsResource.Resource.Values.fromValue<
+                                  purify.Maybe<"text" | "html">
+                                >({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    InPropertiesClass.$properties
+                                      .inStringsProperty["identifier"],
+                                  value: purify.Maybe.empty(),
+                                }),
+                          )
+                          .chain((values) => values.head())
+                          .map((inStringsProperty) => ({
+                            $identifier,
+                            inBooleansProperty,
+                            inDateTimesProperty,
+                            inIrisProperty,
+                            inNumbersProperty,
+                            inStringsProperty,
+                          })),
+                      ),
+                  ),
+              ),
+          ),
+      ),
     );
   }
 
@@ -38853,6 +40006,27 @@ export namespace InPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
@@ -38902,6 +40076,49 @@ export namespace InPropertiesClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: InPropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -39256,6 +40473,7 @@ export class InIdentifierClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource<rdfjs.NamedNode> {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -39266,6 +40484,13 @@ export class InIdentifierClass {
     const resource = resourceSet.mutableNamedResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode("http://example.com/InIdentifierClass"),
+      );
+    }
+
     resource.add(
       InIdentifierClass.$properties.inIdentifierProperty["identifier"],
       ...this.inIdentifierProperty.toList(),
@@ -39344,6 +40569,9 @@ export namespace InIdentifierClass {
     }).map((properties) => new InIdentifierClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/InIdentifierClass",
+  );
   export type $Identifier = rdfjs.NamedNode<
     | "http://example.com/InIdentifierInstance1"
     | "http://example.com/InIdentifierInstance2"
@@ -39499,7 +40727,35 @@ export namespace InIdentifierClass {
     }
   > {
     return (
-      $parameters.resource.identifier.value ===
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/InIdentifierClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  InIdentifierClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/InIdentifierClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      ($parameters.resource.identifier.value ===
         "http://example.com/InIdentifierInstance1" ||
       $parameters.resource.identifier.value ===
         "http://example.com/InIdentifierInstance2"
@@ -39515,40 +40771,46 @@ export namespace InIdentifierClass {
               predicate: $RdfVocabularies.rdf.subject,
             }),
           )
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.inIdentifierProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          $fromRdfPreferredLanguages({
-            focusResource: $parameters.resource,
-            predicate:
-              InIdentifierClass.$properties.inIdentifierProperty["identifier"],
-            preferredLanguages: $parameters.preferredLanguages,
-            values,
-          }),
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.inIdentifierProperty["identifier"],
+            { unique: true },
+          ),
         )
-        .chain((values) => values.chainMap((value) => value.toString()))
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
-                focusResource: $parameters.resource,
-                predicate:
-                  InIdentifierClass.$properties.inIdentifierProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((inIdentifierProperty) => ({ $identifier, inIdentifierProperty })),
+          .chain((values) =>
+            $fromRdfPreferredLanguages({
+              focusResource: $parameters.resource,
+              predicate:
+                InIdentifierClass.$properties.inIdentifierProperty[
+                  "identifier"
+                ],
+              preferredLanguages: $parameters.preferredLanguages,
+              values,
+            }),
+          )
+          .chain((values) => values.chainMap((value) => value.toString()))
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    InIdentifierClass.$properties.inIdentifierProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((inIdentifierProperty) => ({
+            $identifier,
+            inIdentifierProperty,
+          })),
+      ),
     );
   }
 
@@ -39613,6 +40875,27 @@ export namespace InIdentifierClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
@@ -39634,6 +40917,49 @@ export namespace InIdentifierClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: InIdentifierClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $NamedNodeFilter
@@ -43152,6 +44478,7 @@ export class ExternClassPropertyClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -43162,6 +44489,15 @@ export class ExternClassPropertyClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/ExternClassPropertyClass",
+        ),
+      );
+    }
+
     resource.add(
       ExternClassPropertyClass.$properties.externClassProperty["identifier"],
       ...this.externClassProperty
@@ -43245,6 +44581,9 @@ export namespace ExternClassPropertyClass {
     }).map((properties) => new ExternClassPropertyClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/ExternClassPropertyClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -43353,46 +44692,76 @@ export namespace ExternClassPropertyClass {
       externClassProperty: purify.Maybe<ExternClass>;
     }
   > {
-    return purify.Either.of<Error, ExternClassPropertyClass.$Identifier>(
-      $parameters.resource.identifier as ExternClassPropertyClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.externClassProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toResource().chain((resource) =>
-              ExternClass.$fromRdf(resource, {
-                context: $parameters.context,
-                ignoreRdfType: true,
-                objectSet: $parameters.objectSet,
-                preferredLanguages: $parameters.preferredLanguages,
-              }),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/ExternClassPropertyClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  ExternClassPropertyClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/ExternClassPropertyClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, ExternClassPropertyClass.$Identifier>(
+        $parameters.resource.identifier as ExternClassPropertyClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.externClassProperty["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<ExternClass>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  ExternClassPropertyClass.$properties.externClassProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((externClassProperty) => ({ $identifier, externClassProperty })),
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                ExternClass.$fromRdf(resource, {
+                  context: $parameters.context,
+                  ignoreRdfType: true,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
+                }),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<ExternClass>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    ExternClassPropertyClass.$properties.externClassProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((externClassProperty) => ({ $identifier, externClassProperty })),
+      ),
     );
   }
 
@@ -43460,6 +44829,27 @@ export namespace ExternClassPropertyClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
@@ -43490,6 +44880,49 @@ export namespace ExternClassPropertyClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: ExternClassPropertyClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -45394,6 +46827,7 @@ export class DirectRecursiveClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -45404,6 +46838,15 @@ export class DirectRecursiveClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/DirectRecursiveClass",
+        ),
+      );
+    }
+
     resource.add(
       DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
       ...this.directRecursiveProperty
@@ -45486,6 +46929,9 @@ export namespace DirectRecursiveClass {
     }).map((properties) => new DirectRecursiveClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DirectRecursiveClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -45599,49 +47045,79 @@ export namespace DirectRecursiveClass {
       directRecursiveProperty: purify.Maybe<DirectRecursiveClass>;
     }
   > {
-    return purify.Either.of<Error, DirectRecursiveClass.$Identifier>(
-      $parameters.resource.identifier as DirectRecursiveClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.directRecursiveProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) =>
-            value.toResource().chain((resource) =>
-              DirectRecursiveClass.$fromRdf(resource, {
-                context: $parameters.context,
-                ignoreRdfType: true,
-                objectSet: $parameters.objectSet,
-                preferredLanguages: $parameters.preferredLanguages,
-              }),
-            ),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/DirectRecursiveClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  DirectRecursiveClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DirectRecursiveClass)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, DirectRecursiveClass.$Identifier>(
+        $parameters.resource.identifier as DirectRecursiveClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.directRecursiveProperty["identifier"],
+            { unique: true },
           ),
         )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<DirectRecursiveClass>
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  DirectRecursiveClass.$properties.directRecursiveProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .map((directRecursiveProperty) => ({
-          $identifier,
-          directRecursiveProperty,
-        })),
+          .chain((values) =>
+            values.chainMap((value) =>
+              value.toResource().chain((resource) =>
+                DirectRecursiveClass.$fromRdf(resource, {
+                  context: $parameters.context,
+                  ignoreRdfType: true,
+                  objectSet: $parameters.objectSet,
+                  preferredLanguages: $parameters.preferredLanguages,
+                }),
+              ),
+            ),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<DirectRecursiveClass>
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    DirectRecursiveClass.$properties.directRecursiveProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .map((directRecursiveProperty) => ({
+            $identifier,
+            directRecursiveProperty,
+          })),
+      ),
     );
   }
 
@@ -45701,12 +47177,36 @@ export namespace DirectRecursiveClass {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -45719,6 +47219,49 @@ export namespace DirectRecursiveClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DirectRecursiveClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -47423,6 +48966,7 @@ export class DateUnionPropertiesClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -47433,6 +48977,15 @@ export class DateUnionPropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/DateUnionPropertiesClass",
+        ),
+      );
+    }
+
     resource.add(
       DateUnionPropertiesClass.$properties.dateOrDateTimeProperty["identifier"],
       ...this.dateOrDateTimeProperty
@@ -47802,6 +49355,9 @@ export namespace DateUnionPropertiesClass {
     }).map((properties) => new DateUnionPropertiesClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DateUnionPropertiesClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -48031,337 +49587,367 @@ export namespace DateUnionPropertiesClass {
       >;
     }
   > {
-    return purify.Either.of<Error, DateUnionPropertiesClass.$Identifier>(
-      $parameters.resource.identifier as DateUnionPropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $properties.dateOrDateTimeProperty["identifier"],
-          { unique: true },
-        ),
-      )
-        .chain((values) =>
-          values.chainMap((value) => {
-            const valueAsValues = purify.Either.of(value.toValues());
-            return (
-              valueAsValues
-                .chain((values) => values.chainMap((value) => value.toDate()))
-                .map((values) =>
-                  values.map(
-                    (value) =>
-                      ({ type: "date" as const, value }) as
-                        | { type: "date"; value: Date }
-                        | { type: "dateTime"; value: Date },
-                  ),
-                ) as purify.Either<
-                Error,
-                rdfjsResource.Resource.Values<
-                  | { type: "date"; value: Date }
-                  | { type: "dateTime"; value: Date }
-                >
-              >
-            )
-              .altLazy(
-                () =>
-                  valueAsValues
-                    .chain((values) =>
-                      values.chainMap((value) => value.toDate()),
-                    )
-                    .map((values) =>
-                      values.map(
-                        (value) =>
-                          ({ type: "dateTime" as const, value }) as
-                            | { type: "date"; value: Date }
-                            | { type: "dateTime"; value: Date },
-                      ),
-                    ) as purify.Either<
-                    Error,
-                    rdfjsResource.Resource.Values<
-                      | { type: "date"; value: Date }
-                      | { type: "dateTime"; value: Date }
-                    >
-                  >,
-              )
-              .chain((values) => values.head());
-          }),
-        )
-        .map((values) =>
-          values.length > 0
-            ? values.map((value) => purify.Maybe.of(value))
-            : rdfjsResource.Resource.Values.fromValue<
-                purify.Maybe<
-                  | { type: "date"; value: Date }
-                  | { type: "dateTime"; value: Date }
-                >
-              >({
-                focusResource: $parameters.resource,
-                predicate:
-                  DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
-                    "identifier"
-                  ],
-                value: purify.Maybe.empty(),
-              }),
-        )
-        .chain((values) => values.head())
-        .chain((dateOrDateTimeProperty) =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $parameters.resource.values(
-              $properties.dateOrStringProperty["identifier"],
-              { unique: true },
-            ),
-          )
-            .chain((values) =>
-              values.chainMap((value) => {
-                const valueAsValues = purify.Either.of(value.toValues());
-                return (
-                  valueAsValues
-                    .chain((values) =>
-                      values.chainMap((value) => value.toDate()),
-                    )
-                    .map((values) =>
-                      values.map(
-                        (value) =>
-                          ({ type: "date" as const, value }) as
-                            | { type: "date"; value: Date }
-                            | { type: "string"; value: string },
-                      ),
-                    ) as purify.Either<
-                    Error,
-                    rdfjsResource.Resource.Values<
-                      | { type: "date"; value: Date }
-                      | { type: "string"; value: string }
-                    >
-                  >
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/DateUnionPropertiesClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  DateUnionPropertiesClass.$fromRdfType,
                 )
-                  .altLazy(
-                    () =>
-                      valueAsValues
-                        .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              DateUnionPropertiesClass.$properties
-                                .dateOrStringProperty["identifier"],
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
-                        )
-                        .map((values) =>
-                          values.map(
-                            (value) =>
-                              ({ type: "string" as const, value }) as
-                                | { type: "date"; value: Date }
-                                | { type: "string"; value: string },
-                          ),
-                        ) as purify.Either<
-                        Error,
-                        rdfjsResource.Resource.Values<
-                          | { type: "date"; value: Date }
-                          | { type: "string"; value: string }
-                        >
-                      >,
-                  )
-                  .chain((values) => values.head());
-              }),
-            )
-            .map((values) =>
-              values.length > 0
-                ? values.map((value) => purify.Maybe.of(value))
-                : rdfjsResource.Resource.Values.fromValue<
-                    purify.Maybe<
-                      | { type: "date"; value: Date }
-                      | { type: "string"; value: string }
-                    >
-                  >({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      DateUnionPropertiesClass.$properties.dateOrStringProperty[
-                        "identifier"
-                      ],
-                    value: purify.Maybe.empty(),
-                  }),
-            )
-            .chain((values) => values.head())
-            .chain((dateOrStringProperty) =>
-              purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                $parameters.resource.values(
-                  $properties.dateTimeOrDateProperty["identifier"],
-                  { unique: true },
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DateUnionPropertiesClass)`,
                 ),
-              )
-                .chain((values) =>
-                  values.chainMap((value) => {
-                    const valueAsValues = purify.Either.of(value.toValues());
-                    return (
-                      valueAsValues
-                        .chain((values) =>
-                          values.chainMap((value) => value.toDate()),
-                        )
-                        .map((values) =>
-                          values.map(
-                            (value) =>
-                              ({ type: "dateTime" as const, value }) as
-                                | { type: "dateTime"; value: Date }
-                                | { type: "date"; value: Date },
-                          ),
-                        ) as purify.Either<
-                        Error,
-                        rdfjsResource.Resource.Values<
-                          | { type: "dateTime"; value: Date }
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, DateUnionPropertiesClass.$Identifier>(
+        $parameters.resource.identifier as DateUnionPropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $properties.dateOrDateTimeProperty["identifier"],
+            { unique: true },
+          ),
+        )
+          .chain((values) =>
+            values.chainMap((value) => {
+              const valueAsValues = purify.Either.of(value.toValues());
+              return (
+                valueAsValues
+                  .chain((values) => values.chainMap((value) => value.toDate()))
+                  .map((values) =>
+                    values.map(
+                      (value) =>
+                        ({ type: "date" as const, value }) as
                           | { type: "date"; value: Date }
-                        >
-                      >
-                    )
-                      .altLazy(
-                        () =>
-                          valueAsValues
-                            .chain((values) =>
-                              values.chainMap((value) => value.toDate()),
-                            )
-                            .map((values) =>
-                              values.map(
-                                (value) =>
-                                  ({ type: "date" as const, value }) as
-                                    | { type: "dateTime"; value: Date }
-                                    | { type: "date"; value: Date },
-                              ),
-                            ) as purify.Either<
-                            Error,
-                            rdfjsResource.Resource.Values<
-                              | { type: "dateTime"; value: Date }
-                              | { type: "date"; value: Date }
-                            >
-                          >,
-                      )
-                      .chain((values) => values.head());
-                  }),
-                )
-                .map((values) =>
-                  values.length > 0
-                    ? values.map((value) => purify.Maybe.of(value))
-                    : rdfjsResource.Resource.Values.fromValue<
-                        purify.Maybe<
-                          | { type: "dateTime"; value: Date }
-                          | { type: "date"; value: Date }
-                        >
-                      >({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          DateUnionPropertiesClass.$properties
-                            .dateTimeOrDateProperty["identifier"],
-                        value: purify.Maybe.empty(),
-                      }),
-                )
-                .chain((values) => values.head())
-                .chain((dateTimeOrDateProperty) =>
-                  purify.Either.of<
-                    Error,
-                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                  >(
-                    $parameters.resource.values(
-                      $properties.stringOrDateProperty["identifier"],
-                      { unique: true },
+                          | { type: "dateTime"; value: Date },
                     ),
+                  ) as purify.Either<
+                  Error,
+                  rdfjsResource.Resource.Values<
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date }
+                  >
+                >
+              )
+                .altLazy(
+                  () =>
+                    valueAsValues
+                      .chain((values) =>
+                        values.chainMap((value) => value.toDate()),
+                      )
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({ type: "dateTime" as const, value }) as
+                              | { type: "date"; value: Date }
+                              | { type: "dateTime"; value: Date },
+                        ),
+                      ) as purify.Either<
+                      Error,
+                      rdfjsResource.Resource.Values<
+                        | { type: "date"; value: Date }
+                        | { type: "dateTime"; value: Date }
+                      >
+                    >,
+                )
+                .chain((values) => values.head());
+            }),
+          )
+          .map((values) =>
+            values.length > 0
+              ? values.map((value) => purify.Maybe.of(value))
+              : rdfjsResource.Resource.Values.fromValue<
+                  purify.Maybe<
+                    | { type: "date"; value: Date }
+                    | { type: "dateTime"; value: Date }
+                  >
+                >({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
+                      "identifier"
+                    ],
+                  value: purify.Maybe.empty(),
+                }),
+          )
+          .chain((values) => values.head())
+          .chain((dateOrDateTimeProperty) =>
+            purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+            >(
+              $parameters.resource.values(
+                $properties.dateOrStringProperty["identifier"],
+                { unique: true },
+              ),
+            )
+              .chain((values) =>
+                values.chainMap((value) => {
+                  const valueAsValues = purify.Either.of(value.toValues());
+                  return (
+                    valueAsValues
+                      .chain((values) =>
+                        values.chainMap((value) => value.toDate()),
+                      )
+                      .map((values) =>
+                        values.map(
+                          (value) =>
+                            ({ type: "date" as const, value }) as
+                              | { type: "date"; value: Date }
+                              | { type: "string"; value: string },
+                        ),
+                      ) as purify.Either<
+                      Error,
+                      rdfjsResource.Resource.Values<
+                        | { type: "date"; value: Date }
+                        | { type: "string"; value: string }
+                      >
+                    >
                   )
-                    .chain((values) =>
-                      values.chainMap((value) => {
-                        const valueAsValues = purify.Either.of(
-                          value.toValues(),
-                        );
-                        return (
-                          valueAsValues
-                            .chain((values) =>
-                              $fromRdfPreferredLanguages({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  DateUnionPropertiesClass.$properties
-                                    .stringOrDateProperty["identifier"],
-                                preferredLanguages:
-                                  $parameters.preferredLanguages,
-                                values,
-                              }),
-                            )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toString()),
-                            )
-                            .map((values) =>
-                              values.map(
-                                (value) =>
-                                  ({ type: "string" as const, value }) as
-                                    | { type: "string"; value: string }
-                                    | { type: "date"; value: Date },
-                              ),
-                            ) as purify.Either<
-                            Error,
-                            rdfjsResource.Resource.Values<
-                              | { type: "string"; value: string }
-                              | { type: "date"; value: Date }
-                            >
-                          >
-                        )
-                          .altLazy(
-                            () =>
-                              valueAsValues
-                                .chain((values) =>
-                                  values.chainMap((value) => value.toDate()),
-                                )
-                                .map((values) =>
-                                  values.map(
-                                    (value) =>
-                                      ({ type: "date" as const, value }) as
-                                        | { type: "string"; value: string }
-                                        | { type: "date"; value: Date },
-                                  ),
-                                ) as purify.Either<
-                                Error,
-                                rdfjsResource.Resource.Values<
-                                  | { type: "string"; value: string }
-                                  | { type: "date"; value: Date }
-                                >
-                              >,
+                    .altLazy(
+                      () =>
+                        valueAsValues
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                DateUnionPropertiesClass.$properties
+                                  .dateOrStringProperty["identifier"],
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                              values,
+                            }),
                           )
-                          .chain((values) => values.head());
-                      }),
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          )
+                          .map((values) =>
+                            values.map(
+                              (value) =>
+                                ({ type: "string" as const, value }) as
+                                  | { type: "date"; value: Date }
+                                  | { type: "string"; value: string },
+                            ),
+                          ) as purify.Either<
+                          Error,
+                          rdfjsResource.Resource.Values<
+                            | { type: "date"; value: Date }
+                            | { type: "string"; value: string }
+                          >
+                        >,
                     )
-                    .map((values) =>
-                      values.length > 0
-                        ? values.map((value) => purify.Maybe.of(value))
-                        : rdfjsResource.Resource.Values.fromValue<
-                            purify.Maybe<
-                              | { type: "string"; value: string }
-                              | { type: "date"; value: Date }
+                    .chain((values) => values.head());
+                }),
+              )
+              .map((values) =>
+                values.length > 0
+                  ? values.map((value) => purify.Maybe.of(value))
+                  : rdfjsResource.Resource.Values.fromValue<
+                      purify.Maybe<
+                        | { type: "date"; value: Date }
+                        | { type: "string"; value: string }
+                      >
+                    >({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        DateUnionPropertiesClass.$properties
+                          .dateOrStringProperty["identifier"],
+                      value: purify.Maybe.empty(),
+                    }),
+              )
+              .chain((values) => values.head())
+              .chain((dateOrStringProperty) =>
+                purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  $parameters.resource.values(
+                    $properties.dateTimeOrDateProperty["identifier"],
+                    { unique: true },
+                  ),
+                )
+                  .chain((values) =>
+                    values.chainMap((value) => {
+                      const valueAsValues = purify.Either.of(value.toValues());
+                      return (
+                        valueAsValues
+                          .chain((values) =>
+                            values.chainMap((value) => value.toDate()),
+                          )
+                          .map((values) =>
+                            values.map(
+                              (value) =>
+                                ({ type: "dateTime" as const, value }) as
+                                  | { type: "dateTime"; value: Date }
+                                  | { type: "date"; value: Date },
+                            ),
+                          ) as purify.Either<
+                          Error,
+                          rdfjsResource.Resource.Values<
+                            | { type: "dateTime"; value: Date }
+                            | { type: "date"; value: Date }
+                          >
+                        >
+                      )
+                        .altLazy(
+                          () =>
+                            valueAsValues
+                              .chain((values) =>
+                                values.chainMap((value) => value.toDate()),
+                              )
+                              .map((values) =>
+                                values.map(
+                                  (value) =>
+                                    ({ type: "date" as const, value }) as
+                                      | { type: "dateTime"; value: Date }
+                                      | { type: "date"; value: Date },
+                                ),
+                              ) as purify.Either<
+                              Error,
+                              rdfjsResource.Resource.Values<
+                                | { type: "dateTime"; value: Date }
+                                | { type: "date"; value: Date }
+                              >
+                            >,
+                        )
+                        .chain((values) => values.head());
+                    }),
+                  )
+                  .map((values) =>
+                    values.length > 0
+                      ? values.map((value) => purify.Maybe.of(value))
+                      : rdfjsResource.Resource.Values.fromValue<
+                          purify.Maybe<
+                            | { type: "dateTime"; value: Date }
+                            | { type: "date"; value: Date }
+                          >
+                        >({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            DateUnionPropertiesClass.$properties
+                              .dateTimeOrDateProperty["identifier"],
+                          value: purify.Maybe.empty(),
+                        }),
+                  )
+                  .chain((values) => values.head())
+                  .chain((dateTimeOrDateProperty) =>
+                    purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      $parameters.resource.values(
+                        $properties.stringOrDateProperty["identifier"],
+                        { unique: true },
+                      ),
+                    )
+                      .chain((values) =>
+                        values.chainMap((value) => {
+                          const valueAsValues = purify.Either.of(
+                            value.toValues(),
+                          );
+                          return (
+                            valueAsValues
+                              .chain((values) =>
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    DateUnionPropertiesClass.$properties
+                                      .stringOrDateProperty["identifier"],
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toString()),
+                              )
+                              .map((values) =>
+                                values.map(
+                                  (value) =>
+                                    ({ type: "string" as const, value }) as
+                                      | { type: "string"; value: string }
+                                      | { type: "date"; value: Date },
+                                ),
+                              ) as purify.Either<
+                              Error,
+                              rdfjsResource.Resource.Values<
+                                | { type: "string"; value: string }
+                                | { type: "date"; value: Date }
+                              >
                             >
-                          >({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              DateUnionPropertiesClass.$properties
-                                .stringOrDateProperty["identifier"],
-                            value: purify.Maybe.empty(),
-                          }),
-                    )
-                    .chain((values) => values.head())
-                    .map((stringOrDateProperty) => ({
-                      $identifier,
-                      dateOrDateTimeProperty,
-                      dateOrStringProperty,
-                      dateTimeOrDateProperty,
-                      stringOrDateProperty,
-                    })),
-                ),
-            ),
-        ),
+                          )
+                            .altLazy(
+                              () =>
+                                valueAsValues
+                                  .chain((values) =>
+                                    values.chainMap((value) => value.toDate()),
+                                  )
+                                  .map((values) =>
+                                    values.map(
+                                      (value) =>
+                                        ({ type: "date" as const, value }) as
+                                          | { type: "string"; value: string }
+                                          | { type: "date"; value: Date },
+                                    ),
+                                  ) as purify.Either<
+                                  Error,
+                                  rdfjsResource.Resource.Values<
+                                    | { type: "string"; value: string }
+                                    | { type: "date"; value: Date }
+                                  >
+                                >,
+                            )
+                            .chain((values) => values.head());
+                        }),
+                      )
+                      .map((values) =>
+                        values.length > 0
+                          ? values.map((value) => purify.Maybe.of(value))
+                          : rdfjsResource.Resource.Values.fromValue<
+                              purify.Maybe<
+                                | { type: "string"; value: string }
+                                | { type: "date"; value: Date }
+                              >
+                            >({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                DateUnionPropertiesClass.$properties
+                                  .stringOrDateProperty["identifier"],
+                              value: purify.Maybe.empty(),
+                            }),
+                      )
+                      .chain((values) => values.head())
+                      .map((stringOrDateProperty) => ({
+                        $identifier,
+                        dateOrDateTimeProperty,
+                        dateOrStringProperty,
+                        dateTimeOrDateProperty,
+                        stringOrDateProperty,
+                      })),
+                  ),
+              ),
+          ),
+      ),
     );
   }
 
@@ -48429,6 +50015,27 @@ export namespace DateUnionPropertiesClass {
     const subject =
       parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
@@ -48478,6 +50085,49 @@ export namespace DateUnionPropertiesClass {
     const patterns: sparqljs.Pattern[] = [];
     const subject =
       parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DateUnionPropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -57936,6 +59586,10 @@ export namespace BlankNodeOrIriIdentifierInterface {
     });
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeOrIriIdentifierInterface",
+  );
+
   export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -58059,16 +59713,43 @@ export namespace BlankNodeOrIriIdentifierInterface {
       $type: "BlankNodeOrIriIdentifierInterface";
     }
   > {
-    return purify.Either.of<
-      Error,
-      BlankNodeOrIriIdentifierInterface.$Identifier
-    >(
-      $parameters.resource
-        .identifier as BlankNodeOrIriIdentifierInterface.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<Error, "BlankNodeOrIriIdentifierInterface">(
-        "BlankNodeOrIriIdentifierInterface",
-      ).map(($type) => ({ $identifier, $type })),
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/BlankNodeOrIriIdentifierInterface":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  BlankNodeOrIriIdentifierInterface.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeOrIriIdentifierInterface)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, BlankNodeOrIriIdentifierInterface.$Identifier>(
+        $parameters.resource
+          .identifier as BlankNodeOrIriIdentifierInterface.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<Error, "BlankNodeOrIriIdentifierInterface">(
+          "BlankNodeOrIriIdentifierInterface",
+        ).map(($type) => ({ $identifier, $type })),
+      ),
     );
   }
 
@@ -58128,12 +59809,37 @@ export namespace BlankNodeOrIriIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("blankNodeOrIriIdentifierInterface");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -58147,6 +59853,49 @@ export namespace BlankNodeOrIriIdentifierInterface {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("blankNodeOrIriIdentifierInterface");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: BlankNodeOrIriIdentifierInterface.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $IdentifierFilter
@@ -58182,6 +59931,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -58193,6 +59943,15 @@ export namespace BlankNodeOrIriIdentifierInterface {
       _blankNodeOrIriIdentifierInterface.$identifier,
       { mutateGraph },
     );
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/BlankNodeOrIriIdentifierInterface",
+        ),
+      );
+    }
+
     return resource;
   }
 
@@ -58766,6 +60525,10 @@ export namespace BlankNodeIdentifierInterface {
     });
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/BlankNodeIdentifierInterface",
+  );
+
   export function $hash<
     HasherT extends {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
@@ -58884,7 +60647,35 @@ export namespace BlankNodeIdentifierInterface {
     { $identifier: rdfjs.BlankNode; $type: "BlankNodeIdentifierInterface" }
   > {
     return (
-      $parameters.resource.identifier.termType === "BlankNode"
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/BlankNodeIdentifierInterface":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  BlankNodeIdentifierInterface.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/BlankNodeIdentifierInterface)`,
+                ),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      ($parameters.resource.identifier.termType === "BlankNode"
         ? purify.Either.of<Error, BlankNodeIdentifierInterface.$Identifier>(
             $parameters.resource.identifier,
           )
@@ -58896,10 +60687,11 @@ export namespace BlankNodeIdentifierInterface {
               predicate: $RdfVocabularies.rdf.subject,
             }),
           )
-    ).chain(($identifier) =>
-      purify.Either.of<Error, "BlankNodeIdentifierInterface">(
-        "BlankNodeIdentifierInterface",
-      ).map(($type) => ({ $identifier, $type })),
+      ).chain(($identifier) =>
+        purify.Either.of<Error, "BlankNodeIdentifierInterface">(
+          "BlankNodeIdentifierInterface",
+        ).map(($type) => ({ $identifier, $type })),
+      ),
     );
   }
 
@@ -58959,12 +60751,37 @@ export namespace BlankNodeIdentifierInterface {
     );
   }
 
-  export function $sparqlConstructTriples(_parameters?: {
+  export function $sparqlConstructTriples(parameters?: {
     ignoreRdfType?: boolean;
     subject?: sparqljs.Triple["subject"];
     variablePrefix?: string;
   }): readonly sparqljs.Triple[] {
-    return [];
+    const subject =
+      parameters?.subject ??
+      dataFactory.variable!("blankNodeIdentifierInterface");
+    const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface")}RdfClass`,
+          ),
+        },
+      );
+    }
+
+    return triples;
   }
 
   export function $sparqlWherePatterns(parameters?: {
@@ -58978,6 +60795,49 @@ export namespace BlankNodeIdentifierInterface {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("blankNodeIdentifierInterface");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: BlankNodeIdentifierInterface.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns.push({
         patterns: $BlankNodeFilter
@@ -59009,6 +60869,7 @@ export namespace BlankNodeIdentifierInterface {
       resourceSet?: rdfjsResource.MutableResourceSet;
     },
   ): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -59020,6 +60881,15 @@ export namespace BlankNodeIdentifierInterface {
       _blankNodeIdentifierInterface.$identifier,
       { mutateGraph },
     );
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/BlankNodeIdentifierInterface",
+        ),
+      );
+    }
+
     return resource;
   }
 
@@ -71641,7 +73511,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: BlankNodeIdentifierInterface.$filter,
         $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [BlankNodeIdentifierInterface.$fromRdfType],
       },
       query,
     );
@@ -71798,7 +73668,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: BlankNodeOrIriIdentifierInterface.$filter,
         $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [BlankNodeOrIriIdentifierInterface.$fromRdfType],
       },
       query,
     );
@@ -72348,7 +74218,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: DateUnionPropertiesClass.$filter,
         $fromRdf: DateUnionPropertiesClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [DateUnionPropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -72488,7 +74358,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: DirectRecursiveClass.$filter,
         $fromRdf: DirectRecursiveClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [DirectRecursiveClass.$fromRdfType],
       },
       query,
     );
@@ -72695,7 +74565,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: ExternClassPropertyClass.$filter,
         $fromRdf: ExternClassPropertyClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [ExternClassPropertyClass.$fromRdfType],
       },
       query,
     );
@@ -73122,7 +74992,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: IndirectRecursiveClass.$filter,
         $fromRdf: IndirectRecursiveClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [IndirectRecursiveClass.$fromRdfType],
       },
       query,
     );
@@ -73195,7 +75065,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: IndirectRecursiveHelperClass.$filter,
         $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [IndirectRecursiveHelperClass.$fromRdfType],
       },
       query,
     );
@@ -73258,7 +75128,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: InIdentifierClass.$filter,
         $fromRdf: InIdentifierClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [InIdentifierClass.$fromRdfType],
       },
       query,
     );
@@ -73321,7 +75191,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: InPropertiesClass.$filter,
         $fromRdf: InPropertiesClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [InPropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -73583,7 +75453,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: IriIdentifierClass.$filter,
         $fromRdf: IriIdentifierClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [IriIdentifierClass.$fromRdfType],
       },
       query,
     );
@@ -73650,7 +75520,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: IriIdentifierInterface.$filter,
         $fromRdf: IriIdentifierInterface.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [IriIdentifierInterface.$fromRdfType],
       },
       query,
     );
@@ -73726,7 +75596,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: JsPrimitiveUnionPropertyClass.$filter,
         $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [JsPrimitiveUnionPropertyClass.$fromRdfType],
       },
       query,
     );
@@ -74651,7 +76521,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: ListPropertiesClass.$filter,
         $fromRdf: ListPropertiesClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [ListPropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -74718,7 +76588,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: MutablePropertiesClass.$filter,
         $fromRdf: MutablePropertiesClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [MutablePropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -75609,7 +77479,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: RecursiveClassUnionMember1.$filter,
         $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [RecursiveClassUnionMember1.$fromRdfType],
       },
       query,
     );
@@ -75682,7 +77552,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: RecursiveClassUnionMember2.$filter,
         $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [RecursiveClassUnionMember2.$fromRdfType],
       },
       query,
     );
@@ -75814,7 +77684,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: TermPropertiesClass.$filter,
         $fromRdf: TermPropertiesClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [TermPropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -76672,12 +78542,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: RecursiveClassUnion.$filter,
           $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [RecursiveClassUnionMember1.$fromRdfType],
         },
         {
           $filter: RecursiveClassUnion.$filter,
           $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [RecursiveClassUnionMember2.$fromRdfType],
         },
       ],
       query,
@@ -76745,7 +78615,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: BlankNodeIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [BlankNodeIdentifierInterface.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -76755,7 +78625,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: BlankNodeOrIriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [BlankNodeOrIriIdentifierInterface.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -76820,7 +78690,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: DateUnionPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [DateUnionPropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -76830,7 +78700,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: DirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [DirectRecursiveClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -76850,7 +78720,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: ExternClassPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [ExternClassPropertyClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -76887,22 +78757,22 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: InIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [InIdentifierClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: InPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [InPropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: IndirectRecursiveClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [IndirectRecursiveClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: IndirectRecursiveHelperClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [IndirectRecursiveHelperClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -76922,17 +78792,17 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: IriIdentifierClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [IriIdentifierClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: IriIdentifierInterface.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [IriIdentifierInterface.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: JsPrimitiveUnionPropertyClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [JsPrimitiveUnionPropertyClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -77006,12 +78876,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: ListPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [ListPropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: MutablePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [MutablePropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -77066,12 +78936,12 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: RecursiveClassUnionMember1.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [RecursiveClassUnionMember1.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
           $fromRdf: RecursiveClassUnionMember2.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [RecursiveClassUnionMember2.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
@@ -77081,7 +78951,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: TermPropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [TermPropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,
