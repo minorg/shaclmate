@@ -1,4 +1,3 @@
-import { Maybe } from "purify-ts";
 import {
   StructureKind,
   VariableDeclarationKind,

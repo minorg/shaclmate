@@ -2,7 +2,6 @@ import { ShapesGraph as _ShapesGraph } from "@shaclmate/shacl-ast";
 import { owl, rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import type { Either } from "purify-ts";
 import type { Resource } from "rdfjs-resource";
-import { logger } from "../logger.js";
 import { ancestorClassIris } from "./ancestorClassIris.js";
 import { descendantClassIris } from "./descendantClassIris.js";
 import * as generated from "./generated.js";
