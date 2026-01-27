@@ -88,6 +88,17 @@ class TestData {
   }
 
   @Memoize()
+  get noRequiredProperty() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "data",
+        "no-required-property.shaclmate.ttl",
+      ),
+    );
+  }
+
+  @Memoize()
   get skos() {
     return Maybe.of(
       path.join(
