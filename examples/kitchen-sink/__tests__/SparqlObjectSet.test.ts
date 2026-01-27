@@ -19,6 +19,8 @@ describe("SparqlObjectSet", () => {
         oxigraphStore.add(quad);
       }
     }
+    // const ttl = quadsToTurtle(oxigraphStore.match());
+    // console.log(ttl);
     return objectSet;
   });
 });
