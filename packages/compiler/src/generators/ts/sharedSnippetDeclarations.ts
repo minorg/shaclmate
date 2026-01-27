@@ -164,6 +164,32 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly s
       return deduplicatedPatterns;
     }
 
+    function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
+      switch (pattern.type) {
+        case "bind":
+        case "bgp":        
+        case "service":
+        case "values":
+          return true;
+        
+        case "graph":
+        case "group":
+          return pattern.patterns.some(isSolutionGeneratingPattern);
+
+        case "filter":
+        case "minus":
+        case "optional":
+          return false;
+
+        case "union":
+          // A union pattern is solution-generating if every branch is solution-generating
+          return pattern.patterns.every(isSolutionGeneratingPattern);
+
+        default:
+          throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
+      }
+    }
+
     function sortPatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
       const filterPatterns: sparqljs.Pattern[] = [];
       const otherPatterns: sparqljs.Pattern[] = [];
@@ -260,32 +286,6 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly s
     }
 
     return sortPatterns(deduplicatePatterns(compactedPatterns));
-  }
-
-  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-    switch (pattern.type) {
-      case "bind":
-      case "bgp":        
-      case "service":
-      case "values":
-        return true;
-      
-      case "graph":
-      case "group":
-        return pattern.patterns.some(isSolutionGeneratingPattern);
-
-      case "filter":
-      case "minus":
-      case "optional":
-        return false;
-
-      case "union":
-        // A union pattern is solution-generating if every branch is solution-generating
-        return pattern.patterns.every(isSolutionGeneratingPattern);
-
-      default:
-        throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
-    }
   }
 
   const normalizedPatterns = normalizePatternsRecursive(patterns);
