@@ -45,7 +45,9 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   @Memoize()
   override get schema(): string {
-    return `{ in: ${JSON.stringify(this.primitiveIn)} }`;
+    return this.constrained
+      ? objectInitializer(this.schemaObject)
+      : `${syntheticNamePrefix}stringTypeSchema`;
   }
 
   protected override filterSparqlWherePatterns({
@@ -108,6 +110,12 @@ export class StringType extends AbstractPrimitiveType<string> {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+      !this.constrained
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}stringTypeSchema`,
+            `const ${syntheticNamePrefix}stringTypeSchema = ${objectInitializer(this.schemaObject)};`,
+          )
+        : {},
       singleEntryRecord(
         `${syntheticNamePrefix}StringFilter`,
         `\

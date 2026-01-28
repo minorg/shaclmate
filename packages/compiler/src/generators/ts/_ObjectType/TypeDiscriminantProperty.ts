@@ -86,20 +86,6 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     });
   }
 
-  @Memoize()
-  override get schema(): string {
-    return objectInitializer({
-      kind: `${JSON.stringify(this.kind)} as const`,
-      name: JSON.stringify(this.name),
-      type: {
-        descendantValues: this.type.descendantValues.map((_) =>
-          JSON.stringify(_),
-        ),
-        ownValues: this.type.ownValues.map((_) => JSON.stringify(_)),
-      },
-    });
-  }
-
   private get abstract(): boolean {
     return this.objectType.abstract;
   }
@@ -227,6 +213,20 @@ export namespace TypeDiscriminantProperty {
     @Memoize()
     get name(): string {
       return this.values.map((name) => `"${name}"`).join(" | ");
+    }
+
+    @Memoize()
+    get schema(): string {
+      return objectInitializer({
+        descendantValues:
+          this.descendantValues.length > 0
+            ? this.descendantValues.map((_) => JSON.stringify(_))
+            : undefined,
+        ownValues:
+          this.ownValues.length > 0
+            ? this.ownValues.map((_) => JSON.stringify(_))
+            : undefined,
+      });
     }
 
     @Memoize()

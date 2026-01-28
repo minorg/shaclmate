@@ -10,6 +10,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -118,40 +119,6 @@ export class IdentifierType extends AbstractTermType<
     return this.nodeKinds.size === 1 && this.nodeKinds.has("NamedNode");
   }
 
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${this.filterType}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
-  }
-
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
-  ): AbstractTermType.JsonType {
-    const discriminantProperty = parameters?.includeDiscriminantProperty
-      ? `, readonly termType: "BlankNode" | "NamedNode"`
-      : "";
-
-    if (this.in_.length > 0 && this.isNamedNodeKind) {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return new AbstractTermType.JsonType(
-        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
-      );
-    }
-
-    return new AbstractTermType.JsonType(
-      `{ readonly "@id": string${discriminantProperty} }`,
-    );
-  }
-
   @Memoize()
   override get name(): string {
     if (this.in_.length > 0 && this.isNamedNodeKind) {
@@ -169,7 +136,16 @@ export class IdentifierType extends AbstractTermType<
 
   @Memoize()
   override get schema(): string {
-    return `{ }`;
+    if (this.constrained) {
+      return objectInitializer(this.schemaObject);
+    }
+    if (this.isBlankNodeKind) {
+      return `${syntheticNamePrefix}blankNodeIdentifierTypeSchema`;
+    }
+    if (this.isNamedNodeKind) {
+      return `${syntheticNamePrefix}namedNodeIdentifierTypeSchema`;
+    }
+    return `${syntheticNamePrefix}identifierTypeSchema`;
   }
 
   @Memoize()
@@ -187,6 +163,15 @@ export class IdentifierType extends AbstractTermType<
           name: "toString",
         },
       ],
+    };
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      nodeKinds: [...this.nodeKinds].map(
+        (_) => `${JSON.stringify(_)} as const`,
+      ),
     };
   }
 
@@ -209,34 +194,31 @@ export class IdentifierType extends AbstractTermType<
     }
   }
 
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]): ReturnType<
-    AbstractTermType["fromRdfExpressionChain"]
-  > {
-    let valueToExpression: string;
-    if (this.nodeKinds.size === 2) {
-      valueToExpression = "value.toIdentifier()";
-    } else if (this.isNamedNodeKind) {
-      valueToExpression = "value.toIri()";
-      if (this.in_.length > 0) {
-        const eitherTypeParameters = `<Error, ${this.name}>`;
-        valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of${eitherTypeParameters}(iri as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
-      }
-    } else {
-      valueToExpression = "value.toBlankNode()";
-    }
-
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
-    };
-  }
-
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): string {
     return `rdfjsResource.Resource.Identifier.toString(${value})`;
+  }
+
+  @Memoize()
+  override jsonType(
+    parameters?: Parameters<AbstractTermType["jsonType"]>[0],
+  ): AbstractTermType.JsonType {
+    const discriminantProperty = parameters?.includeDiscriminantProperty
+      ? `, readonly termType: "BlankNode" | "NamedNode"`
+      : "";
+
+    if (this.in_.length > 0 && this.isNamedNodeKind) {
+      // Treat sh:in as a union of the IRIs
+      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
+      return new AbstractTermType.JsonType(
+        `{ readonly "@id": ${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}${discriminantProperty} }`,
+      );
+    }
+
+    return new AbstractTermType.JsonType(
+      `{ readonly "@id": string${discriminantProperty} }`,
+    );
   }
 
   override jsonZodSchema({
@@ -295,6 +277,12 @@ namespace ${syntheticNamePrefix}BlankNodeFilter {
 }`,
             )
           : {},
+        !this.constrained
+          ? singleEntryRecord(
+              `${syntheticNamePrefix}blankNodeIdentifierTypeSchema`,
+              `const ${syntheticNamePrefix}blankNodeIdentifierTypeSchema = ${objectInitializer(this.schemaObject)};`,
+            )
+          : {},
       );
     } else if (this.isNamedNodeKind) {
       snippetDeclarations = mergeSnippetDeclarations(
@@ -343,6 +331,12 @@ namespace ${syntheticNamePrefix}NamedNodeFilter {
     return patterns;
   }
 }`,
+            )
+          : {},
+        !this.constrained
+          ? singleEntryRecord(
+              `${syntheticNamePrefix}namedNodeIdentifierTypeSchema`,
+              `const ${syntheticNamePrefix}namedNodeIdentifierTypeSchema = ${objectInitializer(this.schemaObject)};`,
             )
           : {},
       );
@@ -411,6 +405,12 @@ namespace ${syntheticNamePrefix}IdentifierFilter {
 }`,
             )
           : {},
+        !this.constrained
+          ? singleEntryRecord(
+              `${syntheticNamePrefix}identifierTypeSchema`,
+              `const ${syntheticNamePrefix}identifierTypeSchema = ${objectInitializer(this.schemaObject)};`,
+            )
+          : {},
       );
     }
 
@@ -437,5 +437,42 @@ namespace ${syntheticNamePrefix}IdentifierFilter {
       case "NamedNode":
         return valueToNamedNode;
     }
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${this.filterType}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
+  }
+
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]): ReturnType<
+    AbstractTermType["fromRdfExpressionChain"]
+  > {
+    let valueToExpression: string;
+    if (this.nodeKinds.size === 2) {
+      valueToExpression = "value.toIdentifier()";
+    } else if (this.isNamedNodeKind) {
+      valueToExpression = "value.toIri()";
+      if (this.in_.length > 0) {
+        const eitherTypeParameters = `<Error, ${this.name}>`;
+        valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of${eitherTypeParameters}(iri as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
+      }
+    } else {
+      valueToExpression = "value.toBlankNode()";
+    }
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
+    };
   }
 }

@@ -1,5 +1,6 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
@@ -30,9 +31,15 @@ export abstract class AbstractPrimitiveType<
     return Maybe.empty();
   }
 
-  @Memoize()
-  override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(this.name);
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.map(JSON.stringify).extract(),
+      in:
+        this.primitiveIn.length > 0
+          ? this.primitiveIn.map((_) => JSON.stringify(_)).concat()
+          : undefined,
+    };
   }
 
   override fromJsonExpression({
@@ -51,6 +58,11 @@ export abstract class AbstractPrimitiveType<
     variables,
   }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly string[] {
     return [`${variables.hasher}.update(${variables.value}.toString());`];
+  }
+
+  @Memoize()
+  override jsonType(): AbstractLiteralType.JsonType {
+    return new AbstractLiteralType.JsonType(this.name);
   }
 
   override snippetDeclarations(

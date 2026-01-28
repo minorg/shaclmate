@@ -1,4 +1,5 @@
 import type { Literal } from "@rdfjs/types";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -26,21 +27,15 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     this.languageIn = languageIn;
   }
 
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
-  >[0]): ReturnType<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
-  > {
+  override get constrained(): boolean {
+    return super.constrained || this.languageIn.length > 0;
+  }
+
+  protected override get schemaObject() {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.schemaObject,
       languageIn:
-        this.languageIn.length > 0
-          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
-          : undefined,
-      preferredLanguages: `chain(values => ${syntheticNamePrefix}fromRdfPreferredLanguages({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
-      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
+        this.languageIn.length > 0 ? this.languageIn.concat() : undefined,
     };
   }
 
@@ -84,6 +79,24 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
           )
         : {},
     );
+  }
+
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<
+    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+  >[0]): ReturnType<
+    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+  > {
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn:
+        this.languageIn.length > 0
+          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          : undefined,
+      preferredLanguages: `chain(values => ${syntheticNamePrefix}fromRdfPreferredLanguages({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
+      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
+    };
   }
 
   protected preferredLanguagesSparqlWherePatterns({

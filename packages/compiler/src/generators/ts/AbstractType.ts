@@ -60,6 +60,11 @@ export abstract class AbstractType {
   abstract readonly graphqlType: AbstractType.GraphqlType;
 
   /**
+   * Type discriminator.
+   */
+  abstract readonly kind: string;
+
+  /**
    * Label from rdfs:label.
    */
   readonly label: Maybe<string>;

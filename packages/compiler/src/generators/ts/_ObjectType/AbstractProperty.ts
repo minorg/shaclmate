@@ -6,15 +6,17 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+import { Memoize } from "typescript-memoize";
 
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
+import { objectInitializer } from "../objectInitializer.js";
 import type { Sparql } from "../Sparql.js";
 import type { Type } from "../Type.js";
 
 export abstract class AbstractProperty<
-  TypeT extends Pick<Type, "filterFunction" | "mutable" | "name">,
+  TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
 > {
   protected readonly objectType: ObjectType;
 
@@ -69,6 +71,7 @@ export abstract class AbstractProperty<
   abstract readonly jsonPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   >;
+  abstract readonly kind: string;
 
   /**
    * Is the property reassignable?
@@ -98,11 +101,6 @@ export abstract class AbstractProperty<
    * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
    */
   abstract readonly recursive: boolean;
-
-  /**
-   * TypeScript object describing this type, for runtime use.
-   */
-  abstract readonly schema: string;
 
   /**
    * Property type
@@ -135,6 +133,22 @@ export abstract class AbstractProperty<
    * Imports this property requires when declared in an object.
    */
   abstract get declarationImports(): readonly Import[];
+
+  /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  protected get schemaObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)} as const`,
+      name: JSON.stringify(this.name),
+      type: `() => (${this.type.schema})`,
+    };
+  }
 
   /**
    * Statements to assign the parameter of described by constructorParametersPropertySignature to a class or interface member.

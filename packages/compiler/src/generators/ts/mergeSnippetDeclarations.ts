@@ -23,7 +23,9 @@ export function mergeSnippetDeclarations(
       if (!existingSnippetDeclaration) {
         mergedSnippetDeclarations[key] = snippetDeclaration;
       } else if (existingSnippetDeclaration !== snippetDeclaration) {
-        throw new Error(`conflicting snippet declarations for ${key}`);
+        throw new Error(
+          `conflicting snippet declarations for ${key}:\nExisting:\n${existingSnippetDeclaration}\n\nNew:\n${snippetDeclaration}\n\n`,
+        );
       }
     }
   }

@@ -1,5 +1,6 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -8,12 +9,12 @@ import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
-  readonly kind = "BooleanType";
   override readonly filterFunction = `${syntheticNamePrefix}filterBoolean`;
   override readonly filterType = `${syntheticNamePrefix}BooleanFilter`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     "graphql.GraphQLBoolean",
   );
+  readonly kind = "BooleanType";
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -45,39 +46,9 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
 
   @Memoize()
   override get schema(): string {
-    return "{}";
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<boolean>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
-  }
-
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]
-  >[0]): ReturnType<AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = "value.toBoolean()";
-    if (this.primitiveIn.length === 1) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(primitiveValue) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
-    }
-
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      languageIn: undefined,
-      preferredLanguages: undefined,
-      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
-    };
+    return this.constrained
+      ? objectInitializer(this.schemaObject)
+      : `${syntheticNamePrefix}booleanTypeSchema`;
   }
 
   override jsonZodSchema({
@@ -98,6 +69,12 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+      !this.constrained
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}booleanTypeSchema`,
+            `const ${syntheticNamePrefix}booleanTypeSchema = ${objectInitializer(this.schemaObject)};`,
+          )
+        : {},
       singleEntryRecord(
         `${syntheticNamePrefix}BooleanFilter`,
         `\
@@ -160,5 +137,37 @@ namespace ${syntheticNamePrefix}BooleanFilter {
         return `(${variables.value} ? [true] : [])`;
       })
       .orDefault(`[${variables.value}]`);
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractPrimitiveType<boolean>["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
+  }
+
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<
+    AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<boolean>["fromRdfExpressionChain"]> {
+    let fromRdfResourceValueExpression = "value.toBoolean()";
+    if (this.primitiveIn.length === 1) {
+      const eitherTypeParameters = `<Error, ${this.name}>`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? purify.Either.of${eitherTypeParameters}(primitiveValue) : purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})))`;
+    }
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: undefined,
+      preferredLanguages: undefined,
+      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+    };
   }
 }

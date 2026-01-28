@@ -1,4 +1,4 @@
-import * as rdfjs from "@rdfjs/types";
+import type * as rdfjs from "@rdfjs/types";
 
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
@@ -166,11 +166,14 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         ? rdfjsTermExpression(this.path)
         : undefined,
       label: this.label.map(JSON.stringify).extract(),
-      mutable: this.mutable,
+      mutable: this.mutable ? true : undefined,
       name: JSON.stringify(this.name),
-      recursive: this.recursive,
+      recursive: this.recursive ? true : undefined,
       type: `() => (${this.type.schema})`,
-      visibility: `${JSON.stringify(this.visibility)} as const`,
+      visibility:
+        this.visibility !== "public"
+          ? `${JSON.stringify(this.visibility)} as const`
+          : undefined,
     });
   }
 

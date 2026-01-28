@@ -1,10 +1,12 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -24,6 +26,7 @@ export class TermType<
 > extends AbstractTermType {
   override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
   override readonly filterType = `${syntheticNamePrefix}TermFilter`;
+  override readonly kind = "TermType";
 
   constructor(
     superParameters: ConstructorParameters<
@@ -44,32 +47,7 @@ export class TermType<
 
   @Memoize()
   override get schema(): string {
-    return `{ }`;
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
-  }
-
-  @Memoize()
-  override jsonType(): AbstractTermType.JsonType {
-    return new AbstractTermType.JsonType(
-      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
-        .filter((nodeKind) => nodeKind !== "Literal")
-        .map((nodeKind) => `"${nodeKind}"`)
-        .join(
-          " | ",
-        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
-    );
+    return objectInitializer(this.schemaObject);
   }
 
   override fromJsonExpression({
@@ -100,6 +78,18 @@ export class TermType<
     _parameters: Parameters<AbstractTermType["graphqlResolveExpression"]>[0],
   ): string {
     throw new Error("not implemented");
+  }
+
+  @Memoize()
+  override jsonType(): AbstractTermType.JsonType {
+    return new AbstractTermType.JsonType(
+      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
+        .filter((nodeKind) => nodeKind !== "Literal")
+        .map((nodeKind) => `"${nodeKind}"`)
+        .join(
+          " | ",
+        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
+    );
   }
 
   override jsonZodSchema({
@@ -157,5 +147,18 @@ export class TermType<
         ? valueToNodeKind
         : `(${variables.value}.termType === "${nodeKind}") ? ${valueToNodeKind} : ${expression}`;
     }, "");
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractTermType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      {
+        patterns: `${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 }

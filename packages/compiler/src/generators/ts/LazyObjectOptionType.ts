@@ -17,6 +17,7 @@ const Super = AbstractLazyObjectType<
 >;
 
 export class LazyObjectOptionType extends Super {
+  override readonly kind = "LazyObjectOptionType";
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
 
   constructor({

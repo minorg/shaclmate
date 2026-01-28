@@ -1,16 +1,12 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-
-type Super = AbstractLazyObjectType<
-  SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
-  SetType<AbstractLazyObjectType.ObjectTypeConstraint>
->;
 
 export class LazyObjectSetType extends AbstractLazyObjectType<
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
@@ -24,6 +20,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
       type: "graphql.GraphQLInt",
     },
   });
+  override readonly kind = "LazyObjectSetType";
 
   constructor({
     partialType,
@@ -145,3 +142,8 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends rdfjs
     return `(${variables.value}.resolve({ limit: ${variables.args}.limit, offset: ${variables.args}.offset })).then(either => either.unsafeCoerce())`;
   }
 }
+
+type Super = AbstractLazyObjectType<
+  SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
+  SetType<AbstractLazyObjectType.ObjectTypeConstraint>
+>;

@@ -16,7 +16,6 @@ import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
-import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -322,16 +321,13 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
-  @Memoize()
-  override get schema(): string {
-    return objectInitializer({
-      kind: `${JSON.stringify(this.kind)} as const`,
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
       identifierMintingStrategy: this.identifierMintingStrategy
         .map((_) => `${JSON.stringify(_)} as const`)
         .extract(),
-      name: JSON.stringify(this.name),
-      type: this.type.schema,
-    });
+    };
   }
 
   private get abstract(): boolean {

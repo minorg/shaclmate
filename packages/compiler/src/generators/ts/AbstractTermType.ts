@@ -60,6 +60,14 @@ export abstract class AbstractTermType<
     invariant(this.nodeKinds.size > 0, "empty nodeKinds");
   }
 
+  get constrained(): boolean {
+    return (
+      this.defaultValue.isJust() ||
+      this.hasValues.length > 0 ||
+      this.in_.length > 0
+    );
+  }
+
   @Memoize()
   get conversions(): readonly AbstractType.Conversion[] {
     const conversions: AbstractType.Conversion[] = [];
@@ -128,23 +136,11 @@ export abstract class AbstractTermType<
       .join(" | ")})`;
   }
 
-  /**
-   * An array of SPARQL.js WHERE patterns for filtering values of this type.
-   *
-   * Parameters:
-   *   variables: (at runtime)
-   *     - filter: an instance of filterType
-   *     - preferredLanguages: array of preferred language code (strings)
-   *     - valueVariable: rdfjs.Variable of the value of this type
-   *     - variablePrefix: prefix to use for new variables
-   */
-  protected abstract filterSparqlWherePatterns(parameters: {
-    variables: {
-      preferredLanguages: string;
-      filter: string;
-      valueVariable: string;
+  protected get schemaObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)} as const`,
     };
-  }): readonly Sparql.Pattern[];
+  }
 
   override fromRdfExpression(
     parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
@@ -167,52 +163,6 @@ export abstract class AbstractTermType<
     ]
       .filter((_) => typeof _ !== "undefined")
       .join(".");
-  }
-
-  /**
-   * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
-   *
-   * defaultValues: add the default value to the values sequence if the latter doesn't contain values already
-   * hasValues: test whether the values sequence has sh:hasValue values
-   * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)
-   * valueTo: convert values in the values sequence to the appropriate term type/sub-type (literal, string, etc.)
-   *
-   * Considering the sub-expressions as a record instead of an array allows them to be selectively overridden by subclasses.
-   */
-  protected fromRdfExpressionChain({
-    variables,
-  }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
-    hasValues?: string;
-    languageIn?: string;
-    preferredLanguages?: string;
-    valueTo: string;
-  } {
-    let valueToExpression =
-      "purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(value.toTerm())";
-    if (this.nodeKinds.size < 3) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      valueToExpression = `${valueToExpression}.chain(term => {
-  switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);
-  default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
-}})`;
-    }
-
-    return {
-      defaultValue: this.defaultValue
-        .map(
-          (defaultValue) =>
-            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
-        )
-        .extract(),
-      hasValues:
-        this.hasValues.length > 0
-          ? `\
-chain(values => purify.Either.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
-          : undefined,
-      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
-    };
   }
 
   override graphqlResolveExpression(
@@ -313,6 +263,70 @@ chain(values => purify.Either.sequence([${this.hasValues.map(rdfjsTermExpression
     features: ReadonlySet<TsFeature>;
   }): readonly Import[] {
     return [Import.RDFJS_TYPES];
+  }
+
+  /**
+   * An array of SPARQL.js WHERE patterns for filtering values of this type.
+   *
+   * Parameters:
+   *   variables: (at runtime)
+   *     - filter: an instance of filterType
+   *     - preferredLanguages: array of preferred language code (strings)
+   *     - valueVariable: rdfjs.Variable of the value of this type
+   *     - variablePrefix: prefix to use for new variables
+   */
+  protected abstract filterSparqlWherePatterns(parameters: {
+    variables: {
+      preferredLanguages: string;
+      filter: string;
+      valueVariable: string;
+    };
+  }): readonly Sparql.Pattern[];
+
+  /**
+   * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
+   *
+   * defaultValues: add the default value to the values sequence if the latter doesn't contain values already
+   * hasValues: test whether the values sequence has sh:hasValue values
+   * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)
+   * valueTo: convert values in the values sequence to the appropriate term type/sub-type (literal, string, etc.)
+   *
+   * Considering the sub-expressions as a record instead of an array allows them to be selectively overridden by subclasses.
+   */
+  protected fromRdfExpressionChain({
+    variables,
+  }: Parameters<Type["fromRdfExpression"]>[0]): {
+    defaultValue?: string;
+    hasValues?: string;
+    languageIn?: string;
+    preferredLanguages?: string;
+    valueTo: string;
+  } {
+    let valueToExpression =
+      "purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(value.toTerm())";
+    if (this.nodeKinds.size < 3) {
+      const eitherTypeParameters = `<Error, ${this.name}>`;
+      valueToExpression = `${valueToExpression}.chain(term => {
+  switch (term.termType) {
+  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);
+  default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
+}})`;
+    }
+
+    return {
+      defaultValue: this.defaultValue
+        .map(
+          (defaultValue) =>
+            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
+        )
+        .extract(),
+      hasValues:
+        this.hasValues.length > 0
+          ? `\
+chain(values => purify.Either.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
+          : undefined,
+      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
+    };
   }
 }
 

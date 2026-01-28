@@ -1,5 +1,7 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
@@ -10,6 +12,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction = `${syntheticNamePrefix}filterLiteral`;
   override readonly filterType = `${syntheticNamePrefix}LiteralFilter`;
+  override readonly kind = "LiteralType";
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
@@ -18,20 +21,6 @@ export class LiteralType extends AbstractLiteralType {
   @Memoize()
   override get schema(): string {
     return "{}";
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractLiteralType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
-      {
-        patterns: `${syntheticNamePrefix}LiteralFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 
   override fromJsonExpression({
@@ -149,5 +138,19 @@ namespace ${syntheticNamePrefix}LiteralFilter {
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): string {
     return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
+  }
+
+  protected override filterSparqlWherePatterns({
+    variables,
+  }: Parameters<
+    AbstractLiteralType["filterSparqlWherePatterns"]
+  >[0]): readonly Sparql.Pattern[] {
+    return [
+      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
+      {
+        patterns: `${syntheticNamePrefix}LiteralFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
+        type: "opaque-block" as const,
+      },
+    ];
   }
 }
