@@ -1747,7 +1747,20 @@ export namespace $NamedDefaultPartial {
     ).map(($identifier) => ({ $identifier }));
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["$NamedDefaultPartial"] },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -2083,7 +2096,20 @@ export namespace $DefaultPartial {
     ).map(($identifier) => ({ $identifier }));
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["$DefaultPartial"] },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -2490,10 +2516,35 @@ export namespace UuidV4IriIdentifierInterface {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "uuidv4" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
+        type: { in: [] },
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["UuidV4IriIdentifierInterface"],
+        },
+      },
       uuidV4IriProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/uuidV4IriProperty",
         ),
+        mutable: false,
+        name: "uuidV4IriProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -3072,10 +3123,32 @@ export namespace UuidV4IriIdentifierClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "uuidv4" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
+        type: { in: [] },
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["UuidV4IriIdentifierClass"] },
+      },
       uuidV4IriProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/uuidV4IriProperty",
         ),
+        mutable: false,
+        name: "uuidV4IriProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -6322,50 +6395,130 @@ export namespace UnionDiscriminantsClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["UnionDiscriminantsClass"] },
+      },
       optionalClassOrClassOrStringProperty: {
+        comment:
+          "Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalClassOrClassOrStringProperty",
         ),
+        mutable: false,
+        name: "optionalClassOrClassOrStringProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       optionalIriOrLiteralProperty: {
+        comment:
+          "Union that can be discriminated by an inline discriminant property (termType).",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalIriOrLiteralProperty",
         ),
+        mutable: false,
+        name: "optionalIriOrLiteralProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       optionalIriOrStringProperty: {
+        comment: "Union that can be discriminated by typeof.",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalIriOrStringProperty",
         ),
+        mutable: false,
+        name: "optionalIriOrStringProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       requiredClassOrClassOrStringProperty: {
+        comment:
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredClassOrClassOrStringProperty",
         ),
+        mutable: false,
+        name: "requiredClassOrClassOrStringProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       requiredIriOrLiteralProperty: {
+        comment:
+          "Union that can be discriminated by an inline discriminant property (termType).",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredIriOrLiteralProperty",
         ),
+        mutable: false,
+        name: "requiredIriOrLiteralProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       requiredIriOrStringProperty: {
+        comment: "Union that can be discriminated by typeof.",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredIriOrStringProperty",
         ),
+        mutable: false,
+        name: "requiredIriOrStringProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       setClassOrClassOrStringProperty: {
+        comment:
+          "Union with an envelope discriminant (multiple typeofs, no inline discriminant property).",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setClassOrClassOrStringProperty",
         ),
+        mutable: false,
+        name: "setClassOrClassOrStringProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       setIriOrLiteralProperty: {
+        comment:
+          "Union that can be discriminated by an inline discriminant property (termType).",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setIriOrLiteralProperty",
         ),
+        mutable: false,
+        name: "setIriOrLiteralProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       setIriOrStringProperty: {
+        comment: "Union that can be discriminated by typeof.",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setIriOrStringProperty",
         ),
+        mutable: false,
+        name: "setIriOrStringProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -9031,46 +9184,111 @@ export namespace TermPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["TermPropertiesClass"] },
+      },
       blankNodeTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/blankNodeTermProperty",
         ),
+        mutable: false,
+        name: "blankNodeTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       booleanTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/booleanTermProperty",
         ),
+        mutable: false,
+        name: "booleanTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       dateTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateTermProperty",
         ),
+        mutable: false,
+        name: "dateTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       dateTimeTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateTimeTermProperty",
         ),
+        mutable: false,
+        name: "dateTimeTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       iriTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
+        mutable: false,
+        name: "iriTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       literalTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/literalTermProperty",
         ),
+        mutable: false,
+        name: "literalTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       numberTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/numberTermProperty",
         ),
+        mutable: false,
+        name: "numberTermProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       stringTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/stringTermProperty",
         ),
+        mutable: false,
+        name: "stringTermProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
       termProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode("http://example.com/termProperty"),
+        mutable: false,
+        name: "termProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -10073,10 +10291,32 @@ export namespace Sha256IriIdentifierClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "sha256" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
+        type: { in: [] },
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["Sha256IriIdentifierClass"] },
+      },
       sha256IriProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/sha256IriProperty",
         ),
+        mutable: false,
+        name: "sha256IriProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -10682,10 +10922,30 @@ export namespace RecursiveClassUnionMember2 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["RecursiveClassUnionMember2"],
+        },
+      },
       recursiveClassUnionMember2Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/recursiveClassUnionMember2Property",
         ),
+        mutable: false,
+        name: "recursiveClassUnionMember2Property",
+        recursive: true,
+        type: () => ({ item: RecursiveClassUnion.$schema }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -11279,10 +11539,30 @@ export namespace RecursiveClassUnionMember1 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["RecursiveClassUnionMember1"],
+        },
+      },
       recursiveClassUnionMember1Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/recursiveClassUnionMember1Property",
         ),
+        mutable: false,
+        name: "recursiveClassUnionMember1Property",
+        recursive: true,
+        type: () => ({ item: RecursiveClassUnion.$schema }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -11883,16 +12163,48 @@ export namespace PropertyVisibilitiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["PropertyVisibilitiesClass"],
+        },
+      },
       privateProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode("http://example.com/privateProperty"),
+        mutable: false,
+        name: "privateProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "private" as const,
       },
       protectedProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/protectedProperty",
         ),
+        mutable: false,
+        name: "protectedProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "protected" as const,
       },
       publicProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode("http://example.com/publicProperty"),
+        mutable: false,
+        name: "publicProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -12761,25 +13073,67 @@ export namespace PropertyCardinalitiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["PropertyCardinalitiesClass"],
+        },
+      },
       emptyStringSetProperty: {
+        comment: "Set: minCount implicitly=0, no maxCount",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/emptyStringSetProperty",
         ),
+        mutable: false,
+        name: "emptyStringSetProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
       nonEmptyStringSetProperty: {
+        comment: "Set: minCount=1, no maxCount",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/nonEmptyStringSetProperty",
         ),
+        mutable: false,
+        name: "nonEmptyStringSetProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
       optionalStringProperty: {
+        comment: "Option: maxCount=1, minCount=0",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalStringProperty",
         ),
+        mutable: false,
+        name: "optionalStringProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
       requiredStringProperty: {
+        comment: "Required: maxCount=minCount=1",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredStringProperty",
         ),
+        mutable: false,
+        name: "requiredStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -13542,10 +13896,30 @@ export namespace PartialInterfaceUnionMember2 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["PartialInterfaceUnionMember2"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -14182,10 +14556,30 @@ export namespace PartialInterfaceUnionMember1 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["PartialInterfaceUnionMember1"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -14852,10 +15246,27 @@ export namespace PartialClassUnionMember2 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["PartialClassUnionMember2"] },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -15467,10 +15878,27 @@ export namespace PartialClassUnionMember1 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["PartialClassUnionMember1"] },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -16164,20 +16592,49 @@ export namespace OrderedPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["OrderedPropertiesClass"] },
+      },
       orderedPropertyC: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/orderedPropertyC",
         ),
+        mutable: false,
+        name: "orderedPropertyC",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
       orderedPropertyB: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/orderedPropertyB",
         ),
+        mutable: false,
+        name: "orderedPropertyB",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
       orderedPropertyA: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/orderedPropertyA",
         ),
+        mutable: false,
+        name: "orderedPropertyA",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -16825,10 +17282,27 @@ export namespace NonClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["NonClass"] },
+      },
       nonClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/nonClassProperty",
         ),
+        mutable: false,
+        name: "nonClassProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -17327,10 +17801,30 @@ export namespace NoRdfTypeClassUnionMember2 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["NoRdfTypeClassUnionMember2"],
+        },
+      },
       noRdfTypeClassUnionMember2Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/noRdfTypeClassUnionMember2Property",
         ),
+        mutable: false,
+        name: "noRdfTypeClassUnionMember2Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -17841,10 +18335,30 @@ export namespace NoRdfTypeClassUnionMember1 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["NoRdfTypeClassUnionMember1"],
+        },
+      },
       noRdfTypeClassUnionMember1Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/noRdfTypeClassUnionMember1Property",
         ),
+        mutable: false,
+        name: "noRdfTypeClassUnionMember1Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -18741,20 +19255,59 @@ export namespace MutablePropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "sha256" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
+        type: { in: [] },
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["MutablePropertiesClass"] },
+      },
       mutableListProperty: {
+        description:
+          "List-valued property that can't be reassigned but whose value can be mutated",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/mutableListProperty",
         ),
+        mutable: false,
+        name: "mutableListProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       mutableSetProperty: {
+        description:
+          "Set-valued property that can't be reassigned but whose value can be mutated",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/mutableSetProperty",
         ),
+        mutable: true,
+        name: "mutableSetProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
       mutableStringProperty: {
+        description: "String-valued property that can be re-assigned",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/mutableStringProperty",
         ),
+        mutable: true,
+        name: "mutableStringProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -20175,18 +20728,47 @@ export namespace ListPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["ListPropertiesClass"] },
+      },
       iriListProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
+        mutable: false,
+        name: "iriListProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       objectListProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/objectListProperty",
         ),
+        mutable: false,
+        name: "objectListProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       stringListProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/stringListProperty",
         ),
+        mutable: false,
+        name: "stringListProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -21272,10 +21854,27 @@ export namespace PartialInterface {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["PartialInterface"] },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -23938,55 +24537,164 @@ export namespace LazyPropertiesInterface {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["LazyPropertiesInterface"] },
+      },
       optionalLazyToResolvedInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceProperty",
         ),
+        mutable: false,
+        name: "optionalLazyToResolvedInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $DefaultPartial.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
       optionalLazyToResolvedInterfaceUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
         ),
+        mutable: false,
+        name: "optionalLazyToResolvedInterfaceUnionProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $DefaultPartial.$schema },
+          resolvedType: { item: LazilyResolvedInterfaceUnion.$schema },
+        }),
+        visibility: "public" as const,
       },
       optionalLazyToResolvedIriIdentifierInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
         ),
+        mutable: false,
+        name: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $NamedDefaultPartial.$schema },
+          resolvedType: { item: LazilyResolvedIriIdentifierInterface.$schema },
+        }),
+        visibility: "public" as const,
       },
       optionalPartialInterfaceToResolvedInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
         ),
+        mutable: false,
+        name: "optionalPartialInterfaceToResolvedInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialInterface.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         ),
+        mutable: false,
+        name: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialInterface.$schema },
+          resolvedType: { item: LazilyResolvedInterfaceUnion.$schema },
+        }),
+        visibility: "public" as const,
       },
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         ),
+        mutable: false,
+        name: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialInterfaceUnion.$schema },
+          resolvedType: { item: LazilyResolvedInterfaceUnion.$schema },
+        }),
+        visibility: "public" as const,
       },
       requiredLazyToResolvedInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedInterfaceProperty",
         ),
+        mutable: false,
+        name: "requiredLazyToResolvedInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: $DefaultPartial.$schema,
+          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+        }),
+        visibility: "public" as const,
       },
       requiredPartialInterfaceToResolvedInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
         ),
+        mutable: false,
+        name: "requiredPartialInterfaceToResolvedInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: PartialInterface.$schema,
+          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+        }),
+        visibility: "public" as const,
       },
       setLazyToResolvedInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedInterfaceProperty",
         ),
+        mutable: false,
+        name: "setLazyToResolvedInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $DefaultPartial.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
       setPartialInterfaceToResolvedInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
         ),
+        mutable: false,
+        name: "setPartialInterfaceToResolvedInterfaceProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialInterface.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -25148,10 +25856,27 @@ export namespace PartialClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["PartialClass"] },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -27781,55 +28506,164 @@ export namespace LazyPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["LazyPropertiesClass"] },
+      },
       optionalLazyToResolvedClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassProperty",
         ),
+        mutable: false,
+        name: "optionalLazyToResolvedClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $DefaultPartial.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
       optionalLazyToResolvedClassUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedClassUnionProperty",
         ),
+        mutable: false,
+        name: "optionalLazyToResolvedClassUnionProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $DefaultPartial.$schema },
+          resolvedType: { item: LazilyResolvedClassUnion.$schema },
+        }),
+        visibility: "public" as const,
       },
       optionalLazyToResolvedIriIdentifierClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
         ),
+        mutable: false,
+        name: "optionalLazyToResolvedIriIdentifierClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $NamedDefaultPartial.$schema },
+          resolvedType: { item: LazilyResolvedIriIdentifierClass.$schema },
+        }),
+        visibility: "public" as const,
       },
       optionalPartialClassToResolvedClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassProperty",
         ),
+        mutable: false,
+        name: "optionalPartialClassToResolvedClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialClass.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
       optionalPartialClassToResolvedClassUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
         ),
+        mutable: false,
+        name: "optionalPartialClassToResolvedClassUnionProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialClass.$schema },
+          resolvedType: { item: LazilyResolvedClassUnion.$schema },
+        }),
+        visibility: "public" as const,
       },
       optionalPartialClassUnionToResolvedClassUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
         ),
+        mutable: false,
+        name: "optionalPartialClassUnionToResolvedClassUnionProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialClassUnion.$schema },
+          resolvedType: { item: LazilyResolvedClassUnion.$schema },
+        }),
+        visibility: "public" as const,
       },
       requiredLazyToResolvedClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredLazyToResolvedClassProperty",
         ),
+        mutable: false,
+        name: "requiredLazyToResolvedClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: $DefaultPartial.$schema,
+          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+        }),
+        visibility: "public" as const,
       },
       requiredPartialClassToResolvedClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/requiredPartialClassToResolvedClassProperty",
         ),
+        mutable: false,
+        name: "requiredPartialClassToResolvedClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: PartialClass.$schema,
+          resolvedType: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+        }),
+        visibility: "public" as const,
       },
       setLazyToResolvedClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setLazyToResolvedClassProperty",
         ),
+        mutable: false,
+        name: "setLazyToResolvedClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: $DefaultPartial.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
       setPartialClassToResolvedClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/setPartialClassToResolvedClassProperty",
         ),
+        mutable: false,
+        name: "setPartialClassToResolvedClassProperty",
+        recursive: false,
+        type: () => ({
+          partialType: { item: PartialClass.$schema },
+          resolvedType: {
+            item: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema,
+          },
+        }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -28783,10 +29617,29 @@ export namespace LazilyResolvedIriIdentifierInterface {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedIriIdentifierInterface"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -29332,10 +30185,29 @@ export namespace LazilyResolvedIriIdentifierClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedIriIdentifierClass"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -29857,10 +30729,30 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedInterfaceUnionMember2"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -30500,10 +31392,30 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedInterfaceUnionMember1"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -31171,10 +32083,30 @@ export namespace LazilyResolvedClassUnionMember2 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedClassUnionMember2"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -31788,10 +32720,30 @@ export namespace LazilyResolvedClassUnionMember1 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedClassUnionMember1"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -32391,10 +33343,30 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierInterface"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -33076,10 +34048,30 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LazilyResolvedBlankNodeOrIriIdentifierClass"],
+        },
+      },
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -33736,10 +34728,31 @@ export namespace LanguageInPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["LanguageInPropertiesClass"],
+        },
+      },
       languageInLiteralProperty: {
+        comment: "literal property for testing languageIn",
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/languageInLiteralProperty",
         ),
+        mutable: false,
+        name: "languageInLiteralProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -34473,10 +35486,30 @@ export namespace JsPrimitiveUnionPropertyClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["JsPrimitiveUnionPropertyClass"],
+        },
+      },
       jsPrimitiveUnionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/jsPrimitiveUnionProperty",
         ),
+        mutable: false,
+        name: "jsPrimitiveUnionProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -35074,7 +36107,20 @@ export namespace IriIdentifierInterface {
     );
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["IriIdentifierInterface"] },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -35566,7 +36612,20 @@ export namespace IriIdentifierClass {
     );
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["IriIdentifierClass"] },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -35995,10 +37054,30 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: ["InterfaceUnionMember1", "InterfaceUnionMember2"],
+          ownValues: [],
+        },
+      },
       interfaceUnionMemberCommonParentProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
+        mutable: false,
+        name: "interfaceUnionMemberCommonParentProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -36530,9 +37609,15 @@ export namespace InterfaceUnionMember2 {
     properties: {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
       interfaceUnionMember2Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMember2Property",
         ),
+        mutable: false,
+        name: "interfaceUnionMember2Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -37147,9 +38232,15 @@ export namespace InterfaceUnionMember1 {
     properties: {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
       interfaceUnionMember1Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMember1Property",
         ),
+        mutable: false,
+        name: "interfaceUnionMember1Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -37741,10 +38832,27 @@ export namespace Interface {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["Interface"] },
+      },
       interfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceProperty",
         ),
+        mutable: false,
+        name: "interfaceProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -38365,10 +39473,30 @@ export namespace IndirectRecursiveHelperClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["IndirectRecursiveHelperClass"],
+        },
+      },
       indirectRecursiveProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/indirectRecursiveProperty",
         ),
+        mutable: false,
+        name: "indirectRecursiveProperty",
+        recursive: true,
+        type: () => ({ item: IndirectRecursiveClass.$schema }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -38960,10 +40088,27 @@ export namespace IndirectRecursiveClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["IndirectRecursiveClass"] },
+      },
       indirectRecursiveHelperProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/indirectRecursiveHelperProperty",
         ),
+        mutable: false,
+        name: "indirectRecursiveHelperProperty",
+        recursive: true,
+        type: () => ({ item: IndirectRecursiveHelperClass.$schema }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -40061,28 +41206,69 @@ export namespace InPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["InPropertiesClass"] },
+      },
       inBooleansProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/inBooleansProperty",
         ),
+        mutable: false,
+        name: "inBooleansProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       inDateTimesProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/inDateTimesProperty",
         ),
+        mutable: false,
+        name: "inDateTimesProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       inIrisProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
+        mutable: false,
+        name: "inIrisProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       inNumbersProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/inNumbersProperty",
         ),
+        mutable: false,
+        name: "inNumbersProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       inStringsProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/inStringsProperty",
         ),
+        mutable: false,
+        name: "inStringsProperty",
+        recursive: false,
+        type: () => ({ item: { in: ["text", "html"] } }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -40956,10 +42142,26 @@ export namespace InIdentifierClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["InIdentifierClass"] },
+      },
       inIdentifierProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/inIdentifierProperty",
         ),
+        mutable: false,
+        name: "inIdentifierProperty",
+        recursive: false,
+        type: () => ({ item: { in: [] } }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -41509,10 +42711,34 @@ export namespace IdentifierOverride1ClassStatic {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [
+            "IdentifierOverride3Class",
+            "IdentifierOverride4Class",
+            "IdentifierOverride5Class",
+          ],
+          ownValues: [],
+        },
+      },
       identifierOverrideProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/identifierOverrideProperty",
         ),
+        mutable: false,
+        name: "identifierOverrideProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -43676,15 +44902,38 @@ export namespace HasValuePropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["HasValuePropertiesClass"] },
+      },
       hasIriValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/hasIriValueProperty",
         ),
+        mutable: false,
+        name: "hasIriValueProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       hasLiteralValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/hasLiteralValueProperty",
         ),
+        mutable: false,
+        name: "hasLiteralValueProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -44271,10 +45520,27 @@ export namespace FlattenClassUnionMember3 {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["FlattenClassUnionMember3"] },
+      },
       flattenClassUnionMember3Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/flattenClassUnionMember3Property",
         ),
+        mutable: false,
+        name: "flattenClassUnionMember3Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -44924,10 +46190,27 @@ export namespace ExternClassPropertyClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["ExternClassPropertyClass"] },
+      },
       externClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/externClassProperty",
         ),
+        mutable: false,
+        name: "externClassProperty",
+        recursive: false,
+        type: () => ({ item: ExternClass.$schema }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -45451,10 +46734,27 @@ export namespace AbstractBaseClassForExternClassStatic {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: ["ExternClass"], ownValues: [] },
+      },
       abstractBaseClassForExternClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/abstractBaseClassForExternClassProperty",
         ),
+        mutable: false,
+        name: "abstractBaseClassForExternClassProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -46007,10 +47307,27 @@ export namespace ExplicitRdfTypeClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["ExplicitRdfTypeClass"] },
+      },
       explicitRdfTypeProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/explicitRdfTypeProperty",
         ),
+        mutable: false,
+        name: "explicitRdfTypeProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -46633,10 +47950,30 @@ export namespace ExplicitFromToRdfTypesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["ExplicitFromToRdfTypesClass"],
+        },
+      },
       explicitFromToRdfTypesProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/explicitFromToRdfTypesProperty",
         ),
+        mutable: false,
+        name: "explicitFromToRdfTypesProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -47294,10 +48631,27 @@ export namespace DirectRecursiveClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["DirectRecursiveClass"] },
+      },
       directRecursiveProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/directRecursiveProperty",
         ),
+        mutable: false,
+        name: "directRecursiveProperty",
+        recursive: true,
+        type: () => ({ item: DirectRecursiveClass.$schema }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -48300,35 +49654,90 @@ export namespace DefaultValuePropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "sha256" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
+        type: { in: [] },
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["DefaultValuePropertiesClass"],
+        },
+      },
       dateDefaultValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateDefaultValueProperty",
         ),
+        mutable: false,
+        name: "dateDefaultValueProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       dateTimeDefaultValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateTimeDefaultValueProperty",
         ),
+        mutable: false,
+        name: "dateTimeDefaultValueProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       falseBooleanDefaultValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/falseBooleanDefaultValueProperty",
         ),
+        mutable: false,
+        name: "falseBooleanDefaultValueProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       numberDefaultValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/numberDefaultValueProperty",
         ),
+        mutable: false,
+        name: "numberDefaultValueProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       stringDefaultValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/stringDefaultValueProperty",
         ),
+        mutable: false,
+        name: "stringDefaultValueProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
       trueBooleanDefaultValueProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/trueBooleanDefaultValueProperty",
         ),
+        mutable: false,
+        name: "trueBooleanDefaultValueProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -50119,25 +51528,60 @@ export namespace DateUnionPropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["DateUnionPropertiesClass"] },
+      },
       dateOrDateTimeProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateOrDateTimeProperty",
         ),
+        mutable: false,
+        name: "dateOrDateTimeProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       dateOrStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateOrStringProperty",
         ),
+        mutable: false,
+        name: "dateOrStringProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       dateTimeOrDateProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/dateTimeOrDateProperty",
         ),
+        mutable: false,
+        name: "dateTimeOrDateProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       stringOrDateProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/stringOrDateProperty",
         ),
+        mutable: false,
+        name: "stringOrDateProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -52762,65 +54206,151 @@ export namespace ConvertibleTypePropertiesClass {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["ConvertibleTypePropertiesClass"],
+        },
+      },
       convertibleIriNonEmptySetProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriNonEmptySetProperty",
         ),
+        mutable: false,
+        name: "convertibleIriNonEmptySetProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleIriOptionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriOptionProperty",
         ),
+        mutable: false,
+        name: "convertibleIriOptionProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleIriProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriProperty",
         ),
+        mutable: false,
+        name: "convertibleIriProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       convertibleIriSetProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriSetProperty",
         ),
+        mutable: false,
+        name: "convertibleIriSetProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleLiteralNonEmptySetProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralNonEmptySetProperty",
         ),
+        mutable: false,
+        name: "convertibleLiteralNonEmptySetProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleLiteralOptionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralOptionProperty",
         ),
+        mutable: false,
+        name: "convertibleLiteralOptionProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleLiteralProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralProperty",
         ),
+        mutable: false,
+        name: "convertibleLiteralProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       convertibleLiteralSetProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralSetProperty",
         ),
+        mutable: false,
+        name: "convertibleLiteralSetProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleTermNonEmptySetProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermNonEmptySetProperty",
         ),
+        mutable: false,
+        name: "convertibleTermNonEmptySetProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleTermOptionProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermOptionProperty",
         ),
+        mutable: false,
+        name: "convertibleTermOptionProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
       convertibleTermProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermProperty",
         ),
+        mutable: false,
+        name: "convertibleTermProperty",
+        recursive: false,
+        type: () => ({}),
+        visibility: "public" as const,
       },
       convertibleTermSetProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleTermSetProperty",
         ),
+        mutable: false,
+        name: "convertibleTermSetProperty",
+        recursive: false,
+        type: () => ({ item: {} }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -53984,10 +55514,34 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [
+            "BaseInterfaceWithoutProperties",
+            "ConcreteChildInterface",
+            "ConcreteParentInterface",
+          ],
+          ownValues: ["BaseInterfaceWithProperties"],
+        },
+      },
       baseInterfaceWithPropertiesProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/baseInterfaceWithPropertiesProperty",
         ),
+        mutable: false,
+        name: "baseInterfaceWithPropertiesProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -55122,9 +56676,15 @@ export namespace ConcreteParentInterfaceStatic {
     properties: {
       ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
       concreteParentInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/concreteParentInterfaceProperty",
         ),
+        mutable: false,
+        name: "concreteParentInterfaceProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -55759,9 +57319,15 @@ export namespace ConcreteChildInterface {
     properties: {
       ...ConcreteParentInterfaceStatic.$schema.properties,
       concreteChildInterfaceProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/concreteChildInterfaceProperty",
         ),
+        mutable: false,
+        name: "concreteChildInterfaceProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -56396,10 +57962,35 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "sha256" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $identifierPrefix: {
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
+        type: { in: [] },
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: ["ConcreteChildClass", "ConcreteParentClass"],
+          ownValues: [],
+        },
+      },
       abstractBaseClassWithPropertiesProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/abstractBaseClassWithPropertiesProperty",
         ),
+        mutable: false,
+        name: "abstractBaseClassWithPropertiesProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -57201,9 +58792,15 @@ export namespace ConcreteParentClassStatic {
     properties: {
       ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
       concreteParentClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/concreteParentClassProperty",
         ),
+        mutable: false,
+        name: "concreteParentClassProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -57805,9 +59402,15 @@ export namespace ConcreteChildClass {
     properties: {
       ...ConcreteParentClassStatic.$schema.properties,
       concreteChildClassProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/concreteChildClassProperty",
         ),
+        mutable: false,
+        name: "concreteChildClassProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -58360,10 +59963,30 @@ export namespace ClassUnionMemberCommonParentStatic {
 
   export const $schema = {
     properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: ["ClassUnionMember1", "ClassUnionMember2"],
+          ownValues: [],
+        },
+      },
       classUnionMemberCommonParentProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMemberCommonParentProperty",
         ),
+        mutable: false,
+        name: "classUnionMemberCommonParentProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -58865,9 +60488,15 @@ export namespace ClassUnionMember2 {
     properties: {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
       classUnionMember2Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMember2Property",
         ),
+        mutable: false,
+        name: "classUnionMember2Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -59443,9 +61072,15 @@ export namespace ClassUnionMember1 {
     properties: {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
       classUnionMember1Property: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMember1Property",
         ),
+        mutable: false,
+        name: "classUnionMember1Property",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -59970,7 +61605,24 @@ export namespace BlankNodeOrIriIdentifierInterface {
     );
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["BlankNodeOrIriIdentifierInterface"],
+        },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -60476,7 +62128,24 @@ export namespace BlankNodeOrIriIdentifierClass {
     );
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["BlankNodeOrIriIdentifierClass"],
+        },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -60912,7 +62581,24 @@ export namespace BlankNodeIdentifierInterface {
     );
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: {
+          descendantValues: [],
+          ownValues: ["BlankNodeIdentifierInterface"],
+        },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -61417,7 +63103,21 @@ export namespace BlankNodeIdentifierClass {
     );
   }
 
-  export const $schema = { properties: {} } as const;
+  export const $schema = {
+    properties: {
+      $identifier: {
+        kind: "IdentifierProperty" as const,
+        identifierMintingStrategy: "blankNode" as const,
+        name: "$identifier",
+        type: {},
+      },
+      $type: {
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
+        type: { descendantValues: [], ownValues: ["BlankNodeIdentifierClass"] },
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -61737,9 +63437,15 @@ export namespace ClassUnion {
   export const $schema = {
     properties: {
       classUnionMemberCommonParentProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/classUnionMemberCommonParentProperty",
         ),
+        mutable: false,
+        name: "classUnionMemberCommonParentProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -62112,6 +63818,8 @@ export namespace FlattenClassUnion {
     ]);
   }
 
+  export const $schema = { properties: {} } as const;
+
   export function $sparqlConstructQuery(
     parameters?: {
       filter?: FlattenClassUnion.$Filter;
@@ -62483,9 +64191,15 @@ export namespace InterfaceUnion {
   export const $schema = {
     properties: {
       interfaceUnionMemberCommonParentProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/interfaceUnionMemberCommonParentProperty",
         ),
+        mutable: false,
+        name: "interfaceUnionMemberCommonParentProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -62842,9 +64556,15 @@ export namespace LazilyResolvedClassUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -63246,9 +64966,15 @@ export namespace LazilyResolvedInterfaceUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -63632,9 +65358,15 @@ export namespace PartialClassUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -64002,9 +65734,15 @@ export namespace PartialInterfaceUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
+        kind: "ShaclProperty" as const,
         identifier: dataFactory.namedNode(
           "http://example.com/lazilyResolvedStringProperty",
         ),
+        mutable: false,
+        name: "lazilyResolvedStringProperty",
+        recursive: false,
+        type: () => ({ in: [] }),
+        visibility: "public" as const,
       },
     },
   } as const;
@@ -64378,6 +66116,8 @@ export namespace NoRdfTypeClassUnion {
     ]);
   }
 
+  export const $schema = { properties: {} } as const;
+
   export function $sparqlConstructQuery(
     parameters?: {
       filter?: NoRdfTypeClassUnion.$Filter;
@@ -64737,6 +66477,8 @@ export namespace RecursiveClassUnion {
       RecursiveClassUnionMember2.$jsonZodSchema(),
     ]);
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -67940,6 +69682,8 @@ export namespace $Object {
       $NamedDefaultPartial.$jsonZodSchema(),
     ]);
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {

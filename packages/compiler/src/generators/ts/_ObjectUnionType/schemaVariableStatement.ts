@@ -1,4 +1,3 @@
-import { Maybe } from "purify-ts";
 import {
   StructureKind,
   VariableDeclarationKind,
@@ -7,12 +6,12 @@ import {
 
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import type { Type } from "../Type.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import type { Type } from "../Type.js";
 
 export function schemaVariableStatement(
   this: ObjectUnionType,
-): Maybe<VariableStatementStructure> {
+): VariableStatementStructure {
   const commonPropertiesByName: Record<
     string,
     {
@@ -55,11 +54,8 @@ export function schemaVariableStatement(
     }
     propertiesObject.push(`${property.name}: ${property.schema}`);
   }
-  if (propertiesObject.length === 0) {
-    return Maybe.empty();
-  }
 
-  return Maybe.of({
+  return {
     declarationKind: VariableDeclarationKind.Const,
     kind: StructureKind.VariableStatement,
     declarations: [
@@ -69,5 +65,5 @@ export function schemaVariableStatement(
       },
     ],
     isExported: true,
-  } satisfies VariableStatementStructure);
+  };
 }

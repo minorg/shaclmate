@@ -1,6 +1,7 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
@@ -8,6 +9,7 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { SetType } from "./SetType.js";
 import type { Sparql } from "./Sparql.js";
 
@@ -23,6 +25,7 @@ export abstract class AbstractLazyObjectType<
     readonly rawName: string;
     readonly snippetDeclarations: Readonly<Record<string, string>>;
   };
+
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
     Maybe.empty();
   override readonly mutable = false;
@@ -76,6 +79,18 @@ export abstract class AbstractLazyObjectType<
     return this.resolvedType.graphqlType;
   }
 
+  override get name(): string {
+    return this.runtimeClass.name;
+  }
+
+  @Memoize()
+  override get schema(): string {
+    return objectInitializer({
+      partialType: this.partialType.schema,
+      resolvedType: this.resolvedType.schema,
+    });
+  }
+
   override hashStatements({
     depth,
     variables,
@@ -107,15 +122,6 @@ export abstract class AbstractLazyObjectType<
     return this.partialType.jsonZodSchema(parameters);
   }
 
-  override get name(): string {
-    return this.runtimeClass.name;
-  }
-
-  @Memoize()
-  override get schema(): string {
-    return `{ partialType: ${this.partialType.schema}, resolvedType: ${this.resolvedType.schema} }`;
-  }
-
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
@@ -136,31 +142,6 @@ export abstract class AbstractLazyObjectType<
     parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
   ): readonly Sparql.Pattern[] {
     return this.partialType.sparqlWherePatterns(parameters);
-  }
-
-  protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
-    resolvedObjectUnionType,
-    partialObjectUnionType,
-    variables,
-  }: {
-    resolvedObjectUnionType: ObjectUnionType;
-    partialObjectUnionType: ObjectUnionType;
-    variables: { resolvedObjectUnion: string };
-  }) {
-    invariant(
-      resolvedObjectUnionType.memberTypes.length ===
-        partialObjectUnionType.memberTypes.length,
-    );
-
-    const caseBlocks = resolvedObjectUnionType.memberTypes.map(
-      (resolvedObjectType, objectTypeI) => {
-        return `${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
-      },
-    );
-    caseBlocks.push(
-      `default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
-    );
-    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
   }
 
   override toJsonExpression({
@@ -188,6 +169,31 @@ export abstract class AbstractLazyObjectType<
     features: ReadonlySet<TsFeature>;
   }): readonly Import[] {
     return this.resolvedType.useImports(parameters).concat(Import.PURIFY);
+  }
+
+  protected resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({
+    resolvedObjectUnionType,
+    partialObjectUnionType,
+    variables,
+  }: {
+    resolvedObjectUnionType: ObjectUnionType;
+    partialObjectUnionType: ObjectUnionType;
+    variables: { resolvedObjectUnion: string };
+  }) {
+    invariant(
+      resolvedObjectUnionType.memberTypes.length ===
+        partialObjectUnionType.memberTypes.length,
+    );
+
+    const caseBlocks = resolvedObjectUnionType.memberTypes.map(
+      (resolvedObjectType, objectTypeI) => {
+        return `${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+      },
+    );
+    caseBlocks.push(
+      `default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
+    );
+    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
   }
 }
 

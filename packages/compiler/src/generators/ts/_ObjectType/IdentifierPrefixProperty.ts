@@ -96,7 +96,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   @Memoize()
   override get schema(): string {
     return objectInitializer({
-      kind: JSON.stringify(this.kind),
+      kind: `${JSON.stringify(this.kind)} as const`,
       name: JSON.stringify(this.name),
       type: this.type.schema,
     });

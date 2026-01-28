@@ -1,8 +1,8 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as N3 from "n3";
-
 import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
+
 import {
   type $Object,
   type $ObjectSet,
@@ -118,6 +118,8 @@ export namespace ExternClass {
     AbstractBaseClassForExternClassStatic.$jsonZodSchema;
   export const $jsonUiSchema =
     AbstractBaseClassForExternClassStatic.$jsonUiSchema;
+
+  export const $schema = AbstractBaseClassForExternClassStatic.$schema;
 
   export const $sparqlConstructTriples =
     AbstractBaseClassForExternClassStatic.$sparqlConstructTriples;

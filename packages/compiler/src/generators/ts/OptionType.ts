@@ -1,6 +1,7 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
@@ -88,17 +89,6 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
     });
   }
 
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<AbstractType["jsonType"]>[0],
-  ): AbstractType.JsonType {
-    const itemTypeJsonType = this.itemType.jsonType(parameters);
-    invariant(!itemTypeJsonType.optional);
-    return new AbstractType.JsonType(itemTypeJsonType.name, {
-      optional: true,
-    });
-  }
-
   override get mutable(): boolean {
     return this.itemType.mutable;
   }
@@ -153,6 +143,17 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
         })
         .join("\n")} })`,
     ];
+  }
+
+  @Memoize()
+  override jsonType(
+    parameters?: Parameters<AbstractType["jsonType"]>[0],
+  ): AbstractType.JsonType {
+    const itemTypeJsonType = this.itemType.jsonType(parameters);
+    invariant(!itemTypeJsonType.optional);
+    return new AbstractType.JsonType(itemTypeJsonType.name, {
+      optional: true,
+    });
   }
 
   override jsonUiSchemaElement(

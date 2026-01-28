@@ -63,11 +63,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  protected get concreteMemberTypes(): readonly _ObjectUnionType.MemberType[] {
-    return this.memberTypes.filter((memberType) => !memberType.abstract);
-  }
-
-  @Memoize()
   override get conversions(): readonly AbstractDeclaredType.Conversion[] {
     return [
       {
@@ -97,7 +92,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectUnionType.jsonDeclarations.bind(this)(),
       ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectUnionType.schemaVariableStatement.bind(this)().toList(),
+      _ObjectUnionType.schemaVariableStatement.bind(this)(),
       ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
       ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
     ];
@@ -119,33 +114,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractDeclaredType.DiscriminantProperty> {
     return Maybe.of(this._discriminantProperty);
-  }
-
-  @Memoize()
-  protected get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
-    const discriminantPropertyDescendantValues: string[] = [];
-    const discriminantPropertyName =
-      this.memberTypes[0]._discriminantProperty.name;
-    const discriminantPropertyOwnValues: string[] = [];
-    for (const memberType of this.memberTypes) {
-      // invariant(
-      //   memberType.declarationType === this.memberTypes[0].declarationType,
-      // );
-      invariant(
-        memberType._discriminantProperty.name === discriminantPropertyName,
-      );
-      discriminantPropertyDescendantValues.push(
-        ...memberType._discriminantProperty.descendantValues,
-      );
-      discriminantPropertyOwnValues.push(
-        ...memberType._discriminantProperty.ownValues,
-      );
-    }
-    return {
-      descendantValues: discriminantPropertyDescendantValues,
-      name: discriminantPropertyName,
-      ownValues: discriminantPropertyOwnValues,
-    };
   }
 
   @Memoize()
@@ -176,15 +144,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonType(): AbstractDeclaredType.JsonType {
-    return new AbstractDeclaredType.JsonType(
-      this.memberTypes
-        .map((memberType) => memberType.jsonType().name)
-        .join(" | "),
-    );
-  }
-
-  @Memoize()
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
   }
@@ -201,6 +160,38 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   get staticModuleName() {
     return this.name;
+  }
+
+  @Memoize()
+  protected get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
+    const discriminantPropertyDescendantValues: string[] = [];
+    const discriminantPropertyName =
+      this.memberTypes[0]._discriminantProperty.name;
+    const discriminantPropertyOwnValues: string[] = [];
+    for (const memberType of this.memberTypes) {
+      // invariant(
+      //   memberType.declarationType === this.memberTypes[0].declarationType,
+      // );
+      invariant(
+        memberType._discriminantProperty.name === discriminantPropertyName,
+      );
+      discriminantPropertyDescendantValues.push(
+        ...memberType._discriminantProperty.descendantValues,
+      );
+      discriminantPropertyOwnValues.push(
+        ...memberType._discriminantProperty.ownValues,
+      );
+    }
+    return {
+      descendantValues: discriminantPropertyDescendantValues,
+      name: discriminantPropertyName,
+      ownValues: discriminantPropertyOwnValues,
+    };
+  }
+
+  @Memoize()
+  protected get concreteMemberTypes(): readonly _ObjectUnionType.MemberType[] {
+    return this.memberTypes.filter((memberType) => !memberType.abstract);
   }
 
   @Memoize()
@@ -246,6 +237,15 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return [
       `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
     ];
+  }
+
+  @Memoize()
+  override jsonType(): AbstractDeclaredType.JsonType {
+    return new AbstractDeclaredType.JsonType(
+      this.memberTypes
+        .map((memberType) => memberType.jsonType().name)
+        .join(" | "),
+    );
   }
 
   override jsonUiSchemaElement(): Maybe<string> {

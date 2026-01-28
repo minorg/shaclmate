@@ -89,11 +89,13 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   @Memoize()
   override get schema(): string {
     return objectInitializer({
-      kind: JSON.stringify(this.kind),
+      kind: `${JSON.stringify(this.kind)} as const`,
       name: JSON.stringify(this.name),
       type: {
-        descendantValues: this.type.descendantValues.concat(),
-        ownValues: this.type.ownValues.concat(),
+        descendantValues: this.type.descendantValues.map((_) =>
+          JSON.stringify(_),
+        ),
+        ownValues: this.type.ownValues.map((_) => JSON.stringify(_)),
       },
     });
   }

@@ -325,8 +325,10 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   @Memoize()
   override get schema(): string {
     return objectInitializer({
-      kind: JSON.stringify(this.kind),
-      identifierMintingStrategy: this.identifierMintingStrategy.extract(),
+      kind: `${JSON.stringify(this.kind)} as const`,
+      identifierMintingStrategy: this.identifierMintingStrategy
+        .map((_) => `${JSON.stringify(_)} as const`)
+        .extract(),
       name: JSON.stringify(this.name),
       type: this.type.schema,
     });
