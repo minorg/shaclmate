@@ -377,6 +377,11 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
+  override get schema(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}schema`;
+  }
+
+  @Memoize()
   get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
       return this.parentObjectTypes[0].toRdfjsResourceType;

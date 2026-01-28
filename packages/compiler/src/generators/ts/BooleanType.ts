@@ -43,6 +43,11 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return "boolean";
   }
 
+  @Memoize()
+  override get schema(): string {
+    return "{}";
+  }
+
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<

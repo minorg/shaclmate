@@ -97,6 +97,11 @@ export abstract class AbstractProperty<
   abstract readonly recursive: boolean;
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  abstract readonly schema: string;
+
+  /**
    * Property type
 .   */
   readonly type: TypeT;

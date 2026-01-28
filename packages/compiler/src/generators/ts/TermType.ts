@@ -42,6 +42,11 @@ export class TermType<
     throw new Error("not implemented");
   }
 
+  @Memoize()
+  override get schema(): string {
+    return `{ }`;
+  }
+
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<

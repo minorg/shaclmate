@@ -194,6 +194,11 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return objectSetMethodNames.bind(this)();
   }
 
+  @Memoize()
+  override get schema(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}schema`;
+  }
+
   get staticModuleName() {
     return this.name;
   }

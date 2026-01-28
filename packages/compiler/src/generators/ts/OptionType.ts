@@ -108,6 +108,11 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
     return `purify.Maybe<${this.itemType.name}>`;
   }
 
+  @Memoize()
+  override get schema(): string {
+    return `{ item: ${this.itemType.schema} }`;
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {

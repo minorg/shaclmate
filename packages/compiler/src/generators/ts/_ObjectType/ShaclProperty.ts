@@ -1,4 +1,5 @@
 import type * as rdfjs from "@rdfjs/types";
+
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import type {
@@ -8,6 +9,7 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import type { Import } from "../Import.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -19,6 +21,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   private readonly comment: Maybe<string>;
   private readonly description: Maybe<string>;
   private readonly label: Maybe<string>;
+
   readonly kind = "ShaclProperty";
   override readonly mutable: boolean;
   readonly path: rdfjs.NamedNode;
@@ -50,11 +53,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get equalsFunction(): Maybe<string> {
-    return Maybe.of(this.type.equalsFunction);
-  }
-
-  @Memoize()
   override get constructorParametersPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -75,6 +73,101 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       name: this.name,
       type: [...typeNames].sort().join(" | "),
     });
+  }
+
+  @Memoize()
+  override get declarationImports(): readonly Import[] {
+    return this.type.useImports({ features: this.objectType.features });
+  }
+
+  @Memoize()
+  override get equalsFunction(): Maybe<string> {
+    return Maybe.of(this.type.equalsFunction);
+  }
+
+  @Memoize()
+  override get filterProperty() {
+    if (this.visibility !== "public") {
+      return Maybe.empty();
+    }
+
+    return Maybe.of({
+      name: this.name,
+      type: this.type.filterType,
+    });
+  }
+
+  override get getAccessorDeclaration(): Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  > {
+    return Maybe.empty();
+  }
+
+  @Memoize()
+  override get graphqlField(): AbstractProperty<TypeT>["graphqlField"] {
+    const args = this.type.graphqlArgs;
+    const argsVariable = args.isJust() ? "args" : "_args";
+    return Maybe.of({
+      args,
+      description: this.comment.map(JSON.stringify),
+      name: this.name,
+      resolve: `(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
+      type: this.type.graphqlType.name,
+    });
+  }
+
+  @Memoize()
+  override get jsonPropertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    const typeJsonType = this.type.jsonType();
+    return Maybe.of({
+      hasQuestionToken: typeJsonType.optional,
+      isReadonly: true,
+      name: this.name,
+      type: typeJsonType.requiredName,
+    });
+  }
+
+  @Memoize()
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    return Maybe.of({
+      isReadonly: !this.mutable,
+      leadingTrivia: this.declarationComment,
+      name: this.name,
+      scope: ShaclProperty.visibilityToScope(this.visibility),
+      type: this.type.name,
+    });
+  }
+
+  @Memoize()
+  override get propertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: !this.mutable,
+      leadingTrivia: this.declarationComment,
+      name: this.name,
+      type: this.type.name,
+    });
+  }
+
+  @Memoize()
+  get schema() {}
+
+  protected get declarationComment(): string | undefined {
+    return this.comment
+      .alt(this.description)
+      .alt(this.label)
+      .map(tsComment)
+      .extract();
+  }
+
+  @Memoize()
+  protected get predicate(): string {
+    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}["identifier"]`;
   }
 
   override constructorStatements({
@@ -128,54 +221,31 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     ];
   }
 
-  @Memoize()
-  override get filterProperty() {
-    if (this.visibility !== "public") {
-      return Maybe.empty();
-    }
+  override fromRdfExpression({
+    variables,
+  }: Parameters<
+    AbstractProperty<TypeT>["fromRdfExpression"]
+  >[0]): Maybe<string> {
+    // Assume the property has the correct range and ignore the object's RDF type.
+    // This also accommodates the case where the object of a property is a dangling identifier that's not the
+    // subject of any statements.
 
-    return Maybe.of({
-      name: this.name,
-      type: this.type.filterType,
-    });
-  }
-
-  override get getAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
-    return Maybe.empty();
-  }
-
-  @Memoize()
-  override get graphqlField(): AbstractProperty<TypeT>["graphqlField"] {
-    const args = this.type.graphqlArgs;
-    const argsVariable = args.isJust() ? "args" : "_args";
-    return Maybe.of({
-      args,
-      description: this.comment.map(JSON.stringify),
-      name: this.name,
-      resolve: `(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
-      type: this.type.graphqlType.name,
-    });
+    return Maybe.of(
+      `${this.type.fromRdfExpression({
+        variables: {
+          ...variables,
+          ignoreRdfType: true,
+          predicate: this.predicate,
+          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}["identifier"], { unique: true }))`,
+        },
+      })}.chain(values => values.head())`,
+    );
   }
 
   override hashStatements(
     parameters: Parameters<AbstractProperty<TypeT>["hashStatements"]>[0],
   ): readonly string[] {
     return this.type.hashStatements(parameters);
-  }
-
-  @Memoize()
-  override get jsonPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    const typeJsonType = this.type.jsonType();
-    return Maybe.of({
-      hasQuestionToken: typeJsonType.optional,
-      isReadonly: true,
-      name: this.name,
-      type: typeJsonType.requiredName,
-    });
   }
 
   jsonUiSchemaElement({
@@ -209,61 +279,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  @Memoize()
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return Maybe.of({
-      isReadonly: !this.mutable,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      scope: ShaclProperty.visibilityToScope(this.visibility),
-      type: this.type.name,
-    });
-  }
-
-  @Memoize()
-  override get declarationImports(): readonly Import[] {
-    return this.type.useImports({ features: this.objectType.features });
-  }
-
-  @Memoize()
-  override get propertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: !this.mutable,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: this.type.name,
-    });
-  }
-
   override snippetDeclarations(
     parameters: Parameters<AbstractProperty<TypeT>["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {
     return this.type.snippetDeclarations(parameters);
-  }
-
-  override fromRdfExpression({
-    variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["fromRdfExpression"]
-  >[0]): Maybe<string> {
-    // Assume the property has the correct range and ignore the object's RDF type.
-    // This also accommodates the case where the object of a property is a dangling identifier that's not the
-    // subject of any statements.
-
-    return Maybe.of(
-      `${this.type.fromRdfExpression({
-        variables: {
-          ...variables,
-          ignoreRdfType: true,
-          predicate: this.predicate,
-          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}["identifier"], { unique: true }))`,
-        },
-      })}.chain(values => values.head())`,
-    );
   }
 
   override sparqlConstructTriples({
@@ -342,18 +361,5 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         },
       )});`,
     ];
-  }
-
-  protected get declarationComment(): string | undefined {
-    return this.comment
-      .alt(this.description)
-      .alt(this.label)
-      .map(tsComment)
-      .extract();
-  }
-
-  @Memoize()
-  protected get predicate(): string {
-    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}["identifier"]`;
   }
 }

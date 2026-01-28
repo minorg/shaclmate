@@ -111,6 +111,11 @@ export abstract class AbstractLazyObjectType<
     return this.runtimeClass.name;
   }
 
+  @Memoize()
+  override get schema(): string {
+    return `{ partialType: ${this.partialType.schema}, resolvedType: ${this.resolvedType.schema} }`;
+  }
+
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, string>> {

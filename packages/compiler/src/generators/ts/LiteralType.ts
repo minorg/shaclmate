@@ -1,4 +1,5 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
@@ -12,6 +13,11 @@ export class LiteralType extends AbstractLiteralType {
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  @Memoize()
+  override get schema(): string {
+    return "{}";
   }
 
   protected override filterSparqlWherePatterns({

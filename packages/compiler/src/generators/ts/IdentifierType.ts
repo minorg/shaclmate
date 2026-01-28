@@ -168,6 +168,11 @@ export class IdentifierType extends AbstractTermType<
   }
 
   @Memoize()
+  override get schema(): string {
+    return `{ }`;
+  }
+
+  @Memoize()
   get toStringFunctionDeclaration(): VariableStatementStructure {
     // Re-export rdfjsResource.Resource.Identifier.toString
     return {

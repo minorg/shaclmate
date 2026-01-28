@@ -54,6 +54,11 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
     return "number";
   }
 
+  @Memoize()
+  override get schema(): string {
+    return "{}";
+  }
+
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<

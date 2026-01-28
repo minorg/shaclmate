@@ -1,5 +1,6 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import type { Sparql } from "./Sparql.js";
@@ -9,14 +10,6 @@ import type { Type } from "./Type.js";
  * Abstract base class all types.
  */
 export abstract class AbstractType {
-  constructor({
-    comment,
-    label,
-  }: { comment: Maybe<string>; label: Maybe<string> }) {
-    this.comment = comment;
-    this.label = label;
-  }
-
   /**
    * Comment from rdfs:comment.
    */
@@ -82,11 +75,24 @@ export abstract class AbstractType {
   abstract readonly name: string;
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  abstract readonly schema: string;
+
+  /**
    * JavaScript typeof(s) the type.
    */
   abstract readonly typeofs: NonEmptyList<
     "boolean" | "object" | "number" | "string"
   >;
+
+  constructor({
+    comment,
+    label,
+  }: { comment: Maybe<string>; label: Maybe<string> }) {
+    this.comment = comment;
+    this.label = label;
+  }
 
   /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has

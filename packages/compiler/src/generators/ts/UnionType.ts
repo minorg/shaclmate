@@ -385,6 +385,11 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 
   @Memoize()
+  override get schema(): string {
+    return `{ }`;
+  }
+
+  @Memoize()
   override get typeofs(): AbstractType["typeofs"] {
     return NonEmptyList.fromArray(
       this.memberTypes.flatMap((memberType) => memberType.typeofs),

@@ -56,6 +56,11 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     return "Date";
   }
 
+  @Memoize()
+  override get schema(): string {
+    return "{}";
+  }
+
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<

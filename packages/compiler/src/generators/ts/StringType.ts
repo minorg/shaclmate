@@ -43,6 +43,11 @@ export class StringType extends AbstractPrimitiveType<string> {
     return "string";
   }
 
+  @Memoize()
+  override get schema(): string {
+    return `{ in: ${JSON.stringify(this.primitiveIn)} }`;
+  }
+
   protected override filterSparqlWherePatterns({
     variables,
   }: Parameters<
