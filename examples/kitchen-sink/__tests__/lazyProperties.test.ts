@@ -292,11 +292,13 @@ describe("lazyProperties", () => {
   });
 
   for (const propertyNameString of Object.keys(
-    kitchenSink.LazyPropertiesClass.$properties,
-  ).concat(Object.keys(kitchenSink.LazyPropertiesInterface.$properties))) {
+    kitchenSink.LazyPropertiesClass.$schema.properties,
+  ).concat(
+    Object.keys(kitchenSink.LazyPropertiesInterface.$schema.properties),
+  )) {
     const propertyName = propertyNameString as
-      | keyof typeof kitchenSink.LazyPropertiesClass.$properties
-      | keyof typeof kitchenSink.LazyPropertiesInterface.$properties;
+      | keyof typeof kitchenSink.LazyPropertiesClass.$schema.properties
+      | keyof typeof kitchenSink.LazyPropertiesInterface.$schema.properties;
 
     for (const empty of [false, true]) {
       it(`${propertyName} ${empty ? "empty" : "non-empty"}`, async () => {

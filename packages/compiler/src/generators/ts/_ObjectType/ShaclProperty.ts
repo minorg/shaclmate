@@ -260,7 +260,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           ...variables,
           ignoreRdfType: true,
           predicate: this.predicate,
-          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}properties.${this.name}["identifier"], { unique: true }))`,
+          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}["identifier"], { unique: true }))`,
         },
       })}.chain(values => values.head())`,
     );
@@ -354,6 +354,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   protected get predicate(): string {
-    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}properties.${this.name}["identifier"]`;
+    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}["identifier"]`;
   }
 }

@@ -2463,7 +2463,7 @@ export namespace UuidV4IriIdentifierInterface {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.uuidV4IriProperty["identifier"],
+            $schema.properties.uuidV4IriProperty["identifier"],
             { unique: true },
           ),
         )
@@ -2471,9 +2471,8 @@ export namespace UuidV4IriIdentifierInterface {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
-                  "identifier"
-                ],
+                UuidV4IriIdentifierInterface.$schema.properties
+                  .uuidV4IriProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
             }),
@@ -2569,7 +2568,7 @@ export namespace UuidV4IriIdentifierInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface")}UuidV4IriProperty`,
       ),
       predicate:
-        UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
+        UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty[
           "identifier"
         ],
       subject,
@@ -2605,7 +2604,7 @@ export namespace UuidV4IriIdentifierInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface")}UuidV4IriProperty`,
             ),
             predicate:
-              UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty[
+              UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty[
                 "identifier"
               ],
             subject: subject,
@@ -2700,7 +2699,9 @@ export namespace UuidV4IriIdentifierInterface {
       { mutateGraph },
     );
     resource.add(
-      UuidV4IriIdentifierInterface.$properties.uuidV4IriProperty["identifier"],
+      UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty[
+        "identifier"
+      ],
       ...[_uuidV4IriIdentifierInterface.uuidV4IriProperty],
     );
     return resource;
@@ -2856,7 +2857,9 @@ export class UuidV4IriIdentifierClass {
       mutateGraph,
     });
     resource.add(
-      UuidV4IriIdentifierClass.$properties.uuidV4IriProperty["identifier"],
+      UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty[
+        "identifier"
+      ],
       ...[this.uuidV4IriProperty],
     );
     return resource;
@@ -3046,7 +3049,7 @@ export namespace UuidV4IriIdentifierClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.uuidV4IriProperty["identifier"],
+          $schema.properties.uuidV4IriProperty["identifier"],
           { unique: true },
         ),
       )
@@ -3054,7 +3057,7 @@ export namespace UuidV4IriIdentifierClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              UuidV4IriIdentifierClass.$properties.uuidV4IriProperty[
+              UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty[
                 "identifier"
               ],
             preferredLanguages: $parameters.preferredLanguages,
@@ -3146,7 +3149,9 @@ export namespace UuidV4IriIdentifierClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass")}UuidV4IriProperty`,
       ),
       predicate:
-        UuidV4IriIdentifierClass.$properties.uuidV4IriProperty["identifier"],
+        UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -3179,7 +3184,7 @@ export namespace UuidV4IriIdentifierClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass")}UuidV4IriProperty`,
             ),
             predicate:
-              UuidV4IriIdentifierClass.$properties.uuidV4IriProperty[
+              UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty[
                 "identifier"
               ],
             subject: subject,
@@ -4200,9 +4205,8 @@ export class UnionDiscriminantsClass {
       mutateGraph,
     });
     resource.add(
-      UnionDiscriminantsClass.$properties.optionalClassOrClassOrStringProperty[
-        "identifier"
-      ],
+      UnionDiscriminantsClass.$schema.properties
+        .optionalClassOrClassOrStringProperty["identifier"],
       ...this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         value.type === "2-string"
           ? ([value.value] as readonly Parameters<
@@ -4219,7 +4223,7 @@ export class UnionDiscriminantsClass {
       ),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.optionalIriOrLiteralProperty[
+      UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty[
         "identifier"
       ],
       ...this.optionalIriOrLiteralProperty
@@ -4232,7 +4236,7 @@ export class UnionDiscriminantsClass {
         ),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.optionalIriOrStringProperty[
+      UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty[
         "identifier"
       ],
       ...this.optionalIriOrStringProperty
@@ -4245,9 +4249,8 @@ export class UnionDiscriminantsClass {
         ),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.requiredClassOrClassOrStringProperty[
-        "identifier"
-      ],
+      UnionDiscriminantsClass.$schema.properties
+        .requiredClassOrClassOrStringProperty["identifier"],
       ...(this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
             this.requiredClassOrClassOrStringProperty.value,
@@ -4260,7 +4263,7 @@ export class UnionDiscriminantsClass {
           ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
+      UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty[
         "identifier"
       ],
       ...([this.requiredIriOrLiteralProperty] as readonly Parameters<
@@ -4268,7 +4271,7 @@ export class UnionDiscriminantsClass {
       >[1][]),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.requiredIriOrStringProperty[
+      UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty[
         "identifier"
       ],
       ...([this.requiredIriOrStringProperty] as readonly Parameters<
@@ -4276,9 +4279,8 @@ export class UnionDiscriminantsClass {
       >[1][]),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.setClassOrClassOrStringProperty[
-        "identifier"
-      ],
+      UnionDiscriminantsClass.$schema.properties
+        .setClassOrClassOrStringProperty["identifier"],
       ...this.setClassOrClassOrStringProperty.flatMap((item) =>
         item.type === "2-string"
           ? ([item.value] as readonly Parameters<
@@ -4295,7 +4297,9 @@ export class UnionDiscriminantsClass {
       ),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.setIriOrLiteralProperty["identifier"],
+      UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty[
+        "identifier"
+      ],
       ...this.setIriOrLiteralProperty.flatMap(
         (item) =>
           [item] as readonly Parameters<
@@ -4304,7 +4308,9 @@ export class UnionDiscriminantsClass {
       ),
     );
     resource.add(
-      UnionDiscriminantsClass.$properties.setIriOrStringProperty["identifier"],
+      UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty[
+        "identifier"
+      ],
       ...this.setIriOrStringProperty.flatMap(
         (item) =>
           [item] as readonly Parameters<
@@ -5368,7 +5374,7 @@ export namespace UnionDiscriminantsClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.optionalClassOrClassOrStringProperty["identifier"],
+          $schema.properties.optionalClassOrClassOrStringProperty["identifier"],
           { unique: true },
         ),
       )
@@ -5461,7 +5467,7 @@ export namespace UnionDiscriminantsClass {
                       $fromRdfPreferredLanguages({
                         focusResource: $parameters.resource,
                         predicate:
-                          UnionDiscriminantsClass.$properties
+                          UnionDiscriminantsClass.$schema.properties
                             .optionalClassOrClassOrStringProperty["identifier"],
                         preferredLanguages: $parameters.preferredLanguages,
                         values,
@@ -5514,7 +5520,7 @@ export namespace UnionDiscriminantsClass {
               >({
                 focusResource: $parameters.resource,
                 predicate:
-                  UnionDiscriminantsClass.$properties
+                  UnionDiscriminantsClass.$schema.properties
                     .optionalClassOrClassOrStringProperty["identifier"],
                 value: purify.Maybe.empty(),
               }),
@@ -5526,7 +5532,7 @@ export namespace UnionDiscriminantsClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.optionalIriOrLiteralProperty["identifier"],
+              $schema.properties.optionalIriOrLiteralProperty["identifier"],
               { unique: true },
             ),
           )
@@ -5550,7 +5556,7 @@ export namespace UnionDiscriminantsClass {
                           $fromRdfPreferredLanguages({
                             focusResource: $parameters.resource,
                             predicate:
-                              UnionDiscriminantsClass.$properties
+                              UnionDiscriminantsClass.$schema.properties
                                 .optionalIriOrLiteralProperty["identifier"],
                             preferredLanguages: $parameters.preferredLanguages,
                             values,
@@ -5576,7 +5582,7 @@ export namespace UnionDiscriminantsClass {
                   >({
                     focusResource: $parameters.resource,
                     predicate:
-                      UnionDiscriminantsClass.$properties
+                      UnionDiscriminantsClass.$schema.properties
                         .optionalIriOrLiteralProperty["identifier"],
                     value: purify.Maybe.empty(),
                   }),
@@ -5588,7 +5594,7 @@ export namespace UnionDiscriminantsClass {
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 $parameters.resource.values(
-                  $properties.optionalIriOrStringProperty["identifier"],
+                  $schema.properties.optionalIriOrStringProperty["identifier"],
                   { unique: true },
                 ),
               )
@@ -5610,7 +5616,7 @@ export namespace UnionDiscriminantsClass {
                               $fromRdfPreferredLanguages({
                                 focusResource: $parameters.resource,
                                 predicate:
-                                  UnionDiscriminantsClass.$properties
+                                  UnionDiscriminantsClass.$schema.properties
                                     .optionalIriOrStringProperty["identifier"],
                                 preferredLanguages:
                                   $parameters.preferredLanguages,
@@ -5637,7 +5643,7 @@ export namespace UnionDiscriminantsClass {
                       >({
                         focusResource: $parameters.resource,
                         predicate:
-                          UnionDiscriminantsClass.$properties
+                          UnionDiscriminantsClass.$schema.properties
                             .optionalIriOrStringProperty["identifier"],
                         value: purify.Maybe.empty(),
                       }),
@@ -5649,7 +5655,7 @@ export namespace UnionDiscriminantsClass {
                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                   >(
                     $parameters.resource.values(
-                      $properties.requiredClassOrClassOrStringProperty[
+                      $schema.properties.requiredClassOrClassOrStringProperty[
                         "identifier"
                       ],
                       { unique: true },
@@ -5760,7 +5766,7 @@ export namespace UnionDiscriminantsClass {
                                   $fromRdfPreferredLanguages({
                                     focusResource: $parameters.resource,
                                     predicate:
-                                      UnionDiscriminantsClass.$properties
+                                      UnionDiscriminantsClass.$schema.properties
                                         .requiredClassOrClassOrStringProperty[
                                         "identifier"
                                       ],
@@ -5811,7 +5817,7 @@ export namespace UnionDiscriminantsClass {
                         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                       >(
                         $parameters.resource.values(
-                          $properties.requiredIriOrLiteralProperty[
+                          $schema.properties.requiredIriOrLiteralProperty[
                             "identifier"
                           ],
                           { unique: true },
@@ -5839,7 +5845,8 @@ export namespace UnionDiscriminantsClass {
                                       $fromRdfPreferredLanguages({
                                         focusResource: $parameters.resource,
                                         predicate:
-                                          UnionDiscriminantsClass.$properties
+                                          UnionDiscriminantsClass.$schema
+                                            .properties
                                             .requiredIriOrLiteralProperty[
                                             "identifier"
                                           ],
@@ -5869,7 +5876,7 @@ export namespace UnionDiscriminantsClass {
                             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                           >(
                             $parameters.resource.values(
-                              $properties.requiredIriOrStringProperty[
+                              $schema.properties.requiredIriOrStringProperty[
                                 "identifier"
                               ],
                               { unique: true },
@@ -5897,8 +5904,8 @@ export namespace UnionDiscriminantsClass {
                                           $fromRdfPreferredLanguages({
                                             focusResource: $parameters.resource,
                                             predicate:
-                                              UnionDiscriminantsClass
-                                                .$properties
+                                              UnionDiscriminantsClass.$schema
+                                                .properties
                                                 .requiredIriOrStringProperty[
                                                 "identifier"
                                               ],
@@ -5928,7 +5935,8 @@ export namespace UnionDiscriminantsClass {
                                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                               >(
                                 $parameters.resource.values(
-                                  $properties.setClassOrClassOrStringProperty[
+                                  $schema.properties
+                                    .setClassOrClassOrStringProperty[
                                     "identifier"
                                   ],
                                   { unique: true },
@@ -6064,7 +6072,7 @@ export namespace UnionDiscriminantsClass {
                                                   $parameters.resource,
                                                 predicate:
                                                   UnionDiscriminantsClass
-                                                    .$properties
+                                                    .$schema.properties
                                                     .setClassOrClassOrStringProperty[
                                                     "identifier"
                                                   ],
@@ -6124,7 +6132,7 @@ export namespace UnionDiscriminantsClass {
                                   rdfjsResource.Resource.Values.fromValue({
                                     focusResource: $parameters.resource,
                                     predicate:
-                                      UnionDiscriminantsClass.$properties
+                                      UnionDiscriminantsClass.$schema.properties
                                         .setClassOrClassOrStringProperty[
                                         "identifier"
                                       ],
@@ -6138,9 +6146,8 @@ export namespace UnionDiscriminantsClass {
                                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                   >(
                                     $parameters.resource.values(
-                                      $properties.setIriOrLiteralProperty[
-                                        "identifier"
-                                      ],
+                                      $schema.properties
+                                        .setIriOrLiteralProperty["identifier"],
                                       { unique: true },
                                     ),
                                   )
@@ -6170,7 +6177,7 @@ export namespace UnionDiscriminantsClass {
                                                       $parameters.resource,
                                                     predicate:
                                                       UnionDiscriminantsClass
-                                                        .$properties
+                                                        .$schema.properties
                                                         .setIriOrLiteralProperty[
                                                         "identifier"
                                                       ],
@@ -6199,8 +6206,8 @@ export namespace UnionDiscriminantsClass {
                                       rdfjsResource.Resource.Values.fromValue({
                                         focusResource: $parameters.resource,
                                         predicate:
-                                          UnionDiscriminantsClass.$properties
-                                            .setIriOrLiteralProperty[
+                                          UnionDiscriminantsClass.$schema
+                                            .properties.setIriOrLiteralProperty[
                                             "identifier"
                                           ],
                                         value: valuesArray,
@@ -6213,7 +6220,8 @@ export namespace UnionDiscriminantsClass {
                                         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                       >(
                                         $parameters.resource.values(
-                                          $properties.setIriOrStringProperty[
+                                          $schema.properties
+                                            .setIriOrStringProperty[
                                             "identifier"
                                           ],
                                           { unique: true },
@@ -6247,7 +6255,8 @@ export namespace UnionDiscriminantsClass {
                                                             $parameters.resource,
                                                           predicate:
                                                             UnionDiscriminantsClass
-                                                              .$properties
+                                                              .$schema
+                                                              .properties
                                                               .setIriOrStringProperty[
                                                               "identifier"
                                                             ],
@@ -6278,8 +6287,8 @@ export namespace UnionDiscriminantsClass {
                                               focusResource:
                                                 $parameters.resource,
                                               predicate:
-                                                UnionDiscriminantsClass
-                                                  .$properties
+                                                UnionDiscriminantsClass.$schema
+                                                  .properties
                                                   .setIriOrStringProperty[
                                                   "identifier"
                                                 ],
@@ -6430,7 +6439,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties
+        UnionDiscriminantsClass.$schema.properties
           .optionalClassOrClassOrStringProperty["identifier"],
       subject,
     });
@@ -6455,7 +6464,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.optionalIriOrLiteralProperty[
+        UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty[
           "identifier"
         ],
       subject,
@@ -6465,7 +6474,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.optionalIriOrStringProperty[
+        UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -6475,7 +6484,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties
+        UnionDiscriminantsClass.$schema.properties
           .requiredClassOrClassOrStringProperty["identifier"],
       subject,
     });
@@ -6500,7 +6509,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrLiteralProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.requiredIriOrLiteralProperty[
+        UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty[
           "identifier"
         ],
       subject,
@@ -6510,7 +6519,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.requiredIriOrStringProperty[
+        UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -6520,9 +6529,8 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.setClassOrClassOrStringProperty[
-          "identifier"
-        ],
+        UnionDiscriminantsClass.$schema.properties
+          .setClassOrClassOrStringProperty["identifier"],
       subject,
     });
     triples.push(
@@ -6546,7 +6554,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrLiteralProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.setIriOrLiteralProperty[
+        UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty[
           "identifier"
         ],
       subject,
@@ -6556,7 +6564,7 @@ export namespace UnionDiscriminantsClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrStringProperty`,
       ),
       predicate:
-        UnionDiscriminantsClass.$properties.setIriOrStringProperty[
+        UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty[
           "identifier"
         ],
       subject,
@@ -6599,7 +6607,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalClassOrClassOrStringProperty[
                               "identifier"
                             ],
@@ -6631,7 +6639,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalClassOrClassOrStringProperty[
                               "identifier"
                             ],
@@ -6663,7 +6671,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalClassOrClassOrStringProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalClassOrClassOrStringProperty[
                               "identifier"
                             ],
@@ -6750,7 +6758,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalIriOrLiteralProperty["identifier"],
                           subject: subject,
                         },
@@ -6780,7 +6788,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrLiteralProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalIriOrLiteralProperty["identifier"],
                           subject: subject,
                         },
@@ -6865,7 +6873,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalIriOrStringProperty["identifier"],
                           subject: subject,
                         },
@@ -6895,7 +6903,7 @@ export namespace UnionDiscriminantsClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}OptionalIriOrStringProperty`,
                           ),
                           predicate:
-                            UnionDiscriminantsClass.$properties
+                            UnionDiscriminantsClass.$schema.properties
                               .optionalIriOrStringProperty["identifier"],
                           subject: subject,
                         },
@@ -6975,7 +6983,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredClassOrClassOrStringProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredClassOrClassOrStringProperty["identifier"],
                   subject: subject,
                 },
@@ -7007,7 +7015,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredClassOrClassOrStringProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredClassOrClassOrStringProperty["identifier"],
                   subject: subject,
                 },
@@ -7039,7 +7047,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredClassOrClassOrStringProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredClassOrClassOrStringProperty["identifier"],
                   subject: subject,
                 },
@@ -7115,7 +7123,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrLiteralProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredIriOrLiteralProperty["identifier"],
                   subject: subject,
                 },
@@ -7147,7 +7155,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrLiteralProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredIriOrLiteralProperty["identifier"],
                   subject: subject,
                 },
@@ -7224,7 +7232,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrStringProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredIriOrStringProperty["identifier"],
                   subject: subject,
                 },
@@ -7256,7 +7264,7 @@ export namespace UnionDiscriminantsClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}RequiredIriOrStringProperty`,
                   ),
                   predicate:
-                    UnionDiscriminantsClass.$properties
+                    UnionDiscriminantsClass.$schema.properties
                       .requiredIriOrStringProperty["identifier"],
                   subject: subject,
                 },
@@ -7335,7 +7343,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setClassOrClassOrStringProperty["identifier"],
                       subject: subject,
                     },
@@ -7368,7 +7376,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setClassOrClassOrStringProperty["identifier"],
                       subject: subject,
                     },
@@ -7401,7 +7409,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetClassOrClassOrStringProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setClassOrClassOrStringProperty["identifier"],
                       subject: subject,
                     },
@@ -7483,7 +7491,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrLiteralProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setIriOrLiteralProperty["identifier"],
                       subject: subject,
                     },
@@ -7515,7 +7523,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrLiteralProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setIriOrLiteralProperty["identifier"],
                       subject: subject,
                     },
@@ -7597,7 +7605,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrStringProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setIriOrStringProperty["identifier"],
                       subject: subject,
                     },
@@ -7629,7 +7637,7 @@ export namespace UnionDiscriminantsClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")}SetIriOrStringProperty`,
                       ),
                       predicate:
-                        UnionDiscriminantsClass.$properties
+                        UnionDiscriminantsClass.$schema.properties
                           .setIriOrStringProperty["identifier"],
                       subject: subject,
                     },
@@ -8189,15 +8197,17 @@ export class TermPropertiesClass {
     }
 
     resource.add(
-      TermPropertiesClass.$properties.blankNodeTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.blankNodeTermProperty[
+        "identifier"
+      ],
       ...this.blankNodeTermProperty.toList(),
     );
     resource.add(
-      TermPropertiesClass.$properties.booleanTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.booleanTermProperty["identifier"],
       ...this.booleanTermProperty.toList(),
     );
     resource.add(
-      TermPropertiesClass.$properties.dateTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.dateTermProperty["identifier"],
       ...this.dateTermProperty
         .toList()
         .flatMap((value) => [
@@ -8208,7 +8218,7 @@ export class TermPropertiesClass {
         ]),
     );
     resource.add(
-      TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.dateTimeTermProperty["identifier"],
       ...this.dateTimeTermProperty
         .toList()
         .flatMap((value) => [
@@ -8219,15 +8229,15 @@ export class TermPropertiesClass {
         ]),
     );
     resource.add(
-      TermPropertiesClass.$properties.iriTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.iriTermProperty["identifier"],
       ...this.iriTermProperty.toList(),
     );
     resource.add(
-      TermPropertiesClass.$properties.literalTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.literalTermProperty["identifier"],
       ...this.literalTermProperty.toList(),
     );
     resource.add(
-      TermPropertiesClass.$properties.numberTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.numberTermProperty["identifier"],
       ...this.numberTermProperty
         .toList()
         .flatMap((value) => [
@@ -8235,11 +8245,11 @@ export class TermPropertiesClass {
         ]),
     );
     resource.add(
-      TermPropertiesClass.$properties.stringTermProperty["identifier"],
+      TermPropertiesClass.$schema.properties.stringTermProperty["identifier"],
       ...this.stringTermProperty.toList(),
     );
     resource.add(
-      TermPropertiesClass.$properties.termProperty["identifier"],
+      TermPropertiesClass.$schema.properties.termProperty["identifier"],
       ...this.termProperty.toList(),
     );
     return resource;
@@ -8700,7 +8710,7 @@ export namespace TermPropertiesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.blankNodeTermProperty["identifier"],
+            $schema.properties.blankNodeTermProperty["identifier"],
             { unique: true },
           ),
         )
@@ -8713,9 +8723,8 @@ export namespace TermPropertiesClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    TermPropertiesClass.$properties.blankNodeTermProperty[
-                      "identifier"
-                    ],
+                    TermPropertiesClass.$schema.properties
+                      .blankNodeTermProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
           )
@@ -8726,7 +8735,7 @@ export namespace TermPropertiesClass {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.booleanTermProperty["identifier"],
+                $schema.properties.booleanTermProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -8739,9 +8748,8 @@ export namespace TermPropertiesClass {
                     >({
                       focusResource: $parameters.resource,
                       predicate:
-                        TermPropertiesClass.$properties.booleanTermProperty[
-                          "identifier"
-                        ],
+                        TermPropertiesClass.$schema.properties
+                          .booleanTermProperty["identifier"],
                       value: purify.Maybe.empty(),
                     }),
               )
@@ -8752,7 +8760,7 @@ export namespace TermPropertiesClass {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties.dateTermProperty["identifier"],
+                    $schema.properties.dateTermProperty["identifier"],
                     { unique: true },
                   ),
                 )
@@ -8765,9 +8773,8 @@ export namespace TermPropertiesClass {
                         >({
                           focusResource: $parameters.resource,
                           predicate:
-                            TermPropertiesClass.$properties.dateTermProperty[
-                              "identifier"
-                            ],
+                            TermPropertiesClass.$schema.properties
+                              .dateTermProperty["identifier"],
                           value: purify.Maybe.empty(),
                         }),
                   )
@@ -8778,7 +8785,7 @@ export namespace TermPropertiesClass {
                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                     >(
                       $parameters.resource.values(
-                        $properties.dateTimeTermProperty["identifier"],
+                        $schema.properties.dateTimeTermProperty["identifier"],
                         { unique: true },
                       ),
                     )
@@ -8793,7 +8800,7 @@ export namespace TermPropertiesClass {
                             >({
                               focusResource: $parameters.resource,
                               predicate:
-                                TermPropertiesClass.$properties
+                                TermPropertiesClass.$schema.properties
                                   .dateTimeTermProperty["identifier"],
                               value: purify.Maybe.empty(),
                             }),
@@ -8805,7 +8812,7 @@ export namespace TermPropertiesClass {
                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                         >(
                           $parameters.resource.values(
-                            $properties.iriTermProperty["identifier"],
+                            $schema.properties.iriTermProperty["identifier"],
                             { unique: true },
                           ),
                         )
@@ -8820,7 +8827,7 @@ export namespace TermPropertiesClass {
                                 >({
                                   focusResource: $parameters.resource,
                                   predicate:
-                                    TermPropertiesClass.$properties
+                                    TermPropertiesClass.$schema.properties
                                       .iriTermProperty["identifier"],
                                   value: purify.Maybe.empty(),
                                 }),
@@ -8832,7 +8839,9 @@ export namespace TermPropertiesClass {
                               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $properties.literalTermProperty["identifier"],
+                                $schema.properties.literalTermProperty[
+                                  "identifier"
+                                ],
                                 { unique: true },
                               ),
                             )
@@ -8840,7 +8849,7 @@ export namespace TermPropertiesClass {
                                 $fromRdfPreferredLanguages({
                                   focusResource: $parameters.resource,
                                   predicate:
-                                    TermPropertiesClass.$properties
+                                    TermPropertiesClass.$schema.properties
                                       .literalTermProperty["identifier"],
                                   preferredLanguages:
                                     $parameters.preferredLanguages,
@@ -8860,7 +8869,7 @@ export namespace TermPropertiesClass {
                                     >({
                                       focusResource: $parameters.resource,
                                       predicate:
-                                        TermPropertiesClass.$properties
+                                        TermPropertiesClass.$schema.properties
                                           .literalTermProperty["identifier"],
                                       value: purify.Maybe.empty(),
                                     }),
@@ -8872,7 +8881,7 @@ export namespace TermPropertiesClass {
                                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                 >(
                                   $parameters.resource.values(
-                                    $properties.numberTermProperty[
+                                    $schema.properties.numberTermProperty[
                                       "identifier"
                                     ],
                                     { unique: true },
@@ -8893,8 +8902,10 @@ export namespace TermPropertiesClass {
                                         >({
                                           focusResource: $parameters.resource,
                                           predicate:
-                                            TermPropertiesClass.$properties
-                                              .numberTermProperty["identifier"],
+                                            TermPropertiesClass.$schema
+                                              .properties.numberTermProperty[
+                                              "identifier"
+                                            ],
                                           value: purify.Maybe.empty(),
                                         }),
                                   )
@@ -8905,7 +8916,7 @@ export namespace TermPropertiesClass {
                                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                     >(
                                       $parameters.resource.values(
-                                        $properties.stringTermProperty[
+                                        $schema.properties.stringTermProperty[
                                           "identifier"
                                         ],
                                         { unique: true },
@@ -8915,8 +8926,10 @@ export namespace TermPropertiesClass {
                                         $fromRdfPreferredLanguages({
                                           focusResource: $parameters.resource,
                                           predicate:
-                                            TermPropertiesClass.$properties
-                                              .stringTermProperty["identifier"],
+                                            TermPropertiesClass.$schema
+                                              .properties.stringTermProperty[
+                                              "identifier"
+                                            ],
                                           preferredLanguages:
                                             $parameters.preferredLanguages,
                                           values,
@@ -8938,7 +8951,8 @@ export namespace TermPropertiesClass {
                                               focusResource:
                                                 $parameters.resource,
                                               predicate:
-                                                TermPropertiesClass.$properties
+                                                TermPropertiesClass.$schema
+                                                  .properties
                                                   .stringTermProperty[
                                                   "identifier"
                                                 ],
@@ -8952,7 +8966,7 @@ export namespace TermPropertiesClass {
                                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                         >(
                                           $parameters.resource.values(
-                                            $properties.termProperty[
+                                            $schema.properties.termProperty[
                                               "identifier"
                                             ],
                                             { unique: true },
@@ -8983,8 +8997,8 @@ export namespace TermPropertiesClass {
                                                   focusResource:
                                                     $parameters.resource,
                                                   predicate:
-                                                    TermPropertiesClass
-                                                      .$properties.termProperty[
+                                                    TermPropertiesClass.$schema
+                                                      .properties.termProperty[
                                                       "identifier"
                                                     ],
                                                   value: purify.Maybe.empty(),
@@ -9148,7 +9162,9 @@ export namespace TermPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
       ),
       predicate:
-        TermPropertiesClass.$properties.blankNodeTermProperty["identifier"],
+        TermPropertiesClass.$schema.properties.blankNodeTermProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -9156,14 +9172,17 @@ export namespace TermPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BooleanTermProperty`,
       ),
       predicate:
-        TermPropertiesClass.$properties.booleanTermProperty["identifier"],
+        TermPropertiesClass.$schema.properties.booleanTermProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTermProperty`,
       ),
-      predicate: TermPropertiesClass.$properties.dateTermProperty["identifier"],
+      predicate:
+        TermPropertiesClass.$schema.properties.dateTermProperty["identifier"],
       subject,
     });
     triples.push({
@@ -9171,14 +9190,17 @@ export namespace TermPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTimeTermProperty`,
       ),
       predicate:
-        TermPropertiesClass.$properties.dateTimeTermProperty["identifier"],
+        TermPropertiesClass.$schema.properties.dateTimeTermProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}IriTermProperty`,
       ),
-      predicate: TermPropertiesClass.$properties.iriTermProperty["identifier"],
+      predicate:
+        TermPropertiesClass.$schema.properties.iriTermProperty["identifier"],
       subject,
     });
     triples.push({
@@ -9186,7 +9208,9 @@ export namespace TermPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
       ),
       predicate:
-        TermPropertiesClass.$properties.literalTermProperty["identifier"],
+        TermPropertiesClass.$schema.properties.literalTermProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -9194,7 +9218,7 @@ export namespace TermPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}NumberTermProperty`,
       ),
       predicate:
-        TermPropertiesClass.$properties.numberTermProperty["identifier"],
+        TermPropertiesClass.$schema.properties.numberTermProperty["identifier"],
       subject,
     });
     triples.push({
@@ -9202,14 +9226,15 @@ export namespace TermPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
       ),
       predicate:
-        TermPropertiesClass.$properties.stringTermProperty["identifier"],
+        TermPropertiesClass.$schema.properties.stringTermProperty["identifier"],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
       ),
-      predicate: TermPropertiesClass.$properties.termProperty["identifier"],
+      predicate:
+        TermPropertiesClass.$schema.properties.termProperty["identifier"],
       subject,
     });
     return triples;
@@ -9289,9 +9314,8 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BlankNodeTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.blankNodeTermProperty[
-                      "identifier"
-                    ],
+                    TermPropertiesClass.$schema.properties
+                      .blankNodeTermProperty["identifier"],
                   subject: subject,
                 },
               ],
@@ -9325,7 +9349,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}BooleanTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.booleanTermProperty[
+                    TermPropertiesClass.$schema.properties.booleanTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9361,7 +9385,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.dateTermProperty[
+                    TermPropertiesClass.$schema.properties.dateTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9397,7 +9421,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}DateTimeTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.dateTimeTermProperty[
+                    TermPropertiesClass.$schema.properties.dateTimeTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9433,7 +9457,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}IriTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.iriTermProperty[
+                    TermPropertiesClass.$schema.properties.iriTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9469,7 +9493,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}LiteralTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.literalTermProperty[
+                    TermPropertiesClass.$schema.properties.literalTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9545,7 +9569,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}NumberTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.numberTermProperty[
+                    TermPropertiesClass.$schema.properties.numberTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9581,7 +9605,7 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}StringTermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.stringTermProperty[
+                    TermPropertiesClass.$schema.properties.stringTermProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -9657,7 +9681,9 @@ export namespace TermPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")}TermProperty`,
                   ),
                   predicate:
-                    TermPropertiesClass.$properties.termProperty["identifier"],
+                    TermPropertiesClass.$schema.properties.termProperty[
+                      "identifier"
+                    ],
                   subject: subject,
                 },
               ],
@@ -9832,7 +9858,9 @@ export class Sha256IriIdentifierClass {
       mutateGraph,
     });
     resource.add(
-      Sha256IriIdentifierClass.$properties.sha256IriProperty["identifier"],
+      Sha256IriIdentifierClass.$schema.properties.sha256IriProperty[
+        "identifier"
+      ],
       ...[this.sha256IriProperty],
     );
     return resource;
@@ -10022,7 +10050,7 @@ export namespace Sha256IriIdentifierClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.sha256IriProperty["identifier"],
+          $schema.properties.sha256IriProperty["identifier"],
           { unique: true },
         ),
       )
@@ -10030,7 +10058,7 @@ export namespace Sha256IriIdentifierClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              Sha256IriIdentifierClass.$properties.sha256IriProperty[
+              Sha256IriIdentifierClass.$schema.properties.sha256IriProperty[
                 "identifier"
               ],
             preferredLanguages: $parameters.preferredLanguages,
@@ -10122,7 +10150,9 @@ export namespace Sha256IriIdentifierClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass")}Sha256IriProperty`,
       ),
       predicate:
-        Sha256IriIdentifierClass.$properties.sha256IriProperty["identifier"],
+        Sha256IriIdentifierClass.$schema.properties.sha256IriProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -10155,7 +10185,7 @@ export namespace Sha256IriIdentifierClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass")}Sha256IriProperty`,
             ),
             predicate:
-              Sha256IriIdentifierClass.$properties.sha256IriProperty[
+              Sha256IriIdentifierClass.$schema.properties.sha256IriProperty[
                 "identifier"
               ],
             subject: subject,
@@ -10375,9 +10405,8 @@ export class RecursiveClassUnionMember2 {
     }
 
     resource.add(
-      RecursiveClassUnionMember2.$properties.recursiveClassUnionMember2Property[
-        "identifier"
-      ],
+      RecursiveClassUnionMember2.$schema.properties
+        .recursiveClassUnionMember2Property["identifier"],
       ...this.recursiveClassUnionMember2Property
         .toList()
         .flatMap((value) => [
@@ -10613,7 +10642,7 @@ export namespace RecursiveClassUnionMember2 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.recursiveClassUnionMember2Property["identifier"],
+            $schema.properties.recursiveClassUnionMember2Property["identifier"],
             { unique: true },
           ),
         )
@@ -10637,7 +10666,7 @@ export namespace RecursiveClassUnionMember2 {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    RecursiveClassUnionMember2.$properties
+                    RecursiveClassUnionMember2.$schema.properties
                       .recursiveClassUnionMember2Property["identifier"],
                   value: purify.Maybe.empty(),
                 }),
@@ -10973,9 +11002,8 @@ export class RecursiveClassUnionMember1 {
     }
 
     resource.add(
-      RecursiveClassUnionMember1.$properties.recursiveClassUnionMember1Property[
-        "identifier"
-      ],
+      RecursiveClassUnionMember1.$schema.properties
+        .recursiveClassUnionMember1Property["identifier"],
       ...this.recursiveClassUnionMember1Property
         .toList()
         .flatMap((value) => [
@@ -11211,7 +11239,7 @@ export namespace RecursiveClassUnionMember1 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.recursiveClassUnionMember1Property["identifier"],
+            $schema.properties.recursiveClassUnionMember1Property["identifier"],
             { unique: true },
           ),
         )
@@ -11235,7 +11263,7 @@ export namespace RecursiveClassUnionMember1 {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    RecursiveClassUnionMember1.$properties
+                    RecursiveClassUnionMember1.$schema.properties
                       .recursiveClassUnionMember1Property["identifier"],
                   value: purify.Maybe.empty(),
                 }),
@@ -11571,15 +11599,19 @@ export class PropertyVisibilitiesClass {
       mutateGraph,
     });
     resource.add(
-      PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
+      PropertyVisibilitiesClass.$schema.properties.privateProperty[
+        "identifier"
+      ],
       ...[this.privateProperty],
     );
     resource.add(
-      PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
+      PropertyVisibilitiesClass.$schema.properties.protectedProperty[
+        "identifier"
+      ],
       ...[this.protectedProperty],
     );
     resource.add(
-      PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
+      PropertyVisibilitiesClass.$schema.properties.publicProperty["identifier"],
       ...[this.publicProperty],
     );
     return resource;
@@ -11776,15 +11808,16 @@ export namespace PropertyVisibilitiesClass {
         Error,
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
-        $parameters.resource.values($properties.privateProperty["identifier"], {
-          unique: true,
-        }),
+        $parameters.resource.values(
+          $schema.properties.privateProperty["identifier"],
+          { unique: true },
+        ),
       )
         .chain((values) =>
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              PropertyVisibilitiesClass.$properties.privateProperty[
+              PropertyVisibilitiesClass.$schema.properties.privateProperty[
                 "identifier"
               ],
             preferredLanguages: $parameters.preferredLanguages,
@@ -11799,7 +11832,7 @@ export namespace PropertyVisibilitiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.protectedProperty["identifier"],
+              $schema.properties.protectedProperty["identifier"],
               { unique: true },
             ),
           )
@@ -11807,9 +11840,8 @@ export namespace PropertyVisibilitiesClass {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  PropertyVisibilitiesClass.$properties.protectedProperty[
-                    "identifier"
-                  ],
+                  PropertyVisibilitiesClass.$schema.properties
+                    .protectedProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -11822,7 +11854,7 @@ export namespace PropertyVisibilitiesClass {
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 $parameters.resource.values(
-                  $properties.publicProperty["identifier"],
+                  $schema.properties.publicProperty["identifier"],
                   { unique: true },
                 ),
               )
@@ -11830,9 +11862,8 @@ export namespace PropertyVisibilitiesClass {
                   $fromRdfPreferredLanguages({
                     focusResource: $parameters.resource,
                     predicate:
-                      PropertyVisibilitiesClass.$properties.publicProperty[
-                        "identifier"
-                      ],
+                      PropertyVisibilitiesClass.$schema.properties
+                        .publicProperty["identifier"],
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
                   }),
@@ -11935,7 +11966,9 @@ export namespace PropertyVisibilitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PrivateProperty`,
       ),
       predicate:
-        PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
+        PropertyVisibilitiesClass.$schema.properties.privateProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -11943,7 +11976,9 @@ export namespace PropertyVisibilitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}ProtectedProperty`,
       ),
       predicate:
-        PropertyVisibilitiesClass.$properties.protectedProperty["identifier"],
+        PropertyVisibilitiesClass.$schema.properties.protectedProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -11951,7 +11986,9 @@ export namespace PropertyVisibilitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PublicProperty`,
       ),
       predicate:
-        PropertyVisibilitiesClass.$properties.publicProperty["identifier"],
+        PropertyVisibilitiesClass.$schema.properties.publicProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -11983,7 +12020,9 @@ export namespace PropertyVisibilitiesClass {
             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PrivateProperty`,
           ),
           predicate:
-            PropertyVisibilitiesClass.$properties.privateProperty["identifier"],
+            PropertyVisibilitiesClass.$schema.properties.privateProperty[
+              "identifier"
+            ],
           subject: subject,
         },
       ],
@@ -11996,7 +12035,7 @@ export namespace PropertyVisibilitiesClass {
             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}ProtectedProperty`,
           ),
           predicate:
-            PropertyVisibilitiesClass.$properties.protectedProperty[
+            PropertyVisibilitiesClass.$schema.properties.protectedProperty[
               "identifier"
             ],
           subject: subject,
@@ -12012,7 +12051,7 @@ export namespace PropertyVisibilitiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")}PublicProperty`,
             ),
             predicate:
-              PropertyVisibilitiesClass.$properties.publicProperty[
+              PropertyVisibilitiesClass.$schema.properties.publicProperty[
                 "identifier"
               ],
             subject: subject,
@@ -12296,25 +12335,25 @@ export class PropertyCardinalitiesClass {
       mutateGraph,
     });
     resource.add(
-      PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+      PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty[
         "identifier"
       ],
       ...this.emptyStringSetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+      PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty[
         "identifier"
       ],
       ...this.nonEmptyStringSetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      PropertyCardinalitiesClass.$properties.optionalStringProperty[
+      PropertyCardinalitiesClass.$schema.properties.optionalStringProperty[
         "identifier"
       ],
       ...this.optionalStringProperty.toList(),
     );
     resource.add(
-      PropertyCardinalitiesClass.$properties.requiredStringProperty[
+      PropertyCardinalitiesClass.$schema.properties.requiredStringProperty[
         "identifier"
       ],
       ...[this.requiredStringProperty],
@@ -12584,7 +12623,7 @@ export namespace PropertyCardinalitiesClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.emptyStringSetProperty["identifier"],
+          $schema.properties.emptyStringSetProperty["identifier"],
           { unique: true },
         ),
       )
@@ -12592,9 +12631,8 @@ export namespace PropertyCardinalitiesClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-                "identifier"
-              ],
+              PropertyCardinalitiesClass.$schema.properties
+                .emptyStringSetProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
           }),
@@ -12605,9 +12643,8 @@ export namespace PropertyCardinalitiesClass {
           rdfjsResource.Resource.Values.fromValue({
             focusResource: $parameters.resource,
             predicate:
-              PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-                "identifier"
-              ],
+              PropertyCardinalitiesClass.$schema.properties
+                .emptyStringSetProperty["identifier"],
             value: valuesArray,
           }),
         )
@@ -12618,7 +12655,7 @@ export namespace PropertyCardinalitiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.nonEmptyStringSetProperty["identifier"],
+              $schema.properties.nonEmptyStringSetProperty["identifier"],
               { unique: true },
             ),
           )
@@ -12626,7 +12663,7 @@ export namespace PropertyCardinalitiesClass {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  PropertyCardinalitiesClass.$properties
+                  PropertyCardinalitiesClass.$schema.properties
                     .nonEmptyStringSetProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -12644,7 +12681,7 @@ export namespace PropertyCardinalitiesClass {
               rdfjsResource.Resource.Values.fromValue({
                 focusResource: $parameters.resource,
                 predicate:
-                  PropertyCardinalitiesClass.$properties
+                  PropertyCardinalitiesClass.$schema.properties
                     .nonEmptyStringSetProperty["identifier"],
                 value: valuesArray,
               }),
@@ -12656,7 +12693,7 @@ export namespace PropertyCardinalitiesClass {
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 $parameters.resource.values(
-                  $properties.optionalStringProperty["identifier"],
+                  $schema.properties.optionalStringProperty["identifier"],
                   { unique: true },
                 ),
               )
@@ -12664,7 +12701,7 @@ export namespace PropertyCardinalitiesClass {
                   $fromRdfPreferredLanguages({
                     focusResource: $parameters.resource,
                     predicate:
-                      PropertyCardinalitiesClass.$properties
+                      PropertyCardinalitiesClass.$schema.properties
                         .optionalStringProperty["identifier"],
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
@@ -12679,7 +12716,7 @@ export namespace PropertyCardinalitiesClass {
                       >({
                         focusResource: $parameters.resource,
                         predicate:
-                          PropertyCardinalitiesClass.$properties
+                          PropertyCardinalitiesClass.$schema.properties
                             .optionalStringProperty["identifier"],
                         value: purify.Maybe.empty(),
                       }),
@@ -12691,7 +12728,7 @@ export namespace PropertyCardinalitiesClass {
                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                   >(
                     $parameters.resource.values(
-                      $properties.requiredStringProperty["identifier"],
+                      $schema.properties.requiredStringProperty["identifier"],
                       { unique: true },
                     ),
                   )
@@ -12699,7 +12736,7 @@ export namespace PropertyCardinalitiesClass {
                       $fromRdfPreferredLanguages({
                         focusResource: $parameters.resource,
                         predicate:
-                          PropertyCardinalitiesClass.$properties
+                          PropertyCardinalitiesClass.$schema.properties
                             .requiredStringProperty["identifier"],
                         preferredLanguages: $parameters.preferredLanguages,
                         values,
@@ -12817,7 +12854,7 @@ export namespace PropertyCardinalitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}EmptyStringSetProperty`,
       ),
       predicate:
-        PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
+        PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty[
           "identifier"
         ],
       subject,
@@ -12827,7 +12864,7 @@ export namespace PropertyCardinalitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}NonEmptyStringSetProperty`,
       ),
       predicate:
-        PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
+        PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty[
           "identifier"
         ],
       subject,
@@ -12837,7 +12874,7 @@ export namespace PropertyCardinalitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
       ),
       predicate:
-        PropertyCardinalitiesClass.$properties.optionalStringProperty[
+        PropertyCardinalitiesClass.$schema.properties.optionalStringProperty[
           "identifier"
         ],
       subject,
@@ -12847,7 +12884,7 @@ export namespace PropertyCardinalitiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}RequiredStringProperty`,
       ),
       predicate:
-        PropertyCardinalitiesClass.$properties.requiredStringProperty[
+        PropertyCardinalitiesClass.$schema.properties.requiredStringProperty[
           "identifier"
         ],
       subject,
@@ -12884,9 +12921,8 @@ export namespace PropertyCardinalitiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}EmptyStringSetProperty`,
               ),
               predicate:
-                PropertyCardinalitiesClass.$properties.emptyStringSetProperty[
-                  "identifier"
-                ],
+                PropertyCardinalitiesClass.$schema.properties
+                  .emptyStringSetProperty["identifier"],
               subject: subject,
             },
           ],
@@ -12954,9 +12990,8 @@ export namespace PropertyCardinalitiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}NonEmptyStringSetProperty`,
             ),
             predicate:
-              PropertyCardinalitiesClass.$properties.nonEmptyStringSetProperty[
-                "identifier"
-              ],
+              PropertyCardinalitiesClass.$schema.properties
+                .nonEmptyStringSetProperty["identifier"],
             subject: subject,
           },
         ],
@@ -13026,7 +13061,7 @@ export namespace PropertyCardinalitiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}OptionalStringProperty`,
                   ),
                   predicate:
-                    PropertyCardinalitiesClass.$properties
+                    PropertyCardinalitiesClass.$schema.properties
                       .optionalStringProperty["identifier"],
                   subject: subject,
                 },
@@ -13097,9 +13132,8 @@ export namespace PropertyCardinalitiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")}RequiredStringProperty`,
             ),
             predicate:
-              PropertyCardinalitiesClass.$properties.requiredStringProperty[
-                "identifier"
-              ],
+              PropertyCardinalitiesClass.$schema.properties
+                .requiredStringProperty["identifier"],
             subject: subject,
           },
         ],
@@ -13480,7 +13514,7 @@ export namespace PartialInterfaceUnionMember2 {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.lazilyResolvedStringProperty["identifier"],
+              $schema.properties.lazilyResolvedStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -13488,7 +13522,7 @@ export namespace PartialInterfaceUnionMember2 {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  PartialInterfaceUnionMember2.$properties
+                  PartialInterfaceUnionMember2.$schema.properties
                     .lazilyResolvedStringProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -13607,9 +13641,8 @@ export namespace PartialInterfaceUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        PartialInterfaceUnionMember2.$properties.lazilyResolvedStringProperty[
-          "identifier"
-        ],
+        PartialInterfaceUnionMember2.$schema.properties
+          .lazilyResolvedStringProperty["identifier"],
       subject,
     });
     return triples;
@@ -13686,7 +13719,7 @@ export namespace PartialInterfaceUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              PartialInterfaceUnionMember2.$properties
+              PartialInterfaceUnionMember2.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -13794,9 +13827,8 @@ export namespace PartialInterfaceUnionMember2 {
     }
 
     resource.add(
-      PartialInterfaceUnionMember2.$properties.lazilyResolvedStringProperty[
-        "identifier"
-      ],
+      PartialInterfaceUnionMember2.$schema.properties
+        .lazilyResolvedStringProperty["identifier"],
       ...[_partialInterfaceUnionMember2.lazilyResolvedStringProperty],
     );
     return resource;
@@ -14122,7 +14154,7 @@ export namespace PartialInterfaceUnionMember1 {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.lazilyResolvedStringProperty["identifier"],
+              $schema.properties.lazilyResolvedStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -14130,7 +14162,7 @@ export namespace PartialInterfaceUnionMember1 {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  PartialInterfaceUnionMember1.$properties
+                  PartialInterfaceUnionMember1.$schema.properties
                     .lazilyResolvedStringProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -14249,9 +14281,8 @@ export namespace PartialInterfaceUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        PartialInterfaceUnionMember1.$properties.lazilyResolvedStringProperty[
-          "identifier"
-        ],
+        PartialInterfaceUnionMember1.$schema.properties
+          .lazilyResolvedStringProperty["identifier"],
       subject,
     });
     return triples;
@@ -14328,7 +14359,7 @@ export namespace PartialInterfaceUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              PartialInterfaceUnionMember1.$properties
+              PartialInterfaceUnionMember1.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -14436,9 +14467,8 @@ export namespace PartialInterfaceUnionMember1 {
     }
 
     resource.add(
-      PartialInterfaceUnionMember1.$properties.lazilyResolvedStringProperty[
-        "identifier"
-      ],
+      PartialInterfaceUnionMember1.$schema.properties
+        .lazilyResolvedStringProperty["identifier"],
       ...[_partialInterfaceUnionMember1.lazilyResolvedStringProperty],
     );
     return resource;
@@ -14577,7 +14607,7 @@ export class PartialClassUnionMember2 {
     }
 
     resource.add(
-      PartialClassUnionMember2.$properties.lazilyResolvedStringProperty[
+      PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       ...[this.lazilyResolvedStringProperty],
@@ -14796,7 +14826,7 @@ export namespace PartialClassUnionMember2 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.lazilyResolvedStringProperty["identifier"],
+            $schema.properties.lazilyResolvedStringProperty["identifier"],
             { unique: true },
           ),
         )
@@ -14804,7 +14834,7 @@ export namespace PartialClassUnionMember2 {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                PartialClassUnionMember2.$properties
+                PartialClassUnionMember2.$schema.properties
                   .lazilyResolvedStringProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -14920,9 +14950,8 @@ export namespace PartialClassUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        PartialClassUnionMember2.$properties.lazilyResolvedStringProperty[
-          "identifier"
-        ],
+        PartialClassUnionMember2.$schema.properties
+          .lazilyResolvedStringProperty["identifier"],
       subject,
     });
     return triples;
@@ -14998,9 +15027,8 @@ export namespace PartialClassUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              PartialClassUnionMember2.$properties.lazilyResolvedStringProperty[
-                "identifier"
-              ],
+              PartialClassUnionMember2.$schema.properties
+                .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
         ],
@@ -15194,7 +15222,7 @@ export class PartialClassUnionMember1 {
     }
 
     resource.add(
-      PartialClassUnionMember1.$properties.lazilyResolvedStringProperty[
+      PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty[
         "identifier"
       ],
       ...[this.lazilyResolvedStringProperty],
@@ -15413,7 +15441,7 @@ export namespace PartialClassUnionMember1 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.lazilyResolvedStringProperty["identifier"],
+            $schema.properties.lazilyResolvedStringProperty["identifier"],
             { unique: true },
           ),
         )
@@ -15421,7 +15449,7 @@ export namespace PartialClassUnionMember1 {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                PartialClassUnionMember1.$properties
+                PartialClassUnionMember1.$schema.properties
                   .lazilyResolvedStringProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -15537,9 +15565,8 @@ export namespace PartialClassUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        PartialClassUnionMember1.$properties.lazilyResolvedStringProperty[
-          "identifier"
-        ],
+        PartialClassUnionMember1.$schema.properties
+          .lazilyResolvedStringProperty["identifier"],
       subject,
     });
     return triples;
@@ -15615,9 +15642,8 @@ export namespace PartialClassUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              PartialClassUnionMember1.$properties.lazilyResolvedStringProperty[
-                "identifier"
-              ],
+              PartialClassUnionMember1.$schema.properties
+                .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
         ],
@@ -15835,15 +15861,15 @@ export class OrderedPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
+      OrderedPropertiesClass.$schema.properties.orderedPropertyC["identifier"],
       ...[this.orderedPropertyC],
     );
     resource.add(
-      OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
+      OrderedPropertiesClass.$schema.properties.orderedPropertyB["identifier"],
       ...[this.orderedPropertyB],
     );
     resource.add(
-      OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
+      OrderedPropertiesClass.$schema.properties.orderedPropertyA["identifier"],
       ...[this.orderedPropertyA],
     );
     return resource;
@@ -16063,7 +16089,7 @@ export namespace OrderedPropertiesClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.orderedPropertyC["identifier"],
+          $schema.properties.orderedPropertyC["identifier"],
           { unique: true },
         ),
       )
@@ -16071,7 +16097,9 @@ export namespace OrderedPropertiesClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
+              OrderedPropertiesClass.$schema.properties.orderedPropertyC[
+                "identifier"
+              ],
             preferredLanguages: $parameters.preferredLanguages,
             values,
           }),
@@ -16084,7 +16112,7 @@ export namespace OrderedPropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.orderedPropertyB["identifier"],
+              $schema.properties.orderedPropertyB["identifier"],
               { unique: true },
             ),
           )
@@ -16092,7 +16120,7 @@ export namespace OrderedPropertiesClass {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  OrderedPropertiesClass.$properties.orderedPropertyB[
+                  OrderedPropertiesClass.$schema.properties.orderedPropertyB[
                     "identifier"
                   ],
                 preferredLanguages: $parameters.preferredLanguages,
@@ -16107,7 +16135,7 @@ export namespace OrderedPropertiesClass {
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 $parameters.resource.values(
-                  $properties.orderedPropertyA["identifier"],
+                  $schema.properties.orderedPropertyA["identifier"],
                   { unique: true },
                 ),
               )
@@ -16115,9 +16143,8 @@ export namespace OrderedPropertiesClass {
                   $fromRdfPreferredLanguages({
                     focusResource: $parameters.resource,
                     predicate:
-                      OrderedPropertiesClass.$properties.orderedPropertyA[
-                        "identifier"
-                      ],
+                      OrderedPropertiesClass.$schema.properties
+                        .orderedPropertyA["identifier"],
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
                   }),
@@ -16224,7 +16251,9 @@ export namespace OrderedPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")}OrderedPropertyC`,
       ),
       predicate:
-        OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
+        OrderedPropertiesClass.$schema.properties.orderedPropertyC[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -16232,7 +16261,9 @@ export namespace OrderedPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")}OrderedPropertyB`,
       ),
       predicate:
-        OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
+        OrderedPropertiesClass.$schema.properties.orderedPropertyB[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -16240,7 +16271,9 @@ export namespace OrderedPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")}OrderedPropertyA`,
       ),
       predicate:
-        OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
+        OrderedPropertiesClass.$schema.properties.orderedPropertyA[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -16273,7 +16306,9 @@ export namespace OrderedPropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")}OrderedPropertyC`,
             ),
             predicate:
-              OrderedPropertiesClass.$properties.orderedPropertyC["identifier"],
+              OrderedPropertiesClass.$schema.properties.orderedPropertyC[
+                "identifier"
+              ],
             subject: subject,
           },
         ],
@@ -16339,7 +16374,9 @@ export namespace OrderedPropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")}OrderedPropertyB`,
             ),
             predicate:
-              OrderedPropertiesClass.$properties.orderedPropertyB["identifier"],
+              OrderedPropertiesClass.$schema.properties.orderedPropertyB[
+                "identifier"
+              ],
             subject: subject,
           },
         ],
@@ -16405,7 +16442,9 @@ export namespace OrderedPropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")}OrderedPropertyA`,
             ),
             predicate:
-              OrderedPropertiesClass.$properties.orderedPropertyA["identifier"],
+              OrderedPropertiesClass.$schema.properties.orderedPropertyA[
+                "identifier"
+              ],
             subject: subject,
           },
         ],
@@ -16591,7 +16630,7 @@ export class NonClass {
       mutateGraph,
     });
     resource.add(
-      NonClass.$properties.nonClassProperty["identifier"],
+      NonClass.$schema.properties.nonClassProperty["identifier"],
       ...[this.nonClassProperty],
     );
     return resource;
@@ -16765,14 +16804,15 @@ export namespace NonClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.nonClassProperty["identifier"],
+          $schema.properties.nonClassProperty["identifier"],
           { unique: true },
         ),
       )
         .chain((values) =>
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
-            predicate: NonClass.$properties.nonClassProperty["identifier"],
+            predicate:
+              NonClass.$schema.properties.nonClassProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
           }),
@@ -16857,7 +16897,7 @@ export namespace NonClass {
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass")}NonClassProperty`,
       ),
-      predicate: NonClass.$properties.nonClassProperty["identifier"],
+      predicate: NonClass.$schema.properties.nonClassProperty["identifier"],
       subject,
     });
     return triples;
@@ -16888,7 +16928,8 @@ export namespace NonClass {
             object: dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass")}NonClassProperty`,
             ),
-            predicate: NonClass.$properties.nonClassProperty["identifier"],
+            predicate:
+              NonClass.$schema.properties.nonClassProperty["identifier"],
             subject: subject,
           },
         ],
@@ -17072,9 +17113,8 @@ export class NoRdfTypeClassUnionMember2 {
       mutateGraph,
     });
     resource.add(
-      NoRdfTypeClassUnionMember2.$properties.noRdfTypeClassUnionMember2Property[
-        "identifier"
-      ],
+      NoRdfTypeClassUnionMember2.$schema.properties
+        .noRdfTypeClassUnionMember2Property["identifier"],
       ...[this.noRdfTypeClassUnionMember2Property],
     );
     return resource;
@@ -17262,7 +17302,7 @@ export namespace NoRdfTypeClassUnionMember2 {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.noRdfTypeClassUnionMember2Property["identifier"],
+          $schema.properties.noRdfTypeClassUnionMember2Property["identifier"],
           { unique: true },
         ),
       )
@@ -17270,7 +17310,7 @@ export namespace NoRdfTypeClassUnionMember2 {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              NoRdfTypeClassUnionMember2.$properties
+              NoRdfTypeClassUnionMember2.$schema.properties
                 .noRdfTypeClassUnionMember2Property["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -17365,7 +17405,7 @@ export namespace NoRdfTypeClassUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2")}NoRdfTypeClassUnionMember2Property`,
       ),
       predicate:
-        NoRdfTypeClassUnionMember2.$properties
+        NoRdfTypeClassUnionMember2.$schema.properties
           .noRdfTypeClassUnionMember2Property["identifier"],
       subject,
     });
@@ -17400,7 +17440,7 @@ export namespace NoRdfTypeClassUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2")}NoRdfTypeClassUnionMember2Property`,
             ),
             predicate:
-              NoRdfTypeClassUnionMember2.$properties
+              NoRdfTypeClassUnionMember2.$schema.properties
                 .noRdfTypeClassUnionMember2Property["identifier"],
             subject: subject,
           },
@@ -17587,9 +17627,8 @@ export class NoRdfTypeClassUnionMember1 {
       mutateGraph,
     });
     resource.add(
-      NoRdfTypeClassUnionMember1.$properties.noRdfTypeClassUnionMember1Property[
-        "identifier"
-      ],
+      NoRdfTypeClassUnionMember1.$schema.properties
+        .noRdfTypeClassUnionMember1Property["identifier"],
       ...[this.noRdfTypeClassUnionMember1Property],
     );
     return resource;
@@ -17777,7 +17816,7 @@ export namespace NoRdfTypeClassUnionMember1 {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.noRdfTypeClassUnionMember1Property["identifier"],
+          $schema.properties.noRdfTypeClassUnionMember1Property["identifier"],
           { unique: true },
         ),
       )
@@ -17785,7 +17824,7 @@ export namespace NoRdfTypeClassUnionMember1 {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              NoRdfTypeClassUnionMember1.$properties
+              NoRdfTypeClassUnionMember1.$schema.properties
                 .noRdfTypeClassUnionMember1Property["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -17880,7 +17919,7 @@ export namespace NoRdfTypeClassUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1")}NoRdfTypeClassUnionMember1Property`,
       ),
       predicate:
-        NoRdfTypeClassUnionMember1.$properties
+        NoRdfTypeClassUnionMember1.$schema.properties
           .noRdfTypeClassUnionMember1Property["identifier"],
       subject,
     });
@@ -17915,7 +17954,7 @@ export namespace NoRdfTypeClassUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1")}NoRdfTypeClassUnionMember1Property`,
             ),
             predicate:
-              NoRdfTypeClassUnionMember1.$properties
+              NoRdfTypeClassUnionMember1.$schema.properties
                 .noRdfTypeClassUnionMember1Property["identifier"],
             subject: subject,
           },
@@ -18223,7 +18262,9 @@ export class MutablePropertiesClass {
     }
 
     resource.add(
-      MutablePropertiesClass.$properties.mutableListProperty["identifier"],
+      MutablePropertiesClass.$schema.properties.mutableListProperty[
+        "identifier"
+      ],
       ...this.mutableListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -18276,11 +18317,15 @@ export class MutablePropertiesClass {
       ]),
     );
     resource.add(
-      MutablePropertiesClass.$properties.mutableSetProperty["identifier"],
+      MutablePropertiesClass.$schema.properties.mutableSetProperty[
+        "identifier"
+      ],
       ...this.mutableSetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      MutablePropertiesClass.$properties.mutableStringProperty["identifier"],
+      MutablePropertiesClass.$schema.properties.mutableStringProperty[
+        "identifier"
+      ],
       ...this.mutableStringProperty.toList(),
     );
     return resource;
@@ -18562,7 +18607,7 @@ export namespace MutablePropertiesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.mutableListProperty["identifier"],
+            $schema.properties.mutableListProperty["identifier"],
             { unique: true },
           ),
         )
@@ -18576,9 +18621,8 @@ export namespace MutablePropertiesClass {
                 rdfjsResource.Resource.Values.fromArray({
                   focusResource: $parameters.resource,
                   predicate:
-                    MutablePropertiesClass.$properties.mutableListProperty[
-                      "identifier"
-                    ],
+                    MutablePropertiesClass.$schema.properties
+                      .mutableListProperty["identifier"],
                   values: valueList,
                 }),
               )
@@ -18586,9 +18630,8 @@ export namespace MutablePropertiesClass {
                   $fromRdfPreferredLanguages({
                     focusResource: $parameters.resource,
                     predicate:
-                      MutablePropertiesClass.$properties.mutableListProperty[
-                        "identifier"
-                      ],
+                      MutablePropertiesClass.$schema.properties
+                        .mutableListProperty["identifier"],
                     preferredLanguages: $parameters.preferredLanguages,
                     values,
                   }),
@@ -18608,9 +18651,8 @@ export namespace MutablePropertiesClass {
                   {
                     focusResource: $parameters.resource,
                     predicate:
-                      MutablePropertiesClass.$properties.mutableListProperty[
-                        "identifier"
-                      ],
+                      MutablePropertiesClass.$schema.properties
+                        .mutableListProperty["identifier"],
                     value: purify.Maybe.empty(),
                   },
                 ),
@@ -18622,7 +18664,7 @@ export namespace MutablePropertiesClass {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.mutableSetProperty["identifier"],
+                $schema.properties.mutableSetProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -18630,9 +18672,8 @@ export namespace MutablePropertiesClass {
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    MutablePropertiesClass.$properties.mutableSetProperty[
-                      "identifier"
-                    ],
+                    MutablePropertiesClass.$schema.properties
+                      .mutableSetProperty["identifier"],
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
                 }),
@@ -18643,9 +18684,8 @@ export namespace MutablePropertiesClass {
                 rdfjsResource.Resource.Values.fromValue({
                   focusResource: $parameters.resource,
                   predicate:
-                    MutablePropertiesClass.$properties.mutableSetProperty[
-                      "identifier"
-                    ],
+                    MutablePropertiesClass.$schema.properties
+                      .mutableSetProperty["identifier"],
                   value: valuesArray,
                 }),
               )
@@ -18656,7 +18696,7 @@ export namespace MutablePropertiesClass {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties.mutableStringProperty["identifier"],
+                    $schema.properties.mutableStringProperty["identifier"],
                     { unique: true },
                   ),
                 )
@@ -18664,7 +18704,7 @@ export namespace MutablePropertiesClass {
                     $fromRdfPreferredLanguages({
                       focusResource: $parameters.resource,
                       predicate:
-                        MutablePropertiesClass.$properties
+                        MutablePropertiesClass.$schema.properties
                           .mutableStringProperty["identifier"],
                       preferredLanguages: $parameters.preferredLanguages,
                       values,
@@ -18681,7 +18721,7 @@ export namespace MutablePropertiesClass {
                         >({
                           focusResource: $parameters.resource,
                           predicate:
-                            MutablePropertiesClass.$properties
+                            MutablePropertiesClass.$schema.properties
                               .mutableStringProperty["identifier"],
                           value: purify.Maybe.empty(),
                         }),
@@ -18809,7 +18849,9 @@ export namespace MutablePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
       ),
       predicate:
-        MutablePropertiesClass.$properties.mutableListProperty["identifier"],
+        MutablePropertiesClass.$schema.properties.mutableListProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -18853,7 +18895,9 @@ export namespace MutablePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableSetProperty`,
       ),
       predicate:
-        MutablePropertiesClass.$properties.mutableSetProperty["identifier"],
+        MutablePropertiesClass.$schema.properties.mutableSetProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -18861,7 +18905,9 @@ export namespace MutablePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
       ),
       predicate:
-        MutablePropertiesClass.$properties.mutableStringProperty["identifier"],
+        MutablePropertiesClass.$schema.properties.mutableStringProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -18941,9 +18987,8 @@ export namespace MutablePropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableListProperty`,
                   ),
                   predicate:
-                    MutablePropertiesClass.$properties.mutableListProperty[
-                      "identifier"
-                    ],
+                    MutablePropertiesClass.$schema.properties
+                      .mutableListProperty["identifier"],
                   subject: subject,
                 },
               ],
@@ -19149,7 +19194,7 @@ export namespace MutablePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableSetProperty`,
               ),
               predicate:
-                MutablePropertiesClass.$properties.mutableSetProperty[
+                MutablePropertiesClass.$schema.properties.mutableSetProperty[
                   "identifier"
                 ],
               subject: subject,
@@ -19223,9 +19268,8 @@ export namespace MutablePropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")}MutableStringProperty`,
                   ),
                   predicate:
-                    MutablePropertiesClass.$properties.mutableStringProperty[
-                      "identifier"
-                    ],
+                    MutablePropertiesClass.$schema.properties
+                      .mutableStringProperty["identifier"],
                   subject: subject,
                 },
               ],
@@ -19522,7 +19566,7 @@ export class ListPropertiesClass {
     }
 
     resource.add(
-      ListPropertiesClass.$properties.iriListProperty["identifier"],
+      ListPropertiesClass.$schema.properties.iriListProperty["identifier"],
       ...this.iriListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -19575,7 +19619,7 @@ export class ListPropertiesClass {
       ]),
     );
     resource.add(
-      ListPropertiesClass.$properties.objectListProperty["identifier"],
+      ListPropertiesClass.$schema.properties.objectListProperty["identifier"],
       ...this.objectListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -19633,7 +19677,7 @@ export class ListPropertiesClass {
       ]),
     );
     resource.add(
-      ListPropertiesClass.$properties.stringListProperty["identifier"],
+      ListPropertiesClass.$schema.properties.stringListProperty["identifier"],
       ...this.stringListProperty.toList().flatMap((value) => [
         value.length > 0
           ? value.reduce(
@@ -19965,7 +20009,7 @@ export namespace ListPropertiesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.iriListProperty["identifier"],
+            $schema.properties.iriListProperty["identifier"],
             { unique: true },
           ),
         )
@@ -19979,7 +20023,7 @@ export namespace ListPropertiesClass {
                 rdfjsResource.Resource.Values.fromArray({
                   focusResource: $parameters.resource,
                   predicate:
-                    ListPropertiesClass.$properties.iriListProperty[
+                    ListPropertiesClass.$schema.properties.iriListProperty[
                       "identifier"
                     ],
                   values: valueList,
@@ -19998,7 +20042,7 @@ export namespace ListPropertiesClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    ListPropertiesClass.$properties.iriListProperty[
+                    ListPropertiesClass.$schema.properties.iriListProperty[
                       "identifier"
                     ],
                   value: purify.Maybe.empty(),
@@ -20011,7 +20055,7 @@ export namespace ListPropertiesClass {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.objectListProperty["identifier"],
+                $schema.properties.objectListProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -20025,9 +20069,8 @@ export namespace ListPropertiesClass {
                     rdfjsResource.Resource.Values.fromArray({
                       focusResource: $parameters.resource,
                       predicate:
-                        ListPropertiesClass.$properties.objectListProperty[
-                          "identifier"
-                        ],
+                        ListPropertiesClass.$schema.properties
+                          .objectListProperty["identifier"],
                       values: valueList,
                     }),
                   ).chain((values) =>
@@ -20055,9 +20098,8 @@ export namespace ListPropertiesClass {
                     >({
                       focusResource: $parameters.resource,
                       predicate:
-                        ListPropertiesClass.$properties.objectListProperty[
-                          "identifier"
-                        ],
+                        ListPropertiesClass.$schema.properties
+                          .objectListProperty["identifier"],
                       value: purify.Maybe.empty(),
                     }),
               )
@@ -20068,7 +20110,7 @@ export namespace ListPropertiesClass {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties.stringListProperty["identifier"],
+                    $schema.properties.stringListProperty["identifier"],
                     { unique: true },
                   ),
                 )
@@ -20082,9 +20124,8 @@ export namespace ListPropertiesClass {
                         rdfjsResource.Resource.Values.fromArray({
                           focusResource: $parameters.resource,
                           predicate:
-                            ListPropertiesClass.$properties.stringListProperty[
-                              "identifier"
-                            ],
+                            ListPropertiesClass.$schema.properties
+                              .stringListProperty["identifier"],
                           values: valueList,
                         }),
                       )
@@ -20092,7 +20133,7 @@ export namespace ListPropertiesClass {
                           $fromRdfPreferredLanguages({
                             focusResource: $parameters.resource,
                             predicate:
-                              ListPropertiesClass.$properties
+                              ListPropertiesClass.$schema.properties
                                 .stringListProperty["identifier"],
                             preferredLanguages: $parameters.preferredLanguages,
                             values,
@@ -20114,9 +20155,8 @@ export namespace ListPropertiesClass {
                         >({
                           focusResource: $parameters.resource,
                           predicate:
-                            ListPropertiesClass.$properties.stringListProperty[
-                              "identifier"
-                            ],
+                            ListPropertiesClass.$schema.properties
+                              .stringListProperty["identifier"],
                           value: purify.Maybe.empty(),
                         }),
                   )
@@ -20237,7 +20277,8 @@ export namespace ListPropertiesClass {
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
       ),
-      predicate: ListPropertiesClass.$properties.iriListProperty["identifier"],
+      predicate:
+        ListPropertiesClass.$schema.properties.iriListProperty["identifier"],
       subject,
     });
     triples.push({
@@ -20281,7 +20322,7 @@ export namespace ListPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
       ),
       predicate:
-        ListPropertiesClass.$properties.objectListProperty["identifier"],
+        ListPropertiesClass.$schema.properties.objectListProperty["identifier"],
       subject,
     });
     triples.push({
@@ -20343,7 +20384,7 @@ export namespace ListPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
       ),
       predicate:
-        ListPropertiesClass.$properties.stringListProperty["identifier"],
+        ListPropertiesClass.$schema.properties.stringListProperty["identifier"],
       subject,
     });
     triples.push({
@@ -20459,7 +20500,7 @@ export namespace ListPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}IriListProperty`,
                   ),
                   predicate:
-                    ListPropertiesClass.$properties.iriListProperty[
+                    ListPropertiesClass.$schema.properties.iriListProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -20590,7 +20631,7 @@ export namespace ListPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}ObjectListProperty`,
                   ),
                   predicate:
-                    ListPropertiesClass.$properties.objectListProperty[
+                    ListPropertiesClass.$schema.properties.objectListProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -20723,7 +20764,7 @@ export namespace ListPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")}StringListProperty`,
                   ),
                   predicate:
-                    ListPropertiesClass.$properties.stringListProperty[
+                    ListPropertiesClass.$schema.properties.stringListProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -21204,7 +21245,7 @@ export namespace PartialInterface {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.lazilyResolvedStringProperty["identifier"],
+              $schema.properties.lazilyResolvedStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -21212,9 +21253,8 @@ export namespace PartialInterface {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  PartialInterface.$properties.lazilyResolvedStringProperty[
-                    "identifier"
-                  ],
+                  PartialInterface.$schema.properties
+                    .lazilyResolvedStringProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -21306,7 +21346,9 @@ export namespace PartialInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        PartialInterface.$properties.lazilyResolvedStringProperty["identifier"],
+        PartialInterface.$schema.properties.lazilyResolvedStringProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -21339,7 +21381,7 @@ export namespace PartialInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              PartialInterface.$properties.lazilyResolvedStringProperty[
+              PartialInterface.$schema.properties.lazilyResolvedStringProperty[
                 "identifier"
               ],
             subject: subject,
@@ -21438,7 +21480,9 @@ export namespace PartialInterface {
       { mutateGraph },
     );
     resource.add(
-      PartialInterface.$properties.lazilyResolvedStringProperty["identifier"],
+      PartialInterface.$schema.properties.lazilyResolvedStringProperty[
+        "identifier"
+      ],
       ...[_partialInterface.lazilyResolvedStringProperty],
     );
     return resource;
@@ -23225,7 +23269,9 @@ export namespace LazyPropertiesInterface {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.optionalLazyToResolvedInterfaceProperty["identifier"],
+            $schema.properties.optionalLazyToResolvedInterfaceProperty[
+              "identifier"
+            ],
             { unique: true },
           ),
         )
@@ -23249,7 +23295,7 @@ export namespace LazyPropertiesInterface {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalLazyToResolvedInterfaceProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
@@ -23277,7 +23323,7 @@ export namespace LazyPropertiesInterface {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.optionalLazyToResolvedInterfaceUnionProperty[
+                $schema.properties.optionalLazyToResolvedInterfaceUnionProperty[
                   "identifier"
                 ],
                 { unique: true },
@@ -23303,7 +23349,7 @@ export namespace LazyPropertiesInterface {
                     >({
                       focusResource: $parameters.resource,
                       predicate:
-                        LazyPropertiesInterface.$properties
+                        LazyPropertiesInterface.$schema.properties
                           .optionalLazyToResolvedInterfaceUnionProperty[
                           "identifier"
                         ],
@@ -23333,7 +23379,7 @@ export namespace LazyPropertiesInterface {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties
+                    $schema.properties
                       .optionalLazyToResolvedIriIdentifierInterfaceProperty[
                       "identifier"
                     ],
@@ -23360,7 +23406,7 @@ export namespace LazyPropertiesInterface {
                         >({
                           focusResource: $parameters.resource,
                           predicate:
-                            LazyPropertiesInterface.$properties
+                            LazyPropertiesInterface.$schema.properties
                               .optionalLazyToResolvedIriIdentifierInterfaceProperty[
                               "identifier"
                             ],
@@ -23391,7 +23437,7 @@ export namespace LazyPropertiesInterface {
                         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                       >(
                         $parameters.resource.values(
-                          $properties
+                          $schema.properties
                             .optionalPartialInterfaceToResolvedInterfaceProperty[
                             "identifier"
                           ],
@@ -23419,7 +23465,7 @@ export namespace LazyPropertiesInterface {
                               >({
                                 focusResource: $parameters.resource,
                                 predicate:
-                                  LazyPropertiesInterface.$properties
+                                  LazyPropertiesInterface.$schema.properties
                                     .optionalPartialInterfaceToResolvedInterfaceProperty[
                                     "identifier"
                                   ],
@@ -23452,7 +23498,7 @@ export namespace LazyPropertiesInterface {
                               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $properties
+                                $schema.properties
                                   .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
                                   "identifier"
                                 ],
@@ -23482,7 +23528,8 @@ export namespace LazyPropertiesInterface {
                                     >({
                                       focusResource: $parameters.resource,
                                       predicate:
-                                        LazyPropertiesInterface.$properties
+                                        LazyPropertiesInterface.$schema
+                                          .properties
                                           .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
                                           "identifier"
                                         ],
@@ -23515,7 +23562,7 @@ export namespace LazyPropertiesInterface {
                                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                   >(
                                     $parameters.resource.values(
-                                      $properties
+                                      $schema.properties
                                         .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
                                         "identifier"
                                       ],
@@ -23548,8 +23595,8 @@ export namespace LazyPropertiesInterface {
                                           >({
                                             focusResource: $parameters.resource,
                                             predicate:
-                                              LazyPropertiesInterface
-                                                .$properties
+                                              LazyPropertiesInterface.$schema
+                                                .properties
                                                 .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
                                                 "identifier"
                                               ],
@@ -23582,7 +23629,7 @@ export namespace LazyPropertiesInterface {
                                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                         >(
                                           $parameters.resource.values(
-                                            $properties
+                                            $schema.properties
                                               .requiredLazyToResolvedInterfaceProperty[
                                               "identifier"
                                             ],
@@ -23635,7 +23682,7 @@ export namespace LazyPropertiesInterface {
                                                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                               >(
                                                 $parameters.resource.values(
-                                                  $properties
+                                                  $schema.properties
                                                     .requiredPartialInterfaceToResolvedInterfaceProperty[
                                                     "identifier"
                                                   ],
@@ -23692,7 +23739,7 @@ export namespace LazyPropertiesInterface {
                                                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                                     >(
                                                       $parameters.resource.values(
-                                                        $properties
+                                                        $schema.properties
                                                           .setLazyToResolvedInterfaceProperty[
                                                           "identifier"
                                                         ],
@@ -23731,7 +23778,8 @@ export namespace LazyPropertiesInterface {
                                                               $parameters.resource,
                                                             predicate:
                                                               LazyPropertiesInterface
-                                                                .$properties
+                                                                .$schema
+                                                                .properties
                                                                 .setLazyToResolvedInterfaceProperty[
                                                                 "identifier"
                                                               ],
@@ -23776,7 +23824,7 @@ export namespace LazyPropertiesInterface {
                                                             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                                           >(
                                                             $parameters.resource.values(
-                                                              $properties
+                                                              $schema.properties
                                                                 .setPartialInterfaceToResolvedInterfaceProperty[
                                                                 "identifier"
                                                               ],
@@ -23818,7 +23866,8 @@ export namespace LazyPropertiesInterface {
                                                                       $parameters.resource,
                                                                     predicate:
                                                                       LazyPropertiesInterface
-                                                                        .$properties
+                                                                        .$schema
+                                                                        .properties
                                                                         .setPartialInterfaceToResolvedInterfaceProperty[
                                                                         "identifier"
                                                                       ],
@@ -24011,7 +24060,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .optionalLazyToResolvedInterfaceProperty["identifier"],
       subject,
     });
@@ -24029,7 +24078,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
       subject,
     });
@@ -24047,7 +24096,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .optionalLazyToResolvedIriIdentifierInterfaceProperty["identifier"],
       subject,
     });
@@ -24065,7 +24114,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .optionalPartialInterfaceToResolvedInterfaceProperty["identifier"],
       subject,
     });
@@ -24083,7 +24132,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
           "identifier"
         ],
@@ -24103,7 +24152,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
           "identifier"
         ],
@@ -24122,7 +24171,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}RequiredLazyToResolvedInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .requiredLazyToResolvedInterfaceProperty["identifier"],
       subject,
     });
@@ -24140,7 +24189,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}RequiredPartialInterfaceToResolvedInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .requiredPartialInterfaceToResolvedInterfaceProperty["identifier"],
       subject,
     });
@@ -24158,9 +24207,8 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}SetLazyToResolvedInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties.setLazyToResolvedInterfaceProperty[
-          "identifier"
-        ],
+        LazyPropertiesInterface.$schema.properties
+          .setLazyToResolvedInterfaceProperty["identifier"],
       subject,
     });
     triples.push(
@@ -24177,7 +24225,7 @@ export namespace LazyPropertiesInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}SetPartialInterfaceToResolvedInterfaceProperty`,
       ),
       predicate:
-        LazyPropertiesInterface.$properties
+        LazyPropertiesInterface.$schema.properties
           .setPartialInterfaceToResolvedInterfaceProperty["identifier"],
       subject,
     });
@@ -24224,7 +24272,7 @@ export namespace LazyPropertiesInterface {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceProperty`,
                   ),
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalLazyToResolvedInterfaceProperty["identifier"],
                   subject: subject,
                 },
@@ -24262,7 +24310,7 @@ export namespace LazyPropertiesInterface {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedInterfaceUnionProperty`,
                   ),
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalLazyToResolvedInterfaceUnionProperty[
                       "identifier"
                     ],
@@ -24303,7 +24351,7 @@ export namespace LazyPropertiesInterface {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalLazyToResolvedIriIdentifierInterfaceProperty`,
                   ),
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalLazyToResolvedIriIdentifierInterfaceProperty[
                       "identifier"
                     ],
@@ -24344,7 +24392,7 @@ export namespace LazyPropertiesInterface {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceProperty`,
                   ),
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalPartialInterfaceToResolvedInterfaceProperty[
                       "identifier"
                     ],
@@ -24383,7 +24431,7 @@ export namespace LazyPropertiesInterface {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`,
                   ),
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalPartialInterfaceToResolvedInterfaceUnionProperty[
                       "identifier"
                     ],
@@ -24422,7 +24470,7 @@ export namespace LazyPropertiesInterface {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`,
                   ),
                   predicate:
-                    LazyPropertiesInterface.$properties
+                    LazyPropertiesInterface.$schema.properties
                       .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
                       "identifier"
                     ],
@@ -24455,7 +24503,7 @@ export namespace LazyPropertiesInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}RequiredLazyToResolvedInterfaceProperty`,
             ),
             predicate:
-              LazyPropertiesInterface.$properties
+              LazyPropertiesInterface.$schema.properties
                 .requiredLazyToResolvedInterfaceProperty["identifier"],
             subject: subject,
           },
@@ -24485,7 +24533,7 @@ export namespace LazyPropertiesInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}RequiredPartialInterfaceToResolvedInterfaceProperty`,
             ),
             predicate:
-              LazyPropertiesInterface.$properties
+              LazyPropertiesInterface.$schema.properties
                 .requiredPartialInterfaceToResolvedInterfaceProperty[
                 "identifier"
               ],
@@ -24518,7 +24566,7 @@ export namespace LazyPropertiesInterface {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}SetLazyToResolvedInterfaceProperty`,
               ),
               predicate:
-                LazyPropertiesInterface.$properties
+                LazyPropertiesInterface.$schema.properties
                   .setLazyToResolvedInterfaceProperty["identifier"],
               subject: subject,
             },
@@ -24551,7 +24599,7 @@ export namespace LazyPropertiesInterface {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")}SetPartialInterfaceToResolvedInterfaceProperty`,
               ),
               predicate:
-                LazyPropertiesInterface.$properties
+                LazyPropertiesInterface.$schema.properties
                   .setPartialInterfaceToResolvedInterfaceProperty["identifier"],
               subject: subject,
             },
@@ -24651,7 +24699,7 @@ export namespace LazyPropertiesInterface {
       { mutateGraph },
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .optionalLazyToResolvedInterfaceProperty["identifier"],
       ..._lazyPropertiesInterface.optionalLazyToResolvedInterfaceProperty.partial
         .toList()
@@ -24661,7 +24709,7 @@ export namespace LazyPropertiesInterface {
         ]),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .optionalLazyToResolvedInterfaceUnionProperty["identifier"],
       ..._lazyPropertiesInterface.optionalLazyToResolvedInterfaceUnionProperty.partial
         .toList()
@@ -24671,7 +24719,7 @@ export namespace LazyPropertiesInterface {
         ]),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .optionalLazyToResolvedIriIdentifierInterfaceProperty["identifier"],
       ..._lazyPropertiesInterface.optionalLazyToResolvedIriIdentifierInterfaceProperty.partial
         .toList()
@@ -24681,7 +24729,7 @@ export namespace LazyPropertiesInterface {
         ]),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .optionalPartialInterfaceToResolvedInterfaceProperty["identifier"],
       ..._lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceProperty.partial
         .toList()
@@ -24693,7 +24741,7 @@ export namespace LazyPropertiesInterface {
         ]),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .optionalPartialInterfaceToResolvedInterfaceUnionProperty["identifier"],
       ..._lazyPropertiesInterface.optionalPartialInterfaceToResolvedInterfaceUnionProperty.partial
         .toList()
@@ -24705,7 +24753,7 @@ export namespace LazyPropertiesInterface {
         ]),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty[
         "identifier"
       ],
@@ -24717,7 +24765,7 @@ export namespace LazyPropertiesInterface {
         ]),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .requiredLazyToResolvedInterfaceProperty["identifier"],
       ...[
         _lazyPropertiesInterface.requiredLazyToResolvedInterfaceProperty.partial.$toRdf(
@@ -24726,7 +24774,7 @@ export namespace LazyPropertiesInterface {
       ],
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .requiredPartialInterfaceToResolvedInterfaceProperty["identifier"],
       ...[
         PartialInterface.$toRdf(
@@ -24737,9 +24785,8 @@ export namespace LazyPropertiesInterface {
       ],
     );
     resource.add(
-      LazyPropertiesInterface.$properties.setLazyToResolvedInterfaceProperty[
-        "identifier"
-      ],
+      LazyPropertiesInterface.$schema.properties
+        .setLazyToResolvedInterfaceProperty["identifier"],
       ..._lazyPropertiesInterface.setLazyToResolvedInterfaceProperty.partials.flatMap(
         (item) => [
           item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
@@ -24748,7 +24795,7 @@ export namespace LazyPropertiesInterface {
       ),
     );
     resource.add(
-      LazyPropertiesInterface.$properties
+      LazyPropertiesInterface.$schema.properties
         .setPartialInterfaceToResolvedInterfaceProperty["identifier"],
       ..._lazyPropertiesInterface.setPartialInterfaceToResolvedInterfaceProperty.partials.flatMap(
         (item) => [
@@ -24888,7 +24935,9 @@ export class PartialClass {
       mutateGraph,
     });
     resource.add(
-      PartialClass.$properties.lazilyResolvedStringProperty["identifier"],
+      PartialClass.$schema.properties.lazilyResolvedStringProperty[
+        "identifier"
+      ],
       ...[this.lazilyResolvedStringProperty],
     );
     return resource;
@@ -25073,7 +25122,7 @@ export namespace PartialClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.lazilyResolvedStringProperty["identifier"],
+          $schema.properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
@@ -25081,7 +25130,7 @@ export namespace PartialClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              PartialClass.$properties.lazilyResolvedStringProperty[
+              PartialClass.$schema.properties.lazilyResolvedStringProperty[
                 "identifier"
               ],
             preferredLanguages: $parameters.preferredLanguages,
@@ -25173,7 +25222,9 @@ export namespace PartialClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        PartialClass.$properties.lazilyResolvedStringProperty["identifier"],
+        PartialClass.$schema.properties.lazilyResolvedStringProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -25206,7 +25257,7 @@ export namespace PartialClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              PartialClass.$properties.lazilyResolvedStringProperty[
+              PartialClass.$schema.properties.lazilyResolvedStringProperty[
                 "identifier"
               ],
             subject: subject,
@@ -26283,9 +26334,8 @@ export class LazyPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      LazyPropertiesClass.$properties.optionalLazyToResolvedClassProperty[
-        "identifier"
-      ],
+      LazyPropertiesClass.$schema.properties
+        .optionalLazyToResolvedClassProperty["identifier"],
       ...this.optionalLazyToResolvedClassProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26294,9 +26344,8 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties.optionalLazyToResolvedClassUnionProperty[
-        "identifier"
-      ],
+      LazyPropertiesClass.$schema.properties
+        .optionalLazyToResolvedClassUnionProperty["identifier"],
       ...this.optionalLazyToResolvedClassUnionProperty.partial
         .toList()
         .flatMap((value) => [
@@ -26305,7 +26354,7 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties
+      LazyPropertiesClass.$schema.properties
         .optionalLazyToResolvedIriIdentifierClassProperty["identifier"],
       ...this.optionalLazyToResolvedIriIdentifierClassProperty.partial
         .toList()
@@ -26315,7 +26364,7 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties
+      LazyPropertiesClass.$schema.properties
         .optionalPartialClassToResolvedClassProperty["identifier"],
       ...this.optionalPartialClassToResolvedClassProperty.partial
         .toList()
@@ -26325,7 +26374,7 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties
+      LazyPropertiesClass.$schema.properties
         .optionalPartialClassToResolvedClassUnionProperty["identifier"],
       ...this.optionalPartialClassToResolvedClassUnionProperty.partial
         .toList()
@@ -26335,7 +26384,7 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties
+      LazyPropertiesClass.$schema.properties
         .optionalPartialClassUnionToResolvedClassUnionProperty["identifier"],
       ...this.optionalPartialClassUnionToResolvedClassUnionProperty.partial
         .toList()
@@ -26345,9 +26394,8 @@ export class LazyPropertiesClass {
         ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties.requiredLazyToResolvedClassProperty[
-        "identifier"
-      ],
+      LazyPropertiesClass.$schema.properties
+        .requiredLazyToResolvedClassProperty["identifier"],
       ...[
         this.requiredLazyToResolvedClassProperty.partial.$toRdf({
           mutateGraph: mutateGraph,
@@ -26356,7 +26404,7 @@ export class LazyPropertiesClass {
       ],
     );
     resource.add(
-      LazyPropertiesClass.$properties
+      LazyPropertiesClass.$schema.properties
         .requiredPartialClassToResolvedClassProperty["identifier"],
       ...[
         this.requiredPartialClassToResolvedClassProperty.partial.$toRdf({
@@ -26366,7 +26414,7 @@ export class LazyPropertiesClass {
       ],
     );
     resource.add(
-      LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
+      LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty[
         "identifier"
       ],
       ...this.setLazyToResolvedClassProperty.partials.flatMap((item) => [
@@ -26375,9 +26423,8 @@ export class LazyPropertiesClass {
       ]),
     );
     resource.add(
-      LazyPropertiesClass.$properties.setPartialClassToResolvedClassProperty[
-        "identifier"
-      ],
+      LazyPropertiesClass.$schema.properties
+        .setPartialClassToResolvedClassProperty["identifier"],
       ...this.setPartialClassToResolvedClassProperty.partials.flatMap(
         (item) => [
           item.$toRdf({ mutateGraph: mutateGraph, resourceSet: resourceSet })
@@ -27107,7 +27154,7 @@ export namespace LazyPropertiesClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.optionalLazyToResolvedClassProperty["identifier"],
+          $schema.properties.optionalLazyToResolvedClassProperty["identifier"],
           { unique: true },
         ),
       )
@@ -27131,7 +27178,7 @@ export namespace LazyPropertiesClass {
               >({
                 focusResource: $parameters.resource,
                 predicate:
-                  LazyPropertiesClass.$properties
+                  LazyPropertiesClass.$schema.properties
                     .optionalLazyToResolvedClassProperty["identifier"],
                 value: purify.Maybe.empty(),
               }),
@@ -27159,7 +27206,7 @@ export namespace LazyPropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.optionalLazyToResolvedClassUnionProperty[
+              $schema.properties.optionalLazyToResolvedClassUnionProperty[
                 "identifier"
               ],
               { unique: true },
@@ -27185,7 +27232,7 @@ export namespace LazyPropertiesClass {
                   >({
                     focusResource: $parameters.resource,
                     predicate:
-                      LazyPropertiesClass.$properties
+                      LazyPropertiesClass.$schema.properties
                         .optionalLazyToResolvedClassUnionProperty["identifier"],
                     value: purify.Maybe.empty(),
                   }),
@@ -27213,7 +27260,8 @@ export namespace LazyPropertiesClass {
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 $parameters.resource.values(
-                  $properties.optionalLazyToResolvedIriIdentifierClassProperty[
+                  $schema.properties
+                    .optionalLazyToResolvedIriIdentifierClassProperty[
                     "identifier"
                   ],
                   { unique: true },
@@ -27239,7 +27287,7 @@ export namespace LazyPropertiesClass {
                       >({
                         focusResource: $parameters.resource,
                         predicate:
-                          LazyPropertiesClass.$properties
+                          LazyPropertiesClass.$schema.properties
                             .optionalLazyToResolvedIriIdentifierClassProperty[
                             "identifier"
                           ],
@@ -27269,7 +27317,8 @@ export namespace LazyPropertiesClass {
                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                   >(
                     $parameters.resource.values(
-                      $properties.optionalPartialClassToResolvedClassProperty[
+                      $schema.properties
+                        .optionalPartialClassToResolvedClassProperty[
                         "identifier"
                       ],
                       { unique: true },
@@ -27295,7 +27344,7 @@ export namespace LazyPropertiesClass {
                           >({
                             focusResource: $parameters.resource,
                             predicate:
-                              LazyPropertiesClass.$properties
+                              LazyPropertiesClass.$schema.properties
                                 .optionalPartialClassToResolvedClassProperty[
                                 "identifier"
                               ],
@@ -27325,7 +27374,7 @@ export namespace LazyPropertiesClass {
                         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                       >(
                         $parameters.resource.values(
-                          $properties
+                          $schema.properties
                             .optionalPartialClassToResolvedClassUnionProperty[
                             "identifier"
                           ],
@@ -27353,7 +27402,7 @@ export namespace LazyPropertiesClass {
                               >({
                                 focusResource: $parameters.resource,
                                 predicate:
-                                  LazyPropertiesClass.$properties
+                                  LazyPropertiesClass.$schema.properties
                                     .optionalPartialClassToResolvedClassUnionProperty[
                                     "identifier"
                                   ],
@@ -27384,7 +27433,7 @@ export namespace LazyPropertiesClass {
                               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $properties
+                                $schema.properties
                                   .optionalPartialClassUnionToResolvedClassUnionProperty[
                                   "identifier"
                                 ],
@@ -27414,7 +27463,7 @@ export namespace LazyPropertiesClass {
                                     >({
                                       focusResource: $parameters.resource,
                                       predicate:
-                                        LazyPropertiesClass.$properties
+                                        LazyPropertiesClass.$schema.properties
                                           .optionalPartialClassUnionToResolvedClassUnionProperty[
                                           "identifier"
                                         ],
@@ -27447,7 +27496,7 @@ export namespace LazyPropertiesClass {
                                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                   >(
                                     $parameters.resource.values(
-                                      $properties
+                                      $schema.properties
                                         .requiredLazyToResolvedClassProperty[
                                         "identifier"
                                       ],
@@ -27491,7 +27540,7 @@ export namespace LazyPropertiesClass {
                                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                         >(
                                           $parameters.resource.values(
-                                            $properties
+                                            $schema.properties
                                               .requiredPartialClassToResolvedClassProperty[
                                               "identifier"
                                             ],
@@ -27544,7 +27593,7 @@ export namespace LazyPropertiesClass {
                                                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                               >(
                                                 $parameters.resource.values(
-                                                  $properties
+                                                  $schema.properties
                                                     .setLazyToResolvedClassProperty[
                                                     "identifier"
                                                   ],
@@ -27581,7 +27630,7 @@ export namespace LazyPropertiesClass {
                                                         $parameters.resource,
                                                       predicate:
                                                         LazyPropertiesClass
-                                                          .$properties
+                                                          .$schema.properties
                                                           .setLazyToResolvedClassProperty[
                                                           "identifier"
                                                         ],
@@ -27625,7 +27674,7 @@ export namespace LazyPropertiesClass {
                                                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                                     >(
                                                       $parameters.resource.values(
-                                                        $properties
+                                                        $schema.properties
                                                           .setPartialClassToResolvedClassProperty[
                                                           "identifier"
                                                         ],
@@ -27664,7 +27713,8 @@ export namespace LazyPropertiesClass {
                                                               $parameters.resource,
                                                             predicate:
                                                               LazyPropertiesClass
-                                                                .$properties
+                                                                .$schema
+                                                                .properties
                                                                 .setPartialClassToResolvedClassProperty[
                                                                 "identifier"
                                                               ],
@@ -27850,9 +27900,8 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.optionalLazyToResolvedClassProperty[
-          "identifier"
-        ],
+        LazyPropertiesClass.$schema.properties
+          .optionalLazyToResolvedClassProperty["identifier"],
       subject,
     });
     triples.push(
@@ -27869,7 +27918,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties
+        LazyPropertiesClass.$schema.properties
           .optionalLazyToResolvedClassUnionProperty["identifier"],
       subject,
     });
@@ -27887,7 +27936,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties
+        LazyPropertiesClass.$schema.properties
           .optionalLazyToResolvedIriIdentifierClassProperty["identifier"],
       subject,
     });
@@ -27905,7 +27954,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties
+        LazyPropertiesClass.$schema.properties
           .optionalPartialClassToResolvedClassProperty["identifier"],
       subject,
     });
@@ -27923,7 +27972,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties
+        LazyPropertiesClass.$schema.properties
           .optionalPartialClassToResolvedClassUnionProperty["identifier"],
       subject,
     });
@@ -27941,7 +27990,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties
+        LazyPropertiesClass.$schema.properties
           .optionalPartialClassUnionToResolvedClassUnionProperty["identifier"],
       subject,
     });
@@ -27958,9 +28007,8 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}RequiredLazyToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.requiredLazyToResolvedClassProperty[
-          "identifier"
-        ],
+        LazyPropertiesClass.$schema.properties
+          .requiredLazyToResolvedClassProperty["identifier"],
       subject,
     });
     triples.push(
@@ -27977,7 +28025,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}RequiredPartialClassToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties
+        LazyPropertiesClass.$schema.properties
           .requiredPartialClassToResolvedClassProperty["identifier"],
       subject,
     });
@@ -27995,7 +28043,7 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}SetLazyToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
+        LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty[
           "identifier"
         ],
       subject,
@@ -28014,9 +28062,8 @@ export namespace LazyPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}SetPartialClassToResolvedClassProperty`,
       ),
       predicate:
-        LazyPropertiesClass.$properties.setPartialClassToResolvedClassProperty[
-          "identifier"
-        ],
+        LazyPropertiesClass.$schema.properties
+          .setPartialClassToResolvedClassProperty["identifier"],
       subject,
     });
     triples.push(
@@ -28062,7 +28109,7 @@ export namespace LazyPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassProperty`,
                   ),
                   predicate:
-                    LazyPropertiesClass.$properties
+                    LazyPropertiesClass.$schema.properties
                       .optionalLazyToResolvedClassProperty["identifier"],
                   subject: subject,
                 },
@@ -28100,7 +28147,7 @@ export namespace LazyPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedClassUnionProperty`,
                   ),
                   predicate:
-                    LazyPropertiesClass.$properties
+                    LazyPropertiesClass.$schema.properties
                       .optionalLazyToResolvedClassUnionProperty["identifier"],
                   subject: subject,
                 },
@@ -28138,7 +28185,7 @@ export namespace LazyPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalLazyToResolvedIriIdentifierClassProperty`,
                   ),
                   predicate:
-                    LazyPropertiesClass.$properties
+                    LazyPropertiesClass.$schema.properties
                       .optionalLazyToResolvedIriIdentifierClassProperty[
                       "identifier"
                     ],
@@ -28178,7 +28225,7 @@ export namespace LazyPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassProperty`,
                   ),
                   predicate:
-                    LazyPropertiesClass.$properties
+                    LazyPropertiesClass.$schema.properties
                       .optionalPartialClassToResolvedClassProperty[
                       "identifier"
                     ],
@@ -28216,7 +28263,7 @@ export namespace LazyPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassToResolvedClassUnionProperty`,
                   ),
                   predicate:
-                    LazyPropertiesClass.$properties
+                    LazyPropertiesClass.$schema.properties
                       .optionalPartialClassToResolvedClassUnionProperty[
                       "identifier"
                     ],
@@ -28255,7 +28302,7 @@ export namespace LazyPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}OptionalPartialClassUnionToResolvedClassUnionProperty`,
                   ),
                   predicate:
-                    LazyPropertiesClass.$properties
+                    LazyPropertiesClass.$schema.properties
                       .optionalPartialClassUnionToResolvedClassUnionProperty[
                       "identifier"
                     ],
@@ -28288,7 +28335,7 @@ export namespace LazyPropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}RequiredLazyToResolvedClassProperty`,
             ),
             predicate:
-              LazyPropertiesClass.$properties
+              LazyPropertiesClass.$schema.properties
                 .requiredLazyToResolvedClassProperty["identifier"],
             subject: subject,
           },
@@ -28318,7 +28365,7 @@ export namespace LazyPropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}RequiredPartialClassToResolvedClassProperty`,
             ),
             predicate:
-              LazyPropertiesClass.$properties
+              LazyPropertiesClass.$schema.properties
                 .requiredPartialClassToResolvedClassProperty["identifier"],
             subject: subject,
           },
@@ -28348,9 +28395,8 @@ export namespace LazyPropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}SetLazyToResolvedClassProperty`,
               ),
               predicate:
-                LazyPropertiesClass.$properties.setLazyToResolvedClassProperty[
-                  "identifier"
-                ],
+                LazyPropertiesClass.$schema.properties
+                  .setLazyToResolvedClassProperty["identifier"],
               subject: subject,
             },
           ],
@@ -28382,7 +28428,7 @@ export namespace LazyPropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")}SetPartialClassToResolvedClassProperty`,
               ),
               predicate:
-                LazyPropertiesClass.$properties
+                LazyPropertiesClass.$schema.properties
                   .setPartialClassToResolvedClassProperty["identifier"],
               subject: subject,
             },
@@ -28710,7 +28756,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.lazilyResolvedStringProperty["identifier"],
+            $schema.properties.lazilyResolvedStringProperty["identifier"],
             { unique: true },
           ),
         )
@@ -28718,7 +28764,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                LazilyResolvedIriIdentifierInterface.$properties
+                LazilyResolvedIriIdentifierInterface.$schema.properties
                   .lazilyResolvedStringProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -28815,7 +28861,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedIriIdentifierInterface.$properties
+        LazilyResolvedIriIdentifierInterface.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -28850,7 +28896,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedIriIdentifierInterface.$properties
+              LazilyResolvedIriIdentifierInterface.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -28945,7 +28991,7 @@ export namespace LazilyResolvedIriIdentifierInterface {
       { mutateGraph },
     );
     resource.add(
-      LazilyResolvedIriIdentifierInterface.$properties
+      LazilyResolvedIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty["identifier"],
       ...[_lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty],
     );
@@ -29066,9 +29112,8 @@ export class LazilyResolvedIriIdentifierClass {
       mutateGraph,
     });
     resource.add(
-      LazilyResolvedIriIdentifierClass.$properties.lazilyResolvedStringProperty[
-        "identifier"
-      ],
+      LazilyResolvedIriIdentifierClass.$schema.properties
+        .lazilyResolvedStringProperty["identifier"],
       ...[this.lazilyResolvedStringProperty],
     );
     return resource;
@@ -29262,7 +29307,7 @@ export namespace LazilyResolvedIriIdentifierClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.lazilyResolvedStringProperty["identifier"],
+          $schema.properties.lazilyResolvedStringProperty["identifier"],
           { unique: true },
         ),
       )
@@ -29270,7 +29315,7 @@ export namespace LazilyResolvedIriIdentifierClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              LazilyResolvedIriIdentifierClass.$properties
+              LazilyResolvedIriIdentifierClass.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -29365,7 +29410,7 @@ export namespace LazilyResolvedIriIdentifierClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedIriIdentifierClass.$properties
+        LazilyResolvedIriIdentifierClass.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -29400,7 +29445,7 @@ export namespace LazilyResolvedIriIdentifierClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedIriIdentifierClass.$properties
+              LazilyResolvedIriIdentifierClass.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -29784,7 +29829,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.lazilyResolvedStringProperty["identifier"],
+              $schema.properties.lazilyResolvedStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -29792,7 +29837,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  LazilyResolvedInterfaceUnionMember2.$properties
+                  LazilyResolvedInterfaceUnionMember2.$schema.properties
                     .lazilyResolvedStringProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -29911,7 +29956,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedInterfaceUnionMember2.$properties
+        LazilyResolvedInterfaceUnionMember2.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -29989,7 +30034,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedInterfaceUnionMember2.$properties
+              LazilyResolvedInterfaceUnionMember2.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -30098,7 +30143,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     }
 
     resource.add(
-      LazilyResolvedInterfaceUnionMember2.$properties
+      LazilyResolvedInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty["identifier"],
       ...[_lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty],
     );
@@ -30427,7 +30472,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.lazilyResolvedStringProperty["identifier"],
+              $schema.properties.lazilyResolvedStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -30435,7 +30480,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  LazilyResolvedInterfaceUnionMember1.$properties
+                  LazilyResolvedInterfaceUnionMember1.$schema.properties
                     .lazilyResolvedStringProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -30554,7 +30599,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedInterfaceUnionMember1.$properties
+        LazilyResolvedInterfaceUnionMember1.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -30632,7 +30677,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedInterfaceUnionMember1.$properties
+              LazilyResolvedInterfaceUnionMember1.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -30741,7 +30786,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     }
 
     resource.add(
-      LazilyResolvedInterfaceUnionMember1.$properties
+      LazilyResolvedInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty["identifier"],
       ...[_lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty],
     );
@@ -30881,9 +30926,8 @@ export class LazilyResolvedClassUnionMember2 {
     }
 
     resource.add(
-      LazilyResolvedClassUnionMember2.$properties.lazilyResolvedStringProperty[
-        "identifier"
-      ],
+      LazilyResolvedClassUnionMember2.$schema.properties
+        .lazilyResolvedStringProperty["identifier"],
       ...[this.lazilyResolvedStringProperty],
     );
     return resource;
@@ -31101,7 +31145,7 @@ export namespace LazilyResolvedClassUnionMember2 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.lazilyResolvedStringProperty["identifier"],
+            $schema.properties.lazilyResolvedStringProperty["identifier"],
             { unique: true },
           ),
         )
@@ -31109,7 +31153,7 @@ export namespace LazilyResolvedClassUnionMember2 {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                LazilyResolvedClassUnionMember2.$properties
+                LazilyResolvedClassUnionMember2.$schema.properties
                   .lazilyResolvedStringProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -31226,7 +31270,7 @@ export namespace LazilyResolvedClassUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedClassUnionMember2.$properties
+        LazilyResolvedClassUnionMember2.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -31304,7 +31348,7 @@ export namespace LazilyResolvedClassUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedClassUnionMember2.$properties
+              LazilyResolvedClassUnionMember2.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -31499,9 +31543,8 @@ export class LazilyResolvedClassUnionMember1 {
     }
 
     resource.add(
-      LazilyResolvedClassUnionMember1.$properties.lazilyResolvedStringProperty[
-        "identifier"
-      ],
+      LazilyResolvedClassUnionMember1.$schema.properties
+        .lazilyResolvedStringProperty["identifier"],
       ...[this.lazilyResolvedStringProperty],
     );
     return resource;
@@ -31719,7 +31762,7 @@ export namespace LazilyResolvedClassUnionMember1 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.lazilyResolvedStringProperty["identifier"],
+            $schema.properties.lazilyResolvedStringProperty["identifier"],
             { unique: true },
           ),
         )
@@ -31727,7 +31770,7 @@ export namespace LazilyResolvedClassUnionMember1 {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                LazilyResolvedClassUnionMember1.$properties
+                LazilyResolvedClassUnionMember1.$schema.properties
                   .lazilyResolvedStringProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -31844,7 +31887,7 @@ export namespace LazilyResolvedClassUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedClassUnionMember1.$properties
+        LazilyResolvedClassUnionMember1.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -31922,7 +31965,7 @@ export namespace LazilyResolvedClassUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedClassUnionMember1.$properties
+              LazilyResolvedClassUnionMember1.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -32320,7 +32363,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.lazilyResolvedStringProperty["identifier"],
+              $schema.properties.lazilyResolvedStringProperty["identifier"],
               { unique: true },
             ),
           )
@@ -32328,8 +32371,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
-                    .lazilyResolvedStringProperty["identifier"],
+                  LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema
+                    .properties.lazilyResolvedStringProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -32448,7 +32491,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
+        LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -32526,7 +32569,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
+              LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -32636,7 +32679,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     }
 
     resource.add(
-      LazilyResolvedBlankNodeOrIriIdentifierInterface.$properties
+      LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty["identifier"],
       ...[
         _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
@@ -32781,7 +32824,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     }
 
     resource.add(
-      LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
+      LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty["identifier"],
       ...[this.lazilyResolvedStringProperty],
     );
@@ -33007,7 +33050,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.lazilyResolvedStringProperty["identifier"],
+            $schema.properties.lazilyResolvedStringProperty["identifier"],
             { unique: true },
           ),
         )
@@ -33015,7 +33058,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
+                LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
                   .lazilyResolvedStringProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -33134,7 +33177,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass")}LazilyResolvedStringProperty`,
       ),
       predicate:
-        LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
+        LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
           .lazilyResolvedStringProperty["identifier"],
       subject,
     });
@@ -33212,7 +33255,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass")}LazilyResolvedStringProperty`,
             ),
             predicate:
-              LazilyResolvedBlankNodeOrIriIdentifierClass.$properties
+              LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
                 .lazilyResolvedStringProperty["identifier"],
             subject: subject,
           },
@@ -33418,7 +33461,7 @@ export class LanguageInPropertiesClass {
       mutateGraph,
     });
     resource.add(
-      LanguageInPropertiesClass.$properties.languageInLiteralProperty[
+      LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty[
         "identifier"
       ],
       ...this.languageInLiteralProperty.flatMap((item) => [item]),
@@ -33630,7 +33673,7 @@ export namespace LanguageInPropertiesClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.languageInLiteralProperty["identifier"],
+          $schema.properties.languageInLiteralProperty["identifier"],
           { unique: true },
         ),
       )
@@ -33648,7 +33691,7 @@ export namespace LanguageInPropertiesClass {
                       expectedValueType: "(rdfjs.Literal)",
                       focusResource: $parameters.resource,
                       predicate:
-                        LanguageInPropertiesClass.$properties
+                        LanguageInPropertiesClass.$schema.properties
                           .languageInLiteralProperty["identifier"],
                     }),
                   );
@@ -33660,9 +33703,8 @@ export namespace LanguageInPropertiesClass {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              LanguageInPropertiesClass.$properties.languageInLiteralProperty[
-                "identifier"
-              ],
+              LanguageInPropertiesClass.$schema.properties
+                .languageInLiteralProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
           }),
@@ -33679,9 +33721,8 @@ export namespace LanguageInPropertiesClass {
           rdfjsResource.Resource.Values.fromValue({
             focusResource: $parameters.resource,
             predicate:
-              LanguageInPropertiesClass.$properties.languageInLiteralProperty[
-                "identifier"
-              ],
+              LanguageInPropertiesClass.$schema.properties
+                .languageInLiteralProperty["identifier"],
             value: valuesArray,
           }),
         )
@@ -33772,7 +33813,7 @@ export namespace LanguageInPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass")}LanguageInLiteralProperty`,
       ),
       predicate:
-        LanguageInPropertiesClass.$properties.languageInLiteralProperty[
+        LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty[
           "identifier"
         ],
       subject,
@@ -33807,9 +33848,8 @@ export namespace LanguageInPropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass")}LanguageInLiteralProperty`,
             ),
             predicate:
-              LanguageInPropertiesClass.$properties.languageInLiteralProperty[
-                "identifier"
-              ],
+              LanguageInPropertiesClass.$schema.properties
+                .languageInLiteralProperty["identifier"],
             subject: subject,
           },
         ],
@@ -34071,7 +34111,7 @@ export class JsPrimitiveUnionPropertyClass {
     }
 
     resource.add(
-      JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
+      JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty[
         "identifier"
       ],
       ...this.jsPrimitiveUnionProperty.flatMap((item) =>
@@ -34365,7 +34405,7 @@ export namespace JsPrimitiveUnionPropertyClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.jsPrimitiveUnionProperty["identifier"],
+            $schema.properties.jsPrimitiveUnionProperty["identifier"],
             { unique: true },
           ),
         )
@@ -34396,7 +34436,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                         $fromRdfPreferredLanguages({
                           focusResource: $parameters.resource,
                           predicate:
-                            JsPrimitiveUnionPropertyClass.$properties
+                            JsPrimitiveUnionPropertyClass.$schema.properties
                               .jsPrimitiveUnionProperty["identifier"],
                           preferredLanguages: $parameters.preferredLanguages,
                           values,
@@ -34417,7 +34457,7 @@ export namespace JsPrimitiveUnionPropertyClass {
             rdfjsResource.Resource.Values.fromValue({
               focusResource: $parameters.resource,
               predicate:
-                JsPrimitiveUnionPropertyClass.$properties
+                JsPrimitiveUnionPropertyClass.$schema.properties
                   .jsPrimitiveUnionProperty["identifier"],
               value: valuesArray,
             }),
@@ -34532,9 +34572,8 @@ export namespace JsPrimitiveUnionPropertyClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}JsPrimitiveUnionProperty`,
       ),
       predicate:
-        JsPrimitiveUnionPropertyClass.$properties.jsPrimitiveUnionProperty[
-          "identifier"
-        ],
+        JsPrimitiveUnionPropertyClass.$schema.properties
+          .jsPrimitiveUnionProperty["identifier"],
       subject,
     });
     return triples;
@@ -34616,7 +34655,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}JsPrimitiveUnionProperty`,
                       ),
                       predicate:
-                        JsPrimitiveUnionPropertyClass.$properties
+                        JsPrimitiveUnionPropertyClass.$schema.properties
                           .jsPrimitiveUnionProperty["identifier"],
                       subject: subject,
                     },
@@ -34648,7 +34687,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}JsPrimitiveUnionProperty`,
                       ),
                       predicate:
-                        JsPrimitiveUnionPropertyClass.$properties
+                        JsPrimitiveUnionPropertyClass.$schema.properties
                           .jsPrimitiveUnionProperty["identifier"],
                       subject: subject,
                     },
@@ -34680,7 +34719,7 @@ export namespace JsPrimitiveUnionPropertyClass {
                         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")}JsPrimitiveUnionProperty`,
                       ),
                       predicate:
-                        JsPrimitiveUnionPropertyClass.$properties
+                        JsPrimitiveUnionPropertyClass.$schema.properties
                           .jsPrimitiveUnionProperty["identifier"],
                       subject: subject,
                     },
@@ -35929,7 +35968,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.interfaceUnionMemberCommonParentProperty["identifier"],
+          $schema.properties.interfaceUnionMemberCommonParentProperty[
+            "identifier"
+          ],
           { unique: true },
         ),
       )
@@ -35937,7 +35978,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              InterfaceUnionMemberCommonParentStatic.$properties
+              InterfaceUnionMemberCommonParentStatic.$schema.properties
                 .interfaceUnionMemberCommonParentProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -36032,7 +36073,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent")}InterfaceUnionMemberCommonParentProperty`,
       ),
       predicate:
-        InterfaceUnionMemberCommonParentStatic.$properties
+        InterfaceUnionMemberCommonParentStatic.$schema.properties
           .interfaceUnionMemberCommonParentProperty["identifier"],
       subject,
     });
@@ -36067,7 +36108,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent")}InterfaceUnionMemberCommonParentProperty`,
             ),
             predicate:
-              InterfaceUnionMemberCommonParentStatic.$properties
+              InterfaceUnionMemberCommonParentStatic.$schema.properties
                 .interfaceUnionMemberCommonParentProperty["identifier"],
             subject: subject,
           },
@@ -36165,7 +36206,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       { mutateGraph },
     );
     resource.add(
-      InterfaceUnionMemberCommonParentStatic.$properties
+      InterfaceUnionMemberCommonParentStatic.$schema.properties
         .interfaceUnionMemberCommonParentProperty["identifier"],
       ...[
         _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
@@ -36457,7 +36498,7 @@ export namespace InterfaceUnionMember2 {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.interfaceUnionMember2Property["identifier"],
+                $schema.properties.interfaceUnionMember2Property["identifier"],
                 { unique: true },
               ),
             )
@@ -36465,7 +36506,7 @@ export namespace InterfaceUnionMember2 {
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    InterfaceUnionMember2.$properties
+                    InterfaceUnionMember2.$schema.properties
                       .interfaceUnionMember2Property["identifier"],
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
@@ -36597,7 +36638,7 @@ export namespace InterfaceUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2")}InterfaceUnionMember2Property`,
       ),
       predicate:
-        InterfaceUnionMember2.$properties.interfaceUnionMember2Property[
+        InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property[
           "identifier"
         ],
       subject,
@@ -36678,9 +36719,8 @@ export namespace InterfaceUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2")}InterfaceUnionMember2Property`,
             ),
             predicate:
-              InterfaceUnionMember2.$properties.interfaceUnionMember2Property[
-                "identifier"
-              ],
+              InterfaceUnionMember2.$schema.properties
+                .interfaceUnionMember2Property["identifier"],
             subject: subject,
           },
         ],
@@ -36785,7 +36825,7 @@ export namespace InterfaceUnionMember2 {
     }
 
     resource.add(
-      InterfaceUnionMember2.$properties.interfaceUnionMember2Property[
+      InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property[
         "identifier"
       ],
       ...[_interfaceUnionMember2.interfaceUnionMember2Property],
@@ -37075,7 +37115,7 @@ export namespace InterfaceUnionMember1 {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.interfaceUnionMember1Property["identifier"],
+                $schema.properties.interfaceUnionMember1Property["identifier"],
                 { unique: true },
               ),
             )
@@ -37083,7 +37123,7 @@ export namespace InterfaceUnionMember1 {
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    InterfaceUnionMember1.$properties
+                    InterfaceUnionMember1.$schema.properties
                       .interfaceUnionMember1Property["identifier"],
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
@@ -37215,7 +37255,7 @@ export namespace InterfaceUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1")}InterfaceUnionMember1Property`,
       ),
       predicate:
-        InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
+        InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property[
           "identifier"
         ],
       subject,
@@ -37296,9 +37336,8 @@ export namespace InterfaceUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1")}InterfaceUnionMember1Property`,
             ),
             predicate:
-              InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
-                "identifier"
-              ],
+              InterfaceUnionMember1.$schema.properties
+                .interfaceUnionMember1Property["identifier"],
             subject: subject,
           },
         ],
@@ -37403,7 +37442,7 @@ export namespace InterfaceUnionMember1 {
     }
 
     resource.add(
-      InterfaceUnionMember1.$properties.interfaceUnionMember1Property[
+      InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property[
         "identifier"
       ],
       ...[_interfaceUnionMember1.interfaceUnionMember1Property],
@@ -37676,14 +37715,15 @@ export namespace Interface {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.interfaceProperty["identifier"],
+            $schema.properties.interfaceProperty["identifier"],
             { unique: true },
           ),
         )
           .chain((values) =>
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
-              predicate: Interface.$properties.interfaceProperty["identifier"],
+              predicate:
+                Interface.$schema.properties.interfaceProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
             }),
@@ -37773,7 +37813,7 @@ export namespace Interface {
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface")}InterfaceProperty`,
       ),
-      predicate: Interface.$properties.interfaceProperty["identifier"],
+      predicate: Interface.$schema.properties.interfaceProperty["identifier"],
       subject,
     });
     return triples;
@@ -37804,7 +37844,8 @@ export namespace Interface {
             object: dataFactory.variable!(
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface")}InterfaceProperty`,
             ),
-            predicate: Interface.$properties.interfaceProperty["identifier"],
+            predicate:
+              Interface.$schema.properties.interfaceProperty["identifier"],
             subject: subject,
           },
         ],
@@ -37897,7 +37938,7 @@ export namespace Interface {
       mutateGraph,
     });
     resource.add(
-      Interface.$properties.interfaceProperty["identifier"],
+      Interface.$schema.properties.interfaceProperty["identifier"],
       ...[_interface.interfaceProperty],
     );
     return resource;
@@ -38055,7 +38096,7 @@ export class IndirectRecursiveHelperClass {
     }
 
     resource.add(
-      IndirectRecursiveHelperClass.$properties.indirectRecursiveProperty[
+      IndirectRecursiveHelperClass.$schema.properties.indirectRecursiveProperty[
         "identifier"
       ],
       ...this.indirectRecursiveProperty
@@ -38284,7 +38325,7 @@ export namespace IndirectRecursiveHelperClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.indirectRecursiveProperty["identifier"],
+            $schema.properties.indirectRecursiveProperty["identifier"],
             { unique: true },
           ),
         )
@@ -38308,7 +38349,7 @@ export namespace IndirectRecursiveHelperClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    IndirectRecursiveHelperClass.$properties
+                    IndirectRecursiveHelperClass.$schema.properties
                       .indirectRecursiveProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
@@ -38645,7 +38686,7 @@ export class IndirectRecursiveClass {
     }
 
     resource.add(
-      IndirectRecursiveClass.$properties.indirectRecursiveHelperProperty[
+      IndirectRecursiveClass.$schema.properties.indirectRecursiveHelperProperty[
         "identifier"
       ],
       ...this.indirectRecursiveHelperProperty
@@ -38879,7 +38920,7 @@ export namespace IndirectRecursiveClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.indirectRecursiveHelperProperty["identifier"],
+            $schema.properties.indirectRecursiveHelperProperty["identifier"],
             { unique: true },
           ),
         )
@@ -38903,7 +38944,7 @@ export namespace IndirectRecursiveClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    IndirectRecursiveClass.$properties
+                    IndirectRecursiveClass.$schema.properties
                       .indirectRecursiveHelperProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
@@ -39373,11 +39414,11 @@ export class InPropertiesClass {
     }
 
     resource.add(
-      InPropertiesClass.$properties.inBooleansProperty["identifier"],
+      InPropertiesClass.$schema.properties.inBooleansProperty["identifier"],
       ...this.inBooleansProperty.toList(),
     );
     resource.add(
-      InPropertiesClass.$properties.inDateTimesProperty["identifier"],
+      InPropertiesClass.$schema.properties.inDateTimesProperty["identifier"],
       ...this.inDateTimesProperty
         .toList()
         .flatMap((value) => [
@@ -39388,11 +39429,11 @@ export class InPropertiesClass {
         ]),
     );
     resource.add(
-      InPropertiesClass.$properties.inIrisProperty["identifier"],
+      InPropertiesClass.$schema.properties.inIrisProperty["identifier"],
       ...this.inIrisProperty.toList(),
     );
     resource.add(
-      InPropertiesClass.$properties.inNumbersProperty["identifier"],
+      InPropertiesClass.$schema.properties.inNumbersProperty["identifier"],
       ...this.inNumbersProperty
         .toList()
         .flatMap((value) => [
@@ -39400,7 +39441,7 @@ export class InPropertiesClass {
         ]),
     );
     resource.add(
-      InPropertiesClass.$properties.inStringsProperty["identifier"],
+      InPropertiesClass.$schema.properties.inStringsProperty["identifier"],
       ...this.inStringsProperty.toList(),
     );
     return resource;
@@ -39734,7 +39775,7 @@ export namespace InPropertiesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.inBooleansProperty["identifier"],
+            $schema.properties.inBooleansProperty["identifier"],
             { unique: true },
           ),
         )
@@ -39749,9 +39790,8 @@ export namespace InPropertiesClass {
                         expectedValueType: "true",
                         focusResource: $parameters.resource,
                         predicate:
-                          InPropertiesClass.$properties.inBooleansProperty[
-                            "identifier"
-                          ],
+                          InPropertiesClass.$schema.properties
+                            .inBooleansProperty["identifier"],
                       }),
                     ),
               ),
@@ -39763,7 +39803,7 @@ export namespace InPropertiesClass {
               : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({
                   focusResource: $parameters.resource,
                   predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
+                    InPropertiesClass.$schema.properties.inBooleansProperty[
                       "identifier"
                     ],
                   value: purify.Maybe.empty(),
@@ -39776,7 +39816,7 @@ export namespace InPropertiesClass {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.inDateTimesProperty["identifier"],
+                $schema.properties.inDateTimesProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -39792,9 +39832,8 @@ export namespace InPropertiesClass {
                         expectedValueType: "Date",
                         focusResource: $parameters.resource,
                         predicate:
-                          InPropertiesClass.$properties.inDateTimesProperty[
-                            "identifier"
-                          ],
+                          InPropertiesClass.$schema.properties
+                            .inDateTimesProperty["identifier"],
                       }),
                     );
                   }),
@@ -39807,9 +39846,8 @@ export namespace InPropertiesClass {
                       {
                         focusResource: $parameters.resource,
                         predicate:
-                          InPropertiesClass.$properties.inDateTimesProperty[
-                            "identifier"
-                          ],
+                          InPropertiesClass.$schema.properties
+                            .inDateTimesProperty["identifier"],
                         value: purify.Maybe.empty(),
                       },
                     ),
@@ -39821,7 +39859,7 @@ export namespace InPropertiesClass {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties.inIrisProperty["identifier"],
+                    $schema.properties.inIrisProperty["identifier"],
                     { unique: true },
                   ),
                 )
@@ -39864,7 +39902,7 @@ export namespace InPropertiesClass {
                                     'rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
                                   focusResource: $parameters.resource,
                                   predicate:
-                                    InPropertiesClass.$properties
+                                    InPropertiesClass.$schema.properties
                                       .inIrisProperty["identifier"],
                                 },
                               ),
@@ -39886,7 +39924,7 @@ export namespace InPropertiesClass {
                         >({
                           focusResource: $parameters.resource,
                           predicate:
-                            InPropertiesClass.$properties.inIrisProperty[
+                            InPropertiesClass.$schema.properties.inIrisProperty[
                               "identifier"
                             ],
                           value: purify.Maybe.empty(),
@@ -39899,7 +39937,7 @@ export namespace InPropertiesClass {
                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                     >(
                       $parameters.resource.values(
-                        $properties.inNumbersProperty["identifier"],
+                        $schema.properties.inNumbersProperty["identifier"],
                         { unique: true },
                       ),
                     )
@@ -39920,7 +39958,7 @@ export namespace InPropertiesClass {
                                       expectedValueType: "1 | 2",
                                       focusResource: $parameters.resource,
                                       predicate:
-                                        InPropertiesClass.$properties
+                                        InPropertiesClass.$schema.properties
                                           .inNumbersProperty["identifier"],
                                     },
                                   ),
@@ -39937,9 +39975,8 @@ export namespace InPropertiesClass {
                             >({
                               focusResource: $parameters.resource,
                               predicate:
-                                InPropertiesClass.$properties.inNumbersProperty[
-                                  "identifier"
-                                ],
+                                InPropertiesClass.$schema.properties
+                                  .inNumbersProperty["identifier"],
                               value: purify.Maybe.empty(),
                             }),
                       )
@@ -39950,7 +39987,7 @@ export namespace InPropertiesClass {
                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                         >(
                           $parameters.resource.values(
-                            $properties.inStringsProperty["identifier"],
+                            $schema.properties.inStringsProperty["identifier"],
                             { unique: true },
                           ),
                         )
@@ -39958,9 +39995,8 @@ export namespace InPropertiesClass {
                             $fromRdfPreferredLanguages({
                               focusResource: $parameters.resource,
                               predicate:
-                                InPropertiesClass.$properties.inStringsProperty[
-                                  "identifier"
-                                ],
+                                InPropertiesClass.$schema.properties
+                                  .inStringsProperty["identifier"],
                               preferredLanguages:
                                 $parameters.preferredLanguages,
                               values,
@@ -39984,7 +40020,7 @@ export namespace InPropertiesClass {
                                           expectedValueType: '"text" | "html"',
                                           focusResource: $parameters.resource,
                                           predicate:
-                                            InPropertiesClass.$properties
+                                            InPropertiesClass.$schema.properties
                                               .inStringsProperty["identifier"],
                                         },
                                       ),
@@ -40001,7 +40037,7 @@ export namespace InPropertiesClass {
                                 >({
                                   focusResource: $parameters.resource,
                                   predicate:
-                                    InPropertiesClass.$properties
+                                    InPropertiesClass.$schema.properties
                                       .inStringsProperty["identifier"],
                                   value: purify.Maybe.empty(),
                                 }),
@@ -40137,7 +40173,8 @@ export namespace InPropertiesClass {
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
       ),
-      predicate: InPropertiesClass.$properties.inBooleansProperty["identifier"],
+      predicate:
+        InPropertiesClass.$schema.properties.inBooleansProperty["identifier"],
       subject,
     });
     triples.push({
@@ -40145,28 +40182,31 @@ export namespace InPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InDateTimesProperty`,
       ),
       predicate:
-        InPropertiesClass.$properties.inDateTimesProperty["identifier"],
+        InPropertiesClass.$schema.properties.inDateTimesProperty["identifier"],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InIrisProperty`,
       ),
-      predicate: InPropertiesClass.$properties.inIrisProperty["identifier"],
+      predicate:
+        InPropertiesClass.$schema.properties.inIrisProperty["identifier"],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InNumbersProperty`,
       ),
-      predicate: InPropertiesClass.$properties.inNumbersProperty["identifier"],
+      predicate:
+        InPropertiesClass.$schema.properties.inNumbersProperty["identifier"],
       subject,
     });
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
       ),
-      predicate: InPropertiesClass.$properties.inStringsProperty["identifier"],
+      predicate:
+        InPropertiesClass.$schema.properties.inStringsProperty["identifier"],
       subject,
     });
     return triples;
@@ -40246,7 +40286,7 @@ export namespace InPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InBooleansProperty`,
                   ),
                   predicate:
-                    InPropertiesClass.$properties.inBooleansProperty[
+                    InPropertiesClass.$schema.properties.inBooleansProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -40282,7 +40322,7 @@ export namespace InPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InDateTimesProperty`,
                   ),
                   predicate:
-                    InPropertiesClass.$properties.inDateTimesProperty[
+                    InPropertiesClass.$schema.properties.inDateTimesProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -40318,7 +40358,9 @@ export namespace InPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InIrisProperty`,
                   ),
                   predicate:
-                    InPropertiesClass.$properties.inIrisProperty["identifier"],
+                    InPropertiesClass.$schema.properties.inIrisProperty[
+                      "identifier"
+                    ],
                   subject: subject,
                 },
               ],
@@ -40352,7 +40394,7 @@ export namespace InPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InNumbersProperty`,
                   ),
                   predicate:
-                    InPropertiesClass.$properties.inNumbersProperty[
+                    InPropertiesClass.$schema.properties.inNumbersProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -40388,7 +40430,7 @@ export namespace InPropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")}InStringsProperty`,
                   ),
                   predicate:
-                    InPropertiesClass.$properties.inStringsProperty[
+                    InPropertiesClass.$schema.properties.inStringsProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -40598,7 +40640,7 @@ export class InIdentifierClass {
     }
 
     resource.add(
-      InIdentifierClass.$properties.inIdentifierProperty["identifier"],
+      InIdentifierClass.$schema.properties.inIdentifierProperty["identifier"],
       ...this.inIdentifierProperty.toList(),
     );
     return resource;
@@ -40875,7 +40917,7 @@ export namespace InIdentifierClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.inIdentifierProperty["identifier"],
+            $schema.properties.inIdentifierProperty["identifier"],
             { unique: true },
           ),
         )
@@ -40883,7 +40925,7 @@ export namespace InIdentifierClass {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                InIdentifierClass.$properties.inIdentifierProperty[
+                InIdentifierClass.$schema.properties.inIdentifierProperty[
                   "identifier"
                 ],
               preferredLanguages: $parameters.preferredLanguages,
@@ -40897,7 +40939,7 @@ export namespace InIdentifierClass {
               : rdfjsResource.Resource.Values.fromValue<purify.Maybe<string>>({
                   focusResource: $parameters.resource,
                   predicate:
-                    InIdentifierClass.$properties.inIdentifierProperty[
+                    InIdentifierClass.$schema.properties.inIdentifierProperty[
                       "identifier"
                     ],
                   value: purify.Maybe.empty(),
@@ -41009,7 +41051,7 @@ export namespace InIdentifierClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
       ),
       predicate:
-        InIdentifierClass.$properties.inIdentifierProperty["identifier"],
+        InIdentifierClass.$schema.properties.inIdentifierProperty["identifier"],
       subject,
     });
     return triples;
@@ -41089,7 +41131,7 @@ export namespace InIdentifierClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")}InIdentifierProperty`,
                   ),
                   predicate:
-                    InIdentifierClass.$properties.inIdentifierProperty[
+                    InIdentifierClass.$schema.properties.inIdentifierProperty[
                       "identifier"
                     ],
                   subject: subject,
@@ -41285,9 +41327,8 @@ export abstract class IdentifierOverride1Class {
       mutateGraph,
     });
     resource.add(
-      IdentifierOverride1ClassStatic.$properties.identifierOverrideProperty[
-        "identifier"
-      ],
+      IdentifierOverride1ClassStatic.$schema.properties
+        .identifierOverrideProperty["identifier"],
       ...[this.identifierOverrideProperty],
     );
     return resource;
@@ -41443,7 +41484,7 @@ export namespace IdentifierOverride1ClassStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.identifierOverrideProperty["identifier"],
+          $schema.properties.identifierOverrideProperty["identifier"],
           { unique: true },
         ),
       )
@@ -41451,7 +41492,7 @@ export namespace IdentifierOverride1ClassStatic {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              IdentifierOverride1ClassStatic.$properties
+              IdentifierOverride1ClassStatic.$schema.properties
                 .identifierOverrideProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -41545,9 +41586,8 @@ export namespace IdentifierOverride1ClassStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class")}IdentifierOverrideProperty`,
       ),
       predicate:
-        IdentifierOverride1ClassStatic.$properties.identifierOverrideProperty[
-          "identifier"
-        ],
+        IdentifierOverride1ClassStatic.$schema.properties
+          .identifierOverrideProperty["identifier"],
       subject,
     });
     return triples;
@@ -41580,7 +41620,7 @@ export namespace IdentifierOverride1ClassStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class")}IdentifierOverrideProperty`,
             ),
             predicate:
-              IdentifierOverride1ClassStatic.$properties
+              IdentifierOverride1ClassStatic.$schema.properties
                 .identifierOverrideProperty["identifier"],
             subject: subject,
           },
@@ -43364,11 +43404,15 @@ export class HasValuePropertiesClass {
       mutateGraph,
     });
     resource.add(
-      HasValuePropertiesClass.$properties.hasIriValueProperty["identifier"],
+      HasValuePropertiesClass.$schema.properties.hasIriValueProperty[
+        "identifier"
+      ],
       ...[this.hasIriValueProperty],
     );
     resource.add(
-      HasValuePropertiesClass.$properties.hasLiteralValueProperty["identifier"],
+      HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty[
+        "identifier"
+      ],
       ...[this.hasLiteralValueProperty],
     );
     return resource;
@@ -43575,7 +43619,7 @@ export namespace HasValuePropertiesClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.hasIriValueProperty["identifier"],
+          $schema.properties.hasIriValueProperty["identifier"],
           { unique: true },
         ),
       )
@@ -43598,7 +43642,7 @@ export namespace HasValuePropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.hasLiteralValueProperty["identifier"],
+              $schema.properties.hasLiteralValueProperty["identifier"],
               { unique: true },
             ),
           )
@@ -43613,9 +43657,8 @@ export namespace HasValuePropertiesClass {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  HasValuePropertiesClass.$properties.hasLiteralValueProperty[
-                    "identifier"
-                  ],
+                  HasValuePropertiesClass.$schema.properties
+                    .hasLiteralValueProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -43715,7 +43758,9 @@ export namespace HasValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass")}HasIriValueProperty`,
       ),
       predicate:
-        HasValuePropertiesClass.$properties.hasIriValueProperty["identifier"],
+        HasValuePropertiesClass.$schema.properties.hasIriValueProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -43723,7 +43768,7 @@ export namespace HasValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass")}HasLiteralValueProperty`,
       ),
       predicate:
-        HasValuePropertiesClass.$properties.hasLiteralValueProperty[
+        HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty[
           "identifier"
         ],
       subject,
@@ -43758,7 +43803,7 @@ export namespace HasValuePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass")}HasIriValueProperty`,
             ),
             predicate:
-              HasValuePropertiesClass.$properties.hasIriValueProperty[
+              HasValuePropertiesClass.$schema.properties.hasIriValueProperty[
                 "identifier"
               ],
             subject: subject,
@@ -43786,9 +43831,8 @@ export namespace HasValuePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass")}HasLiteralValueProperty`,
             ),
             predicate:
-              HasValuePropertiesClass.$properties.hasLiteralValueProperty[
-                "identifier"
-              ],
+              HasValuePropertiesClass.$schema.properties
+                .hasLiteralValueProperty["identifier"],
             subject: subject,
           },
         ],
@@ -43983,9 +44027,8 @@ export class FlattenClassUnionMember3 {
     }
 
     resource.add(
-      FlattenClassUnionMember3.$properties.flattenClassUnionMember3Property[
-        "identifier"
-      ],
+      FlattenClassUnionMember3.$schema.properties
+        .flattenClassUnionMember3Property["identifier"],
       ...[this.flattenClassUnionMember3Property],
     );
     return resource;
@@ -44202,7 +44245,7 @@ export namespace FlattenClassUnionMember3 {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.flattenClassUnionMember3Property["identifier"],
+            $schema.properties.flattenClassUnionMember3Property["identifier"],
             { unique: true },
           ),
         )
@@ -44210,7 +44253,7 @@ export namespace FlattenClassUnionMember3 {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                FlattenClassUnionMember3.$properties
+                FlattenClassUnionMember3.$schema.properties
                   .flattenClassUnionMember3Property["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -44326,9 +44369,8 @@ export namespace FlattenClassUnionMember3 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3")}FlattenClassUnionMember3Property`,
       ),
       predicate:
-        FlattenClassUnionMember3.$properties.flattenClassUnionMember3Property[
-          "identifier"
-        ],
+        FlattenClassUnionMember3.$schema.properties
+          .flattenClassUnionMember3Property["identifier"],
       subject,
     });
     return triples;
@@ -44404,7 +44446,7 @@ export namespace FlattenClassUnionMember3 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3")}FlattenClassUnionMember3Property`,
             ),
             predicate:
-              FlattenClassUnionMember3.$properties
+              FlattenClassUnionMember3.$schema.properties
                 .flattenClassUnionMember3Property["identifier"],
             subject: subject,
           },
@@ -44621,7 +44663,9 @@ export class ExternClassPropertyClass {
     }
 
     resource.add(
-      ExternClassPropertyClass.$properties.externClassProperty["identifier"],
+      ExternClassPropertyClass.$schema.properties.externClassProperty[
+        "identifier"
+      ],
       ...this.externClassProperty
         .toList()
         .flatMap((value) => [
@@ -44843,7 +44887,7 @@ export namespace ExternClassPropertyClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.externClassProperty["identifier"],
+            $schema.properties.externClassProperty["identifier"],
             { unique: true },
           ),
         )
@@ -44867,9 +44911,8 @@ export namespace ExternClassPropertyClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    ExternClassPropertyClass.$properties.externClassProperty[
-                      "identifier"
-                    ],
+                    ExternClassPropertyClass.$schema.properties
+                      .externClassProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
           )
@@ -44979,7 +45022,9 @@ export namespace ExternClassPropertyClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
       ),
       predicate:
-        ExternClassPropertyClass.$properties.externClassProperty["identifier"],
+        ExternClassPropertyClass.$schema.properties.externClassProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push(
@@ -45068,9 +45113,8 @@ export namespace ExternClassPropertyClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")}ExternClassProperty`,
                   ),
                   predicate:
-                    ExternClassPropertyClass.$properties.externClassProperty[
-                      "identifier"
-                    ],
+                    ExternClassPropertyClass.$schema.properties
+                      .externClassProperty["identifier"],
                   subject: subject,
                 },
               ],
@@ -45224,7 +45268,7 @@ export abstract class AbstractBaseClassForExternClass {
       mutateGraph,
     });
     resource.add(
-      AbstractBaseClassForExternClassStatic.$properties
+      AbstractBaseClassForExternClassStatic.$schema.properties
         .abstractBaseClassForExternClassProperty["identifier"],
       ...[this.abstractBaseClassForExternClassProperty],
     );
@@ -45380,7 +45424,9 @@ export namespace AbstractBaseClassForExternClassStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.abstractBaseClassForExternClassProperty["identifier"],
+          $schema.properties.abstractBaseClassForExternClassProperty[
+            "identifier"
+          ],
           { unique: true },
         ),
       )
@@ -45388,7 +45434,7 @@ export namespace AbstractBaseClassForExternClassStatic {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              AbstractBaseClassForExternClassStatic.$properties
+              AbstractBaseClassForExternClassStatic.$schema.properties
                 .abstractBaseClassForExternClassProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -45483,7 +45529,7 @@ export namespace AbstractBaseClassForExternClassStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
       ),
       predicate:
-        AbstractBaseClassForExternClassStatic.$properties
+        AbstractBaseClassForExternClassStatic.$schema.properties
           .abstractBaseClassForExternClassProperty["identifier"],
       subject,
     });
@@ -45518,7 +45564,7 @@ export namespace AbstractBaseClassForExternClassStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")}AbstractBaseClassForExternClassProperty`,
             ),
             predicate:
-              AbstractBaseClassForExternClassStatic.$properties
+              AbstractBaseClassForExternClassStatic.$schema.properties
                 .abstractBaseClassForExternClassProperty["identifier"],
             subject: subject,
           },
@@ -45716,7 +45762,9 @@ export class ExplicitRdfTypeClass {
     }
 
     resource.add(
-      ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty["identifier"],
+      ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty[
+        "identifier"
+      ],
       ...[this.explicitRdfTypeProperty],
     );
     return resource;
@@ -45932,7 +45980,7 @@ export namespace ExplicitRdfTypeClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.explicitRdfTypeProperty["identifier"],
+            $schema.properties.explicitRdfTypeProperty["identifier"],
             { unique: true },
           ),
         )
@@ -45940,7 +45988,7 @@ export namespace ExplicitRdfTypeClass {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
+                ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty[
                   "identifier"
                 ],
               preferredLanguages: $parameters.preferredLanguages,
@@ -46057,7 +46105,9 @@ export namespace ExplicitRdfTypeClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass")}ExplicitRdfTypeProperty`,
       ),
       predicate:
-        ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty["identifier"],
+        ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -46133,7 +46183,7 @@ export namespace ExplicitRdfTypeClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass")}ExplicitRdfTypeProperty`,
             ),
             predicate:
-              ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty[
+              ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty[
                 "identifier"
               ],
             subject: subject,
@@ -46338,9 +46388,8 @@ export class ExplicitFromToRdfTypesClass {
     }
 
     resource.add(
-      ExplicitFromToRdfTypesClass.$properties.explicitFromToRdfTypesProperty[
-        "identifier"
-      ],
+      ExplicitFromToRdfTypesClass.$schema.properties
+        .explicitFromToRdfTypesProperty["identifier"],
       ...[this.explicitFromToRdfTypesProperty],
     );
     return resource;
@@ -46558,7 +46607,7 @@ export namespace ExplicitFromToRdfTypesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.explicitFromToRdfTypesProperty["identifier"],
+            $schema.properties.explicitFromToRdfTypesProperty["identifier"],
             { unique: true },
           ),
         )
@@ -46566,7 +46615,7 @@ export namespace ExplicitFromToRdfTypesClass {
             $fromRdfPreferredLanguages({
               focusResource: $parameters.resource,
               predicate:
-                ExplicitFromToRdfTypesClass.$properties
+                ExplicitFromToRdfTypesClass.$schema.properties
                   .explicitFromToRdfTypesProperty["identifier"],
               preferredLanguages: $parameters.preferredLanguages,
               values,
@@ -46683,9 +46732,8 @@ export namespace ExplicitFromToRdfTypesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass")}ExplicitFromToRdfTypesProperty`,
       ),
       predicate:
-        ExplicitFromToRdfTypesClass.$properties.explicitFromToRdfTypesProperty[
-          "identifier"
-        ],
+        ExplicitFromToRdfTypesClass.$schema.properties
+          .explicitFromToRdfTypesProperty["identifier"],
       subject,
     });
     return triples;
@@ -46762,7 +46810,7 @@ export namespace ExplicitFromToRdfTypesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass")}ExplicitFromToRdfTypesProperty`,
             ),
             predicate:
-              ExplicitFromToRdfTypesClass.$properties
+              ExplicitFromToRdfTypesClass.$schema.properties
                 .explicitFromToRdfTypesProperty["identifier"],
             subject: subject,
           },
@@ -46978,7 +47026,9 @@ export class DirectRecursiveClass {
     }
 
     resource.add(
-      DirectRecursiveClass.$properties.directRecursiveProperty["identifier"],
+      DirectRecursiveClass.$schema.properties.directRecursiveProperty[
+        "identifier"
+      ],
       ...this.directRecursiveProperty
         .toList()
         .flatMap((value) => [
@@ -47204,7 +47254,7 @@ export namespace DirectRecursiveClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.directRecursiveProperty["identifier"],
+            $schema.properties.directRecursiveProperty["identifier"],
             { unique: true },
           ),
         )
@@ -47228,9 +47278,8 @@ export namespace DirectRecursiveClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    DirectRecursiveClass.$properties.directRecursiveProperty[
-                      "identifier"
-                    ],
+                    DirectRecursiveClass.$schema.properties
+                      .directRecursiveProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
           )
@@ -47704,7 +47753,7 @@ export class DefaultValuePropertiesClass {
       mutateGraph,
     });
     resource.add(
-      DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
+      DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty[
         "identifier"
       ],
       ...(this.dateDefaultValueProperty.getTime() !== 1523232000000
@@ -47717,9 +47766,8 @@ export class DefaultValuePropertiesClass {
         : []),
     );
     resource.add(
-      DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty[
-        "identifier"
-      ],
+      DefaultValuePropertiesClass.$schema.properties
+        .dateTimeDefaultValueProperty["identifier"],
       ...(this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
         ? [
             dataFactory.literal(
@@ -47730,13 +47778,12 @@ export class DefaultValuePropertiesClass {
         : []),
     );
     resource.add(
-      DefaultValuePropertiesClass.$properties.falseBooleanDefaultValueProperty[
-        "identifier"
-      ],
+      DefaultValuePropertiesClass.$schema.properties
+        .falseBooleanDefaultValueProperty["identifier"],
       ...(this.falseBooleanDefaultValueProperty ? [true] : []),
     );
     resource.add(
-      DefaultValuePropertiesClass.$properties.numberDefaultValueProperty[
+      DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty[
         "identifier"
       ],
       ...(this.numberDefaultValueProperty !== 0
@@ -47749,7 +47796,7 @@ export class DefaultValuePropertiesClass {
         : []),
     );
     resource.add(
-      DefaultValuePropertiesClass.$properties.stringDefaultValueProperty[
+      DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty[
         "identifier"
       ],
       ...(this.stringDefaultValueProperty !== ""
@@ -47757,9 +47804,8 @@ export class DefaultValuePropertiesClass {
         : []),
     );
     resource.add(
-      DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty[
-        "identifier"
-      ],
+      DefaultValuePropertiesClass.$schema.properties
+        .trueBooleanDefaultValueProperty["identifier"],
       ...(!this.trueBooleanDefaultValueProperty ? [false] : []),
     );
     return resource;
@@ -48060,7 +48106,7 @@ export namespace DefaultValuePropertiesClass {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.dateDefaultValueProperty["identifier"],
+          $schema.properties.dateDefaultValueProperty["identifier"],
           { unique: true },
         ),
       )
@@ -48070,7 +48116,7 @@ export namespace DefaultValuePropertiesClass {
             : new rdfjsResource.Resource.TermValue({
                 focusResource: $parameters.resource,
                 predicate:
-                  DefaultValuePropertiesClass.$properties
+                  DefaultValuePropertiesClass.$schema.properties
                     .dateDefaultValueProperty["identifier"],
                 term: dataFactory.literal(
                   "2018-04-09",
@@ -48086,7 +48132,7 @@ export namespace DefaultValuePropertiesClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.dateTimeDefaultValueProperty["identifier"],
+              $schema.properties.dateTimeDefaultValueProperty["identifier"],
               { unique: true },
             ),
           )
@@ -48096,7 +48142,7 @@ export namespace DefaultValuePropertiesClass {
                 : new rdfjsResource.Resource.TermValue({
                     focusResource: $parameters.resource,
                     predicate:
-                      DefaultValuePropertiesClass.$properties
+                      DefaultValuePropertiesClass.$schema.properties
                         .dateTimeDefaultValueProperty["identifier"],
                     term: dataFactory.literal(
                       "2018-04-09T10:00:00Z",
@@ -48112,7 +48158,9 @@ export namespace DefaultValuePropertiesClass {
                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
               >(
                 $parameters.resource.values(
-                  $properties.falseBooleanDefaultValueProperty["identifier"],
+                  $schema.properties.falseBooleanDefaultValueProperty[
+                    "identifier"
+                  ],
                   { unique: true },
                 ),
               )
@@ -48122,7 +48170,7 @@ export namespace DefaultValuePropertiesClass {
                     : new rdfjsResource.Resource.TermValue({
                         focusResource: $parameters.resource,
                         predicate:
-                          DefaultValuePropertiesClass.$properties
+                          DefaultValuePropertiesClass.$schema.properties
                             .falseBooleanDefaultValueProperty["identifier"],
                         term: dataFactory.literal(
                           "false",
@@ -48140,7 +48188,9 @@ export namespace DefaultValuePropertiesClass {
                     rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                   >(
                     $parameters.resource.values(
-                      $properties.numberDefaultValueProperty["identifier"],
+                      $schema.properties.numberDefaultValueProperty[
+                        "identifier"
+                      ],
                       { unique: true },
                     ),
                   )
@@ -48150,7 +48200,7 @@ export namespace DefaultValuePropertiesClass {
                         : new rdfjsResource.Resource.TermValue({
                             focusResource: $parameters.resource,
                             predicate:
-                              DefaultValuePropertiesClass.$properties
+                              DefaultValuePropertiesClass.$schema.properties
                                 .numberDefaultValueProperty["identifier"],
                             term: dataFactory.literal(
                               "0",
@@ -48168,7 +48218,9 @@ export namespace DefaultValuePropertiesClass {
                         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                       >(
                         $parameters.resource.values(
-                          $properties.stringDefaultValueProperty["identifier"],
+                          $schema.properties.stringDefaultValueProperty[
+                            "identifier"
+                          ],
                           { unique: true },
                         ),
                       )
@@ -48178,7 +48230,7 @@ export namespace DefaultValuePropertiesClass {
                             : new rdfjsResource.Resource.TermValue({
                                 focusResource: $parameters.resource,
                                 predicate:
-                                  DefaultValuePropertiesClass.$properties
+                                  DefaultValuePropertiesClass.$schema.properties
                                     .stringDefaultValueProperty["identifier"],
                                 term: dataFactory.literal(""),
                               }).toValues(),
@@ -48187,7 +48239,7 @@ export namespace DefaultValuePropertiesClass {
                           $fromRdfPreferredLanguages({
                             focusResource: $parameters.resource,
                             predicate:
-                              DefaultValuePropertiesClass.$properties
+                              DefaultValuePropertiesClass.$schema.properties
                                 .stringDefaultValueProperty["identifier"],
                             preferredLanguages: $parameters.preferredLanguages,
                             values,
@@ -48203,9 +48255,8 @@ export namespace DefaultValuePropertiesClass {
                             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                           >(
                             $parameters.resource.values(
-                              $properties.trueBooleanDefaultValueProperty[
-                                "identifier"
-                              ],
+                              $schema.properties
+                                .trueBooleanDefaultValueProperty["identifier"],
                               { unique: true },
                             ),
                           )
@@ -48215,7 +48266,8 @@ export namespace DefaultValuePropertiesClass {
                                 : new rdfjsResource.Resource.TermValue({
                                     focusResource: $parameters.resource,
                                     predicate:
-                                      DefaultValuePropertiesClass.$properties
+                                      DefaultValuePropertiesClass.$schema
+                                        .properties
                                         .trueBooleanDefaultValueProperty[
                                         "identifier"
                                       ],
@@ -48351,7 +48403,7 @@ export namespace DefaultValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}DateDefaultValueProperty`,
       ),
       predicate:
-        DefaultValuePropertiesClass.$properties.dateDefaultValueProperty[
+        DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty[
           "identifier"
         ],
       subject,
@@ -48361,9 +48413,8 @@ export namespace DefaultValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}DateTimeDefaultValueProperty`,
       ),
       predicate:
-        DefaultValuePropertiesClass.$properties.dateTimeDefaultValueProperty[
-          "identifier"
-        ],
+        DefaultValuePropertiesClass.$schema.properties
+          .dateTimeDefaultValueProperty["identifier"],
       subject,
     });
     triples.push({
@@ -48371,7 +48422,7 @@ export namespace DefaultValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}FalseBooleanDefaultValueProperty`,
       ),
       predicate:
-        DefaultValuePropertiesClass.$properties
+        DefaultValuePropertiesClass.$schema.properties
           .falseBooleanDefaultValueProperty["identifier"],
       subject,
     });
@@ -48380,9 +48431,8 @@ export namespace DefaultValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}NumberDefaultValueProperty`,
       ),
       predicate:
-        DefaultValuePropertiesClass.$properties.numberDefaultValueProperty[
-          "identifier"
-        ],
+        DefaultValuePropertiesClass.$schema.properties
+          .numberDefaultValueProperty["identifier"],
       subject,
     });
     triples.push({
@@ -48390,9 +48440,8 @@ export namespace DefaultValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}StringDefaultValueProperty`,
       ),
       predicate:
-        DefaultValuePropertiesClass.$properties.stringDefaultValueProperty[
-          "identifier"
-        ],
+        DefaultValuePropertiesClass.$schema.properties
+          .stringDefaultValueProperty["identifier"],
       subject,
     });
     triples.push({
@@ -48400,9 +48449,8 @@ export namespace DefaultValuePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}TrueBooleanDefaultValueProperty`,
       ),
       predicate:
-        DefaultValuePropertiesClass.$properties.trueBooleanDefaultValueProperty[
-          "identifier"
-        ],
+        DefaultValuePropertiesClass.$schema.properties
+          .trueBooleanDefaultValueProperty["identifier"],
       subject,
     });
     return triples;
@@ -48437,7 +48485,7 @@ export namespace DefaultValuePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}DateDefaultValueProperty`,
               ),
               predicate:
-                DefaultValuePropertiesClass.$properties
+                DefaultValuePropertiesClass.$schema.properties
                   .dateDefaultValueProperty["identifier"],
               subject: subject,
             },
@@ -48467,7 +48515,7 @@ export namespace DefaultValuePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}DateTimeDefaultValueProperty`,
               ),
               predicate:
-                DefaultValuePropertiesClass.$properties
+                DefaultValuePropertiesClass.$schema.properties
                   .dateTimeDefaultValueProperty["identifier"],
               subject: subject,
             },
@@ -48497,7 +48545,7 @@ export namespace DefaultValuePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}FalseBooleanDefaultValueProperty`,
               ),
               predicate:
-                DefaultValuePropertiesClass.$properties
+                DefaultValuePropertiesClass.$schema.properties
                   .falseBooleanDefaultValueProperty["identifier"],
               subject: subject,
             },
@@ -48527,7 +48575,7 @@ export namespace DefaultValuePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}NumberDefaultValueProperty`,
               ),
               predicate:
-                DefaultValuePropertiesClass.$properties
+                DefaultValuePropertiesClass.$schema.properties
                   .numberDefaultValueProperty["identifier"],
               subject: subject,
             },
@@ -48557,7 +48605,7 @@ export namespace DefaultValuePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}StringDefaultValueProperty`,
               ),
               predicate:
-                DefaultValuePropertiesClass.$properties
+                DefaultValuePropertiesClass.$schema.properties
                   .stringDefaultValueProperty["identifier"],
               subject: subject,
             },
@@ -48627,7 +48675,7 @@ export namespace DefaultValuePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}TrueBooleanDefaultValueProperty`,
               ),
               predicate:
-                DefaultValuePropertiesClass.$properties
+                DefaultValuePropertiesClass.$schema.properties
                   .trueBooleanDefaultValueProperty["identifier"],
               subject: subject,
             },
@@ -49121,7 +49169,9 @@ export class DateUnionPropertiesClass {
     }
 
     resource.add(
-      DateUnionPropertiesClass.$properties.dateOrDateTimeProperty["identifier"],
+      DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty[
+        "identifier"
+      ],
       ...this.dateOrDateTimeProperty
         .toList()
         .flatMap((value) =>
@@ -49145,7 +49195,9 @@ export class DateUnionPropertiesClass {
         ),
     );
     resource.add(
-      DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
+      DateUnionPropertiesClass.$schema.properties.dateOrStringProperty[
+        "identifier"
+      ],
       ...this.dateOrStringProperty
         .toList()
         .flatMap((value) =>
@@ -49164,7 +49216,9 @@ export class DateUnionPropertiesClass {
         ),
     );
     resource.add(
-      DateUnionPropertiesClass.$properties.dateTimeOrDateProperty["identifier"],
+      DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty[
+        "identifier"
+      ],
       ...this.dateTimeOrDateProperty
         .toList()
         .flatMap((value) =>
@@ -49188,7 +49242,9 @@ export class DateUnionPropertiesClass {
         ),
     );
     resource.add(
-      DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
+      DateUnionPropertiesClass.$schema.properties.stringOrDateProperty[
+        "identifier"
+      ],
       ...this.stringOrDateProperty
         .toList()
         .flatMap((value) =>
@@ -49735,7 +49791,7 @@ export namespace DateUnionPropertiesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.dateOrDateTimeProperty["identifier"],
+            $schema.properties.dateOrDateTimeProperty["identifier"],
             { unique: true },
           ),
         )
@@ -49795,9 +49851,8 @@ export namespace DateUnionPropertiesClass {
                 >({
                   focusResource: $parameters.resource,
                   predicate:
-                    DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
-                      "identifier"
-                    ],
+                    DateUnionPropertiesClass.$schema.properties
+                      .dateOrDateTimeProperty["identifier"],
                   value: purify.Maybe.empty(),
                 }),
           )
@@ -49808,7 +49863,7 @@ export namespace DateUnionPropertiesClass {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.dateOrStringProperty["identifier"],
+                $schema.properties.dateOrStringProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -49842,7 +49897,7 @@ export namespace DateUnionPropertiesClass {
                             $fromRdfPreferredLanguages({
                               focusResource: $parameters.resource,
                               predicate:
-                                DateUnionPropertiesClass.$properties
+                                DateUnionPropertiesClass.$schema.properties
                                   .dateOrStringProperty["identifier"],
                               preferredLanguages:
                                 $parameters.preferredLanguages,
@@ -49881,7 +49936,7 @@ export namespace DateUnionPropertiesClass {
                     >({
                       focusResource: $parameters.resource,
                       predicate:
-                        DateUnionPropertiesClass.$properties
+                        DateUnionPropertiesClass.$schema.properties
                           .dateOrStringProperty["identifier"],
                       value: purify.Maybe.empty(),
                     }),
@@ -49893,7 +49948,7 @@ export namespace DateUnionPropertiesClass {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties.dateTimeOrDateProperty["identifier"],
+                    $schema.properties.dateTimeOrDateProperty["identifier"],
                     { unique: true },
                   ),
                 )
@@ -49955,7 +50010,7 @@ export namespace DateUnionPropertiesClass {
                         >({
                           focusResource: $parameters.resource,
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateTimeOrDateProperty["identifier"],
                           value: purify.Maybe.empty(),
                         }),
@@ -49967,7 +50022,7 @@ export namespace DateUnionPropertiesClass {
                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                     >(
                       $parameters.resource.values(
-                        $properties.stringOrDateProperty["identifier"],
+                        $schema.properties.stringOrDateProperty["identifier"],
                         { unique: true },
                       ),
                     )
@@ -49982,7 +50037,7 @@ export namespace DateUnionPropertiesClass {
                                 $fromRdfPreferredLanguages({
                                   focusResource: $parameters.resource,
                                   predicate:
-                                    DateUnionPropertiesClass.$properties
+                                    DateUnionPropertiesClass.$schema.properties
                                       .stringOrDateProperty["identifier"],
                                   preferredLanguages:
                                     $parameters.preferredLanguages,
@@ -50042,7 +50097,7 @@ export namespace DateUnionPropertiesClass {
                             >({
                               focusResource: $parameters.resource,
                               predicate:
-                                DateUnionPropertiesClass.$properties
+                                DateUnionPropertiesClass.$schema.properties
                                   .stringOrDateProperty["identifier"],
                               value: purify.Maybe.empty(),
                             }),
@@ -50177,7 +50232,7 @@ export namespace DateUnionPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
       ),
       predicate:
-        DateUnionPropertiesClass.$properties.dateOrDateTimeProperty[
+        DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty[
           "identifier"
         ],
       subject,
@@ -50187,7 +50242,9 @@ export namespace DateUnionPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
       ),
       predicate:
-        DateUnionPropertiesClass.$properties.dateOrStringProperty["identifier"],
+        DateUnionPropertiesClass.$schema.properties.dateOrStringProperty[
+          "identifier"
+        ],
       subject,
     });
     triples.push({
@@ -50195,7 +50252,7 @@ export namespace DateUnionPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
       ),
       predicate:
-        DateUnionPropertiesClass.$properties.dateTimeOrDateProperty[
+        DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty[
           "identifier"
         ],
       subject,
@@ -50205,7 +50262,9 @@ export namespace DateUnionPropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
       ),
       predicate:
-        DateUnionPropertiesClass.$properties.stringOrDateProperty["identifier"],
+        DateUnionPropertiesClass.$schema.properties.stringOrDateProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -50289,7 +50348,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateOrDateTimeProperty["identifier"],
                           subject: subject,
                         },
@@ -50319,7 +50378,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrDateTimeProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateOrDateTimeProperty["identifier"],
                           subject: subject,
                         },
@@ -50364,7 +50423,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateOrStringProperty["identifier"],
                           subject: subject,
                         },
@@ -50394,7 +50453,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateOrStringProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateOrStringProperty["identifier"],
                           subject: subject,
                         },
@@ -50479,7 +50538,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateTimeOrDateProperty["identifier"],
                           subject: subject,
                         },
@@ -50509,7 +50568,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}DateTimeOrDateProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .dateTimeOrDateProperty["identifier"],
                           subject: subject,
                         },
@@ -50554,7 +50613,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .stringOrDateProperty["identifier"],
                           subject: subject,
                         },
@@ -50624,7 +50683,7 @@ export namespace DateUnionPropertiesClass {
                             `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")}StringOrDateProperty`,
                           ),
                           predicate:
-                            DateUnionPropertiesClass.$properties
+                            DateUnionPropertiesClass.$schema.properties
                               .stringOrDateProperty["identifier"],
                           subject: subject,
                         },
@@ -51406,71 +51465,65 @@ export class ConvertibleTypePropertiesClass {
     }
 
     resource.add(
-      ConvertibleTypePropertiesClass.$properties
+      ConvertibleTypePropertiesClass.$schema.properties
         .convertibleIriNonEmptySetProperty["identifier"],
       ...this.convertibleIriNonEmptySetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleIriOptionProperty[
-        "identifier"
-      ],
+      ConvertibleTypePropertiesClass.$schema.properties
+        .convertibleIriOptionProperty["identifier"],
       ...this.convertibleIriOptionProperty.toList(),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleIriProperty[
+      ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty[
         "identifier"
       ],
       ...[this.convertibleIriProperty],
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleIriSetProperty[
-        "identifier"
-      ],
+      ConvertibleTypePropertiesClass.$schema.properties
+        .convertibleIriSetProperty["identifier"],
       ...this.convertibleIriSetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties
+      ConvertibleTypePropertiesClass.$schema.properties
         .convertibleLiteralNonEmptySetProperty["identifier"],
       ...this.convertibleLiteralNonEmptySetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties
+      ConvertibleTypePropertiesClass.$schema.properties
         .convertibleLiteralOptionProperty["identifier"],
       ...this.convertibleLiteralOptionProperty.toList(),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleLiteralProperty[
-        "identifier"
-      ],
+      ConvertibleTypePropertiesClass.$schema.properties
+        .convertibleLiteralProperty["identifier"],
       ...[this.convertibleLiteralProperty],
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleLiteralSetProperty[
-        "identifier"
-      ],
+      ConvertibleTypePropertiesClass.$schema.properties
+        .convertibleLiteralSetProperty["identifier"],
       ...this.convertibleLiteralSetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties
+      ConvertibleTypePropertiesClass.$schema.properties
         .convertibleTermNonEmptySetProperty["identifier"],
       ...this.convertibleTermNonEmptySetProperty.flatMap((item) => [item]),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleTermOptionProperty[
-        "identifier"
-      ],
+      ConvertibleTypePropertiesClass.$schema.properties
+        .convertibleTermOptionProperty["identifier"],
       ...this.convertibleTermOptionProperty.toList(),
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleTermProperty[
+      ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty[
         "identifier"
       ],
       ...[this.convertibleTermProperty],
     );
     resource.add(
-      ConvertibleTypePropertiesClass.$properties.convertibleTermSetProperty[
-        "identifier"
-      ],
+      ConvertibleTypePropertiesClass.$schema.properties
+        .convertibleTermSetProperty["identifier"],
       ...this.convertibleTermSetProperty.flatMap((item) => [item]),
     );
     return resource;
@@ -52224,7 +52277,7 @@ export namespace ConvertibleTypePropertiesClass {
           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
         >(
           $parameters.resource.values(
-            $properties.convertibleIriNonEmptySetProperty["identifier"],
+            $schema.properties.convertibleIriNonEmptySetProperty["identifier"],
             { unique: true },
           ),
         )
@@ -52240,7 +52293,7 @@ export namespace ConvertibleTypePropertiesClass {
             rdfjsResource.Resource.Values.fromValue({
               focusResource: $parameters.resource,
               predicate:
-                ConvertibleTypePropertiesClass.$properties
+                ConvertibleTypePropertiesClass.$schema.properties
                   .convertibleIriNonEmptySetProperty["identifier"],
               value: valuesArray,
             }),
@@ -52252,7 +52305,7 @@ export namespace ConvertibleTypePropertiesClass {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.convertibleIriOptionProperty["identifier"],
+                $schema.properties.convertibleIriOptionProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -52265,7 +52318,7 @@ export namespace ConvertibleTypePropertiesClass {
                     >({
                       focusResource: $parameters.resource,
                       predicate:
-                        ConvertibleTypePropertiesClass.$properties
+                        ConvertibleTypePropertiesClass.$schema.properties
                           .convertibleIriOptionProperty["identifier"],
                       value: purify.Maybe.empty(),
                     }),
@@ -52277,7 +52330,7 @@ export namespace ConvertibleTypePropertiesClass {
                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                 >(
                   $parameters.resource.values(
-                    $properties.convertibleIriProperty["identifier"],
+                    $schema.properties.convertibleIriProperty["identifier"],
                     { unique: true },
                   ),
                 )
@@ -52289,7 +52342,9 @@ export namespace ConvertibleTypePropertiesClass {
                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                     >(
                       $parameters.resource.values(
-                        $properties.convertibleIriSetProperty["identifier"],
+                        $schema.properties.convertibleIriSetProperty[
+                          "identifier"
+                        ],
                         { unique: true },
                       ),
                     )
@@ -52301,7 +52356,7 @@ export namespace ConvertibleTypePropertiesClass {
                         rdfjsResource.Resource.Values.fromValue({
                           focusResource: $parameters.resource,
                           predicate:
-                            ConvertibleTypePropertiesClass.$properties
+                            ConvertibleTypePropertiesClass.$schema.properties
                               .convertibleIriSetProperty["identifier"],
                           value: valuesArray,
                         }),
@@ -52313,7 +52368,8 @@ export namespace ConvertibleTypePropertiesClass {
                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                         >(
                           $parameters.resource.values(
-                            $properties.convertibleLiteralNonEmptySetProperty[
+                            $schema.properties
+                              .convertibleLiteralNonEmptySetProperty[
                               "identifier"
                             ],
                             { unique: true },
@@ -52323,7 +52379,8 @@ export namespace ConvertibleTypePropertiesClass {
                             $fromRdfPreferredLanguages({
                               focusResource: $parameters.resource,
                               predicate:
-                                ConvertibleTypePropertiesClass.$properties
+                                ConvertibleTypePropertiesClass.$schema
+                                  .properties
                                   .convertibleLiteralNonEmptySetProperty[
                                   "identifier"
                                 ],
@@ -52348,7 +52405,8 @@ export namespace ConvertibleTypePropertiesClass {
                             rdfjsResource.Resource.Values.fromValue({
                               focusResource: $parameters.resource,
                               predicate:
-                                ConvertibleTypePropertiesClass.$properties
+                                ConvertibleTypePropertiesClass.$schema
+                                  .properties
                                   .convertibleLiteralNonEmptySetProperty[
                                   "identifier"
                                 ],
@@ -52362,7 +52420,8 @@ export namespace ConvertibleTypePropertiesClass {
                               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                             >(
                               $parameters.resource.values(
-                                $properties.convertibleLiteralOptionProperty[
+                                $schema.properties
+                                  .convertibleLiteralOptionProperty[
                                   "identifier"
                                 ],
                                 { unique: true },
@@ -52372,7 +52431,8 @@ export namespace ConvertibleTypePropertiesClass {
                                 $fromRdfPreferredLanguages({
                                   focusResource: $parameters.resource,
                                   predicate:
-                                    ConvertibleTypePropertiesClass.$properties
+                                    ConvertibleTypePropertiesClass.$schema
+                                      .properties
                                       .convertibleLiteralOptionProperty[
                                       "identifier"
                                     ],
@@ -52394,8 +52454,8 @@ export namespace ConvertibleTypePropertiesClass {
                                     >({
                                       focusResource: $parameters.resource,
                                       predicate:
-                                        ConvertibleTypePropertiesClass
-                                          .$properties
+                                        ConvertibleTypePropertiesClass.$schema
+                                          .properties
                                           .convertibleLiteralOptionProperty[
                                           "identifier"
                                         ],
@@ -52409,9 +52469,8 @@ export namespace ConvertibleTypePropertiesClass {
                                   rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                 >(
                                   $parameters.resource.values(
-                                    $properties.convertibleLiteralProperty[
-                                      "identifier"
-                                    ],
+                                    $schema.properties
+                                      .convertibleLiteralProperty["identifier"],
                                     { unique: true },
                                   ),
                                 )
@@ -52419,8 +52478,8 @@ export namespace ConvertibleTypePropertiesClass {
                                     $fromRdfPreferredLanguages({
                                       focusResource: $parameters.resource,
                                       predicate:
-                                        ConvertibleTypePropertiesClass
-                                          .$properties
+                                        ConvertibleTypePropertiesClass.$schema
+                                          .properties
                                           .convertibleLiteralProperty[
                                           "identifier"
                                         ],
@@ -52441,7 +52500,7 @@ export namespace ConvertibleTypePropertiesClass {
                                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                     >(
                                       $parameters.resource.values(
-                                        $properties
+                                        $schema.properties
                                           .convertibleLiteralSetProperty[
                                           "identifier"
                                         ],
@@ -52453,7 +52512,7 @@ export namespace ConvertibleTypePropertiesClass {
                                           focusResource: $parameters.resource,
                                           predicate:
                                             ConvertibleTypePropertiesClass
-                                              .$properties
+                                              .$schema.properties
                                               .convertibleLiteralSetProperty[
                                               "identifier"
                                             ],
@@ -52474,7 +52533,7 @@ export namespace ConvertibleTypePropertiesClass {
                                             focusResource: $parameters.resource,
                                             predicate:
                                               ConvertibleTypePropertiesClass
-                                                .$properties
+                                                .$schema.properties
                                                 .convertibleLiteralSetProperty[
                                                 "identifier"
                                               ],
@@ -52489,7 +52548,7 @@ export namespace ConvertibleTypePropertiesClass {
                                           rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                         >(
                                           $parameters.resource.values(
-                                            $properties
+                                            $schema.properties
                                               .convertibleTermNonEmptySetProperty[
                                               "identifier"
                                             ],
@@ -52522,7 +52581,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                   $parameters.resource,
                                                 predicate:
                                                   ConvertibleTypePropertiesClass
-                                                    .$properties
+                                                    .$schema.properties
                                                     .convertibleTermNonEmptySetProperty[
                                                     "identifier"
                                                   ],
@@ -52540,7 +52599,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                 rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                               >(
                                                 $parameters.resource.values(
-                                                  $properties
+                                                  $schema.properties
                                                     .convertibleTermOptionProperty[
                                                     "identifier"
                                                   ],
@@ -52573,7 +52632,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                           $parameters.resource,
                                                         predicate:
                                                           ConvertibleTypePropertiesClass
-                                                            .$properties
+                                                            .$schema.properties
                                                             .convertibleTermOptionProperty[
                                                             "identifier"
                                                           ],
@@ -52593,7 +52652,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                       rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                                     >(
                                                       $parameters.resource.values(
-                                                        $properties
+                                                        $schema.properties
                                                           .convertibleTermProperty[
                                                           "identifier"
                                                         ],
@@ -52623,7 +52682,7 @@ export namespace ConvertibleTypePropertiesClass {
                                                             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
                                                           >(
                                                             $parameters.resource.values(
-                                                              $properties
+                                                              $schema.properties
                                                                 .convertibleTermSetProperty[
                                                                 "identifier"
                                                               ],
@@ -52654,7 +52713,8 @@ export namespace ConvertibleTypePropertiesClass {
                                                                       $parameters.resource,
                                                                     predicate:
                                                                       ConvertibleTypePropertiesClass
-                                                                        .$properties
+                                                                        .$schema
+                                                                        .properties
                                                                         .convertibleTermSetProperty[
                                                                         "identifier"
                                                                       ],
@@ -52856,7 +52916,7 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriNonEmptySetProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties
+        ConvertibleTypePropertiesClass.$schema.properties
           .convertibleIriNonEmptySetProperty["identifier"],
       subject,
     });
@@ -52865,9 +52925,8 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriOptionProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties.convertibleIriOptionProperty[
-          "identifier"
-        ],
+        ConvertibleTypePropertiesClass.$schema.properties
+          .convertibleIriOptionProperty["identifier"],
       subject,
     });
     triples.push({
@@ -52875,9 +52934,8 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties.convertibleIriProperty[
-          "identifier"
-        ],
+        ConvertibleTypePropertiesClass.$schema.properties
+          .convertibleIriProperty["identifier"],
       subject,
     });
     triples.push({
@@ -52885,9 +52943,8 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriSetProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties.convertibleIriSetProperty[
-          "identifier"
-        ],
+        ConvertibleTypePropertiesClass.$schema.properties
+          .convertibleIriSetProperty["identifier"],
       subject,
     });
     triples.push({
@@ -52895,7 +52952,7 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralNonEmptySetProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties
+        ConvertibleTypePropertiesClass.$schema.properties
           .convertibleLiteralNonEmptySetProperty["identifier"],
       subject,
     });
@@ -52904,7 +52961,7 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties
+        ConvertibleTypePropertiesClass.$schema.properties
           .convertibleLiteralOptionProperty["identifier"],
       subject,
     });
@@ -52913,9 +52970,8 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties.convertibleLiteralProperty[
-          "identifier"
-        ],
+        ConvertibleTypePropertiesClass.$schema.properties
+          .convertibleLiteralProperty["identifier"],
       subject,
     });
     triples.push({
@@ -52923,7 +52979,7 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralSetProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties
+        ConvertibleTypePropertiesClass.$schema.properties
           .convertibleLiteralSetProperty["identifier"],
       subject,
     });
@@ -52932,7 +52988,7 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermNonEmptySetProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties
+        ConvertibleTypePropertiesClass.$schema.properties
           .convertibleTermNonEmptySetProperty["identifier"],
       subject,
     });
@@ -52941,7 +52997,7 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties
+        ConvertibleTypePropertiesClass.$schema.properties
           .convertibleTermOptionProperty["identifier"],
       subject,
     });
@@ -52950,9 +53006,8 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties.convertibleTermProperty[
-          "identifier"
-        ],
+        ConvertibleTypePropertiesClass.$schema.properties
+          .convertibleTermProperty["identifier"],
       subject,
     });
     triples.push({
@@ -52960,9 +53015,8 @@ export namespace ConvertibleTypePropertiesClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermSetProperty`,
       ),
       predicate:
-        ConvertibleTypePropertiesClass.$properties.convertibleTermSetProperty[
-          "identifier"
-        ],
+        ConvertibleTypePropertiesClass.$schema.properties
+          .convertibleTermSetProperty["identifier"],
       subject,
     });
     return triples;
@@ -53039,7 +53093,7 @@ export namespace ConvertibleTypePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriNonEmptySetProperty`,
             ),
             predicate:
-              ConvertibleTypePropertiesClass.$properties
+              ConvertibleTypePropertiesClass.$schema.properties
                 .convertibleIriNonEmptySetProperty["identifier"],
             subject: subject,
           },
@@ -53070,7 +53124,7 @@ export namespace ConvertibleTypePropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriOptionProperty`,
                   ),
                   predicate:
-                    ConvertibleTypePropertiesClass.$properties
+                    ConvertibleTypePropertiesClass.$schema.properties
                       .convertibleIriOptionProperty["identifier"],
                   subject: subject,
                 },
@@ -53101,9 +53155,8 @@ export namespace ConvertibleTypePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriProperty`,
             ),
             predicate:
-              ConvertibleTypePropertiesClass.$properties.convertibleIriProperty[
-                "identifier"
-              ],
+              ConvertibleTypePropertiesClass.$schema.properties
+                .convertibleIriProperty["identifier"],
             subject: subject,
           },
         ],
@@ -53130,7 +53183,7 @@ export namespace ConvertibleTypePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleIriSetProperty`,
               ),
               predicate:
-                ConvertibleTypePropertiesClass.$properties
+                ConvertibleTypePropertiesClass.$schema.properties
                   .convertibleIriSetProperty["identifier"],
               subject: subject,
             },
@@ -53159,7 +53212,7 @@ export namespace ConvertibleTypePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralNonEmptySetProperty`,
             ),
             predicate:
-              ConvertibleTypePropertiesClass.$properties
+              ConvertibleTypePropertiesClass.$schema.properties
                 .convertibleLiteralNonEmptySetProperty["identifier"],
             subject: subject,
           },
@@ -53230,7 +53283,7 @@ export namespace ConvertibleTypePropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralOptionProperty`,
                   ),
                   predicate:
-                    ConvertibleTypePropertiesClass.$properties
+                    ConvertibleTypePropertiesClass.$schema.properties
                       .convertibleLiteralOptionProperty["identifier"],
                   subject: subject,
                 },
@@ -53301,7 +53354,7 @@ export namespace ConvertibleTypePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralProperty`,
             ),
             predicate:
-              ConvertibleTypePropertiesClass.$properties
+              ConvertibleTypePropertiesClass.$schema.properties
                 .convertibleLiteralProperty["identifier"],
             subject: subject,
           },
@@ -53369,7 +53422,7 @@ export namespace ConvertibleTypePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleLiteralSetProperty`,
               ),
               predicate:
-                ConvertibleTypePropertiesClass.$properties
+                ConvertibleTypePropertiesClass.$schema.properties
                   .convertibleLiteralSetProperty["identifier"],
               subject: subject,
             },
@@ -53438,7 +53491,7 @@ export namespace ConvertibleTypePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermNonEmptySetProperty`,
             ),
             predicate:
-              ConvertibleTypePropertiesClass.$properties
+              ConvertibleTypePropertiesClass.$schema.properties
                 .convertibleTermNonEmptySetProperty["identifier"],
             subject: subject,
           },
@@ -53469,7 +53522,7 @@ export namespace ConvertibleTypePropertiesClass {
                     `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermOptionProperty`,
                   ),
                   predicate:
-                    ConvertibleTypePropertiesClass.$properties
+                    ConvertibleTypePropertiesClass.$schema.properties
                       .convertibleTermOptionProperty["identifier"],
                   subject: subject,
                 },
@@ -53500,7 +53553,7 @@ export namespace ConvertibleTypePropertiesClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermProperty`,
             ),
             predicate:
-              ConvertibleTypePropertiesClass.$properties
+              ConvertibleTypePropertiesClass.$schema.properties
                 .convertibleTermProperty["identifier"],
             subject: subject,
           },
@@ -53528,7 +53581,7 @@ export namespace ConvertibleTypePropertiesClass {
                 `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")}ConvertibleTermSetProperty`,
               ),
               predicate:
-                ConvertibleTypePropertiesClass.$properties
+                ConvertibleTypePropertiesClass.$schema.properties
                   .convertibleTermSetProperty["identifier"],
               subject: subject,
             },
@@ -53901,7 +53954,9 @@ export namespace BaseInterfaceWithPropertiesStatic {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.baseInterfaceWithPropertiesProperty["identifier"],
+              $schema.properties.baseInterfaceWithPropertiesProperty[
+                "identifier"
+              ],
               { unique: true },
             ),
           )
@@ -53909,7 +53964,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  BaseInterfaceWithPropertiesStatic.$properties
+                  BaseInterfaceWithPropertiesStatic.$schema.properties
                     .baseInterfaceWithPropertiesProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -54028,7 +54083,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties")}BaseInterfaceWithPropertiesProperty`,
       ),
       predicate:
-        BaseInterfaceWithPropertiesStatic.$properties
+        BaseInterfaceWithPropertiesStatic.$schema.properties
           .baseInterfaceWithPropertiesProperty["identifier"],
       subject,
     });
@@ -54123,7 +54178,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties")}BaseInterfaceWithPropertiesProperty`,
             ),
             predicate:
-              BaseInterfaceWithPropertiesStatic.$properties
+              BaseInterfaceWithPropertiesStatic.$schema.properties
                 .baseInterfaceWithPropertiesProperty["identifier"],
             subject: subject,
           },
@@ -54231,7 +54286,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }
 
     resource.add(
-      BaseInterfaceWithPropertiesStatic.$properties
+      BaseInterfaceWithPropertiesStatic.$schema.properties
         .baseInterfaceWithPropertiesProperty["identifier"],
       ...[_baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty],
     );
@@ -55033,7 +55088,9 @@ export namespace ConcreteParentInterfaceStatic {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.concreteParentInterfaceProperty["identifier"],
+                $schema.properties.concreteParentInterfaceProperty[
+                  "identifier"
+                ],
                 { unique: true },
               ),
             )
@@ -55041,7 +55098,7 @@ export namespace ConcreteParentInterfaceStatic {
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    ConcreteParentInterfaceStatic.$properties
+                    ConcreteParentInterfaceStatic.$schema.properties
                       .concreteParentInterfaceProperty["identifier"],
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
@@ -55173,7 +55230,7 @@ export namespace ConcreteParentInterfaceStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface")}ConcreteParentInterfaceProperty`,
       ),
       predicate:
-        ConcreteParentInterfaceStatic.$properties
+        ConcreteParentInterfaceStatic.$schema.properties
           .concreteParentInterfaceProperty["identifier"],
       subject,
     });
@@ -55268,7 +55325,7 @@ export namespace ConcreteParentInterfaceStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface")}ConcreteParentInterfaceProperty`,
             ),
             predicate:
-              ConcreteParentInterfaceStatic.$properties
+              ConcreteParentInterfaceStatic.$schema.properties
                 .concreteParentInterfaceProperty["identifier"],
             subject: subject,
           },
@@ -55374,9 +55431,8 @@ export namespace ConcreteParentInterfaceStatic {
     }
 
     resource.add(
-      ConcreteParentInterfaceStatic.$properties.concreteParentInterfaceProperty[
-        "identifier"
-      ],
+      ConcreteParentInterfaceStatic.$schema.properties
+        .concreteParentInterfaceProperty["identifier"],
       ...[_concreteParentInterface.concreteParentInterfaceProperty],
     );
     return resource;
@@ -55671,7 +55727,7 @@ export namespace ConcreteChildInterface {
               rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
             >(
               $parameters.resource.values(
-                $properties.concreteChildInterfaceProperty["identifier"],
+                $schema.properties.concreteChildInterfaceProperty["identifier"],
                 { unique: true },
               ),
             )
@@ -55679,7 +55735,7 @@ export namespace ConcreteChildInterface {
                 $fromRdfPreferredLanguages({
                   focusResource: $parameters.resource,
                   predicate:
-                    ConcreteChildInterface.$properties
+                    ConcreteChildInterface.$schema.properties
                       .concreteChildInterfaceProperty["identifier"],
                   preferredLanguages: $parameters.preferredLanguages,
                   values,
@@ -55811,9 +55867,8 @@ export namespace ConcreteChildInterface {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface")}ConcreteChildInterfaceProperty`,
       ),
       predicate:
-        ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
-          "identifier"
-        ],
+        ConcreteChildInterface.$schema.properties
+          .concreteChildInterfaceProperty["identifier"],
       subject,
     });
     return triples;
@@ -55892,9 +55947,8 @@ export namespace ConcreteChildInterface {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface")}ConcreteChildInterfaceProperty`,
             ),
             predicate:
-              ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
-                "identifier"
-              ],
+              ConcreteChildInterface.$schema.properties
+                .concreteChildInterfaceProperty["identifier"],
             subject: subject,
           },
         ],
@@ -55997,7 +56051,7 @@ export namespace ConcreteChildInterface {
     }
 
     resource.add(
-      ConcreteChildInterface.$properties.concreteChildInterfaceProperty[
+      ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty[
         "identifier"
       ],
       ...[_concreteChildInterface.concreteChildInterfaceProperty],
@@ -56159,7 +56213,7 @@ export abstract class AbstractBaseClassWithProperties {
       mutateGraph,
     });
     resource.add(
-      AbstractBaseClassWithPropertiesStatic.$properties
+      AbstractBaseClassWithPropertiesStatic.$schema.properties
         .abstractBaseClassWithPropertiesProperty["identifier"],
       ...[this.abstractBaseClassWithPropertiesProperty],
     );
@@ -56315,7 +56369,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.abstractBaseClassWithPropertiesProperty["identifier"],
+          $schema.properties.abstractBaseClassWithPropertiesProperty[
+            "identifier"
+          ],
           { unique: true },
         ),
       )
@@ -56323,7 +56379,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              AbstractBaseClassWithPropertiesStatic.$properties
+              AbstractBaseClassWithPropertiesStatic.$schema.properties
                 .abstractBaseClassWithPropertiesProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -56418,7 +56474,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties")}AbstractBaseClassWithPropertiesProperty`,
       ),
       predicate:
-        AbstractBaseClassWithPropertiesStatic.$properties
+        AbstractBaseClassWithPropertiesStatic.$schema.properties
           .abstractBaseClassWithPropertiesProperty["identifier"],
       subject,
     });
@@ -56453,7 +56509,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties")}AbstractBaseClassWithPropertiesProperty`,
             ),
             predicate:
-              AbstractBaseClassWithPropertiesStatic.$properties
+              AbstractBaseClassWithPropertiesStatic.$schema.properties
                 .abstractBaseClassWithPropertiesProperty["identifier"],
             subject: subject,
           },
@@ -56909,7 +56965,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     }
 
     resource.add(
-      ConcreteParentClassStatic.$properties.concreteParentClassProperty[
+      ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty[
         "identifier"
       ],
       ...[this.concreteParentClassProperty],
@@ -57115,7 +57171,7 @@ export namespace ConcreteParentClassStatic {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.concreteParentClassProperty["identifier"],
+              $schema.properties.concreteParentClassProperty["identifier"],
               { unique: true },
             ),
           )
@@ -57123,7 +57179,7 @@ export namespace ConcreteParentClassStatic {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  ConcreteParentClassStatic.$properties
+                  ConcreteParentClassStatic.$schema.properties
                     .concreteParentClassProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
@@ -57253,9 +57309,8 @@ export namespace ConcreteParentClassStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass")}ConcreteParentClassProperty`,
       ),
       predicate:
-        ConcreteParentClassStatic.$properties.concreteParentClassProperty[
-          "identifier"
-        ],
+        ConcreteParentClassStatic.$schema.properties
+          .concreteParentClassProperty["identifier"],
       subject,
     });
     return triples;
@@ -57349,9 +57404,8 @@ export namespace ConcreteParentClassStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass")}ConcreteParentClassProperty`,
             ),
             predicate:
-              ConcreteParentClassStatic.$properties.concreteParentClassProperty[
-                "identifier"
-              ],
+              ConcreteParentClassStatic.$schema.properties
+                .concreteParentClassProperty["identifier"],
             subject: subject,
           },
         ],
@@ -57527,7 +57581,9 @@ export class ConcreteChildClass extends ConcreteParentClass {
     }
 
     resource.add(
-      ConcreteChildClass.$properties.concreteChildClassProperty["identifier"],
+      ConcreteChildClass.$schema.properties.concreteChildClassProperty[
+        "identifier"
+      ],
       ...[this.concreteChildClassProperty],
     );
     return resource;
@@ -57719,7 +57775,7 @@ export namespace ConcreteChildClass {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.concreteChildClassProperty["identifier"],
+              $schema.properties.concreteChildClassProperty["identifier"],
               { unique: true },
             ),
           )
@@ -57727,9 +57783,8 @@ export namespace ConcreteChildClass {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  ConcreteChildClass.$properties.concreteChildClassProperty[
-                    "identifier"
-                  ],
+                  ConcreteChildClass.$schema.properties
+                    .concreteChildClassProperty["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -57855,7 +57910,9 @@ export namespace ConcreteChildClass {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass")}ConcreteChildClassProperty`,
       ),
       predicate:
-        ConcreteChildClass.$properties.concreteChildClassProperty["identifier"],
+        ConcreteChildClass.$schema.properties.concreteChildClassProperty[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -57934,7 +57991,7 @@ export namespace ConcreteChildClass {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass")}ConcreteChildClassProperty`,
             ),
             predicate:
-              ConcreteChildClass.$properties.concreteChildClassProperty[
+              ConcreteChildClass.$schema.properties.concreteChildClassProperty[
                 "identifier"
               ],
             subject: subject,
@@ -58122,7 +58179,7 @@ export abstract class ClassUnionMemberCommonParent {
       mutateGraph,
     });
     resource.add(
-      ClassUnionMemberCommonParentStatic.$properties
+      ClassUnionMemberCommonParentStatic.$schema.properties
         .classUnionMemberCommonParentProperty["identifier"],
       ...[this.classUnionMemberCommonParentProperty],
     );
@@ -58278,7 +58335,7 @@ export namespace ClassUnionMemberCommonParentStatic {
         rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
       >(
         $parameters.resource.values(
-          $properties.classUnionMemberCommonParentProperty["identifier"],
+          $schema.properties.classUnionMemberCommonParentProperty["identifier"],
           { unique: true },
         ),
       )
@@ -58286,7 +58343,7 @@ export namespace ClassUnionMemberCommonParentStatic {
           $fromRdfPreferredLanguages({
             focusResource: $parameters.resource,
             predicate:
-              ClassUnionMemberCommonParentStatic.$properties
+              ClassUnionMemberCommonParentStatic.$schema.properties
                 .classUnionMemberCommonParentProperty["identifier"],
             preferredLanguages: $parameters.preferredLanguages,
             values,
@@ -58381,7 +58438,7 @@ export namespace ClassUnionMemberCommonParentStatic {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent")}ClassUnionMemberCommonParentProperty`,
       ),
       predicate:
-        ClassUnionMemberCommonParentStatic.$properties
+        ClassUnionMemberCommonParentStatic.$schema.properties
           .classUnionMemberCommonParentProperty["identifier"],
       subject,
     });
@@ -58416,7 +58473,7 @@ export namespace ClassUnionMemberCommonParentStatic {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent")}ClassUnionMemberCommonParentProperty`,
             ),
             predicate:
-              ClassUnionMemberCommonParentStatic.$properties
+              ClassUnionMemberCommonParentStatic.$schema.properties
                 .classUnionMemberCommonParentProperty["identifier"],
             subject: subject,
           },
@@ -58581,7 +58638,9 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
     }
 
     resource.add(
-      ClassUnionMember2.$properties.classUnionMember2Property["identifier"],
+      ClassUnionMember2.$schema.properties.classUnionMember2Property[
+        "identifier"
+      ],
       ...[this.classUnionMember2Property],
     );
     return resource;
@@ -58776,7 +58835,7 @@ export namespace ClassUnionMember2 {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.classUnionMember2Property["identifier"],
+              $schema.properties.classUnionMember2Property["identifier"],
               { unique: true },
             ),
           )
@@ -58784,9 +58843,8 @@ export namespace ClassUnionMember2 {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  ClassUnionMember2.$properties.classUnionMember2Property[
-                    "identifier"
-                  ],
+                  ClassUnionMember2.$schema.properties
+                    .classUnionMember2Property["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -58912,7 +58970,9 @@ export namespace ClassUnionMember2 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2")}ClassUnionMember2Property`,
       ),
       predicate:
-        ClassUnionMember2.$properties.classUnionMember2Property["identifier"],
+        ClassUnionMember2.$schema.properties.classUnionMember2Property[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -58991,7 +59051,7 @@ export namespace ClassUnionMember2 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2")}ClassUnionMember2Property`,
             ),
             predicate:
-              ClassUnionMember2.$properties.classUnionMember2Property[
+              ClassUnionMember2.$schema.properties.classUnionMember2Property[
                 "identifier"
               ],
             subject: subject,
@@ -59156,7 +59216,9 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     }
 
     resource.add(
-      ClassUnionMember1.$properties.classUnionMember1Property["identifier"],
+      ClassUnionMember1.$schema.properties.classUnionMember1Property[
+        "identifier"
+      ],
       ...[this.classUnionMember1Property],
     );
     return resource;
@@ -59351,7 +59413,7 @@ export namespace ClassUnionMember1 {
             rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
           >(
             $parameters.resource.values(
-              $properties.classUnionMember1Property["identifier"],
+              $schema.properties.classUnionMember1Property["identifier"],
               { unique: true },
             ),
           )
@@ -59359,9 +59421,8 @@ export namespace ClassUnionMember1 {
               $fromRdfPreferredLanguages({
                 focusResource: $parameters.resource,
                 predicate:
-                  ClassUnionMember1.$properties.classUnionMember1Property[
-                    "identifier"
-                  ],
+                  ClassUnionMember1.$schema.properties
+                    .classUnionMember1Property["identifier"],
                 preferredLanguages: $parameters.preferredLanguages,
                 values,
               }),
@@ -59487,7 +59548,9 @@ export namespace ClassUnionMember1 {
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1")}ClassUnionMember1Property`,
       ),
       predicate:
-        ClassUnionMember1.$properties.classUnionMember1Property["identifier"],
+        ClassUnionMember1.$schema.properties.classUnionMember1Property[
+          "identifier"
+        ],
       subject,
     });
     return triples;
@@ -59566,7 +59629,7 @@ export namespace ClassUnionMember1 {
               `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1")}ClassUnionMember1Property`,
             ),
             predicate:
-              ClassUnionMember1.$properties.classUnionMember1Property[
+              ClassUnionMember1.$schema.properties.classUnionMember1Property[
                 "identifier"
               ],
             subject: subject,

@@ -19,7 +19,7 @@ describe("sparql", () => {
     const languageInSubject = oxigraph.blankNode();
     for (const language of ["", "ar", "en", "fr"]) {
       for (const property of Object.values(
-        kitchenSink.LanguageInPropertiesClass.$properties,
+        kitchenSink.LanguageInPropertiesClass.$schema.properties,
       )) {
         languageInDataset.add(
           oxigraph.quad(
@@ -309,7 +309,8 @@ describe("sparql", () => {
       }),
     );
     expect(actualDataset.size).toStrictEqual(
-      Object.keys(kitchenSink.LanguageInPropertiesClass.$properties).length * 1,
+      Object.keys(kitchenSink.LanguageInPropertiesClass.$schema.properties)
+        .length * 1,
     );
     for (const quad of actualDataset.match()) {
       expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
