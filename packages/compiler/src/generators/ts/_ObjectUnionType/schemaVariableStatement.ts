@@ -11,7 +11,7 @@ import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 
-export function propertiesVariableStatement(
+export function schemaVariableStatement(
   this: ObjectUnionType,
 ): Maybe<VariableStatementStructure> {
   const commonPropertiesByName: Record<

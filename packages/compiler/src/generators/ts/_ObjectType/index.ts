@@ -22,11 +22,9 @@ export * from "./jsonDeclarations.js";
 
 export * from "./objectSetMethodNames.js";
 export * from "./Property.js";
-export * from "./propertiesVariableStatement.js";
-
 export * from "./rdfFunctionDeclarations.js";
-
 export * from "./ShaclProperty.js";
+export * from "./schemaVariableStatement.js";
 
 export * from "./sparqlFunctionDeclarations.js";
 

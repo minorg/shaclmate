@@ -218,7 +218,7 @@ export class ObjectType extends AbstractDeclaredType {
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
       _ObjectType.isTypeFunctionDeclaration.bind(this)(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-      _ObjectType.propertiesVariableStatement.bind(this)(),
+      _ObjectType.schemaVariableStatement.bind(this)(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
     ];
 

@@ -97,7 +97,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectUnionType.jsonDeclarations.bind(this)(),
       ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectUnionType.propertiesVariableStatement.bind(this)().toList(),
+      ..._ObjectUnionType.schemaVariableStatement.bind(this)().toList(),
       ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
       ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
     ];

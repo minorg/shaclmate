@@ -9,13 +9,13 @@ import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-export function propertiesVariableStatement(
+export function schemaVariableStatement(
   this: ObjectType,
 ): VariableStatementStructure {
   const propertiesObject: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertiesObject.push(
-      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}properties`,
+      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}schema`,
     );
   }
   for (const property of this.ownShaclProperties) {
@@ -33,8 +33,8 @@ export function propertiesVariableStatement(
     kind: StructureKind.VariableStatement,
     declarations: [
       {
-        name: `${syntheticNamePrefix}properties`,
-        initializer: `{${propertiesObject.join(", ")}}`,
+        name: `${syntheticNamePrefix}schema`,
+        initializer: `${propertiesObject.join(", ")}`,
       },
     ],
     isExported: true,
