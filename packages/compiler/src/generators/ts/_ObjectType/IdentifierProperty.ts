@@ -1,5 +1,6 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -10,10 +11,12 @@ import {
   Scope,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
+
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
+import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -23,6 +26,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
+
   readonly kind = "IdentifierProperty";
   override readonly mutable = false;
   override readonly recursive = false;
@@ -43,10 +47,6 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierPrefixPropertyName = identifierPrefixPropertyName;
     this.typeAlias = typeAlias;
-  }
-
-  private get abstract(): boolean {
-    return this.objectType.abstract;
   }
 
   @Memoize()
@@ -83,6 +83,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get declarationImports(): readonly Import[] {
     const imports = this.type
       .useImports({ features: this.objectType.features })
@@ -115,6 +116,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
@@ -233,6 +235,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     return Maybe.empty();
   }
 
+  @Memoize()
   override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
@@ -244,6 +247,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -252,6 +256,84 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
       name: "@id",
       type: "string",
     });
+  }
+
+  @Memoize()
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    if (this.objectType.parentObjectTypes.length > 0) {
+      // An ancestor will declare the identifier property.
+      return Maybe.empty();
+    }
+
+    if (
+      this.identifierMintingStrategy.isJust() ||
+      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      ) ||
+      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      )
+    ) {
+      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
+      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
+      return Maybe.of({
+        hasQuestionToken: true,
+        name: `_${this.name}`,
+        scope: this.objectType.descendantObjectTypes.some(
+          (descendantObjectType) =>
+            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        )
+          ? Scope.Protected
+          : Scope.Private,
+        type: this.typeAlias,
+      });
+    }
+
+    if (this.abstract) {
+      // Declare the property abstract and public
+      return Maybe.of({
+        isReadonly: true,
+        // Work around a ts-morph bug that puts the override keyword before the abstract keyword
+        leadingTrivia: this.override ? "abstract override " : "abstract ",
+        name: this.name,
+        type: this.typeAlias,
+      });
+    }
+
+    // Declare the property public
+    return Maybe.of({
+      hasOverrideKeyword: this.override,
+      isReadonly: true,
+      name: this.name,
+      type: this.typeAlias,
+    });
+  }
+
+  @Memoize()
+  override get propertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: true,
+      name: this.name,
+      type: this.typeAlias,
+    });
+  }
+
+  @Memoize()
+  override get schema(): string {
+    return objectInitializer({
+      kind: JSON.stringify(this.kind),
+      identifierMintingStrategy: this.identifierMintingStrategy.extract(),
+      name: JSON.stringify(this.name),
+      type: this.type.schema,
+    });
+  }
+
+  private get abstract(): boolean {
+    return this.objectType.abstract;
   }
 
   private get override(): boolean {
@@ -405,69 +487,6 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     return Maybe.of({
       key: this.jsonPropertySignature.unsafeCoerce().name,
       schema,
-    });
-  }
-
-  @Memoize()
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    if (this.objectType.parentObjectTypes.length > 0) {
-      // An ancestor will declare the identifier property.
-      return Maybe.empty();
-    }
-
-    if (
-      this.identifierMintingStrategy.isJust() ||
-      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
-        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      ) ||
-      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      )
-    ) {
-      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
-      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
-      return Maybe.of({
-        hasQuestionToken: true,
-        name: `_${this.name}`,
-        scope: this.objectType.descendantObjectTypes.some(
-          (descendantObjectType) =>
-            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        )
-          ? Scope.Protected
-          : Scope.Private,
-        type: this.typeAlias,
-      });
-    }
-
-    if (this.abstract) {
-      // Declare the property abstract and public
-      return Maybe.of({
-        isReadonly: true,
-        // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-        leadingTrivia: this.override ? "abstract override " : "abstract ",
-        name: this.name,
-        type: this.typeAlias,
-      });
-    }
-
-    // Declare the property public
-    return Maybe.of({
-      hasOverrideKeyword: this.override,
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
-    });
-  }
-
-  override get propertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
     });
   }
 

@@ -6,6 +6,7 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
@@ -15,6 +16,8 @@ import type { Type } from "../Type.js";
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name">,
 > {
+  protected readonly objectType: ObjectType;
+
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
@@ -28,19 +31,19 @@ export abstract class AbstractProperty<
   abstract readonly equalsFunction: Maybe<string>;
 
   /**
-   * Optional get accessor to include in a class declaration of the object type.
-   */
-  abstract readonly getAccessorDeclaration: Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  >;
-
-  /**
    * Optional property in the object type's filter.
    */
   abstract readonly filterProperty: Maybe<{
     readonly name: string;
     readonly type: string;
   }>;
+
+  /**
+   * Optional get accessor to include in a class declaration of the object type.
+   */
+  abstract readonly getAccessorDeclaration: Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  >;
 
   /**
    * GraphQL.js field definition.
@@ -109,10 +112,7 @@ export abstract class AbstractProperty<
   /**
    * Property visibility: private, protected, public.
    */
-
   readonly visibility: PropertyVisibility;
-
-  protected readonly objectType: ObjectType;
 
   constructor({
     name,
@@ -135,19 +135,6 @@ export abstract class AbstractProperty<
    * Imports this property requires when declared in an object.
    */
   abstract get declarationImports(): readonly Import[];
-
-  protected static visibilityToScope(
-    visibility: PropertyVisibility,
-  ): Scope | undefined {
-    switch (visibility) {
-      case "private":
-        return Scope.Private;
-      case "protected":
-        return Scope.Protected;
-      case "public":
-        return undefined;
-    }
-  }
 
   /**
    * Statements to assign the parameter of described by constructorParametersPropertySignature to a class or interface member.
@@ -261,4 +248,17 @@ export abstract class AbstractProperty<
       "predicate"
     >;
   }): readonly string[];
+
+  protected static visibilityToScope(
+    visibility: PropertyVisibility,
+  ): Scope | undefined {
+    switch (visibility) {
+      case "private":
+        return Scope.Private;
+      case "protected":
+        return Scope.Protected;
+      case "public":
+        return undefined;
+    }
+  }
 }

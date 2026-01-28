@@ -11,6 +11,8 @@ import type {
 import { Memoize } from "typescript-memoize";
 
 import type { Import } from "../Import.js";
+import { objectInitializer } from "../objectInitializer.js";
+import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
@@ -155,7 +157,22 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  get schema() {}
+  override get schema(): string {
+    return objectInitializer({
+      comment: this.comment.map(JSON.stringify).extract(),
+      description: this.description.map(JSON.stringify).extract(),
+      kind: JSON.stringify(this.kind),
+      identifier: this.objectType.features.has("rdf")
+        ? rdfjsTermExpression(this.path)
+        : undefined,
+      label: this.label.map(JSON.stringify).extract(),
+      mutable: this.mutable,
+      name: JSON.stringify(this.name),
+      recursive: this.recursive,
+      type: this.type.schema,
+      visibility: JSON.stringify(this.visibility),
+    });
+  }
 
   protected get declarationComment(): string | undefined {
     return this.comment

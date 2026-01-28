@@ -4,12 +4,11 @@ import {
   VariableDeclarationKind,
   type VariableStatementStructure,
 } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { objectInitializer } from "../objectInitializer.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function schemaVariableStatement(
   this: ObjectUnionType,
@@ -18,7 +17,7 @@ export function schemaVariableStatement(
     string,
     {
       memberTypesWithProperty: boolean[];
-      path: ObjectType.ShaclProperty<Type>["path"];
+      property: ObjectType.ShaclProperty<Type>;
     }
   > = {};
 
@@ -33,7 +32,7 @@ export function schemaVariableStatement(
       }
       let commonProperty = commonPropertiesByName[memberTypeProperty.name];
       if (commonProperty) {
-        if (commonProperty.path.equals(memberTypeProperty.path)) {
+        if (commonProperty.property.path.equals(memberTypeProperty.path)) {
           commonProperty.memberTypesWithProperty[memberTypeI] = true;
         }
       } else {
@@ -41,7 +40,7 @@ export function schemaVariableStatement(
           memberTypesWithProperty: new Array<boolean>(
             this.memberTypes.length,
           ).fill(false),
-          path: memberTypeProperty.path,
+          property: memberTypeProperty,
         };
         commonProperty.memberTypesWithProperty[memberTypeI] = true;
       }
@@ -50,15 +49,11 @@ export function schemaVariableStatement(
 
   const propertiesObject: string[] = [];
   for (const name of Object.keys(commonPropertiesByName).toSorted()) {
-    const { memberTypesWithProperty, path } = commonPropertiesByName[name];
+    const { memberTypesWithProperty, property } = commonPropertiesByName[name];
     if (!memberTypesWithProperty.every((value) => value)) {
       continue;
     }
-    const propertyObject: Record<string, string> = {};
-    if (this.features.has("rdf")) {
-      propertyObject["identifier"] = rdfjsTermExpression(path);
-    }
-    propertiesObject.push(`${name}: ${objectInitializer(propertyObject)}`);
+    propertiesObject.push(`${property.name}: ${property.schema}`);
   }
   if (propertiesObject.length === 0) {
     return Maybe.empty();
