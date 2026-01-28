@@ -69,8 +69,8 @@ export function schemaVariableStatement(
     kind: StructureKind.VariableStatement,
     declarations: [
       {
-        name: `${syntheticNamePrefix}properties`,
-        initializer: `{${propertiesObject.join(", ")}}`,
+        name: `${syntheticNamePrefix}schema`,
+        initializer: `{ properties: { ${propertiesObject.join(", ")} } } as const`,
       },
     ],
     isExported: true,

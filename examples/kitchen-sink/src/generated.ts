@@ -1711,8 +1711,6 @@ export namespace $NamedDefaultPartial {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<zod.ZodError, { $identifier: rdfjs.NamedNode }> {
@@ -1748,6 +1746,8 @@ export namespace $NamedDefaultPartial {
           )
     ).map(($identifier) => ({ $identifier }));
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -2053,8 +2053,6 @@ export namespace $DefaultPartial {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -2084,6 +2082,8 @@ export namespace $DefaultPartial {
       $parameters.resource.identifier as $DefaultPartial.$Identifier,
     ).map(($identifier) => ({ $identifier }));
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -2407,12 +2407,6 @@ export namespace UuidV4IriIdentifierInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    uuidV4IriProperty: {
-      identifier: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -2494,6 +2488,16 @@ export namespace UuidV4IriIdentifierInterface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      uuidV4IriProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/uuidV4IriProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -2996,12 +3000,6 @@ export namespace UuidV4IriIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    uuidV4IriProperty: {
-      identifier: dataFactory.namedNode("http://example.com/uuidV4IriProperty"),
-    },
-  };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -3068,6 +3066,16 @@ export namespace UuidV4IriIdentifierClass {
         .map((uuidV4IriProperty) => ({ $identifier, uuidV4IriProperty })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      uuidV4IriProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/uuidV4IriProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -5158,54 +5166,6 @@ export namespace UnionDiscriminantsClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    optionalClassOrClassOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalClassOrClassOrStringProperty",
-      ),
-    },
-    optionalIriOrLiteralProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalIriOrLiteralProperty",
-      ),
-    },
-    optionalIriOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalIriOrStringProperty",
-      ),
-    },
-    requiredClassOrClassOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredClassOrClassOrStringProperty",
-      ),
-    },
-    requiredIriOrLiteralProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredIriOrLiteralProperty",
-      ),
-    },
-    requiredIriOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredIriOrStringProperty",
-      ),
-    },
-    setClassOrClassOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setClassOrClassOrStringProperty",
-      ),
-    },
-    setIriOrLiteralProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setIriOrLiteralProperty",
-      ),
-    },
-    setIriOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setIriOrStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -6350,6 +6310,56 @@ export namespace UnionDiscriminantsClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      optionalClassOrClassOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalClassOrClassOrStringProperty",
+        ),
+      },
+      optionalIriOrLiteralProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalIriOrLiteralProperty",
+        ),
+      },
+      optionalIriOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalIriOrStringProperty",
+        ),
+      },
+      requiredClassOrClassOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredClassOrClassOrStringProperty",
+        ),
+      },
+      requiredIriOrLiteralProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredIriOrLiteralProperty",
+        ),
+      },
+      requiredIriOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredIriOrStringProperty",
+        ),
+      },
+      setClassOrClassOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setClassOrClassOrStringProperty",
+        ),
+      },
+      setIriOrLiteralProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setIriOrLiteralProperty",
+        ),
+      },
+      setIriOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setIriOrStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -8541,48 +8551,6 @@ export namespace TermPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    blankNodeTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/blankNodeTermProperty",
-      ),
-    },
-    booleanTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/booleanTermProperty",
-      ),
-    },
-    dateTermProperty: {
-      identifier: dataFactory.namedNode("http://example.com/dateTermProperty"),
-    },
-    dateTimeTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/dateTimeTermProperty",
-      ),
-    },
-    iriTermProperty: {
-      identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
-    },
-    literalTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/literalTermProperty",
-      ),
-    },
-    numberTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/numberTermProperty",
-      ),
-    },
-    stringTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/stringTermProperty",
-      ),
-    },
-    termProperty: {
-      identifier: dataFactory.namedNode("http://example.com/termProperty"),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -9046,6 +9014,52 @@ export namespace TermPropertiesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      blankNodeTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/blankNodeTermProperty",
+        ),
+      },
+      booleanTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/booleanTermProperty",
+        ),
+      },
+      dateTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateTermProperty",
+        ),
+      },
+      dateTimeTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateTimeTermProperty",
+        ),
+      },
+      iriTermProperty: {
+        identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
+      },
+      literalTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/literalTermProperty",
+        ),
+      },
+      numberTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/numberTermProperty",
+        ),
+      },
+      stringTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/stringTermProperty",
+        ),
+      },
+      termProperty: {
+        identifier: dataFactory.namedNode("http://example.com/termProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -9962,12 +9976,6 @@ export namespace Sha256IriIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    sha256IriProperty: {
-      identifier: dataFactory.namedNode("http://example.com/sha256IriProperty"),
-    },
-  };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -10034,6 +10042,16 @@ export namespace Sha256IriIdentifierClass {
         .map((sha256IriProperty) => ({ $identifier, sha256IriProperty })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      sha256IriProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/sha256IriProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -10519,14 +10537,6 @@ export namespace RecursiveClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    recursiveClassUnionMember2Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/recursiveClassUnionMember2Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -10640,6 +10650,16 @@ export namespace RecursiveClassUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      recursiveClassUnionMember2Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/recursiveClassUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -11115,14 +11135,6 @@ export namespace RecursiveClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    recursiveClassUnionMember1Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/recursiveClassUnionMember1Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -11236,6 +11248,16 @@ export namespace RecursiveClassUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      recursiveClassUnionMember1Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/recursiveClassUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -11703,18 +11725,6 @@ export namespace PropertyVisibilitiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    privateProperty: {
-      identifier: dataFactory.namedNode("http://example.com/privateProperty"),
-    },
-    protectedProperty: {
-      identifier: dataFactory.namedNode("http://example.com/protectedProperty"),
-    },
-    publicProperty: {
-      identifier: dataFactory.namedNode("http://example.com/publicProperty"),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -11839,6 +11849,22 @@ export namespace PropertyVisibilitiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      privateProperty: {
+        identifier: dataFactory.namedNode("http://example.com/privateProperty"),
+      },
+      protectedProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/protectedProperty",
+        ),
+      },
+      publicProperty: {
+        identifier: dataFactory.namedNode("http://example.com/publicProperty"),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -12498,29 +12524,6 @@ export namespace PropertyCardinalitiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    emptyStringSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/emptyStringSetProperty",
-      ),
-    },
-    nonEmptyStringSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/nonEmptyStringSetProperty",
-      ),
-    },
-    optionalStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalStringProperty",
-      ),
-    },
-    requiredStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -12718,6 +12721,31 @@ export namespace PropertyCardinalitiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      emptyStringSetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/emptyStringSetProperty",
+        ),
+      },
+      nonEmptyStringSetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/nonEmptyStringSetProperty",
+        ),
+      },
+      optionalStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalStringProperty",
+        ),
+      },
+      requiredStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -13370,14 +13398,6 @@ export namespace PartialInterfaceUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -13485,6 +13505,16 @@ export namespace PartialInterfaceUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -14010,14 +14040,6 @@ export namespace PartialInterfaceUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -14125,6 +14147,16 @@ export namespace PartialInterfaceUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -14693,14 +14725,6 @@ export namespace PartialClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -14795,6 +14819,16 @@ export namespace PartialClassUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -15308,14 +15342,6 @@ export namespace PartialClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -15410,6 +15436,16 @@ export namespace PartialClassUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -15975,18 +16011,6 @@ export namespace OrderedPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    orderedPropertyC: {
-      identifier: dataFactory.namedNode("http://example.com/orderedPropertyC"),
-    },
-    orderedPropertyB: {
-      identifier: dataFactory.namedNode("http://example.com/orderedPropertyB"),
-    },
-    orderedPropertyA: {
-      identifier: dataFactory.namedNode("http://example.com/orderedPropertyA"),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -16110,6 +16134,26 @@ export namespace OrderedPropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      orderedPropertyC: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/orderedPropertyC",
+        ),
+      },
+      orderedPropertyB: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/orderedPropertyB",
+        ),
+      },
+      orderedPropertyA: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/orderedPropertyA",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -16684,12 +16728,6 @@ export namespace NonClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    nonClassProperty: {
-      identifier: dataFactory.namedNode("http://example.com/nonClassProperty"),
-    },
-  };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -16744,6 +16782,16 @@ export namespace NonClass {
         .map((nonClassProperty) => ({ $identifier, nonClassProperty })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      nonClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/nonClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -17169,14 +17217,6 @@ export namespace NoRdfTypeClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    noRdfTypeClassUnionMember2Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/noRdfTypeClassUnionMember2Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -17244,6 +17284,16 @@ export namespace NoRdfTypeClassUnionMember2 {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      noRdfTypeClassUnionMember2Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/noRdfTypeClassUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -17682,14 +17732,6 @@ export namespace NoRdfTypeClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    noRdfTypeClassUnionMember1Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/noRdfTypeClassUnionMember1Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -17757,6 +17799,16 @@ export namespace NoRdfTypeClassUnionMember1 {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      noRdfTypeClassUnionMember1Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/noRdfTypeClassUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -18425,24 +18477,6 @@ export namespace MutablePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    mutableListProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/mutableListProperty",
-      ),
-    },
-    mutableSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/mutableSetProperty",
-      ),
-    },
-    mutableStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/mutableStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -18664,6 +18698,26 @@ export namespace MutablePropertiesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      mutableListProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/mutableListProperty",
+        ),
+      },
+      mutableSetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/mutableSetProperty",
+        ),
+      },
+      mutableStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/mutableStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -19822,22 +19876,6 @@ export namespace ListPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    iriListProperty: {
-      identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
-    },
-    objectListProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/objectListProperty",
-      ),
-    },
-    stringListProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/stringListProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -20094,6 +20132,24 @@ export namespace ListPropertiesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      iriListProperty: {
+        identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
+      },
+      objectListProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/objectListProperty",
+        ),
+      },
+      stringListProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/stringListProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -21097,14 +21153,6 @@ export namespace PartialInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -21181,6 +21229,16 @@ export namespace PartialInterface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -22836,59 +22894,6 @@ export namespace LazyPropertiesInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    optionalLazyToResolvedInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedInterfaceProperty",
-      ),
-    },
-    optionalLazyToResolvedInterfaceUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
-      ),
-    },
-    optionalLazyToResolvedIriIdentifierInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
-      ),
-    },
-    optionalPartialInterfaceToResolvedInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
-      ),
-    },
-    optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
-      ),
-    },
-    optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
-      ),
-    },
-    requiredLazyToResolvedInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredLazyToResolvedInterfaceProperty",
-      ),
-    },
-    requiredPartialInterfaceToResolvedInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
-      ),
-    },
-    setLazyToResolvedInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setLazyToResolvedInterfaceProperty",
-      ),
-    },
-    setPartialInterfaceToResolvedInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -23881,6 +23886,61 @@ export namespace LazyPropertiesInterface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      optionalLazyToResolvedInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedInterfaceProperty",
+        ),
+      },
+      optionalLazyToResolvedInterfaceUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedInterfaceUnionProperty",
+        ),
+      },
+      optionalLazyToResolvedIriIdentifierInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedIriIdentifierInterfaceProperty",
+        ),
+      },
+      optionalPartialInterfaceToResolvedInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalPartialInterfaceToResolvedInterfaceProperty",
+        ),
+      },
+      optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalPartialInterfaceToResolvedInterfaceUnionProperty",
+        ),
+      },
+      optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
+        ),
+      },
+      requiredLazyToResolvedInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredLazyToResolvedInterfaceProperty",
+        ),
+      },
+      requiredPartialInterfaceToResolvedInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredPartialInterfaceToResolvedInterfaceProperty",
+        ),
+      },
+      setLazyToResolvedInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setLazyToResolvedInterfaceProperty",
+        ),
+      },
+      setPartialInterfaceToResolvedInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setPartialInterfaceToResolvedInterfaceProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -24971,14 +25031,6 @@ export namespace PartialClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -25044,6 +25096,16 @@ export namespace PartialClass {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -26726,59 +26788,6 @@ export namespace LazyPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    optionalLazyToResolvedClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedClassProperty",
-      ),
-    },
-    optionalLazyToResolvedClassUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedClassUnionProperty",
-      ),
-    },
-    optionalLazyToResolvedIriIdentifierClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
-      ),
-    },
-    optionalPartialClassToResolvedClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalPartialClassToResolvedClassProperty",
-      ),
-    },
-    optionalPartialClassToResolvedClassUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
-      ),
-    },
-    optionalPartialClassUnionToResolvedClassUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
-      ),
-    },
-    requiredLazyToResolvedClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredLazyToResolvedClassProperty",
-      ),
-    },
-    requiredPartialClassToResolvedClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/requiredPartialClassToResolvedClassProperty",
-      ),
-    },
-    setLazyToResolvedClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setLazyToResolvedClassProperty",
-      ),
-    },
-    setPartialClassToResolvedClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/setPartialClassToResolvedClassProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -27720,6 +27729,61 @@ export namespace LazyPropertiesClass {
     );
   }
 
+  export const $schema = {
+    properties: {
+      optionalLazyToResolvedClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedClassProperty",
+        ),
+      },
+      optionalLazyToResolvedClassUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedClassUnionProperty",
+        ),
+      },
+      optionalLazyToResolvedIriIdentifierClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalLazyToResolvedIriIdentifierClassProperty",
+        ),
+      },
+      optionalPartialClassToResolvedClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalPartialClassToResolvedClassProperty",
+        ),
+      },
+      optionalPartialClassToResolvedClassUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalPartialClassToResolvedClassUnionProperty",
+        ),
+      },
+      optionalPartialClassUnionToResolvedClassUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/optionalPartialClassUnionToResolvedClassUnionProperty",
+        ),
+      },
+      requiredLazyToResolvedClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredLazyToResolvedClassProperty",
+        ),
+      },
+      requiredPartialClassToResolvedClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/requiredPartialClassToResolvedClassProperty",
+        ),
+      },
+      setLazyToResolvedClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setLazyToResolvedClassProperty",
+        ),
+      },
+      setPartialClassToResolvedClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/setPartialClassToResolvedClassProperty",
+        ),
+      },
+    },
+  } as const;
+
   export function $sparqlConstructQuery(
     parameters?: {
       filter?: LazyPropertiesClass.$Filter;
@@ -28584,14 +28648,6 @@ export namespace LazilyResolvedIriIdentifierInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -28678,6 +28734,16 @@ export namespace LazilyResolvedIriIdentifierInterface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -29149,14 +29215,6 @@ export namespace LazilyResolvedIriIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -29226,6 +29284,16 @@ export namespace LazilyResolvedIriIdentifierClass {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -29634,14 +29702,6 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -29749,6 +29809,16 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -30275,14 +30345,6 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -30390,6 +30452,16 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -30957,14 +31029,6 @@ export namespace LazilyResolvedClassUnionMember2 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -31060,6 +31124,16 @@ export namespace LazilyResolvedClassUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -31573,14 +31647,6 @@ export namespace LazilyResolvedClassUnionMember1 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -31676,6 +31742,16 @@ export namespace LazilyResolvedClassUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -32158,14 +32234,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -32277,6 +32345,16 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -32854,14 +32932,6 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -32960,6 +33030,16 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -33496,14 +33576,6 @@ export namespace LanguageInPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    languageInLiteralProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/languageInLiteralProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -33620,6 +33692,16 @@ export namespace LanguageInPropertiesClass {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      languageInLiteralProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/languageInLiteralProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -34212,14 +34294,6 @@ export namespace JsPrimitiveUnionPropertyClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    jsPrimitiveUnionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/jsPrimitiveUnionProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -34356,6 +34430,16 @@ export namespace JsPrimitiveUnionPropertyClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      jsPrimitiveUnionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/jsPrimitiveUnionProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -34875,8 +34959,6 @@ export namespace IriIdentifierInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -34952,6 +35034,8 @@ export namespace IriIdentifierInterface {
       ),
     );
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -35378,8 +35462,6 @@ export namespace IriIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<zod.ZodError, { $identifier: rdfjs.NamedNode }> {
@@ -35444,6 +35526,8 @@ export namespace IriIdentifierClass {
       ).map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -35796,14 +35880,6 @@ export namespace InterfaceUnionMemberCommonParentStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    interfaceUnionMemberCommonParentProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMemberCommonParentProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -35875,6 +35951,16 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      interfaceUnionMemberCommonParentProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -36276,15 +36362,6 @@ export namespace InterfaceUnionMember2 {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...InterfaceUnionMemberCommonParentStatic.$properties,
-    interfaceUnionMember2Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMember2Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -36407,6 +36484,17 @@ export namespace InterfaceUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
+      interfaceUnionMember2Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -36892,15 +36980,6 @@ export namespace InterfaceUnionMember1 {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...InterfaceUnionMemberCommonParentStatic.$properties,
-    interfaceUnionMember1Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMember1Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -37023,6 +37102,17 @@ export namespace InterfaceUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
+      interfaceUnionMember1Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -37541,12 +37631,6 @@ export namespace Interface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    interfaceProperty: {
-      identifier: dataFactory.namedNode("http://example.com/interfaceProperty"),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -37614,6 +37698,16 @@ export namespace Interface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      interfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/interfaceProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -38117,14 +38211,6 @@ export namespace IndirectRecursiveHelperClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    indirectRecursiveProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/indirectRecursiveProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -38235,6 +38321,16 @@ export namespace IndirectRecursiveHelperClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      indirectRecursiveProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/indirectRecursiveProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -38709,14 +38805,6 @@ export namespace IndirectRecursiveClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    indirectRecursiveHelperProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/indirectRecursiveHelperProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -38828,6 +38916,16 @@ export namespace IndirectRecursiveClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      indirectRecursiveHelperProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/indirectRecursiveHelperProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -39527,28 +39625,6 @@ export namespace InPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    inBooleansProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/inBooleansProperty",
-      ),
-    },
-    inDateTimesProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/inDateTimesProperty",
-      ),
-    },
-    inIrisProperty: {
-      identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
-    },
-    inNumbersProperty: {
-      identifier: dataFactory.namedNode("http://example.com/inNumbersProperty"),
-    },
-    inStringsProperty: {
-      identifier: dataFactory.namedNode("http://example.com/inStringsProperty"),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -39946,6 +40022,34 @@ export namespace InPropertiesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      inBooleansProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/inBooleansProperty",
+        ),
+      },
+      inDateTimesProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/inDateTimesProperty",
+        ),
+      },
+      inIrisProperty: {
+        identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
+      },
+      inNumbersProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/inNumbersProperty",
+        ),
+      },
+      inStringsProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/inStringsProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -40681,14 +40785,6 @@ export namespace InIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    inIdentifierProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/inIdentifierProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -40815,6 +40911,16 @@ export namespace InIdentifierClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      inIdentifierProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/inIdentifierProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -41294,14 +41400,6 @@ export namespace IdentifierOverride1ClassStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    identifierOverrideProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/identifierOverrideProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -41367,6 +41465,16 @@ export namespace IdentifierOverride1ClassStatic {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      identifierOverrideProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/identifierOverrideProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -41664,8 +41772,6 @@ export namespace IdentifierOverride2ClassStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = { ...IdentifierOverride1ClassStatic.$properties };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -41717,6 +41823,10 @@ export namespace IdentifierOverride2ClassStatic {
       ).map(($identifier) => ({ ...$super0, $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride1ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -41972,8 +42082,6 @@ export namespace IdentifierOverride3ClassStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = { ...IdentifierOverride2ClassStatic.$properties };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -42056,6 +42164,10 @@ export namespace IdentifierOverride3ClassStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride2ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -42413,8 +42525,6 @@ export namespace IdentifierOverride4ClassStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = { ...IdentifierOverride3ClassStatic.$properties };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -42496,6 +42606,10 @@ export namespace IdentifierOverride4ClassStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride3ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -42845,8 +42959,6 @@ export namespace IdentifierOverride5Class {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = { ...IdentifierOverride4ClassStatic.$properties };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -42927,6 +43039,10 @@ export namespace IdentifierOverride5Class {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...IdentifierOverride4ClassStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -43409,19 +43525,6 @@ export namespace HasValuePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    hasIriValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/hasIriValueProperty",
-      ),
-    },
-    hasLiteralValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/hasLiteralValueProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -43527,6 +43630,21 @@ export namespace HasValuePropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      hasIriValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/hasIriValueProperty",
+        ),
+      },
+      hasLiteralValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/hasLiteralValueProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -44013,14 +44131,6 @@ export namespace FlattenClassUnionMember3 {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    flattenClassUnionMember3Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/flattenClassUnionMember3Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -44115,6 +44225,16 @@ export namespace FlattenClassUnionMember3 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      flattenClassUnionMember3Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/flattenClassUnionMember3Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -44651,14 +44771,6 @@ export namespace ExternClassPropertyClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    externClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/externClassProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -44766,6 +44878,16 @@ export namespace ExternClassPropertyClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      externClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/externClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -45209,14 +45331,6 @@ export namespace AbstractBaseClassForExternClassStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    abstractBaseClassForExternClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/abstractBaseClassForExternClassProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -45288,6 +45402,16 @@ export namespace AbstractBaseClassForExternClassStatic {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      abstractBaseClassForExternClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/abstractBaseClassForExternClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -45738,14 +45862,6 @@ export namespace ExplicitRdfTypeClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    explicitRdfTypeProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/explicitRdfTypeProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -45840,6 +45956,16 @@ export namespace ExplicitRdfTypeClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      explicitRdfTypeProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/explicitRdfTypeProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -46360,14 +46486,6 @@ export namespace ExplicitFromToRdfTypesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    explicitFromToRdfTypesProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/explicitFromToRdfTypesProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -46463,6 +46581,16 @@ export namespace ExplicitFromToRdfTypesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      explicitFromToRdfTypesProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/explicitFromToRdfTypesProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -47004,14 +47132,6 @@ export namespace DirectRecursiveClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    directRecursiveProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/directRecursiveProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -47122,6 +47242,16 @@ export namespace DirectRecursiveClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      directRecursiveProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/directRecursiveProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -47857,39 +47987,6 @@ export namespace DefaultValuePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    dateDefaultValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/dateDefaultValueProperty",
-      ),
-    },
-    dateTimeDefaultValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/dateTimeDefaultValueProperty",
-      ),
-    },
-    falseBooleanDefaultValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/falseBooleanDefaultValueProperty",
-      ),
-    },
-    numberDefaultValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/numberDefaultValueProperty",
-      ),
-    },
-    stringDefaultValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/stringDefaultValueProperty",
-      ),
-    },
-    trueBooleanDefaultValueProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/trueBooleanDefaultValueProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -48148,6 +48245,41 @@ export namespace DefaultValuePropertiesClass {
         ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      dateDefaultValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateDefaultValueProperty",
+        ),
+      },
+      dateTimeDefaultValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateTimeDefaultValueProperty",
+        ),
+      },
+      falseBooleanDefaultValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/falseBooleanDefaultValueProperty",
+        ),
+      },
+      numberDefaultValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/numberDefaultValueProperty",
+        ),
+      },
+      stringDefaultValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/stringDefaultValueProperty",
+        ),
+      },
+      trueBooleanDefaultValueProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/trueBooleanDefaultValueProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -49478,29 +49610,6 @@ export namespace DateUnionPropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    dateOrDateTimeProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/dateOrDateTimeProperty",
-      ),
-    },
-    dateOrStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/dateOrStringProperty",
-      ),
-    },
-    dateTimeOrDateProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/dateTimeOrDateProperty",
-      ),
-    },
-    stringOrDateProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/stringOrDateProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -49952,6 +50061,31 @@ export namespace DateUnionPropertiesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      dateOrDateTimeProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateOrDateTimeProperty",
+        ),
+      },
+      dateOrStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateOrStringProperty",
+        ),
+      },
+      dateTimeOrDateProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/dateTimeOrDateProperty",
+        ),
+      },
+      stringOrDateProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/stringOrDateProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -51829,69 +51963,6 @@ export namespace ConvertibleTypePropertiesClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    convertibleIriNonEmptySetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleIriNonEmptySetProperty",
-      ),
-    },
-    convertibleIriOptionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleIriOptionProperty",
-      ),
-    },
-    convertibleIriProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleIriProperty",
-      ),
-    },
-    convertibleIriSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleIriSetProperty",
-      ),
-    },
-    convertibleLiteralNonEmptySetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleLiteralNonEmptySetProperty",
-      ),
-    },
-    convertibleLiteralOptionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleLiteralOptionProperty",
-      ),
-    },
-    convertibleLiteralProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleLiteralProperty",
-      ),
-    },
-    convertibleLiteralSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleLiteralSetProperty",
-      ),
-    },
-    convertibleTermNonEmptySetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleTermNonEmptySetProperty",
-      ),
-    },
-    convertibleTermOptionProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleTermOptionProperty",
-      ),
-    },
-    convertibleTermProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleTermProperty",
-      ),
-    },
-    convertibleTermSetProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/convertibleTermSetProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -52628,6 +52699,71 @@ export namespace ConvertibleTypePropertiesClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      convertibleIriNonEmptySetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleIriNonEmptySetProperty",
+        ),
+      },
+      convertibleIriOptionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleIriOptionProperty",
+        ),
+      },
+      convertibleIriProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleIriProperty",
+        ),
+      },
+      convertibleIriSetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleIriSetProperty",
+        ),
+      },
+      convertibleLiteralNonEmptySetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralNonEmptySetProperty",
+        ),
+      },
+      convertibleLiteralOptionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralOptionProperty",
+        ),
+      },
+      convertibleLiteralProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralProperty",
+        ),
+      },
+      convertibleLiteralSetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleLiteralSetProperty",
+        ),
+      },
+      convertibleTermNonEmptySetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleTermNonEmptySetProperty",
+        ),
+      },
+      convertibleTermOptionProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleTermOptionProperty",
+        ),
+      },
+      convertibleTermProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleTermProperty",
+        ),
+      },
+      convertibleTermSetProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/convertibleTermSetProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -53672,14 +53808,6 @@ export namespace BaseInterfaceWithPropertiesStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    baseInterfaceWithPropertiesProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/baseInterfaceWithPropertiesProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -53798,6 +53926,16 @@ export namespace BaseInterfaceWithPropertiesStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      baseInterfaceWithPropertiesProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/baseInterfaceWithPropertiesProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -54273,10 +54411,6 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...BaseInterfaceWithPropertiesStatic.$properties,
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -54370,6 +54504,10 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: { ...BaseInterfaceWithPropertiesStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -54800,15 +54938,6 @@ export namespace ConcreteParentInterfaceStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...BaseInterfaceWithoutPropertiesStatic.$properties,
-    concreteParentInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/concreteParentInterfaceProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -54931,6 +55060,17 @@ export namespace ConcreteParentInterfaceStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
+      concreteParentInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/concreteParentInterfaceProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -55440,15 +55580,6 @@ export namespace ConcreteChildInterface {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...ConcreteParentInterfaceStatic.$properties,
-    concreteChildInterfaceProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/concreteChildInterfaceProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -55567,6 +55698,17 @@ export namespace ConcreteChildInterface {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ConcreteParentInterfaceStatic.$schema.properties,
+      concreteChildInterfaceProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/concreteChildInterfaceProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -56124,14 +56266,6 @@ export namespace AbstractBaseClassWithPropertiesStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    abstractBaseClassWithPropertiesProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/abstractBaseClassWithPropertiesProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -56203,6 +56337,16 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      abstractBaseClassWithPropertiesProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/abstractBaseClassWithPropertiesProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -56484,10 +56628,6 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...AbstractBaseClassWithPropertiesStatic.$properties,
-  };
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -56539,6 +56679,10 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
       ).map(($identifier) => ({ ...$super0, $identifier })),
     );
   }
+
+  export const $schema = {
+    properties: { ...AbstractBaseClassWithPropertiesStatic.$schema.properties },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -56881,15 +57025,6 @@ export namespace ConcreteParentClassStatic {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...AbstractBaseClassWithoutPropertiesStatic.$properties,
-    concreteParentClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/concreteParentClassProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -57005,6 +57140,17 @@ export namespace ConcreteParentClassStatic {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
+      concreteParentClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/concreteParentClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -57493,15 +57639,6 @@ export namespace ConcreteChildClass {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...ConcreteParentClassStatic.$properties,
-    concreteChildClassProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/concreteChildClassProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -57608,6 +57745,17 @@ export namespace ConcreteChildClass {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ConcreteParentClassStatic.$schema.properties,
+      concreteChildClassProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/concreteChildClassProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -58081,14 +58229,6 @@ export namespace ClassUnionMemberCommonParentStatic {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    classUnionMemberCommonParentProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/classUnionMemberCommonParentProperty",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -58160,6 +58300,16 @@ export namespace ClassUnionMemberCommonParentStatic {
         })),
     );
   }
+
+  export const $schema = {
+    properties: {
+      classUnionMemberCommonParentProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/classUnionMemberCommonParentProperty",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -58543,15 +58693,6 @@ export namespace ClassUnionMember2 {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...ClassUnionMemberCommonParentStatic.$properties,
-    classUnionMember2Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/classUnionMember2Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -58661,6 +58802,17 @@ export namespace ClassUnionMember2 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ClassUnionMemberCommonParentStatic.$schema.properties,
+      classUnionMember2Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/classUnionMember2Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -59116,15 +59268,6 @@ export namespace ClassUnionMember1 {
     ) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {
-    ...ClassUnionMemberCommonParentStatic.$properties,
-    classUnionMember1Property: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/classUnionMember1Property",
-      ),
-    },
-  };
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -59234,6 +59377,17 @@ export namespace ClassUnionMember1 {
       ),
     );
   }
+
+  export const $schema = {
+    properties: {
+      ...ClassUnionMemberCommonParentStatic.$schema.properties,
+      classUnionMember1Property: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/classUnionMember1Property",
+        ),
+      },
+    },
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -59680,8 +59834,6 @@ export namespace BlankNodeOrIriIdentifierInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(_json: unknown): purify.Either<
     zod.ZodError,
     {
@@ -59754,6 +59906,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
       ),
     );
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -60198,8 +60352,6 @@ export namespace BlankNodeOrIriIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -60260,6 +60412,8 @@ export namespace BlankNodeOrIriIdentifierClass {
       ).map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -60619,8 +60773,6 @@ export namespace BlankNodeIdentifierInterface {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<
@@ -60696,6 +60848,8 @@ export namespace BlankNodeIdentifierInterface {
       ),
     );
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -61135,8 +61289,6 @@ export namespace BlankNodeIdentifierClass {
     }) satisfies zod.ZodType<$Json>;
   }
 
-  export const $properties = {};
-
   export function $propertiesFromJson(
     _json: unknown,
   ): purify.Either<zod.ZodError, { $identifier: rdfjs.BlankNode }> {
@@ -61201,6 +61353,8 @@ export namespace BlankNodeIdentifierClass {
       ).map(($identifier) => ({ $identifier })),
     );
   }
+
+  export const $schema = { properties: {} } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -61517,13 +61671,15 @@ export namespace ClassUnion {
     ]);
   }
 
-  export const $properties = {
-    classUnionMemberCommonParentProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/classUnionMemberCommonParentProperty",
-      ),
+  export const $schema = {
+    properties: {
+      classUnionMemberCommonParentProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/classUnionMemberCommonParentProperty",
+        ),
+      },
     },
-  };
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -62261,13 +62417,15 @@ export namespace InterfaceUnion {
     ]);
   }
 
-  export const $properties = {
-    interfaceUnionMemberCommonParentProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/interfaceUnionMemberCommonParentProperty",
-      ),
+  export const $schema = {
+    properties: {
+      interfaceUnionMemberCommonParentProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/interfaceUnionMemberCommonParentProperty",
+        ),
+      },
     },
-  };
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -62618,13 +62776,15 @@ export namespace LazilyResolvedClassUnion {
     ]);
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  };
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -63020,13 +63180,15 @@ export namespace LazilyResolvedInterfaceUnion {
     ]);
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  };
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -63404,13 +63566,15 @@ export namespace PartialClassUnion {
     ]);
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  };
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {
@@ -63772,13 +63936,15 @@ export namespace PartialInterfaceUnion {
     ]);
   }
 
-  export const $properties = {
-    lazilyResolvedStringProperty: {
-      identifier: dataFactory.namedNode(
-        "http://example.com/lazilyResolvedStringProperty",
-      ),
+  export const $schema = {
+    properties: {
+      lazilyResolvedStringProperty: {
+        identifier: dataFactory.namedNode(
+          "http://example.com/lazilyResolvedStringProperty",
+        ),
+      },
     },
-  };
+  } as const;
 
   export function $sparqlConstructQuery(
     parameters?: {

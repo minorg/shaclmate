@@ -15,7 +15,7 @@ export function schemaVariableStatement(
   const propertiesObject: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertiesObject.push(
-      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}schema`,
+      `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}schema.properties`,
     );
   }
   for (const property of this.ownShaclProperties) {
@@ -34,7 +34,7 @@ export function schemaVariableStatement(
     declarations: [
       {
         name: `${syntheticNamePrefix}schema`,
-        initializer: `${propertiesObject.join(", ")}`,
+        initializer: `{ properties: { ${propertiesObject.join(", ")} } } as const`,
       },
     ],
     isExported: true,
