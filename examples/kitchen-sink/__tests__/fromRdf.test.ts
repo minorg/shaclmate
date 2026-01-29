@@ -238,6 +238,13 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
+        rdf.type,
+        kitchenSink.InPropertiesClass.$fromRdfType,
+      ),
+    );
+    dataset.add(
+      dataFactory.quad(
+        identifier,
         kitchenSink.InPropertiesClass.$schema.properties.inStringsProperty
           .identifier,
         object,
@@ -367,7 +374,7 @@ describe("fromRdf", () => {
           .mutableResource(
             dataFactory.namedNode("http://example.com/identifier"),
           )
-          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+          .add(rdf.type, kitchenSink.IriIdentifierClass.$fromRdfType),
       ).isRight(),
     ).toBe(true);
   });
@@ -382,7 +389,7 @@ describe("fromRdf", () => {
           .mutableResource(
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
           )
-          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+          .add(rdf.type, kitchenSink.InIdentifierClass.$fromRdfType),
       ).isRight(),
     ).toBe(true);
   });
