@@ -246,7 +246,7 @@ export abstract class AbstractType {
       valueVariable: string;
       variablePrefix: string;
     };
-  }): readonly (Sparql.Triple | string)[];
+  }): readonly (AbstractType.SparqlConstructTriple | string)[];
 
   /**
    * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
@@ -368,5 +368,11 @@ export namespace AbstractType {
         ? `(${this.requiredName}) | undefined`
         : this.requiredName;
     }
+  }
+
+  export interface SparqlConstructTriple {
+    readonly object: string;
+    readonly predicate: string;
+    readonly subject: string;
   }
 }

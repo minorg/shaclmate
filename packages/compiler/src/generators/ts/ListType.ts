@@ -70,8 +70,9 @@ export class ListType<
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
-  >[0]): readonly (Sparql.Triple | string)[] {
-    const triples: (Sparql.Triple | string)[] = [];
+  >[0]): readonly (AbstractCollectionType.SparqlConstructTriple | string)[] {
+    const triples: (AbstractCollectionType.SparqlConstructTriple | string)[] =
+      [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
       `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;

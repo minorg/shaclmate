@@ -47,7 +47,7 @@ export class SetType<
     parameters: Parameters<
       AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
     >[0],
-  ): readonly (Sparql.Triple | string)[] {
+  ): readonly (AbstractCollectionType.SparqlConstructTriple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 

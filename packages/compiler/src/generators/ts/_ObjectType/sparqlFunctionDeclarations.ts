@@ -112,7 +112,7 @@ if (!parameters?.ignoreRdfType) {
       variables,
     })) {
       sparqlConstructTriplesStatements.push(
-        `triples.push(${typeof triple === "object" ? Sparql.Triple.stringify(triple) : triple});`,
+        `triples.push(${typeof triple === "object" ? objectInitializer(triple as unknown as Record<string, string>) : triple});`,
       );
     }
 

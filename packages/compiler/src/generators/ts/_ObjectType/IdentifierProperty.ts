@@ -14,10 +14,10 @@ import { Memoize } from "typescript-memoize";
 
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
+import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -496,7 +496,10 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     return this.type.snippetDeclarations(parameters);
   }
 
-  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
+  override sparqlConstructTriples(): readonly (
+    | AbstractType.SparqlConstructTriple
+    | string
+  )[] {
     return [];
   }
 

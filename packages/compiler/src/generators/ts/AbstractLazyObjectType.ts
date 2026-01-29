@@ -133,7 +133,7 @@ export abstract class AbstractLazyObjectType<
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (Sparql.Triple | string)[] {
+  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
     return this.partialType.sparqlConstructTriples(parameters);
   }
 

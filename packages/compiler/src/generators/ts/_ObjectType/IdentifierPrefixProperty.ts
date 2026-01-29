@@ -8,10 +8,9 @@ import {
   Scope,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
+import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
-import type { Sparql } from "../Sparql.js";
 import type { StringType } from "../StringType.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -138,7 +137,10 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     return {};
   }
 
-  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
+  override sparqlConstructTriples(): readonly (
+    | AbstractType.SparqlConstructTriple
+    | string
+  )[] {
     return [];
   }
 

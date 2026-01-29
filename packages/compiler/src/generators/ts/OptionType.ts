@@ -273,7 +273,7 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (Sparql.Triple | string)[] {
+  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 

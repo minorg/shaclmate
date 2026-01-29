@@ -547,7 +547,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (Sparql.Triple | string)[] {
+  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
     return this.memberTypes.flatMap((memberType) =>
       memberType.sparqlConstructTriples({
         ...parameters,

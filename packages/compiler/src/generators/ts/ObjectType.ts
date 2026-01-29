@@ -529,7 +529,7 @@ export class ObjectType extends AbstractDeclaredType {
     allowIgnoreRdfType,
     variables,
   }: Parameters<AbstractDeclaredType["sparqlConstructTriples"]>[0]): readonly (
-    | Sparql.Triple
+    | AbstractDeclaredType.SparqlConstructTriple
     | string
   )[] {
     return [

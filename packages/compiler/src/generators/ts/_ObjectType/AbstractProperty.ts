@@ -9,6 +9,7 @@ import {
 import { Memoize } from "typescript-memoize";
 
 import type { PropertyVisibility } from "../../../enums/index.js";
+import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
@@ -225,7 +226,7 @@ export abstract class AbstractProperty<
    */
   abstract sparqlConstructTriples(parameters: {
     variables: { focusIdentifier: string; variablePrefix: string };
-  }): readonly (Sparql.Triple | string)[];
+  }): readonly (AbstractType.SparqlConstructTriple | string)[];
 
   /**
    * An array of SPARQL.js WHERE patterns for this property as strings (so they can incorporate runtime calls).

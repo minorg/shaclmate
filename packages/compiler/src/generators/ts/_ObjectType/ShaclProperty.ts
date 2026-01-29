@@ -9,10 +9,9 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
+import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -305,7 +304,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     variables,
   }: Parameters<
     AbstractProperty<TypeT>["sparqlConstructTriples"]
-  >[0]): readonly (Sparql.Triple | string)[] {
+  >[0]): readonly (AbstractType.SparqlConstructTriple | string)[] {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return [
@@ -313,7 +312,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         object: valueVariable,
         predicate: this.predicate,
         subject: variables.focusIdentifier,
-      } as Sparql.Triple | string,
+      } as AbstractType.SparqlConstructTriple | string,
     ].concat(
       this.type.sparqlConstructTriples({
         allowIgnoreRdfType: true,
