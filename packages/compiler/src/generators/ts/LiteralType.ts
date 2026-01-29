@@ -1,7 +1,4 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
-import { Memoize } from "typescript-memoize";
-
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { Sparql } from "./Sparql.js";
@@ -16,11 +13,6 @@ export class LiteralType extends AbstractLiteralType {
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
-  }
-
-  @Memoize()
-  override get schema(): string {
-    return "{}";
   }
 
   override fromJsonExpression({
@@ -68,6 +60,7 @@ export class LiteralType extends AbstractLiteralType {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+
       parameters.features.has("sparql") && this.languageIn.length > 0
         ? singleEntryRecord(
             `${syntheticNamePrefix}arrayIntersection`,
@@ -100,6 +93,7 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
 }`,
           )
         : {},
+
       singleEntryRecord(
         `${syntheticNamePrefix}filterLiteral`,
         `\
@@ -115,6 +109,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
   readonly in?: readonly rdfjs.Literal[];
 }`,
       ),
+
       parameters.features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}LiteralFilter.sparqlWherePatterns`,

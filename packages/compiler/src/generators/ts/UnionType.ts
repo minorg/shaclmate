@@ -5,6 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
@@ -94,6 +95,10 @@ class MemberType {
     return this.delegate.name;
   }
 
+  get schema() {
+    return this.delegate.schema;
+  }
+
   get typeofs() {
     return this.delegate.typeofs;
   }
@@ -110,12 +115,12 @@ class MemberType {
     return this.delegate.fromRdfExpression(parameters);
   }
 
-  jsonType(parameters?: Parameters<AbstractType["jsonType"]>[0]) {
-    return this.delegate.jsonType(parameters);
-  }
-
   hashStatements(parameters: Parameters<AbstractType["hashStatements"]>[0]) {
     return this.delegate.hashStatements(parameters);
+  }
+
+  jsonType(parameters?: Parameters<AbstractType["jsonType"]>[0]) {
+    return this.delegate.jsonType(parameters);
   }
 
   jsonZodSchema(parameters: Parameters<AbstractType["jsonZodSchema"]>[0]) {
@@ -168,6 +173,7 @@ class MemberType {
 export class UnionType extends AbstractType {
   private readonly discriminant: Discriminant;
   private readonly memberTypes: readonly MemberType[];
+
   #name?: string;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
@@ -333,31 +339,6 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 
   @Memoize()
-  override jsonType(): AbstractType.JsonType {
-    switch (this.discriminant.kind) {
-      case "envelope":
-        return new AbstractType.JsonType(
-          `(${this.memberTypes.map((memberType) => `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonType().name} }`).join(" | ")})`,
-        );
-      case "inline":
-      case "typeof":
-        return new AbstractType.JsonType(
-          this.memberTypes
-            .map(
-              (memberType) =>
-                memberType.jsonType({
-                  includeDiscriminantProperty:
-                    this.discriminant.kind === "inline",
-                }).name,
-            )
-            .join(" | "),
-        );
-      default:
-        throw this.discriminant satisfies never;
-    }
-  }
-
-  @Memoize()
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
   }
@@ -386,7 +367,17 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   @Memoize()
   override get schema(): string {
-    return `{ }`;
+    return objectInitializer({
+      discriminant: {
+        kind: JSON.stringify(this.discriminant.kind),
+      },
+      members: this.memberTypes.map((memberType) => ({
+        discriminantValues: memberType.discriminantValues.map((_) =>
+          JSON.stringify(_),
+        ),
+        type: memberType.schema,
+      })),
+    });
   }
 
   @Memoize()
@@ -469,6 +460,31 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return [
       `switch (${this.discriminantVariable(variables.value)}) { ${caseBlocks.join("\n")} }`,
     ];
+  }
+
+  @Memoize()
+  override jsonType(): AbstractType.JsonType {
+    switch (this.discriminant.kind) {
+      case "envelope":
+        return new AbstractType.JsonType(
+          `(${this.memberTypes.map((memberType) => `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonType().name} }`).join(" | ")})`,
+        );
+      case "inline":
+      case "typeof":
+        return new AbstractType.JsonType(
+          this.memberTypes
+            .map(
+              (memberType) =>
+                memberType.jsonType({
+                  includeDiscriminantProperty:
+                    this.discriminant.kind === "inline",
+                }).name,
+            )
+            .join(" | "),
+        );
+      default:
+        throw this.discriminant satisfies never;
+    }
   }
 
   override jsonUiSchemaElement(): Maybe<string> {

@@ -6,7 +6,6 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -43,11 +42,6 @@ export class TermType<
 
   override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
-  }
-
-  @Memoize()
-  override get schema(): string {
-    return objectInitializer(this.schemaObject);
   }
 
   override fromJsonExpression({

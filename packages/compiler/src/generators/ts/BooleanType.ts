@@ -44,13 +44,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return "boolean";
   }
 
-  @Memoize()
-  override get schema(): string {
-    return this.constrained
-      ? objectInitializer(this.schemaObject)
-      : `${syntheticNamePrefix}booleanTypeSchema`;
-  }
-
   override jsonZodSchema({
     variables,
   }: Parameters<
@@ -69,12 +62,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
-      !this.constrained
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}booleanTypeSchema`,
-            `const ${syntheticNamePrefix}booleanTypeSchema = ${objectInitializer(this.schemaObject)};`,
-          )
-        : {},
+
       singleEntryRecord(
         `${syntheticNamePrefix}BooleanFilter`,
         `\
@@ -93,6 +81,7 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
   return true;
 }`,
       ),
+
       parameters.features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}BooleanFilter.sparqlWherePatterns`,

@@ -3,6 +3,7 @@ import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
@@ -82,7 +83,16 @@ export abstract class AbstractType {
   /**
    * TypeScript object describing this type, for runtime use.
    */
-  abstract readonly schema: string;
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  protected get schemaObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)} as const`,
+    };
+  }
 
   /**
    * JavaScript typeof(s) the type.

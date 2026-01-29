@@ -11,7 +11,6 @@ import { Memoize } from "typescript-memoize";
 
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
-import { objectInitializer } from "../objectInitializer.js";
 import type { Sparql } from "../Sparql.js";
 import type { StringType } from "../StringType.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
@@ -91,15 +90,6 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
           type: this.type.name,
         })
       : Maybe.empty();
-  }
-
-  @Memoize()
-  override get schema(): string {
-    return objectInitializer({
-      kind: `${JSON.stringify(this.kind)} as const`,
-      name: JSON.stringify(this.name),
-      type: this.type.schema,
-    });
   }
 
   override constructorStatements({

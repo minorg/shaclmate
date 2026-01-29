@@ -45,11 +45,6 @@ export class ListType<
     );
   }
 
-  @Memoize()
-  override get schema(): string {
-    return "{}";
-  }
-
   override fromRdfExpression({
     variables,
   }: Parameters<

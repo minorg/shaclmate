@@ -136,12 +136,6 @@ export abstract class AbstractTermType<
       .join(" | ")})`;
   }
 
-  protected get schemaObject() {
-    return {
-      kind: `${JSON.stringify(this.kind)} as const`,
-    };
-  }
-
   override fromRdfExpression(
     parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
   ): string {

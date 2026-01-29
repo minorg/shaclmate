@@ -21,11 +21,6 @@ export class SetType<
     return new AbstractCollectionType.JsonType(name);
   }
 
-  @Memoize()
-  override get schema(): string {
-    return `{ item: ${this.itemType.schema} }`;
-  }
-
   override fromRdfExpression(
     parameters: Parameters<
       AbstractCollectionType<ItemTypeT>["fromRdfExpression"]

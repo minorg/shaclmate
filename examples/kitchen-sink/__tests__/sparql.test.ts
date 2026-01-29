@@ -21,6 +21,9 @@ describe("sparql", () => {
       for (const property of Object.values(
         kitchenSink.LanguageInPropertiesClass.$schema.properties,
       )) {
+        if (property.kind !== "ShaclProperty") {
+          continue;
+        }
         languageInDataset.add(
           oxigraph.quad(
             languageInSubject,

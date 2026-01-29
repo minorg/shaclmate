@@ -160,6 +160,15 @@ export abstract class AbstractCollectionType<
     }
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      item: this.itemType.schema,
+      minCount: this.minCount,
+      mutable: this.mutable ? true : undefined,
+    };
+  }
+
   @Memoize()
   override get conversions(): readonly AbstractType.Conversion[] {
     const conversions: AbstractType.Conversion[] = [];

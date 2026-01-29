@@ -11,7 +11,6 @@ import type {
 import { Memoize } from "typescript-memoize";
 
 import type { Import } from "../Import.js";
-import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -156,25 +155,22 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  @Memoize()
-  override get schema(): string {
-    return objectInitializer({
-      comment: this.comment.map(JSON.stringify).extract(),
-      description: this.description.map(JSON.stringify).extract(),
-      kind: `${JSON.stringify(this.kind)} as const`,
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      // comment: this.comment.map(JSON.stringify).extract(),
+      // description: this.description.map(JSON.stringify).extract(),
       identifier: this.objectType.features.has("rdf")
         ? rdfjsTermExpression(this.path)
         : undefined,
-      label: this.label.map(JSON.stringify).extract(),
+      // label: this.label.map(JSON.stringify).extract(),
       mutable: this.mutable ? true : undefined,
-      name: JSON.stringify(this.name),
       recursive: this.recursive ? true : undefined,
-      type: `() => (${this.type.schema})`,
       visibility:
         this.visibility !== "public"
           ? `${JSON.stringify(this.visibility)} as const`
           : undefined,
-    });
+    };
   }
 
   protected get declarationComment(): string | undefined {
@@ -187,7 +183,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   protected get predicate(): string {
-    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}["identifier"]`;
+    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
   }
 
   override constructorStatements({
@@ -256,7 +252,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           ...variables,
           ignoreRdfType: true,
           predicate: this.predicate,
-          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}["identifier"], { unique: true }))`,
+          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
         },
       })}.chain(values => values.head())`,
     );

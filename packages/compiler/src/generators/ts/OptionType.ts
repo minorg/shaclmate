@@ -98,9 +98,11 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
     return `purify.Maybe<${this.itemType.name}>`;
   }
 
-  @Memoize()
-  override get schema(): string {
-    return `{ item: ${this.itemType.schema} }`;
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      item: this.itemType.schema,
+    };
   }
 
   override fromJsonExpression({

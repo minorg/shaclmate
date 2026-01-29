@@ -9,7 +9,6 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { SetType } from "./SetType.js";
 import type { Sparql } from "./Sparql.js";
 
@@ -83,12 +82,12 @@ export abstract class AbstractLazyObjectType<
     return this.runtimeClass.name;
   }
 
-  @Memoize()
-  override get schema(): string {
-    return objectInitializer({
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
       partialType: this.partialType.schema,
       resolvedType: this.resolvedType.schema,
-    });
+    };
   }
 
   override hashStatements({

@@ -1,5 +1,6 @@
 import type { Literal } from "@rdfjs/types";
-
+import { camelCase } from "change-case";
+import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -31,11 +32,20 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     return super.constrained || this.languageIn.length > 0;
   }
 
+  @Memoize()
+  override get schema(): string {
+    return this.constrained
+      ? objectInitializer(this.schemaObject)
+      : `${syntheticNamePrefix}${camelCase(this.kind)}Schema`;
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
       languageIn:
-        this.languageIn.length > 0 ? this.languageIn.concat() : undefined,
+        this.languageIn.length > 0
+          ? this.languageIn.map((_) => JSON.stringify(_))
+          : undefined,
     };
   }
 
@@ -46,6 +56,14 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   ): Readonly<Record<string, string>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+
+      !this.constrained
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}${camelCase(this.kind)}Schema`,
+            `const ${syntheticNamePrefix}${camelCase(this.kind)}Schema = ${objectInitializer(this.schemaObject)};`,
+          )
+        : {},
+
       parameters.features.has("rdf")
         ? singleEntryRecord(
             `${syntheticNamePrefix}fromRdfPreferredLanguages`,
