@@ -95,6 +95,20 @@ export abstract class AbstractType {
   }
 
   /**
+   * TypeScript type describing .schema.
+   */
+  @Memoize()
+  get schemaType(): string {
+    return objectInitializer(this.schemaTypeObject);
+  }
+
+  protected get schemaTypeObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)}`,
+    };
+  }
+
+  /**
    * JavaScript typeof(s) the type.
    */
   abstract readonly typeofs: NonEmptyList<

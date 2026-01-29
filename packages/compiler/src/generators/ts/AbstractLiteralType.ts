@@ -1,6 +1,8 @@
 import type { Literal } from "@rdfjs/types";
+
 import { camelCase } from "change-case";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -49,6 +51,20 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     };
   }
 
+  @Memoize()
+  override get schemaType(): string {
+    return this.constrained
+      ? objectInitializer(this.schemaTypeObject)
+      : `${syntheticNamePrefix}${this.kind}Schema`;
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "languageIn?": "readonly string[]",
+    };
+  }
+
   override snippetDeclarations(
     parameters: Parameters<
       AbstractTermType<Literal, Literal>["snippetDeclarations"]
@@ -58,10 +74,16 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       super.snippetDeclarations(parameters),
 
       !this.constrained
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}${camelCase(this.kind)}Schema`,
-            `const ${syntheticNamePrefix}${camelCase(this.kind)}Schema = ${objectInitializer(this.schemaObject)};`,
-          )
+        ? {
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}${camelCase(this.kind)}Schema`,
+              `const ${syntheticNamePrefix}${camelCase(this.kind)}Schema = ${objectInitializer(this.schemaObject)};`,
+            ),
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}${this.kind}Schema`,
+              `type ${syntheticNamePrefix}${this.kind}Schema = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
+            ),
+          }
         : {},
 
       parameters.features.has("rdf")

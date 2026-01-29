@@ -164,6 +164,12 @@ namespace $BooleanFilter {
 }
 
 const $booleanTypeSchema = { kind: "BooleanType" as const };
+type $BooleanTypeSchema = {
+  kind: "BooleanType";
+  languageIn?: readonly string[];
+  defaultValue?: boolean;
+  in?: readonly boolean[];
+};
 type $CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly $maxCount?: number;
   readonly $minCount?: number;
@@ -258,7 +264,19 @@ namespace $DateFilter {
 }
 
 const $dateTimeTypeSchema = { kind: "DateTimeType" as const };
+type $DateTimeTypeSchema = {
+  kind: "DateTimeType";
+  languageIn?: readonly string[];
+  defaultValue?: Date;
+  in?: readonly Date[];
+};
 const $dateTypeSchema = { kind: "DateType" as const };
+type $DateTypeSchema = {
+  kind: "DateType";
+  languageIn?: readonly string[];
+  defaultValue?: Date;
+  in?: readonly Date[];
+};
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -863,6 +881,10 @@ namespace $LiteralFilter {
 }
 
 const $literalTypeSchema = { kind: "LiteralType" as const };
+type $LiteralTypeSchema = {
+  kind: "LiteralType";
+  languageIn?: readonly string[];
+};
 function $maybeEquals<T>(
   leftMaybe: purify.Maybe<T>,
   rightMaybe: purify.Maybe<T>,
@@ -1213,6 +1235,12 @@ namespace $NumberFilter {
 }
 
 const $numberTypeSchema = { kind: "NumberType" as const };
+type $NumberTypeSchema = {
+  kind: "NumberType";
+  languageIn?: readonly string[];
+  defaultValue?: number;
+  in?: readonly number[];
+};
 namespace $RdfVocabularies {
   export namespace rdf {
     export const first = dataFactory.namedNode(
@@ -1364,6 +1392,12 @@ namespace $StringFilter {
 }
 
 const $stringTypeSchema = { kind: "StringType" as const };
+type $StringTypeSchema = {
+  kind: "StringType";
+  languageIn?: readonly string[];
+  defaultValue?: string;
+  in?: readonly string[];
+};
 interface $TermFilter {
   readonly datatypeIn?: readonly rdfjs.NamedNode[];
   readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];

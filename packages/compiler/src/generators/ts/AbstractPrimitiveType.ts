@@ -42,6 +42,14 @@ export abstract class AbstractPrimitiveType<
     };
   }
 
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": this.name,
+      "in?": `readonly (${this.name})[]`,
+    };
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {
