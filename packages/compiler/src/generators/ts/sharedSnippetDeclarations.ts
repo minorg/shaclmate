@@ -138,6 +138,23 @@ class ${syntheticNamePrefix}IdentifierSet {
 }`,
   ),
 
+  liftSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}liftSparqlWherePatterns`,
+    `\
+${syntheticNamePrefix}liftSparqlWherePatterns(sparqlWherePatterns: readonly ${syntheticNamePrefix}SparqlWherePattern): [readonly ${syntheticNamePrefix}SparqlWherePattern[], readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[]] {
+  const liftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+  const unliftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+  for (const sparqlWherePattern of sparqlWherePatterns) {
+    if (sparqlWherePattern.type === "filter" && sparqlWherePattern.lift) {
+      liftedSparqlWherePatterns.push(sparqlWherePattern);
+    } else {
+      unliftedSparqlWherePatterns.push(sparqlWherePattern); 
+    }
+  }
+  return [unliftedSparqlWherePatterns, liftedSparqlWherePatterns];
+}`,
+  ),
+
   normalizeSparqlWherePatterns: singleEntryRecord(
     `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
     `\
@@ -322,6 +339,24 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
     export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
 }`,
+  ),
+
+  SparqlWherePatternTypes: singleEntryRecord(
+    `SparqlWherePatternTypes`,
+    `\
+type ${syntheticNamePrefix}SparqlWhereFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
+type ${syntheticNamePrefix}SparqlWherePattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlWhereFilterPattern;
+type ${syntheticNamePrefix}SparqlWherePatternFunctionParameters<FilterT, SchemaT> = Readonly<{
+  allowIgnoreRdfType: boolean;
+  filter?: FilterT;
+  preferredLanguages: readonly string[];
+  propertyPatterns: readonly sparqljs.BgpPattern[];
+  schema: SchemaT;
+  valueVariable: rdfjs.Variable;
+  variablePrefix: string;
+};
+type ${syntheticNamePrefix}SparqlWherePatternFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternFunctionParameters<FilterT, SchemaT>) => ${syntheticNamePrefix}SparqlWherePattern;
+`,
   ),
 
   strictEquals: singleEntryRecord(

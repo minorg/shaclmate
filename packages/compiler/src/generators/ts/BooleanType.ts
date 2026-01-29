@@ -84,17 +84,12 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
 
       parameters.features.has("sparql")
         ? singleEntryRecord(
-            `${syntheticNamePrefix}BooleanFilter.sparqlWherePatterns`,
+            `${syntheticNamePrefix}booleanSparqlWherePatterns`,
             `\
-namespace ${syntheticNamePrefix}BooleanFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    const patterns: sparqljs.FilterPattern[] = [];
+function ${syntheticNamePrefix}booleanSparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, schema: ${syntheticNamePrefix}BooleanTypeSchema, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] => {
+    const patterns: sparqljs.Pattern[] = [];
 
-    if (!filter) {
-      return patterns;
-    }
-
-    if (typeof filter.value !== "undefined") {
+    if (typeof filter?.value !== "undefined") {
       patterns.push({
         type: "filter",
         expression: {
@@ -106,7 +101,7 @@ namespace ${syntheticNamePrefix}BooleanFilter {
     }
 
     return patterns;
-  }
+  );
 }`,
           )
         : {},

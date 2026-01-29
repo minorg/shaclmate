@@ -105,6 +105,11 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
     };
   }
 
+  @Memoize()
+  override get schemaType(): string {
+    return `${syntheticNamePrefix}MaybeSchema<${this.itemType.schemaType}>`;
+  }
+
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
@@ -241,17 +246,24 @@ function ${syntheticNamePrefix}maybeEquals<T>(
 type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
       ),
 
+      singleEntryRecord(
+        `${syntheticNamePrefix}MaybeSchema`,
+        `${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = Readonly<{ item: ItemSchemaT }>`,
+      ),
+
       parameters.features.has("sparql")
         ? singleEntryRecord(
-            `${syntheticNamePrefix}MaybeFilter.sparqlWherePatterns`,
+            `${syntheticNamePrefix}maybeSparqlWherePatterns`,
             `\
-namespace ${syntheticNamePrefix}MaybeFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns<ItemFilterT>(filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT> | undefined, itemSparqlWherePatterns: (itemFilter: ItemFilterT | undefined) => readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {  
+function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}MaybeFilter<ItemFilterT>, ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>> {  
+  return ({ filter, schema, ...otherParameters }) => {
     if (filter === null) {
-      return [{ expression: { args: itemSparqlWherePatterns(undefined).concat(), operator: "notexists", type: "operation" }, type: "filter" }]
+      const [itemSparqlWherePatterns, liftSparqlWherePatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
+      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlWherePatterns]
     }
 
-    return [{ patterns: itemSparqlWherePatterns(filter).concat(), type: "optional" }];
+    const [itemSparqlWherePatterns, liftSparqlWherePatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
+    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
   }
 }`,
           )
