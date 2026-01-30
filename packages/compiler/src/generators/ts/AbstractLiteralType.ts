@@ -1,8 +1,8 @@
 import type { Literal } from "@rdfjs/types";
 
 import { camelCase } from "change-case";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
@@ -36,9 +36,10 @@ export abstract class AbstractLiteralType extends AbstractTermType<
 
   @Memoize()
   override get schema(): string {
+    invariant(this.kind.endsWith("Type"));
     return this.constrained
       ? objectInitializer(this.schemaObject)
-      : `${syntheticNamePrefix}${camelCase(this.kind)}Schema`;
+      : `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}Schema`;
   }
 
   protected override get schemaObject() {
@@ -49,6 +50,12 @@ export abstract class AbstractLiteralType extends AbstractTermType<
           ? this.languageIn.map((_) => JSON.stringify(_))
           : undefined,
     };
+  }
+
+  @Memoize()
+  override get schemaType(): string {
+    invariant(this.kind.endsWith("Type"));
+    return `${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
   }
 
   protected override get schemaTypeObject() {
@@ -67,17 +74,16 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       super.snippetDeclarations(parameters),
 
       !this.constrained
-        ? {
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}${camelCase(this.kind)}Schema`,
-              `const ${syntheticNamePrefix}${camelCase(this.kind)}Schema = ${objectInitializer(this.schemaObject)};`,
-            ),
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}${this.kind}Schema`,
-              `type ${syntheticNamePrefix}${this.kind}Schema = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
-            ),
-          }
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}${camelCase(this.kind)}Schema`,
+            `const ${syntheticNamePrefix}${camelCase(this.kind)}Schema = ${objectInitializer(this.schemaObject)};`,
+          )
         : {},
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}${this.kind}Schema`,
+        `type ${syntheticNamePrefix}${this.kind}Schema = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
+      ),
 
       parameters.features.has("rdf")
         ? singleEntryRecord(

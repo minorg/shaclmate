@@ -7,6 +7,7 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -561,7 +562,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       return {};
     }
     recursionStack.push(this);
-    const snippetDeclarations = this.memberTypes.reduce(
+    let snippetDeclarations = this.memberTypes.reduce(
       (snippetDeclarations, memberType) =>
         mergeSnippetDeclarations(
           snippetDeclarations,
@@ -569,6 +570,12 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
         ),
       {} as Record<string, SnippetDeclaration>,
     );
+    if (parameters.features.has("sparql")) {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        sharedSnippetDeclarations.liftSparqlWherePatterns,
+      );
+    }
     invariant(Object.is(recursionStack.pop(), this));
     return snippetDeclarations;
   }

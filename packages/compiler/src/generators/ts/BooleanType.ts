@@ -89,7 +89,7 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
             {
               code: `\
 const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
-  ({ filter, propertyPatterns, valueVariable }) => {
+  ({ filter, valueVariable }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter?.value !== "undefined") {
@@ -97,8 +97,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
-  );
-}`,
+  }`,
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,
                 ...sharedSnippetDeclarations.SparqlWherePatternTypes,
