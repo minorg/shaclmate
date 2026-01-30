@@ -69,6 +69,11 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
     }
   }
 
+  @Memoize()
+  override get schemaType(): string {
+    return `${syntheticNamePrefix}NumberSchema`;
+  }
+
   protected override fromRdfExpressionChain({
     variables,
   }: Parameters<
@@ -144,55 +149,57 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
   ({ filter, valueVariable }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
-    if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
-    }
+    if (filter) {
+      if (typeof filter.in !== "undefined") {
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
+      }
 
-    if (typeof filter.maxExclusive !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<",
-          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
+      if (typeof filter.maxExclusive !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<",
+            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
 
-    if (typeof filter.maxInclusive !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<=",
-          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
+      if (typeof filter.maxInclusive !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<=",
+            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
 
-    if (typeof filter.minExclusive !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">",
-          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
+      if (typeof filter.minExclusive !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">",
+            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
 
-    if (typeof filter.minInclusive !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">=",
-          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
-        },
-        type: "filter",
-      });
+      if (typeof filter.minInclusive !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">=",
+            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+          },
+          type: "filter",
+        });
+      }
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });

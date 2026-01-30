@@ -116,7 +116,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
         ...itemSparqlWherePatternsFunction({
           filter: parameters.filter,
           preferredLanguages: parameters.preferredLanguages,
-          propertyPaths: [],
+          propertyPatterns: [],
           schema: parameters.schema.item,
           valueVariable: item0Variable,
           variablePrefix: variablePrefix("Item0"),
@@ -148,7 +148,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       triples: [
         {
           subject: listVariable,
-          predicate: "{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }",
+          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] },
           object: restNVariable,
         },
       ],
@@ -169,14 +169,12 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
           type: "bgp"
         },
         ...itemSparqlWherePatternsFunction({
-          variables: {
-            filter: parameters.filter,
-            preferredLanguages: parameters.preferredLanguages,
-            propertyPatterns: [],
-            schema: parameters.schema.item,
-            valueVariable: itemNVariable,
-            variablePrefix: variablePrefix("ItemN"),
-          },
+          filter: parameters.filter,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPatterns: [],
+          schema: parameters.schema.item,
+          valueVariable: itemNVariable,
+          variablePrefix: variablePrefix("ItemN"),
         }),
       );
     }
@@ -196,7 +194,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
     patterns.push({ type: "optional", patterns: optionalPatterns });
 
     // Having an optional around everything handles the rdf:nil case
-    return [...propertyPatterns, { patterns, type: "optional" }];
+    return [...parameters.propertyPatterns, { patterns, type: "optional" }];
   }
 }`,
             dependencies: {

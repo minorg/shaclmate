@@ -249,7 +249,7 @@ type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
 
       singleEntryRecord(
         `${syntheticNamePrefix}MaybeSchema`,
-        `${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = Readonly<{ item: ItemSchemaT }>`,
+        `type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = Readonly<{ item: ItemSchemaT }>`,
       ),
 
       parameters.features.has("sparql")

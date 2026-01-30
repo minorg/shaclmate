@@ -75,14 +75,14 @@ export abstract class AbstractLiteralType extends AbstractTermType<
 
       !this.constrained
         ? singleEntryRecord(
-            `${syntheticNamePrefix}${camelCase(this.kind)}Schema`,
-            `const ${syntheticNamePrefix}${camelCase(this.kind)}Schema = ${objectInitializer(this.schemaObject)};`,
+            this.schema,
+            `const ${this.schema} = ${objectInitializer(this.schemaObject)};`,
           )
         : {},
 
       singleEntryRecord(
-        `${syntheticNamePrefix}${this.kind}Schema`,
-        `type ${syntheticNamePrefix}${this.kind}Schema = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
+        this.schemaType,
+        `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
       ),
 
       parameters.features.has("rdf")

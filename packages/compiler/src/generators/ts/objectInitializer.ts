@@ -39,8 +39,11 @@ function propertyInitializer(propertyValue: PropertyValue): string | undefined {
  * Uses shorthand properties and doesn't quote strings like JSON.stringify would.
  */
 export function objectInitializer(properties: Properties): string {
-  return `{ ${Object.entries(properties)
-    .flatMap(([propertyName, propertyValue]) => {
+  return `{ ${Object.keys(properties)
+    .sort()
+    .flatMap((propertyName) => {
+      const propertyValue = properties[propertyName];
+
       if (typeof propertyValue === "string" && propertyName === propertyValue) {
         return [propertyName]; // Shorthand
       }

@@ -98,7 +98,7 @@ type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, Schema
   valueVariable: rdfjs.Variable;
   variablePrefix: string;
 };
-type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => ${syntheticNamePrefix}SparqlWherePattern;
+type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly ${syntheticNamePrefix}SparqlWherePattern[];
 `,
 );
 
@@ -154,7 +154,7 @@ const sparqlValueInPattern = singleEntryRecord(
   `${syntheticNamePrefix}sparqlValueInPattern`,
   {
     code: `\
-function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlWhereFilterPattern {
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlWhereFilterPattern {
   return {
     expression: {
       type: "operation",
@@ -166,6 +166,10 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
           case "string":
             return ${syntheticNamePrefix}toLiteral(inValue)
           case "object":
+            if (inValue instanceof Date) {
+              return ${syntheticNamePrefix}toLiteral(inValue)
+            }
+
             return inValue;
         }
       )],
@@ -204,8 +208,8 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
   preferredLanguages: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?: boolean | string | number | rdfjs.Literal | rdfjs.NamedNode;
-    in?: readonly (boolean | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
+    defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
+    in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
   }>,
   valueVariable: rdfjs.Variable;
 }): readonly ${syntheticNamePrefix}SparqlWherePattern[] {
@@ -328,8 +332,8 @@ class ${syntheticNamePrefix}IdentifierSet {
   liftSparqlWherePatterns: singleEntryRecord(
     `${syntheticNamePrefix}liftSparqlWherePatterns`,
     `\
-${syntheticNamePrefix}liftSparqlWherePatterns(sparqlWherePatterns: readonly ${syntheticNamePrefix}SparqlWherePattern): [readonly ${syntheticNamePrefix}SparqlWherePattern[], readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[]] {
-  const liftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+function ${syntheticNamePrefix}liftSparqlWherePatterns(sparqlWherePatterns: Iterable<${syntheticNamePrefix}SparqlWherePattern>): [readonly ${syntheticNamePrefix}SparqlWherePattern[], readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[]] {
+  const liftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
   const unliftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
   for (const sparqlWherePattern of sparqlWherePatterns) {
     if (sparqlWherePattern.type === "filter" && sparqlWherePattern.lift) {

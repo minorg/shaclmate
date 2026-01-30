@@ -120,32 +120,34 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
-    if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
-    }
+    if (filter) {
+      if (typeof filter.in !== "undefined") {
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
+      }
 
-    if (typeof filter.maxLength !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "<=",
-          args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
+      if (typeof filter.maxLength !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<=",
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
 
-    if (typeof filter.minLength !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: ">=",
-          args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
-        },
-        lift: true,
-        type: "filter",
-      });
+      if (typeof filter.minLength !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">=",
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });

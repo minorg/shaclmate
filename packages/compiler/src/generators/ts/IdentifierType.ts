@@ -326,7 +326,7 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
-    if (typeof filter.in !== "undefined") {
+    if (typeof filter?.in !== "undefined") {
       filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
     }
 
@@ -385,20 +385,22 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
-    if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in.filter(identifier => identifier.termType === "NamedNode") });
-    }
+    if (filter) {
+      if (typeof filter.in !== "undefined") {
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in.filter(identifier => identifier.termType === "NamedNode") }));
+      }
 
-    if (typeof filter.type !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
-          args: [valueVariable],
-        },
-        lift: true,
-        type: "filter",
-      });
+      if (typeof filter.type !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
+            args: [valueVariable],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
