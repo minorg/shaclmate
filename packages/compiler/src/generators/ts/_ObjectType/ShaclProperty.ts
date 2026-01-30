@@ -11,6 +11,7 @@ import type {
 import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
+import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -333,8 +334,11 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return {
-      patterns: this.type.sparqlWherePatterns({
-        allowIgnoreRdfType: true,
+      patterns: `${this.type.sparqlWherePatternsFunction}(${objectInitializer({
+        filter: this.filterProperty
+          .map(({ name }) => `${variables.filter}?.${name}`)
+          .extract(),
+        preferredLanguages: variables.preferredLanguages,
         propertyPatterns: [
           {
             triples: [
@@ -347,15 +351,9 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             type: "bgp",
           },
         ],
-        variables: {
-          filter: this.filterProperty.map(
-            ({ name }) => `${variables.filter}?.${name}`,
-          ),
-          preferredLanguages: variables.preferredLanguages,
-          valueVariable,
-          variablePrefix: valueString,
-        },
-      }),
+        valueVariable,
+        variablePrefix: valueString,
+      })})`,
     };
   }
 

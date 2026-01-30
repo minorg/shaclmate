@@ -91,6 +91,7 @@ type ${syntheticNamePrefix}SparqlWhereFilterPattern = sparqljs.FilterPattern & {
 type ${syntheticNamePrefix}SparqlWherePattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlWhereFilterPattern;
 type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   filter?: FilterT;
+  ignoreRdfType?: boolean;
   preferredLanguages: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: SchemaT;

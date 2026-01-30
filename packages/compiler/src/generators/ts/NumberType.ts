@@ -54,19 +54,6 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
     return "number";
   }
 
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<number>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
-  }
-
   override jsonZodSchema({
     variables,
   }: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0]): ReturnType<

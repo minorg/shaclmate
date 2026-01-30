@@ -117,7 +117,7 @@ if (!parameters?.ignoreRdfType) {
 
     const { condition, patterns } = property.sparqlWherePatterns({ variables });
     if (patterns.length > 0) {
-      const pushStatement = `patterns.push(${patterns.map(Sparql.Pattern.stringify).join(", ")});`;
+      const pushStatement = `patterns.push(${patterns});`;
       if (condition) {
         sparqlWherePatternsStatements.push(
           `if (${condition}) { ${pushStatement} }`,

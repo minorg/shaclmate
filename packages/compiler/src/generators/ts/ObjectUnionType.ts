@@ -158,6 +158,11 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return `${this.staticModuleName}.${syntheticNamePrefix}schema`;
   }
 
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `(({ propertyPatterns, ...otherParameters }) => [...propertyPatterns, ${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(otherParameters)])`;
+  }
+
   get staticModuleName() {
     return this.name;
   }
@@ -302,28 +307,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
           variablePrefix: variables.variablePrefix,
         },
       )})`,
-    ];
-  }
-
-  override sparqlWherePatterns({
-    propertyPatterns,
-    variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...propertyPatterns,
-      {
-        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-          {
-            filter: variables.filter.extract(),
-            preferredLanguages: variables.preferredLanguages,
-            subject: variables.valueVariable,
-            variablePrefix: variables.variablePrefix,
-          },
-        )})`,
-        type: "opaque-block",
-      },
     ];
   }
 

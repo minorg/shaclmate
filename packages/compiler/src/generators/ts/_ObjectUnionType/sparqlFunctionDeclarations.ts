@@ -56,17 +56,15 @@ export function sparqlFunctionDeclarations(
         `\
 const subject = parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}");
 if (subject.termType === "Variable") {
-  patterns.push(${this.identifierType.sparqlWherePatterns({
-    allowIgnoreRdfType: false,
-    variables: {
-      filter: `parameters?.filter?.${syntheticNamePrefix}identifier`,
-      preferredLanguages: "parameters?.preferredLanguages",
+  patterns.push(${this.identifierType.sparqlWherePatternsFunction}({
+      filter: parameters?.filter?.${syntheticNamePrefix}identifier,
+      ignoreRdfType: false,
+      preferredLanguages: parameters?.preferredLanguages,
       propertyPatterns: "[]",
       schema: this.identifierType.schema,
       valueVariable: "subject",
       variablePrefix: "subject",
-    },
-  })});
+  }));
 }`,
         `patterns.push({ patterns: [${this.concreteMemberTypes
           .map((memberType) =>

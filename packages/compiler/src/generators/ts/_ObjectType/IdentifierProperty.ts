@@ -17,6 +17,7 @@ import { logger } from "../../../logger.js";
 import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
+import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -509,17 +510,14 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   }: Parameters<AbstractProperty<IdentifierType>["sparqlWherePatterns"]>[0]) {
     return {
       condition: `${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: this.type.sparqlWherePatterns({
-        allowIgnoreRdfType: false,
-        variables: {
-          filter: `${variables.filter}?.${this.name}`,
-          preferredLanguages: variables.preferredLanguages,
-          propertyPatterns: "[]",
-          schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type`,
-          valueVariable: variables.focusIdentifier,
-          variablePrefix: variables.variablePrefix, // Unused
-        },
-      }),
+      patterns: `${this.type.sparqlWherePatternsFunction}(${objectInitializer({
+        filter: `${variables.filter}?.${this.name}`,
+        preferredLanguages: variables.preferredLanguages,
+        propertyPatterns: "[]",
+        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type`,
+        valueVariable: variables.focusIdentifier,
+        variablePrefix: variables.variablePrefix, // Unused
+      })})`,
     };
   }
 
