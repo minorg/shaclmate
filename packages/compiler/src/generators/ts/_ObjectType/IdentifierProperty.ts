@@ -1,4 +1,3 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
@@ -13,10 +12,11 @@ import {
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
-import type { AbstractIdentifierType } from "../AbstractIdentifierType.js";
 import type { AbstractType } from "../AbstractType.js";
+import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
+import type { NamedNodeType } from "../NamedNodeType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
@@ -24,7 +24,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<
-  AbstractIdentifierType<BlankNode | NamedNode>
+  BlankNodeType | IdentifierType | NamedNodeType
 > {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
@@ -42,7 +42,7 @@ export class IdentifierProperty extends AbstractProperty<
   }: {
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierPrefixPropertyName: string;
-    type: IdentifierType;
+    type: BlankNodeType | IdentifierType | NamedNodeType;
     typeAlias: string;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
@@ -134,11 +134,8 @@ export class IdentifierProperty extends AbstractProperty<
         return [];
       }
 
-      const expectedNodeKind: IdentifierNodeKind = this.type.nodeKinds.has(
-        "BlankNode",
-      )
-        ? "BlankNode"
-        : "NamedNode";
+      const expectedNodeKind: IdentifierNodeKind =
+        this.type.kind !== "NamedNodeType" ? "BlankNode" : "NamedNode";
 
       if (identifierVariableNodeKinds) {
         if (

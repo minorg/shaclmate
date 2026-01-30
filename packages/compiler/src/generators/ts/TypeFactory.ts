@@ -6,6 +6,7 @@ import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
@@ -17,6 +18,7 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
@@ -42,7 +44,9 @@ export class TypeFactory {
     ObjectUnionType
   > = new TermMap();
 
-  private createIdentifierType(astType: ast.IdentifierType): IdentifierType {
+  private createIdentifierType(
+    astType: ast.IdentifierType,
+  ): BlankNodeType | IdentifierType | NamedNodeType {
     return new IdentifierType({
       comment: astType.comment,
       defaultValue: astType.defaultValue,

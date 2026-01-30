@@ -1,4 +1,4 @@
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { NamedNode } from "@rdfjs/types";
 
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
@@ -16,10 +16,11 @@ import type {
 } from "../../enums/index.js";
 import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
-import type { AbstractIdentifierType } from "./AbstractIdentifierType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
@@ -39,7 +40,7 @@ export class ObjectType extends AbstractDeclaredType {
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
-  readonly identifierType: AbstractIdentifierType<BlankNode | NamedNode>;
+  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
@@ -68,7 +69,7 @@ export class ObjectType extends AbstractDeclaredType {
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    identifierType: IdentifierType;
+    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
     imports: readonly string[];
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly ObjectType[];

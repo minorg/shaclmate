@@ -10,9 +10,11 @@ import { Memoize } from "typescript-memoize";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
@@ -33,7 +35,7 @@ import { tsComment } from "./tsComment.js";
 export class ObjectUnionType extends AbstractDeclaredType {
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
-  readonly identifierType: IdentifierType;
+  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -45,7 +47,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }: ConstructorParameters<typeof AbstractDeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
-    identifierType: IdentifierType;
+    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
     label: Maybe<string>;
     memberTypes: readonly ObjectType[];
     name: string;
