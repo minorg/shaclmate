@@ -4,6 +4,86 @@ import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
+const EqualsResult = singleEntryRecord(
+  `${syntheticNamePrefix}EqualsResult`,
+  `\
+export type ${syntheticNamePrefix}EqualsResult = purify.Either<${syntheticNamePrefix}EqualsResult.Unequal, true>;
+
+export namespace ${syntheticNamePrefix}EqualsResult {
+  export const Equal: ${syntheticNamePrefix}EqualsResult = purify.Either.of<Unequal, true>(true);
+
+  export function fromBooleanEqualsResult(
+    left: any,
+    right: any,
+    equalsResult: boolean | ${syntheticNamePrefix}EqualsResult,
+  ): ${syntheticNamePrefix}EqualsResult {
+    if (typeof equalsResult !== "boolean") {
+      return equalsResult;
+    }
+
+    if (equalsResult) {
+      return Equal;
+    }
+
+    return purify.Left({ left, right, type: "BooleanEquals" });
+  }
+
+  export type Unequal =
+  | {
+    readonly left: {
+      readonly array: readonly any[];
+      readonly element: any;
+      readonly elementIndex: number;
+    };
+    readonly right: {
+      readonly array: readonly any[];
+      readonly unequals: readonly Unequal[];
+    };
+    readonly type: "ArrayElement";
+  }
+  | {
+    readonly left: readonly any[];
+    readonly right: readonly any[];
+    readonly type: "ArrayLength";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly type: "BooleanEquals";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly type: "LeftError";
+  }
+  | {
+    readonly right: any;
+    readonly type: "LeftNull";
+  }
+  | {
+    readonly left: bigint | boolean | number | string;
+    readonly right: bigint | boolean | number | string;
+    readonly type: "Primitive";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly propertyName: string;
+    readonly propertyValuesUnequal: Unequal;
+    readonly type: "Property";
+  }
+  | {
+    readonly left: any;
+    readonly right: any;
+    readonly type: "RightError";
+  }
+  | {
+    readonly left: any;
+    readonly type: "RightNull";
+  };
+}`,
+);
+
 const SparqlWherePatternTypes = singleEntryRecord(
   `SparqlWherePatternTypes`,
   `\
@@ -97,6 +177,17 @@ function ${syntheticNamePrefix}sparqlValueInPattern(value: rdfjs.NamedNode | rdf
   } satisfies SnippetDeclaration,
 );
 
+const TermFilter = singleEntryRecord(
+  `${syntheticNamePrefix}TermFilter`,
+  `\
+interface ${syntheticNamePrefix}TermFilter {
+  readonly datatypeIn?: readonly rdfjs.NamedNode[];
+  readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
+  readonly languageIn?: readonly string[];
+  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
+}`,
+);
+
 const termLikeSparqlWherePatterns = singleEntryRecord(
   `${syntheticNamePrefix}termLikeSparqlWherePatterns`,
   {
@@ -120,94 +211,15 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
 
   return propertyPatterns.concat(filterPatterns);
 }`,
-    dependencies: [SparqlWherePatternTypes],
-  },
+    dependencies: { ...sparqlValueInPattern, ...SparqlWherePatternTypes },
+  } satisfies SnippetDeclaration,
 );
 
 export const sharedSnippetDeclarations = {
-  EqualsResult: singleEntryRecord(
-    `${syntheticNamePrefix}EqualsResult`,
-    `\
-export type ${syntheticNamePrefix}EqualsResult = purify.Either<${syntheticNamePrefix}EqualsResult.Unequal, true>;
+  EqualsResult,
 
-export namespace ${syntheticNamePrefix}EqualsResult {
-  export const Equal: ${syntheticNamePrefix}EqualsResult = purify.Either.of<Unequal, true>(true);
-
-  export function fromBooleanEqualsResult(
-    left: any,
-    right: any,
-    equalsResult: boolean | ${syntheticNamePrefix}EqualsResult,
-  ): ${syntheticNamePrefix}EqualsResult {
-    if (typeof equalsResult !== "boolean") {
-      return equalsResult;
-    }
-
-    if (equalsResult) {
-      return Equal;
-    }
-
-    return purify.Left({ left, right, type: "BooleanEquals" });
-  }
-
-  export type Unequal =
-  | {
-    readonly left: {
-      readonly array: readonly any[];
-      readonly element: any;
-      readonly elementIndex: number;
-    };
-    readonly right: {
-      readonly array: readonly any[];
-      readonly unequals: readonly Unequal[];
-    };
-    readonly type: "ArrayElement";
-  }
-  | {
-    readonly left: readonly any[];
-    readonly right: readonly any[];
-    readonly type: "ArrayLength";
-  }
-  | {
-    readonly left: any;
-    readonly right: any;
-    readonly type: "BooleanEquals";
-  }
-  | {
-    readonly left: any;
-    readonly right: any;
-    readonly type: "LeftError";
-  }
-  | {
-    readonly right: any;
-    readonly type: "LeftNull";
-  }
-  | {
-    readonly left: bigint | boolean | number | string;
-    readonly right: bigint | boolean | number | string;
-    readonly type: "Primitive";
-  }
-  | {
-    readonly left: any;
-    readonly right: any;
-    readonly propertyName: string;
-    readonly propertyValuesUnequal: Unequal;
-    readonly type: "Property";
-  }
-  | {
-    readonly left: any;
-    readonly right: any;
-    readonly type: "RightError";
-  }
-  | {
-    readonly left: any;
-    readonly type: "RightNull";
-  };
-}`,
-  ),
-
-  filterTerm: singleEntryRecord(
-    `${syntheticNamePrefix}filterTerm`,
-    `\
+  filterTerm: singleEntryRecord(`${syntheticNamePrefix}filterTerm`, {
+    code: `\
   function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {  
     if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype.equals(value.datatype)))) {
       return false;
@@ -228,7 +240,8 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     
     return true;
   }`,
-  ),
+    dependencies: TermFilter,
+  } satisfies SnippetDeclaration),
 
   IdentifierSet: singleEntryRecord(
     `${syntheticNamePrefix}IdentifierSet`,
@@ -501,9 +514,8 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
 
   SparqlWherePatternTypes,
 
-  strictEquals: singleEntryRecord(
-    `${syntheticNamePrefix}strictEquals`,
-    `\
+  strictEquals: singleEntryRecord(`${syntheticNamePrefix}strictEquals`, {
+    code: `\
 /**
  * Compare two values for strict equality (===), returning an ${syntheticNamePrefix}EqualsResult rather than a boolean.
  */
@@ -513,18 +525,10 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
 ): ${syntheticNamePrefix}EqualsResult {
   return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, left === right);
 }`,
-  ),
+    dependencies: EqualsResult,
+  } satisfies SnippetDeclaration),
 
-  TermFilter: singleEntryRecord(
-    `${syntheticNamePrefix}TermFilter`,
-    `\
-interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly rdfjs.NamedNode[];
-  readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
-  readonly languageIn?: readonly string[];
-  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-}`,
-  ),
+  TermFilter,
 
   termLikeSparqlWherePatterns,
 
@@ -604,8 +608,8 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, ...otherParameters });
   }`,
-      dependencies: { ...sparqlValueInPattern, termLikeSparqlWherePatterns },
-    },
+      dependencies: { ...sparqlValueInPattern, ...termLikeSparqlWherePatterns },
+    } satisfies SnippetDeclaration,
   ),
 
   toLiteral,

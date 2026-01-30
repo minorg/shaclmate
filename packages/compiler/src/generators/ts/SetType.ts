@@ -6,6 +6,7 @@ import type { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -60,10 +61,8 @@ export class SetType<
       super.snippetDeclarations(parameters),
 
       parameters.features.has("sparql")
-        ? {
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}setSparqlWherePatterns`,
-              `\
+        ? singleEntryRecord(`${syntheticNamePrefix}setSparqlWherePatterns`, {
+            code: `\
 function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}SetSchema<ItemSchemaT>> {
   return ({ schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item });
@@ -78,8 +77,11 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
     return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
   }
 }`,
-            ),
-          }
+            dependencies: {
+              ...sharedSnippetDeclarations.liftSparqlWherePatterns,
+              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            },
+          })
         : {},
     );
   }

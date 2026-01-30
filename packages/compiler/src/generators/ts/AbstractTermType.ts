@@ -193,23 +193,23 @@ export abstract class AbstractTermType<
   > {
     return mergeSnippetDeclarations(
       features.has("equals")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}booleanEquals`,
-            `\
-  /**
-   * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
-   */
-  function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
-    left: T,
-    right: T,
-  ): ${syntheticNamePrefix}EqualsResult {
-    return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-      left,
-      right,
-      left.equals(right),
-    );
-  }`,
-          )
+        ? singleEntryRecord(`${syntheticNamePrefix}booleanEquals`, {
+            code: `\
+/**
+ * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
+ */
+function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.equals(right),
+  );
+}`,
+            dependencies: sharedSnippetDeclarations.EqualsResult,
+          })
         : {},
       sharedSnippetDeclarations.toLiteral,
     );

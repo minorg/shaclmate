@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -256,9 +257,8 @@ export abstract class AbstractCollectionType<
     if (parameters.features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        singleEntryRecord(
-          `${syntheticNamePrefix}arrayEquals`,
-          `\
+        singleEntryRecord(`${syntheticNamePrefix}arrayEquals`, {
+          code: `\
 /**
  * Compare two arrays element-wise with the provided elementEquals function.
  */  
@@ -324,7 +324,8 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 
   return ${syntheticNamePrefix}EqualsResult.Equal;
 }`,
-        ),
+          dependencies: { ...sharedSnippetDeclarations.EqualsResult },
+        }),
       );
     }
 

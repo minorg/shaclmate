@@ -7,6 +7,7 @@ import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -252,9 +253,8 @@ type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
       ),
 
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}maybeSparqlWherePatterns`,
-            `\
+        ? singleEntryRecord(`${syntheticNamePrefix}maybeSparqlWherePatterns`, {
+            code: `\
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}MaybeFilter<ItemFilterT>, ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (filter === null) {
@@ -266,7 +266,11 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
     return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
   }
 }`,
-          )
+            dependencies: {
+              ...sharedSnippetDeclarations.liftSparqlWherePatterns,
+              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            },
+          })
         : {},
     );
   }

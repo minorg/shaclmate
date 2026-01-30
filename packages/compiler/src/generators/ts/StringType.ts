@@ -114,14 +114,10 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
       ),
 
       parameters.features.has("sparql")
-        ? {
-            ...sharedSnippetDeclarations.languageInSparqlWherePatterns,
-            ...sharedSnippetDeclarations.sparqlValueInPattern,
-            ...sharedSnippetDeclarations.SparqlWherePatternTypes,
-            ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
-              `\
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
+            {
+              code: `\
 const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
@@ -156,8 +152,13 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
-            ),
-          }
+              dependencies: {
+                ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+                ...sharedSnippetDeclarations.toLiteral,
+                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              },
+            },
+          )
         : {},
     );
   }
