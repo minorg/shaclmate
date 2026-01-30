@@ -52,21 +52,10 @@ export abstract class AbstractPrimitiveType<
   }
 
   protected override get schemaTypeObject() {
-    let valueType: string;
-    switch (this.kind) {
-      case "DateTimeType":
-      case "DateType":
-        valueType = "Date";
-        break;
-      default:
-        valueType = this.typeofs[0];
-        break;
-    }
-
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": valueType,
-      "in?": `readonly ${valueType}[]`,
+      "defaultValue?": this.typeofs[0] as string,
+      "in?": `readonly ${this.typeofs[0]}[]`,
     };
   }
 
