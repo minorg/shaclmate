@@ -137,10 +137,9 @@ export abstract class AbstractLazyObjectType<
     return this.partialType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
-  ): readonly Sparql.Pattern[] {
-    return this.partialType.sparqlWherePatterns(parameters);
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
   }
 
   override toJsonExpression({
