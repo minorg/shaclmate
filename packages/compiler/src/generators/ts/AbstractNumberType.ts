@@ -10,11 +10,11 @@ import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export abstract class NumberType extends AbstractPrimitiveType<number> {
+export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
   override readonly filterFunction = `${syntheticNamePrefix}filterNumber`;
   override readonly filterType = `${syntheticNamePrefix}NumberFilter`;
-  readonly kind = "NumberType";
+  abstract override readonly kind: "FloatType" | "IntType";
   override readonly typeofs = NonEmptyList(["number" as const]);
 
   constructor({
@@ -209,6 +209,13 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
           }
         : {},
     );
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      kind: '"FloatType" | "IntType"',
+    };
   }
 
   override toRdfExpression({

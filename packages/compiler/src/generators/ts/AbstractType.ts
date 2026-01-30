@@ -132,7 +132,7 @@ export abstract class AbstractType {
 
   protected get schemaTypeObject() {
     return {
-      kind: `${JSON.stringify(this.kind)}`,
+      kind: JSON.stringify(this.kind),
     };
   }
 

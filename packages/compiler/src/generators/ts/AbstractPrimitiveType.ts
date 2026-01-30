@@ -14,6 +14,14 @@ export abstract class AbstractPrimitiveType<
     `${syntheticNamePrefix}strictEquals`;
   readonly primitiveDefaultValue: Maybe<ValueT>;
   readonly primitiveIn: readonly ValueT[];
+  abstract override readonly kind:
+    | "BooleanType"
+    | "DateTimeType"
+    | "DateType"
+    | "FloatType"
+    | "IntType"
+    | "NumberType"
+    | "StringType";
 
   constructor({
     primitiveDefaultValue,
@@ -44,10 +52,21 @@ export abstract class AbstractPrimitiveType<
   }
 
   protected override get schemaTypeObject() {
+    let valueType: string;
+    switch (this.kind) {
+      case "DateTimeType":
+      case "DateType":
+        valueType = "Date";
+        break;
+      default:
+        valueType = this.typeofs[0];
+        break;
+    }
+
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": this.name,
-      "in?": `readonly (${this.name})[]`,
+      "defaultValue?": valueType,
+      "in?": `readonly ${valueType}[]`,
     };
   }
 

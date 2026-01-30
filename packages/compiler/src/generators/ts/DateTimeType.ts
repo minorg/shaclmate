@@ -15,6 +15,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class DateTimeType extends AbstractPrimitiveType<Date> {
   protected readonly xsdDatatype: NamedNode = xsd.dateTime;
+
   override readonly equalsFunction = `${syntheticNamePrefix}dateEquals`;
   override readonly filterFunction = `${syntheticNamePrefix}filterDate`;
   override readonly filterType = `${syntheticNamePrefix}DateFilter`;
@@ -47,13 +48,15 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     return conversions;
   }
 
-  @Memoize()
-  override jsonType(): AbstractPrimitiveType.JsonType {
-    return new AbstractPrimitiveType.JsonType("string");
-  }
-
   override get name(): string {
     return "Date";
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      kind: JSON.stringify("DateTimeType"), // Don't override without DateType
+    };
   }
 
   override fromJsonExpression({
@@ -70,31 +73,17 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     return [`${variables.hasher}.update(${variables.value}.toISOString());`];
   }
 
+  @Memoize()
+  override jsonType(): AbstractPrimitiveType.JsonType {
+    return new AbstractPrimitiveType.JsonType("string");
+  }
+
   override jsonZodSchema({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["jsonZodSchema"]>[0]): ReturnType<
     AbstractPrimitiveType<Date>["jsonZodSchema"]
   > {
     return `${variables.zod}.iso.datetime()`;
-  }
-
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<Date>["fromRdfExpressionChain"]
-  >[0]): ReturnType<AbstractPrimitiveType<Date>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = "value.toDate()";
-    if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
-    }
-
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      languageIn: undefined,
-      preferredLanguages: undefined,
-      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
-    };
   }
 
   override snippetDeclarations(
@@ -241,10 +230,6 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
     );
   }
 
-  protected toIsoStringExpression(variables: { value: string }) {
-    return `${variables.value}.toISOString()`;
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toJsonExpression"]>[0]): string {
@@ -273,5 +258,28 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
       imports.push(Import.GRAPHQL_SCALARS);
     }
     return imports;
+  }
+
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<
+    AbstractPrimitiveType<Date>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<Date>["fromRdfExpressionChain"]> {
+    let fromRdfResourceValueExpression = "value.toDate()";
+    if (this.primitiveIn.length > 0) {
+      const eitherTypeParameters = `<Error, ${this.name}>`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return purify.Either.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); })`;
+    }
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn: undefined,
+      preferredLanguages: undefined,
+      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+    };
+  }
+
+  protected toIsoStringExpression(variables: { value: string }) {
+    return `${variables.value}.toISOString()`;
   }
 }
