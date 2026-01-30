@@ -1,5 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { invariant } from "ts-invariant";
+import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
@@ -167,6 +168,26 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
           )
         : {},
     );
+  }
+
+  @Memoize()
+  get fromStringFunctionDeclaration(): FunctionDeclarationStructure {
+    // Wrap rdfjsResource.Resource.Identifier.fromString
+    return {
+      isExported: true,
+      kind: StructureKind.Function,
+      name: "fromString",
+      parameters: [
+        {
+          name: "identifier",
+          type: "string",
+        },
+      ],
+      returnType: "purify.Either<Error, rdfjsResource.Resource.Identifier>",
+      statements: [
+        "return purify.Either.encase(() => rdfjsResource.Resource.Identifier.fromString({ dataFactory, identifier }));",
+      ],
+    };
   }
 
   override toJsonExpression({

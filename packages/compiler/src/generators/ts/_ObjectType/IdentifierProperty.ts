@@ -1,6 +1,6 @@
+import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
-
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import {
@@ -11,9 +11,9 @@ import {
   Scope,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
+import type { AbstractIdentifierType } from "../AbstractIdentifierType.js";
 import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
@@ -23,7 +23,9 @@ import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
-export class IdentifierProperty extends AbstractProperty<IdentifierType> {
+export class IdentifierProperty extends AbstractProperty<
+  AbstractIdentifierType<BlankNode | NamedNode>
+> {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
@@ -433,7 +435,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
   >[0]): Maybe<string> {
-    if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
+    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
@@ -441,9 +443,12 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
       );
     }
 
-    if (this.type.isBlankNodeKind || this.type.isNamedNodeKind) {
+    if (
+      this.type.kind === "BlankNodeType" ||
+      this.type.kind === "NamedNodeType"
+    ) {
       return Maybe.of(
-        `${variables.resource}.identifier.termType === "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        `${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -476,7 +481,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     AbstractProperty<IdentifierType>["jsonZodSchema"]
   >[0]): ReturnType<AbstractProperty<IdentifierType>["jsonZodSchema"]> {
     let schema: string;
-    if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
+    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       schema = `${variables.zod}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;

@@ -1,6 +1,7 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
 import {
+  type FunctionDeclarationStructure,
   StructureKind,
   VariableDeclarationKind,
   type VariableStatementStructure,
@@ -12,6 +13,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,
 > extends AbstractTermType<NamedNode, IdentifierT> {
+  abstract readonly fromStringFunctionDeclaration: FunctionDeclarationStructure;
   override readonly graphqlType = new AbstractTermType.GraphqlType(
     "graphql.GraphQLString",
   );
