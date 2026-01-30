@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -83,27 +83,27 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
       ),
 
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}booleanSparqlWherePatterns`,
-            `\
-function ${syntheticNamePrefix}booleanSparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, schema: ${syntheticNamePrefix}BooleanTypeSchema, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] => {
-    const patterns: sparqljs.Pattern[] = [];
+        ? {
+            ...sharedSnippetDeclarations.sparqlValueInPattern,
+            ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+            ...sharedSnippetDeclarations.toLiteral,
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}booleanSparqlWherePatterns`,
+              `\
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}BooleanFilter> =
+  ({ filter, propertyPatterns, valueVariable }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter?.value !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "=",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.value)],
-        }
-      });
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, [filter.value]);
     }
 
-    return patterns;
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   );
 }`,
-          )
+            ),
+          }
         : {},
     );
   }
@@ -121,19 +121,6 @@ function ${syntheticNamePrefix}booleanSparqlWherePatterns(filter: ${syntheticNam
         return `(${variables.value} ? [true] : [])`;
       })
       .orDefault(`[${variables.value}]`);
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<boolean>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 
   protected override fromRdfExpressionChain({

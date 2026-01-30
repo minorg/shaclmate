@@ -4,7 +4,6 @@ import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
@@ -35,7 +34,7 @@ export function sparqlFunctionDeclarations(
       `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer({ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`,
     );
     sparqlWherePatternsStatements.push(`\
-patterns.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer({ filter: "parameters?.filter", ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`);
+patterns.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer({ filter: variables.filter, ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`);
   }
 
   if (this.fromRdfType.isJust()) {

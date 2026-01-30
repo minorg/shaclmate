@@ -8,7 +8,7 @@ import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { Sparql } from "./Sparql.js";
+
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";

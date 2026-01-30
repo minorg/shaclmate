@@ -20,7 +20,6 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";

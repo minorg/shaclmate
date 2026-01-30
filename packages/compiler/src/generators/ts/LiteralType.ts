@@ -1,7 +1,7 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { Sparql } from "./Sparql.js";
+
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";

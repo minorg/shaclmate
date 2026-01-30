@@ -1,8 +1,12 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
-import type { Sparql } from "./Sparql.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 export class SetType<
@@ -13,12 +17,8 @@ export class SetType<
   readonly kind = "SetType";
 
   @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    const name = `readonly (${this.itemType.jsonType().name})[]`;
-    if (this.minCount === 0) {
-      return new AbstractCollectionType.JsonType(name, { optional: true });
-    }
-    return new AbstractCollectionType.JsonType(name);
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}setSparqlWherePatterns(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression(
@@ -43,39 +43,52 @@ export class SetType<
     return chain.join(".");
   }
 
+  @Memoize()
+  override jsonType(): AbstractCollectionType.JsonType {
+    const name = `readonly (${this.itemType.jsonType().name})[]`;
+    if (this.minCount === 0) {
+      return new AbstractCollectionType.JsonType(name, { optional: true });
+    }
+    return new AbstractCollectionType.JsonType(name);
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, string>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+
+      parameters.features.has("sparql")
+        ? {
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}setSparqlWherePatterns`,
+              `\
+function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}SetSchema<ItemSchemaT>> {
+  return ({ schema, ...otherParameters }) => {
+    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item });
+
+    const minCount = filter?.${syntheticNamePrefix}minCount ?? schema.minCount;
+    if (typeof minCount > 0) {
+      // Required
+      return itemSparqlWherePatterns;
+    }
+    
+    const [optionalSparqlWherePatterns, liftSparqlWherePatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(itemSparqlWherePatterns);
+    return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
+  }
+}`,
+            ),
+          }
+        : {},
+    );
+  }
+
   override sparqlConstructTriples(
     parameters: Parameters<
       AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
     >[0],
   ): readonly (AbstractCollectionType.SparqlConstructTriple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
-  }
-
-  override sparqlWherePatterns({
-    variables,
-    ...otherParameters
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    const itemPatterns = this.itemType.sparqlWherePatterns({
-      ...otherParameters,
-      variables,
-    });
-
-    if (itemPatterns.length === 0) {
-      return itemPatterns;
-    }
-
-    if (this.minCount > 0) {
-      return itemPatterns; // Treat them as required
-    }
-
-    if (itemPatterns.length === 1 && itemPatterns[0].type === "optional") {
-      return itemPatterns; // Item patterns are already optional, so no need to wrap them with another optional block
-    }
-
-    // minCount === 0 and itemPatterns are required, wrap them in an optional block
-    return [{ patterns: itemPatterns, type: "optional" }];
   }
 
   override toRdfExpression({

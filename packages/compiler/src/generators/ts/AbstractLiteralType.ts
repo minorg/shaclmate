@@ -6,7 +6,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -137,54 +137,6 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
       preferredLanguages: `chain(values => ${syntheticNamePrefix}fromRdfPreferredLanguages({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
       valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
     };
-  }
-
-  protected preferredLanguagesSparqlWherePatterns({
-    variables,
-  }: {
-    variables: {
-      preferredLanguages: string;
-      valueVariable: string;
-    };
-  }): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `[${
-          this.languageIn.length > 0
-            ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
-            : `(${variables.preferredLanguages} ?? [])`
-        }]
-        .filter(languages => languages.length > 0)
-        .map(languages =>
-          languages.map(language => 
-            ({
-              type: "operation" as const,
-              operator: "=",
-              args: [
-                { type: "operation" as const, operator: "lang", args: [${variables.valueVariable}] },
-                dataFactory.literal(language)
-              ]
-            })
-          )
-        )
-        .map(langEqualsExpressions => 
-          ({
-            type: "filter" as const,
-            expression: langEqualsExpressions.reduce((reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression]
-              };
-            }, null as sparqljs.Expression | null) as sparqljs.Expression
-          })
-        )`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 }
 

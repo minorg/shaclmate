@@ -8,7 +8,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { Sparql } from "./Sparql.js";
+
 import type { Type } from "./Type.js";
 
 export class ListType<
@@ -141,11 +141,10 @@ export class ListType<
   }
 
   override sparqlWherePatterns({
-    propertyPatterns,
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
+  >[0]): string {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
     // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list

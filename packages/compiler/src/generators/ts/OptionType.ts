@@ -6,7 +6,6 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { Sparql } from "./Sparql.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -277,33 +276,9 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
-  ): readonly Sparql.Pattern[] {
-    const { variables } = parameters;
-    return variables.filter
-      .map((filterVariable) => {
-        const itemPatterns = this.itemType.sparqlWherePatterns({
-          ...parameters,
-          variables: {
-            ...variables,
-            filter: Maybe.of("itemFilter"),
-          },
-        });
-
-        return [
-          {
-            patterns: `${syntheticNamePrefix}MaybeFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, (itemFilter) => [${itemPatterns.map(Sparql.Pattern.stringify).join(", ")}])`,
-            type: "opaque-block",
-          },
-        ] as readonly Sparql.Pattern[];
-      })
-      .orDefaultLazy(() => [
-        {
-          patterns: this.itemType.sparqlWherePatterns(parameters),
-          type: "optional",
-        },
-      ]);
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}maybeSparqlWherePatterns(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override toJsonExpression({

@@ -6,7 +6,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { Sparql } from "./Sparql.js";
+
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -115,7 +115,12 @@ export class TermType<
       super.snippetDeclarations(parameters),
       sharedSnippetDeclarations.filterTerm,
       sharedSnippetDeclarations.TermFilter,
-      sharedSnippetDeclarations.TermFilter_sparqlWherePatterns,
+      parameters.features.has("sparql")
+        ? {
+            ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            ...sharedSnippetDeclarations.termSparqlWherePatterns,
+          }
+        : {},
     );
   }
 
@@ -141,18 +146,5 @@ export class TermType<
         ? valueToNodeKind
         : `(${variables.value}.termType === "${nodeKind}") ? ${valueToNodeKind} : ${expression}`;
     }, "");
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 }

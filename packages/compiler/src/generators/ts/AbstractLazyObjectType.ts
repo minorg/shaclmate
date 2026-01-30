@@ -10,7 +10,6 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
-import type { Sparql } from "./Sparql.js";
 
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,

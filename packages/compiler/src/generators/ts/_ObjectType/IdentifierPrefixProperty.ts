@@ -147,7 +147,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   override sparqlWherePatterns(): ReturnType<
     AbstractProperty<StringType>["sparqlWherePatterns"]
   > {
-    return { patterns: [] };
+    return { patterns: "" };
   }
 
   override toJsonObjectMember(): Maybe<string> {

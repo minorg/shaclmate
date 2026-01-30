@@ -5,7 +5,7 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { Sparql } from "./Sparql.js";
+
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -150,72 +150,72 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
         ? {
             ...sharedSnippetDeclarations.toLiteral,
             ...singleEntryRecord(
-              `${syntheticNamePrefix}NumberFilter.${syntheticNamePrefix}sparqlWherePatterns`,
+              `${syntheticNamePrefix}numberSparqlWherePatterns`,
               `\
-namespace ${syntheticNamePrefix}NumberFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NumberFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    const patterns: sparqljs.FilterPattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}NumberFilter> =
+  ({ filter, valueVariable }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "in",
-          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
-        }
+          args: [valueVariable, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
     if (typeof filter.maxExclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "<",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
     if (typeof filter.maxInclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "<=",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
     if (typeof filter.minExclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: ">",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
     if (typeof filter.minInclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: ">=",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+        },
+        type: "filter",
       });
     }
 
-    return patterns;
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }
 }`,
             ),

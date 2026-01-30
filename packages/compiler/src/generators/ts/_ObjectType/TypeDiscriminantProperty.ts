@@ -175,7 +175,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override sparqlWherePatterns(): ReturnType<
     AbstractProperty<TypeDiscriminantProperty.Type>["sparqlWherePatterns"]
   > {
-    return { patterns: [] };
+    return { patterns: "" };
   }
 
   override toJsonObjectMember({

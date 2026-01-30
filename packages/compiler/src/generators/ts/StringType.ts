@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -113,54 +113,50 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
       ),
 
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
-            `\
-namespace ${syntheticNamePrefix}StringFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    const patterns: sparqljs.FilterPattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
+        ? {
+            ...sharedSnippetDeclarations.languageInSparqlWherePatterns,
+            ...sharedSnippetDeclarations.sparqlValueInPattern,
+            ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+            ...singleEntryRecord(
+              `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
+              `\
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
-        }
-      });
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in);
     }
 
     if (typeof filter.maxLength !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "<=",
-          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
-        }
+          args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
     if (typeof filter.minLength !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: ">=",
-          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
-        }
+          args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
-    return patterns;
-  }
-}`,
-          )
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+            ),
+          }
         : {},
     );
   }
@@ -174,20 +170,6 @@ namespace ${syntheticNamePrefix}StringFilter {
           `(${variables.value} !== "${defaultValue}" ? [${variables.value}] : [])`,
       )
       .orDefault(`[${variables.value}]`);
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<string>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
-      {
-        patterns: `${syntheticNamePrefix}StringFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 
   protected override fromRdfExpressionChain({

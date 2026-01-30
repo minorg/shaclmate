@@ -1,11 +1,9 @@
 import { camelCase, pascalCase } from "change-case";
-import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { objectInitializer } from "../objectInitializer.js";
-import { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlFunctionDeclarations(
@@ -58,21 +56,17 @@ export function sparqlFunctionDeclarations(
         `\
 const subject = parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}");
 if (subject.termType === "Variable") {
-  patterns.push(${this.identifierType
-    .sparqlWherePatterns({
-      allowIgnoreRdfType: false,
-      propertyPatterns: [],
-      variables: {
-        filter: Maybe.of(
-          `parameters?.filter?.${syntheticNamePrefix}identifier`,
-        ),
-        preferredLanguages: "parameters?.preferredLanguages",
-        valueVariable: "subject",
-        variablePrefix: "don't need",
-      },
-    })
-    .map(Sparql.Pattern.stringify)
-    .join(", ")});
+  patterns.push(${this.identifierType.sparqlWherePatterns({
+    allowIgnoreRdfType: false,
+    variables: {
+      filter: `parameters?.filter?.${syntheticNamePrefix}identifier`,
+      preferredLanguages: "parameters?.preferredLanguages",
+      propertyPatterns: "[]",
+      schema: this.identifierType.schema,
+      valueVariable: "subject",
+      variablePrefix: "subject",
+    },
+  })});
 }`,
         `patterns.push({ patterns: [${this.concreteMemberTypes
           .map((memberType) =>

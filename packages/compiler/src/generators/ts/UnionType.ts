@@ -6,7 +6,6 @@ import { AbstractType } from "./AbstractType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
 class MemberType {
@@ -99,6 +98,10 @@ class MemberType {
     return this.delegate.schema;
   }
 
+  get sparqlWherePatternsFunction() {
+    return this.delegate.sparqlWherePatternsFunction;
+  }
+
   get typeofs() {
     return this.delegate.typeofs;
   }
@@ -147,12 +150,6 @@ class MemberType {
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
   ) {
     return this.delegate.sparqlConstructTriples(parameters);
-  }
-
-  sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
-  ) {
-    return this.delegate.sparqlWherePatterns(parameters);
   }
 
   toJsonExpression(
@@ -556,34 +553,33 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     );
   }
 
-  override sparqlWherePatterns({
-    allowIgnoreRdfType: _allowIgnoreRdfType,
-    variables,
-    ...otherParameters
-  }: Parameters<
-    AbstractType["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: this.memberTypes.map((memberType) => ({
-          patterns: memberType.sparqlWherePatterns({
-            ...otherParameters,
-            allowIgnoreRdfType: false,
-            variables: {
-              ...variables,
-              filter: variables.filter.map(
-                (filterVariable) =>
-                  `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
-              ),
-            },
-          }),
-          type: "group" as const,
-        })),
-        type: "union" as const,
-      },
-    ];
-  }
-
+  // override sparqlWherePatterns({
+  //   allowIgnoreRdfType: _allowIgnoreRdfType,
+  //   variables,
+  //   ...otherParameters
+  // }: Parameters<
+  //   AbstractType["sparqlWherePatterns"]
+  // >[0]): readonly Sparql.Pattern[] {
+  //   return [
+  //     {
+  //       patterns: this.memberTypes.map((memberType) => ({
+  //         patterns: memberType.sparqlWherePatterns({
+  //           ...otherParameters,
+  //           allowIgnoreRdfType: false,
+  //           variables: {
+  //             ...variables,
+  //             filter: variables.filter.map(
+  //               (filterVariable) =>
+  //                 `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
+  //             ),
+  //           },
+  //         }),
+  //         type: "group" as const,
+  //       })),
+  //       type: "union" as const,
+  //     },
+  //   ];
+  // }
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): string {

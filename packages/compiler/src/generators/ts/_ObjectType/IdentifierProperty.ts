@@ -510,10 +510,11 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
       condition: `${variables.focusIdentifier}.termType === "Variable"`,
       patterns: this.type.sparqlWherePatterns({
         allowIgnoreRdfType: false,
-        propertyPatterns: [],
         variables: {
-          filter: Maybe.of(`${variables.filter}?.${this.name}`),
+          filter: `${variables.filter}?.${this.name}`,
           preferredLanguages: variables.preferredLanguages,
+          propertyPatterns: "[]",
+          schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type`,
           valueVariable: variables.focusIdentifier,
           variablePrefix: variables.variablePrefix, // Unused
         },

@@ -15,7 +15,7 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsComment } from "./tsComment.js";

@@ -13,7 +13,7 @@ import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
-import type { Sparql } from "../Sparql.js";
+
 import type { Type } from "../Type.js";
 
 export abstract class AbstractProperty<
@@ -229,7 +229,7 @@ export abstract class AbstractProperty<
   }): readonly (AbstractType.SparqlConstructTriple | string)[];
 
   /**
-   * An array of SPARQL.js WHERE patterns for this property as strings (so they can incorporate runtime calls).
+   * SPARQL where patterns for this property.
    *
    * Parameters:
    *   variables: (at runtime)
@@ -237,6 +237,10 @@ export abstract class AbstractProperty<
    *     - focusIdentifier: identifier (rdfjs.BlankNode or rdfjs.NamedNode) of the object that is the focus of the patterns
    *     - preferredLanguages: array of preferred language code (strings)
    *     - variablePrefix: prefix to use for new variables
+   *
+   * Returns:
+   *   - condition: optional runtime condition to evaluate in an if statement before including the patterns
+   *   - patterns: runtime array of SparqlWherePattern's.
    */
   abstract sparqlWherePatterns(parameters: {
     variables: {
@@ -245,7 +249,7 @@ export abstract class AbstractProperty<
       preferredLanguages: string;
       variablePrefix: string;
     };
-  }): { condition?: string; patterns: readonly Sparql.Pattern[] };
+  }): { condition?: string; patterns: string };
 
   /**
    * property: expression to serialize a property to a JSON object member.

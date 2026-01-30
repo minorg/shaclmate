@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -81,32 +80,17 @@ export abstract class AbstractType {
   abstract readonly name: string;
 
   /**
-   * TypeScript object describing this type, for runtime use.
+   * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlWherePattern's for a property of this type.
+   *
+   * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
+   * - filter?: an instance of filterType
+   * - preferredLanguages: array of preferred language code (strings); may be empty
+   * - propertyPatterns: array of sparqljs.BgpPattern's for the property; may be empty
+   * - schema: instance of this.schemaType
+   * - valueVariable: rdfjs.Variable of the value of this type
+   * - variablePrefix: prefix to use for new variables
    */
-  @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
-  }
-
-  protected get schemaObject() {
-    return {
-      kind: `${JSON.stringify(this.kind)} as const`,
-    };
-  }
-
-  /**
-   * TypeScript type describing .schema.
-   */
-  @Memoize()
-  get schemaType(): string {
-    return objectInitializer(this.schemaTypeObject);
-  }
-
-  protected get schemaTypeObject() {
-    return {
-      kind: `${JSON.stringify(this.kind)}`,
-    };
-  }
+  abstract readonly sparqlWherePatternsFunction: string;
 
   /**
    * JavaScript typeof(s) the type.
@@ -121,6 +105,34 @@ export abstract class AbstractType {
   }: { comment: Maybe<string>; label: Maybe<string> }) {
     this.comment = comment;
     this.label = label;
+  }
+
+  /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  /**
+   * TypeScript type describing .schema.
+   */
+  @Memoize()
+  get schemaType(): string {
+    return objectInitializer(this.schemaTypeObject);
+  }
+
+  protected get schemaObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)} as const`,
+    };
+  }
+
+  protected get schemaTypeObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)}`,
+    };
   }
 
   /**
@@ -247,29 +259,6 @@ export abstract class AbstractType {
       variablePrefix: string;
     };
   }): readonly (AbstractType.SparqlConstructTriple | string)[];
-
-  /**
-   * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
-   *
-   * Parameters:
-   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *   propertyPattern: if Just, should be included in the patterns for this type
-   *   variables: (at runtime)
-   *     - filter: if Just, an instance of filterType or undefined
-   *     - preferredLanguages: array of preferred language code (strings)
-   *     - valueVariable: rdfjs.Variable of the value of this type
-   *     - variablePrefix: prefix to use for new variables
-   */
-  abstract sparqlWherePatterns(parameters: {
-    allowIgnoreRdfType: boolean;
-    propertyPatterns: readonly Sparql.Pattern[];
-    variables: {
-      filter: Maybe<string>;
-      preferredLanguages: string;
-      valueVariable: string;
-      variablePrefix: string;
-    };
-  }): readonly Sparql.Pattern[];
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
