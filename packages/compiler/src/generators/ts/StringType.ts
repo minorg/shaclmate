@@ -118,7 +118,7 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
             `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
             {
               code: `\
-const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction =
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}StringFilter> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 

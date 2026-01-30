@@ -56,19 +56,6 @@ export class DateTimeType extends AbstractPrimitiveType<Date> {
     return "Date";
   }
 
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<Date>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["fromJsonExpression"]>[0]): string {
@@ -176,79 +163,80 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
       ),
 
       parameters.features.has("sparql")
-        ? {
-            ...sharedSnippetDeclarations.toLiteral,
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}DateFilter.${syntheticNamePrefix}sparqlWherePatterns`,
-              `\
-namespace ${syntheticNamePrefix}DateFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}DateFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    const patterns: sparqljs.FilterPattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
+        ? singleEntryRecord(`${syntheticNamePrefix}dateSparqlWherePatterns`, {
+            code: `\
+const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}DateFilter> =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "in",
-          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
-        }
+          args: [valueVariable, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
     if (typeof filter.maxExclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "<",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+        },
+        lift: true,
+        type: "filter"
       });
     }
 
     if (typeof filter.maxInclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: "<=",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+        },
+        lift: true,
+        type: "filter"
       });
     }
 
     if (typeof filter.minExclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: ">",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+        },
+        lift: true,
+        type: "filter"
       });
     }
 
     if (typeof filter.minInclusive !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: ">=",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
-        }
+          args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+        },
+        lift: true,
+        type: "filter"
       });
     }
 
-    return patterns;
-  }
-}`,
-            ),
-          }
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+            dependencies: {
+              ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+              ...sharedSnippetDeclarations.toLiteral,
+              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            },
+          })
         : {},
     );
   }
