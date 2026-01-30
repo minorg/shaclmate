@@ -153,6 +153,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
               dependencies: {
+                ...sharedSnippetDeclarations.sparqlValueInPattern,
                 ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
                 ...sharedSnippetDeclarations.toLiteral,
                 ...sharedSnippetDeclarations.SparqlWherePatternTypes,

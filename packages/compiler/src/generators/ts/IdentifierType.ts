@@ -12,6 +12,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -107,6 +108,11 @@ export class IdentifierType extends AbstractTermType<
         `return ${expressions.join(".")} as purify.Either<Error, ${this.name}>;`,
       ],
     };
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}${this.isBlankNodeKind ? "blankNode" : this.isNamedNodeKind ? "namedNode" : "identifier"}SparqlWherePatterns`;
   }
 
   @Memoize()
@@ -253,12 +259,14 @@ export class IdentifierType extends AbstractTermType<
     if (this.isBlankNodeKind) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
+
         singleEntryRecord(
           `${syntheticNamePrefix}BlankNodeFilter`,
           `\
 interface ${syntheticNamePrefix}BlankNodeFilter {
 }`,
         ),
+
         singleEntryRecord(
           `${syntheticNamePrefix}filterBlankNode`,
           `\
@@ -266,17 +274,19 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
   return true;
 }`,
         ),
+
         parameters.features.has("sparql")
           ? singleEntryRecord(
-              `${syntheticNamePrefix}BlankNodeFilter.sparqlWherePatterns`,
-              `\
-namespace ${syntheticNamePrefix}BlankNodeFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(_filter: ${syntheticNamePrefix}BlankNodeFilter | undefined, _value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    return [];
-  }
-}`,
+              `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
+              {
+                code: `\
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}BlankNodeFilter> =
+  ({ propertyPatterns }) => propertyPatterns;`,
+                dependencies: sharedSnippetDeclarations.SparqlWherePatternTypes,
+              },
             )
           : {},
+
         !this.constrained
           ? singleEntryRecord(
               `${syntheticNamePrefix}blankNodeIdentifierTypeSchema`,
@@ -298,6 +308,7 @@ function ${syntheticNamePrefix}filterNamedNode(filter: ${syntheticNamePrefix}Nam
   return true;
 }`,
         ),
+
         singleEntryRecord(
           `${syntheticNamePrefix}NamedNodeFilter`,
           `\
@@ -305,34 +316,31 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
   readonly in?: readonly rdfjs.NamedNode[];
 }`,
         ),
+
         parameters.features.has("sparql")
           ? singleEntryRecord(
-              `${syntheticNamePrefix}NamedNodeFilter.sparqlWherePatterns`,
-              `\
-namespace ${syntheticNamePrefix}NamedNodeFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}NamedNodeFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    const patterns: sparqljs.FilterPattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
+              `${syntheticNamePrefix}namedNodeSparqlWherePatterns`,
+              {
+                code: `\
+const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}NamedNodeFilter> =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [value, filter.in.concat()],
-        }
-      });
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in);
     }
 
-    return patterns;
-  }
-}`,
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+                dependencies: {
+                  ...sharedSnippetDeclarations.sparqlValueInPattern,
+                  ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+                  ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                },
+              },
             )
           : {},
+
         !this.constrained
           ? singleEntryRecord(
               `${syntheticNamePrefix}namedNodeIdentifierTypeSchema`,
@@ -358,6 +366,7 @@ function ${syntheticNamePrefix}filterIdentifier(filter: ${syntheticNamePrefix}Id
   return true;
 }`,
         ),
+
         singleEntryRecord(
           `${syntheticNamePrefix}IdentifierFilter`,
           `\
@@ -366,45 +375,43 @@ interface ${syntheticNamePrefix}IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }`,
         ),
+
         parameters.features.has("sparql")
           ? singleEntryRecord(
-              `${syntheticNamePrefix}IdentifierFilter.sparqlWherePatterns`,
-              `\
-namespace ${syntheticNamePrefix}IdentifierFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}IdentifierFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    const patterns: sparqljs.FilterPattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
+              `${syntheticNamePrefix}identifierSparqlWherePatterns`,
+              {
+                code: `\
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}IdentifierFilter> =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [value, filter.in.filter(identifier => identifier.termType === "NamedNode")],
-        }
-      });
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in.filter(identifier => identifier.termType === "NamedNode"));
     }
 
     if (typeof filter.type !== "undefined") {
-      patterns.push({
-        type: "filter",
+      filterPatterns.push({
         expression: {
           type: "operation",
           operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
-          args: [value],
-        }
+          args: [valueVariable],
+        },
+        lift: true,
+        type: "filter",
       });
     }
 
-    return patterns;
-  }
-}`,
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+                dependencies: {
+                  ...sharedSnippetDeclarations.sparqlValueInPattern,
+                  ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+                  ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                },
+              },
             )
           : {},
+
         !this.constrained
           ? singleEntryRecord(
               `${syntheticNamePrefix}identifierTypeSchema`,
@@ -437,19 +444,6 @@ namespace ${syntheticNamePrefix}IdentifierFilter {
       case "NamedNode":
         return valueToNamedNode;
     }
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${this.filterType}.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 
   protected override fromRdfExpressionChain({
