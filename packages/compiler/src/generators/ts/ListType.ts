@@ -1,14 +1,21 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
+
 import type { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
+import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 export class ListType<
@@ -39,10 +46,8 @@ export class ListType<
   }
 
   @Memoize()
-  override jsonType(): AbstractCollectionType.JsonType {
-    return new AbstractCollectionType.JsonType(
-      `readonly (${this.itemType.jsonType().name})[]`,
-    );
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}listSparqlWherePatterns(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression({
@@ -64,6 +69,142 @@ export class ListType<
       ))`, // Resource.Values<Resource.TermValue[]> to Resource.Values<item type arrays>
       `map(valueLists => valueLists.map(valueList => valueList.toArray()${this.mutable ? ".concat()" : ""}))`, // Convert inner Resource.Values to arrays
     ].join(".");
+  }
+
+  @Memoize()
+  override jsonType(): AbstractCollectionType.JsonType {
+    return new AbstractCollectionType.JsonType(
+      `readonly (${this.itemType.jsonType().name})[]`,
+    );
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+  ): Readonly<Record<string, SnippetDeclaration>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+
+      parameters.features.has("sparql")
+        ? singleEntryRecord(`${syntheticNamePrefix}listSparqlWherePatterns`, {
+            code: `\
+function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}ListSchema<ItemSchemaT>> {
+  return (parameters) => {
+    // Need to handle two cases:
+    // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
+    // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
+    // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
+
+    const listVariable = parameters.valueVariable;
+    const patterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+    const variable = (suffix: string) => dataFactory.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
+    const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
+
+    {
+      // ?list rdf:first ?item0
+      const item0Variable = variable("Item0");
+      patterns.push(
+        {
+          triples: [
+            {
+              subject: listVariable,
+              predicate: ${rdfjsTermExpression(rdf.first)},
+              object: item0Variable,
+            },
+          ],
+          type: "bgp",
+        },
+        ...itemSparqlWherePatternsFunction({
+          filter: parameters.filter,
+          preferredLanguages: parameters.preferredLanguages,
+          propertyPaths: [],
+          schema: parameters.schema.item,
+          valueVariable: item0Variable,
+          variablePrefix: variablePrefix("Item0"),
+        }),
+      );
+    }
+
+    {
+      // ?list rdf:rest ?rest0
+      const rest0Variable = variable("Rest0");
+      patterns.push({
+        triples: [
+          {
+            subject: listVariable,
+            predicate: ${rdfjsTermExpression(rdf.rest)},
+            object: rest0Variable,
+          },
+        ],
+        type: "bgp",
+      });
+    }
+
+    const optionalPatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+    
+    const restNVariable = variable("RestN");
+    // ?list rdf:rest+ ?restN
+    optionalPatterns.push({
+      type: "bgp",
+      triples: [
+        {
+          subject: listVariable,
+          predicate: "{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }",
+          object: restNVariable,
+        },
+      ],
+    });
+
+    {
+      // ?rest rdf:first ?itemN
+      const itemNVariable = variable("ItemN");
+      optionalPatterns.push(
+        {
+          triples: [
+            {
+              subject: restNVariable,
+              predicate: ${rdfjsTermExpression(rdf.first)},
+              object: itemNVariable,
+            },
+          ],
+          type: "bgp"
+        },
+        ...itemSparqlWherePatternsFunction({
+          variables: {
+            filter: parameters.filter,
+            preferredLanguages: parameters.preferredLanguages,
+            propertyPatterns: [],
+            schema: parameters.schema.item,
+            valueVariable: itemNVariable,
+            variablePrefix: variablePrefix("ItemN"),
+          },
+        }),
+      );
+    }
+
+    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
+    optionalPatterns.push({
+      triples: [
+        {
+          subject: restNVariable,
+          predicate: ${rdfjsTermExpression(rdf.rest)},
+          object: variable("RestNBasic"),
+        },
+      ],
+      type: "bgp"
+    });
+
+    patterns.push({ type: "optional", patterns: optionalPatterns });
+
+    // Having an optional around everything handles the rdf:nil case
+    return [...propertyPatterns, { patterns, type: "optional" }];
+  }
+}`,
+            dependencies: {
+              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+            },
+          })
+        : {},
+    );
   }
 
   override sparqlConstructTriples({
@@ -138,129 +279,6 @@ export class ListType<
     });
 
     return triples;
-  }
-
-  override sparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["sparqlWherePatterns"]
-  >[0]): string {
-    // Need to handle two cases:
-    // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
-    // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
-    // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
-
-    const patterns: Sparql.Pattern[] = [];
-    const listVariable = variables.valueVariable;
-    const variable = (suffix: string) =>
-      `dataFactory.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
-    const variablePrefix = (suffix: string) =>
-      `\`\${${variables.variablePrefix}}${suffix}\``;
-
-    {
-      // ?list rdf:first ?item0
-      const item0Variable = variable("Item0");
-      patterns.push(
-        {
-          type: "bgp",
-          triples: [
-            {
-              subject: listVariable,
-              predicate: rdfjsTermExpression(rdf.first),
-              object: item0Variable,
-            },
-          ],
-        },
-        ...this.itemType.sparqlWherePatterns({
-          allowIgnoreRdfType: true,
-          propertyPatterns: [],
-          variables: {
-            filter: variables.filter,
-            preferredLanguages: variables.preferredLanguages,
-            valueVariable: item0Variable,
-            variablePrefix: variablePrefix("Item0"),
-          },
-        }),
-      );
-    }
-
-    {
-      // ?list rdf:rest ?rest0
-      const rest0Variable = variable("Rest0");
-      patterns.push({
-        type: "bgp",
-        triples: [
-          {
-            subject: listVariable,
-            predicate: rdfjsTermExpression(rdf.rest),
-            object: rest0Variable,
-          },
-        ],
-      });
-    }
-
-    const optionalPatterns: Sparql.Pattern[] = [];
-
-    const restNVariable = variable("RestN");
-    // ?list rdf:rest+ ?restN
-    optionalPatterns.push({
-      type: "bgp",
-      triples: [
-        {
-          subject: listVariable,
-          predicate: `{ type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] }`,
-          object: restNVariable,
-        },
-      ],
-    });
-
-    {
-      // ?rest rdf:first ?itemN
-      const itemNVariable = variable("ItemN");
-      optionalPatterns.push(
-        {
-          type: "bgp",
-          triples: [
-            {
-              subject: restNVariable,
-              predicate: rdfjsTermExpression(rdf.first),
-              object: itemNVariable,
-            },
-          ],
-        },
-        ...this.itemType.sparqlWherePatterns({
-          allowIgnoreRdfType: true,
-          propertyPatterns: [],
-          variables: {
-            filter: variables.filter,
-            preferredLanguages: variables.preferredLanguages,
-            valueVariable: itemNVariable,
-            variablePrefix: variablePrefix("ItemN"),
-          },
-        }),
-      );
-    }
-
-    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    optionalPatterns.push({
-      type: "bgp",
-      triples: [
-        {
-          subject: restNVariable,
-          predicate: rdfjsTermExpression(rdf.rest),
-          object: variable("RestNBasic"),
-        },
-      ],
-    });
-
-    patterns.push({ type: "optional", patterns: optionalPatterns });
-
-    // Having an optional around everything handles the rdf:nil case
-    const result: readonly Sparql.Pattern[] = [{ patterns, type: "optional" }];
-    if (propertyPatterns.length > 0) {
-      return [...propertyPatterns, ...result];
-    }
-    return result;
   }
 
   override toRdfExpression({
