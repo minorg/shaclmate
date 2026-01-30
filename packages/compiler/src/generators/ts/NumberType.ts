@@ -5,7 +5,7 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -151,21 +151,14 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
             ...sharedSnippetDeclarations.toLiteral,
             ...singleEntryRecord(
               `${syntheticNamePrefix}numberSparqlWherePatterns`,
-              `\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}NumberFilter> =
+              {
+                code: `\
+const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}NumberFilter> =
   ({ filter, valueVariable }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [valueVariable, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
-        },
-        lift: true,
-        type: "filter",
-      });
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
     }
 
     if (typeof filter.maxExclusive !== "undefined") {
@@ -218,6 +211,13 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }
 }`,
+                dependencies: {
+                  ...sharedSnippetDeclarations.sparqlValueInPattern,
+                  ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+                  ...sharedSnippetDeclarations.toLiteral,
+                  ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                },
+              },
             ),
           }
         : {},
