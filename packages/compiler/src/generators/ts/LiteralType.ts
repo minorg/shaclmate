@@ -82,7 +82,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
             `${syntheticNamePrefix}literalSparqlWherePatterns`,
             {
               code: `\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}LiteralFilter> =
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   (parameters) => ${syntheticNamePrefix}termSparqlWherePatterns(parameters);`,
               dependencies: {
                 ...sharedSnippetDeclarations.termSparqlWherePatterns,

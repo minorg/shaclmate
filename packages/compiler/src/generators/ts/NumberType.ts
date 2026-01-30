@@ -140,7 +140,7 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
               `${syntheticNamePrefix}numberSparqlWherePatterns`,
               {
                 code: `\
-const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}NumberFilter> =
+const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 

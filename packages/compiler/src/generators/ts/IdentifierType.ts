@@ -280,7 +280,7 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
               `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
               {
                 code: `\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}BlankNodeFilter> =
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ propertyPatterns }) => propertyPatterns;`,
                 dependencies: sharedSnippetDeclarations.SparqlWherePatternTypes,
               },
@@ -322,7 +322,7 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
               `${syntheticNamePrefix}namedNodeSparqlWherePatterns`,
               {
                 code: `\
-const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}NamedNodeFilter> =
+const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
@@ -381,7 +381,7 @@ interface ${syntheticNamePrefix}IdentifierFilter {
               `${syntheticNamePrefix}identifierSparqlWherePatterns`,
               {
                 code: `\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}IdentifierFilter> =
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 

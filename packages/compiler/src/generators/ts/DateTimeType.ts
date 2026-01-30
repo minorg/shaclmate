@@ -165,7 +165,7 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
       parameters.features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}dateSparqlWherePatterns`, {
             code: `\
-const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}DateFilter> =
+const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 

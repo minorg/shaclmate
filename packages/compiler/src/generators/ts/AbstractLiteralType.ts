@@ -51,13 +51,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     };
   }
 
-  @Memoize()
-  override get schemaType(): string {
-    return this.constrained
-      ? objectInitializer(this.schemaTypeObject)
-      : `${syntheticNamePrefix}${this.kind}Schema`;
-  }
-
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,

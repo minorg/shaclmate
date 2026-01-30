@@ -88,7 +88,7 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
             `${syntheticNamePrefix}booleanSparqlWherePatterns`,
             {
               code: `\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}BooleanFilter> =
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, propertyPatterns, valueVariable }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
