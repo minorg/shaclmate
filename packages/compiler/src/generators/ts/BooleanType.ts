@@ -93,7 +93,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter?.value !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, [filter.value]);
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: [filter.value] });
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });

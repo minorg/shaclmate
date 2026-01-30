@@ -327,7 +327,7 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in);
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
@@ -386,7 +386,7 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in.filter(identifier => identifier.termType === "NamedNode"));
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in.filter(identifier => identifier.termType === "NamedNode") });
     }
 
     if (typeof filter.type !== "undefined") {

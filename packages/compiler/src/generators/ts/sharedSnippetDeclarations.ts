@@ -153,12 +153,12 @@ const sparqlValueInPattern = singleEntryRecord(
   `${syntheticNamePrefix}sparqlValueInPattern`,
   {
     code: `\
-function ${syntheticNamePrefix}sparqlValueInPattern(value: rdfjs.NamedNode | rdfjs.Variable, valueIn: readonly (boolean | number | string | rdfjs.Literal | rdfjs.NamedNode)[]): ${syntheticNamePrefix}SparqlWhereFilterPattern {
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlWhereFilterPattern {
   return {
     expression: {
       type: "operation",
       operator: "in",
-      args: [value, valueIn.map(inValue => {
+      args: [valueVariable, valueIn.map(inValue => {
         switch (typeof inValue) {
           case "boolean":
           case "number":
@@ -169,7 +169,7 @@ function ${syntheticNamePrefix}sparqlValueInPattern(value: rdfjs.NamedNode | rdf
         }
       )],
     },
-    lift: true,
+    lift,
     type: "filter",
   };
 }`,
@@ -193,7 +193,14 @@ const termLikeSparqlWherePatterns = singleEntryRecord(
   {
     code: `\
 function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
+  filterPatterns,
+  preferredLanguages,
+  propertyPatterns,
+  schema,
+  valueVariable
+}: {
   filterPatterns: readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[],
+  preferredLanguages: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
     defaultValue?: boolean | string | number | rdfjs.Literal | rdfjs.NamedNode;
@@ -201,21 +208,66 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
   }>,
   valueVariable: rdfjs.Variable;
 }): readonly ${syntheticNamePrefix}SparqlWherePattern[] {
-  if (filterPatterns.length === 0) {
-    if (typeof schema.defaultValue !== "undefined") {
-      propertyPatterns = [{ patterns: propertyPatterns, type: "optional" }];
-    } else if (schema.in) {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, schema.in));
-    }
+  if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
+    // Filter patterns make the property required
+    propertyPatterns = [{ patterns: propertyPatterns, type: "optional" }];
   }
 
-  return propertyPatterns.concat(filterPatterns);
+  const schemaPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+  if (schema.in) {
+    schemaPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
+  }
+
+  if (preferredLanguages.length > 0) {
+    schemaPatterns.push({
+      expression: {
+        args: [{ args: [value], operator: "lang", type: "operation" }, preferredLanguages.map(dataFactory.literal)],
+        operator: "in",
+        type: "operation"
+      },
+      lift: false,
+      type: "filter",
+    });
+  }
+
+  return propertyPatterns.concat(schemaPatterns).concat(liftedFilterPatterns);
 }`,
     dependencies: { ...sparqlValueInPattern, ...SparqlWherePatternTypes },
   } satisfies SnippetDeclaration,
 );
 
 export const sharedSnippetDeclarations = {
+  arrayIntersection: singleEntryRecord(
+    `${syntheticNamePrefix}arrayIntersection`,
+    `\
+function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }  
+    }
+  }
+  return [...intersection];
+}`,
+  ),
+
   EqualsResult,
 
   filterTerm: singleEntryRecord(`${syntheticNamePrefix}filterTerm`, {
@@ -270,41 +322,6 @@ class ${syntheticNamePrefix}IdentifierSet {
     }
   }
 }`,
-  ),
-
-  languageInSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}languageInSparqlWherePatterns`,
-    {
-      code: `\
-function ${syntheticNamePrefix}languageInSparqlWherePatterns(languages: readonly string[], valueVariable: rdfjs.Variable): ${syntheticNamePrefix}SparqlWhereFilterPattern {
-  return {
-    expression:
-      languages.map(language => 
-        ({
-          type: "operation" as const,
-          operator: "=",
-          args: [
-            { type: "operation" as const, operator: "lang", args: [valueVariable] },
-            dataFactory.literal(language)
-          ]
-        })
-      ).reduce((reducedExpression, langEqualsExpression) => {
-        if (reducedExpression === null) {
-          return langEqualsExpression;
-        }
-        return {
-          type: "operation" as const,
-          operator: "||",
-          args: [reducedExpression, langEqualsExpression]
-        };
-      },
-      null as sparqljs.Expression | null) as sparqljs.Expression,
-    lift: true,
-    type: "filter" as const,
-  };
-}`,
-      dependencies: SparqlWherePatternTypes,
-    },
   ),
 
   liftSparqlWherePatterns: singleEntryRecord(

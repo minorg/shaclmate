@@ -61,39 +61,6 @@ export class LiteralType extends AbstractLiteralType {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
-      parameters.features.has("sparql") && this.languageIn.length > 0
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}arrayIntersection`,
-            `\
-function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
-  if (left.length === 0) {
-    return right;
-  }
-  if (right.length === 0) {
-    return left;
-  }
-
-  const intersection = new Set<T>();
-  if (left.length <= right.length) {
-    const rightSet = new Set(right);
-    for (const leftElement of left) {
-      if (rightSet.has(leftElement)) {
-        intersection.add(leftElement);
-      }
-    }
-  } else {
-    const leftSet = new Set(left);
-    for (const rightElement of right) {
-      if (leftSet.has(rightElement)) {
-        intersection.add(rightElement);
-      }  
-    }
-  }
-  return [...intersection];
-}`,
-          )
-        : {},
-
       singleEntryRecord(
         `${syntheticNamePrefix}filterLiteral`,
         `\
@@ -112,18 +79,17 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
 
       parameters.features.has("sparql")
         ? singleEntryRecord(
-            `${syntheticNamePrefix}LiteralFilter.sparqlWherePatterns`,
-            `\
-namespace ${syntheticNamePrefix}LiteralFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable): readonly sparqljs.FilterPattern[] {
-    return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter, value);
-  }
-}`,
+            `${syntheticNamePrefix}literalSparqlWherePatterns`,
+            {
+              code: `\
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}LiteralFilter> =
+  (parameters) => ${syntheticNamePrefix}termSparqlWherePatterns(parameters);`,
+              dependencies: {
+                ...sharedSnippetDeclarations.termSparqlWherePatterns,
+                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              },
+            },
           )
-        : {},
-      sharedSnippetDeclarations.TermFilter,
-      parameters.features.has("sparql")
-        ? sharedSnippetDeclarations.TermFilter_sparqlWherePatterns
         : {},
     );
   }
@@ -133,19 +99,5 @@ namespace ${syntheticNamePrefix}LiteralFilter {
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): string {
     return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractLiteralType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
-      {
-        patterns: `${syntheticNamePrefix}LiteralFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 }

@@ -114,16 +114,14 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
       ),
 
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
-            {
-              code: `\
+        ? singleEntryRecord(`${syntheticNamePrefix}stringSparqlWherePatterns`, {
+            code: `\
 const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}StringFilter> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in);
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
     }
 
     if (typeof filter.maxLength !== "undefined") {
@@ -152,14 +150,13 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
-              dependencies: {
-                ...sharedSnippetDeclarations.sparqlValueInPattern,
-                ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
-                ...sharedSnippetDeclarations.toLiteral,
-                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
-              },
+            dependencies: {
+              ...sharedSnippetDeclarations.sparqlValueInPattern,
+              ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+              ...sharedSnippetDeclarations.toLiteral,
+              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
             },
-          )
+          })
         : {},
     );
   }
