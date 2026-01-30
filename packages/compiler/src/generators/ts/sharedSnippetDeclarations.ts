@@ -1,7 +1,128 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+
+const SparqlWherePatternTypes = singleEntryRecord(
+  `SparqlWherePatternTypes`,
+  `\
+type ${syntheticNamePrefix}SparqlWhereFilterPattern = sparqljs.FilterPattern & { lift: boolean };
+type ${syntheticNamePrefix}SparqlWherePattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlWhereFilterPattern;
+type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
+  filter?: FilterT;
+  preferredLanguages: readonly string[];
+  propertyPatterns: readonly sparqljs.BgpPattern[];
+  schema: SchemaT;
+  valueVariable: rdfjs.Variable;
+  variablePrefix: string;
+};
+type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => ${syntheticNamePrefix}SparqlWherePattern;
+`,
+);
+
+const toLiteral = singleEntryRecord(
+  `${syntheticNamePrefix}toLiteral`,
+  `\
+function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
+  switch (typeof value) {
+    case "boolean":
+      return dataFactory.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
+    case "object": {
+      if (value instanceof Date) {
+        if (datatype) {
+          if (datatype.equals(${rdfjsTermExpression(xsd.date)})) {
+            return dataFactory.literal(value.toISOString().replace(/T.*$/, ''), datatype);
+          } else if (datatype.equals(${rdfjsTermExpression(xsd.dateTime)})) {
+            return dataFactory.literal(value.toISOString(), datatype);             
+          } else {
+            throw new RangeError(datatype.value);
+          }
+        }
+          
+        return dataFactory.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
+      }
+      value satisfies never;
+      throw new Error("should never happen");
+    }
+    case "number": {
+      if (datatype) {
+        return dataFactory.literal(value.toString(10), datatype);
+      }
+
+      // Convert the number to a literal following SPARQL rules = tests on the lexical form
+      const valueString = value.toString(10);
+      if (/^[+-]?[0-9]+$/.test(valueString)) {
+        // No decimal point, no exponent: xsd:integer
+        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
+      }
+      if (/^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)[eE][+-]?[0-9]+$/.test(valueString)) {
+        // Has exponent: xsd:double
+        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.double)});
+      }
+      // Default: xsd:decimal
+      return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
+    }
+    case "string":
+      return dataFactory.literal(value, datatype);
+  }
+}`,
+);
+
+const sparqlValueInPattern = singleEntryRecord(
+  `${syntheticNamePrefix}sparqlValueInPattern`,
+  {
+    code: `\
+function ${syntheticNamePrefix}sparqlValueInPattern(value: rdfjs.NamedNode | rdfjs.Variable, valueIn: readonly (boolean | number | string | rdfjs.Literal | rdfjs.NamedNode)[]): ${syntheticNamePrefix}SparqlWhereFilterPattern {
+  return {
+    expression: {
+      type: "operation",
+      operator: "in",
+      args: [value, valueIn.map(inValue => {
+        switch (typeof inValue) {
+          case "boolean":
+          case "number":
+          case "string":
+            return ${syntheticNamePrefix}toLiteral(inValue)
+          case "object":
+            return inValue;
+        }
+      )],
+    },
+    lift: true,
+    type: "filter",
+  };
+}`,
+    dependencies: toLiteral,
+  } satisfies SnippetDeclaration,
+);
+
+const termLikeSparqlWherePatterns = singleEntryRecord(
+  `${syntheticNamePrefix}termLikeSparqlWherePatterns`,
+  {
+    code: `\
+function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
+  filterPatterns: readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[],
+  propertyPatterns: readonly sparqljs.BgpPattern[];
+  schema: Readonly<{
+    defaultValue?: boolean | string | number | rdfjs.Literal | rdfjs.NamedNode;
+    in?: readonly (boolean | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
+  }>,
+  valueVariable: rdfjs.Variable;
+}): readonly ${syntheticNamePrefix}SparqlWherePattern[] {
+  if (filterPatterns.length === 0) {
+    if (typeof schema.defaultValue !== "undefined") {
+      propertyPatterns = [{ patterns: propertyPatterns, type: "optional" }];
+    } else if (schema.in) {
+      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, schema.in));
+    }
+  }
+
+  return propertyPatterns.concat(filterPatterns);
+}`,
+    dependencies: [SparqlWherePatternTypes],
+  },
+);
 
 export const sharedSnippetDeclarations = {
   EqualsResult: singleEntryRecord(
@@ -140,7 +261,8 @@ class ${syntheticNamePrefix}IdentifierSet {
 
   languageInSparqlWherePatterns: singleEntryRecord(
     `${syntheticNamePrefix}languageInSparqlWherePatterns`,
-    `\
+    {
+      code: `\
 function ${syntheticNamePrefix}languageInSparqlWherePatterns(languages: readonly string[], valueVariable: rdfjs.Variable): ${syntheticNamePrefix}SparqlWhereFilterPattern {
   return {
     expression:
@@ -168,6 +290,8 @@ function ${syntheticNamePrefix}languageInSparqlWherePatterns(languages: readonly
     type: "filter" as const,
   };
 }`,
+      dependencies: SparqlWherePatternTypes,
+    },
   ),
 
   liftSparqlWherePatterns: singleEntryRecord(
@@ -373,47 +497,9 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
 }`,
   ),
 
-  sparqlValueInPattern: singleEntryRecord(
-    `${syntheticNamePrefix}sparqlValueInPattern`,
-    `\
-function ${syntheticNamePrefix}sparqlValueInPattern(value: rdfjs.NamedNode | rdfjs.Variable, valueIn: readonly (boolean | number | string | rdfjs.Literal | rdfjs.NamedNode)[]): ${syntheticNamePrefix}SparqlWhereFilterPattern {
-  return {
-    expression: {
-      type: "operation",
-      operator: "in",
-      args: [value, valueIn.map(inValue => {
-        switch (typeof inValue) {
-          case "boolean":
-          case "number":
-          case "string":
-            return ${syntheticNamePrefix}toLiteral(inValue)
-          case "object":
-            return inValue;
-        }
-      )],
-    },
-    lift: true,
-    type: "filter",
-  };
-}`,
-  ),
+  sparqlValueInPattern,
 
-  SparqlWherePatternTypes: singleEntryRecord(
-    `SparqlWherePatternTypes`,
-    `\
-type ${syntheticNamePrefix}SparqlWhereFilterPattern = sparqljs.FilterPattern & { lift: boolean };
-type ${syntheticNamePrefix}SparqlWherePattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlWhereFilterPattern;
-type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
-  filter?: FilterT;
-  preferredLanguages: readonly string[];
-  propertyPatterns: readonly sparqljs.BgpPattern[];
-  schema: SchemaT;
-  valueVariable: rdfjs.Variable;
-  variablePrefix: string;
-};
-type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => ${syntheticNamePrefix}SparqlWherePattern;
-`,
-  ),
+  SparqlWherePatternTypes,
 
   strictEquals: singleEntryRecord(
     `${syntheticNamePrefix}strictEquals`,
@@ -440,33 +526,12 @@ interface ${syntheticNamePrefix}TermFilter {
 }`,
   ),
 
-  termLikeSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}termLikeSparqlWherePatterns`,
-    `\
-function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
-  filterPatterns: readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[],
-  propertyPatterns: readonly sparqljs.BgpPattern[];
-  schema: Readonly<{
-    defaultValue?: boolean | string | number | rdfjs.Literal | rdfjs.NamedNode;
-    in?: readonly (boolean | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
-  }>,
-  valueVariable: rdfjs.Variable;
-}): readonly ${syntheticNamePrefix}SparqlWherePattern[] {
-  if (filterPatterns.length === 0) {
-    if (typeof schema.defaultValue !== "undefined") {
-      propertyPatterns = [{ patterns: propertyPatterns, type: "optional" }];
-    } else if (schema.in) {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, schema.in));
-    }
-  }
-
-  return propertyPatterns.concat(filterPatterns);
-}`,
-  ),
+  termLikeSparqlWherePatterns,
 
   termSparqlWherePatterns: singleEntryRecord(
     `${syntheticNamePrefix}termSparqlWherePatterns`,
-    `\
+    {
+      code: `\
 const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
   ({ filter, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
@@ -539,55 +604,11 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, ...otherParameters });
   }`,
+      dependencies: { ...sparqlValueInPattern, termLikeSparqlWherePatterns },
+    },
   ),
 
-  toLiteral: singleEntryRecord(
-    `${syntheticNamePrefix}toLiteral`,
-    `\
-function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
-  switch (typeof value) {
-    case "boolean":
-      return dataFactory.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
-    case "object": {
-      if (value instanceof Date) {
-        if (datatype) {
-          if (datatype.equals(${rdfjsTermExpression(xsd.date)})) {
-            return dataFactory.literal(value.toISOString().replace(/T.*$/, ''), datatype);
-          } else if (datatype.equals(${rdfjsTermExpression(xsd.dateTime)})) {
-            return dataFactory.literal(value.toISOString(), datatype);             
-          } else {
-            throw new RangeError(datatype.value);
-          }
-        }
-          
-        return dataFactory.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
-      }
-      value satisfies never;
-      throw new Error("should never happen");
-    }
-    case "number": {
-      if (datatype) {
-        return dataFactory.literal(value.toString(10), datatype);
-      }
-
-      // Convert the number to a literal following SPARQL rules = tests on the lexical form
-      const valueString = value.toString(10);
-      if (/^[+-]?[0-9]+$/.test(valueString)) {
-        // No decimal point, no exponent: xsd:integer
-        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
-      }
-      if (/^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)[eE][+-]?[0-9]+$/.test(valueString)) {
-        // Has exponent: xsd:double
-        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.double)});
-      }
-      // Default: xsd:decimal
-      return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
-    }
-    case "string":
-      return dataFactory.literal(value, datatype);
-  }
-}`,
-  ),
+  toLiteral,
 };
 
 export namespace SnippetDeclarations {}

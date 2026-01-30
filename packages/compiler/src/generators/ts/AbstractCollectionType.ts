@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -247,7 +248,7 @@ export abstract class AbstractCollectionType<
 
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     let snippetDeclarations = {
       ...this.itemType.snippetDeclarations(parameters),
     };
@@ -336,7 +337,9 @@ function ${syntheticNamePrefix}arrayEquals<T>(
       sourceTypeCheckExpression = sourceTypeCheckExpression.substring(
         syntheticNamePrefix.length,
       );
-      let isReadonlyArraySnippetDeclaration: Record<string, string> | undefined;
+      let isReadonlyArraySnippetDeclaration:
+        | Record<string, SnippetDeclaration>
+        | undefined;
       if (sourceTypeCheckExpression.startsWith("isReadonlyBooleanArray")) {
         isReadonlyArraySnippetDeclaration = singleEntryRecord(
           `${syntheticNamePrefix}isReadonlyBooleanArray`,

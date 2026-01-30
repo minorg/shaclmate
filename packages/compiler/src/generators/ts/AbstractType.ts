@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -241,7 +242,7 @@ export abstract class AbstractType {
   abstract snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
-  }): Readonly<Record<string, string>>;
+  }): Readonly<Record<string, SnippetDeclaration>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).

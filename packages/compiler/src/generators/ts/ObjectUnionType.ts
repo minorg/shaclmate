@@ -15,7 +15,7 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
-
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsComment } from "./tsComment.js";
@@ -272,7 +272,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override snippetDeclarations(
     parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
       return {};
@@ -284,7 +284,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
           snippetDeclarations,
           memberType.snippetDeclarations(parameters),
         ),
-      {} as Record<string, string>,
+      {} as Record<string, SnippetDeclaration>,
     );
     invariant(Object.is(recursionStack.pop(), this));
     return snippetDeclarations;

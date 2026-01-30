@@ -4,6 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -59,7 +60,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     parameters: Parameters<
       AbstractPrimitiveType<boolean>["snippetDeclarations"]
     >[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
@@ -83,14 +84,10 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
       ),
 
       parameters.features.has("sparql")
-        ? {
-            ...sharedSnippetDeclarations.sparqlValueInPattern,
-            ...sharedSnippetDeclarations.SparqlWherePatternTypes,
-            ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
-            ...sharedSnippetDeclarations.toLiteral,
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}booleanSparqlWherePatterns`,
-              `\
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}booleanSparqlWherePatterns`,
+            {
+              code: `\
 const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}BooleanFilter> =
   ({ filter, propertyPatterns, valueVariable }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
@@ -102,8 +99,12 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   );
 }`,
-            ),
-          }
+              dependencies: {
+                ...sharedSnippetDeclarations.sparqlValueInPattern,
+                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              },
+            },
+          )
         : {},
     );
   }

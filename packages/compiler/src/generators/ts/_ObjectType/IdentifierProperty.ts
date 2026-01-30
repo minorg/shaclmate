@@ -18,6 +18,7 @@ import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -492,7 +493,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     parameters: Parameters<
       AbstractProperty<IdentifierType>["snippetDeclarations"]
     >[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return this.type.snippetDeclarations(parameters);
   }
 

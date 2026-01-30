@@ -105,7 +105,7 @@ export abstract class NumberType extends AbstractPrimitiveType<number> {
     parameters: Parameters<
       AbstractPrimitiveType<number>["snippetDeclarations"]
     >[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
       singleEntryRecord(

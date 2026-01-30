@@ -10,6 +10,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import type { SetType } from "./SetType.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
@@ -21,7 +22,7 @@ export abstract class AbstractLazyObjectType<
     readonly name: string;
     readonly partialPropertyName: string;
     readonly rawName: string;
-    readonly snippetDeclarations: Readonly<Record<string, string>>;
+    readonly snippetDeclarations: Readonly<Record<string, SnippetDeclaration>>;
   };
 
   override readonly discriminantProperty: AbstractType["discriminantProperty"] =
@@ -122,7 +123,7 @@ export abstract class AbstractLazyObjectType<
 
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       this.partialType.snippetDeclarations(parameters),
       this.resolvedType.snippetDeclarations(parameters),

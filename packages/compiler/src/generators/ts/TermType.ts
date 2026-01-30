@@ -6,7 +6,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -110,16 +110,13 @@ export class TermType<
 
   override snippetDeclarations(
     parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
       sharedSnippetDeclarations.filterTerm,
       sharedSnippetDeclarations.TermFilter,
       parameters.features.has("sparql")
-        ? {
-            ...sharedSnippetDeclarations.SparqlWherePatternTypes,
-            ...sharedSnippetDeclarations.termSparqlWherePatterns,
-          }
+        ? sharedSnippetDeclarations.termSparqlWherePatterns
         : {},
     );
   }

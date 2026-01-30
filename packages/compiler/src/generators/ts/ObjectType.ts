@@ -20,6 +20,7 @@ import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -466,13 +467,13 @@ export class ObjectType extends AbstractDeclaredType {
   override snippetDeclarations({
     recursionStack,
   }: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0]): Readonly<
-    Record<string, string>
+    Record<string, SnippetDeclaration>
   > {
     if (recursionStack.some((type) => Object.is(type, this))) {
       return {};
     }
 
-    let snippetDeclarations: Record<string, string> = {};
+    let snippetDeclarations: Record<string, SnippetDeclaration> = {};
 
     if (this.features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(

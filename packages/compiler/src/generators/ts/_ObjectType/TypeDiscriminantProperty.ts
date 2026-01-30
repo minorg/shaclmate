@@ -10,6 +10,7 @@ import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import { objectInitializer } from "../objectInitializer.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -158,7 +159,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     });
   }
 
-  override snippetDeclarations(): Readonly<Record<string, string>> {
+  override snippetDeclarations(): Readonly<Record<string, SnippetDeclaration>> {
     if (this.objectType.features.has("equals")) {
       return sharedSnippetDeclarations.strictEquals;
     }

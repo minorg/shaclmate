@@ -12,6 +12,7 @@ import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -296,7 +297,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override snippetDeclarations(
     parameters: Parameters<AbstractProperty<TypeT>["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return this.type.snippetDeclarations(parameters);
   }
 

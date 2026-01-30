@@ -1,6 +1,8 @@
+import { SnippetDeclaration } from "./SnippetDeclaration.js";
+
 export function mergeSnippetDeclarations(
-  ...snippetDeclarations: Readonly<Record<string, string>>[]
-): Readonly<Record<string, string>> {
+  ...snippetDeclarations: Readonly<Record<string, SnippetDeclaration>>[]
+): Readonly<Record<string, SnippetDeclaration>> {
   if (snippetDeclarations.length === 0) {
     return {};
   }
@@ -8,7 +10,7 @@ export function mergeSnippetDeclarations(
     return snippetDeclarations[0];
   }
 
-  const mergedSnippetDeclarations: Record<string, string> = {
+  let mergedSnippetDeclarations: Record<string, SnippetDeclaration> = {
     ...snippetDeclarations[0],
   };
   for (
@@ -22,9 +24,22 @@ export function mergeSnippetDeclarations(
       const existingSnippetDeclaration = mergedSnippetDeclarations[key];
       if (!existingSnippetDeclaration) {
         mergedSnippetDeclarations[key] = snippetDeclaration;
-      } else if (existingSnippetDeclaration !== snippetDeclaration) {
+      } else if (
+        SnippetDeclaration.code(existingSnippetDeclaration) !==
+        SnippetDeclaration.code(snippetDeclaration)
+      ) {
         throw new Error(
-          `conflicting snippet declarations for ${key}:\nExisting:\n${existingSnippetDeclaration}\n\nNew:\n${snippetDeclaration}\n\n`,
+          `conflicting snippet declarations for ${key}:\nExisting:\n${SnippetDeclaration.code(existingSnippetDeclaration)}\n\nNew:\n${SnippetDeclaration.code(snippetDeclaration)}\n\n`,
+        );
+      }
+
+      if (
+        typeof snippetDeclaration === "object" &&
+        snippetDeclaration.dependencies
+      ) {
+        mergedSnippetDeclarations = mergeSnippetDeclarations(
+          mergedSnippetDeclarations,
+          snippetDeclaration.dependencies,
         );
       }
     }

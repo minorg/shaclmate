@@ -13,7 +13,7 @@ import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
-
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import type { Type } from "../Type.js";
 
 export abstract class AbstractProperty<
@@ -214,7 +214,7 @@ export abstract class AbstractProperty<
    */
   abstract snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>>;
+  ): Readonly<Record<string, SnippetDeclaration>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for this property as strings (so they can incorporate runtime calls).

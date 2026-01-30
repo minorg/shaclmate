@@ -11,6 +11,7 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 
@@ -84,11 +85,11 @@ export class TsGenerator implements Generator {
                 recursionStack: [],
               }),
             ),
-          {} as Record<string, string>,
+          {} as Record<string, SnippetDeclaration>,
         ),
       )
         .sort((left, right) => left[0].localeCompare(right[0]))
-        .map((entry) => entry[1]),
+        .map((entry) => SnippetDeclaration.code(entry[1])),
     );
 
     for (const objectType of objectTypes) {
