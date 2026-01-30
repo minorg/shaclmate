@@ -7,6 +7,7 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 class MemberType {
@@ -369,13 +370,42 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       discriminant: {
         kind: JSON.stringify(this.discriminant.kind),
       },
-      members: this.memberTypes.map((memberType) => ({
-        discriminantValues: memberType.discriminantValues.map((_) =>
-          JSON.stringify(_),
-        ),
-        type: memberType.schema,
-      })),
+      members: `{ ${this.memberTypes
+        .map(
+          (memberType) =>
+            `readonly "${memberType.discriminantValues[0]}"?: ${objectInitializer(
+              {
+                discriminantValues: memberType.discriminantValues.map((_) =>
+                  JSON.stringify(_),
+                ),
+                type: memberType.schema,
+              },
+            )}`,
+        )
+        .join(";")} }`,
     });
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `\
+(({ filter, schema, ...otherParameters }) => {
+  const unionPatterns: sparqljs.GroupPattern[] = [];
+  const liftedPatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+
+  ${this.memberTypes
+    .map(
+      (memberType) => `\
+{
+  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.["${memberType.discriminantValues[0]}"] }));
+  unionPatterns.push({ patterns: memberPatterns, type: "group" });
+  liftedPatterns.push(...memberLiftedPatterns);
+}`,
+    )
+    .join("\n")}
+  
+  return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+})`;
   }
 
   @Memoize()
@@ -554,33 +584,6 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     );
   }
 
-  // override sparqlWherePatterns({
-  //   allowIgnoreRdfType: _allowIgnoreRdfType,
-  //   variables,
-  //   ...otherParameters
-  // }: Parameters<
-  //   AbstractType["sparqlWherePatterns"]
-  // >[0]): readonly Sparql.Pattern[] {
-  //   return [
-  //     {
-  //       patterns: this.memberTypes.map((memberType) => ({
-  //         patterns: memberType.sparqlWherePatterns({
-  //           ...otherParameters,
-  //           allowIgnoreRdfType: false,
-  //           variables: {
-  //             ...variables,
-  //             filter: variables.filter.map(
-  //               (filterVariable) =>
-  //                 `${filterVariable}?.on?.["${memberType.discriminantValues[0]}"]`,
-  //             ),
-  //           },
-  //         }),
-  //         type: "group" as const,
-  //       })),
-  //       type: "union" as const,
-  //     },
-  //   ];
-  // }
   override toJsonExpression({
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
