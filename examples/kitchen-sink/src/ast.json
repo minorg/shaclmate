@@ -128,7 +128,7 @@
       "comment": "Node shape that can only have a blank node as an identifier",
       "identifierMintingStrategy": "blankNode",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "BlankNodeType",
         "hasValue": [],
         "nodeKinds": [
           "BlankNode"
@@ -142,7 +142,7 @@
       "comment": "Node shape that can only have a blank node as an identifier",
       "identifierMintingStrategy": "blankNode",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "BlankNodeType",
         "hasValue": [],
         "nodeKinds": [
           "BlankNode"
@@ -478,7 +478,7 @@
           "path": "http://example.com/convertibleIriProperty",
           "shapeIdentifier": "_:n3-147",
           "type": {
-            "kind": "IdentifierType",
+            "kind": "NamedNodeType",
             "hasValue": [],
             "nodeKinds": [
               "NamedNode"
@@ -494,7 +494,7 @@
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "IdentifierType",
+              "kind": "NamedNodeType",
               "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
@@ -511,7 +511,7 @@
           "type": {
             "kind": "SetType",
             "itemType": {
-              "kind": "IdentifierType",
+              "kind": "NamedNodeType",
               "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
@@ -528,7 +528,7 @@
           "type": {
             "kind": "SetType",
             "itemType": {
-              "kind": "IdentifierType",
+              "kind": "NamedNodeType",
               "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
@@ -1046,7 +1046,7 @@
           "path": "http://example.com/hasIriValueProperty",
           "shapeIdentifier": "_:n3-187",
           "type": {
-            "kind": "IdentifierType",
+            "kind": "NamedNodeType",
             "hasValue": [
               {
                 "termType": "NamedNode",
@@ -1114,7 +1114,7 @@
       "kind": "ObjectType",
       "comment": "Node shape for testing identifier type overriding: blank node or IRI identifier, abstract",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1127,7 +1127,7 @@
       "kind": "ObjectType",
       "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1141,7 +1141,7 @@
       "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete, UUIDv4 minting",
       "identifierMintingStrategy": "uuidv4",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1155,7 +1155,7 @@
       "comment": "Node shape for testing identifier type overriding: IRI identifier, concrete, SHA-256 minting",
       "identifierMintingStrategy": "sha256",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1168,7 +1168,7 @@
       "kind": "ObjectType",
       "comment": "Shape with sh:in constraining its identifier.",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1246,7 +1246,7 @@
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "IdentifierType",
+              "kind": "NamedNodeType",
               "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
@@ -1508,7 +1508,7 @@
       "kind": "ObjectType",
       "comment": "A node shape that only allows IRI identifiers.",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1521,7 +1521,7 @@
       "kind": "ObjectType",
       "comment": "A node shape that only allows IRI identifiers.",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1804,7 +1804,7 @@
       "kind": "ObjectType",
       "comment": "Node shape resolved by LazyPropertiesClass",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1833,7 +1833,7 @@
       "kind": "ObjectType",
       "comment": "Node shape resolved by LazyPropertiesInterface",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -1934,7 +1934,7 @@
                 "name": "NamedDefaultPartial",
                 "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
                 "identifierType": {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -1951,7 +1951,7 @@
                 "comment": "Node shape resolved by LazyPropertiesClass",
                 "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierClass>",
                 "identifierType": {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -2634,7 +2634,7 @@
                 "name": "NamedDefaultPartial",
                 "shapeIdentifier": "<urn:shaclmate:synthetic:NamedDefaultPartial>",
                 "identifierType": {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -2651,7 +2651,7 @@
                 "comment": "Node shape resolved by LazyPropertiesInterface",
                 "shapeIdentifier": "<http://example.com/LazilyResolvedIriIdentifierInterface>",
                 "identifierType": {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -3314,7 +3314,7 @@
               "kind": "ListType",
               "comment": "A node shape that models an RDF list of IRIs. Should be transformed into a list data structure when used as a property.",
               "itemType": {
-                "kind": "IdentifierType",
+                "kind": "NamedNodeType",
                 "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
@@ -4017,7 +4017,7 @@
       "comment": "A node shape that mints its identifier by hashing (other) contents, if no identifier is supplied.",
       "identifierMintingStrategy": "sha256",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -4064,7 +4064,7 @@
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "IdentifierType",
+              "kind": "BlankNodeType",
               "hasValue": [],
               "nodeKinds": [
                 "BlankNode"
@@ -4135,7 +4135,7 @@
           "type": {
             "kind": "OptionType",
             "itemType": {
-              "kind": "IdentifierType",
+              "kind": "NamedNodeType",
               "hasValue": [],
               "nodeKinds": [
                 "NamedNode"
@@ -4313,7 +4313,7 @@
               "memberDiscriminantValues": [],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -4341,7 +4341,7 @@
               "memberDiscriminantValues": [],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -4445,7 +4445,7 @@
             "memberDiscriminantValues": [],
             "memberTypes": [
               {
-                "kind": "IdentifierType",
+                "kind": "NamedNodeType",
                 "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
@@ -4470,7 +4470,7 @@
             "memberDiscriminantValues": [],
             "memberTypes": [
               {
-                "kind": "IdentifierType",
+                "kind": "NamedNodeType",
                 "hasValue": [],
                 "nodeKinds": [
                   "NamedNode"
@@ -4578,7 +4578,7 @@
               "memberDiscriminantValues": [],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -4606,7 +4606,7 @@
               "memberDiscriminantValues": [],
               "memberTypes": [
                 {
-                  "kind": "IdentifierType",
+                  "kind": "NamedNodeType",
                   "hasValue": [],
                   "nodeKinds": [
                     "NamedNode"
@@ -4632,7 +4632,7 @@
       "comment": "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
       "identifierMintingStrategy": "uuidv4",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -4662,7 +4662,7 @@
       "comment": "A node shape that mints its identifier by generating a v4 UUID, if no identifier is supplied.",
       "identifierMintingStrategy": "uuidv4",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
@@ -4704,7 +4704,7 @@
     {
       "kind": "ObjectType",
       "identifierType": {
-        "kind": "IdentifierType",
+        "kind": "NamedNodeType",
         "hasValue": [],
         "nodeKinds": [
           "NamedNode"
