@@ -398,8 +398,8 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     .map(
       (memberType) => `\
 {
-  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.["${memberType.discriminantValues[0]}"] }));
-  unionPatterns.push({ patterns: memberPatterns, type: "group" });
+  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema["${memberType.discriminantValues[0]}"] }));
+  unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
   liftedPatterns.push(...memberLiftedPatterns);
 }`,
     )

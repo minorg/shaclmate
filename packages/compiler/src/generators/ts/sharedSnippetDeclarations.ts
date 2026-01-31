@@ -97,7 +97,7 @@ type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, Schema
   schema: SchemaT;
   valueVariable: rdfjs.Variable;
   variablePrefix: string;
-};
+}>;
 type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly ${syntheticNamePrefix}SparqlWherePattern[];
 `,
 );
@@ -157,8 +157,6 @@ const sparqlValueInPattern = singleEntryRecord(
 function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlWhereFilterPattern {
   return {
     expression: {
-      type: "operation",
-      operator: "in",
       args: [valueVariable, valueIn.map(inValue => {
         switch (typeof inValue) {
           case "boolean":
@@ -171,8 +169,11 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
             }
 
             return inValue;
+          }
         }
       )],
+      operator: "in",
+      type: "operation",
     },
     lift,
     type: "filter",
@@ -562,69 +563,71 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
   ({ filter, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
-    if (typeof filter.datatypeIn !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [{ args: [value], operator: "datatype", type: "operation" }, filter.datatypeIn.concat()]
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
+    if (filter) {
+      if (typeof filter.datatypeIn !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "in",
+            args: [{ args: [valueVariable], operator: "datatype", type: "operation" }, filter.datatypeIn.concat()]
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
 
-    if (typeof filter.in !== "undefined") {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(value, filter.in);
-    }
+      if (typeof filter.in !== "undefined") {
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in);
+      }
 
-    if (typeof filter.languageIn !== "undefined") {
-      filterPatterns.push({
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [{ args: [value], operator: "lang", type: "operation" }, filter.languageIn.map(value => dataFactory.literal(value))]
-        },
-        lift: true,
-        type: "filter",
-      });
-    }
+      if (typeof filter.languageIn !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "in",
+            args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => dataFactory.literal(value))]
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
 
-    if (typeof filter.typeIn !== "undefined") {
-      const typeInExpressions = filter.typeIn.map(inType => {
-        switch (inType) {
-          case "BlankNode":
-            return "isBlank";
-          case "Literal":
-            return "isLiteral";
-          case "NamedNode":
-            return "isIRI";
+      if (typeof filter.typeIn !== "undefined") {
+        const typeInExpressions = filter.typeIn.map(inType => {
+          switch (inType) {
+            case "BlankNode":
+              return "isBlank";
+            case "Literal":
+              return "isLiteral";
+            case "NamedNode":
+              return "isIRI";
+            default:
+              inType satisfies never;
+              throw new RangeError(inType);
+          }
+        }).map(operator => ({
+          type: "operation" as const,
+          operator,
+          args: [valueVariable]
+        }));
+
+        switch (typeInExpressions.length) {
+          case 0:
+            break;
+          case 1:
+            filterPatterns.push({ expression: typeInExpressions[0], lift: true, type: "filter" });
+            break;
           default:
-            inType satisfies never;
-            throw new RangeError(inType);
+            filterPatterns.push({
+              expression: {
+                type: "operation",
+                operator: "||",
+                args: typeInExpressions
+              },
+              lift: true,
+              type: "filter",
+            });
         }
-      }).map(operator => ({
-        type: "operation" as const,
-        operator,
-        args: [value]
-      }));
-
-      switch (typeInExpressions.length) {
-        case 0:
-          break;
-        case 1:
-          filterPatterns.push({ expression: typeInExpressions[0], lift: true, type: "filter" });
-          break;
-        default:
-          filterPatterns.push({
-            expression: {
-              type: "operation",
-              operator: "||",
-              args: typeInExpressions
-            },
-            lift: true,
-            type: "filter",
-          });
       }
     }
 

@@ -151,7 +151,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
-        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (typeof filter.maxExclusive !== "undefined") {
@@ -204,8 +204,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
     }
 
     return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
-  }
-}`,
+  }`,
                 dependencies: {
                   ...sharedSnippetDeclarations.sparqlValueInPattern,
                   ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,

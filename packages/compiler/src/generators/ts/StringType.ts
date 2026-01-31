@@ -116,13 +116,13 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
       parameters.features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}stringSparqlWherePatterns`, {
             code: `\
-const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}StringFilter> =
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
-        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in });
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (typeof filter.maxLength !== "undefined") {
