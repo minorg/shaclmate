@@ -186,7 +186,6 @@ export abstract class AbstractCollectionType<
       ...super.schemaObject,
       item: this.itemType.schema,
       minCount: this.minCount,
-      mutable: this.mutable ? true : undefined,
     };
   }
 
@@ -401,7 +400,7 @@ type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
 
       singleEntryRecord(
         `${syntheticNamePrefix}CollectionSchema`,
-        `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; readonly mutable?: true; }`,
+        `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
       ),
 
       singleEntryRecord(

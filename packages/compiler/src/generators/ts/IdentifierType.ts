@@ -5,7 +5,6 @@ import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
@@ -179,13 +178,6 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
                 ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },
-          )
-        : {},
-
-      !this.constrained
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}identifierTypeSchema`,
-            `const ${syntheticNamePrefix}identifierTypeSchema = ${objectInitializer(this.schemaObject)};`,
           )
         : {},
     );
