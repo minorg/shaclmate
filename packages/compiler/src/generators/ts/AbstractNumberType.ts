@@ -153,7 +153,7 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
                 code: `\
 const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -215,7 +215,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
                   ...sharedSnippetDeclarations.sparqlValueInPattern,
                   ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
                   ...sharedSnippetDeclarations.toLiteral,
-                  ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                  ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
                 },
               },
             ),

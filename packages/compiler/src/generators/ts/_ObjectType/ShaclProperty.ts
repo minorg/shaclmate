@@ -340,7 +340,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           .extract(),
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: [
-          {
+          `${objectInitializer({
             triples: [
               {
                 object: valueVariable,
@@ -349,7 +349,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
               },
             ],
             type: JSON.stringify("bgp"),
-          },
+          })} satisfies sparqljs.BgpPattern`,
         ],
         schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
         valueVariable,

@@ -240,7 +240,7 @@ export abstract class AbstractProperty<
    *
    * Returns:
    *   - condition: optional runtime condition to evaluate in an if statement before including the patterns
-   *   - patterns: runtime array of SparqlWherePattern's.
+   *   - patterns: runtime array of SparqlPattern's.
    */
   abstract sparqlWherePatterns(parameters: {
     variables: {

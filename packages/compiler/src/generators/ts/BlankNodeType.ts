@@ -145,7 +145,8 @@ function ${syntheticNamePrefix}filterBlankNode(_filter: ${syntheticNamePrefix}Bl
               code: `\
 const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ propertyPatterns }) => propertyPatterns;`,
-              dependencies: sharedSnippetDeclarations.SparqlWherePatternTypes,
+              dependencies:
+                sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },
           )
         : {},

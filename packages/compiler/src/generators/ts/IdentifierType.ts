@@ -151,7 +151,7 @@ interface ${syntheticNamePrefix}IdentifierFilter {
               code: `\
 const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -176,7 +176,7 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,
                 ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
-                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },
           )

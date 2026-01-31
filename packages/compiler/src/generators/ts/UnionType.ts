@@ -372,9 +372,9 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   @Memoize()
   override get schema(): string {
     return objectInitializer({
-      discriminant: {
-        kind: JSON.stringify(this.discriminant.kind),
-      },
+      // discriminant: {
+      //   kind: `${JSON.stringify(this.discriminant.kind)} as const`,
+      // },
       kind: '"UnionType" as const',
       members: `{ ${this.memberTypes
         .map(
@@ -392,18 +392,16 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override get schemaType(): string {
     return objectInitializer({
-      discriminant: {
-        kind: '"envelope" | "inline" | "typeof"',
-      },
+      // discriminant: {
+      //   kind: '"envelope" | "inline" | "typeof"',
+      // },
       kind: '"UnionType"',
       members: `{ ${this.memberTypes
         .map(
           (memberType) =>
-            `readonly "${memberType.discriminantValues[0]}"?: ${objectInitializer(
+            `readonly "${memberType.discriminantValues[0]}": ${objectInitializer(
               {
-                discriminantValues: memberType.discriminantValues.map((_) =>
-                  JSON.stringify(_),
-                ),
+                discriminantValues: "readonly string[]",
                 type: memberType.schemaType,
               },
             )}`,
@@ -417,13 +415,13 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return `\
 (({ filter, schema, ...otherParameters }) => {
   const unionPatterns: sparqljs.GroupPattern[] = [];
-  const liftedPatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+  const liftedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
 
   ${this.memberTypes
     .map(
       (memberType) => `\
 {
-  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema["${memberType.discriminantValues[0]}"], ...otherParameters }));
+  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));
   unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
   liftedPatterns.push(...memberLiftedPatterns);
 }`,
@@ -598,7 +596,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     if (parameters.features.has("sparql")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sharedSnippetDeclarations.liftSparqlWherePatterns,
+        sharedSnippetDeclarations.liftSparqlPatterns,
       );
     }
     invariant(Object.is(recursionStack.pop(), this));

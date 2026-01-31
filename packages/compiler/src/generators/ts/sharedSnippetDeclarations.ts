@@ -84,11 +84,17 @@ export namespace ${syntheticNamePrefix}EqualsResult {
 }`,
 );
 
-const SparqlWherePatternTypes = singleEntryRecord(
-  `SparqlWherePatternTypes`,
+const SparqlPattern = singleEntryRecord(
+  `SparqlPattern`,
   `\
-type ${syntheticNamePrefix}SparqlWhereFilterPattern = sparqljs.FilterPattern & { lift: boolean };
-type ${syntheticNamePrefix}SparqlWherePattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlWhereFilterPattern;
+type ${syntheticNamePrefix}SparqlFilterPattern = sparqljs.FilterPattern & { lift: boolean };
+type ${syntheticNamePrefix}SparqlPattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlFilterPattern;`,
+);
+
+const SparqlWherePatternsFunction = singleEntryRecord(
+  `SparqlWherePatternsFunction`,
+  {
+    code: `\
 type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   filter?: FilterT;
   ignoreRdfType?: boolean;
@@ -98,8 +104,10 @@ type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, Schema
   valueVariable: rdfjs.Variable;
   variablePrefix: string;
 }>;
-type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly ${syntheticNamePrefix}SparqlWherePattern[];
+type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly ${syntheticNamePrefix}SparqlPattern[];
 `,
+    dependencies: SparqlPattern,
+  } satisfies SnippetDeclaration,
 );
 
 const toLiteral = singleEntryRecord(
@@ -154,7 +162,7 @@ const sparqlValueInPattern = singleEntryRecord(
   `${syntheticNamePrefix}sparqlValueInPattern`,
   {
     code: `\
-function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlWhereFilterPattern {
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlFilterPattern {
   return {
     expression: {
       args: [valueVariable, valueIn.map(inValue => {
@@ -208,7 +216,7 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
   schema,
   valueVariable
 }: {
-  filterPatterns: readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[],
+  filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
   preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
@@ -216,8 +224,8 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
     in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
   }>,
   valueVariable: rdfjs.Variable;
-}): readonly ${syntheticNamePrefix}SparqlWherePattern[] {
-  let patterns: ${syntheticNamePrefix}SparqlWherePattern[];
+}): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  let patterns: ${syntheticNamePrefix}SparqlPattern[];
 
   if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
     // Filter patterns make the property required
@@ -244,7 +252,7 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
 
   return patterns.concat(filterPatterns);
 }`,
-    dependencies: { ...sparqlValueInPattern, ...SparqlWherePatternTypes },
+    dependencies: { ...sparqlValueInPattern, ...SparqlPattern },
   } satisfies SnippetDeclaration,
 );
 
@@ -336,21 +344,24 @@ class ${syntheticNamePrefix}IdentifierSet {
 }`,
   ),
 
-  liftSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}liftSparqlWherePatterns`,
-    `\
-function ${syntheticNamePrefix}liftSparqlWherePatterns(sparqlWherePatterns: Iterable<${syntheticNamePrefix}SparqlWherePattern>): [readonly ${syntheticNamePrefix}SparqlWherePattern[], readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[]] {
-  const liftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
-  const unliftedSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
-  for (const sparqlWherePattern of sparqlWherePatterns) {
-    if (sparqlWherePattern.type === "filter" && sparqlWherePattern.lift) {
-      liftedSparqlWherePatterns.push(sparqlWherePattern);
+  liftSparqlPatterns: singleEntryRecord(
+    `${syntheticNamePrefix}liftSparqlPatterns`,
+    {
+      code: `\
+function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${syntheticNamePrefix}SparqlPattern>): [readonly ${syntheticNamePrefix}SparqlPattern[], readonly ${syntheticNamePrefix}SparqlFilterPattern[]] {
+  const liftedPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+  const unliftedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  for (const pattern of patterns) {
+    if (pattern.type === "filter" && pattern.lift) {
+      liftedPatterns.push(pattern);
     } else {
-      unliftedSparqlWherePatterns.push(sparqlWherePattern); 
+      unliftedPatterns.push(pattern); 
     }
   }
-  return [unliftedSparqlWherePatterns, liftedSparqlWherePatterns];
+  return [unliftedPatterns, liftedPatterns];
 }`,
+      dependencies: SparqlPattern,
+    },
   ),
 
   normalizeSparqlWherePatterns: singleEntryRecord(
@@ -539,9 +550,11 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
 }`,
   ),
 
+  SparqlPattern,
+
   sparqlValueInPattern,
 
-  SparqlWherePatternTypes,
+  SparqlWherePatternsFunction,
 
   strictEquals: singleEntryRecord(`${syntheticNamePrefix}strictEquals`, {
     code: `\
@@ -567,7 +580,7 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
       code: `\
 const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.datatypeIn !== "undefined") {

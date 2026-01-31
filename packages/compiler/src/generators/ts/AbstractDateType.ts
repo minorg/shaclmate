@@ -44,21 +44,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return conversions;
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      defaultValue: this.primitiveDefaultValue.map(
-        (defaultValue) => `new Date("${defaultValue.toISOString()}")`,
-      ),
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map(
-              (inValue) => `new Date("${inValue.toISOString()}")`,
-            )
-          : undefined,
-    };
-  }
-
   override get name(): string {
     return "Date";
   }
@@ -71,6 +56,21 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
     return `${syntheticNamePrefix}dateSparqlWherePatterns`;
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue
+        .map((defaultValue) => `new Date("${defaultValue.toISOString()}")`)
+        .extract(),
+      in:
+        this.primitiveIn.length > 0
+          ? this.primitiveIn.map(
+              (inValue) => `new Date("${inValue.toISOString()}")`,
+            )
+          : undefined,
+    };
   }
 
   protected override get schemaTypeObject() {
@@ -171,7 +171,7 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
             code: `\
 const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -240,7 +240,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
             dependencies: {
               ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
               ...sharedSnippetDeclarations.toLiteral,
-              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },
           })
         : {},

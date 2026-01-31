@@ -47,7 +47,7 @@ export class ListType<
 
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}listSparqlWherePatterns(${this.itemType.sparqlWherePatternsFunction})`;
+    return `${syntheticNamePrefix}listSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression({
@@ -95,7 +95,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
     const listVariable = parameters.valueVariable;
-    const patterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+    const patterns: ${syntheticNamePrefix}SparqlPattern[] = [];
     const variable = (suffix: string) => dataFactory.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
     const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
 
@@ -139,7 +139,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       });
     }
 
-    const optionalPatterns: ${syntheticNamePrefix}SparqlWherePattern[] = [];
+    const optionalPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
     
     const restNVariable = variable("RestN");
     // ?list rdf:rest+ ?restN
@@ -198,7 +198,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
   }
 }`,
             dependencies: {
-              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },
           })
         : {},

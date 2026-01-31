@@ -90,7 +90,7 @@ export abstract class AbstractType {
   abstract readonly schemaType: string;
 
   /**
-   * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlWherePattern's for a property of this type.
+   * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
    *
    * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
    * - filter?: an instance of filterType

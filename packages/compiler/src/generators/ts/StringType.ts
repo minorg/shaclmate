@@ -48,6 +48,14 @@ export class StringType extends AbstractPrimitiveType<string> {
     };
   }
 
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": "string",
+      "in?": `readonly string[]`,
+    };
+  }
+
   @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
@@ -122,7 +130,7 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
             code: `\
 const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -160,7 +168,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
               ...sharedSnippetDeclarations.sparqlValueInPattern,
               ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
               ...sharedSnippetDeclarations.toLiteral,
-              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },
           })
         : {},

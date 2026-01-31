@@ -86,7 +86,7 @@ const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}Sp
   (parameters) => ${syntheticNamePrefix}termSparqlWherePatterns({ ...parameters, schema: { ...parameters.schema, kind: "TermType" as const } });`,
               dependencies: {
                 ...sharedSnippetDeclarations.termSparqlWherePatterns,
-                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },
           )

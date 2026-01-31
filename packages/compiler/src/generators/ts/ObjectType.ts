@@ -337,7 +337,7 @@ export class ObjectType extends AbstractDeclaredType {
 
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
-    return `(({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])`;
+    return `(({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly ${syntheticNamePrefix}SparqlPattern[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))`;
   }
 
   @Memoize()
@@ -472,9 +472,10 @@ export class ObjectType extends AbstractDeclaredType {
       }
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sharedSnippetDeclarations.liftSparqlWherePatterns,
+        sharedSnippetDeclarations.liftSparqlPatterns,
         sharedSnippetDeclarations.normalizeSparqlWherePatterns,
-        sharedSnippetDeclarations.SparqlWherePatternTypes,
+        sharedSnippetDeclarations.SparqlPattern,
+        sharedSnippetDeclarations.SparqlWherePatternsFunction,
       );
     }
     if (
@@ -572,7 +573,7 @@ const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
 /**
  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
  */
-function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.Pattern {
+function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.BgpPattern {
   return {
     triples: [
       {

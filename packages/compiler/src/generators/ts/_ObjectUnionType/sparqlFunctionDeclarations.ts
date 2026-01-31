@@ -50,20 +50,20 @@ export function sparqlFunctionDeclarations(
           type: `{ filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }`,
         },
       ],
-      returnType: "readonly sparqljs.Pattern[]",
+      returnType: `readonly ${syntheticNamePrefix}SparqlPattern[]`,
       statements: [
-        `const patterns: sparqljs.Pattern[] = [];`,
+        `let patterns: ${syntheticNamePrefix}SparqlPattern[] = [];`,
         `\
 const subject = parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}");
 if (subject.termType === "Variable") {
-  patterns.push(${this.identifierType.sparqlWherePatternsFunction}({
+  patterns = patterns.concat(${this.identifierType.sparqlWherePatternsFunction}({
       filter: parameters?.filter?.${syntheticNamePrefix}identifier,
       ignoreRdfType: false,
       preferredLanguages: parameters?.preferredLanguages,
-      propertyPatterns: "[]",
-      schema: this.identifierType.schema,
-      valueVariable: "subject",
-      variablePrefix: "subject",
+      propertyPatterns: [],
+      schema: ${this.identifierType.schema},
+      valueVariable: subject,
+      variablePrefix: subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}",
   }));
 }`,
         `patterns.push({ patterns: [${this.concreteMemberTypes

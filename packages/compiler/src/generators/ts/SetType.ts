@@ -20,7 +20,7 @@ export class SetType<
 
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}setSparqlWherePatterns(${this.itemType.sparqlWherePatternsFunction})`;
+    return `${syntheticNamePrefix}setSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression(
@@ -73,13 +73,13 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       return itemSparqlWherePatterns;
     }
     
-    const [optionalSparqlWherePatterns, liftSparqlWherePatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(itemSparqlWherePatterns);
-    return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
+    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatterns);
+    return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,
             dependencies: {
-              ...sharedSnippetDeclarations.liftSparqlWherePatterns,
-              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              ...sharedSnippetDeclarations.liftSparqlPatterns,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },
           })
         : {},

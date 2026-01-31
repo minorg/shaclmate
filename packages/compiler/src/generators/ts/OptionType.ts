@@ -264,17 +264,17 @@ type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}MaybeFilter<ItemFilterT>, ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (filter === null) {
-      const [itemSparqlWherePatterns, liftSparqlWherePatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
-      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlWherePatterns]
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
+      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 
-    const [itemSparqlWherePatterns, liftSparqlWherePatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
-    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
+    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,
             dependencies: {
-              ...sharedSnippetDeclarations.liftSparqlWherePatterns,
-              ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+              ...sharedSnippetDeclarations.liftSparqlPatterns,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },
           })
         : {},
@@ -289,7 +289,7 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
 
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}maybeSparqlWherePatterns(${this.itemType.sparqlWherePatternsFunction})`;
+    return `${syntheticNamePrefix}maybeSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override toJsonExpression({

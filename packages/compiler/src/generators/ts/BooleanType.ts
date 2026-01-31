@@ -106,7 +106,7 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
               code: `\
 const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.value !== "undefined") {
@@ -118,7 +118,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
   }`,
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,
-                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },
           )

@@ -196,7 +196,7 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
               code: `\
 const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (typeof filter?.in !== "undefined") {
       filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
@@ -207,7 +207,7 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,
                 ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
-                ...sharedSnippetDeclarations.SparqlWherePatternTypes,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },
           )

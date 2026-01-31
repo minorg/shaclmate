@@ -102,7 +102,7 @@ interface $BooleanFilter {
 type $BooleanSchema = Readonly<{ defaultValue?: boolean, in?: readonly boolean[], kind: "BooleanType", languageIn?: readonly string[] }>;
 const $booleanSparqlWherePatterns: $SparqlWherePatternsFunction<$BooleanFilter, $BooleanSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.value !== "undefined") {
@@ -141,7 +141,7 @@ interface $DateFilter {
 type $DateSchema = Readonly<{ defaultValue?: Date, in?: readonly Date[], kind: "DateTimeType" | "DateType", languageIn?: readonly string[] }>;
 const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<$DateFilter, $DateSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -505,7 +505,7 @@ class $IdentifierSet {
 
 const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<$IdentifierFilter, $IdentifierSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -626,17 +626,17 @@ export class $LazyObjectSet<ObjectIdentifierT extends rdfjs.BlankNode | rdfjs.Na
   }
 }
 
-function $liftSparqlWherePatterns(sparqlWherePatterns: Iterable<$SparqlWherePattern>): [readonly $SparqlWherePattern[], readonly $SparqlWhereFilterPattern[]] {
-  const liftedSparqlWherePatterns: $SparqlWhereFilterPattern[] = [];
-  const unliftedSparqlWherePatterns: $SparqlWherePattern[] = [];
-  for (const sparqlWherePattern of sparqlWherePatterns) {
-    if (sparqlWherePattern.type === "filter" && sparqlWherePattern.lift) {
-      liftedSparqlWherePatterns.push(sparqlWherePattern);
+function $liftSparqlPatterns(patterns: Iterable<$SparqlPattern>): [readonly $SparqlPattern[], readonly $SparqlFilterPattern[]] {
+  const liftedPatterns: $SparqlFilterPattern[] = [];
+  const unliftedPatterns: $SparqlPattern[] = [];
+  for (const pattern of patterns) {
+    if (pattern.type === "filter" && pattern.lift) {
+      liftedPatterns.push(pattern);
     } else {
-      unliftedSparqlWherePatterns.push(sparqlWherePattern); 
+      unliftedPatterns.push(pattern); 
     }
   }
-  return [unliftedSparqlWherePatterns, liftedSparqlWherePatterns];
+  return [unliftedPatterns, liftedPatterns];
 }
 
 function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): $SparqlWherePatternsFunction<$CollectionFilter<ItemFilterT>, $CollectionSchema<ItemSchemaT>> {
@@ -647,7 +647,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatte
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
     const listVariable = parameters.valueVariable;
-    const patterns: $SparqlWherePattern[] = [];
+    const patterns: $SparqlPattern[] = [];
     const variable = (suffix: string) => dataFactory.variable!(`${parameters.variablePrefix}${suffix}`);
     const variablePrefix = (suffix: string) => `${parameters.variablePrefix}${suffix}`;
 
@@ -691,7 +691,7 @@ function $listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatte
       });
     }
 
-    const optionalPatterns: $SparqlWherePattern[] = [];
+    const optionalPatterns: $SparqlPattern[] = [];
     
     const restNVariable = variable("RestN");
     // ?list rdf:rest+ ?restN
@@ -792,12 +792,12 @@ type $MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }
 function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): $SparqlWherePatternsFunction<$MaybeFilter<ItemFilterT>, $MaybeSchema<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (filter === null) {
-      const [itemSparqlWherePatterns, liftSparqlWherePatterns] = $liftSparqlWherePatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
-      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlWherePatterns]
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
+      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 
-    const [itemSparqlWherePatterns, liftSparqlWherePatterns] = $liftSparqlWherePatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
-    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
+    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }
 
@@ -809,7 +809,7 @@ const $namedNodeIdentifierTypeSchema = { kind: "NamedNodeType" as const };
 type $NamedNodeSchema = Readonly<{ defaultValue?: rdfjs.NamedNode, in?: readonly rdfjs.NamedNode[], kind: "NamedNodeType" }>;
 const $namedNodeSparqlWherePatterns: $SparqlWherePatternsFunction<$NamedNodeFilter, $NamedNodeSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (typeof filter?.in !== "undefined") {
       filterPatterns.push($sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
@@ -984,7 +984,7 @@ interface $NumberFilter {
 type $NumberSchema = Readonly<{ defaultValue?: number, in?: readonly number[], kind: "FloatType" | "IntType", languageIn?: readonly string[] }>;
 const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<$NumberFilter, $NumberSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -1076,15 +1076,15 @@ function $setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatter
       return itemSparqlWherePatterns;
     }
     
-    const [optionalSparqlWherePatterns, liftSparqlWherePatterns] = $liftSparqlWherePatterns(itemSparqlWherePatterns);
-    return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlWherePatterns];
+    const [optionalSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(itemSparqlWherePatterns);
+    return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }
 
 /**
  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
  */
-function $sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.Pattern {
+function $sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.BgpPattern {
   return {
     triples: [
       {
@@ -1108,7 +1108,7 @@ function $sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedN
   };
 }
 
-function $sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): $SparqlWhereFilterPattern {
+function $sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): $SparqlFilterPattern {
   return {
     expression: {
       args: [valueVariable, valueIn.map(inValue => {
@@ -1153,10 +1153,10 @@ interface $StringFilter {
   readonly minLength?: number;
 }
 
-type $StringSchema = Readonly<{ kind: "StringType", languageIn?: readonly string[] }>;
+type $StringSchema = Readonly<{ defaultValue?: string, in?: readonly string[], kind: "StringType", languageIn?: readonly string[] }>;
 const $stringSparqlWherePatterns: $SparqlWherePatternsFunction<$StringFilter, $StringSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
@@ -1205,7 +1205,7 @@ function $termLikeSparqlWherePatterns({
   schema,
   valueVariable
 }: {
-  filterPatterns: readonly $SparqlWhereFilterPattern[],
+  filterPatterns: readonly $SparqlFilterPattern[],
   preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
@@ -1213,8 +1213,8 @@ function $termLikeSparqlWherePatterns({
     in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
   }>,
   valueVariable: rdfjs.Variable;
-}): readonly $SparqlWherePattern[] {
-  let patterns: $SparqlWherePattern[];
+}): readonly $SparqlPattern[] {
+  let patterns: $SparqlPattern[];
 
   if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
     // Filter patterns make the property required
@@ -1245,7 +1245,7 @@ function $termLikeSparqlWherePatterns({
 type $TermSchema = Readonly<{ defaultValue?: rdfjs.Literal | rdfjs.NamedNode, in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[], kind: "TermType" }>;
 const $termSparqlWherePatterns: $SparqlWherePatternsFunction<$TermFilter, $TermSchema> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: $SparqlWhereFilterPattern[] = [];
+    const filterPatterns: $SparqlFilterPattern[] = [];
 
     if (filter) {
       if (typeof filter.datatypeIn !== "undefined") {
@@ -1363,15 +1363,15 @@ function $toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.Na
 }
 
 const $unconstrainedBooleanSchema = { kind: "BooleanType" as const };
-const $unconstrainedDateSchema = { defaultValue: {  }, kind: "DateType" as const };
-const $unconstrainedDateTimeSchema = { defaultValue: {  }, kind: "DateTimeType" as const };
+const $unconstrainedDateSchema = { kind: "DateType" as const };
+const $unconstrainedDateTimeSchema = { kind: "DateTimeType" as const };
 const $unconstrainedFloatSchema = { kind: "FloatType" as const };
 const $unconstrainedIdentifierSchema = { kind: "IdentifierType" as const };
 const $unconstrainedLiteralSchema = { kind: "LiteralType" as const };
 const $unconstrainedStringSchema = { kind: "StringType" as const };
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never
-type $SparqlWhereFilterPattern = sparqljs.FilterPattern & { lift: boolean };
-type $SparqlWherePattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | $SparqlWhereFilterPattern;
+type $SparqlFilterPattern = sparqljs.FilterPattern & { lift: boolean };
+type $SparqlPattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | $SparqlFilterPattern;
 type $SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   filter?: FilterT;
   ignoreRdfType?: boolean;
@@ -1381,7 +1381,7 @@ type $SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   valueVariable: rdfjs.Variable;
   variablePrefix: string;
 }>;
-type $SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: $SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly $SparqlWherePattern[];
+type $SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: $SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly $SparqlPattern[];
 export class $NamedDefaultPartial {
     readonly $identifier: $NamedDefaultPartial.$Identifier;
     readonly $type = "$NamedDefaultPartial";
@@ -1497,8 +1497,8 @@ export namespace $NamedDefaultPartial {
         return [];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: $NamedDefaultPartial.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: $NamedDefaultPartial.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("namedDefaultPartial");
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: $NamedDefaultPartial.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "namedDefaultPartial")) })); }
 
@@ -1624,8 +1624,8 @@ export namespace $DefaultPartial {
         return [];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: $DefaultPartial.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: $DefaultPartial.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("defaultPartial");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: $DefaultPartial.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultPartial")) })); }
 
@@ -1748,17 +1748,17 @@ export namespace UuidV4IriIdentifierInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty`), predicate: UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: UuidV4IriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: UuidV4IriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierInterface");
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: UuidV4IriIdentifierInterface.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.uuidV4IriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty`), predicate: UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty.identifier, subject }], type: "bgp" }], schema: UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.uuidV4IriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty`), predicate: UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierInterface"))}UuidV4IriProperty` }));
         return patterns;
     }
 
@@ -1916,17 +1916,17 @@ export namespace UuidV4IriIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty`), predicate: UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: UuidV4IriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: UuidV4IriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("uuidV4IriIdentifierClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: UuidV4IriIdentifierClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.uuidV4IriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty`), predicate: UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier, subject }], type: "bgp" }], schema: UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.uuidV4IriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty`), predicate: UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "uuidV4IriIdentifierClass"))}UuidV4IriProperty` }));
         return patterns;
     }
 
@@ -2526,7 +2526,7 @@ export namespace UnionDiscriminantsClass {
               })).map(values => values.toArray()).map(valuesArray => rdfjsResource.Resource.Values.fromValue({ focusResource: $parameters.resource, predicate: UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty.identifier, value: valuesArray })).chain(values => values.head())).map(setIriOrStringProperty => ({ $identifier, optionalClassOrClassOrStringProperty, optionalIriOrLiteralProperty, optionalIriOrStringProperty, requiredClassOrClassOrStringProperty, requiredIriOrLiteralProperty, requiredIriOrStringProperty, setClassOrClassOrStringProperty, setIriOrLiteralProperty, setIriOrStringProperty })))))))))))
     }
 
-    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["UnionDiscriminantsClass"] }) }, optionalClassOrClassOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/optionalClassOrClassOrStringProperty"), kind: "ShaclProperty" as const, name: "optionalClassOrClassOrStringProperty", type: () => ({ item: { discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "0-ClassUnionMember1": { discriminantValues: ["0-ClassUnionMember1"], type: ClassUnionMember1.$schema },"1-ClassUnionMember2": { discriminantValues: ["1-ClassUnionMember2"], type: ClassUnionMember2.$schema },"2-string": { discriminantValues: ["2-string"], type: $unconstrainedStringSchema } } }, kind: "OptionType" as const }) }, optionalIriOrLiteralProperty: { identifier: dataFactory.namedNode("http://example.com/optionalIriOrLiteralProperty"), kind: "ShaclProperty" as const, name: "optionalIriOrLiteralProperty", type: () => ({ item: { discriminant: { kind: "inline" }, kind: "UnionType" as const, members: { "NamedNode": { discriminantValues: ["NamedNode"], type: $namedNodeIdentifierTypeSchema },"Literal": { discriminantValues: ["Literal"], type: $unconstrainedLiteralSchema } } }, kind: "OptionType" as const }) }, optionalIriOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/optionalIriOrStringProperty"), kind: "ShaclProperty" as const, name: "optionalIriOrStringProperty", type: () => ({ item: { discriminant: { kind: "typeof" }, kind: "UnionType" as const, members: { "object": { discriminantValues: ["object"], type: $namedNodeIdentifierTypeSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "OptionType" as const }) }, requiredClassOrClassOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/requiredClassOrClassOrStringProperty"), kind: "ShaclProperty" as const, name: "requiredClassOrClassOrStringProperty", type: () => ({ discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "0-ClassUnionMember1": { discriminantValues: ["0-ClassUnionMember1"], type: ClassUnionMember1.$schema },"1-ClassUnionMember2": { discriminantValues: ["1-ClassUnionMember2"], type: ClassUnionMember2.$schema },"2-string": { discriminantValues: ["2-string"], type: $unconstrainedStringSchema } } }) }, requiredIriOrLiteralProperty: { identifier: dataFactory.namedNode("http://example.com/requiredIriOrLiteralProperty"), kind: "ShaclProperty" as const, name: "requiredIriOrLiteralProperty", type: () => ({ discriminant: { kind: "inline" }, kind: "UnionType" as const, members: { "NamedNode": { discriminantValues: ["NamedNode"], type: $namedNodeIdentifierTypeSchema },"Literal": { discriminantValues: ["Literal"], type: $unconstrainedLiteralSchema } } }) }, requiredIriOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/requiredIriOrStringProperty"), kind: "ShaclProperty" as const, name: "requiredIriOrStringProperty", type: () => ({ discriminant: { kind: "typeof" }, kind: "UnionType" as const, members: { "object": { discriminantValues: ["object"], type: $namedNodeIdentifierTypeSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }) }, setClassOrClassOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/setClassOrClassOrStringProperty"), kind: "ShaclProperty" as const, name: "setClassOrClassOrStringProperty", type: () => ({ item: { discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "0-ClassUnionMember1": { discriminantValues: ["0-ClassUnionMember1"], type: ClassUnionMember1.$schema },"1-ClassUnionMember2": { discriminantValues: ["1-ClassUnionMember2"], type: ClassUnionMember2.$schema },"2-string": { discriminantValues: ["2-string"], type: $unconstrainedStringSchema } } }, kind: "SetType" as const, minCount: 0 }) }, setIriOrLiteralProperty: { identifier: dataFactory.namedNode("http://example.com/setIriOrLiteralProperty"), kind: "ShaclProperty" as const, name: "setIriOrLiteralProperty", type: () => ({ item: { discriminant: { kind: "inline" }, kind: "UnionType" as const, members: { "NamedNode": { discriminantValues: ["NamedNode"], type: $namedNodeIdentifierTypeSchema },"Literal": { discriminantValues: ["Literal"], type: $unconstrainedLiteralSchema } } }, kind: "SetType" as const, minCount: 0 }) }, setIriOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/setIriOrStringProperty"), kind: "ShaclProperty" as const, name: "setIriOrStringProperty", type: () => ({ item: { discriminant: { kind: "typeof" }, kind: "UnionType" as const, members: { "object": { discriminantValues: ["object"], type: $namedNodeIdentifierTypeSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "SetType" as const, minCount: 0 }) } } } as const;
+    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["UnionDiscriminantsClass"] }) }, optionalClassOrClassOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/optionalClassOrClassOrStringProperty"), kind: "ShaclProperty" as const, name: "optionalClassOrClassOrStringProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "0-ClassUnionMember1": { discriminantValues: ["0-ClassUnionMember1"], type: ClassUnionMember1.$schema },"1-ClassUnionMember2": { discriminantValues: ["1-ClassUnionMember2"], type: ClassUnionMember2.$schema },"2-string": { discriminantValues: ["2-string"], type: $unconstrainedStringSchema } } }, kind: "OptionType" as const }) }, optionalIriOrLiteralProperty: { identifier: dataFactory.namedNode("http://example.com/optionalIriOrLiteralProperty"), kind: "ShaclProperty" as const, name: "optionalIriOrLiteralProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "NamedNode": { discriminantValues: ["NamedNode"], type: $namedNodeIdentifierTypeSchema },"Literal": { discriminantValues: ["Literal"], type: $unconstrainedLiteralSchema } } }, kind: "OptionType" as const }) }, optionalIriOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/optionalIriOrStringProperty"), kind: "ShaclProperty" as const, name: "optionalIriOrStringProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "object": { discriminantValues: ["object"], type: $namedNodeIdentifierTypeSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "OptionType" as const }) }, requiredClassOrClassOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/requiredClassOrClassOrStringProperty"), kind: "ShaclProperty" as const, name: "requiredClassOrClassOrStringProperty", type: () => ({ kind: "UnionType" as const, members: { "0-ClassUnionMember1": { discriminantValues: ["0-ClassUnionMember1"], type: ClassUnionMember1.$schema },"1-ClassUnionMember2": { discriminantValues: ["1-ClassUnionMember2"], type: ClassUnionMember2.$schema },"2-string": { discriminantValues: ["2-string"], type: $unconstrainedStringSchema } } }) }, requiredIriOrLiteralProperty: { identifier: dataFactory.namedNode("http://example.com/requiredIriOrLiteralProperty"), kind: "ShaclProperty" as const, name: "requiredIriOrLiteralProperty", type: () => ({ kind: "UnionType" as const, members: { "NamedNode": { discriminantValues: ["NamedNode"], type: $namedNodeIdentifierTypeSchema },"Literal": { discriminantValues: ["Literal"], type: $unconstrainedLiteralSchema } } }) }, requiredIriOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/requiredIriOrStringProperty"), kind: "ShaclProperty" as const, name: "requiredIriOrStringProperty", type: () => ({ kind: "UnionType" as const, members: { "object": { discriminantValues: ["object"], type: $namedNodeIdentifierTypeSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }) }, setClassOrClassOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/setClassOrClassOrStringProperty"), kind: "ShaclProperty" as const, name: "setClassOrClassOrStringProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "0-ClassUnionMember1": { discriminantValues: ["0-ClassUnionMember1"], type: ClassUnionMember1.$schema },"1-ClassUnionMember2": { discriminantValues: ["1-ClassUnionMember2"], type: ClassUnionMember2.$schema },"2-string": { discriminantValues: ["2-string"], type: $unconstrainedStringSchema } } }, kind: "SetType" as const, minCount: 0 }) }, setIriOrLiteralProperty: { identifier: dataFactory.namedNode("http://example.com/setIriOrLiteralProperty"), kind: "ShaclProperty" as const, name: "setIriOrLiteralProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "NamedNode": { discriminantValues: ["NamedNode"], type: $namedNodeIdentifierTypeSchema },"Literal": { discriminantValues: ["Literal"], type: $unconstrainedLiteralSchema } } }, kind: "SetType" as const, minCount: 0 }) }, setIriOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/setIriOrStringProperty"), kind: "ShaclProperty" as const, name: "setIriOrStringProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "object": { discriminantValues: ["object"], type: $namedNodeIdentifierTypeSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "SetType" as const, minCount: 0 }) } } } as const;
 
     export function $sparqlConstructQuery(parameters?: { filter?: UnionDiscriminantsClass.$Filter; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">): sparqljs.ConstructQuery {
         const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {}
@@ -2540,7 +2540,7 @@ export namespace UnionDiscriminantsClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalClassOrClassOrStringProperty.identifier, subject });
         triples.push(...ClassUnionMember1.$sparqlConstructTriples({ subject: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty` }));
         triples.push(...ClassUnionMember2.$sparqlConstructTriples({ subject: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty` }));
@@ -2559,179 +2559,179 @@ export namespace UnionDiscriminantsClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: UnionDiscriminantsClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: UnionDiscriminantsClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("unionDiscriminantsClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: UnionDiscriminantsClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;readonly "2-string"?: $StringFilter } }, { kind: "UnionType", members: { readonly "0-ClassUnionMember1": { discriminantValues: readonly string[], type: typeof ClassUnionMember1.$schema };readonly "1-ClassUnionMember2": { discriminantValues: readonly string[], type: typeof ClassUnionMember2.$schema };readonly "2-string": { discriminantValues: readonly string[], type: $StringSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ filter: filter?.on?.["0-ClassUnionMember1"], schema: schema["0-ClassUnionMember1"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ filter: filter?.on?.["0-ClassUnionMember1"], schema: schema.members["0-ClassUnionMember1"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ filter: filter?.on?.["1-ClassUnionMember2"], schema: schema["1-ClassUnionMember2"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ filter: filter?.on?.["1-ClassUnionMember2"], schema: schema.members["1-ClassUnionMember2"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["2-string"], schema: schema["2-string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["2-string"], schema: schema.members["2-string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.optionalClassOrClassOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalClassOrClassOrStringProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.optionalClassOrClassOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.optionalClassOrClassOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalClassOrClassOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.optionalClassOrClassOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalClassOrClassOrStringProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "NamedNode"?: $NamedNodeFilter;readonly "Literal"?: $LiteralFilter } }, { kind: "UnionType", members: { readonly "NamedNode": { discriminantValues: readonly string[], type: $NamedNodeSchema };readonly "Literal": { discriminantValues: readonly string[], type: $LiteralSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["NamedNode"], schema: schema["NamedNode"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["NamedNode"], schema: schema.members["NamedNode"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($literalSparqlWherePatterns({ filter: filter?.on?.["Literal"], schema: schema["Literal"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($literalSparqlWherePatterns({ filter: filter?.on?.["Literal"], schema: schema.members["Literal"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.optionalIriOrLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrLiteralProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrLiteralProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.optionalIriOrLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrLiteralProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.optionalIriOrLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrLiteralProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "object"?: $NamedNodeFilter;readonly "string"?: $StringFilter } }, { kind: "UnionType", members: { readonly "object": { discriminantValues: readonly string[], type: $NamedNodeSchema };readonly "string": { discriminantValues: readonly string[], type: $StringSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["object"], schema: schema["object"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["object"], schema: schema.members["object"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema["string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema.members["string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.optionalIriOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrStringProperty` }));
+        }))({ filter: parameters?.filter?.optionalIriOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.optionalIriOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}OptionalIriOrStringProperty` }));
         patterns = patterns.concat((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ filter: filter?.on?.["0-ClassUnionMember1"], schema: schema["0-ClassUnionMember1"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ filter: filter?.on?.["0-ClassUnionMember1"], schema: schema.members["0-ClassUnionMember1"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ filter: filter?.on?.["1-ClassUnionMember2"], schema: schema["1-ClassUnionMember2"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ filter: filter?.on?.["1-ClassUnionMember2"], schema: schema.members["1-ClassUnionMember2"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["2-string"], schema: schema["2-string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["2-string"], schema: schema.members["2-string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        })({ filter: parameters?.filter?.requiredClassOrClassOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.requiredClassOrClassOrStringProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.requiredClassOrClassOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredClassOrClassOrStringProperty` }));
+        })({ filter: parameters?.filter?.requiredClassOrClassOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.requiredClassOrClassOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.requiredClassOrClassOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredClassOrClassOrStringProperty` }));
         patterns = patterns.concat((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["NamedNode"], schema: schema["NamedNode"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["NamedNode"], schema: schema.members["NamedNode"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($literalSparqlWherePatterns({ filter: filter?.on?.["Literal"], schema: schema["Literal"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($literalSparqlWherePatterns({ filter: filter?.on?.["Literal"], schema: schema.members["Literal"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        })({ filter: parameters?.filter?.requiredIriOrLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrLiteralProperty`), predicate: UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrLiteralProperty` }));
+        })({ filter: parameters?.filter?.requiredIriOrLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrLiteralProperty`), predicate: UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.requiredIriOrLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrLiteralProperty` }));
         patterns = patterns.concat((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["object"], schema: schema["object"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["object"], schema: schema.members["object"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema["string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema.members["string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        })({ filter: parameters?.filter?.requiredIriOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrStringProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        })({ filter: parameters?.filter?.requiredIriOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}RequiredIriOrStringProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<{ readonly on?: { readonly "0-ClassUnionMember1"?: ClassUnionMember1.$Filter;readonly "1-ClassUnionMember2"?: ClassUnionMember2.$Filter;readonly "2-string"?: $StringFilter } }, { kind: "UnionType", members: { readonly "0-ClassUnionMember1": { discriminantValues: readonly string[], type: typeof ClassUnionMember1.$schema };readonly "1-ClassUnionMember2": { discriminantValues: readonly string[], type: typeof ClassUnionMember2.$schema };readonly "2-string": { discriminantValues: readonly string[], type: $StringSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ filter: filter?.on?.["0-ClassUnionMember1"], schema: schema["0-ClassUnionMember1"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ClassUnionMember1.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ filter: filter?.on?.["0-ClassUnionMember1"], schema: schema.members["0-ClassUnionMember1"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ filter: filter?.on?.["1-ClassUnionMember2"], schema: schema["1-ClassUnionMember2"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ClassUnionMember2.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ filter: filter?.on?.["1-ClassUnionMember2"], schema: schema.members["1-ClassUnionMember2"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["2-string"], schema: schema["2-string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["2-string"], schema: schema.members["2-string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.setClassOrClassOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetClassOrClassOrStringProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.setClassOrClassOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetClassOrClassOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetClassOrClassOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetClassOrClassOrStringProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<{ readonly on?: { readonly "NamedNode"?: $NamedNodeFilter;readonly "Literal"?: $LiteralFilter } }, { kind: "UnionType", members: { readonly "NamedNode": { discriminantValues: readonly string[], type: $NamedNodeSchema };readonly "Literal": { discriminantValues: readonly string[], type: $LiteralSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["NamedNode"], schema: schema["NamedNode"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["NamedNode"], schema: schema.members["NamedNode"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($literalSparqlWherePatterns({ filter: filter?.on?.["Literal"], schema: schema["Literal"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($literalSparqlWherePatterns({ filter: filter?.on?.["Literal"], schema: schema.members["Literal"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.setIriOrLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrLiteralProperty`), predicate: UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrLiteralProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.setIriOrLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrLiteralProperty`), predicate: UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.setIriOrLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrLiteralProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<{ readonly on?: { readonly "object"?: $NamedNodeFilter;readonly "string"?: $StringFilter } }, { kind: "UnionType", members: { readonly "object": { discriminantValues: readonly string[], type: $NamedNodeSchema };readonly "string": { discriminantValues: readonly string[], type: $StringSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["object"], schema: schema["object"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($namedNodeSparqlWherePatterns({ filter: filter?.on?.["object"], schema: schema.members["object"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema["string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema.members["string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.setIriOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty.identifier, subject }], type: "bgp" }], schema: UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrStringProperty` }));
+        }))({ filter: parameters?.filter?.setIriOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrStringProperty`), predicate: UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "unionDiscriminantsClass"))}SetIriOrStringProperty` }));
         return patterns;
     }
 
@@ -2958,7 +2958,7 @@ export namespace TermPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}RdfType`) },
@@ -2978,8 +2978,8 @@ export namespace TermPropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: TermPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: TermPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("termPropertiesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -3019,15 +3019,15 @@ export namespace TermPropertiesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: TermPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns($blankNodeSparqlWherePatterns)({ filter: parameters?.filter?.blankNodeTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BlankNodeTermProperty`), predicate: TermPropertiesClass.$schema.properties.blankNodeTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.blankNodeTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BlankNodeTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BlankNodeTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($booleanSparqlWherePatterns)({ filter: parameters?.filter?.booleanTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BooleanTermProperty`), predicate: TermPropertiesClass.$schema.properties.booleanTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.booleanTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BooleanTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BooleanTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($dateSparqlWherePatterns)({ filter: parameters?.filter?.dateTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTermProperty`), predicate: TermPropertiesClass.$schema.properties.dateTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.dateTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($dateSparqlWherePatterns)({ filter: parameters?.filter?.dateTimeTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTimeTermProperty`), predicate: TermPropertiesClass.$schema.properties.dateTimeTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.dateTimeTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTimeTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTimeTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.iriTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}IriTermProperty`), predicate: TermPropertiesClass.$schema.properties.iriTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.iriTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}IriTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}IriTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($literalSparqlWherePatterns)({ filter: parameters?.filter?.literalTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}LiteralTermProperty`), predicate: TermPropertiesClass.$schema.properties.literalTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.literalTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}LiteralTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}LiteralTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($numberSparqlWherePatterns)({ filter: parameters?.filter?.numberTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}NumberTermProperty`), predicate: TermPropertiesClass.$schema.properties.numberTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.numberTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}NumberTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}NumberTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.stringTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}StringTermProperty`), predicate: TermPropertiesClass.$schema.properties.stringTermProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.stringTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}StringTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}StringTermProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($termSparqlWherePatterns)({ filter: parameters?.filter?.termProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}TermProperty`), predicate: TermPropertiesClass.$schema.properties.termProperty.identifier, subject }], type: "bgp" }], schema: TermPropertiesClass.$schema.properties.termProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}TermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}TermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$BlankNodeFilter, $BlankNodeSchema>($blankNodeSparqlWherePatterns)({ filter: parameters?.filter?.blankNodeTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BlankNodeTermProperty`), predicate: TermPropertiesClass.$schema.properties.blankNodeTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.blankNodeTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BlankNodeTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BlankNodeTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$BooleanFilter, $BooleanSchema>($booleanSparqlWherePatterns)({ filter: parameters?.filter?.booleanTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BooleanTermProperty`), predicate: TermPropertiesClass.$schema.properties.booleanTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.booleanTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BooleanTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}BooleanTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$DateFilter, $DateSchema>($dateSparqlWherePatterns)({ filter: parameters?.filter?.dateTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTermProperty`), predicate: TermPropertiesClass.$schema.properties.dateTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.dateTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$DateFilter, $DateSchema>($dateSparqlWherePatterns)({ filter: parameters?.filter?.dateTimeTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTimeTermProperty`), predicate: TermPropertiesClass.$schema.properties.dateTimeTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.dateTimeTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTimeTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}DateTimeTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.iriTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}IriTermProperty`), predicate: TermPropertiesClass.$schema.properties.iriTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.iriTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}IriTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}IriTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$LiteralFilter, $LiteralSchema>($literalSparqlWherePatterns)({ filter: parameters?.filter?.literalTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}LiteralTermProperty`), predicate: TermPropertiesClass.$schema.properties.literalTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.literalTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}LiteralTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}LiteralTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$NumberFilter, $NumberSchema>($numberSparqlWherePatterns)({ filter: parameters?.filter?.numberTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}NumberTermProperty`), predicate: TermPropertiesClass.$schema.properties.numberTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.numberTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}NumberTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}NumberTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.stringTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}StringTermProperty`), predicate: TermPropertiesClass.$schema.properties.stringTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.stringTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}StringTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}StringTermProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$TermFilter, $TermSchema>($termSparqlWherePatterns)({ filter: parameters?.filter?.termProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}TermProperty`), predicate: TermPropertiesClass.$schema.properties.termProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: TermPropertiesClass.$schema.properties.termProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}TermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "termPropertiesClass"))}TermProperty` }));
         return patterns;
     }
 
@@ -3173,17 +3173,17 @@ export namespace Sha256IriIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty`), predicate: Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: Sha256IriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: Sha256IriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("sha256IriIdentifierClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: Sha256IriIdentifierClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.sha256IriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty`), predicate: Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier, subject }], type: "bgp" }], schema: Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.sha256IriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty`), predicate: Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "sha256IriIdentifierClass"))}Sha256IriProperty` }));
         return patterns;
     }
 
@@ -3337,7 +3337,7 @@ export namespace RecursiveClassUnionMember2 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("recursiveClassUnionMember2");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2"))}RdfType`) },
@@ -3348,8 +3348,8 @@ export namespace RecursiveClassUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: RecursiveClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: RecursiveClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("recursiveClassUnionMember2");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember2"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -3542,7 +3542,7 @@ export namespace RecursiveClassUnionMember1 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("recursiveClassUnionMember1");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1"))}RdfType`) },
@@ -3553,8 +3553,8 @@ export namespace RecursiveClassUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: RecursiveClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: RecursiveClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("recursiveClassUnionMember1");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "recursiveClassUnionMember1"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -3741,21 +3741,21 @@ export namespace PropertyVisibilitiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PropertyVisibilitiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PropertyVisibilitiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("propertyVisibilitiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PropertyVisibilitiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier, subject }], type: "bgp" }], schema: PropertyVisibilitiesClass.$schema.properties.privateProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier, subject }], type: "bgp" }], schema: PropertyVisibilitiesClass.$schema.properties.protectedProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.publicProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier, subject }], type: "bgp" }], schema: PropertyVisibilitiesClass.$schema.properties.publicProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyVisibilitiesClass.$schema.properties.privateProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PrivateProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyVisibilitiesClass.$schema.properties.protectedProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}ProtectedProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.publicProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty`), predicate: PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyVisibilitiesClass.$schema.properties.publicProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyVisibilitiesClass"))}PublicProperty` }));
         return patterns;
     }
 
@@ -3930,7 +3930,7 @@ export namespace PropertyCardinalitiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("propertyCardinalitiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.optionalStringProperty.identifier, subject });
@@ -3938,15 +3938,15 @@ export namespace PropertyCardinalitiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PropertyCardinalitiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PropertyCardinalitiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("propertyCardinalitiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PropertyCardinalitiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass")) })); }
 
-        patterns = patterns.concat($setSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.emptyStringSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty.identifier, subject }], type: "bgp" }], schema: PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.nonEmptyStringSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty.identifier, subject }], type: "bgp" }], schema: PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.optionalStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.optionalStringProperty.identifier, subject }], type: "bgp" }], schema: PropertyCardinalitiesClass.$schema.properties.optionalStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.requiredStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}RequiredStringProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.requiredStringProperty.identifier, subject }], type: "bgp" }], schema: PropertyCardinalitiesClass.$schema.properties.requiredStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}RequiredStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}RequiredStringProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.emptyStringSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}EmptyStringSetProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.nonEmptyStringSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}NonEmptyStringSetProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.optionalStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.optionalStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyCardinalitiesClass.$schema.properties.optionalStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}OptionalStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.requiredStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}RequiredStringProperty`), predicate: PropertyCardinalitiesClass.$schema.properties.requiredStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PropertyCardinalitiesClass.$schema.properties.requiredStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}RequiredStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "propertyCardinalitiesClass"))}RequiredStringProperty` }));
         return patterns;
     }
 
@@ -4080,7 +4080,7 @@ export namespace PartialInterfaceUnionMember2 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterfaceUnionMember2");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}RdfType`) },
@@ -4092,8 +4092,8 @@ export namespace PartialInterfaceUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterfaceUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterfaceUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterfaceUnionMember2");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -4133,7 +4133,7 @@ export namespace PartialInterfaceUnionMember2 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PartialInterfaceUnionMember2.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}LazilyResolvedStringProperty`), predicate: PartialInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: PartialInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}LazilyResolvedStringProperty`), predicate: PartialInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PartialInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember2"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -4282,7 +4282,7 @@ export namespace PartialInterfaceUnionMember1 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterfaceUnionMember1");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}RdfType`) },
@@ -4294,8 +4294,8 @@ export namespace PartialInterfaceUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterfaceUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterfaceUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterfaceUnionMember1");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -4335,7 +4335,7 @@ export namespace PartialInterfaceUnionMember1 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PartialInterfaceUnionMember1.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}LazilyResolvedStringProperty`), predicate: PartialInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: PartialInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}LazilyResolvedStringProperty`), predicate: PartialInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PartialInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterfaceUnionMember1"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -4504,7 +4504,7 @@ export namespace PartialClassUnionMember2 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("partialClassUnionMember2");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}RdfType`) },
@@ -4516,8 +4516,8 @@ export namespace PartialClassUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialClassUnionMember2");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -4557,7 +4557,7 @@ export namespace PartialClassUnionMember2 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PartialClassUnionMember2.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}LazilyResolvedStringProperty`), predicate: PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}LazilyResolvedStringProperty`), predicate: PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember2"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -4711,7 +4711,7 @@ export namespace PartialClassUnionMember1 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("partialClassUnionMember1");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}RdfType`) },
@@ -4723,8 +4723,8 @@ export namespace PartialClassUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialClassUnionMember1");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -4764,7 +4764,7 @@ export namespace PartialClassUnionMember1 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PartialClassUnionMember1.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}LazilyResolvedStringProperty`), predicate: PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}LazilyResolvedStringProperty`), predicate: PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClassUnionMember1"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -4916,21 +4916,21 @@ export namespace OrderedPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("orderedPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: OrderedPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: OrderedPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("orderedPropertiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: OrderedPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.orderedPropertyC, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier, subject }], type: "bgp" }], schema: OrderedPropertiesClass.$schema.properties.orderedPropertyC.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.orderedPropertyB, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier, subject }], type: "bgp" }], schema: OrderedPropertiesClass.$schema.properties.orderedPropertyB.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.orderedPropertyA, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier, subject }], type: "bgp" }], schema: OrderedPropertiesClass.$schema.properties.orderedPropertyA.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.orderedPropertyC, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: OrderedPropertiesClass.$schema.properties.orderedPropertyC.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyC` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.orderedPropertyB, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: OrderedPropertiesClass.$schema.properties.orderedPropertyB.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyB` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.orderedPropertyA, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA`), predicate: OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: OrderedPropertiesClass.$schema.properties.orderedPropertyA.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "orderedPropertiesClass"))}OrderedPropertyA` }));
         return patterns;
     }
 
@@ -5068,17 +5068,17 @@ export namespace NonClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty`), predicate: NonClass.$schema.properties.nonClassProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: NonClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: NonClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("nonClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: NonClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.nonClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty`), predicate: NonClass.$schema.properties.nonClassProperty.identifier, subject }], type: "bgp" }], schema: NonClass.$schema.properties.nonClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.nonClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty`), predicate: NonClass.$schema.properties.nonClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: NonClass.$schema.properties.nonClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "nonClass"))}NonClassProperty` }));
         return patterns;
     }
 
@@ -5213,17 +5213,17 @@ export namespace NoRdfTypeClassUnionMember2 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnionMember2");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property`), predicate: NoRdfTypeClassUnionMember2.$schema.properties.noRdfTypeClassUnionMember2Property.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: NoRdfTypeClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: NoRdfTypeClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnionMember2");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: NoRdfTypeClassUnionMember2.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.noRdfTypeClassUnionMember2Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property`), predicate: NoRdfTypeClassUnionMember2.$schema.properties.noRdfTypeClassUnionMember2Property.identifier, subject }], type: "bgp" }], schema: NoRdfTypeClassUnionMember2.$schema.properties.noRdfTypeClassUnionMember2Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.noRdfTypeClassUnionMember2Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property`), predicate: NoRdfTypeClassUnionMember2.$schema.properties.noRdfTypeClassUnionMember2Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: NoRdfTypeClassUnionMember2.$schema.properties.noRdfTypeClassUnionMember2Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember2"))}NoRdfTypeClassUnionMember2Property` }));
         return patterns;
     }
 
@@ -5358,17 +5358,17 @@ export namespace NoRdfTypeClassUnionMember1 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnionMember1");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property`), predicate: NoRdfTypeClassUnionMember1.$schema.properties.noRdfTypeClassUnionMember1Property.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: NoRdfTypeClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: NoRdfTypeClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnionMember1");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: NoRdfTypeClassUnionMember1.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.noRdfTypeClassUnionMember1Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property`), predicate: NoRdfTypeClassUnionMember1.$schema.properties.noRdfTypeClassUnionMember1Property.identifier, subject }], type: "bgp" }], schema: NoRdfTypeClassUnionMember1.$schema.properties.noRdfTypeClassUnionMember1Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.noRdfTypeClassUnionMember1Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property`), predicate: NoRdfTypeClassUnionMember1.$schema.properties.noRdfTypeClassUnionMember1Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: NoRdfTypeClassUnionMember1.$schema.properties.noRdfTypeClassUnionMember1Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnionMember1"))}NoRdfTypeClassUnionMember1Property` }));
         return patterns;
     }
 
@@ -5586,7 +5586,7 @@ export namespace MutablePropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}RdfType`) },
@@ -5604,8 +5604,8 @@ export namespace MutablePropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: MutablePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: MutablePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("mutablePropertiesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -5645,9 +5645,9 @@ export namespace MutablePropertiesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: MutablePropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns($listSparqlWherePatterns($stringSparqlWherePatterns))({ filter: parameters?.filter?.mutableListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableListProperty`), predicate: MutablePropertiesClass.$schema.properties.mutableListProperty.identifier, subject }], type: "bgp" }], schema: MutablePropertiesClass.$schema.properties.mutableListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableListProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.mutableSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableSetProperty`), predicate: MutablePropertiesClass.$schema.properties.mutableSetProperty.identifier, subject }], type: "bgp" }], schema: MutablePropertiesClass.$schema.properties.mutableSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableSetProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.mutableStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableStringProperty`), predicate: MutablePropertiesClass.$schema.properties.mutableStringProperty.identifier, subject }], type: "bgp" }], schema: MutablePropertiesClass.$schema.properties.mutableStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableStringProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$CollectionFilter<$StringFilter>, $CollectionSchema<$StringSchema>>($listSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns))({ filter: parameters?.filter?.mutableListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableListProperty`), predicate: MutablePropertiesClass.$schema.properties.mutableListProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: MutablePropertiesClass.$schema.properties.mutableListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableListProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.mutableSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableSetProperty`), predicate: MutablePropertiesClass.$schema.properties.mutableSetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: MutablePropertiesClass.$schema.properties.mutableSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableSetProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.mutableStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableStringProperty`), predicate: MutablePropertiesClass.$schema.properties.mutableStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: MutablePropertiesClass.$schema.properties.mutableStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "mutablePropertiesClass"))}MutableStringProperty` }));
         return patterns;
     }
 
@@ -5908,7 +5908,7 @@ export namespace ListPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}RdfType`) },
@@ -5936,8 +5936,8 @@ export namespace ListPropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ListPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ListPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("listPropertiesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -5977,9 +5977,9 @@ export namespace ListPropertiesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: ListPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns($listSparqlWherePatterns($namedNodeSparqlWherePatterns))({ filter: parameters?.filter?.iriListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}IriListProperty`), predicate: ListPropertiesClass.$schema.properties.iriListProperty.identifier, subject }], type: "bgp" }], schema: ListPropertiesClass.$schema.properties.iriListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}IriListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}IriListProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($listSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, NonClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])))({ filter: parameters?.filter?.objectListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}ObjectListProperty`), predicate: ListPropertiesClass.$schema.properties.objectListProperty.identifier, subject }], type: "bgp" }], schema: ListPropertiesClass.$schema.properties.objectListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}ObjectListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}ObjectListProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($listSparqlWherePatterns($stringSparqlWherePatterns))({ filter: parameters?.filter?.stringListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}StringListProperty`), predicate: ListPropertiesClass.$schema.properties.stringListProperty.identifier, subject }], type: "bgp" }], schema: ListPropertiesClass.$schema.properties.stringListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}StringListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}StringListProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$CollectionFilter<$NamedNodeFilter>, $CollectionSchema<$NamedNodeSchema>>($listSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>($namedNodeSparqlWherePatterns))({ filter: parameters?.filter?.iriListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}IriListProperty`), predicate: ListPropertiesClass.$schema.properties.iriListProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ListPropertiesClass.$schema.properties.iriListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}IriListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}IriListProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$CollectionFilter<NonClass.$Filter>, $CollectionSchema<typeof NonClass.$schema>>($listSparqlWherePatterns<NonClass.$Filter, typeof NonClass.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(NonClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))))({ filter: parameters?.filter?.objectListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}ObjectListProperty`), predicate: ListPropertiesClass.$schema.properties.objectListProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ListPropertiesClass.$schema.properties.objectListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}ObjectListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}ObjectListProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$CollectionFilter<$StringFilter>, $CollectionSchema<$StringSchema>>($listSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns))({ filter: parameters?.filter?.stringListProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}StringListProperty`), predicate: ListPropertiesClass.$schema.properties.stringListProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ListPropertiesClass.$schema.properties.stringListProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}StringListProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "listPropertiesClass"))}StringListProperty` }));
         return patterns;
     }
 
@@ -6099,17 +6099,17 @@ export namespace PartialInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty`), predicate: PartialInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterface");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PartialInterface.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty`), predicate: PartialInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: PartialInterface.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty`), predicate: PartialInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PartialInterface.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialInterface"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -6321,7 +6321,7 @@ export namespace LazyPropertiesInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazyPropertiesInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceProperty.identifier, subject });
         triples.push(...$DefaultPartial.$sparqlConstructTriples({ ignoreRdfType: true, subject: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty` }));
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceUnionProperty.identifier, subject });
@@ -6345,21 +6345,21 @@ export namespace LazyPropertiesInterface {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazyPropertiesInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazyPropertiesInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazyPropertiesInterface");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazyPropertiesInterface.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface")) })); }
 
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceUnionProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $NamedDefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedIriIdentifierInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedIriIdentifierInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedIriIdentifierInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedIriIdentifierInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedIriIdentifierInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedIriIdentifierInterfaceProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialInterfaceToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialInterfaceToResolvedInterfaceUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceUnionProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceUnionProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialInterfaceUnion.$sparqlWherePatterns(otherParameters)]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.requiredLazyToResolvedInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.requiredLazyToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredLazyToResolvedInterfaceProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredPartialInterfaceToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredPartialInterfaceToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.requiredPartialInterfaceToResolvedInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.requiredPartialInterfaceToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredPartialInterfaceToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredPartialInterfaceToResolvedInterfaceProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setLazyToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.setLazyToResolvedInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.setLazyToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetLazyToResolvedInterfaceProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetPartialInterfaceToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.setPartialInterfaceToResolvedInterfaceProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesInterface.$schema.properties.setPartialInterfaceToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetPartialInterfaceToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetPartialInterfaceToResolvedInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<$DefaultPartial.$Filter, typeof $DefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<$DefaultPartial.$Filter, typeof $DefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedInterfaceUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedInterfaceUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedInterfaceUnionProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<$NamedDefaultPartial.$Filter, typeof $NamedDefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($NamedDefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedIriIdentifierInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedIriIdentifierInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedIriIdentifierInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.optionalLazyToResolvedIriIdentifierInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedIriIdentifierInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalLazyToResolvedIriIdentifierInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<PartialInterface.$Filter, typeof PartialInterface.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialInterfaceToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<PartialInterface.$Filter, typeof PartialInterface.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialInterfaceToResolvedInterfaceUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceToResolvedInterfaceUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceToResolvedInterfaceUnionProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<PartialInterfaceUnion.$Filter, typeof PartialInterfaceUnion.$schema>((({ propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialInterfaceUnion.$sparqlWherePatterns(otherParameters))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`), predicate: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}OptionalPartialInterfaceUnionToResolvedInterfaceUnionProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredLazyToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.requiredLazyToResolvedInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.requiredLazyToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredLazyToResolvedInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredPartialInterfaceToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredPartialInterfaceToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.requiredPartialInterfaceToResolvedInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.requiredPartialInterfaceToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredPartialInterfaceToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}RequiredPartialInterfaceToResolvedInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns<$DefaultPartial.$Filter, typeof $DefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setLazyToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetLazyToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.setLazyToResolvedInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.setLazyToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetLazyToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetLazyToResolvedInterfaceProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns<PartialInterface.$Filter, typeof PartialInterface.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialInterface.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setPartialInterfaceToResolvedInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetPartialInterfaceToResolvedInterfaceProperty`), predicate: LazyPropertiesInterface.$schema.properties.setPartialInterfaceToResolvedInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesInterface.$schema.properties.setPartialInterfaceToResolvedInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetPartialInterfaceToResolvedInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesInterface"))}SetPartialInterfaceToResolvedInterfaceProperty` }));
         return patterns;
     }
 
@@ -6518,17 +6518,17 @@ export namespace PartialClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("partialClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty`), predicate: PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: PartialClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty`), predicate: PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: PartialClass.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty`), predicate: PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: PartialClass.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "partialClass"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -6744,7 +6744,7 @@ export namespace LazyPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazyPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty.identifier, subject });
         triples.push(...$DefaultPartial.$sparqlConstructTriples({ ignoreRdfType: true, subject: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty` }));
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassUnionProperty.identifier, subject });
@@ -6768,21 +6768,21 @@ export namespace LazyPropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazyPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazyPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazyPropertiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazyPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass")) })); }
 
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassUnionProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $NamedDefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedIriIdentifierClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedIriIdentifierClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedIriIdentifierClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedIriIdentifierClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedIriIdentifierClassProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialClassToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassUnionProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassUnionProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns((({ propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialClassUnion.$sparqlWherePatterns(otherParameters)]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialClassUnionToResolvedClassUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassUnionToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalPartialClassUnionToResolvedClassUnionProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.optionalPartialClassUnionToResolvedClassUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassUnionToResolvedClassUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassUnionToResolvedClassUnionProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredLazyToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredLazyToResolvedClassProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredPartialClassToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.requiredPartialClassToResolvedClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.requiredPartialClassToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredPartialClassToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredPartialClassToResolvedClassProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, $DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setLazyToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetLazyToResolvedClassProperty` }));
-        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setPartialClassToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetPartialClassToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.setPartialClassToResolvedClassProperty.identifier, subject }], type: "bgp" }], schema: LazyPropertiesClass.$schema.properties.setPartialClassToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetPartialClassToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetPartialClassToResolvedClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<$DefaultPartial.$Filter, typeof $DefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<$DefaultPartial.$Filter, typeof $DefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedClassUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedClassUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedClassUnionProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<$NamedDefaultPartial.$Filter, typeof $NamedDefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($NamedDefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalLazyToResolvedIriIdentifierClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedIriIdentifierClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedIriIdentifierClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.optionalLazyToResolvedIriIdentifierClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedIriIdentifierClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalLazyToResolvedIriIdentifierClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<PartialClass.$Filter, typeof PartialClass.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialClassToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<PartialClass.$Filter, typeof PartialClass.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialClassToResolvedClassUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.optionalPartialClassToResolvedClassUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassToResolvedClassUnionProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $maybeSparqlWherePatterns<PartialClassUnion.$Filter, typeof PartialClassUnion.$schema>((({ propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialClassUnion.$sparqlWherePatterns(otherParameters))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.optionalPartialClassUnionToResolvedClassUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassUnionToResolvedClassUnionProperty`), predicate: LazyPropertiesClass.$schema.properties.optionalPartialClassUnionToResolvedClassUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.optionalPartialClassUnionToResolvedClassUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassUnionToResolvedClassUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}OptionalPartialClassUnionToResolvedClassUnionProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredLazyToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.requiredLazyToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredLazyToResolvedClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => (({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.requiredPartialClassToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredPartialClassToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.requiredPartialClassToResolvedClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.requiredPartialClassToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredPartialClassToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}RequiredPartialClassToResolvedClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns<$DefaultPartial.$Filter, typeof $DefaultPartial.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat($DefaultPartial.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setLazyToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetLazyToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.setLazyToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetLazyToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetLazyToResolvedClassProperty` }));
+        patterns = patterns.concat((({ schema, ...otherParameters }) => $setSparqlWherePatterns<PartialClass.$Filter, typeof PartialClass.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(PartialClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ schema: schema.partialType, ...otherParameters }))({ filter: parameters?.filter?.setPartialClassToResolvedClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetPartialClassToResolvedClassProperty`), predicate: LazyPropertiesClass.$schema.properties.setPartialClassToResolvedClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazyPropertiesClass.$schema.properties.setPartialClassToResolvedClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetPartialClassToResolvedClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazyPropertiesClass"))}SetPartialClassToResolvedClassProperty` }));
         return patterns;
     }
 
@@ -6902,17 +6902,17 @@ export namespace LazilyResolvedIriIdentifierInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedIriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedIriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedIriIdentifierInterface");
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedIriIdentifierInterface.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierInterface"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -7056,17 +7056,17 @@ export namespace LazilyResolvedIriIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedIriIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedIriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedIriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedIriIdentifierClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedIriIdentifierClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedIriIdentifierClass"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -7200,7 +7200,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnionMember2");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}RdfType`) },
@@ -7212,8 +7212,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedInterfaceUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedInterfaceUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnionMember2");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -7253,7 +7253,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedInterfaceUnionMember2.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedInterfaceUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember2"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -7402,7 +7402,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnionMember1");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}RdfType`) },
@@ -7414,8 +7414,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedInterfaceUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedInterfaceUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnionMember1");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -7455,7 +7455,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedInterfaceUnionMember1.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedInterfaceUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnionMember1"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -7624,7 +7624,7 @@ export namespace LazilyResolvedClassUnionMember2 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnionMember2");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}RdfType`) },
@@ -7636,8 +7636,8 @@ export namespace LazilyResolvedClassUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnionMember2");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -7677,7 +7677,7 @@ export namespace LazilyResolvedClassUnionMember2 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedClassUnionMember2.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedClassUnionMember2.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember2"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -7831,7 +7831,7 @@ export namespace LazilyResolvedClassUnionMember1 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnionMember1");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}RdfType`) },
@@ -7843,8 +7843,8 @@ export namespace LazilyResolvedClassUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnionMember1");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -7884,7 +7884,7 @@ export namespace LazilyResolvedClassUnionMember1 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedClassUnionMember1.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedClassUnionMember1.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnionMember1"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -8021,7 +8021,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}RdfType`) },
@@ -8033,8 +8033,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierInterface");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -8074,7 +8074,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierInterface"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -8246,7 +8246,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}RdfType`) },
@@ -8258,8 +8258,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedBlankNodeOrIriIdentifierClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -8299,7 +8299,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" }], schema: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}LazilyResolvedStringProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.lazilyResolvedStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}LazilyResolvedStringProperty`), predicate: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties.lazilyResolvedStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}LazilyResolvedStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "lazilyResolvedBlankNodeOrIriIdentifierClass"))}LazilyResolvedStringProperty` }));
         return patterns;
     }
 
@@ -8444,17 +8444,17 @@ export namespace LanguageInPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("languageInPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty`), predicate: LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LanguageInPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LanguageInPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("languageInPropertiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: LanguageInPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass")) })); }
 
-        patterns = patterns.concat($setSparqlWherePatterns($literalSparqlWherePatterns)({ filter: parameters?.filter?.languageInLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty`), predicate: LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty.identifier, subject }], type: "bgp" }], schema: LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$LiteralFilter, $LiteralSchema>($literalSparqlWherePatterns)({ filter: parameters?.filter?.languageInLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty`), predicate: LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: LanguageInPropertiesClass.$schema.properties.languageInLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "languageInPropertiesClass"))}LanguageInLiteralProperty` }));
         return patterns;
     }
 
@@ -8648,7 +8648,7 @@ export namespace JsPrimitiveUnionPropertyClass {
               })).map(values => values.toArray()).map(valuesArray => rdfjsResource.Resource.Values.fromValue({ focusResource: $parameters.resource, predicate: JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty.identifier, value: valuesArray })).chain(values => values.head())).map(jsPrimitiveUnionProperty => ({ $identifier, jsPrimitiveUnionProperty }))))
     }
 
-    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["JsPrimitiveUnionPropertyClass"] }) }, jsPrimitiveUnionProperty: { identifier: dataFactory.namedNode("http://example.com/jsPrimitiveUnionProperty"), kind: "ShaclProperty" as const, name: "jsPrimitiveUnionProperty", type: () => ({ item: { discriminant: { kind: "typeof" }, kind: "UnionType" as const, members: { "boolean": { discriminantValues: ["boolean"], type: $unconstrainedBooleanSchema },"number": { discriminantValues: ["number"], type: $unconstrainedFloatSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "SetType" as const, minCount: 0 }) } } } as const;
+    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["JsPrimitiveUnionPropertyClass"] }) }, jsPrimitiveUnionProperty: { identifier: dataFactory.namedNode("http://example.com/jsPrimitiveUnionProperty"), kind: "ShaclProperty" as const, name: "jsPrimitiveUnionProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "boolean": { discriminantValues: ["boolean"], type: $unconstrainedBooleanSchema },"number": { discriminantValues: ["number"], type: $unconstrainedFloatSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "SetType" as const, minCount: 0 }) } } } as const;
 
     export function $sparqlConstructQuery(parameters?: { filter?: JsPrimitiveUnionPropertyClass.$Filter; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">): sparqljs.ConstructQuery {
         const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {}
@@ -8662,7 +8662,7 @@ export namespace JsPrimitiveUnionPropertyClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("jsPrimitiveUnionPropertyClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}RdfType`) },
@@ -8674,8 +8674,8 @@ export namespace JsPrimitiveUnionPropertyClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: JsPrimitiveUnionPropertyClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: JsPrimitiveUnionPropertyClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("jsPrimitiveUnionPropertyClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -8715,28 +8715,28 @@ export namespace JsPrimitiveUnionPropertyClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: JsPrimitiveUnionPropertyClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass")) })); }
 
-        patterns = patterns.concat($setSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        patterns = patterns.concat($setSparqlWherePatterns<{ readonly on?: { readonly "boolean"?: $BooleanFilter;readonly "number"?: $NumberFilter;readonly "string"?: $StringFilter } }, { kind: "UnionType", members: { readonly "boolean": { discriminantValues: readonly string[], type: $BooleanSchema };readonly "number": { discriminantValues: readonly string[], type: $NumberSchema };readonly "string": { discriminantValues: readonly string[], type: $StringSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($booleanSparqlWherePatterns({ filter: filter?.on?.["boolean"], schema: schema["boolean"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($booleanSparqlWherePatterns({ filter: filter?.on?.["boolean"], schema: schema.members["boolean"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($numberSparqlWherePatterns({ filter: filter?.on?.["number"], schema: schema["number"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($numberSparqlWherePatterns({ filter: filter?.on?.["number"], schema: schema.members["number"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema["string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema.members["string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.jsPrimitiveUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}JsPrimitiveUnionProperty`), predicate: JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty.identifier, subject }], type: "bgp" }], schema: JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}JsPrimitiveUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}JsPrimitiveUnionProperty` }));
+        }))({ filter: parameters?.filter?.jsPrimitiveUnionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}JsPrimitiveUnionProperty`), predicate: JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: JsPrimitiveUnionPropertyClass.$schema.properties.jsPrimitiveUnionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}JsPrimitiveUnionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "jsPrimitiveUnionPropertyClass"))}JsPrimitiveUnionProperty` }));
         return patterns;
     }
 
@@ -8867,7 +8867,7 @@ export namespace IriIdentifierInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("iriIdentifierInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface"))}RdfType`) },
@@ -8878,8 +8878,8 @@ export namespace IriIdentifierInterface {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("iriIdentifierInterface");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierInterface"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -9075,7 +9075,7 @@ export namespace IriIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("iriIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass"))}RdfType`) },
@@ -9086,8 +9086,8 @@ export namespace IriIdentifierClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("iriIdentifierClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "iriIdentifierClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -9230,17 +9230,17 @@ export namespace InterfaceUnionMemberCommonParentStatic {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("interfaceUnionMemberCommonParent");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty`), predicate: InterfaceUnionMemberCommonParentStatic.$schema.properties.interfaceUnionMemberCommonParentProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnionMemberCommonParentStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnionMemberCommonParentStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("interfaceUnionMemberCommonParent");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: InterfaceUnionMemberCommonParentStatic.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceUnionMemberCommonParentProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty`), predicate: InterfaceUnionMemberCommonParentStatic.$schema.properties.interfaceUnionMemberCommonParentProperty.identifier, subject }], type: "bgp" }], schema: InterfaceUnionMemberCommonParentStatic.$schema.properties.interfaceUnionMemberCommonParentProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceUnionMemberCommonParentProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty`), predicate: InterfaceUnionMemberCommonParentStatic.$schema.properties.interfaceUnionMemberCommonParentProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InterfaceUnionMemberCommonParentStatic.$schema.properties.interfaceUnionMemberCommonParentProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMemberCommonParent"))}InterfaceUnionMemberCommonParentProperty` }));
         return patterns;
     }
 
@@ -9390,8 +9390,8 @@ export namespace InterfaceUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("interfaceUnionMember2");
         patterns = patterns.concat(InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}RdfType`);
@@ -9430,7 +9430,7 @@ export namespace InterfaceUnionMember2 {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceUnionMember2Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}InterfaceUnionMember2Property`), predicate: InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property.identifier, subject }], type: "bgp" }], schema: InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}InterfaceUnionMember2Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}InterfaceUnionMember2Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceUnionMember2Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}InterfaceUnionMember2Property`), predicate: InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}InterfaceUnionMember2Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember2"))}InterfaceUnionMember2Property` }));
         return patterns;
     }
 
@@ -9582,8 +9582,8 @@ export namespace InterfaceUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("interfaceUnionMember1");
         patterns = patterns.concat(InterfaceUnionMemberCommonParentStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}RdfType`);
@@ -9622,7 +9622,7 @@ export namespace InterfaceUnionMember1 {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceUnionMember1Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}InterfaceUnionMember1Property`), predicate: InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property.identifier, subject }], type: "bgp" }], schema: InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}InterfaceUnionMember1Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}InterfaceUnionMember1Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceUnionMember1Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}InterfaceUnionMember1Property`), predicate: InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}InterfaceUnionMember1Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interfaceUnionMember1"))}InterfaceUnionMember1Property` }));
         return patterns;
     }
 
@@ -9757,17 +9757,17 @@ export namespace Interface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("interface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty`), predicate: Interface.$schema.properties.interfaceProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: Interface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: Interface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("interface");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: Interface.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty`), predicate: Interface.$schema.properties.interfaceProperty.identifier, subject }], type: "bgp" }], schema: Interface.$schema.properties.interfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.interfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty`), predicate: Interface.$schema.properties.interfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: Interface.$schema.properties.interfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "interface"))}InterfaceProperty` }));
         return patterns;
     }
 
@@ -9933,7 +9933,7 @@ export namespace IndirectRecursiveHelperClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("indirectRecursiveHelperClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass"))}RdfType`) },
@@ -9944,8 +9944,8 @@ export namespace IndirectRecursiveHelperClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IndirectRecursiveHelperClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IndirectRecursiveHelperClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("indirectRecursiveHelperClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveHelperClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -10138,7 +10138,7 @@ export namespace IndirectRecursiveClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass"))}RdfType`) },
@@ -10149,8 +10149,8 @@ export namespace IndirectRecursiveClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IndirectRecursiveClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IndirectRecursiveClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("indirectRecursiveClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "indirectRecursiveClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -10365,7 +10365,7 @@ export namespace InPropertiesClass {
             }) : purify.Either.of<Error, true>(true)).chain(_rdfTypeCheck => (purify.Either.of<Error, InPropertiesClass.$Identifier>($parameters.resource.identifier as InPropertiesClass.$Identifier)).chain($identifier => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.inBooleansProperty.identifier, { unique: true })).chain(values => values.chainMap(value => value.toBoolean().chain(primitiveValue => primitiveValue === true ? purify.Either.of<Error, true>(primitiveValue) : purify.Left<Error, true>(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: value.toTerm(), expectedValueType: "true", focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inBooleansProperty.identifier }))))).map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<true>>({ focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inBooleansProperty.identifier, value: purify.Maybe.empty() })).chain(values => values.head())).chain(inBooleansProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.inDateTimesProperty.identifier, { unique: true })).chain(values => values.chainMap(value => value.toDate().chain(primitiveValue => { if (primitiveValue.getTime() === 1523268000000) { return purify.Either.of<Error, Date>(primitiveValue); } return purify.Left<Error, Date>(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: value.toTerm(), expectedValueType: "Date", focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inDateTimesProperty.identifier })); }))).map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<Date>>({ focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inDateTimesProperty.identifier, value: purify.Maybe.empty() })).chain(values => values.head())).chain(inDateTimesProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.inIrisProperty.identifier, { unique: true })).chain(values => values.chainMap(value => value.toIri().chain(iri => { switch (iri.value) { case "http://example.com/InPropertiesIri1": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri1">); case "http://example.com/InPropertiesIri2": return purify.Either.of<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(iri as rdfjs.NamedNode<"http://example.com/InPropertiesIri2">); default: return purify.Left<Error, rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: iri, expectedValueType: "rdfjs.NamedNode<\"http://example.com/InPropertiesIri1\" | \"http://example.com/InPropertiesIri2\">", focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inIrisProperty.identifier })); } } ))).map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<rdfjs.NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">>>({ focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inIrisProperty.identifier, value: purify.Maybe.empty() })).chain(values => values.head())).chain(inIrisProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.inNumbersProperty.identifier, { unique: true })).chain(values => values.chainMap(value => value.toNumber().chain(primitiveValue => { switch (primitiveValue) { case 1: case 2: return purify.Either.of<Error, 1 | 2>(primitiveValue); default: return purify.Left<Error, 1 | 2>(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: value.toTerm(), expectedValueType: "1 | 2", focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inNumbersProperty.identifier })); } }))).map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<1 | 2>>({ focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inNumbersProperty.identifier, value: purify.Maybe.empty() })).chain(values => values.head())).chain(inNumbersProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.inStringsProperty.identifier, { unique: true })).chain(values => $fromRdfPreferredLanguages({ focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inStringsProperty.identifier, preferredLanguages: $parameters.preferredLanguages, values })).chain(values => values.chainMap(value => value.toString().chain(string_ => { switch (string_) { case "text": case "html": return purify.Either.of<Error, "text" | "html">(string_); default: return purify.Left<Error, "text" | "html">(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: value.toTerm(), expectedValueType: "\"text\" | \"html\"", focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inStringsProperty.identifier })); } }))).map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<"text" | "html">>({ focusResource: $parameters.resource, predicate: InPropertiesClass.$schema.properties.inStringsProperty.identifier, value: purify.Maybe.empty() })).chain(values => values.head())).map(inStringsProperty => ({ $identifier, inBooleansProperty, inDateTimesProperty, inIrisProperty, inNumbersProperty, inStringsProperty }))))))))
     }
 
-    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["InPropertiesClass"] }) }, inBooleansProperty: { identifier: dataFactory.namedNode("http://example.com/inBooleansProperty"), kind: "ShaclProperty" as const, name: "inBooleansProperty", type: () => ({ item: { in: [true], kind: "BooleanType" as const }, kind: "OptionType" as const }) }, inDateTimesProperty: { identifier: dataFactory.namedNode("http://example.com/inDateTimesProperty"), kind: "ShaclProperty" as const, name: "inDateTimesProperty", type: () => ({ item: { defaultValue: {  }, in: [new Date("2018-04-09T10:00:00.000Z")], kind: "DateTimeType" as const }, kind: "OptionType" as const }) }, inIrisProperty: { identifier: dataFactory.namedNode("http://example.com/inIrisProperty"), kind: "ShaclProperty" as const, name: "inIrisProperty", type: () => ({ item: { in: [dataFactory.namedNode("http://example.com/InPropertiesIri1"), dataFactory.namedNode("http://example.com/InPropertiesIri2")], kind: "NamedNodeType" as const }, kind: "OptionType" as const }) }, inNumbersProperty: { identifier: dataFactory.namedNode("http://example.com/inNumbersProperty"), kind: "ShaclProperty" as const, name: "inNumbersProperty", type: () => ({ item: { in: [1, 2], kind: "IntType" as const }, kind: "OptionType" as const }) }, inStringsProperty: { identifier: dataFactory.namedNode("http://example.com/inStringsProperty"), kind: "ShaclProperty" as const, name: "inStringsProperty", type: () => ({ item: { in: ["text", "html"], kind: "StringType" as const }, kind: "OptionType" as const }) } } } as const;
+    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["InPropertiesClass"] }) }, inBooleansProperty: { identifier: dataFactory.namedNode("http://example.com/inBooleansProperty"), kind: "ShaclProperty" as const, name: "inBooleansProperty", type: () => ({ item: { in: [true], kind: "BooleanType" as const }, kind: "OptionType" as const }) }, inDateTimesProperty: { identifier: dataFactory.namedNode("http://example.com/inDateTimesProperty"), kind: "ShaclProperty" as const, name: "inDateTimesProperty", type: () => ({ item: { in: [new Date("2018-04-09T10:00:00.000Z")], kind: "DateTimeType" as const }, kind: "OptionType" as const }) }, inIrisProperty: { identifier: dataFactory.namedNode("http://example.com/inIrisProperty"), kind: "ShaclProperty" as const, name: "inIrisProperty", type: () => ({ item: { in: [dataFactory.namedNode("http://example.com/InPropertiesIri1"), dataFactory.namedNode("http://example.com/InPropertiesIri2")], kind: "NamedNodeType" as const }, kind: "OptionType" as const }) }, inNumbersProperty: { identifier: dataFactory.namedNode("http://example.com/inNumbersProperty"), kind: "ShaclProperty" as const, name: "inNumbersProperty", type: () => ({ item: { in: [1, 2], kind: "IntType" as const }, kind: "OptionType" as const }) }, inStringsProperty: { identifier: dataFactory.namedNode("http://example.com/inStringsProperty"), kind: "ShaclProperty" as const, name: "inStringsProperty", type: () => ({ item: { in: ["text", "html"], kind: "StringType" as const }, kind: "OptionType" as const }) } } } as const;
 
     export function $sparqlConstructQuery(parameters?: { filter?: InPropertiesClass.$Filter; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">): sparqljs.ConstructQuery {
         const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {}
@@ -10379,7 +10379,7 @@ export namespace InPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}RdfType`) },
@@ -10395,8 +10395,8 @@ export namespace InPropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: InPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: InPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("inPropertiesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -10436,11 +10436,11 @@ export namespace InPropertiesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: InPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns($booleanSparqlWherePatterns)({ filter: parameters?.filter?.inBooleansProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InBooleansProperty`), predicate: InPropertiesClass.$schema.properties.inBooleansProperty.identifier, subject }], type: "bgp" }], schema: InPropertiesClass.$schema.properties.inBooleansProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InBooleansProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InBooleansProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($dateSparqlWherePatterns)({ filter: parameters?.filter?.inDateTimesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InDateTimesProperty`), predicate: InPropertiesClass.$schema.properties.inDateTimesProperty.identifier, subject }], type: "bgp" }], schema: InPropertiesClass.$schema.properties.inDateTimesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InDateTimesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InDateTimesProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.inIrisProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InIrisProperty`), predicate: InPropertiesClass.$schema.properties.inIrisProperty.identifier, subject }], type: "bgp" }], schema: InPropertiesClass.$schema.properties.inIrisProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InIrisProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InIrisProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($numberSparqlWherePatterns)({ filter: parameters?.filter?.inNumbersProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InNumbersProperty`), predicate: InPropertiesClass.$schema.properties.inNumbersProperty.identifier, subject }], type: "bgp" }], schema: InPropertiesClass.$schema.properties.inNumbersProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InNumbersProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InNumbersProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.inStringsProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InStringsProperty`), predicate: InPropertiesClass.$schema.properties.inStringsProperty.identifier, subject }], type: "bgp" }], schema: InPropertiesClass.$schema.properties.inStringsProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InStringsProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InStringsProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$BooleanFilter, $BooleanSchema>($booleanSparqlWherePatterns)({ filter: parameters?.filter?.inBooleansProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InBooleansProperty`), predicate: InPropertiesClass.$schema.properties.inBooleansProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InPropertiesClass.$schema.properties.inBooleansProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InBooleansProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InBooleansProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$DateFilter, $DateSchema>($dateSparqlWherePatterns)({ filter: parameters?.filter?.inDateTimesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InDateTimesProperty`), predicate: InPropertiesClass.$schema.properties.inDateTimesProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InPropertiesClass.$schema.properties.inDateTimesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InDateTimesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InDateTimesProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.inIrisProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InIrisProperty`), predicate: InPropertiesClass.$schema.properties.inIrisProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InPropertiesClass.$schema.properties.inIrisProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InIrisProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InIrisProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$NumberFilter, $NumberSchema>($numberSparqlWherePatterns)({ filter: parameters?.filter?.inNumbersProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InNumbersProperty`), predicate: InPropertiesClass.$schema.properties.inNumbersProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InPropertiesClass.$schema.properties.inNumbersProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InNumbersProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InNumbersProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.inStringsProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InStringsProperty`), predicate: InPropertiesClass.$schema.properties.inStringsProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InPropertiesClass.$schema.properties.inStringsProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InStringsProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inPropertiesClass"))}InStringsProperty` }));
         return patterns;
     }
 
@@ -10591,7 +10591,7 @@ export namespace InIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}RdfType`) },
@@ -10603,8 +10603,8 @@ export namespace InIdentifierClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: InIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: InIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("inIdentifierClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -10644,7 +10644,7 @@ export namespace InIdentifierClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: InIdentifierClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns($stringSparqlWherePatterns)({ filter: parameters?.filter?.inIdentifierProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}InIdentifierProperty`), predicate: InIdentifierClass.$schema.properties.inIdentifierProperty.identifier, subject }], type: "bgp" }], schema: InIdentifierClass.$schema.properties.inIdentifierProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}InIdentifierProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}InIdentifierProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$StringFilter, $StringSchema>($stringSparqlWherePatterns)({ filter: parameters?.filter?.inIdentifierProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}InIdentifierProperty`), predicate: InIdentifierClass.$schema.properties.inIdentifierProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: InIdentifierClass.$schema.properties.inIdentifierProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}InIdentifierProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "inIdentifierClass"))}InIdentifierProperty` }));
         return patterns;
     }
 
@@ -10770,17 +10770,17 @@ export namespace IdentifierOverride1ClassStatic {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty`), predicate: IdentifierOverride1ClassStatic.$schema.properties.identifierOverrideProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride1ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride1ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("identifierOverride1Class");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: IdentifierOverride1ClassStatic.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.identifierOverrideProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty`), predicate: IdentifierOverride1ClassStatic.$schema.properties.identifierOverrideProperty.identifier, subject }], type: "bgp" }], schema: IdentifierOverride1ClassStatic.$schema.properties.identifierOverrideProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.identifierOverrideProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty`), predicate: IdentifierOverride1ClassStatic.$schema.properties.identifierOverrideProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: IdentifierOverride1ClassStatic.$schema.properties.identifierOverrideProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride1Class"))}IdentifierOverrideProperty` }));
         return patterns;
     }
 
@@ -10886,8 +10886,8 @@ export namespace IdentifierOverride2ClassStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride2ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride2ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("identifierOverride2Class");
         patterns = patterns.concat(IdentifierOverride1ClassStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride2Class")) }));
         return patterns;
@@ -11019,8 +11019,8 @@ export namespace IdentifierOverride3ClassStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride3ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride3ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("identifierOverride3Class");
         patterns = patterns.concat(IdentifierOverride2ClassStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride3Class")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride3Class"))}RdfType`);
@@ -11208,8 +11208,8 @@ export namespace IdentifierOverride4ClassStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride4ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride4ClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("identifierOverride4Class");
         patterns = patterns.concat(IdentifierOverride3ClassStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride4Class")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride4Class"))}RdfType`);
@@ -11394,8 +11394,8 @@ export namespace IdentifierOverride5Class {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride5Class.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: IdentifierOverride5Class.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("identifierOverride5Class");
         patterns = patterns.concat(IdentifierOverride4ClassStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride5Class")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "identifierOverride5Class"))}RdfType`);
@@ -11580,19 +11580,19 @@ export namespace HasValuePropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("hasValuePropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty`), predicate: HasValuePropertiesClass.$schema.properties.hasIriValueProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty`), predicate: HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: HasValuePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: HasValuePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("hasValuePropertiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: HasValuePropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass")) })); }
 
-        patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.hasIriValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty`), predicate: HasValuePropertiesClass.$schema.properties.hasIriValueProperty.identifier, subject }], type: "bgp" }], schema: HasValuePropertiesClass.$schema.properties.hasIriValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.hasLiteralValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty`), predicate: HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty.identifier, subject }], type: "bgp" }], schema: HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty` }));
+        patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.hasIriValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty`), predicate: HasValuePropertiesClass.$schema.properties.hasIriValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: HasValuePropertiesClass.$schema.properties.hasIriValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasIriValueProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.hasLiteralValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty`), predicate: HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "hasValuePropertiesClass"))}HasLiteralValueProperty` }));
         return patterns;
     }
 
@@ -11746,7 +11746,7 @@ export namespace FlattenClassUnionMember3 {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}RdfType`) },
@@ -11758,8 +11758,8 @@ export namespace FlattenClassUnionMember3 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: FlattenClassUnionMember3.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: FlattenClassUnionMember3.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("flattenClassUnionMember3");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -11799,7 +11799,7 @@ export namespace FlattenClassUnionMember3 {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: FlattenClassUnionMember3.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.flattenClassUnionMember3Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}FlattenClassUnionMember3Property`), predicate: FlattenClassUnionMember3.$schema.properties.flattenClassUnionMember3Property.identifier, subject }], type: "bgp" }], schema: FlattenClassUnionMember3.$schema.properties.flattenClassUnionMember3Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}FlattenClassUnionMember3Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}FlattenClassUnionMember3Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.flattenClassUnionMember3Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}FlattenClassUnionMember3Property`), predicate: FlattenClassUnionMember3.$schema.properties.flattenClassUnionMember3Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: FlattenClassUnionMember3.$schema.properties.flattenClassUnionMember3Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}FlattenClassUnionMember3Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "flattenClassUnionMember3"))}FlattenClassUnionMember3Property` }));
         return patterns;
     }
 
@@ -11956,7 +11956,7 @@ export namespace ExternClassPropertyClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}RdfType`) },
@@ -11969,8 +11969,8 @@ export namespace ExternClassPropertyClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ExternClassPropertyClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ExternClassPropertyClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("externClassPropertyClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -12010,7 +12010,7 @@ export namespace ExternClassPropertyClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: ExternClassPropertyClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ExternClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })]))({ filter: parameters?.filter?.externClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}ExternClassProperty`), predicate: ExternClassPropertyClass.$schema.properties.externClassProperty.identifier, subject }], type: "bgp" }], schema: ExternClassPropertyClass.$schema.properties.externClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}ExternClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}ExternClassProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<ExternClass.$Filter, typeof ExternClass.$schema>((({ ignoreRdfType, propertyPatterns, ...otherParameters }) => (propertyPatterns as readonly $SparqlPattern[]).concat(ExternClass.$sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters }))))({ filter: parameters?.filter?.externClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}ExternClassProperty`), predicate: ExternClassPropertyClass.$schema.properties.externClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ExternClassPropertyClass.$schema.properties.externClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}ExternClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "externClassPropertyClass"))}ExternClassProperty` }));
         return patterns;
     }
 
@@ -12136,17 +12136,17 @@ export namespace AbstractBaseClassForExternClassStatic {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("abstractBaseClassForExternClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty`), predicate: AbstractBaseClassForExternClassStatic.$schema.properties.abstractBaseClassForExternClassProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: AbstractBaseClassForExternClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: AbstractBaseClassForExternClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("abstractBaseClassForExternClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: AbstractBaseClassForExternClassStatic.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.abstractBaseClassForExternClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty`), predicate: AbstractBaseClassForExternClassStatic.$schema.properties.abstractBaseClassForExternClassProperty.identifier, subject }], type: "bgp" }], schema: AbstractBaseClassForExternClassStatic.$schema.properties.abstractBaseClassForExternClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.abstractBaseClassForExternClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty`), predicate: AbstractBaseClassForExternClassStatic.$schema.properties.abstractBaseClassForExternClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: AbstractBaseClassForExternClassStatic.$schema.properties.abstractBaseClassForExternClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassForExternClass"))}AbstractBaseClassForExternClassProperty` }));
         return patterns;
     }
 
@@ -12305,7 +12305,7 @@ export namespace ExplicitRdfTypeClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("explicitRdfTypeClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}RdfType`) },
@@ -12317,8 +12317,8 @@ export namespace ExplicitRdfTypeClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ExplicitRdfTypeClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ExplicitRdfTypeClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("explicitRdfTypeClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -12358,7 +12358,7 @@ export namespace ExplicitRdfTypeClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: ExplicitRdfTypeClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.explicitRdfTypeProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}ExplicitRdfTypeProperty`), predicate: ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty.identifier, subject }], type: "bgp" }], schema: ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}ExplicitRdfTypeProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}ExplicitRdfTypeProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.explicitRdfTypeProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}ExplicitRdfTypeProperty`), predicate: ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}ExplicitRdfTypeProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitRdfTypeClass"))}ExplicitRdfTypeProperty` }));
         return patterns;
     }
 
@@ -12518,7 +12518,7 @@ export namespace ExplicitFromToRdfTypesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("explicitFromToRdfTypesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}RdfType`) },
@@ -12530,8 +12530,8 @@ export namespace ExplicitFromToRdfTypesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ExplicitFromToRdfTypesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ExplicitFromToRdfTypesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("explicitFromToRdfTypesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -12571,7 +12571,7 @@ export namespace ExplicitFromToRdfTypesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: ExplicitFromToRdfTypesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.explicitFromToRdfTypesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}ExplicitFromToRdfTypesProperty`), predicate: ExplicitFromToRdfTypesClass.$schema.properties.explicitFromToRdfTypesProperty.identifier, subject }], type: "bgp" }], schema: ExplicitFromToRdfTypesClass.$schema.properties.explicitFromToRdfTypesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}ExplicitFromToRdfTypesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}ExplicitFromToRdfTypesProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.explicitFromToRdfTypesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}ExplicitFromToRdfTypesProperty`), predicate: ExplicitFromToRdfTypesClass.$schema.properties.explicitFromToRdfTypesProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ExplicitFromToRdfTypesClass.$schema.properties.explicitFromToRdfTypesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}ExplicitFromToRdfTypesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "explicitFromToRdfTypesClass"))}ExplicitFromToRdfTypesProperty` }));
         return patterns;
     }
 
@@ -12725,7 +12725,7 @@ export namespace DirectRecursiveClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass"))}RdfType`) },
@@ -12736,8 +12736,8 @@ export namespace DirectRecursiveClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: DirectRecursiveClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: DirectRecursiveClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("directRecursiveClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "directRecursiveClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -12946,7 +12946,7 @@ export namespace DefaultValuePropertiesClass {
         return (purify.Either.of<Error, DefaultValuePropertiesClass.$Identifier>($parameters.resource.identifier as DefaultValuePropertiesClass.$Identifier)).chain($identifier => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.dateDefaultValueProperty.identifier, { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.identifier, term: dataFactory.literal("2018-04-09", $RdfVocabularies.xsd.date) }).toValues()).chain(values => values.chainMap(value => value.toDate())).chain(values => values.head())).chain(dateDefaultValueProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.dateTimeDefaultValueProperty.identifier, { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.identifier, term: dataFactory.literal("2018-04-09T10:00:00Z", $RdfVocabularies.xsd.dateTime) }).toValues()).chain(values => values.chainMap(value => value.toDate())).chain(values => values.head())).chain(dateTimeDefaultValueProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.falseBooleanDefaultValueProperty.identifier, { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.identifier, term: dataFactory.literal("false", $RdfVocabularies.xsd.boolean) }).toValues()).chain(values => values.chainMap(value => value.toBoolean())).chain(values => values.head())).chain(falseBooleanDefaultValueProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.numberDefaultValueProperty.identifier, { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty.identifier, term: dataFactory.literal("0", $RdfVocabularies.xsd.integer) }).toValues()).chain(values => values.chainMap(value => value.toNumber())).chain(values => values.head())).chain(numberDefaultValueProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.stringDefaultValueProperty.identifier, { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.identifier, term: dataFactory.literal("") }).toValues()).chain(values => $fromRdfPreferredLanguages({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.identifier, preferredLanguages: $parameters.preferredLanguages, values })).chain(values => values.chainMap(value => value.toString())).chain(values => values.head())).chain(stringDefaultValueProperty => (purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>($parameters.resource.values($schema.properties.trueBooleanDefaultValueProperty.identifier, { unique: true })).map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue({ focusResource: $parameters.resource, predicate: DefaultValuePropertiesClass.$schema.properties.trueBooleanDefaultValueProperty.identifier, term: dataFactory.literal("true", $RdfVocabularies.xsd.boolean) }).toValues()).chain(values => values.chainMap(value => value.toBoolean())).chain(values => values.head())).map(trueBooleanDefaultValueProperty => ({ $identifier, dateDefaultValueProperty, dateTimeDefaultValueProperty, falseBooleanDefaultValueProperty, numberDefaultValueProperty, stringDefaultValueProperty, trueBooleanDefaultValueProperty }))))))))
     }
 
-    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "sha256" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $identifierPrefix: { kind: "IdentifierPrefixProperty" as const, name: "$identifierPrefix", type: () => ($unconstrainedStringSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["DefaultValuePropertiesClass"] }) }, dateDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/dateDefaultValueProperty"), kind: "ShaclProperty" as const, name: "dateDefaultValueProperty", type: () => ({ defaultValue: { __value: new Date("2018-04-09T00:00:00.000Z") }, kind: "DateType" as const }) }, dateTimeDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/dateTimeDefaultValueProperty"), kind: "ShaclProperty" as const, name: "dateTimeDefaultValueProperty", type: () => ({ defaultValue: { __value: new Date("2018-04-09T10:00:00.000Z") }, kind: "DateTimeType" as const }) }, falseBooleanDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/falseBooleanDefaultValueProperty"), kind: "ShaclProperty" as const, name: "falseBooleanDefaultValueProperty", type: () => ({ defaultValue: false, kind: "BooleanType" as const }) }, numberDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/numberDefaultValueProperty"), kind: "ShaclProperty" as const, name: "numberDefaultValueProperty", type: () => ({ defaultValue: 0, kind: "IntType" as const }) }, stringDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/stringDefaultValueProperty"), kind: "ShaclProperty" as const, name: "stringDefaultValueProperty", type: () => ({ defaultValue: "", kind: "StringType" as const }) }, trueBooleanDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/trueBooleanDefaultValueProperty"), kind: "ShaclProperty" as const, name: "trueBooleanDefaultValueProperty", type: () => ({ defaultValue: true, kind: "BooleanType" as const }) } } } as const;
+    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "sha256" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $identifierPrefix: { kind: "IdentifierPrefixProperty" as const, name: "$identifierPrefix", type: () => ($unconstrainedStringSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["DefaultValuePropertiesClass"] }) }, dateDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/dateDefaultValueProperty"), kind: "ShaclProperty" as const, name: "dateDefaultValueProperty", type: () => ({ defaultValue: new Date("2018-04-09T00:00:00.000Z"), kind: "DateType" as const }) }, dateTimeDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/dateTimeDefaultValueProperty"), kind: "ShaclProperty" as const, name: "dateTimeDefaultValueProperty", type: () => ({ defaultValue: new Date("2018-04-09T10:00:00.000Z"), kind: "DateTimeType" as const }) }, falseBooleanDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/falseBooleanDefaultValueProperty"), kind: "ShaclProperty" as const, name: "falseBooleanDefaultValueProperty", type: () => ({ defaultValue: false, kind: "BooleanType" as const }) }, numberDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/numberDefaultValueProperty"), kind: "ShaclProperty" as const, name: "numberDefaultValueProperty", type: () => ({ defaultValue: 0, kind: "IntType" as const }) }, stringDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/stringDefaultValueProperty"), kind: "ShaclProperty" as const, name: "stringDefaultValueProperty", type: () => ({ defaultValue: "", kind: "StringType" as const }) }, trueBooleanDefaultValueProperty: { identifier: dataFactory.namedNode("http://example.com/trueBooleanDefaultValueProperty"), kind: "ShaclProperty" as const, name: "trueBooleanDefaultValueProperty", type: () => ({ defaultValue: true, kind: "BooleanType" as const }) } } } as const;
 
     export function $sparqlConstructQuery(parameters?: { filter?: DefaultValuePropertiesClass.$Filter; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">): sparqljs.ConstructQuery {
         const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {}
@@ -12960,7 +12960,7 @@ export namespace DefaultValuePropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("defaultValuePropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.identifier, subject });
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.identifier, subject });
@@ -12970,17 +12970,17 @@ export namespace DefaultValuePropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: DefaultValuePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: DefaultValuePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("defaultValuePropertiesClass");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: DefaultValuePropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")) })); }
 
-        patterns = patterns.concat($dateSparqlWherePatterns({ filter: parameters?.filter?.dateDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.identifier, subject }], type: "bgp" }], schema: DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty` }));
-        patterns = patterns.concat($dateSparqlWherePatterns({ filter: parameters?.filter?.dateTimeDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.identifier, subject }], type: "bgp" }], schema: DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty` }));
-        patterns = patterns.concat($booleanSparqlWherePatterns({ filter: parameters?.filter?.falseBooleanDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.identifier, subject }], type: "bgp" }], schema: DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty` }));
-        patterns = patterns.concat($numberSparqlWherePatterns({ filter: parameters?.filter?.numberDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}NumberDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty.identifier, subject }], type: "bgp" }], schema: DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}NumberDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}NumberDefaultValueProperty` }));
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.stringDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}StringDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.identifier, subject }], type: "bgp" }], schema: DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}StringDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}StringDefaultValueProperty` }));
-        patterns = patterns.concat($booleanSparqlWherePatterns({ filter: parameters?.filter?.trueBooleanDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}TrueBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.trueBooleanDefaultValueProperty.identifier, subject }], type: "bgp" }], schema: DefaultValuePropertiesClass.$schema.properties.trueBooleanDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}TrueBooleanDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}TrueBooleanDefaultValueProperty` }));
+        patterns = patterns.concat($dateSparqlWherePatterns({ filter: parameters?.filter?.dateDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateDefaultValueProperty` }));
+        patterns = patterns.concat($dateSparqlWherePatterns({ filter: parameters?.filter?.dateTimeDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DefaultValuePropertiesClass.$schema.properties.dateTimeDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}DateTimeDefaultValueProperty` }));
+        patterns = patterns.concat($booleanSparqlWherePatterns({ filter: parameters?.filter?.falseBooleanDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DefaultValuePropertiesClass.$schema.properties.falseBooleanDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}FalseBooleanDefaultValueProperty` }));
+        patterns = patterns.concat($numberSparqlWherePatterns({ filter: parameters?.filter?.numberDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}NumberDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}NumberDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}NumberDefaultValueProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.stringDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}StringDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}StringDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}StringDefaultValueProperty` }));
+        patterns = patterns.concat($booleanSparqlWherePatterns({ filter: parameters?.filter?.trueBooleanDefaultValueProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}TrueBooleanDefaultValueProperty`), predicate: DefaultValuePropertiesClass.$schema.properties.trueBooleanDefaultValueProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DefaultValuePropertiesClass.$schema.properties.trueBooleanDefaultValueProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}TrueBooleanDefaultValueProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass"))}TrueBooleanDefaultValueProperty` }));
         return patterns;
     }
 
@@ -13291,7 +13291,7 @@ export namespace DateUnionPropertiesClass {
               })).map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<({ type: "string", value: string } | { type: "date", value: Date })>>({ focusResource: $parameters.resource, predicate: DateUnionPropertiesClass.$schema.properties.stringOrDateProperty.identifier, value: purify.Maybe.empty() })).chain(values => values.head())).map(stringOrDateProperty => ({ $identifier, dateOrDateTimeProperty, dateOrStringProperty, dateTimeOrDateProperty, stringOrDateProperty })))))))
     }
 
-    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["DateUnionPropertiesClass"] }) }, dateOrDateTimeProperty: { identifier: dataFactory.namedNode("http://example.com/dateOrDateTimeProperty"), kind: "ShaclProperty" as const, name: "dateOrDateTimeProperty", type: () => ({ item: { discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "date": { discriminantValues: ["date"], type: $unconstrainedDateSchema },"dateTime": { discriminantValues: ["dateTime"], type: $unconstrainedDateTimeSchema } } }, kind: "OptionType" as const }) }, dateOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/dateOrStringProperty"), kind: "ShaclProperty" as const, name: "dateOrStringProperty", type: () => ({ item: { discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "date": { discriminantValues: ["date"], type: $unconstrainedDateSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "OptionType" as const }) }, dateTimeOrDateProperty: { identifier: dataFactory.namedNode("http://example.com/dateTimeOrDateProperty"), kind: "ShaclProperty" as const, name: "dateTimeOrDateProperty", type: () => ({ item: { discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "dateTime": { discriminantValues: ["dateTime"], type: $unconstrainedDateTimeSchema },"date": { discriminantValues: ["date"], type: $unconstrainedDateSchema } } }, kind: "OptionType" as const }) }, stringOrDateProperty: { identifier: dataFactory.namedNode("http://example.com/stringOrDateProperty"), kind: "ShaclProperty" as const, name: "stringOrDateProperty", type: () => ({ item: { discriminant: { kind: "envelope" }, kind: "UnionType" as const, members: { "string": { discriminantValues: ["string"], type: $unconstrainedStringSchema },"date": { discriminantValues: ["date"], type: $unconstrainedDateSchema } } }, kind: "OptionType" as const }) } } } as const;
+    export const $schema = { properties: { $identifier: { identifierMintingStrategy: "blankNode" as const, kind: "IdentifierProperty" as const, name: "$identifier", type: () => ($unconstrainedIdentifierSchema) }, $type: { kind: "TypeDiscriminantProperty" as const, name: "$type", type: () => ({ ownValues: ["DateUnionPropertiesClass"] }) }, dateOrDateTimeProperty: { identifier: dataFactory.namedNode("http://example.com/dateOrDateTimeProperty"), kind: "ShaclProperty" as const, name: "dateOrDateTimeProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "date": { discriminantValues: ["date"], type: $unconstrainedDateSchema },"dateTime": { discriminantValues: ["dateTime"], type: $unconstrainedDateTimeSchema } } }, kind: "OptionType" as const }) }, dateOrStringProperty: { identifier: dataFactory.namedNode("http://example.com/dateOrStringProperty"), kind: "ShaclProperty" as const, name: "dateOrStringProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "date": { discriminantValues: ["date"], type: $unconstrainedDateSchema },"string": { discriminantValues: ["string"], type: $unconstrainedStringSchema } } }, kind: "OptionType" as const }) }, dateTimeOrDateProperty: { identifier: dataFactory.namedNode("http://example.com/dateTimeOrDateProperty"), kind: "ShaclProperty" as const, name: "dateTimeOrDateProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "dateTime": { discriminantValues: ["dateTime"], type: $unconstrainedDateTimeSchema },"date": { discriminantValues: ["date"], type: $unconstrainedDateSchema } } }, kind: "OptionType" as const }) }, stringOrDateProperty: { identifier: dataFactory.namedNode("http://example.com/stringOrDateProperty"), kind: "ShaclProperty" as const, name: "stringOrDateProperty", type: () => ({ item: { kind: "UnionType" as const, members: { "string": { discriminantValues: ["string"], type: $unconstrainedStringSchema },"date": { discriminantValues: ["date"], type: $unconstrainedDateSchema } } }, kind: "OptionType" as const }) } } } as const;
 
     export function $sparqlConstructQuery(parameters?: { filter?: DateUnionPropertiesClass.$Filter; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type">): sparqljs.ConstructQuery {
         const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {}
@@ -13305,7 +13305,7 @@ export namespace DateUnionPropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}RdfType`) },
@@ -13320,8 +13320,8 @@ export namespace DateUnionPropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: DateUnionPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: DateUnionPropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("dateUnionPropertiesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -13361,74 +13361,74 @@ export namespace DateUnionPropertiesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: DateUnionPropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass")) })); }
 
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "date"?: $DateFilter;readonly "dateTime"?: $DateFilter } }, { kind: "UnionType", members: { readonly "date": { discriminantValues: readonly string[], type: $DateSchema };readonly "dateTime": { discriminantValues: readonly string[], type: $DateSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema["date"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema.members["date"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($dateSparqlWherePatterns({ filter: filter?.on?.["dateTime"], schema: schema["dateTime"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($dateSparqlWherePatterns({ filter: filter?.on?.["dateTime"], schema: schema.members["dateTime"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.dateOrDateTimeProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrDateTimeProperty`), predicate: DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty.identifier, subject }], type: "bgp" }], schema: DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrDateTimeProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrDateTimeProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.dateOrDateTimeProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrDateTimeProperty`), predicate: DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DateUnionPropertiesClass.$schema.properties.dateOrDateTimeProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrDateTimeProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrDateTimeProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "date"?: $DateFilter;readonly "string"?: $StringFilter } }, { kind: "UnionType", members: { readonly "date": { discriminantValues: readonly string[], type: $DateSchema };readonly "string": { discriminantValues: readonly string[], type: $StringSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema["date"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema.members["date"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema["string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema.members["string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.dateOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrStringProperty`), predicate: DateUnionPropertiesClass.$schema.properties.dateOrStringProperty.identifier, subject }], type: "bgp" }], schema: DateUnionPropertiesClass.$schema.properties.dateOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrStringProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.dateOrStringProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrStringProperty`), predicate: DateUnionPropertiesClass.$schema.properties.dateOrStringProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DateUnionPropertiesClass.$schema.properties.dateOrStringProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrStringProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateOrStringProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "dateTime"?: $DateFilter;readonly "date"?: $DateFilter } }, { kind: "UnionType", members: { readonly "dateTime": { discriminantValues: readonly string[], type: $DateSchema };readonly "date": { discriminantValues: readonly string[], type: $DateSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($dateSparqlWherePatterns({ filter: filter?.on?.["dateTime"], schema: schema["dateTime"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($dateSparqlWherePatterns({ filter: filter?.on?.["dateTime"], schema: schema.members["dateTime"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema["date"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema.members["date"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.dateTimeOrDateProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateTimeOrDateProperty`), predicate: DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty.identifier, subject }], type: "bgp" }], schema: DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateTimeOrDateProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateTimeOrDateProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns((({ filter, schema, ...otherParameters }) => {
+        }))({ filter: parameters?.filter?.dateTimeOrDateProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateTimeOrDateProperty`), predicate: DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DateUnionPropertiesClass.$schema.properties.dateTimeOrDateProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateTimeOrDateProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}DateTimeOrDateProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<{ readonly on?: { readonly "string"?: $StringFilter;readonly "date"?: $DateFilter } }, { kind: "UnionType", members: { readonly "string": { discriminantValues: readonly string[], type: $StringSchema };readonly "date": { discriminantValues: readonly string[], type: $DateSchema } } }>((({ filter, schema, ...otherParameters }) => {
           const unionPatterns: sparqljs.GroupPattern[] = [];
-          const liftedPatterns: $SparqlWherePattern[] = [];
+          const liftedPatterns: $SparqlPattern[] = [];
 
           {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema["string"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($stringSparqlWherePatterns({ filter: filter?.on?.["string"], schema: schema.members["string"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
         {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlWherePatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema["date"], ...otherParameters }));
+          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns($dateSparqlWherePatterns({ filter: filter?.on?.["date"], schema: schema.members["date"].type, ...otherParameters }));
           unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
           liftedPatterns.push(...memberLiftedPatterns);
         }
           
           return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
-        }))({ filter: parameters?.filter?.stringOrDateProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}StringOrDateProperty`), predicate: DateUnionPropertiesClass.$schema.properties.stringOrDateProperty.identifier, subject }], type: "bgp" }], schema: DateUnionPropertiesClass.$schema.properties.stringOrDateProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}StringOrDateProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}StringOrDateProperty` }));
+        }))({ filter: parameters?.filter?.stringOrDateProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}StringOrDateProperty`), predicate: DateUnionPropertiesClass.$schema.properties.stringOrDateProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: DateUnionPropertiesClass.$schema.properties.stringOrDateProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}StringOrDateProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "dateUnionPropertiesClass"))}StringOrDateProperty` }));
         return patterns;
     }
 
@@ -13696,7 +13696,7 @@ export namespace ConvertibleTypePropertiesClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("convertibleTypePropertiesClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}RdfType`) },
@@ -13719,8 +13719,8 @@ export namespace ConvertibleTypePropertiesClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ConvertibleTypePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ConvertibleTypePropertiesClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("convertibleTypePropertiesClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -13760,18 +13760,18 @@ export namespace ConvertibleTypePropertiesClass {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: ConvertibleTypePropertiesClass.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass")) })); }
 
-        patterns = patterns.concat($setSparqlWherePatterns($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.convertibleIriNonEmptySetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriNonEmptySetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriNonEmptySetProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriNonEmptySetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriNonEmptySetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriNonEmptySetProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.convertibleIriOptionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriOptionProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriOptionProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriOptionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriOptionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriOptionProperty` }));
-        patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.convertibleIriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.convertibleIriSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriSetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriSetProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriSetProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($literalSparqlWherePatterns)({ filter: parameters?.filter?.convertibleLiteralNonEmptySetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralNonEmptySetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralNonEmptySetProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralNonEmptySetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralNonEmptySetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralNonEmptySetProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($literalSparqlWherePatterns)({ filter: parameters?.filter?.convertibleLiteralOptionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralOptionProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralOptionProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralOptionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralOptionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralOptionProperty` }));
-        patterns = patterns.concat($literalSparqlWherePatterns({ filter: parameters?.filter?.convertibleLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($literalSparqlWherePatterns)({ filter: parameters?.filter?.convertibleLiteralSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralSetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralSetProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralSetProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($termSparqlWherePatterns)({ filter: parameters?.filter?.convertibleTermNonEmptySetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermNonEmptySetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermNonEmptySetProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermNonEmptySetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermNonEmptySetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermNonEmptySetProperty` }));
-        patterns = patterns.concat($maybeSparqlWherePatterns($termSparqlWherePatterns)({ filter: parameters?.filter?.convertibleTermOptionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermOptionProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermOptionProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermOptionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermOptionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermOptionProperty` }));
-        patterns = patterns.concat($termSparqlWherePatterns({ filter: parameters?.filter?.convertibleTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermProperty` }));
-        patterns = patterns.concat($setSparqlWherePatterns($termSparqlWherePatterns)({ filter: parameters?.filter?.convertibleTermSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermSetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermSetProperty.identifier, subject }], type: "bgp" }], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermSetProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.convertibleIriNonEmptySetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriNonEmptySetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriNonEmptySetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriNonEmptySetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriNonEmptySetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriNonEmptySetProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.convertibleIriOptionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriOptionProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriOptionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriOptionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriOptionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriOptionProperty` }));
+        patterns = patterns.concat($namedNodeSparqlWherePatterns({ filter: parameters?.filter?.convertibleIriProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$NamedNodeFilter, $NamedNodeSchema>($namedNodeSparqlWherePatterns)({ filter: parameters?.filter?.convertibleIriSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriSetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriSetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleIriSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleIriSetProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$LiteralFilter, $LiteralSchema>($literalSparqlWherePatterns)({ filter: parameters?.filter?.convertibleLiteralNonEmptySetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralNonEmptySetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralNonEmptySetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralNonEmptySetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralNonEmptySetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralNonEmptySetProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$LiteralFilter, $LiteralSchema>($literalSparqlWherePatterns)({ filter: parameters?.filter?.convertibleLiteralOptionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralOptionProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralOptionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralOptionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralOptionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralOptionProperty` }));
+        patterns = patterns.concat($literalSparqlWherePatterns({ filter: parameters?.filter?.convertibleLiteralProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$LiteralFilter, $LiteralSchema>($literalSparqlWherePatterns)({ filter: parameters?.filter?.convertibleLiteralSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralSetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralSetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleLiteralSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleLiteralSetProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$TermFilter, $TermSchema>($termSparqlWherePatterns)({ filter: parameters?.filter?.convertibleTermNonEmptySetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermNonEmptySetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermNonEmptySetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermNonEmptySetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermNonEmptySetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermNonEmptySetProperty` }));
+        patterns = patterns.concat($maybeSparqlWherePatterns<$TermFilter, $TermSchema>($termSparqlWherePatterns)({ filter: parameters?.filter?.convertibleTermOptionProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermOptionProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermOptionProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermOptionProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermOptionProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermOptionProperty` }));
+        patterns = patterns.concat($termSparqlWherePatterns({ filter: parameters?.filter?.convertibleTermProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermProperty` }));
+        patterns = patterns.concat($setSparqlWherePatterns<$TermFilter, $TermSchema>($termSparqlWherePatterns)({ filter: parameters?.filter?.convertibleTermSetProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermSetProperty`), predicate: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermSetProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConvertibleTypePropertiesClass.$schema.properties.convertibleTermSetProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermSetProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "convertibleTypePropertiesClass"))}ConvertibleTermSetProperty` }));
         return patterns;
     }
 
@@ -13911,7 +13911,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("baseInterfaceWithProperties");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}RdfType`) },
@@ -13923,8 +13923,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: BaseInterfaceWithPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: BaseInterfaceWithPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("baseInterfaceWithProperties");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -13972,7 +13972,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
 
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: BaseInterfaceWithPropertiesStatic.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.baseInterfaceWithPropertiesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}BaseInterfaceWithPropertiesProperty`), predicate: BaseInterfaceWithPropertiesStatic.$schema.properties.baseInterfaceWithPropertiesProperty.identifier, subject }], type: "bgp" }], schema: BaseInterfaceWithPropertiesStatic.$schema.properties.baseInterfaceWithPropertiesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}BaseInterfaceWithPropertiesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}BaseInterfaceWithPropertiesProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.baseInterfaceWithPropertiesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}BaseInterfaceWithPropertiesProperty`), predicate: BaseInterfaceWithPropertiesStatic.$schema.properties.baseInterfaceWithPropertiesProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: BaseInterfaceWithPropertiesStatic.$schema.properties.baseInterfaceWithPropertiesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}BaseInterfaceWithPropertiesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithProperties"))}BaseInterfaceWithPropertiesProperty` }));
         return patterns;
     }
 
@@ -14125,8 +14125,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: BaseInterfaceWithoutPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: BaseInterfaceWithoutPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("baseInterfaceWithoutProperties");
         patterns = patterns.concat(BaseInterfaceWithPropertiesStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithoutProperties")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "baseInterfaceWithoutProperties"))}RdfType`);
@@ -14329,8 +14329,8 @@ export namespace ConcreteParentInterfaceStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteParentInterfaceStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteParentInterfaceStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("concreteParentInterface");
         patterns = patterns.concat(BaseInterfaceWithoutPropertiesStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}RdfType`);
@@ -14377,7 +14377,7 @@ export namespace ConcreteParentInterfaceStatic {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteParentInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}ConcreteParentInterfaceProperty`), predicate: ConcreteParentInterfaceStatic.$schema.properties.concreteParentInterfaceProperty.identifier, subject }], type: "bgp" }], schema: ConcreteParentInterfaceStatic.$schema.properties.concreteParentInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}ConcreteParentInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}ConcreteParentInterfaceProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteParentInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}ConcreteParentInterfaceProperty`), predicate: ConcreteParentInterfaceStatic.$schema.properties.concreteParentInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConcreteParentInterfaceStatic.$schema.properties.concreteParentInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}ConcreteParentInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentInterface"))}ConcreteParentInterfaceProperty` }));
         return patterns;
     }
 
@@ -14533,8 +14533,8 @@ export namespace ConcreteChildInterface {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteChildInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteChildInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("concreteChildInterface");
         patterns = patterns.concat(ConcreteParentInterfaceStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}RdfType`);
@@ -14573,7 +14573,7 @@ export namespace ConcreteChildInterface {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteChildInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}ConcreteChildInterfaceProperty`), predicate: ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty.identifier, subject }], type: "bgp" }], schema: ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}ConcreteChildInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}ConcreteChildInterfaceProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteChildInterfaceProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}ConcreteChildInterfaceProperty`), predicate: ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}ConcreteChildInterfaceProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildInterface"))}ConcreteChildInterfaceProperty` }));
         return patterns;
     }
 
@@ -14724,17 +14724,17 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("abstractBaseClassWithProperties");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty`), predicate: AbstractBaseClassWithPropertiesStatic.$schema.properties.abstractBaseClassWithPropertiesProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: AbstractBaseClassWithPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: AbstractBaseClassWithPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("abstractBaseClassWithProperties");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: AbstractBaseClassWithPropertiesStatic.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.abstractBaseClassWithPropertiesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty`), predicate: AbstractBaseClassWithPropertiesStatic.$schema.properties.abstractBaseClassWithPropertiesProperty.identifier, subject }], type: "bgp" }], schema: AbstractBaseClassWithPropertiesStatic.$schema.properties.abstractBaseClassWithPropertiesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.abstractBaseClassWithPropertiesProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty`), predicate: AbstractBaseClassWithPropertiesStatic.$schema.properties.abstractBaseClassWithPropertiesProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: AbstractBaseClassWithPropertiesStatic.$schema.properties.abstractBaseClassWithPropertiesProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithProperties"))}AbstractBaseClassWithPropertiesProperty` }));
         return patterns;
     }
 
@@ -14833,8 +14833,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: AbstractBaseClassWithoutPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: AbstractBaseClassWithoutPropertiesStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("abstractBaseClassWithoutProperties");
         patterns = patterns.concat(AbstractBaseClassWithPropertiesStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "abstractBaseClassWithoutProperties")) }));
         return patterns;
@@ -14999,8 +14999,8 @@ export namespace ConcreteParentClassStatic {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteParentClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteParentClassStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("concreteParentClass");
         patterns = patterns.concat(AbstractBaseClassWithoutPropertiesStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}RdfType`);
@@ -15047,7 +15047,7 @@ export namespace ConcreteParentClassStatic {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteParentClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}ConcreteParentClassProperty`), predicate: ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty.identifier, subject }], type: "bgp" }], schema: ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}ConcreteParentClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}ConcreteParentClassProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteParentClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}ConcreteParentClassProperty`), predicate: ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}ConcreteParentClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteParentClass"))}ConcreteParentClassProperty` }));
         return patterns;
     }
 
@@ -15209,8 +15209,8 @@ export namespace ConcreteChildClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteChildClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ConcreteChildClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("concreteChildClass");
         patterns = patterns.concat(ConcreteParentClassStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}RdfType`);
@@ -15249,7 +15249,7 @@ export namespace ConcreteChildClass {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteChildClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}ConcreteChildClassProperty`), predicate: ConcreteChildClass.$schema.properties.concreteChildClassProperty.identifier, subject }], type: "bgp" }], schema: ConcreteChildClass.$schema.properties.concreteChildClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}ConcreteChildClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}ConcreteChildClassProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.concreteChildClassProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}ConcreteChildClassProperty`), predicate: ConcreteChildClass.$schema.properties.concreteChildClassProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ConcreteChildClass.$schema.properties.concreteChildClassProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}ConcreteChildClassProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "concreteChildClass"))}ConcreteChildClassProperty` }));
         return patterns;
     }
 
@@ -15372,17 +15372,17 @@ export namespace ClassUnionMemberCommonParentStatic {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("classUnionMemberCommonParent");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         triples.push({ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty`), predicate: ClassUnionMemberCommonParentStatic.$schema.properties.classUnionMemberCommonParentProperty.identifier, subject });
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnionMemberCommonParentStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnionMemberCommonParentStatic.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("classUnionMemberCommonParent");
         if (subject.termType === "Variable") { patterns = patterns.concat($identifierSparqlWherePatterns({ filter: parameters?.filter?.$identifier, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [], schema: ClassUnionMemberCommonParentStatic.$schema.properties.$identifier.type(), valueVariable: subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent")) })); }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.classUnionMemberCommonParentProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty`), predicate: ClassUnionMemberCommonParentStatic.$schema.properties.classUnionMemberCommonParentProperty.identifier, subject }], type: "bgp" }], schema: ClassUnionMemberCommonParentStatic.$schema.properties.classUnionMemberCommonParentProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.classUnionMemberCommonParentProperty, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty`), predicate: ClassUnionMemberCommonParentStatic.$schema.properties.classUnionMemberCommonParentProperty.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ClassUnionMemberCommonParentStatic.$schema.properties.classUnionMemberCommonParentProperty.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMemberCommonParent"))}ClassUnionMemberCommonParentProperty` }));
         return patterns;
     }
 
@@ -15537,8 +15537,8 @@ export namespace ClassUnionMember2 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnionMember2.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("classUnionMember2");
         patterns = patterns.concat(ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}RdfType`);
@@ -15577,7 +15577,7 @@ export namespace ClassUnionMember2 {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.classUnionMember2Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}ClassUnionMember2Property`), predicate: ClassUnionMember2.$schema.properties.classUnionMember2Property.identifier, subject }], type: "bgp" }], schema: ClassUnionMember2.$schema.properties.classUnionMember2Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}ClassUnionMember2Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}ClassUnionMember2Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.classUnionMember2Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}ClassUnionMember2Property`), predicate: ClassUnionMember2.$schema.properties.classUnionMember2Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ClassUnionMember2.$schema.properties.classUnionMember2Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}ClassUnionMember2Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember2"))}ClassUnionMember2Property` }));
         return patterns;
     }
 
@@ -15731,8 +15731,8 @@ export namespace ClassUnionMember1 {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnionMember1.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("classUnionMember1");
         patterns = patterns.concat(ClassUnionMemberCommonParentStatic.$sparqlWherePatterns({ filter: parameters?.filter, ignoreRdfType: true, subject, variablePrefix: (parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1")) }));
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}RdfType`);
@@ -15771,7 +15771,7 @@ export namespace ClassUnionMember1 {
           );
         }
 
-        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.classUnionMember1Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}ClassUnionMember1Property`), predicate: ClassUnionMember1.$schema.properties.classUnionMember1Property.identifier, subject }], type: "bgp" }], schema: ClassUnionMember1.$schema.properties.classUnionMember1Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}ClassUnionMember1Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}ClassUnionMember1Property` }));
+        patterns = patterns.concat($stringSparqlWherePatterns({ filter: parameters?.filter?.classUnionMember1Property, preferredLanguages: parameters?.preferredLanguages, propertyPatterns: [{ triples: [{ object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}ClassUnionMember1Property`), predicate: ClassUnionMember1.$schema.properties.classUnionMember1Property.identifier, subject }], type: "bgp" } satisfies sparqljs.BgpPattern], schema: ClassUnionMember1.$schema.properties.classUnionMember1Property.type(), valueVariable: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}ClassUnionMember1Property`), variablePrefix: `${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "classUnionMember1"))}ClassUnionMember1Property` }));
         return patterns;
     }
 
@@ -15902,7 +15902,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeOrIriIdentifierInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface"))}RdfType`) },
@@ -15913,8 +15913,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeOrIriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeOrIriIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeOrIriIdentifierInterface");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierInterface"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -16116,7 +16116,7 @@ export namespace BlankNodeOrIriIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeOrIriIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierClass"))}RdfType`) },
@@ -16127,8 +16127,8 @@ export namespace BlankNodeOrIriIdentifierClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeOrIriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeOrIriIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeOrIriIdentifierClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeOrIriIdentifierClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -16298,7 +16298,7 @@ export namespace BlankNodeIdentifierInterface {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierInterface");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface"))}RdfType`) },
@@ -16309,8 +16309,8 @@ export namespace BlankNodeIdentifierInterface {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeIdentifierInterface.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierInterface");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierInterface"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -16514,7 +16514,7 @@ export namespace BlankNodeIdentifierClass {
 
     export function $sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Triple[] {
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
-        let triples: sparqljs.Triple[] = []
+        const triples: sparqljs.Triple[] = []
         if (!parameters?.ignoreRdfType) {
           triples.push(
             { subject, predicate: $RdfVocabularies.rdf.type, object: dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierClass"))}RdfType`) },
@@ -16525,8 +16525,8 @@ export namespace BlankNodeIdentifierClass {
         return triples;
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        let patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: BlankNodeIdentifierClass.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("blankNodeIdentifierClass");
         const rdfTypeVariable = dataFactory.variable!(`${(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "blankNodeIdentifierClass"))}RdfType`);
         if (!parameters?.ignoreRdfType) {
@@ -16657,18 +16657,18 @@ export namespace ClassUnion {
         return [...ClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("classUnionClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ClassUnionMember1` : "classUnionClassUnionMember1" }).concat(), ...ClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("classUnionClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ClassUnionMember2` : "classUnionClassUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: ClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("classUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "classUnion",
           }));
         }
 
@@ -16787,18 +16787,18 @@ export namespace FlattenClassUnion {
         return [...ClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("flattenClassUnionClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ClassUnionMember1` : "flattenClassUnionClassUnionMember1" }).concat(), ...ClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("flattenClassUnionClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ClassUnionMember2` : "flattenClassUnionClassUnionMember2" }).concat(), ...FlattenClassUnionMember3.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("flattenClassUnionFlattenClassUnionMember3"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}FlattenClassUnionMember3` : "flattenClassUnionFlattenClassUnionMember3" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: FlattenClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: FlattenClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("flattenClassUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "flattenClassUnion",
           }));
         }
 
@@ -16914,18 +16914,18 @@ export namespace InterfaceUnion {
         return [...InterfaceUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("interfaceUnionInterfaceUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}InterfaceUnionMember1` : "interfaceUnionInterfaceUnionMember1" }).concat(), ...InterfaceUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("interfaceUnionInterfaceUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}InterfaceUnionMember2` : "interfaceUnionInterfaceUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: InterfaceUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("interfaceUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "interfaceUnion",
           }));
         }
 
@@ -17037,18 +17037,18 @@ export namespace LazilyResolvedClassUnion {
         return [...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnionLazilyResolvedClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1` : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember1" }).concat(), ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnionLazilyResolvedClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2` : "lazilyResolvedClassUnionLazilyResolvedClassUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedClassUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "lazilyResolvedClassUnion",
           }));
         }
 
@@ -17160,18 +17160,18 @@ export namespace LazilyResolvedInterfaceUnion {
         return [...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1` : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember1" }).concat(), ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2` : "lazilyResolvedInterfaceUnionLazilyResolvedInterfaceUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedInterfaceUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: LazilyResolvedInterfaceUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("lazilyResolvedInterfaceUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "lazilyResolvedInterfaceUnion",
           }));
         }
 
@@ -17283,18 +17283,18 @@ export namespace PartialClassUnion {
         return [...PartialClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("partialClassUnionPartialClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialClassUnionMember1` : "partialClassUnionPartialClassUnionMember1" }).concat(), ...PartialClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("partialClassUnionPartialClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialClassUnionMember2` : "partialClassUnionPartialClassUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialClassUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "partialClassUnion",
           }));
         }
 
@@ -17406,18 +17406,18 @@ export namespace PartialInterfaceUnion {
         return [...PartialInterfaceUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("partialInterfaceUnionPartialInterfaceUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialInterfaceUnionMember1` : "partialInterfaceUnionPartialInterfaceUnionMember1" }).concat(), ...PartialInterfaceUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("partialInterfaceUnionPartialInterfaceUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialInterfaceUnionMember2` : "partialInterfaceUnionPartialInterfaceUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterfaceUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: PartialInterfaceUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("partialInterfaceUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "partialInterfaceUnion",
           }));
         }
 
@@ -17529,18 +17529,18 @@ export namespace NoRdfTypeClassUnion {
         return [...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnionNoRdfTypeClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1` : "noRdfTypeClassUnionNoRdfTypeClassUnionMember1" }).concat(), ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnionNoRdfTypeClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2` : "noRdfTypeClassUnionNoRdfTypeClassUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: NoRdfTypeClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: NoRdfTypeClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("noRdfTypeClassUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "noRdfTypeClassUnion",
           }));
         }
 
@@ -17652,18 +17652,18 @@ export namespace RecursiveClassUnion {
         return [...RecursiveClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("recursiveClassUnionRecursiveClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}RecursiveClassUnionMember1` : "recursiveClassUnionRecursiveClassUnionMember1" }).concat(), ...RecursiveClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("recursiveClassUnionRecursiveClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}RecursiveClassUnionMember2` : "recursiveClassUnionRecursiveClassUnionMember2" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: RecursiveClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: RecursiveClassUnion.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("recursiveClassUnion");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "recursiveClassUnion",
           }));
         }
 
@@ -18269,18 +18269,18 @@ export namespace $Object {
         return [...BlankNodeIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectBlankNodeIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}BlankNodeIdentifierClass` : "objectBlankNodeIdentifierClass" }).concat(), ...BlankNodeIdentifierInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectBlankNodeIdentifierInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}BlankNodeIdentifierInterface` : "objectBlankNodeIdentifierInterface" }).concat(), ...BlankNodeOrIriIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectBlankNodeOrIriIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierClass` : "objectBlankNodeOrIriIdentifierClass" }).concat(), ...BlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectBlankNodeOrIriIdentifierInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}BlankNodeOrIriIdentifierInterface` : "objectBlankNodeOrIriIdentifierInterface" }).concat(), ...ClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ClassUnionMember1` : "objectClassUnionMember1" }).concat(), ...ClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ClassUnionMember2` : "objectClassUnionMember2" }).concat(), ...ConcreteChildClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectConcreteChildClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ConcreteChildClass` : "objectConcreteChildClass" }).concat(), ...ConcreteParentClassStatic.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectConcreteParentClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ConcreteParentClass` : "objectConcreteParentClass" }).concat(), ...ConcreteChildInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectConcreteChildInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ConcreteChildInterface` : "objectConcreteChildInterface" }).concat(), ...ConcreteParentInterfaceStatic.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectConcreteParentInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ConcreteParentInterface` : "objectConcreteParentInterface" }).concat(), ...BaseInterfaceWithoutPropertiesStatic.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectBaseInterfaceWithoutProperties"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}BaseInterfaceWithoutProperties` : "objectBaseInterfaceWithoutProperties" }).concat(), ...BaseInterfaceWithPropertiesStatic.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectBaseInterfaceWithProperties"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}BaseInterfaceWithProperties` : "objectBaseInterfaceWithProperties" }).concat(), ...ConvertibleTypePropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectConvertibleTypePropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ConvertibleTypePropertiesClass` : "objectConvertibleTypePropertiesClass" }).concat(), ...DateUnionPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectDateUnionPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}DateUnionPropertiesClass` : "objectDateUnionPropertiesClass" }).concat(), ...DefaultValuePropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectDefaultValuePropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}DefaultValuePropertiesClass` : "objectDefaultValuePropertiesClass" }).concat(), ...DirectRecursiveClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectDirectRecursiveClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}DirectRecursiveClass` : "objectDirectRecursiveClass" }).concat(), ...ExplicitFromToRdfTypesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectExplicitFromToRdfTypesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ExplicitFromToRdfTypesClass` : "objectExplicitFromToRdfTypesClass" }).concat(), ...ExplicitRdfTypeClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectExplicitRdfTypeClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ExplicitRdfTypeClass` : "objectExplicitRdfTypeClass" }).concat(), ...ExternClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectExternClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ExternClass` : "objectExternClass" }).concat(), ...ExternClassPropertyClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectExternClassPropertyClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ExternClassPropertyClass` : "objectExternClassPropertyClass" }).concat(), ...FlattenClassUnionMember3.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectFlattenClassUnionMember3"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}FlattenClassUnionMember3` : "objectFlattenClassUnionMember3" }).concat(), ...HasValuePropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectHasValuePropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}HasValuePropertiesClass` : "objectHasValuePropertiesClass" }).concat(), ...IdentifierOverride5Class.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIdentifierOverride5Class"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IdentifierOverride5Class` : "objectIdentifierOverride5Class" }).concat(), ...IdentifierOverride4ClassStatic.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIdentifierOverride4Class"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IdentifierOverride4Class` : "objectIdentifierOverride4Class" }).concat(), ...IdentifierOverride3ClassStatic.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIdentifierOverride3Class"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IdentifierOverride3Class` : "objectIdentifierOverride3Class" }).concat(), ...InIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectInIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}InIdentifierClass` : "objectInIdentifierClass" }).concat(), ...InPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectInPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}InPropertiesClass` : "objectInPropertiesClass" }).concat(), ...IndirectRecursiveClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIndirectRecursiveClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IndirectRecursiveClass` : "objectIndirectRecursiveClass" }).concat(), ...IndirectRecursiveHelperClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIndirectRecursiveHelperClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IndirectRecursiveHelperClass` : "objectIndirectRecursiveHelperClass" }).concat(), ...Interface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}Interface` : "objectInterface" }).concat(), ...InterfaceUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectInterfaceUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}InterfaceUnionMember1` : "objectInterfaceUnionMember1" }).concat(), ...InterfaceUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectInterfaceUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}InterfaceUnionMember2` : "objectInterfaceUnionMember2" }).concat(), ...IriIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIriIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IriIdentifierClass` : "objectIriIdentifierClass" }).concat(), ...IriIdentifierInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectIriIdentifierInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}IriIdentifierInterface` : "objectIriIdentifierInterface" }).concat(), ...JsPrimitiveUnionPropertyClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectJsPrimitiveUnionPropertyClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}JsPrimitiveUnionPropertyClass` : "objectJsPrimitiveUnionPropertyClass" }).concat(), ...LanguageInPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLanguageInPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LanguageInPropertiesClass` : "objectLanguageInPropertiesClass" }).concat(), ...LazilyResolvedBlankNodeOrIriIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedBlankNodeOrIriIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierClass` : "objectLazilyResolvedBlankNodeOrIriIdentifierClass" }).concat(), ...LazilyResolvedBlankNodeOrIriIdentifierInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedBlankNodeOrIriIdentifierInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedBlankNodeOrIriIdentifierInterface` : "objectLazilyResolvedBlankNodeOrIriIdentifierInterface" }).concat(), ...LazilyResolvedClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember1` : "objectLazilyResolvedClassUnionMember1" }).concat(), ...LazilyResolvedClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedClassUnionMember2` : "objectLazilyResolvedClassUnionMember2" }).concat(), ...LazilyResolvedInterfaceUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedInterfaceUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember1` : "objectLazilyResolvedInterfaceUnionMember1" }).concat(), ...LazilyResolvedInterfaceUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedInterfaceUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedInterfaceUnionMember2` : "objectLazilyResolvedInterfaceUnionMember2" }).concat(), ...LazilyResolvedIriIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedIriIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierClass` : "objectLazilyResolvedIriIdentifierClass" }).concat(), ...LazilyResolvedIriIdentifierInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazilyResolvedIriIdentifierInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazilyResolvedIriIdentifierInterface` : "objectLazilyResolvedIriIdentifierInterface" }).concat(), ...LazyPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazyPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazyPropertiesClass` : "objectLazyPropertiesClass" }).concat(), ...PartialClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPartialClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialClass` : "objectPartialClass" }).concat(), ...LazyPropertiesInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectLazyPropertiesInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}LazyPropertiesInterface` : "objectLazyPropertiesInterface" }).concat(), ...PartialInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPartialInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialInterface` : "objectPartialInterface" }).concat(), ...ListPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectListPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}ListPropertiesClass` : "objectListPropertiesClass" }).concat(), ...MutablePropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectMutablePropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}MutablePropertiesClass` : "objectMutablePropertiesClass" }).concat(), ...NoRdfTypeClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectNoRdfTypeClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember1` : "objectNoRdfTypeClassUnionMember1" }).concat(), ...NoRdfTypeClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectNoRdfTypeClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}NoRdfTypeClassUnionMember2` : "objectNoRdfTypeClassUnionMember2" }).concat(), ...NonClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectNonClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}NonClass` : "objectNonClass" }).concat(), ...OrderedPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectOrderedPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}OrderedPropertiesClass` : "objectOrderedPropertiesClass" }).concat(), ...PartialClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPartialClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialClassUnionMember1` : "objectPartialClassUnionMember1" }).concat(), ...PartialClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPartialClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialClassUnionMember2` : "objectPartialClassUnionMember2" }).concat(), ...PartialInterfaceUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPartialInterfaceUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialInterfaceUnionMember1` : "objectPartialInterfaceUnionMember1" }).concat(), ...PartialInterfaceUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPartialInterfaceUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PartialInterfaceUnionMember2` : "objectPartialInterfaceUnionMember2" }).concat(), ...PropertyCardinalitiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPropertyCardinalitiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PropertyCardinalitiesClass` : "objectPropertyCardinalitiesClass" }).concat(), ...PropertyVisibilitiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectPropertyVisibilitiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}PropertyVisibilitiesClass` : "objectPropertyVisibilitiesClass" }).concat(), ...RecursiveClassUnionMember1.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectRecursiveClassUnionMember1"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}RecursiveClassUnionMember1` : "objectRecursiveClassUnionMember1" }).concat(), ...RecursiveClassUnionMember2.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectRecursiveClassUnionMember2"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}RecursiveClassUnionMember2` : "objectRecursiveClassUnionMember2" }).concat(), ...Sha256IriIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectSha256IriIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}Sha256IriIdentifierClass` : "objectSha256IriIdentifierClass" }).concat(), ...TermPropertiesClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectTermPropertiesClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}TermPropertiesClass` : "objectTermPropertiesClass" }).concat(), ...UnionDiscriminantsClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectUnionDiscriminantsClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}UnionDiscriminantsClass` : "objectUnionDiscriminantsClass" }).concat(), ...UuidV4IriIdentifierClass.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectUuidV4IriIdentifierClass"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}UuidV4IriIdentifierClass` : "objectUuidV4IriIdentifierClass" }).concat(), ...UuidV4IriIdentifierInterface.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectUuidV4IriIdentifierInterface"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}UuidV4IriIdentifierInterface` : "objectUuidV4IriIdentifierInterface" }).concat(), ...$DefaultPartial.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectDefaultPartial"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}DefaultPartial` : "objectDefaultPartial" }).concat(), ...$NamedDefaultPartial.$sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("objectNamedDefaultPartial"), variablePrefix: parameters?.variablePrefix ? `${parameters.variablePrefix}NamedDefaultPartial` : "objectNamedDefaultPartial" }).concat()];
     }
 
-    export function $sparqlWherePatterns(parameters?: { filter?: $Object.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly sparqljs.Pattern[] {
-        const patterns: sparqljs.Pattern[] = [];
+    export function $sparqlWherePatterns(parameters?: { filter?: $Object.$Filter; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly $SparqlPattern[] {
+        let patterns: $SparqlPattern[] = [];
         const subject = parameters?.subject ?? dataFactory.variable!("object");
         if (subject.termType === "Variable") {
-          patterns.push($identifierSparqlWherePatterns({
+          patterns = patterns.concat($identifierSparqlWherePatterns({
               filter: parameters?.filter?.$identifier,
               ignoreRdfType: false,
               preferredLanguages: parameters?.preferredLanguages,
-              propertyPatterns: "[]",
-              schema: this.identifierType.schema,
-              valueVariable: "subject",
-              variablePrefix: "subject",
+              propertyPatterns: [],
+              schema: $unconstrainedIdentifierSchema,
+              valueVariable: subject,
+              variablePrefix: subject.termType === "Variable" ? subject.value : "object",
           }));
         }
 
