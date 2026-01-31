@@ -516,7 +516,7 @@ export class IdentifierProperty extends AbstractProperty<
         filter: `${variables.filter}?.${this.name}`,
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: "[]",
-        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type`,
+        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
       })})`,

@@ -351,6 +351,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
             type: JSON.stringify("bgp"),
           },
         ],
+        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
         valueVariable,
         variablePrefix: valueString,
       })})`,

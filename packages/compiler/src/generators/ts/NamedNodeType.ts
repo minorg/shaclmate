@@ -86,7 +86,7 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
 
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}blankNodeSparqlWherePatterns`;
+    return `${syntheticNamePrefix}namedNodeSparqlWherePatterns`;
   }
 
   @Memoize()
@@ -229,7 +229,7 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
     AbstractTermType<NamedNode, BlankNode | NamedNode>["toJsonExpression"]
   >[0]): string {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.value}.termType}`
+      ? `, termType: ${variables.value}.termType`
       : "";
     return `{ "@id": ${variables.value}.value${discriminantProperty} }`;
   }

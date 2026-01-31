@@ -40,25 +40,6 @@ export abstract class AbstractPrimitiveType<
     return Maybe.empty();
   }
 
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      defaultValue: this.primitiveDefaultValue.map(JSON.stringify).extract(),
-      in:
-        this.primitiveIn.length > 0
-          ? this.primitiveIn.map((_) => JSON.stringify(_)).concat()
-          : undefined,
-    };
-  }
-
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "defaultValue?": this.typeofs[0] as string,
-      "in?": `readonly ${this.typeofs[0]}[]`,
-    };
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {

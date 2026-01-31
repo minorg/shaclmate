@@ -37,6 +37,17 @@ export class StringType extends AbstractPrimitiveType<string> {
     return conversions;
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.map(JSON.stringify).extract(),
+      in:
+        this.primitiveIn.length > 0
+          ? this.primitiveIn.map((_) => JSON.stringify(_)).concat()
+          : undefined,
+    };
+  }
+
   @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {

@@ -44,6 +44,21 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return conversions;
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.map(
+        (defaultValue) => `new Date("${defaultValue.toISOString()}")`,
+      ),
+      in:
+        this.primitiveIn.length > 0
+          ? this.primitiveIn.map(
+              (inValue) => `new Date("${inValue.toISOString()}")`,
+            )
+          : undefined,
+    };
+  }
+
   override get name(): string {
     return "Date";
   }

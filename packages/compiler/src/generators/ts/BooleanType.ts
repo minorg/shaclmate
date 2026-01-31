@@ -45,6 +45,22 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return "boolean";
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.extract(),
+      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": "boolean",
+      "in?": `readonly boolean[]`,
+    };
+  }
+
   override jsonZodSchema({
     variables,
   }: Parameters<

@@ -386,7 +386,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
               type: memberType.schema,
             })}`,
         )
-        .join(";")} }`,
+        .join(",")} }`,
     });
   }
 

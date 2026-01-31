@@ -57,6 +57,14 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
     return "number";
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.extract(),
+      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
+    };
+  }
+
   @Memoize()
   override get schemaType(): string {
     return `${syntheticNamePrefix}NumberSchema`;
@@ -70,7 +78,9 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
+      "defaultValue?": "number",
       kind: '"FloatType" | "IntType"',
+      "in?": `readonly number[]`,
     };
   }
 
