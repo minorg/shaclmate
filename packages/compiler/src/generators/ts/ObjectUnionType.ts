@@ -161,6 +161,11 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
+  override get schemaType(): string {
+    return `typeof ${this.schema}`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): string {
     return `(({ propertyPatterns, ...otherParameters }) => [...propertyPatterns, ${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(otherParameters)])`;
   }

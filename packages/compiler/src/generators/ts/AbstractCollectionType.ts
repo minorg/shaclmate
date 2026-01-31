@@ -1,27 +1,15 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
-
-function isTypeofString(
-  x: string,
-): x is "boolean" | "object" | "number" | "string" {
-  switch (x) {
-    case "boolean":
-    case "object":
-    case "number":
-    case "string":
-      return true;
-    default:
-      return false;
-  }
-}
 
 /**
  * Abstract base class for ListType and SetType.
@@ -29,12 +17,13 @@ function isTypeofString(
 export abstract class AbstractCollectionType<
   ItemTypeT extends Type,
 > extends AbstractType {
+  protected readonly _mutable: boolean;
+  protected readonly minCount: number;
+
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly itemType: ItemTypeT;
-  protected readonly minCount: number;
-  protected readonly _mutable: boolean;
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
@@ -55,15 +44,6 @@ export abstract class AbstractCollectionType<
     if (mutable) {
       invariant(this.minCount === 0);
     }
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      item: this.itemType.schema,
-      minCount: this.minCount,
-      mutable: this.mutable ? true : undefined,
-    };
   }
 
   @Memoize()
@@ -189,6 +169,34 @@ export abstract class AbstractCollectionType<
       return `readonly (${this.itemType.name})[]`;
     }
     return `purify.NonEmptyList<${this.itemType.name}>`;
+  }
+
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  @Memoize()
+  get schemaType(): string {
+    return objectInitializer(this.schemaTypeObject);
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      item: this.itemType.schema,
+      minCount: this.minCount,
+      mutable: this.mutable ? true : undefined,
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      item: this.itemType.schemaType,
+      minCount: "number",
+      "mutable?": "boolean",
+    };
   }
 
   override fromJsonExpression({
@@ -431,6 +439,20 @@ function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (item
     variables,
   }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
     return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
+  }
+}
+
+function isTypeofString(
+  x: string,
+): x is "boolean" | "object" | "number" | "string" {
+  switch (x) {
+    case "boolean":
+    case "object":
+    case "number":
+    case "string":
+      return true;
+    default:
+      return false;
   }
 }
 

@@ -92,7 +92,7 @@ type ${syntheticNamePrefix}SparqlWherePattern = Exclude<sparqljs.Pattern, sparql
 type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   filter?: FilterT;
   ignoreRdfType?: boolean;
-  preferredLanguages: readonly string[];
+  preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: SchemaT;
   valueVariable: rdfjs.Variable;
@@ -206,7 +206,7 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
   valueVariable
 }: {
   filterPatterns: readonly ${syntheticNamePrefix}SparqlWhereFilterPattern[],
-  preferredLanguages: readonly string[];
+  preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
     defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
@@ -224,7 +224,7 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
     schemaPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
   }
 
-  if (preferredLanguages.length > 0) {
+  if (preferredLanguages && preferredLanguages.length > 0) {
     schemaPatterns.push({
       expression: {
         args: [{ args: [value], operator: "lang", type: "operation" }, preferredLanguages.map(dataFactory.literal)],

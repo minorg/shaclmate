@@ -101,6 +101,10 @@ class MemberType {
     return this.delegate.schema;
   }
 
+  get schemaType() {
+    return this.delegate.schemaType;
+  }
+
   get sparqlWherePatternsFunction() {
     return this.delegate.sparqlWherePatternsFunction;
   }
@@ -371,6 +375,27 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       discriminant: {
         kind: JSON.stringify(this.discriminant.kind),
       },
+      kind: '"UnionType" as const',
+      members: `{ ${this.memberTypes
+        .map(
+          (memberType) =>
+            `"${memberType.discriminantValues[0]}": ${objectInitializer({
+              discriminantValues: memberType.discriminantValues.map((_) =>
+                JSON.stringify(_),
+              ),
+              type: memberType.schema,
+            })}`,
+        )
+        .join(";")} }`,
+    });
+  }
+
+  override get schemaType(): string {
+    return objectInitializer({
+      discriminant: {
+        kind: '"envelope" | "inline" | "typeof"',
+      },
+      kind: '"UnionType"',
       members: `{ ${this.memberTypes
         .map(
           (memberType) =>
@@ -379,7 +404,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
                 discriminantValues: memberType.discriminantValues.map((_) =>
                   JSON.stringify(_),
                 ),
-                type: memberType.schema,
+                type: memberType.schemaType,
               },
             )}`,
         )
@@ -398,7 +423,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     .map(
       (memberType) => `\
 {
-  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema["${memberType.discriminantValues[0]}"] }));
+  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlWherePatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema["${memberType.discriminantValues[0]}"], ...otherParameters }));
   unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
   liftedPatterns.push(...memberLiftedPatterns);
 }`,

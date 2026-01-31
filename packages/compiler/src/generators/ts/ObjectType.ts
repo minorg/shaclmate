@@ -331,6 +331,11 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
+  override get schemaType(): string {
+    return `typeof ${this.schema}`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): string {
     return `(({ ignoreRdfType, propertyPatterns, ...otherParameters }) => [...propertyPatterns, ${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })])`;
   }

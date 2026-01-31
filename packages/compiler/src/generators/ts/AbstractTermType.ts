@@ -139,9 +139,15 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
+  override get schemaType(): string {
+    invariant(this.kind.endsWith("Type"));
+    return `${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
+  }
+
+  @Memoize()
   override get sparqlWherePatternsFunction(): string {
     invariant(this.kind.endsWith("Type"));
-    return `${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}SparqlWherePatterns`;
+    return `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}SparqlWherePatterns`;
   }
 
   override fromRdfExpression(
@@ -192,6 +198,11 @@ export abstract class AbstractTermType<
     Record<string, SnippetDeclaration>
   > {
     return mergeSnippetDeclarations(
+      singleEntryRecord(
+        this.schemaType,
+        `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
+      ),
+
       features.has("equals")
         ? singleEntryRecord(`${syntheticNamePrefix}booleanEquals`, {
             code: `\
@@ -211,7 +222,8 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
             dependencies: sharedSnippetDeclarations.EqualsResult,
           })
         : {},
-      sharedSnippetDeclarations.toLiteral,
+
+      sharedSnippetDeclarations.toLiteral, // For initializers
     );
   }
 

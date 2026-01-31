@@ -34,6 +34,14 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
     return `${syntheticNamePrefix}NamedNodeFilter`;
   }
 
+  override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": "rdfjs.NamedNode",
+      "in?": "readonly rdfjs.NamedNode[]",
+    };
+  }
+
   @Memoize()
   get fromStringFunctionDeclaration(): FunctionDeclarationStructure {
     const expressions: string[] = [

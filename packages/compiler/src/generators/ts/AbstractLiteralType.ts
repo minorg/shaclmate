@@ -1,6 +1,5 @@
 import type { Literal } from "@rdfjs/types";
 
-import { camelCase } from "change-case";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
@@ -39,7 +38,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     invariant(this.kind.endsWith("Type"));
     return this.constrained
       ? objectInitializer(this.schemaObject)
-      : `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}Schema`;
+      : `${syntheticNamePrefix}unconstrained${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
   }
 
   protected override get schemaObject() {
@@ -50,12 +49,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
           ? this.languageIn.map((_) => JSON.stringify(_))
           : undefined,
     };
-  }
-
-  @Memoize()
-  override get schemaType(): string {
-    invariant(this.kind.endsWith("Type"));
-    return `${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
   }
 
   protected override get schemaTypeObject() {
@@ -79,11 +72,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
             `const ${this.schema} = ${objectInitializer(this.schemaObject)};`,
           )
         : {},
-
-      singleEntryRecord(
-        this.schemaType,
-        `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
-      ),
 
       parameters.features.has("rdf")
         ? singleEntryRecord(

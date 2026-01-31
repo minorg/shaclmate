@@ -3,7 +3,6 @@ import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import type { Type } from "./Type.js";
 
@@ -81,6 +80,16 @@ export abstract class AbstractType {
   abstract readonly name: string;
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  abstract readonly schema: string;
+
+  /**
+   * TypeScript type describing .schema.
+   */
+  abstract readonly schemaType: string;
+
+  /**
    * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlWherePattern's for a property of this type.
    *
    * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
@@ -109,27 +118,17 @@ export abstract class AbstractType {
   }
 
   /**
-   * TypeScript object describing this type, for runtime use.
+   * Helper to compose the result of schema along the type hierarchy.
    */
-  @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
-  }
-
-  /**
-   * TypeScript type describing .schema.
-   */
-  @Memoize()
-  get schemaType(): string {
-    return objectInitializer(this.schemaTypeObject);
-  }
-
   protected get schemaObject() {
     return {
       kind: `${JSON.stringify(this.kind)} as const`,
     };
   }
 
+  /**
+   * Helper to compose the result of schemaType along the type hierarchy.
+   */
   protected get schemaTypeObject() {
     return {
       kind: JSON.stringify(this.kind),

@@ -87,7 +87,7 @@ export class ListType<
       parameters.features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}listSparqlWherePatterns`, {
             code: `\
-function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}ListSchema<ItemSchemaT>> {
+function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}CollectionSchema<ItemSchemaT>> {
   return (parameters) => {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil

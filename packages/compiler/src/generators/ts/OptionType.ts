@@ -6,6 +6,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -97,6 +98,11 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   @Memoize()
   override get name(): string {
     return `purify.Maybe<${this.itemType.name}>`;
+  }
+
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
   }
 
   protected override get schemaObject() {

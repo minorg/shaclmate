@@ -53,6 +53,11 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     return `${syntheticNamePrefix}DateSchema`;
   }
 
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}dateSparqlWherePatterns`;
+  }
+
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,

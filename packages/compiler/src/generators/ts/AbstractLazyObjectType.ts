@@ -9,6 +9,7 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { SetType } from "./SetType.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 
@@ -82,11 +83,34 @@ export abstract class AbstractLazyObjectType<
     return this.runtimeClass.name;
   }
 
+  @Memoize()
+  override get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  @Memoize()
+  override get schemaType(): string {
+    return objectInitializer(this.schemaTypeObject);
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
       partialType: this.partialType.schema,
       resolvedType: this.resolvedType.schema,
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      partialType: this.partialType.schemaType,
+      resolvedType: this.resolvedType.schemaType,
     };
   }
 
@@ -135,11 +159,6 @@ export abstract class AbstractLazyObjectType<
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
   ): readonly (AbstractType.SparqlConstructTriple | string)[] {
     return this.partialType.sparqlConstructTriples(parameters);
-  }
-
-  @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `(({ schema, ...otherParameters }) => ${this.partialType.sparqlWherePatternsFunction}({ schema: schema.partialType, ...otherParameters }))`;
   }
 
   override toJsonExpression({

@@ -348,7 +348,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
                 subject: variables.focusIdentifier,
               },
             ],
-            type: "bgp",
+            type: JSON.stringify("bgp"),
           },
         ],
         valueVariable,
