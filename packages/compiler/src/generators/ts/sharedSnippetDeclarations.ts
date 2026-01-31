@@ -169,6 +169,9 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
             }
 
             return inValue;
+          default:
+            inValue satisfies never;
+            throw new Error("should never reach this point");
           }
         }
       )],
@@ -214,20 +217,23 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
   }>,
   valueVariable: rdfjs.Variable;
 }): readonly ${syntheticNamePrefix}SparqlWherePattern[] {
+  let patterns: ${syntheticNamePrefix}SparqlWherePattern[];
+
   if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
     // Filter patterns make the property required
-    propertyPatterns = [{ patterns: propertyPatterns, type: "optional" }];
+    patterns = [{ patterns: propertyPatterns.concat(), type: "optional" }];
+  } else {
+    patterns = propertyPatterns.concat();
   }
 
-  const schemaPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
   if (schema.in) {
-    schemaPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
+    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
   }
 
   if (preferredLanguages && preferredLanguages.length > 0) {
-    schemaPatterns.push({
+    patterns.push({
       expression: {
-        args: [{ args: [value], operator: "lang", type: "operation" }, preferredLanguages.map(dataFactory.literal)],
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, preferredLanguages.map(_ => dataFactory.literal(_))],
         operator: "in",
         type: "operation"
       },
@@ -236,7 +242,7 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
     });
   }
 
-  return propertyPatterns.concat(schemaPatterns).concat(liftedFilterPatterns);
+  return patterns.concat(filterPatterns);
 }`,
     dependencies: { ...sparqlValueInPattern, ...SparqlWherePatternTypes },
   } satisfies SnippetDeclaration,
@@ -560,7 +566,7 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
     {
       code: `\
 const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
-  ({ filter, ...otherParameters }) => {
+  ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (filter) {
@@ -577,7 +583,7 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
       }
 
       if (typeof filter.in !== "undefined") {
-        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern(valueVariable, filter.in);
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (typeof filter.languageIn !== "undefined") {
@@ -631,7 +637,7 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
       }
     }
 
-    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, ...otherParameters });
+    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
       dependencies: { ...sparqlValueInPattern, ...termLikeSparqlWherePatterns },
     } satisfies SnippetDeclaration,

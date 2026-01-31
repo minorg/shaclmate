@@ -76,13 +76,6 @@ export class StringType extends AbstractPrimitiveType<string> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
-      !this.constrained
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}stringTypeSchema`,
-            `const ${syntheticNamePrefix}stringTypeSchema = ${objectInitializer(this.schemaObject)};`,
-          )
-        : {},
-
       singleEntryRecord(
         `${syntheticNamePrefix}StringFilter`,
         `\

@@ -177,8 +177,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get schemaType(): string {
-    return objectInitializer(this.schemaTypeObject);
+  override get schemaType(): string {
+    return `${syntheticNamePrefix}CollectionSchema<${this.itemType.schemaType}>`;
   }
 
   protected override get schemaObject() {
@@ -187,15 +187,6 @@ export abstract class AbstractCollectionType<
       item: this.itemType.schema,
       minCount: this.minCount,
       mutable: this.mutable ? true : undefined,
-    };
-  }
-
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      item: this.itemType.schemaType,
-      minCount: "number",
-      "mutable?": "boolean",
     };
   }
 
@@ -398,6 +389,7 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
 
     snippetDeclarations = mergeSnippetDeclarations(
       snippetDeclarations,
+
       singleEntryRecord(
         `${syntheticNamePrefix}CollectionFilter`,
         `\
@@ -405,6 +397,11 @@ type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly ${syntheticNamePrefix}maxCount?: number;
   readonly ${syntheticNamePrefix}minCount?: number;
 };`,
+      ),
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}CollectionSchema`,
+        `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; readonly mutable?: true; }`,
       ),
 
       singleEntryRecord(

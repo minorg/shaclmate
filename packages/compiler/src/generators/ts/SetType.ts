@@ -64,11 +64,11 @@ export class SetType<
         ? singleEntryRecord(`${syntheticNamePrefix}setSparqlWherePatterns`, {
             code: `\
 function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}CollectionSchema<ItemSchemaT>> {
-  return ({ schema, ...otherParameters }) => {
-    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item });
+  return ({ filter, schema, ...otherParameters }) => {
+    const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
 
     const minCount = filter?.${syntheticNamePrefix}minCount ?? schema.minCount;
-    if (typeof minCount > 0) {
+    if (minCount > 0) {
       // Required
       return itemSparqlWherePatterns;
     }

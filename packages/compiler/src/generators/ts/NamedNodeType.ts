@@ -5,6 +5,7 @@ import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -32,6 +33,17 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   get filterType(): string {
     return `${syntheticNamePrefix}NamedNodeFilter`;
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
+      in:
+        this.in_.length > 0
+          ? this.in_.map(rdfjsTermExpression).concat()
+          : undefined,
+    };
   }
 
   override get schemaTypeObject() {

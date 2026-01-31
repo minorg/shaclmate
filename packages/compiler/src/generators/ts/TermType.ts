@@ -7,6 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -48,6 +49,22 @@ export class TermType<
   @Memoize()
   get schema(): string {
     return objectInitializer(this.schemaObject);
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
+      in: this.in_.map(rdfjsTermExpression),
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": `rdfjs.Literal | rdfjs.NamedNode`,
+      "in?": `readonly (rdfjs.Literal | rdfjs.NamedNode)[]`,
+    };
   }
 
   override fromJsonExpression({
