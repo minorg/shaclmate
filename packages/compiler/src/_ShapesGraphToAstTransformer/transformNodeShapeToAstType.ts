@@ -1,5 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import type { NodeKind } from "@shaclmate/shacl-ast";
+import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
@@ -10,6 +10,7 @@ import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import { createIdentifierType } from "./createIdentifierType.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
@@ -30,10 +31,7 @@ const listPropertiesObjectType = new ast.ObjectType({
   identifierType: new ast.IdentifierType({
     comment: Maybe.empty(),
     defaultValue: Maybe.empty(),
-    hasValues: [],
     label: Maybe.empty(),
-    in_: [],
-    nodeKinds: new Set(["BlankNode", "NamedNode"]),
   }),
   fromRdfType: Maybe.empty(),
   name: Maybe.empty(),
@@ -342,6 +340,12 @@ export function transformNodeShapeToAstType(
         toRdfTypes = [];
       }
 
+      if (nodeKinds.has("Literal")) {
+        return Left(
+          new Error(`${nodeShape} should not have a nodeKind "Literal"`),
+        );
+      }
+
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
@@ -353,14 +357,10 @@ export function transformNodeShapeToAstType(
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
         label: nodeShape.label,
-        identifierType: new ast.IdentifierType({
-          comment: Maybe.empty(),
-          defaultValue: Maybe.empty(),
-          hasValues: [],
-          in_: nodeShape.identifierIn,
-          label: Maybe.empty(),
-          nodeKinds,
-        }),
+        identifierType: createIdentifierType(
+          nodeKinds as ReadonlySet<IdentifierNodeKind>,
+          { in_: nodeShape.identifierIn },
+        ),
         identifierMintingStrategy,
         name: nodeShape.shaclmateName,
         shapeIdentifier: this.shapeIdentifier(nodeShape),

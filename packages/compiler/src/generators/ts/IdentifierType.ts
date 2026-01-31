@@ -1,5 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { invariant } from "ts-invariant";
+import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
@@ -11,21 +11,30 @@ import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
+const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([
+  "BlankNode",
+  "NamedNode",
+]);
+
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
   readonly kind = "IdentifierType";
 
   constructor(
-    parameters: ConstructorParameters<
-      typeof AbstractIdentifierType<BlankNode | NamedNode>
-    >[0],
+    parameters: Pick<
+      ConstructorParameters<
+        typeof AbstractIdentifierType<BlankNode | NamedNode>
+      >[0],
+      "comment" | "defaultValue" | "label"
+    >,
   ) {
-    super(parameters);
-    invariant(this.defaultValue.isNothing());
-    invariant(this.hasValues.length === 0);
-    invariant(this.in_.length === 0);
-    invariant(this.nodeKinds.size === 2);
+    super({
+      ...parameters,
+      hasValues: [],
+      in_: [],
+      nodeKinds,
+    });
   }
 
   @Memoize()

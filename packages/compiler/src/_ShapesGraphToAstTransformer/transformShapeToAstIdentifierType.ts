@@ -1,9 +1,10 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { type Either, Left } from "purify-ts";
-import * as ast from "../ast/index.js";
+import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import { createIdentifierType } from "./createIdentifierType.js";
 import type { ShapeStack } from "./ShapeStack.js";
 import { shapeNodeKinds } from "./shapeNodeKinds.js";
 import { transformShapeToAstAbstractTypeProperties } from "./transformShapeToAstAbstractTypeProperties.js";
@@ -15,7 +16,7 @@ export function transformShapeToAstIdentifierType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.IdentifierType> {
+): Either<Error, ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType> {
   shapeStack.push(shape);
   try {
     // defaultValue / hasValue / in only makes sense with IRIs
@@ -38,12 +39,11 @@ export function transformShapeToAstIdentifierType(
       ) {
         return transformShapeToAstAbstractTypeProperties(shape).map(
           (astAbstractTypeProperties) =>
-            new ast.IdentifierType({
+            createIdentifierType(nodeKinds as ReadonlySet<IdentifierNodeKind>, {
               ...astAbstractTypeProperties,
               defaultValue: identifierDefaultValue,
               hasValues: identifierHasValues,
               in_: identifierIn,
-              nodeKinds: nodeKinds as ReadonlySet<IdentifierNodeKind>,
             }),
         );
       }

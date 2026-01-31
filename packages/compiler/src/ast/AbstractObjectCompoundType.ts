@@ -7,7 +7,9 @@ import { Resource } from "rdfjs-resource";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractCompoundType } from "./AbstractCompoundType.js";
+import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
+import { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -72,7 +74,7 @@ export abstract class AbstractObjectCompoundType<
   }
 
   @Memoize()
-  get identifierType(): IdentifierType {
+  get identifierType(): BlankNodeType | IdentifierType | NamedNodeType {
     const memberIdentifierTypeNodeKinds = new Set<IdentifierNodeKind>();
     const memberIdentifierTypesIn = new TermSet<NamedNode>();
     for (const memberType of this.memberTypes) {
@@ -88,14 +90,33 @@ export abstract class AbstractObjectCompoundType<
       // `could not infer ${ast.Name.toString(astType.name)} member type node kinds`,
     );
 
-    return new IdentifierType({
-      comment: Maybe.empty(),
-      defaultValue: Maybe.empty(),
-      hasValues: [],
-      in_: [...memberIdentifierTypesIn],
-      label: Maybe.empty(),
-      nodeKinds: memberIdentifierTypeNodeKinds,
-    });
+    if (memberIdentifierTypeNodeKinds.size === 2) {
+      return new IdentifierType({
+        comment: Maybe.empty(),
+        defaultValue: Maybe.empty(),
+        label: Maybe.empty(),
+      });
+    }
+
+    const memberIdentifierTypeNodeKind = [...memberIdentifierTypeNodeKinds][0];
+    switch (memberIdentifierTypeNodeKind) {
+      case "BlankNode":
+        return new BlankNodeType({
+          comment: Maybe.empty(),
+          label: Maybe.empty(),
+        });
+      case "NamedNode":
+        return new NamedNodeType({
+          comment: Maybe.empty(),
+          defaultValue: Maybe.empty(),
+          hasValues: [],
+          in_: [...memberIdentifierTypesIn],
+          label: Maybe.empty(),
+        });
+      default:
+        memberIdentifierTypeNodeKind satisfies never;
+        throw new Error("should never reach here");
+    }
   }
 
   @Memoize()

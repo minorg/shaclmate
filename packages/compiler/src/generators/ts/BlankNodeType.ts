@@ -1,5 +1,5 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { invariant } from "ts-invariant";
+import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
@@ -11,20 +11,24 @@ import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
+const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);
+
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly kind = "BlankNodeType";
 
   constructor(
-    parameters: ConstructorParameters<
-      typeof AbstractIdentifierType<BlankNode>
-    >[0],
+    superParameters: Pick<
+      ConstructorParameters<typeof AbstractIdentifierType<BlankNode>>[0],
+      "comment" | "label"
+    >,
   ) {
-    super(parameters);
-    invariant(this.defaultValue.isNothing());
-    invariant(this.hasValues.length === 0);
-    invariant(this.in_.length === 0);
-    invariant(this.nodeKinds.size === 1);
-    invariant([...this.nodeKinds][0] === "BlankNode");
+    super({
+      ...superParameters,
+      defaultValue: Maybe.empty(),
+      hasValues: [],
+      in_: [],
+      nodeKinds,
+    });
   }
 
   @Memoize()

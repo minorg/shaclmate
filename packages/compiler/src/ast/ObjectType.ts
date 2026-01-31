@@ -11,9 +11,11 @@ import type {
   TsObjectDeclarationType,
 } from "../enums/index.js";
 import { AbstractType } from "./AbstractType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Curie } from "./Curie.js";
 import { arrayEquals } from "./equals.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import { Type } from "./Type.js";
 
 export class ObjectType extends AbstractType {
@@ -75,7 +77,7 @@ export class ObjectType extends AbstractType {
   /**
    * Identifier type.
    */
-  readonly identifierType: IdentifierType;
+  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
 
   /**
    * Type discriminant.
@@ -160,7 +162,7 @@ export class ObjectType extends AbstractType {
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    identifierType: IdentifierType;
+    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
     name: Maybe<string>;
     shapeIdentifier: BlankNode | Curie | NamedNode;
     synthetic: boolean;
@@ -429,8 +431,10 @@ export namespace ObjectType {
         const currentPropertyType = propertyType.at(-1)!;
 
         switch (currentPropertyType.kind) {
+          case "BlankNodeType":
           case "IdentifierType":
           case "LiteralType":
+          case "NamedNodeType":
           case "PlaceholderType":
           case "TermType":
             return false;

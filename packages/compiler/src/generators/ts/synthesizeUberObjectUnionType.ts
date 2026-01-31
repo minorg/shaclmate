@@ -1,7 +1,9 @@
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { Maybe } from "purify-ts";
 import type { TsFeature } from "../../enums/TsFeature.js";
+import { BlankNodeType } from "./BlankNodeType.js";
 import { IdentifierType } from "./IdentifierType.js";
+import { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -17,6 +19,41 @@ export function synthesizeUberObjectUnionType({
   //   const objectTypes = parameters.objectTypes.filter(
   //     (objectType) => !objectType.abstract,
   //   );
+
+  const nodeKinds = objectTypes.reduce((nodeKinds, objectType) => {
+    for (const nodeKind of objectType.identifierType.nodeKinds) {
+      nodeKinds.add(nodeKind);
+    }
+    return nodeKinds;
+  }, new Set<IdentifierNodeKind>());
+
+  let identifierType: BlankNodeType | IdentifierType | NamedNodeType;
+  if (nodeKinds.size === 2) {
+    identifierType = new IdentifierType({
+      comment: Maybe.empty(),
+      defaultValue: Maybe.empty(),
+      label: Maybe.empty(),
+    });
+  } else {
+    switch ([...nodeKinds][0]) {
+      case "BlankNode":
+        identifierType = new BlankNodeType({
+          comment: Maybe.empty(),
+          label: Maybe.empty(),
+        });
+        break;
+      case "NamedNode":
+        identifierType = new NamedNodeType({
+          comment: Maybe.empty(),
+          defaultValue: Maybe.empty(),
+          hasValues: [],
+          in_: [],
+          label: Maybe.empty(),
+        });
+        break;
+    }
+  }
+
   return new ObjectUnionType({
     comment: Maybe.empty(),
     export_: true,
@@ -26,19 +63,7 @@ export function synthesizeUberObjectUnionType({
       }
       return features;
     }, new Set<TsFeature>()),
-    identifierType: new IdentifierType({
-      comment: Maybe.empty(),
-      defaultValue: Maybe.empty(),
-      hasValues: [],
-      in_: [],
-      label: Maybe.empty(),
-      nodeKinds: objectTypes.reduce((nodeKinds, objectType) => {
-        for (const nodeKind of objectType.identifierType.nodeKinds) {
-          nodeKinds.add(nodeKind);
-        }
-        return nodeKinds;
-      }, new Set<IdentifierNodeKind>()),
-    }),
+    identifierType,
     label: Maybe.empty(),
     memberTypes: objectTypes,
     name: `${syntheticNamePrefix}Object`,

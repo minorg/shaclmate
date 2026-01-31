@@ -11,7 +11,7 @@ import {
 } from "./equals.js";
 
 /**
- * Abstract base class of term types (IdentifierType, LiteralType, TermType).
+ * Abstract base class of term types (BlankNodeType, IdentifierType, LiteralType, NamedNodeType, TermType).
  *
  * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
  * RuntimeTermT is the type of values at runtime.
@@ -28,7 +28,12 @@ export abstract class AbstractTermType<
   readonly defaultValue: Maybe<ConstantTermT>;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
-  abstract readonly kind: "IdentifierType" | "LiteralType" | "TermType";
+  abstract readonly kind:
+    | "BlankNodeType"
+    | "IdentifierType"
+    | "LiteralType"
+    | "NamedNodeType"
+    | "TermType";
   readonly nodeKinds: ReadonlySet<_RuntimeTermT["termType"]>;
 
   constructor({
