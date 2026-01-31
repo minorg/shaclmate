@@ -20,6 +20,8 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     >[0],
   ) {
     super(parameters);
+    invariant(this.defaultValue.isNothing());
+    invariant(this.hasValues.length === 0);
     invariant(this.in_.length === 0);
     invariant(this.nodeKinds.size === 1);
     invariant([...this.nodeKinds][0] === "BlankNode");

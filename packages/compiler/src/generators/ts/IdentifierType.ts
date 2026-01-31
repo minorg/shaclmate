@@ -22,6 +22,8 @@ export class IdentifierType extends AbstractIdentifierType<
     >[0],
   ) {
     super(parameters);
+    invariant(this.defaultValue.isNothing());
+    invariant(this.hasValues.length === 0);
     invariant(this.in_.length === 0);
     invariant(this.nodeKinds.size === 2);
   }

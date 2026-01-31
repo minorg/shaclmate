@@ -146,7 +146,7 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
               {
                 code: `\
 const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
-  ({ filter, valueVariable }) => {
+  ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlWhereFilterPattern[] = [];
 
     if (filter) {
@@ -197,6 +197,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
             operator: ">=",
             args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
           },
+          lift: true,
           type: "filter",
         });
       }

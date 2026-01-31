@@ -4,9 +4,10 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
+import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
-import type { BlankNodeType } from "./BlankNodeType.js";
+import { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
@@ -18,7 +19,7 @@ import { LazyObjectSetType } from "./LazyObjectSetType.js";
 import { LazyObjectType } from "./LazyObjectType.js";
 import { ListType } from "./ListType.js";
 import { LiteralType } from "./LiteralType.js";
-import type { NamedNodeType } from "./NamedNodeType.js";
+import { NamedNodeType } from "./NamedNodeType.js";
 import { ObjectType } from "./ObjectType.js";
 import { ObjectUnionType } from "./ObjectUnionType.js";
 import { OptionType } from "./OptionType.js";
@@ -47,14 +48,40 @@ export class TypeFactory {
   private createIdentifierType(
     astType: ast.IdentifierType,
   ): BlankNodeType | IdentifierType | NamedNodeType {
-    return new IdentifierType({
-      comment: astType.comment,
-      defaultValue: astType.defaultValue,
-      hasValues: astType.hasValues,
-      in_: astType.in_.filter((_) => _.termType === "NamedNode"),
-      label: astType.label,
-      nodeKinds: astType.nodeKinds,
-    });
+    const in_ = astType.in_.filter((_) => _.termType === "NamedNode");
+
+    if (astType.nodeKinds.size === 2) {
+      return new IdentifierType({
+        comment: astType.comment,
+        defaultValue: astType.defaultValue,
+        hasValues: astType.hasValues,
+        in_,
+        label: astType.label,
+        nodeKinds: astType.nodeKinds,
+      });
+    }
+
+    invariant(astType.nodeKinds.size === 1);
+    switch ([...astType.nodeKinds][0]) {
+      case "BlankNode":
+        return new BlankNodeType({
+          comment: astType.comment,
+          defaultValue: astType.defaultValue,
+          hasValues: astType.hasValues,
+          in_,
+          label: astType.label,
+          nodeKinds: astType.nodeKinds as ReadonlySet<"BlankNode">,
+        });
+      case "NamedNode":
+        return new NamedNodeType({
+          comment: astType.comment,
+          defaultValue: astType.defaultValue,
+          hasValues: astType.hasValues,
+          in_,
+          label: astType.label,
+          nodeKinds: astType.nodeKinds as ReadonlySet<"NamedNode">,
+        });
+    }
   }
 
   private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
