@@ -3,6 +3,7 @@ import * as kitchenSink from "@shaclmate/kitchen-sink-example";
 import N3 from "n3";
 import * as oxigraph from "oxigraph";
 import { describe } from "vitest";
+import { quadsToTurtle } from "./quadsToTurtle.js";
 import { testObjectSet } from "./testObjectSet.js";
 
 describe("SparqlObjectSet", () => {
@@ -19,8 +20,8 @@ describe("SparqlObjectSet", () => {
         oxigraphStore.add(quad);
       }
     }
-    // const ttl = quadsToTurtle(oxigraphStore.match());
-    // console.log(ttl);
+    const ttl = quadsToTurtle(oxigraphStore.match());
+    console.log(ttl);
     return objectSet;
   });
 });

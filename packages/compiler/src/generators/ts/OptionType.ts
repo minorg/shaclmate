@@ -263,13 +263,20 @@ type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
             code: `\
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}MaybeFilter<ItemFilterT>, ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
+    if (typeof filter === "undefined") {
+      // Treat the item's patterns as optional
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
+      return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
+    }
+      
     if (filter === null) {
+      // Use FILTER NOT EXISTS around the item's patterns
       const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
       return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 
-    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
-    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
+    // Treat the item as required.
+    return itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item });
   }
 }`,
             dependencies: {
