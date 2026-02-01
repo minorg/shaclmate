@@ -132,10 +132,7 @@ describe("sparql", () => {
         preferredLanguages: ["en"],
       }),
     );
-    expect(actualDataset.size).toStrictEqual(
-      Object.keys(kitchenSink.LanguageInPropertiesClass.$schema.properties)
-        .length * 1,
-    );
+    expect(actualDataset.size).toStrictEqual(1);
     for (const quad of actualDataset.match()) {
       expect((quad.object as oxigraph.Literal).value).toStrictEqual("envalue");
     }

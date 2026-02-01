@@ -162,11 +162,11 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
       }
     }
 
-    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
             dependencies: {
+              ...sharedSnippetDeclarations.literalSchemaSparqlWherePatterns,
               ...sharedSnippetDeclarations.sparqlValueInPattern,
-              ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
               ...sharedSnippetDeclarations.toLiteral,
               ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },

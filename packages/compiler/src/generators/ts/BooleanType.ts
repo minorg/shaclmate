@@ -114,7 +114,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
       }
     }
 
-    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,

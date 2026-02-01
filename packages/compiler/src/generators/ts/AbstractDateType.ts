@@ -235,10 +235,10 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
       }
     }
 
-    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
             dependencies: {
-              ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
               ...sharedSnippetDeclarations.toLiteral,
               ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
             },

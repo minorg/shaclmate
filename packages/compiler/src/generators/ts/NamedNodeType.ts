@@ -202,11 +202,11 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
       filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
-    return ${syntheticNamePrefix}termLikeSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,
-                ...sharedSnippetDeclarations.termLikeSparqlWherePatterns,
+                ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
                 ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },

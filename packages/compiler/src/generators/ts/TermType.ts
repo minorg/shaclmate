@@ -10,6 +10,7 @@ import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
@@ -139,7 +140,15 @@ export class TermType<
       sharedSnippetDeclarations.filterTerm,
       sharedSnippetDeclarations.TermFilter,
       parameters.features.has("sparql")
-        ? sharedSnippetDeclarations.termSparqlWherePatterns
+        ? singleEntryRecord(`${syntheticNamePrefix}termSparqlWherePatterns`, {
+            code: `\
+const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
+  (parameters) => ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns: ${syntheticNamePrefix}termFilterSparqlPatterns(parameters), ...parameters })`,
+            dependencies: {
+              ...sharedSnippetDeclarations.termFilterSparqlPatterns,
+              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
+            },
+          } satisfies SnippetDeclaration)
         : {},
     );
   }
