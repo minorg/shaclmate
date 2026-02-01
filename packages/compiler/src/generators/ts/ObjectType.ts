@@ -337,7 +337,7 @@ export class ObjectType extends AbstractDeclaredType {
 
   @Memoize()
   override get sparqlWherePatternsFunction(): string {
-    return `(({ ignoreRdfType, propertyPatterns, ...otherParameters }: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${syntheticNamePrefix}SparqlPattern[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, ...otherParameters })))`;
+    return `(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${syntheticNamePrefix}SparqlPattern[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, subject: valueVariable, ...otherParameters })))`;
   }
 
   @Memoize()

@@ -62,7 +62,7 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      // if (id !== "termPropertiesClass") {
+      // if (id !== "objectListProperty") {
       //   return;
       // }
 

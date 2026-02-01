@@ -7154,6 +7154,7 @@ export namespace UnionDiscriminantsClass {
             (({
               ignoreRdfType,
               propertyPatterns,
+              valueVariable,
               ...otherParameters
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember1.$Filter,
@@ -7162,6 +7163,7 @@ export namespace UnionDiscriminantsClass {
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember1.$sparqlWherePatterns({
                   ignoreRdfType: ignoreRdfType ?? true,
+                  subject: valueVariable,
                   ...otherParameters,
                 }),
               ))({
@@ -7181,6 +7183,7 @@ export namespace UnionDiscriminantsClass {
             (({
               ignoreRdfType,
               propertyPatterns,
+              valueVariable,
               ...otherParameters
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember2.$Filter,
@@ -7189,6 +7192,7 @@ export namespace UnionDiscriminantsClass {
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember2.$sparqlWherePatterns({
                   ignoreRdfType: ignoreRdfType ?? true,
+                  subject: valueVariable,
                   ...otherParameters,
                 }),
               ))({
@@ -7420,6 +7424,7 @@ export namespace UnionDiscriminantsClass {
             (({
               ignoreRdfType,
               propertyPatterns,
+              valueVariable,
               ...otherParameters
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember1.$Filter,
@@ -7428,6 +7433,7 @@ export namespace UnionDiscriminantsClass {
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember1.$sparqlWherePatterns({
                   ignoreRdfType: ignoreRdfType ?? true,
+                  subject: valueVariable,
                   ...otherParameters,
                 }),
               ))({
@@ -7447,6 +7453,7 @@ export namespace UnionDiscriminantsClass {
             (({
               ignoreRdfType,
               propertyPatterns,
+              valueVariable,
               ...otherParameters
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember2.$Filter,
@@ -7455,6 +7462,7 @@ export namespace UnionDiscriminantsClass {
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember2.$sparqlWherePatterns({
                   ignoreRdfType: ignoreRdfType ?? true,
+                  subject: valueVariable,
                   ...otherParameters,
                 }),
               ))({
@@ -7671,6 +7679,7 @@ export namespace UnionDiscriminantsClass {
             (({
               ignoreRdfType,
               propertyPatterns,
+              valueVariable,
               ...otherParameters
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember1.$Filter,
@@ -7679,6 +7688,7 @@ export namespace UnionDiscriminantsClass {
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember1.$sparqlWherePatterns({
                   ignoreRdfType: ignoreRdfType ?? true,
+                  subject: valueVariable,
                   ...otherParameters,
                 }),
               ))({
@@ -7698,6 +7708,7 @@ export namespace UnionDiscriminantsClass {
             (({
               ignoreRdfType,
               propertyPatterns,
+              valueVariable,
               ...otherParameters
             }: $SparqlWherePatternsFunctionParameters<
               ClassUnionMember2.$Filter,
@@ -7706,6 +7717,7 @@ export namespace UnionDiscriminantsClass {
               (propertyPatterns as readonly $SparqlPattern[]).concat(
                 ClassUnionMember2.$sparqlWherePatterns({
                   ignoreRdfType: ignoreRdfType ?? true,
+                  subject: valueVariable,
                   ...otherParameters,
                 }),
               ))({
@@ -20187,6 +20199,7 @@ export namespace ListPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             NonClass.$Filter,
@@ -20195,6 +20208,7 @@ export namespace ListPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               NonClass.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23668,6 +23682,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
@@ -23676,6 +23691,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23715,6 +23731,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
@@ -23723,6 +23740,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23763,6 +23781,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $NamedDefaultPartial.$Filter,
@@ -23771,6 +23790,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $NamedDefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23813,6 +23833,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             PartialInterface.$Filter,
@@ -23821,6 +23842,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23863,6 +23885,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             PartialInterface.$Filter,
@@ -23871,6 +23894,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -23909,9 +23933,12 @@ export namespace LazyPropertiesInterface {
         $maybeSparqlWherePatterns<
           PartialInterfaceUnion.$Filter,
           typeof PartialInterfaceUnion.$schema
-        >(({ propertyPatterns, ...otherParameters }) =>
+        >(({ propertyPatterns, valueVariable, ...otherParameters }) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
-            PartialInterfaceUnion.$sparqlWherePatterns(otherParameters),
+            PartialInterfaceUnion.$sparqlWherePatterns({
+              subject: valueVariable,
+              ...otherParameters,
+            }),
           ),
         )({ schema: schema.partialType, ...otherParameters }))({
         filter:
@@ -23948,6 +23975,7 @@ export namespace LazyPropertiesInterface {
         (({
           ignoreRdfType,
           propertyPatterns,
+          valueVariable,
           ...otherParameters
         }: $SparqlWherePatternsFunctionParameters<
           $DefaultPartial.$Filter,
@@ -23956,6 +23984,7 @@ export namespace LazyPropertiesInterface {
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             $DefaultPartial.$sparqlWherePatterns({
               ignoreRdfType: ignoreRdfType ?? true,
+              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partialType, ...otherParameters }))({
@@ -23990,6 +24019,7 @@ export namespace LazyPropertiesInterface {
         (({
           ignoreRdfType,
           propertyPatterns,
+          valueVariable,
           ...otherParameters
         }: $SparqlWherePatternsFunctionParameters<
           PartialInterface.$Filter,
@@ -23998,6 +24028,7 @@ export namespace LazyPropertiesInterface {
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             PartialInterface.$sparqlWherePatterns({
               ignoreRdfType: ignoreRdfType ?? true,
+              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partialType, ...otherParameters }))({
@@ -24039,6 +24070,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
@@ -24047,6 +24079,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -24086,6 +24119,7 @@ export namespace LazyPropertiesInterface {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             PartialInterface.$Filter,
@@ -24094,6 +24128,7 @@ export namespace LazyPropertiesInterface {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialInterface.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27705,6 +27740,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
@@ -27713,6 +27749,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27752,6 +27789,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
@@ -27760,6 +27798,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27799,6 +27838,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $NamedDefaultPartial.$Filter,
@@ -27807,6 +27847,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $NamedDefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27848,6 +27889,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             PartialClass.$Filter,
@@ -27856,6 +27898,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27895,6 +27938,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             PartialClass.$Filter,
@@ -27903,6 +27947,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -27940,9 +27985,12 @@ export namespace LazyPropertiesClass {
         $maybeSparqlWherePatterns<
           PartialClassUnion.$Filter,
           typeof PartialClassUnion.$schema
-        >(({ propertyPatterns, ...otherParameters }) =>
+        >(({ propertyPatterns, valueVariable, ...otherParameters }) =>
           (propertyPatterns as readonly $SparqlPattern[]).concat(
-            PartialClassUnion.$sparqlWherePatterns(otherParameters),
+            PartialClassUnion.$sparqlWherePatterns({
+              subject: valueVariable,
+              ...otherParameters,
+            }),
           ),
         )({ schema: schema.partialType, ...otherParameters }))({
         filter:
@@ -27979,6 +28027,7 @@ export namespace LazyPropertiesClass {
         (({
           ignoreRdfType,
           propertyPatterns,
+          valueVariable,
           ...otherParameters
         }: $SparqlWherePatternsFunctionParameters<
           $DefaultPartial.$Filter,
@@ -27987,6 +28036,7 @@ export namespace LazyPropertiesClass {
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             $DefaultPartial.$sparqlWherePatterns({
               ignoreRdfType: ignoreRdfType ?? true,
+              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partialType, ...otherParameters }))({
@@ -28021,6 +28071,7 @@ export namespace LazyPropertiesClass {
         (({
           ignoreRdfType,
           propertyPatterns,
+          valueVariable,
           ...otherParameters
         }: $SparqlWherePatternsFunctionParameters<
           PartialClass.$Filter,
@@ -28029,6 +28080,7 @@ export namespace LazyPropertiesClass {
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             PartialClass.$sparqlWherePatterns({
               ignoreRdfType: ignoreRdfType ?? true,
+              subject: valueVariable,
               ...otherParameters,
             }),
           ))({ schema: schema.partialType, ...otherParameters }))({
@@ -28067,6 +28119,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             $DefaultPartial.$Filter,
@@ -28075,6 +28128,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               $DefaultPartial.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -28114,6 +28168,7 @@ export namespace LazyPropertiesClass {
           ({
             ignoreRdfType,
             propertyPatterns,
+            valueVariable,
             ...otherParameters
           }: $SparqlWherePatternsFunctionParameters<
             PartialClass.$Filter,
@@ -28122,6 +28177,7 @@ export namespace LazyPropertiesClass {
             (propertyPatterns as readonly $SparqlPattern[]).concat(
               PartialClass.$sparqlWherePatterns({
                 ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
                 ...otherParameters,
               }),
             ),
@@ -44584,6 +44640,7 @@ export namespace ExternClassPropertyClass {
         ({
           ignoreRdfType,
           propertyPatterns,
+          valueVariable,
           ...otherParameters
         }: $SparqlWherePatternsFunctionParameters<
           ExternClass.$Filter,
@@ -44592,6 +44649,7 @@ export namespace ExternClassPropertyClass {
           (propertyPatterns as readonly $SparqlPattern[]).concat(
             ExternClass.$sparqlWherePatterns({
               ignoreRdfType: ignoreRdfType ?? true,
+              subject: valueVariable,
               ...otherParameters,
             }),
           ),
