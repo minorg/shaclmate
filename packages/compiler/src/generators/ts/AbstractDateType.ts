@@ -174,7 +174,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
     const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
-      if (typeof filter.in !== "undefined") {
+      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
         filterPatterns.push({
           expression: {
             type: "operation",

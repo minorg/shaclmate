@@ -154,7 +154,10 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
-        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in.filter(identifier => identifier.termType === "NamedNode") }));
+        const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
+        if (valueIn.length > 0) {
+          filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn }));
+        }
       }
 
       if (typeof filter.type !== "undefined") {

@@ -172,7 +172,7 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined") {
+    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -658,15 +658,14 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
 
   if (filter) {
     if (typeof filter.in !== "undefined") {
-      filterPatterns.push(
-        $sparqlValueInPattern({
-          lift: true,
-          valueVariable,
-          valueIn: filter.in.filter(
-            (identifier) => identifier.termType === "NamedNode",
-          ),
-        }),
+      const valueIn = filter.in.filter(
+        (identifier) => identifier.termType === "NamedNode",
       );
+      if (valueIn.length > 0) {
+        filterPatterns.push(
+          $sparqlValueInPattern({ lift: true, valueVariable, valueIn }),
+        );
+      }
     }
 
     if (typeof filter.type !== "undefined") {
@@ -1081,7 +1080,7 @@ const $namedNodeSparqlWherePatterns: $SparqlWherePatternsFunction<
 > = ({ filter, valueVariable, ...otherParameters }) => {
   const filterPatterns: $SparqlFilterPattern[] = [];
 
-  if (typeof filter?.in !== "undefined") {
+  if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
     filterPatterns.push(
       $sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }),
     );
@@ -1296,7 +1295,7 @@ const $numberSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined") {
+    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
       filterPatterns.push(
         $sparqlValueInPattern({
           lift: true,
@@ -1489,6 +1488,10 @@ function $sparqlValueInPattern({
   )[];
   valueVariable: rdfjs.Variable;
 }): $SparqlFilterPattern {
+  if (valueIn.length === 0) {
+    throw new RangeError("expected valueIn not to be empty");
+  }
+
   return {
     expression: {
       args: [
@@ -1548,7 +1551,7 @@ const $stringSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.in !== "undefined") {
+    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
       filterPatterns.push(
         $sparqlValueInPattern({
           lift: true,
@@ -1644,7 +1647,7 @@ function $termLikeSparqlWherePatterns({
     patterns = propertyPatterns.concat();
   }
 
-  if (schema.in) {
+  if (schema.in && schema.in.length > 0) {
     patterns.push(
       $sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }),
     );
@@ -1680,7 +1683,10 @@ const $termSparqlWherePatterns: $SparqlWherePatternsFunction<
   const filterPatterns: $SparqlFilterPattern[] = [];
 
   if (filter) {
-    if (typeof filter.datatypeIn !== "undefined") {
+    if (
+      typeof filter.datatypeIn !== "undefined" &&
+      filter.datatypeIn.length > 0
+    ) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -1695,7 +1701,7 @@ const $termSparqlWherePatterns: $SparqlWherePatternsFunction<
       });
     }
 
-    if (typeof filter.in !== "undefined") {
+    if (typeof filter.in !== "undefined" && filter.in.length > 0) {
       filterPatterns.push(
         $sparqlValueInPattern({
           lift: true,
@@ -1705,7 +1711,10 @@ const $termSparqlWherePatterns: $SparqlWherePatternsFunction<
       );
     }
 
-    if (typeof filter.languageIn !== "undefined") {
+    if (
+      typeof filter.languageIn !== "undefined" &&
+      filter.languageIn.length > 0
+    ) {
       filterPatterns.push({
         expression: {
           type: "operation",
@@ -9334,7 +9343,7 @@ export namespace TermPropertiesClass {
         kind: "ShaclProperty" as const,
         name: "termProperty",
         type: () => ({
-          item: { in: [], kind: "TermType" as const },
+          item: { kind: "TermType" as const },
           kind: "OptionType" as const,
         }),
       },
@@ -10812,7 +10821,6 @@ export namespace RecursiveClassUnionMember2 {
         ),
         kind: "ShaclProperty" as const,
         name: "recursiveClassUnionMember2Property",
-        recursive: true,
         type: () => ({
           item: RecursiveClassUnion.$schema,
           kind: "OptionType" as const,
@@ -11436,7 +11444,6 @@ export namespace RecursiveClassUnionMember1 {
         ),
         kind: "ShaclProperty" as const,
         name: "recursiveClassUnionMember1Property",
-        recursive: true,
         type: () => ({
           item: RecursiveClassUnion.$schema,
           kind: "OptionType" as const,
@@ -12061,7 +12068,6 @@ export namespace PropertyVisibilitiesClass {
         kind: "ShaclProperty" as const,
         name: "privateProperty",
         type: () => $unconstrainedStringSchema,
-        visibility: "private" as const,
       },
       protectedProperty: {
         identifier: dataFactory.namedNode(
@@ -12070,7 +12076,6 @@ export namespace PropertyVisibilitiesClass {
         kind: "ShaclProperty" as const,
         name: "protectedProperty",
         type: () => $unconstrainedStringSchema,
-        visibility: "protected" as const,
       },
       publicProperty: {
         identifier: dataFactory.namedNode("http://example.com/publicProperty"),
@@ -18599,7 +18604,6 @@ export namespace MutablePropertiesClass {
           "http://example.com/mutableSetProperty",
         ),
         kind: "ShaclProperty" as const,
-        mutable: true,
         name: "mutableSetProperty",
         type: () => ({
           item: $unconstrainedStringSchema,
@@ -18612,7 +18616,6 @@ export namespace MutablePropertiesClass {
           "http://example.com/mutableStringProperty",
         ),
         kind: "ShaclProperty" as const,
-        mutable: true,
         name: "mutableStringProperty",
         type: () => ({
           item: $unconstrainedStringSchema,
@@ -37863,7 +37866,6 @@ export namespace IndirectRecursiveHelperClass {
         ),
         kind: "ShaclProperty" as const,
         name: "indirectRecursiveProperty",
-        recursive: true,
         type: () => ({
           item: IndirectRecursiveClass.$schema,
           kind: "OptionType" as const,
@@ -38484,7 +38486,6 @@ export namespace IndirectRecursiveClass {
         ),
         kind: "ShaclProperty" as const,
         name: "indirectRecursiveHelperProperty",
-        recursive: true,
         type: () => ({
           item: IndirectRecursiveHelperClass.$schema,
           kind: "OptionType" as const,
@@ -46739,7 +46740,6 @@ export namespace DirectRecursiveClass {
         ),
         kind: "ShaclProperty" as const,
         name: "directRecursiveProperty",
-        recursive: true,
         type: () => ({
           item: DirectRecursiveClass.$schema,
           kind: "OptionType" as const,
@@ -52426,7 +52426,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "convertibleTermNonEmptySetProperty",
         type: () => ({
-          item: { in: [], kind: "TermType" as const },
+          item: { kind: "TermType" as const },
           kind: "SetType" as const,
           minCount: 1,
         }),
@@ -52438,7 +52438,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "convertibleTermOptionProperty",
         type: () => ({
-          item: { in: [], kind: "TermType" as const },
+          item: { kind: "TermType" as const },
           kind: "OptionType" as const,
         }),
       },
@@ -52448,7 +52448,7 @@ export namespace ConvertibleTypePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "convertibleTermProperty",
-        type: () => ({ in: [], kind: "TermType" as const }),
+        type: () => ({ kind: "TermType" as const }),
       },
       convertibleTermSetProperty: {
         identifier: dataFactory.namedNode(
@@ -52457,7 +52457,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "convertibleTermSetProperty",
         type: () => ({
-          item: { in: [], kind: "TermType" as const },
+          item: { kind: "TermType" as const },
           kind: "SetType" as const,
           minCount: 0,
         }),

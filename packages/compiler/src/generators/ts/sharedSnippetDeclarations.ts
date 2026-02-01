@@ -163,6 +163,10 @@ const sparqlValueInPattern = singleEntryRecord(
   {
     code: `\
 function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlFilterPattern {
+  if (valueIn.length === 0) {
+    throw new RangeError("expected valueIn not to be empty");
+  }
+
   return {
     expression: {
       args: [valueVariable, valueIn.map(inValue => {
@@ -234,7 +238,7 @@ function ${syntheticNamePrefix}termLikeSparqlWherePatterns({
     patterns = propertyPatterns.concat();
   }
 
-  if (schema.in) {
+  if (schema.in && schema.in.length > 0) {
     patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
   }
 
@@ -583,7 +587,7 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
     const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
     if (filter) {
-      if (typeof filter.datatypeIn !== "undefined") {
+      if (typeof filter.datatypeIn !== "undefined" && filter.datatypeIn.length > 0) {
         filterPatterns.push({
           expression: {
             type: "operation",
@@ -595,11 +599,11 @@ const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}Sparq
         });
       }
 
-      if (typeof filter.in !== "undefined") {
+      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
         filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
-      if (typeof filter.languageIn !== "undefined") {
+      if (typeof filter.languageIn !== "undefined" && filter.languageIn.length > 0) {
         filterPatterns.push({
           expression: {
             type: "operation",

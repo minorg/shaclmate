@@ -92,7 +92,7 @@ describe("sparql", () => {
     }
 
     it(`${id} round trip`, async ({ expect }) => {
-      // if (id !== "unionDiscriminantsClass1") {
+      // if (id !== "termPropertiesClass") {
       //   return;
       // }
 

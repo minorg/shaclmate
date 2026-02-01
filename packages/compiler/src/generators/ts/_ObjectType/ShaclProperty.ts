@@ -165,12 +165,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         ? rdfjsTermExpression(this.path)
         : undefined,
       // label: this.label.map(JSON.stringify).extract(),
-      mutable: this.mutable ? true : undefined,
-      recursive: this.recursive ? true : undefined,
-      visibility:
-        this.visibility !== "public"
-          ? `${JSON.stringify(this.visibility)} as const`
-          : undefined,
+      // mutable: this.mutable ? true : undefined,
+      // recursive: this.recursive ? true : undefined,
+      // visibility:
+      //   this.visibility !== "public"
+      //     ? `${JSON.stringify(this.visibility)} as const`
+      //     : undefined,
     };
   }
 

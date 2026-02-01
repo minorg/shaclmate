@@ -55,7 +55,7 @@ export class TermType<
     return {
       ...super.schemaObject,
       defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
-      in: this.in_.map(rdfjsTermExpression),
+      in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
     };
   }
 

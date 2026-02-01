@@ -198,7 +198,7 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
-    if (typeof filter?.in !== "undefined") {
+    if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
       filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
