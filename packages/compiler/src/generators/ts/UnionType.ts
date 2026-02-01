@@ -8,7 +8,6 @@ import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 class MemberType {
@@ -420,7 +419,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     .map(
       (memberType) => `\
 {
-  unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }), type: "group" });
+  unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });
 }`,
     )
     .join("\n")}

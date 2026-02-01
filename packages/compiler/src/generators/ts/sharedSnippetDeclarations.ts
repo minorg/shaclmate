@@ -118,7 +118,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
 const SparqlPattern = singleEntryRecord(
   `SparqlPattern`,
   `\
-type ${syntheticNamePrefix}SparqlFilterPattern = sparqljs.FilterPattern & { lift: boolean };
+type ${syntheticNamePrefix}SparqlFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
 type ${syntheticNamePrefix}SparqlPattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlFilterPattern;`,
 );
 
@@ -139,6 +139,94 @@ type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (para
 `,
     dependencies: SparqlPattern,
   } satisfies SnippetDeclaration,
+);
+
+const deduplicateSparqlPatterns = singleEntryRecord(
+  `${syntheticNamePrefix}deduplicateSparqlPatterns`,
+  {
+    code: `\
+function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  if (patterns.length === 0) {
+    return patterns;
+  }
+
+  const deduplicatedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const deduplicatePatternStrings = new Set<string>();
+  for (const pattern of patterns) {
+    const patternString = JSON.stringify(pattern);
+    if (!deduplicatePatternStrings.has(patternString)) {
+      deduplicatePatternStrings.add(patternString);
+      deduplicatedPatterns.push(pattern);
+    }
+  }
+  return deduplicatedPatterns;
+}`,
+    dependendencies: SparqlPattern,
+  },
+);
+
+const SparqlPattern_isSolutionGenerating = singleEntryRecord(
+  `${syntheticNamePrefix}SparqlPattern_isSolutionGenerating`,
+  {
+    code: `\
+namespace ${syntheticNamePrefix}SparqlPattern {
+  export function isSolutionGenerating(pattern: ${syntheticNamePrefix}SparqlPattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":        
+      case "service":
+      case "values":
+        return true;
+      
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGenerating);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGenerating);
+
+      default:
+        throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
+    }
+  }
+}`,
+    dependencies: SparqlPattern,
+  },
+);
+
+const sortSparqlPatterns = singleEntryRecord(
+  `${syntheticNamePrefix}sortSparqlPatterns`,
+  {
+    code: `\
+function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  const filterPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const otherPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const valuesPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+
+  for (const pattern of patterns) {
+    switch (pattern.type) {
+      case "filter":
+        filterPatterns.push(pattern);
+        break;
+      case "values":
+        valuesPatterns.push(pattern);
+        break;
+      default:
+        otherPatterns.push(pattern);
+        break;
+    }
+  }
+
+  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+}`,
+    dependencies: SparqlPattern,
+  },
 );
 
 const toLiteral = singleEntryRecord(
@@ -193,7 +281,7 @@ const sparqlValueInPattern = singleEntryRecord(
   `${syntheticNamePrefix}sparqlValueInPattern`,
   {
     code: `\
-function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlFilterPattern {
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlFilterPattern {
   if (valueIn.length === 0) {
     throw new RangeError("expected valueIn not to be empty");
   }
@@ -261,7 +349,7 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
   let patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
+    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
   }
 
   if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
@@ -380,7 +468,7 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
   let patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }));
+    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
   }
 
   const languageIn = ${syntheticNamePrefix}arrayIntersection(schema.languageIn ?? [], preferredLanguages ?? []);
@@ -391,7 +479,6 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
         operator: "in",
         type: "operation"
       },
-      lift: false,
       type: "filter",
     });
   }
@@ -412,80 +499,16 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
 
   normalizeSparqlWherePatterns: singleEntryRecord(
     `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
-    `\
-function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-    switch (pattern.type) {
-      case "bind":
-      case "bgp":        
-      case "service":
-      case "values":
-        return true;
-      
-      case "graph":
-      case "group":
-        return pattern.patterns.some(isSolutionGeneratingPattern);
-
-      case "filter":
-      case "minus":
-      case "optional":
-        return false;
-
-      case "union":
-        // A union pattern is solution-generating if every branch is solution-generating
-        return pattern.patterns.every(isSolutionGeneratingPattern);
-
-      default:
-        throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
-    }
-  }
-
-  function normalizePatternsRecursive(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-    if (patterns.length === 0) {
-      return patterns;
+    {
+      code: `\
+function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  function normalizePatternsRecursive(patternsRecursive: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+    if (patternsRecursive.length === 0) {
+      return patternsRecursive;
     }
 
-    function deduplicatePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-      if (patterns.length === 0) {
-        return patterns;
-      }
-
-      const deduplicatedPatterns: sparqljs.Pattern[] = [];
-      const deduplicatePatternStrings = new Set<string>();
-      for (const pattern of patterns) {
-        const patternString = JSON.stringify(pattern);
-        if (!deduplicatePatternStrings.has(patternString)) {
-          deduplicatePatternStrings.add(patternString);
-          deduplicatedPatterns.push(pattern);
-        }
-      }
-      return deduplicatedPatterns;
-    }
-
-    function sortPatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-      const filterPatterns: sparqljs.Pattern[] = [];
-      const otherPatterns: sparqljs.Pattern[] = [];
-      const valuesPatterns: sparqljs.Pattern[] = [];
-
-      for (const pattern of patterns) {
-        switch (pattern.type) {
-          case "filter":
-            filterPatterns.push(pattern);
-            break;
-          case "values":
-            valuesPatterns.push(pattern);
-            break;
-          default:
-            otherPatterns.push(pattern);
-            break;
-        }
-      }
-
-      return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
-    }    
-
-    const compactedPatterns: sparqljs.Pattern[] = [];
-    for (const pattern of deduplicatePatterns(patterns)) {
+    const compactedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+    for (const pattern of ${syntheticNamePrefix}deduplicateSparqlPatterns(patternsRecursive)) {
       switch (pattern.type) {
         case "bgp": {
           if (pattern.triples.length === 0) {
@@ -521,7 +544,7 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly s
           break;
         }
         case "union": {
-          const unionPatterns = deduplicatePatterns(pattern.patterns.flatMap(pattern => {
+          const unionPatterns = ${syntheticNamePrefix}deduplicateSparqlPatterns(pattern.patterns.flatMap(pattern => {
             switch (pattern.type) {
               case "group":
                 // Don't flatten the groups in a union
@@ -533,7 +556,7 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly s
                 if (patterns_.length > 0) {
                   return [{ ...pattern, patterns: patterns_.concat() }];
                 }
-                return [] as sparqljs.Pattern[];
+                return [] as ${syntheticNamePrefix}SparqlPattern[];
               }
               default:
                 return [pattern];
@@ -557,16 +580,22 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly s
       }
     }
 
-    return sortPatterns(deduplicatePatterns(compactedPatterns));
+    return ${syntheticNamePrefix}sortSparqlPatterns(${syntheticNamePrefix}deduplicateSparqlPatterns(compactedPatterns));
   }
 
   const normalizedPatterns = normalizePatternsRecursive(patterns);
-  if (!normalizedPatterns.some(isSolutionGeneratingPattern)) {
+  if (!normalizedPatterns.some(${syntheticNamePrefix}SparqlPattern.isSolutionGenerating)) {
     throw new Error("SPARQL WHERE patterns must have at least one solution-generating pattern");
   }
 
   return normalizedPatterns;
 }`,
+      dependencies: {
+        ...deduplicateSparqlPatterns,
+        ...sortSparqlPatterns,
+        ...SparqlPattern_isSolutionGenerating,
+      },
+    },
   ),
 
   RdfVocabularies: singleEntryRecord(

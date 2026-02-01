@@ -273,6 +273,25 @@ const $dateSparqlWherePatterns: $SparqlWherePatternsFunction<
   });
 };
 
+function $deduplicateSparqlPatterns(
+  patterns: readonly $SparqlPattern[],
+): readonly $SparqlPattern[] {
+  if (patterns.length === 0) {
+    return patterns;
+  }
+
+  const deduplicatedPatterns: $SparqlPattern[] = [];
+  const deduplicatePatternStrings = new Set<string>();
+  for (const pattern of patterns) {
+    const patternString = JSON.stringify(pattern);
+    if (!deduplicatePatternStrings.has(patternString)) {
+      deduplicatePatternStrings.add(patternString);
+      deduplicatedPatterns.push(pattern);
+    }
+  }
+  return deduplicatedPatterns;
+}
+
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -1042,9 +1061,7 @@ function $literalSchemaSparqlWherePatterns({
   let patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(
-      $sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }),
-    );
+    patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
   }
 
   const languageIn = $arrayIntersection(
@@ -1061,7 +1078,6 @@ function $literalSchemaSparqlWherePatterns({
         operator: "in",
         type: "operation",
       },
-      lift: false,
       type: "filter",
     });
   }
@@ -1203,88 +1219,17 @@ const $namedNodeSparqlWherePatterns: $SparqlWherePatternsFunction<
 };
 
 function $normalizeSparqlWherePatterns(
-  patterns: readonly sparqljs.Pattern[],
-): readonly sparqljs.Pattern[] {
-  function isSolutionGeneratingPattern(pattern: sparqljs.Pattern): boolean {
-    switch (pattern.type) {
-      case "bind":
-      case "bgp":
-      case "service":
-      case "values":
-        return true;
-
-      case "graph":
-      case "group":
-        return pattern.patterns.some(isSolutionGeneratingPattern);
-
-      case "filter":
-      case "minus":
-      case "optional":
-        return false;
-
-      case "union":
-        // A union pattern is solution-generating if every branch is solution-generating
-        return pattern.patterns.every(isSolutionGeneratingPattern);
-
-      default:
-        throw new RangeError(
-          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
-        );
-    }
-  }
-
+  patterns: readonly $SparqlPattern[],
+): readonly $SparqlPattern[] {
   function normalizePatternsRecursive(
-    patterns: readonly sparqljs.Pattern[],
-  ): readonly sparqljs.Pattern[] {
-    if (patterns.length === 0) {
-      return patterns;
+    patternsRecursive: readonly $SparqlPattern[],
+  ): readonly $SparqlPattern[] {
+    if (patternsRecursive.length === 0) {
+      return patternsRecursive;
     }
 
-    function deduplicatePatterns(
-      patterns: readonly sparqljs.Pattern[],
-    ): readonly sparqljs.Pattern[] {
-      if (patterns.length === 0) {
-        return patterns;
-      }
-
-      const deduplicatedPatterns: sparqljs.Pattern[] = [];
-      const deduplicatePatternStrings = new Set<string>();
-      for (const pattern of patterns) {
-        const patternString = JSON.stringify(pattern);
-        if (!deduplicatePatternStrings.has(patternString)) {
-          deduplicatePatternStrings.add(patternString);
-          deduplicatedPatterns.push(pattern);
-        }
-      }
-      return deduplicatedPatterns;
-    }
-
-    function sortPatterns(
-      patterns: readonly sparqljs.Pattern[],
-    ): readonly sparqljs.Pattern[] {
-      const filterPatterns: sparqljs.Pattern[] = [];
-      const otherPatterns: sparqljs.Pattern[] = [];
-      const valuesPatterns: sparqljs.Pattern[] = [];
-
-      for (const pattern of patterns) {
-        switch (pattern.type) {
-          case "filter":
-            filterPatterns.push(pattern);
-            break;
-          case "values":
-            valuesPatterns.push(pattern);
-            break;
-          default:
-            otherPatterns.push(pattern);
-            break;
-        }
-      }
-
-      return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
-    }
-
-    const compactedPatterns: sparqljs.Pattern[] = [];
-    for (const pattern of deduplicatePatterns(patterns)) {
+    const compactedPatterns: $SparqlPattern[] = [];
+    for (const pattern of $deduplicateSparqlPatterns(patternsRecursive)) {
       switch (pattern.type) {
         case "bgp": {
           if (pattern.triples.length === 0) {
@@ -1325,7 +1270,7 @@ function $normalizeSparqlWherePatterns(
           break;
         }
         case "union": {
-          const unionPatterns = deduplicatePatterns(
+          const unionPatterns = $deduplicateSparqlPatterns(
             pattern.patterns.flatMap((pattern) => {
               switch (pattern.type) {
                 case "group":
@@ -1340,7 +1285,7 @@ function $normalizeSparqlWherePatterns(
                   if (patterns_.length > 0) {
                     return [{ ...pattern, patterns: patterns_.concat() }];
                   }
-                  return [] as sparqljs.Pattern[];
+                  return [] as $SparqlPattern[];
                 }
                 default:
                   return [pattern];
@@ -1370,11 +1315,11 @@ function $normalizeSparqlWherePatterns(
       }
     }
 
-    return sortPatterns(deduplicatePatterns(compactedPatterns));
+    return $sortSparqlPatterns($deduplicateSparqlPatterns(compactedPatterns));
   }
 
   const normalizedPatterns = normalizePatternsRecursive(patterns);
-  if (!normalizedPatterns.some(isSolutionGeneratingPattern)) {
+  if (!normalizedPatterns.some($SparqlPattern.isSolutionGenerating)) {
     throw new Error(
       "SPARQL WHERE patterns must have at least one solution-generating pattern",
     );
@@ -1548,6 +1493,30 @@ function $setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   };
 }
 
+function $sortSparqlPatterns(
+  patterns: readonly $SparqlPattern[],
+): readonly $SparqlPattern[] {
+  const filterPatterns: $SparqlPattern[] = [];
+  const otherPatterns: $SparqlPattern[] = [];
+  const valuesPatterns: $SparqlPattern[] = [];
+
+  for (const pattern of patterns) {
+    switch (pattern.type) {
+      case "filter":
+        filterPatterns.push(pattern);
+        break;
+      case "values":
+        valuesPatterns.push(pattern);
+        break;
+      default:
+        otherPatterns.push(pattern);
+        break;
+    }
+  }
+
+  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
+}
+
 /**
  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
  */
@@ -1581,12 +1550,42 @@ function $sparqlInstancesOfPattern({
   };
 }
 
+namespace $SparqlPattern {
+  export function isSolutionGenerating(pattern: $SparqlPattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":
+      case "service":
+      case "values":
+        return true;
+
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGenerating);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGenerating);
+
+      default:
+        throw new RangeError(
+          `unable to determine whether "${pattern.type}" pattern is solution-generating`,
+        );
+    }
+  }
+}
+
 function $sparqlValueInPattern({
   lift,
   valueIn,
   valueVariable,
 }: {
-  lift: boolean;
+  lift?: boolean;
   valueIn: readonly (
     | boolean
     | Date
@@ -1852,9 +1851,7 @@ function $termSchemaSparqlWherePatterns({
   let patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(
-      $sparqlValueInPattern({ lift: false, valueVariable, valueIn: schema.in }),
-    );
+    patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
   }
 
   if (
@@ -1942,7 +1939,7 @@ const $unconstrainedIdentifierSchema = { kind: "IdentifierType" as const };
 const $unconstrainedLiteralSchema = { kind: "LiteralType" as const };
 const $unconstrainedStringSchema = { kind: "StringType" as const };
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
-type $SparqlFilterPattern = sparqljs.FilterPattern & { lift: boolean };
+type $SparqlFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
 type $SparqlPattern =
   | Exclude<sparqljs.Pattern, sparqljs.FilterPattern>
   | $SparqlFilterPattern;
@@ -7242,82 +7239,62 @@ export namespace UnionDiscriminantsClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: (({
+            ignoreRdfType,
+            propertyPatterns,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ClassUnionMember1.$Filter,
+            typeof ClassUnionMember1.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ClassUnionMember1.$sparqlWherePatterns({
+                ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
+                ...otherParameters,
+              }),
+            ))({
+            filter: filter?.on?.["0-ClassUnionMember1"],
+            schema: schema.members["0-ClassUnionMember1"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: (({
+            ignoreRdfType,
+            propertyPatterns,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ClassUnionMember2.$Filter,
+            typeof ClassUnionMember2.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ClassUnionMember2.$sparqlWherePatterns({
+                ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
+                ...otherParameters,
+              }),
+            ))({
+            filter: filter?.on?.["1-ClassUnionMember2"],
+            schema: schema.members["1-ClassUnionMember2"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["2-string"],
+            schema: schema.members["2-string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            (({
-              ignoreRdfType,
-              propertyPatterns,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember1.$Filter,
-              typeof ClassUnionMember1.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember1.$sparqlWherePatterns({
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  subject: valueVariable,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["0-ClassUnionMember1"],
-              schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            (({
-              ignoreRdfType,
-              propertyPatterns,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember2.$Filter,
-              typeof ClassUnionMember2.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember2.$sparqlWherePatterns({
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  subject: valueVariable,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["1-ClassUnionMember2"],
-              schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["2-string"],
-              schema: schema.members["2-string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.optionalClassOrClassOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7368,38 +7345,24 @@ export namespace UnionDiscriminantsClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $namedNodeSparqlWherePatterns({
+            filter: filter?.on?.["NamedNode"],
+            schema: schema.members["NamedNode"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $literalSparqlWherePatterns({
+            filter: filter?.on?.["Literal"],
+            schema: schema.members["Literal"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $namedNodeSparqlWherePatterns({
-              filter: filter?.on?.["NamedNode"],
-              schema: schema.members["NamedNode"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $literalSparqlWherePatterns({
-              filter: filter?.on?.["Literal"],
-              schema: schema.members["Literal"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.optionalIriOrLiteralProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7450,38 +7413,24 @@ export namespace UnionDiscriminantsClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $namedNodeSparqlWherePatterns({
+            filter: filter?.on?.["object"],
+            schema: schema.members["object"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["string"],
+            schema: schema.members["string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $namedNodeSparqlWherePatterns({
-              filter: filter?.on?.["object"],
-              schema: schema.members["object"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.optionalIriOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7512,82 +7461,62 @@ export namespace UnionDiscriminantsClass {
     patterns = patterns.concat(
       (({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: (({
+            ignoreRdfType,
+            propertyPatterns,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ClassUnionMember1.$Filter,
+            typeof ClassUnionMember1.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ClassUnionMember1.$sparqlWherePatterns({
+                ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
+                ...otherParameters,
+              }),
+            ))({
+            filter: filter?.on?.["0-ClassUnionMember1"],
+            schema: schema.members["0-ClassUnionMember1"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: (({
+            ignoreRdfType,
+            propertyPatterns,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ClassUnionMember2.$Filter,
+            typeof ClassUnionMember2.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ClassUnionMember2.$sparqlWherePatterns({
+                ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
+                ...otherParameters,
+              }),
+            ))({
+            filter: filter?.on?.["1-ClassUnionMember2"],
+            schema: schema.members["1-ClassUnionMember2"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["2-string"],
+            schema: schema.members["2-string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            (({
-              ignoreRdfType,
-              propertyPatterns,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember1.$Filter,
-              typeof ClassUnionMember1.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember1.$sparqlWherePatterns({
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  subject: valueVariable,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["0-ClassUnionMember1"],
-              schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            (({
-              ignoreRdfType,
-              propertyPatterns,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember2.$Filter,
-              typeof ClassUnionMember2.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember2.$sparqlWherePatterns({
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  subject: valueVariable,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["1-ClassUnionMember2"],
-              schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["2-string"],
-              schema: schema.members["2-string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.requiredClassOrClassOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7618,38 +7547,24 @@ export namespace UnionDiscriminantsClass {
     patterns = patterns.concat(
       (({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $namedNodeSparqlWherePatterns({
+            filter: filter?.on?.["NamedNode"],
+            schema: schema.members["NamedNode"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $literalSparqlWherePatterns({
+            filter: filter?.on?.["Literal"],
+            schema: schema.members["Literal"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $namedNodeSparqlWherePatterns({
-              filter: filter?.on?.["NamedNode"],
-              schema: schema.members["NamedNode"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $literalSparqlWherePatterns({
-              filter: filter?.on?.["Literal"],
-              schema: schema.members["Literal"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.requiredIriOrLiteralProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7680,38 +7595,24 @@ export namespace UnionDiscriminantsClass {
     patterns = patterns.concat(
       (({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $namedNodeSparqlWherePatterns({
+            filter: filter?.on?.["object"],
+            schema: schema.members["object"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["string"],
+            schema: schema.members["string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $namedNodeSparqlWherePatterns({
-              filter: filter?.on?.["object"],
-              schema: schema.members["object"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.requiredIriOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7767,82 +7668,62 @@ export namespace UnionDiscriminantsClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: (({
+            ignoreRdfType,
+            propertyPatterns,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ClassUnionMember1.$Filter,
+            typeof ClassUnionMember1.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ClassUnionMember1.$sparqlWherePatterns({
+                ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
+                ...otherParameters,
+              }),
+            ))({
+            filter: filter?.on?.["0-ClassUnionMember1"],
+            schema: schema.members["0-ClassUnionMember1"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: (({
+            ignoreRdfType,
+            propertyPatterns,
+            valueVariable,
+            ...otherParameters
+          }: $SparqlWherePatternsFunctionParameters<
+            ClassUnionMember2.$Filter,
+            typeof ClassUnionMember2.$schema
+          >) =>
+            (propertyPatterns as readonly $SparqlPattern[]).concat(
+              ClassUnionMember2.$sparqlWherePatterns({
+                ignoreRdfType: ignoreRdfType ?? true,
+                subject: valueVariable,
+                ...otherParameters,
+              }),
+            ))({
+            filter: filter?.on?.["1-ClassUnionMember2"],
+            schema: schema.members["1-ClassUnionMember2"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["2-string"],
+            schema: schema.members["2-string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            (({
-              ignoreRdfType,
-              propertyPatterns,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember1.$Filter,
-              typeof ClassUnionMember1.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember1.$sparqlWherePatterns({
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  subject: valueVariable,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["0-ClassUnionMember1"],
-              schema: schema.members["0-ClassUnionMember1"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            (({
-              ignoreRdfType,
-              propertyPatterns,
-              valueVariable,
-              ...otherParameters
-            }: $SparqlWherePatternsFunctionParameters<
-              ClassUnionMember2.$Filter,
-              typeof ClassUnionMember2.$schema
-            >) =>
-              (propertyPatterns as readonly $SparqlPattern[]).concat(
-                ClassUnionMember2.$sparqlWherePatterns({
-                  ignoreRdfType: ignoreRdfType ?? true,
-                  subject: valueVariable,
-                  ...otherParameters,
-                }),
-              ))({
-              filter: filter?.on?.["1-ClassUnionMember2"],
-              schema: schema.members["1-ClassUnionMember2"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["2-string"],
-              schema: schema.members["2-string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.setClassOrClassOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7893,38 +7774,24 @@ export namespace UnionDiscriminantsClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $namedNodeSparqlWherePatterns({
+            filter: filter?.on?.["NamedNode"],
+            schema: schema.members["NamedNode"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $literalSparqlWherePatterns({
+            filter: filter?.on?.["Literal"],
+            schema: schema.members["Literal"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $namedNodeSparqlWherePatterns({
-              filter: filter?.on?.["NamedNode"],
-              schema: schema.members["NamedNode"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $literalSparqlWherePatterns({
-              filter: filter?.on?.["Literal"],
-              schema: schema.members["Literal"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.setIriOrLiteralProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -7975,38 +7842,24 @@ export namespace UnionDiscriminantsClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $namedNodeSparqlWherePatterns({
+            filter: filter?.on?.["object"],
+            schema: schema.members["object"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["string"],
+            schema: schema.members["string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $namedNodeSparqlWherePatterns({
-              filter: filter?.on?.["object"],
-              schema: schema.members["object"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.setIriOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -34420,52 +34273,32 @@ export namespace JsPrimitiveUnionPropertyClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $booleanSparqlWherePatterns({
+            filter: filter?.on?.["boolean"],
+            schema: schema.members["boolean"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $numberSparqlWherePatterns({
+            filter: filter?.on?.["number"],
+            schema: schema.members["number"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["string"],
+            schema: schema.members["string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $booleanSparqlWherePatterns({
-              filter: filter?.on?.["boolean"],
-              schema: schema.members["boolean"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $numberSparqlWherePatterns({
-              filter: filter?.on?.["number"],
-              schema: schema.members["number"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.jsPrimitiveUnionProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -50144,38 +49977,24 @@ export namespace DateUnionPropertiesClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $dateSparqlWherePatterns({
+            filter: filter?.on?.["date"],
+            schema: schema.members["date"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $dateSparqlWherePatterns({
+            filter: filter?.on?.["dateTime"],
+            schema: schema.members["dateTime"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $dateSparqlWherePatterns({
-              filter: filter?.on?.["dateTime"],
-              schema: schema.members["dateTime"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.dateOrDateTimeProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -50226,38 +50045,24 @@ export namespace DateUnionPropertiesClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $dateSparqlWherePatterns({
+            filter: filter?.on?.["date"],
+            schema: schema.members["date"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["string"],
+            schema: schema.members["string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.dateOrStringProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -50308,38 +50113,24 @@ export namespace DateUnionPropertiesClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $dateSparqlWherePatterns({
+            filter: filter?.on?.["dateTime"],
+            schema: schema.members["dateTime"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $dateSparqlWherePatterns({
+            filter: filter?.on?.["date"],
+            schema: schema.members["date"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $dateSparqlWherePatterns({
-              filter: filter?.on?.["dateTime"],
-              schema: schema.members["dateTime"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.dateTimeOrDateProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -50390,38 +50181,24 @@ export namespace DateUnionPropertiesClass {
         }
       >(({ filter, schema, ...otherParameters }) => {
         const unionPatterns: sparqljs.GroupPattern[] = [];
-        const liftedPatterns: $SparqlPattern[] = [];
+        unionPatterns.push({
+          patterns: $stringSparqlWherePatterns({
+            filter: filter?.on?.["string"],
+            schema: schema.members["string"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
+        unionPatterns.push({
+          patterns: $dateSparqlWherePatterns({
+            filter: filter?.on?.["date"],
+            schema: schema.members["date"].type,
+            ...otherParameters,
+          }).concat(),
+          type: "group",
+        });
 
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $stringSparqlWherePatterns({
-              filter: filter?.on?.["string"],
-              schema: schema.members["string"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-        {
-          const [memberPatterns, memberLiftedPatterns] = $liftSparqlPatterns(
-            $dateSparqlWherePatterns({
-              filter: filter?.on?.["date"],
-              schema: schema.members["date"].type,
-              ...otherParameters,
-            }),
-          );
-          unionPatterns.push({
-            patterns: memberPatterns.concat(),
-            type: "group",
-          });
-          liftedPatterns.push(...memberLiftedPatterns);
-        }
-
-        return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+        return [{ patterns: unionPatterns, type: "union" }];
       })({
         filter: parameters?.filter?.stringOrDateProperty,
         preferredLanguages: parameters?.preferredLanguages,
