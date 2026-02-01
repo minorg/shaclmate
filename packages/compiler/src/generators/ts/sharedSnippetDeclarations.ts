@@ -516,8 +516,8 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
           }
           const lastPattern = compactedPatterns.at(-1);
           if (lastPattern && lastPattern.type === "bgp") {
-            // Coalesce adjacent BGP patterns
-            lastPattern.triples.push(...pattern.triples);
+            // Coalesce adjacent BGP patterns without mutating lastPattern
+            compactedPatterns[compactedPatterns.length - 1] = { triples: lastPattern.triples.concat(pattern.triples), type: "bgp" };
           } else {
             compactedPatterns.push(pattern);
           }

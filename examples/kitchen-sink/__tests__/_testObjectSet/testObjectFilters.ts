@@ -794,6 +794,10 @@ export function testObjectFilters(
         [kitchenSink.UnionDiscriminantsClass.$Filter, readonly NamedNode[]]
       >)) {
         it(id, async ({ expect }) => {
+          // if (id.endsWith("Negative")) {
+          //   return;
+          // }
+
           const actual = (
             await objectSet.unionDiscriminantsClassIdentifiers({
               filter,
