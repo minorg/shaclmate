@@ -415,20 +415,17 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return `\
 (({ filter, schema, ...otherParameters }) => {
   const unionPatterns: sparqljs.GroupPattern[] = [];
-  const liftedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
 
   ${this.memberTypes
     .map(
       (memberType) => `\
 {
-  const [memberPatterns, memberLiftedPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }));
-  unionPatterns.push({ patterns: memberPatterns.concat(), type: "group" });
-  liftedPatterns.push(...memberLiftedPatterns);
+  unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }), type: "group" });
 }`,
     )
     .join("\n")}
   
-  return [{ patterns: unionPatterns, type: "union" }, ...liftedPatterns];
+  return [{ patterns: unionPatterns, type: "union" }];
 })`;
   }
 
