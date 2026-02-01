@@ -1,5 +1,3 @@
-Default;
-
 import { StoreFactory as _DatasetFactory } from "n3";
 
 const datasetFactory = new _DatasetFactory();

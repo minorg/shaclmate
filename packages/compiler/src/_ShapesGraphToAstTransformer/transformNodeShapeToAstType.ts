@@ -383,10 +383,6 @@ export function transformNodeShapeToAstType(
         );
       }
 
-      if (nodeShape.identifier.value.endsWith("DefaultValuePropertiesClass")) {
-        console.log("Default");
-      }
-
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
