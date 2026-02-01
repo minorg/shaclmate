@@ -1,3 +1,5 @@
+Default;
+
 import { StoreFactory as _DatasetFactory } from "n3";
 
 const datasetFactory = new _DatasetFactory();
@@ -47196,6 +47198,7 @@ export class DefaultValuePropertiesClass {
     mutateGraph?: rdfjsResource.MutableResource.MutateGraph;
     resourceSet?: rdfjsResource.MutableResourceSet;
   }): rdfjsResource.MutableResource {
+    const ignoreRdfType = !!options?.ignoreRdfType;
     const mutateGraph = options?.mutateGraph;
     const resourceSet =
       options?.resourceSet ??
@@ -47206,6 +47209,15 @@ export class DefaultValuePropertiesClass {
     const resource = resourceSet.mutableResource(this.$identifier, {
       mutateGraph,
     });
+    if (!ignoreRdfType) {
+      resource.add(
+        $RdfVocabularies.rdf.type,
+        resource.dataFactory.namedNode(
+          "http://example.com/DefaultValuePropertiesClass",
+        ),
+      );
+    }
+
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
         .identifier,
@@ -47388,6 +47400,9 @@ export namespace DefaultValuePropertiesClass {
     }).map((properties) => new DefaultValuePropertiesClass(properties));
   }
 
+  export const $fromRdfType: rdfjs.NamedNode<string> = dataFactory.namedNode(
+    "http://example.com/DefaultValuePropertiesClass",
+  );
   export type $Identifier = rdfjs.BlankNode | rdfjs.NamedNode;
 
   export namespace $Identifier {
@@ -47548,199 +47563,232 @@ export namespace DefaultValuePropertiesClass {
       trueBooleanDefaultValueProperty: boolean;
     }
   > {
-    return purify.Either.of<Error, DefaultValuePropertiesClass.$Identifier>(
-      $parameters.resource
-        .identifier as DefaultValuePropertiesClass.$Identifier,
-    ).chain(($identifier) =>
-      purify.Either.of<
-        Error,
-        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-      >(
-        $parameters.resource.values(
-          $schema.properties.dateDefaultValueProperty.identifier,
-          { unique: true },
-        ),
-      )
-        .map((values) =>
-          values.length > 0
-            ? values
-            : new rdfjsResource.Resource.TermValue({
-                focusResource: $parameters.resource,
-                predicate:
-                  DefaultValuePropertiesClass.$schema.properties
-                    .dateDefaultValueProperty.identifier,
-                term: dataFactory.literal(
-                  "2018-04-09",
-                  $RdfVocabularies.xsd.date,
+    return (
+      !$parameters.ignoreRdfType
+        ? $parameters.resource
+            .value($RdfVocabularies.rdf.type)
+            .chain((actualRdfType) => actualRdfType.toIri())
+            .chain((actualRdfType) => {
+              // Check the expected type and its known subtypes
+              switch (actualRdfType.value) {
+                case "http://example.com/DefaultValuePropertiesClass":
+                  return purify.Either.of<Error, true>(true);
+              }
+
+              // Check arbitrary rdfs:subClassOf's of the expected type
+              if (
+                $parameters.resource.isInstanceOf(
+                  DefaultValuePropertiesClass.$fromRdfType,
+                )
+              ) {
+                return purify.Either.of<Error, true>(true);
+              }
+
+              return purify.Left(
+                new Error(
+                  `${rdfjsResource.Resource.Identifier.toString($parameters.resource.identifier)} has unexpected RDF type (actual: ${actualRdfType.value}, expected: http://example.com/DefaultValuePropertiesClass)`,
                 ),
-              }).toValues(),
+              );
+            })
+        : purify.Either.of<Error, true>(true)
+    ).chain((_rdfTypeCheck) =>
+      purify.Either.of<Error, DefaultValuePropertiesClass.$Identifier>(
+        $parameters.resource
+          .identifier as DefaultValuePropertiesClass.$Identifier,
+      ).chain(($identifier) =>
+        purify.Either.of<
+          Error,
+          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+        >(
+          $parameters.resource.values(
+            $schema.properties.dateDefaultValueProperty.identifier,
+            { unique: true },
+          ),
         )
-        .chain((values) => values.chainMap((value) => value.toDate()))
-        .chain((values) => values.head())
-        .chain((dateDefaultValueProperty) =>
-          purify.Either.of<
-            Error,
-            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-          >(
-            $parameters.resource.values(
-              $schema.properties.dateTimeDefaultValueProperty.identifier,
-              { unique: true },
-            ),
+          .map((values) =>
+            values.length > 0
+              ? values
+              : new rdfjsResource.Resource.TermValue({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    DefaultValuePropertiesClass.$schema.properties
+                      .dateDefaultValueProperty.identifier,
+                  term: dataFactory.literal(
+                    "2018-04-09",
+                    $RdfVocabularies.xsd.date,
+                  ),
+                }).toValues(),
           )
-            .map((values) =>
-              values.length > 0
-                ? values
-                : new rdfjsResource.Resource.TermValue({
-                    focusResource: $parameters.resource,
-                    predicate:
-                      DefaultValuePropertiesClass.$schema.properties
-                        .dateTimeDefaultValueProperty.identifier,
-                    term: dataFactory.literal(
-                      "2018-04-09T10:00:00Z",
-                      $RdfVocabularies.xsd.dateTime,
-                    ),
-                  }).toValues(),
+          .chain((values) => values.chainMap((value) => value.toDate()))
+          .chain((values) => values.head())
+          .chain((dateDefaultValueProperty) =>
+            purify.Either.of<
+              Error,
+              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+            >(
+              $parameters.resource.values(
+                $schema.properties.dateTimeDefaultValueProperty.identifier,
+                { unique: true },
+              ),
             )
-            .chain((values) => values.chainMap((value) => value.toDate()))
-            .chain((values) => values.head())
-            .chain((dateTimeDefaultValueProperty) =>
-              purify.Either.of<
-                Error,
-                rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-              >(
-                $parameters.resource.values(
-                  $schema.properties.falseBooleanDefaultValueProperty
-                    .identifier,
-                  { unique: true },
-                ),
+              .map((values) =>
+                values.length > 0
+                  ? values
+                  : new rdfjsResource.Resource.TermValue({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        DefaultValuePropertiesClass.$schema.properties
+                          .dateTimeDefaultValueProperty.identifier,
+                      term: dataFactory.literal(
+                        "2018-04-09T10:00:00Z",
+                        $RdfVocabularies.xsd.dateTime,
+                      ),
+                    }).toValues(),
               )
-                .map((values) =>
-                  values.length > 0
-                    ? values
-                    : new rdfjsResource.Resource.TermValue({
-                        focusResource: $parameters.resource,
-                        predicate:
-                          DefaultValuePropertiesClass.$schema.properties
-                            .falseBooleanDefaultValueProperty.identifier,
-                        term: dataFactory.literal(
-                          "false",
-                          $RdfVocabularies.xsd.boolean,
-                        ),
-                      }).toValues(),
+              .chain((values) => values.chainMap((value) => value.toDate()))
+              .chain((values) => values.head())
+              .chain((dateTimeDefaultValueProperty) =>
+                purify.Either.of<
+                  Error,
+                  rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                >(
+                  $parameters.resource.values(
+                    $schema.properties.falseBooleanDefaultValueProperty
+                      .identifier,
+                    { unique: true },
+                  ),
                 )
-                .chain((values) =>
-                  values.chainMap((value) => value.toBoolean()),
-                )
-                .chain((values) => values.head())
-                .chain((falseBooleanDefaultValueProperty) =>
-                  purify.Either.of<
-                    Error,
-                    rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                  >(
-                    $parameters.resource.values(
-                      $schema.properties.numberDefaultValueProperty.identifier,
-                      { unique: true },
-                    ),
+                  .map((values) =>
+                    values.length > 0
+                      ? values
+                      : new rdfjsResource.Resource.TermValue({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            DefaultValuePropertiesClass.$schema.properties
+                              .falseBooleanDefaultValueProperty.identifier,
+                          term: dataFactory.literal(
+                            "false",
+                            $RdfVocabularies.xsd.boolean,
+                          ),
+                        }).toValues(),
                   )
-                    .map((values) =>
-                      values.length > 0
-                        ? values
-                        : new rdfjsResource.Resource.TermValue({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              DefaultValuePropertiesClass.$schema.properties
-                                .numberDefaultValueProperty.identifier,
-                            term: dataFactory.literal(
-                              "0",
-                              $RdfVocabularies.xsd.integer,
-                            ),
-                          }).toValues(),
+                  .chain((values) =>
+                    values.chainMap((value) => value.toBoolean()),
+                  )
+                  .chain((values) => values.head())
+                  .chain((falseBooleanDefaultValueProperty) =>
+                    purify.Either.of<
+                      Error,
+                      rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                    >(
+                      $parameters.resource.values(
+                        $schema.properties.numberDefaultValueProperty
+                          .identifier,
+                        { unique: true },
+                      ),
                     )
-                    .chain((values) =>
-                      values.chainMap((value) => value.toNumber()),
-                    )
-                    .chain((values) => values.head())
-                    .chain((numberDefaultValueProperty) =>
-                      purify.Either.of<
-                        Error,
-                        rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                      >(
-                        $parameters.resource.values(
-                          $schema.properties.stringDefaultValueProperty
-                            .identifier,
-                          { unique: true },
-                        ),
+                      .map((values) =>
+                        values.length > 0
+                          ? values
+                          : new rdfjsResource.Resource.TermValue({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                DefaultValuePropertiesClass.$schema.properties
+                                  .numberDefaultValueProperty.identifier,
+                              term: dataFactory.literal(
+                                "0",
+                                $RdfVocabularies.xsd.integer,
+                              ),
+                            }).toValues(),
                       )
-                        .map((values) =>
-                          values.length > 0
-                            ? values
-                            : new rdfjsResource.Resource.TermValue({
-                                focusResource: $parameters.resource,
-                                predicate:
-                                  DefaultValuePropertiesClass.$schema.properties
-                                    .stringDefaultValueProperty.identifier,
-                                term: dataFactory.literal(""),
-                              }).toValues(),
+                      .chain((values) =>
+                        values.chainMap((value) => value.toNumber()),
+                      )
+                      .chain((values) => values.head())
+                      .chain((numberDefaultValueProperty) =>
+                        purify.Either.of<
+                          Error,
+                          rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                        >(
+                          $parameters.resource.values(
+                            $schema.properties.stringDefaultValueProperty
+                              .identifier,
+                            { unique: true },
+                          ),
                         )
-                        .chain((values) =>
-                          $fromRdfPreferredLanguages({
-                            focusResource: $parameters.resource,
-                            predicate:
-                              DefaultValuePropertiesClass.$schema.properties
-                                .stringDefaultValueProperty.identifier,
-                            preferredLanguages: $parameters.preferredLanguages,
-                            values,
-                          }),
-                        )
-                        .chain((values) =>
-                          values.chainMap((value) => value.toString()),
-                        )
-                        .chain((values) => values.head())
-                        .chain((stringDefaultValueProperty) =>
-                          purify.Either.of<
-                            Error,
-                            rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-                          >(
-                            $parameters.resource.values(
-                              $schema.properties.trueBooleanDefaultValueProperty
-                                .identifier,
-                              { unique: true },
-                            ),
+                          .map((values) =>
+                            values.length > 0
+                              ? values
+                              : new rdfjsResource.Resource.TermValue({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    DefaultValuePropertiesClass.$schema
+                                      .properties.stringDefaultValueProperty
+                                      .identifier,
+                                  term: dataFactory.literal(""),
+                                }).toValues(),
                           )
-                            .map((values) =>
-                              values.length > 0
-                                ? values
-                                : new rdfjsResource.Resource.TermValue({
-                                    focusResource: $parameters.resource,
-                                    predicate:
-                                      DefaultValuePropertiesClass.$schema
-                                        .properties
-                                        .trueBooleanDefaultValueProperty
-                                        .identifier,
-                                    term: dataFactory.literal(
-                                      "true",
-                                      $RdfVocabularies.xsd.boolean,
-                                    ),
-                                  }).toValues(),
+                          .chain((values) =>
+                            $fromRdfPreferredLanguages({
+                              focusResource: $parameters.resource,
+                              predicate:
+                                DefaultValuePropertiesClass.$schema.properties
+                                  .stringDefaultValueProperty.identifier,
+                              preferredLanguages:
+                                $parameters.preferredLanguages,
+                              values,
+                            }),
+                          )
+                          .chain((values) =>
+                            values.chainMap((value) => value.toString()),
+                          )
+                          .chain((values) => values.head())
+                          .chain((stringDefaultValueProperty) =>
+                            purify.Either.of<
+                              Error,
+                              rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
+                            >(
+                              $parameters.resource.values(
+                                $schema.properties
+                                  .trueBooleanDefaultValueProperty.identifier,
+                                { unique: true },
+                              ),
                             )
-                            .chain((values) =>
-                              values.chainMap((value) => value.toBoolean()),
-                            )
-                            .chain((values) => values.head())
-                            .map((trueBooleanDefaultValueProperty) => ({
-                              $identifier,
-                              dateDefaultValueProperty,
-                              dateTimeDefaultValueProperty,
-                              falseBooleanDefaultValueProperty,
-                              numberDefaultValueProperty,
-                              stringDefaultValueProperty,
-                              trueBooleanDefaultValueProperty,
-                            })),
-                        ),
-                    ),
-                ),
-            ),
-        ),
+                              .map((values) =>
+                                values.length > 0
+                                  ? values
+                                  : new rdfjsResource.Resource.TermValue({
+                                      focusResource: $parameters.resource,
+                                      predicate:
+                                        DefaultValuePropertiesClass.$schema
+                                          .properties
+                                          .trueBooleanDefaultValueProperty
+                                          .identifier,
+                                      term: dataFactory.literal(
+                                        "true",
+                                        $RdfVocabularies.xsd.boolean,
+                                      ),
+                                    }).toValues(),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toBoolean()),
+                              )
+                              .chain((values) => values.head())
+                              .map((trueBooleanDefaultValueProperty) => ({
+                                $identifier,
+                                dateDefaultValueProperty,
+                                dateTimeDefaultValueProperty,
+                                falseBooleanDefaultValueProperty,
+                                numberDefaultValueProperty,
+                                stringDefaultValueProperty,
+                                trueBooleanDefaultValueProperty,
+                              })),
+                          ),
+                      ),
+                  ),
+              ),
+          ),
+      ),
     );
   }
 
@@ -47884,6 +47932,27 @@ export namespace DefaultValuePropertiesClass {
       parameters?.subject ??
       dataFactory.variable!("defaultValuePropertiesClass");
     const triples: sparqljs.Triple[] = [];
+    if (!parameters?.ignoreRdfType) {
+      triples.push(
+        {
+          subject,
+          predicate: $RdfVocabularies.rdf.type,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}RdfType`,
+          ),
+        },
+        {
+          subject: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}RdfType`,
+          ),
+          predicate: $RdfVocabularies.rdfs.subClassOf,
+          object: dataFactory.variable!(
+            `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}RdfClass`,
+          ),
+        },
+      );
+    }
+
     triples.push({
       object: dataFactory.variable!(
         `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}DateDefaultValueProperty`,
@@ -47952,6 +48021,49 @@ export namespace DefaultValuePropertiesClass {
     const subject =
       parameters?.subject ??
       dataFactory.variable!("defaultValuePropertiesClass");
+    const rdfTypeVariable = dataFactory.variable!(
+      `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}RdfType`,
+    );
+    if (!parameters?.ignoreRdfType) {
+      patterns.push(
+        $sparqlInstancesOfPattern({
+          rdfType: DefaultValuePropertiesClass.$fromRdfType,
+          subject,
+        }),
+        {
+          triples: [
+            {
+              subject,
+              predicate: $RdfVocabularies.rdf.type,
+              object: rdfTypeVariable,
+            },
+          ],
+          type: "bgp" as const,
+        },
+        {
+          patterns: [
+            {
+              triples: [
+                {
+                  subject: rdfTypeVariable,
+                  predicate: {
+                    items: [$RdfVocabularies.rdfs.subClassOf],
+                    pathType: "+" as const,
+                    type: "path" as const,
+                  },
+                  object: dataFactory.variable!(
+                    `${parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "defaultValuePropertiesClass")}RdfClass`,
+                  ),
+                },
+              ],
+              type: "bgp" as const,
+            },
+          ],
+          type: "optional" as const,
+        },
+      );
+    }
+
     if (subject.termType === "Variable") {
       patterns = patterns.concat(
         $identifierSparqlWherePatterns({
@@ -73831,7 +73943,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       {
         $filter: DefaultValuePropertiesClass.$filter,
         $fromRdf: DefaultValuePropertiesClass.$fromRdf,
-        $fromRdfTypes: [],
+        $fromRdfTypes: [DefaultValuePropertiesClass.$fromRdfType],
       },
       query,
     );
@@ -78235,7 +78347,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
         {
           $filter: $Object.$filter,
           $fromRdf: DefaultValuePropertiesClass.$fromRdf,
-          $fromRdfTypes: [],
+          $fromRdfTypes: [DefaultValuePropertiesClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,

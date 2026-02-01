@@ -21,6 +21,43 @@ const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "NamedNode",
 ]);
 
+function isObjectTypePropertyRequired(property: {
+  type: ast.ObjectType.Property["type"];
+}): boolean {
+  switch (property.type.kind) {
+    case "LazyObjectOptionType":
+      return false;
+    case "LazyObjectSetType":
+      return property.type.partialType.minCount > 0;
+    case "OptionType":
+      return false;
+    case "SetType":
+      return property.type.minCount > 0;
+    case "IntersectionType":
+    case "ObjectIntersectionType":
+      throw new Error("unsupported");
+    case "BlankNodeType":
+    case "IdentifierType":
+    case "LiteralType":
+    case "NamedNodeType":
+    case "TermType":
+      return property.type.defaultValue.isNothing();
+    case "LazyObjectType":
+    case "ListType":
+    case "ObjectType":
+    case "ObjectUnionType":
+    case "PlaceholderType":
+      return true;
+    case "UnionType":
+      return property.type.memberTypes.every((memberType) =>
+        isObjectTypePropertyRequired({ type: memberType }),
+      );
+    default:
+      property.type satisfies never;
+      throw new Error("should never reach this point");
+  }
+}
+
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
   export_: false,
@@ -346,6 +383,10 @@ export function transformNodeShapeToAstType(
         );
       }
 
+      if (nodeShape.identifier.value.endsWith("DefaultValuePropertiesClass")) {
+        console.log("Default");
+      }
+
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
@@ -415,17 +456,7 @@ export function transformNodeShapeToAstType(
           !objectType.abstract &&
           !objectType.extern &&
           objectType.fromRdfType.isNothing() &&
-          !objectType.properties.some((property) => {
-            switch (property.type.kind) {
-              case "LazyObjectOptionType":
-              case "OptionType":
-                return false;
-              case "SetType":
-                return property.type.minCount > 0;
-              default:
-                return true; // Required property
-            }
-          })
+          !objectType.properties.some(isObjectTypePropertyRequired)
         ) {
           return Left(
             new Error(
