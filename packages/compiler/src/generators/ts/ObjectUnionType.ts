@@ -10,12 +10,14 @@ import { Memoize } from "typescript-memoize";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsComment } from "./tsComment.js";
@@ -33,7 +35,7 @@ import { tsComment } from "./tsComment.js";
 export class ObjectUnionType extends AbstractDeclaredType {
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
-  readonly identifierType: IdentifierType;
+  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
   readonly kind = "ObjectUnionType";
   readonly memberTypes: readonly _ObjectUnionType.MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
@@ -45,7 +47,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }: ConstructorParameters<typeof AbstractDeclaredType>[0] & {
     comment: Maybe<string>;
     export_: boolean;
-    identifierType: IdentifierType;
+    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
     label: Maybe<string>;
     memberTypes: readonly ObjectType[];
     name: string;
@@ -91,8 +93,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
       ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
       ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
       ..._ObjectUnionType.jsonDeclarations.bind(this)(),
-      _ObjectUnionType.isTypeFunctionDeclaration.bind(this)(),
-      ..._ObjectUnionType.propertiesVariableStatement.bind(this)().toList(),
+      ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
+      _ObjectUnionType.schemaVariableStatement.bind(this)(),
       ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
       ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
     ];
@@ -114,33 +116,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
   @Memoize()
   override get discriminantProperty(): Maybe<AbstractDeclaredType.DiscriminantProperty> {
     return Maybe.of(this._discriminantProperty);
-  }
-
-  @Memoize()
-  protected get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
-    const discriminantPropertyDescendantValues: string[] = [];
-    const discriminantPropertyName =
-      this.memberTypes[0]._discriminantProperty.name;
-    const discriminantPropertyOwnValues: string[] = [];
-    for (const memberType of this.memberTypes) {
-      invariant(
-        memberType.declarationType === this.memberTypes[0].declarationType,
-      );
-      invariant(
-        memberType._discriminantProperty.name === discriminantPropertyName,
-      );
-      discriminantPropertyDescendantValues.push(
-        ...memberType._discriminantProperty.descendantValues,
-      );
-      discriminantPropertyOwnValues.push(
-        ...memberType._discriminantProperty.ownValues,
-      );
-    }
-    return {
-      descendantValues: discriminantPropertyDescendantValues,
-      name: discriminantPropertyName,
-      ownValues: discriminantPropertyOwnValues,
-    };
   }
 
   @Memoize()
@@ -171,15 +146,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonType(): AbstractDeclaredType.JsonType {
-    return new AbstractDeclaredType.JsonType(
-      this.memberTypes
-        .map((memberType) => memberType.jsonType().name)
-        .join(" | "),
-    );
-  }
-
-  @Memoize()
   override get mutable(): boolean {
     return this.memberTypes.some((memberType) => memberType.mutable);
   }
@@ -189,8 +155,55 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return objectSetMethodNames.bind(this)();
   }
 
+  @Memoize()
+  override get schema(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}schema`;
+  }
+
+  @Memoize()
+  override get schemaType(): string {
+    return `typeof ${this.schema}`;
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${syntheticNamePrefix}SparqlPattern[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
+  }
+
   get staticModuleName() {
     return this.name;
+  }
+
+  @Memoize()
+  protected get _discriminantProperty(): AbstractDeclaredType.DiscriminantProperty {
+    const discriminantPropertyDescendantValues: string[] = [];
+    const discriminantPropertyName =
+      this.memberTypes[0]._discriminantProperty.name;
+    const discriminantPropertyOwnValues: string[] = [];
+    for (const memberType of this.memberTypes) {
+      // invariant(
+      //   memberType.declarationType === this.memberTypes[0].declarationType,
+      // );
+      invariant(
+        memberType._discriminantProperty.name === discriminantPropertyName,
+      );
+      discriminantPropertyDescendantValues.push(
+        ...memberType._discriminantProperty.descendantValues,
+      );
+      discriminantPropertyOwnValues.push(
+        ...memberType._discriminantProperty.ownValues,
+      );
+    }
+    return {
+      descendantValues: discriminantPropertyDescendantValues,
+      name: discriminantPropertyName,
+      ownValues: discriminantPropertyOwnValues,
+    };
+  }
+
+  @Memoize()
+  protected get concreteMemberTypes(): readonly _ObjectUnionType.MemberType[] {
+    return this.memberTypes.filter((memberType) => !memberType.abstract);
   }
 
   @Memoize()
@@ -233,16 +246,18 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override hashStatements({
     variables,
   }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly string[] {
-    switch (this.memberTypes[0].declarationType) {
-      case "class":
-        return [
-          `${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`,
-        ];
-      case "interface":
-        return [
-          `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
-        ];
-    }
+    return [
+      `${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+    ];
+  }
+
+  @Memoize()
+  override jsonType(): AbstractDeclaredType.JsonType {
+    return new AbstractDeclaredType.JsonType(
+      this.memberTypes
+        .map((memberType) => memberType.jsonType().name)
+        .join(" | "),
+    );
   }
 
   override jsonUiSchemaElement(): Maybe<string> {
@@ -269,7 +284,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override snippetDeclarations(
     parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     const { recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
       return {};
@@ -281,7 +296,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
           snippetDeclarations,
           memberType.snippetDeclarations(parameters),
         ),
-      {} as Record<string, string>,
+      {} as Record<string, SnippetDeclaration>,
     );
     invariant(Object.is(recursionStack.pop(), this));
     return snippetDeclarations;
@@ -302,49 +317,16 @@ export class ObjectUnionType extends AbstractDeclaredType {
     ];
   }
 
-  override sparqlWherePatterns({
-    propertyPatterns,
-    variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...propertyPatterns,
-      {
-        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-          {
-            filter: variables.filter.extract(),
-            preferredLanguages: variables.preferredLanguages,
-            subject: variables.valueVariable,
-            variablePrefix: variables.variablePrefix,
-          },
-        )})`,
-        type: "opaque-block",
-      },
-    ];
-  }
-
   override toJsonExpression({
     variables,
   }: Parameters<AbstractDeclaredType["toJsonExpression"]>[0]): string {
-    switch (this.memberTypes[0].declarationType) {
-      case "class":
-        return `${variables.value}.${syntheticNamePrefix}toJson()`;
-      case "interface":
-        return `${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
-    }
+    return `${this.staticModuleName}.${syntheticNamePrefix}toJson(${variables.value})`;
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<AbstractDeclaredType["toRdfExpression"]>[0]): string {
-    const options = `{ mutateGraph: ${variables.mutateGraph}, resourceSet: ${variables.resourceSet} }`;
-    switch (this.memberTypes[0].declarationType) {
-      case "class":
-        return `[${variables.value}.${syntheticNamePrefix}toRdf(${options}).identifier]`;
-      case "interface":
-        return `[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${options}).identifier]`;
-    }
+    return `[${this.staticModuleName}.${syntheticNamePrefix}toRdf(${variables.value}, ${objectInitializer({ mutateGraph: variables.mutateGraph, resourceSet: variables.resourceSet })}).identifier]`;
   }
 
   override useImports(): readonly Import[] {

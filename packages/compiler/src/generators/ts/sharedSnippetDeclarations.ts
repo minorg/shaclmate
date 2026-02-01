@@ -1,29 +1,43 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export const sharedSnippetDeclarations = {
-  deduplicateSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}deduplicateSparqlWherePatterns`,
-    `\
-function ${syntheticNamePrefix}deduplicateSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  const deduplicatedPatterns: sparqljs.Pattern[] = [];
-  const deduplicatePatternStrings = new Set<string>();
-  for (const pattern of patterns) {
-    const patternString = JSON.stringify(pattern);
-    if (!deduplicatePatternStrings.has(patternString)) {
-      deduplicatePatternStrings.add(patternString);
-      deduplicatedPatterns.push(pattern);
+const arrayIntersection = singleEntryRecord(
+  `${syntheticNamePrefix}arrayIntersection`,
+  `\
+function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
+  if (left.length === 0) {
+    return right;
+  }
+  if (right.length === 0) {
+    return left;
+  }
+
+  const intersection = new Set<T>();
+  if (left.length <= right.length) {
+    const rightSet = new Set(right);
+    for (const leftElement of left) {
+      if (rightSet.has(leftElement)) {
+        intersection.add(leftElement);
+      }
+    }
+  } else {
+    const leftSet = new Set(left);
+    for (const rightElement of right) {
+      if (leftSet.has(rightElement)) {
+        intersection.add(rightElement);
+      }  
     }
   }
-  return deduplicatedPatterns;
+  return [...intersection];
 }`,
-  ),
+);
 
-  EqualsResult: singleEntryRecord(
-    `${syntheticNamePrefix}EqualsResult`,
-    `\
+const EqualsResult = singleEntryRecord(
+  `${syntheticNamePrefix}EqualsResult`,
+  `\
 export type ${syntheticNamePrefix}EqualsResult = purify.Either<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
 export namespace ${syntheticNamePrefix}EqualsResult {
@@ -99,317 +113,125 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     readonly type: "RightNull";
   };
 }`,
-  ),
+);
 
-  filterTerm: singleEntryRecord(
-    `${syntheticNamePrefix}filterTerm`,
-    `\
-  function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {  
-    if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype === value.datatype.value))) {
-      return false;
-    }
+const SparqlPattern = singleEntryRecord(
+  `SparqlPattern`,
+  `\
+type ${syntheticNamePrefix}SparqlFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
+type ${syntheticNamePrefix}SparqlPattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlFilterPattern;`,
+);
 
-    if (typeof filter.in !== "undefined" && !filter.in.some(inTerm => {
-      if (typeof inTerm.datatype !== "undefined" && (value.termType !== "Literal" || value.datatype.value !== inTerm.datatype)) {
-        return false;
-      }
-  
-      if (typeof inTerm.language !== "undefined" && (value.termType !== "Literal" || value.language !== inTerm.language)) {
-        return false;
-      }
-  
-      if (value.termType !== inTerm.type) {
-        return false;
-      }
-  
-      if (value.value !== inTerm.value) {
-        return false;
-      }
-  
-      return true;
-    })) {
-      return false;
-    }
+const SparqlWherePatternsFunction = singleEntryRecord(
+  `SparqlWherePatternsFunction`,
+  {
+    code: `\
+type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
+  filter?: FilterT;
+  ignoreRdfType?: boolean;
+  preferredLanguages?: readonly string[];
+  propertyPatterns: readonly sparqljs.BgpPattern[];
+  schema: SchemaT;
+  valueVariable: rdfjs.Variable;
+  variablePrefix: string;
+}>;
+type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly ${syntheticNamePrefix}SparqlPattern[];
+`,
+    dependencies: SparqlPattern,
+  } satisfies SnippetDeclaration,
+);
 
-  
-    if (typeof filter.languageIn !== "undefined" && (value.termType !== "Literal" || !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
-      return false;
-    }
-  
-    if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType)) {
-      return false;
-    }
-    
-    return true;
-  }`,
-  ),
-
-  insertSeedSparqlWherePattern: singleEntryRecord(
-    `${syntheticNamePrefix}insertSeedSparqlWherePattern`,
-    `\
-/**
- * Insert a seed SPARQL where pattern if necessary.
- * 
- * A SPARQL WHERE block that solely consists of OPTIONAL blocks won't match anything. OPTIONAL is a left join.
- * In that situation the solution is to insert a VALUES () { () } seed as the first pattern in order to match the entire store.
- */
-function ${syntheticNamePrefix}insertSeedSparqlWherePattern(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
-  if (patterns.every(pattern => pattern.type === "optional")) {
-    return [{ values: [{}], type: "values" }, ...patterns];
-  }
-  return patterns;
-}`,
-  ),
-
-  optimizeSparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}optimizeSparqlWherePatterns`,
-    `\
-function ${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns: readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {
+const deduplicateSparqlPatterns = singleEntryRecord(
+  `${syntheticNamePrefix}deduplicateSparqlPatterns`,
+  {
+    code: `\
+function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
   if (patterns.length === 0) {
     return patterns;
   }
 
-  const filterPatterns: sparqljs.Pattern[] = [];
-  const valuesPatterns: sparqljs.Pattern[] = [];
-  const otherPatterns: sparqljs.Pattern[] = [];
+  const deduplicatedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const deduplicatePatternStrings = new Set<string>();
+  for (const pattern of patterns) {
+    const patternString = JSON.stringify(pattern);
+    if (!deduplicatePatternStrings.has(patternString)) {
+      deduplicatePatternStrings.add(patternString);
+      deduplicatedPatterns.push(pattern);
+    }
+  }
+  return deduplicatedPatterns;
+}`,
+    dependendencies: SparqlPattern,
+  },
+);
+
+const SparqlPattern_isSolutionGenerating = singleEntryRecord(
+  `${syntheticNamePrefix}SparqlPattern_isSolutionGenerating`,
+  {
+    code: `\
+namespace ${syntheticNamePrefix}SparqlPattern {
+  export function isSolutionGenerating(pattern: ${syntheticNamePrefix}SparqlPattern): boolean {
+    switch (pattern.type) {
+      case "bind":
+      case "bgp":        
+      case "service":
+      case "values":
+        return true;
+      
+      case "graph":
+      case "group":
+        return pattern.patterns.some(isSolutionGenerating);
+
+      case "filter":
+      case "minus":
+      case "optional":
+        return false;
+
+      case "union":
+        // A union pattern is solution-generating if every branch is solution-generating
+        return pattern.patterns.every(isSolutionGenerating);
+
+      default:
+        throw new RangeError(\`unable to determine whether "\${pattern.type}" pattern is solution-generating\`);
+    }
+  }
+}`,
+    dependencies: SparqlPattern,
+  },
+);
+
+const sortSparqlPatterns = singleEntryRecord(
+  `${syntheticNamePrefix}sortSparqlPatterns`,
+  {
+    code: `\
+function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  const filterPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const otherPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const valuesPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
 
   for (const pattern of patterns) {
     switch (pattern.type) {
-      case "bgp": {
-        if (pattern.triples.length === 0) {
-          continue;
-        }
-        const lastPattern = otherPatterns.at(-1);
-        if (lastPattern && lastPattern.type === "bgp") {
-          // Coalesce adjacent BGP patterns
-          lastPattern.triples.push(...pattern.triples);
-        } else {
-          otherPatterns.push(pattern);
-        }
-        break;
-      }
-      case "bind":
-      case "query":
-        otherPatterns.push(pattern);
-        break;
       case "filter":
         filterPatterns.push(pattern);
-        break;
-      case "group":
-        // Flatten groups outside unions
-        otherPatterns.push(...${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns));
         break;
       case "values":
         valuesPatterns.push(pattern);
         break;
-      case "graph":
-      case "minus":
-      case "optional":
-      case "service": {
-        const optimizedPatterns = ${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns);
-        if (optimizedPatterns.length > 0) {
-          otherPatterns.push({ ...pattern, patterns: optimizedPatterns.concat() });
-        }
-        break;
-      }
-      case "union": {
-        const unionPatterns = ${syntheticNamePrefix}deduplicateSparqlWherePatterns(pattern.patterns.flatMap(pattern => {
-          switch (pattern.type) {
-            case "group":
-              // Don't flatten the groups in a union
-            case "graph":
-            case "minus":
-            case "optional":
-            case "service": {
-              const optimizedPatterns = ${syntheticNamePrefix}optimizeSparqlWherePatterns(pattern.patterns);
-              if (optimizedPatterns.length > 0) {
-                return [{ ...pattern, patterns: optimizedPatterns.concat() }];
-              }
-              return [] as sparqljs.Pattern[];
-            }
-            default:
-              return [pattern];
-          }
-        }));
-
-        switch (unionPatterns.length) {
-          case 0:
-            break;
-          case 1:
-            otherPatterns.push(...${syntheticNamePrefix}optimizeSparqlWherePatterns([unionPatterns[0]]));
-            break;
-          default:
-            otherPatterns.push({...pattern, patterns: unionPatterns.concat() });
-            break;
-        }
-        break;
-      }
       default:
-        pattern satisfies never;
+        otherPatterns.push(pattern);
+        break;
     }
   }
 
-  return ${syntheticNamePrefix}deduplicateSparqlWherePatterns(valuesPatterns.concat(otherPatterns).concat(filterPatterns));
+  return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
 }`,
-  ),
+    dependencies: SparqlPattern,
+  },
+);
 
-  RdfVocabularies: singleEntryRecord(
-    `${syntheticNamePrefix}RdfVocabularies`,
-    `\
-namespace ${syntheticNamePrefix}RdfVocabularies {
-  export namespace rdf {
-    export const first = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
-    export const nil = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
-    export const rest = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
-    export const subject = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
-    export const type = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
-  }
-
-  export namespace rdfs {
-    export const subClassOf = dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
-  }
-
-  export namespace xsd {
-    export const boolean = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
-    export const date = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date");
-    export const dateTime = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
-    export const decimal = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
-    export const double = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double");
-    export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
-  }
-}`,
-  ),
-
-  strictEquals: singleEntryRecord(
-    `${syntheticNamePrefix}strictEquals`,
-    `\
-/**
- * Compare two values for strict equality (===), returning an ${syntheticNamePrefix}EqualsResult rather than a boolean.
- */
-function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number | string>(
-  left: T,
-  right: T,
-): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, left === right);
-}`,
-  ),
-
-  TermFilter: singleEntryRecord(
-    `${syntheticNamePrefix}TermFilter`,
-    `\
-interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly string[];
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly type: "Literal" | "NamedNode"; readonly value: string; }[];
-  readonly languageIn?: readonly string[];
-  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
-}`,
-  ),
-
-  TermFilter_sparqlWherePatterns: singleEntryRecord(
-    `${syntheticNamePrefix}TermFilter.sparqlWherePatterns`,
-    `\
-namespace ${syntheticNamePrefix}TermFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}TermFilter | undefined, value: rdfjs.Variable): readonly sparqljs.Pattern[] {
-    const patterns: sparqljs.Pattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
-  
-    if (typeof filter.datatypeIn !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [{ args: [value], operator: "datatype", type: "operation" }, filter.datatypeIn.map(dataFactory.namedNode)]
-        }
-      });
-    }
-
-    if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [value, filter.in.map(inTerm => {
-            if (typeof inTerm.datatype !== "undefined") {
-              return dataFactory.literal(inTerm.value, dataFactory.namedNode(inTerm.datatype));
-            }
-            if (typeof inTerm.language !== "undefined") {
-              return dataFactory.literal(inTerm.value, inTerm.language);
-            }
-            switch (inTerm.type) {
-              case "Literal":
-                return dataFactory.literal(inTerm.value);
-              case "NamedNode":
-                return dataFactory.namedNode(inTerm.value);
-              default:
-                inTerm.type satisfies never;
-                throw new RangeError(inTerm.type);
-            }
-          })],
-        }
-      });
-    }
-  
-    if (typeof filter.languageIn !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [{ args: [value], operator: "lang", type: "operation" }, filter.languageIn.map(value => dataFactory.literal(value))]
-        }
-      });
-    }
-  
-    if (typeof filter.typeIn !== "undefined") {
-      const typeInExpressions = filter.typeIn.map(inType => {
-        switch (inType) {
-          case "BlankNode":
-            return "isBlank";
-          case "Literal":
-            return "isLiteral";
-          case "NamedNode":
-            return "isIRI";
-          default:
-            inType satisfies never;
-            throw new RangeError(inType);
-        }
-      }).map(operator => ({
-        type: "operation" as const,
-        operator,
-        args: [value]
-      }));
-
-      switch (typeInExpressions.length) {
-        case 0:
-          break;
-        case 1:
-          patterns.push({ type: "filter", expression: typeInExpressions[0] });
-          break;
-        default:
-          patterns.push({
-            type: "filter",
-            expression: {
-              type: "operation",
-              operator: "||",
-              args: typeInExpressions
-            }
-          });
-      }
-    }
-
-    return patterns;
-  }
-}`,
-  ),
-
-  toLiteral: singleEntryRecord(
-    `${syntheticNamePrefix}toLiteral`,
-    `\
+const toLiteral = singleEntryRecord(
+  `${syntheticNamePrefix}toLiteral`,
+  `\
 function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
   switch (typeof value) {
     case "boolean":
@@ -453,7 +275,464 @@ function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string
       return dataFactory.literal(value, datatype);
   }
 }`,
+);
+
+const sparqlValueInPattern = singleEntryRecord(
+  `${syntheticNamePrefix}sparqlValueInPattern`,
+  {
+    code: `\
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlFilterPattern {
+  if (valueIn.length === 0) {
+    throw new RangeError("expected valueIn not to be empty");
+  }
+
+  return {
+    expression: {
+      args: [valueVariable, valueIn.map(inValue => {
+        switch (typeof inValue) {
+          case "boolean":
+          case "number":
+          case "string":
+            return ${syntheticNamePrefix}toLiteral(inValue)
+          case "object":
+            if (inValue instanceof Date) {
+              return ${syntheticNamePrefix}toLiteral(inValue)
+            }
+
+            return inValue;
+          default:
+            inValue satisfies never;
+            throw new Error("should never reach this point");
+          }
+        }
+      )],
+      operator: "in",
+      type: "operation",
+    },
+    lift,
+    type: "filter",
+  };
+}`,
+    dependencies: toLiteral,
+  } satisfies SnippetDeclaration,
+);
+
+const TermFilter = singleEntryRecord(
+  `${syntheticNamePrefix}TermFilter`,
+  `\
+interface ${syntheticNamePrefix}TermFilter {
+  readonly datatypeIn?: readonly rdfjs.NamedNode[];
+  readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
+  readonly languageIn?: readonly string[];
+  readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
+}`,
+);
+
+const termSchemaSparqlWherePatterns = singleEntryRecord(
+  `${syntheticNamePrefix}termSchemaSparqlWherePatterns`,
+  {
+    code: `\
+function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
+  filterPatterns,
+  propertyPatterns,
+  schema,
+  valueVariable
+}: {
+  filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
+  propertyPatterns: readonly sparqljs.BgpPattern[];
+  schema: Readonly<{
+    defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
+    in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
+  }>,
+  valueVariable: rdfjs.Variable;
+}): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  let patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
+
+  if (schema.in && schema.in.length > 0) {
+    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
+  }
+
+  if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
+    // Filter patterns make the property required
+    patterns = [{ patterns, type: "optional" }];
+  }
+
+  return patterns.concat(filterPatterns);
+}`,
+    dependencies: {
+      ...arrayIntersection,
+      ...sparqlValueInPattern,
+      ...SparqlPattern,
+    },
+  } satisfies SnippetDeclaration,
+);
+
+export const sharedSnippetDeclarations = {
+  EqualsResult,
+
+  filterTerm: singleEntryRecord(`${syntheticNamePrefix}filterTerm`, {
+    code: `\
+  function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {  
+    if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype.equals(value.datatype)))) {
+      return false;
+    }
+
+    if (typeof filter.in !== "undefined" && !filter.in.some(inTerm => inTerm.equals(value))) {
+      return false;
+    }
+
+  
+    if (typeof filter.languageIn !== "undefined" && (value.termType !== "Literal" || !filter.languageIn.some(inLanguage => inLanguage === value.language))) {
+      return false;
+    }
+  
+    if (typeof filter.typeIn !== "undefined" && !filter.typeIn.some(inType => inType === value.termType)) {
+      return false;
+    }
+    
+    return true;
+  }`,
+    dependencies: TermFilter,
+  } satisfies SnippetDeclaration),
+
+  IdentifierSet: singleEntryRecord(
+    `${syntheticNamePrefix}IdentifierSet`,
+    `\
+class ${syntheticNamePrefix}IdentifierSet {
+  private readonly blankNodeValues = new Set<string>();
+  private readonly namedNodeValues = new Set<string>();
+
+  add(identifier: rdfjs.BlankNode | rdfjs.NamedNode): this {
+    switch (identifier.termType) {
+      case "BlankNode":
+        this.blankNodeValues.add(identifier.value);
+        return this;
+      case "NamedNode":
+        this.namedNodeValues.add(identifier.value);
+        return this;
+    }
+  }
+
+  has(identifier: rdfjs.BlankNode | rdfjs.NamedNode): boolean {
+    switch (identifier.termType) {
+      case "BlankNode":
+        return this.blankNodeValues.has(identifier.value);
+      case "NamedNode":
+        return this.namedNodeValues.has(identifier.value);
+    }
+  }
+}`,
   ),
+
+  liftSparqlPatterns: singleEntryRecord(
+    `${syntheticNamePrefix}liftSparqlPatterns`,
+    {
+      code: `\
+function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${syntheticNamePrefix}SparqlPattern>): [readonly ${syntheticNamePrefix}SparqlPattern[], readonly ${syntheticNamePrefix}SparqlFilterPattern[]] {
+  const liftedPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+  const unliftedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  for (const pattern of patterns) {
+    if (pattern.type === "filter" && pattern.lift) {
+      liftedPatterns.push(pattern);
+    } else {
+      unliftedPatterns.push(pattern); 
+    }
+  }
+  return [unliftedPatterns, liftedPatterns];
+}`,
+      dependencies: SparqlPattern,
+    },
+  ),
+
+  literalSchemaSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}literalSchemaSparqlWherePatterns`,
+    {
+      code: `\
+function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
+  filterPatterns,
+  preferredLanguages,
+  propertyPatterns,
+  schema,
+  valueVariable
+}: {
+  filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
+  preferredLanguages?: readonly string[];
+  propertyPatterns: readonly sparqljs.BgpPattern[];
+  schema: Readonly<{
+    defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
+    languageIn?: readonly string[];
+    in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
+  }>,
+  valueVariable: rdfjs.Variable;
+}): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  let patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
+
+  if (schema.in && schema.in.length > 0) {
+    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
+  }
+
+  const languageIn = ${syntheticNamePrefix}arrayIntersection(schema.languageIn ?? [], preferredLanguages ?? []);
+  if (languageIn.length > 0) {
+    patterns.push({
+      expression: {
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, languageIn.map(_ => dataFactory.literal(_))],
+        operator: "in",
+        type: "operation"
+      },
+      type: "filter",
+    });
+  }
+
+  if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
+    // Filter patterns make the property required
+    patterns = [{ patterns, type: "optional" }];
+  }
+
+  return patterns.concat(filterPatterns);
+}`,
+      dependencies: {
+        ...arrayIntersection,
+        ...SparqlPattern,
+      },
+    } satisfies SnippetDeclaration,
+  ),
+
+  normalizeSparqlWherePatterns: singleEntryRecord(
+    `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
+    {
+      code: `\
+function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  function normalizePatternsRecursive(patternsRecursive: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+    if (patternsRecursive.length === 0) {
+      return patternsRecursive;
+    }
+
+    const compactedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+    for (const pattern of ${syntheticNamePrefix}deduplicateSparqlPatterns(patternsRecursive)) {
+      switch (pattern.type) {
+        case "bgp": {
+          if (pattern.triples.length === 0) {
+            continue;
+          }
+          const lastPattern = compactedPatterns.at(-1);
+          if (lastPattern && lastPattern.type === "bgp") {
+            // Coalesce adjacent BGP patterns without mutating lastPattern
+            compactedPatterns[compactedPatterns.length - 1] = { triples: lastPattern.triples.concat(pattern.triples), type: "bgp" };
+          } else {
+            compactedPatterns.push(pattern);
+          }
+          break;
+        }
+        case "bind":
+        case "filter":
+        case "query":
+        case "values":
+          compactedPatterns.push(pattern);
+          break;
+        case "group":
+          // Flatten groups outside unions
+          compactedPatterns.push(...normalizePatternsRecursive(pattern.patterns));
+          break;
+        case "graph":
+        case "minus":
+        case "optional":
+        case "service": {
+          const patterns_ = normalizePatternsRecursive(pattern.patterns);
+          if (patterns_.length > 0) {
+            compactedPatterns.push({ ...pattern, patterns: patterns_.concat() });
+          }
+          break;
+        }
+        case "union": {
+          const unionPatterns = ${syntheticNamePrefix}deduplicateSparqlPatterns(pattern.patterns.flatMap(pattern => {
+            switch (pattern.type) {
+              case "group":
+                // Don't flatten the groups in a union
+              case "graph":
+              case "minus":
+              case "optional":
+              case "service": {
+                const patterns_ = normalizePatternsRecursive(pattern.patterns);
+                if (patterns_.length > 0) {
+                  return [{ ...pattern, patterns: patterns_.concat() }];
+                }
+                return [] as ${syntheticNamePrefix}SparqlPattern[];
+              }
+              default:
+                return [pattern];
+            }
+          }));
+
+          switch (unionPatterns.length) {
+            case 0:
+              break;
+            case 1:
+              compactedPatterns.push(...normalizePatternsRecursive([unionPatterns[0]]));
+              break;
+            default:
+              compactedPatterns.push({ ...pattern, patterns: unionPatterns.concat() });
+              break;
+          }
+          break;
+        }
+        default:
+          pattern satisfies never;
+      }
+    }
+
+    return ${syntheticNamePrefix}sortSparqlPatterns(${syntheticNamePrefix}deduplicateSparqlPatterns(compactedPatterns));
+  }
+
+  const normalizedPatterns = normalizePatternsRecursive(patterns);
+  if (!normalizedPatterns.some(${syntheticNamePrefix}SparqlPattern.isSolutionGenerating)) {
+    throw new Error("SPARQL WHERE patterns must have at least one solution-generating pattern");
+  }
+
+  return normalizedPatterns;
+}`,
+      dependencies: {
+        ...deduplicateSparqlPatterns,
+        ...sortSparqlPatterns,
+        ...SparqlPattern_isSolutionGenerating,
+      },
+    },
+  ),
+
+  RdfVocabularies: singleEntryRecord(
+    `${syntheticNamePrefix}RdfVocabularies`,
+    `\
+namespace ${syntheticNamePrefix}RdfVocabularies {
+  export namespace rdf {
+    export const first = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
+    export const nil = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
+    export const rest = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+    export const subject = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
+    export const type = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+  }
+
+  export namespace rdfs {
+    export const subClassOf = dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
+  }
+
+  export namespace xsd {
+    export const boolean = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
+    export const date = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date");
+    export const dateTime = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
+    export const decimal = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
+    export const double = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double");
+    export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
+  }
+}`,
+  ),
+
+  SparqlPattern,
+
+  sparqlValueInPattern,
+
+  SparqlWherePatternsFunction,
+
+  strictEquals: singleEntryRecord(`${syntheticNamePrefix}strictEquals`, {
+    code: `\
+/**
+ * Compare two values for strict equality (===), returning an ${syntheticNamePrefix}EqualsResult rather than a boolean.
+ */
+function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number | string>(
+  left: T,
+  right: T,
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+}`,
+    dependencies: EqualsResult,
+  } satisfies SnippetDeclaration),
+
+  TermFilter,
+
+  termFilterSparqlPatterns: singleEntryRecord(
+    `${syntheticNamePrefix}termFilterSparqlPatterns`,
+    {
+      code: `\
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${syntheticNamePrefix}TermFilter; valueVariable: rdfjs.Variable }): readonly ${syntheticNamePrefix}SparqlFilterPattern[] {
+  if (!filter) {
+    return [];
+  }
+
+  const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+
+  if (typeof filter.datatypeIn !== "undefined" && filter.datatypeIn.length > 0) {
+    filterPatterns.push({
+      expression: {
+        type: "operation",
+        operator: "in",
+        args: [{ args: [valueVariable], operator: "datatype", type: "operation" }, filter.datatypeIn.concat()]
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+    filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
+  }
+
+  if (typeof filter.languageIn !== "undefined" && filter.languageIn.length > 0) {
+    filterPatterns.push({
+      expression: {
+        type: "operation",
+        operator: "in",
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => dataFactory.literal(value))]
+      },
+      lift: true,
+      type: "filter",
+    });
+  }
+
+  if (typeof filter.typeIn !== "undefined") {
+    const typeInExpressions = filter.typeIn.map(inType => {
+      switch (inType) {
+        case "BlankNode":
+          return "isBlank";
+        case "Literal":
+          return "isLiteral";
+        case "NamedNode":
+          return "isIRI";
+        default:
+          inType satisfies never;
+          throw new RangeError(inType);
+      }
+    }).map(operator => ({
+      type: "operation" as const,
+      operator,
+      args: [valueVariable]
+    }));
+
+    switch (typeInExpressions.length) {
+      case 0:
+        break;
+      case 1:
+        filterPatterns.push({ expression: typeInExpressions[0], lift: true, type: "filter" });
+        break;
+      default:
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "||",
+            args: typeInExpressions
+          },
+          lift: true,
+          type: "filter",
+        });
+    }
+  }
+
+  return filterPatterns;
+}`,
+      dependencies: { ...sparqlValueInPattern, ...SparqlPattern },
+    } satisfies SnippetDeclaration,
+  ),
+
+  termSchemaSparqlWherePatterns,
+
+  toLiteral,
 };
 
 export namespace SnippetDeclarations {}

@@ -1,4 +1,6 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
+
+import { camelCase } from "change-case";
 import type { TsFeature } from "enums/TsFeature.js";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
@@ -8,7 +10,7 @@ import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -58,6 +60,14 @@ export abstract class AbstractTermType<
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
     invariant(this.nodeKinds.size > 0, "empty nodeKinds");
+  }
+
+  get constrained(): boolean {
+    return (
+      this.defaultValue.isJust() ||
+      this.hasValues.length > 0 ||
+      this.in_.length > 0
+    );
   }
 
   @Memoize()
@@ -128,23 +138,17 @@ export abstract class AbstractTermType<
       .join(" | ")})`;
   }
 
-  /**
-   * An array of SPARQL.js WHERE patterns for filtering values of this type.
-   *
-   * Parameters:
-   *   variables: (at runtime)
-   *     - filter: an instance of filterType
-   *     - preferredLanguages: array of preferred language code (strings)
-   *     - valueVariable: rdfjs.Variable of the value of this type
-   *     - variablePrefix: prefix to use for new variables
-   */
-  protected abstract filterSparqlWherePatterns(parameters: {
-    variables: {
-      preferredLanguages: string;
-      filter: string;
-      valueVariable: string;
-    };
-  }): readonly Sparql.Pattern[];
+  @Memoize()
+  override get schemaType(): string {
+    invariant(this.kind.endsWith("Type"));
+    return `${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    invariant(this.kind.endsWith("Type"));
+    return `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}SparqlWherePatterns`;
+  }
 
   override fromRdfExpression(
     parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
@@ -167,6 +171,85 @@ export abstract class AbstractTermType<
     ]
       .filter((_) => typeof _ !== "undefined")
       .join(".");
+  }
+
+  override graphqlResolveExpression(
+    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
+  ): string {
+    throw new Error("not implemented");
+  }
+
+  override hashStatements({
+    variables,
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+    return [
+      `${variables.hasher}.update(${variables.value}.termType);`,
+      `${variables.hasher}.update(${variables.value}.value);`,
+    ];
+  }
+
+  override jsonUiSchemaElement(): Maybe<string> {
+    return Maybe.empty();
+  }
+
+  override snippetDeclarations({
+    features,
+  }: Parameters<AbstractType["snippetDeclarations"]>[0]): Readonly<
+    Record<string, SnippetDeclaration>
+  > {
+    return mergeSnippetDeclarations(
+      singleEntryRecord(
+        this.schemaType,
+        `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
+      ),
+
+      features.has("equals")
+        ? singleEntryRecord(`${syntheticNamePrefix}booleanEquals`, {
+            code: `\
+/**
+ * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
+ */
+function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.equals(right),
+  );
+}`,
+            dependencies: sharedSnippetDeclarations.EqualsResult,
+          })
+        : {},
+
+      sharedSnippetDeclarations.toLiteral, // For initializers
+    );
+  }
+
+  override sparqlConstructTriples(): readonly (
+    | AbstractType.SparqlConstructTriple
+    | string
+  )[] {
+    // Terms never have other triples hanging off them.
+    return [];
+  }
+
+  override toRdfExpression({
+    variables,
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+    return this.defaultValue
+      .map(
+        (defaultValue) =>
+          `(!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? [${variables.value}] : [])`,
+      )
+      .orDefault(`[${variables.value}]`);
+  }
+
+  override useImports(_object: {
+    features: ReadonlySet<TsFeature>;
+  }): readonly Import[] {
+    return [Import.RDFJS_TYPES];
   }
 
   /**
@@ -213,106 +296,6 @@ chain(values => purify.Either.sequence([${this.hasValues.map(rdfjsTermExpression
           : undefined,
       valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
     };
-  }
-
-  override graphqlResolveExpression(
-    _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
-  ): string {
-    throw new Error("not implemented");
-  }
-
-  override hashStatements({
-    variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
-    return [
-      `${variables.hasher}.update(${variables.value}.termType);`,
-      `${variables.hasher}.update(${variables.value}.value);`,
-    ];
-  }
-
-  override jsonUiSchemaElement(): Maybe<string> {
-    return Maybe.empty();
-  }
-
-  override snippetDeclarations({
-    features,
-  }: Parameters<AbstractType["snippetDeclarations"]>[0]): Readonly<
-    Record<string, string>
-  > {
-    return mergeSnippetDeclarations(
-      features.has("equals")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}booleanEquals`,
-            `\
-  /**
-   * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
-   */
-  function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
-    left: T,
-    right: T,
-  ): ${syntheticNamePrefix}EqualsResult {
-    return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-      left,
-      right,
-      left.equals(right),
-    );
-  }`,
-          )
-        : {},
-      sharedSnippetDeclarations.toLiteral,
-    );
-  }
-
-  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
-    return [];
-  }
-
-  override sparqlWherePatterns({
-    propertyPatterns,
-    variables,
-  }: Parameters<
-    AbstractType["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    const requiredPatterns: Sparql.Pattern[] = [
-      ...propertyPatterns,
-      ...variables.filter
-        .map((filterVariable) =>
-          this.filterSparqlWherePatterns({
-            variables: {
-              preferredLanguages: variables.preferredLanguages,
-              filter: filterVariable,
-              valueVariable: variables.valueVariable,
-            },
-          }),
-        )
-        .orDefault([]),
-    ];
-
-    return this.defaultValue
-      .map(
-        () =>
-          [
-            { patterns: requiredPatterns, type: "optional" },
-          ] as Sparql.Pattern[],
-      )
-      .orDefault(requiredPatterns);
-  }
-
-  override toRdfExpression({
-    variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
-    return this.defaultValue
-      .map(
-        (defaultValue) =>
-          `(!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? [${variables.value}] : [])`,
-      )
-      .orDefault(`[${variables.value}]`);
-  }
-
-  override useImports(_object: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[] {
-    return [Import.RDFJS_TYPES];
   }
 }
 

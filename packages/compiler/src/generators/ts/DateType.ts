@@ -1,13 +1,15 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
+import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
 
-export class DateType extends DateTimeType {
+export class DateType extends AbstractDateType {
+  protected override readonly xsdDatatype: NamedNode = xsd.date;
+
   override readonly graphqlType = new DateTimeType.GraphqlType(
     "graphqlScalars.Date",
   );
-  protected override readonly xsdDatatype: NamedNode = xsd.date;
-
   override readonly kind = "DateType";
 
   override jsonZodSchema({

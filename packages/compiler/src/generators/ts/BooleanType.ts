@@ -1,19 +1,21 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
-  readonly kind = "BooleanType";
   override readonly filterFunction = `${syntheticNamePrefix}filterBoolean`;
   override readonly filterType = `${syntheticNamePrefix}BooleanFilter`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     "graphql.GraphQLBoolean",
   );
+  readonly kind = "BooleanType";
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -43,17 +45,100 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     return "boolean";
   }
 
-  protected override filterSparqlWherePatterns({
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.extract(),
+      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": "boolean",
+      "in?": `readonly boolean[]`,
+    };
+  }
+
+  override jsonZodSchema({
     variables,
   }: Parameters<
-    AbstractPrimitiveType<boolean>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}BooleanFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
+    AbstractPrimitiveType<boolean>["jsonZodSchema"]
+  >[0]): ReturnType<AbstractPrimitiveType<boolean>["jsonZodSchema"]> {
+    if (this.primitiveIn.length === 1) {
+      return `${variables.zod}.literal(${this.primitiveIn[0]})`;
+    }
+    return `${variables.zod}.boolean()`;
+  }
+
+  override snippetDeclarations(
+    parameters: Parameters<
+      AbstractPrimitiveType<boolean>["snippetDeclarations"]
+    >[0],
+  ): Readonly<Record<string, SnippetDeclaration>> {
+    return mergeSnippetDeclarations(
+      super.snippetDeclarations(parameters),
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}BooleanFilter`,
+        `\
+interface ${syntheticNamePrefix}BooleanFilter {
+  readonly value?: boolean;
+}`,
+      ),
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterBoolean`,
+        `\
+function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}BooleanFilter, value: boolean) {
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+      ),
+
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}booleanSparqlWherePatterns`,
+            {
+              code: `\
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+
+    if (filter) {
+      if (typeof filter.value !== "undefined") {
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: [filter.value] }));
+      }
+    }
+
+    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+              dependencies: {
+                ...sharedSnippetDeclarations.sparqlValueInPattern,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+              },
+            },
+          )
+        : {},
+    );
+  }
+
+  override toRdfExpression({
+    variables,
+  }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): string {
+    return this.primitiveDefaultValue
+      .map((defaultValue) => {
+        if (defaultValue) {
+          // If the default is true, only serialize the value if it's false
+          return `(!${variables.value} ? [false] : [])`;
+        }
+        // If the default is false, only serialize the value if it's true
+        return `(${variables.value} ? [true] : [])`;
+      })
+      .orDefault(`[${variables.value}]`);
   }
 
   protected override fromRdfExpressionChain({
@@ -73,87 +158,5 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       preferredLanguages: undefined,
       valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
-  }
-
-  override jsonZodSchema({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<boolean>["jsonZodSchema"]
-  >[0]): ReturnType<AbstractPrimitiveType<boolean>["jsonZodSchema"]> {
-    if (this.primitiveIn.length === 1) {
-      return `${variables.zod}.literal(${this.primitiveIn[0]})`;
-    }
-    return `${variables.zod}.boolean()`;
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractPrimitiveType<boolean>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, string>> {
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-      singleEntryRecord(
-        `${syntheticNamePrefix}BooleanFilter`,
-        `\
-interface ${syntheticNamePrefix}BooleanFilter {
-  readonly value?: boolean;
-}`,
-      ),
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterBoolean`,
-        `\
-function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}BooleanFilter, value: boolean) {
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
-    return false;
-  }
-
-  return true;
-}`,
-      ),
-      parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}BooleanFilter.sparqlWherePatterns`,
-            `\
-namespace ${syntheticNamePrefix}BooleanFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}BooleanFilter | undefined, value: rdfjs.Variable) {
-    const patterns: sparqljs.Pattern[] = [];
-
-    if (!filter) {
-      return patterns;
-    }
-
-    if (typeof filter.value !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "=",
-          args: [value, ${syntheticNamePrefix}toLiteral(filter.value)],
-        }
-      });
-    }
-
-    return patterns;
-  }
-}`,
-          )
-        : {},
-    );
-  }
-
-  override toRdfExpression({
-    variables,
-  }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): string {
-    return this.primitiveDefaultValue
-      .map((defaultValue) => {
-        if (defaultValue) {
-          // If the default is true, only serialize the value if it's false
-          return `(!${variables.value} ? [false] : [])`;
-        }
-        // If the default is false, only serialize the value if it's true
-        return `(${variables.value} ? [true] : [])`;
-      })
-      .orDefault(`[${variables.value}]`);
   }
 }

@@ -4,7 +4,6 @@ import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { Sparql } from "../Sparql.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
@@ -13,10 +12,6 @@ export function sparqlFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {
   if (!this.features.has("sparql")) {
-    return [];
-  }
-
-  if (this.extern) {
     return [];
   }
 
@@ -31,15 +26,19 @@ export function sparqlFunctionDeclarations(
   const rdfClassVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
   const rdfTypeVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
+  let patternsVariableDeclarationKeyword = "const";
+  let triplesVariableDeclarationKeyword = "const";
   const sparqlConstructTriplesStatements = [];
   const sparqlWherePatternsStatements = [];
 
   for (const parentObjectType of this.parentObjectTypes) {
     sparqlConstructTriplesStatements.push(
-      `triples.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer({ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`,
+      `triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer({ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`,
     );
+    triplesVariableDeclarationKeyword = "let";
     sparqlWherePatternsStatements.push(`\
-patterns.push(...${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer({ filter: "parameters?.filter", ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`);
+patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer({ filter: variables.filter, ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`);
+    patternsVariableDeclarationKeyword = "let";
   }
 
   if (this.fromRdfType.isJust()) {
@@ -116,20 +115,21 @@ if (!parameters?.ignoreRdfType) {
       variables,
     })) {
       sparqlConstructTriplesStatements.push(
-        `triples.push(${typeof triple === "object" ? Sparql.Triple.stringify(triple) : triple});`,
+        `triples.push(${typeof triple === "object" ? objectInitializer(triple as unknown as Record<string, string>) : triple});`,
       );
     }
 
     const { condition, patterns } = property.sparqlWherePatterns({ variables });
     if (patterns.length > 0) {
-      const pushStatement = `patterns.push(${patterns.map(Sparql.Pattern.stringify).join(", ")});`;
+      const concatStatement = `patterns = patterns.concat(${patterns});`;
       if (condition) {
         sparqlWherePatternsStatements.push(
-          `if (${condition}) { ${pushStatement} }`,
+          `if (${condition}) { ${concatStatement} }`,
         );
       } else {
-        sparqlWherePatternsStatements.push(pushStatement);
+        sparqlWherePatternsStatements.push(concatStatement);
       }
+      patternsVariableDeclarationKeyword = "let";
     }
   }
 
@@ -152,7 +152,7 @@ if (!parameters?.ignoreRdfType) {
         sparqlConstructTriplesStatements.length > 0
           ? [
               `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
-              "const triples: sparqljs.Triple[] = []",
+              `${triplesVariableDeclarationKeyword} triples: sparqljs.Triple[] = []`,
               ...sparqlConstructTriplesStatements,
               "return triples;",
             ]
@@ -169,11 +169,11 @@ if (!parameters?.ignoreRdfType) {
           type: `{ filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }`,
         },
       ],
-      returnType: "readonly sparqljs.Pattern[]",
+      returnType: `readonly ${syntheticNamePrefix}SparqlPattern[]`,
       statements:
         sparqlWherePatternsStatements.length > 0
           ? [
-              "const patterns: sparqljs.Pattern[] = [];",
+              `${patternsVariableDeclarationKeyword} patterns: ${syntheticNamePrefix}SparqlPattern[] = [];`,
               `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
               ...sparqlWherePatternsStatements,
               "return patterns;",

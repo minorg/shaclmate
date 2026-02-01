@@ -1,19 +1,21 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
-  readonly kind = "StringType";
   override readonly filterFunction = `${syntheticNamePrefix}filterString`;
   override readonly filterType = `${syntheticNamePrefix}StringFilter`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     "graphql.GraphQLString",
   );
+  readonly kind = "StringType";
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
@@ -35,42 +37,31 @@ export class StringType extends AbstractPrimitiveType<string> {
     return conversions;
   }
 
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.primitiveDefaultValue.map(JSON.stringify).extract(),
+      in:
+        this.primitiveIn.length > 0
+          ? this.primitiveIn.map((_) => JSON.stringify(_)).concat()
+          : undefined,
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": "string",
+      "in?": `readonly string[]`,
+    };
+  }
+
   @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => `"${value}"`).join(" | ");
     }
     return "string";
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<string>["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
-      {
-        patterns: `${syntheticNamePrefix}StringFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
-  }
-
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractPrimitiveType<string>["fromRdfExpressionChain"]
-  >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
-    const inChain =
-      this.primitiveIn.length > 0
-        ? `.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`
-        : "";
-
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      valueTo: `chain(values => values.chainMap(value => value.toString()${inChain}))`,
-    };
   }
 
   override hashStatements({
@@ -100,9 +91,10 @@ export class StringType extends AbstractPrimitiveType<string> {
     parameters: Parameters<
       AbstractPrimitiveType<string>["snippetDeclarations"]
     >[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+
       singleEntryRecord(
         `${syntheticNamePrefix}StringFilter`,
         `\
@@ -112,6 +104,7 @@ interface ${syntheticNamePrefix}StringFilter {
   readonly minLength?: number;
 }`,
       ),
+
       singleEntryRecord(
         `${syntheticNamePrefix}filterString`,
         `\
@@ -131,55 +124,53 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
   return true;
 }`,
       ),
+
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}StringFilter.sparqlWherePatterns`,
-            `\
-namespace ${syntheticNamePrefix}StringFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}StringFilter | undefined, value: rdfjs.Variable) {
-    const patterns: sparqljs.Pattern[] = [];
+        ? singleEntryRecord(`${syntheticNamePrefix}stringSparqlWherePatterns`, {
+            code: `\
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
 
-    if (!filter) {
-      return patterns;
+    if (filter) {
+      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
+      }
+
+      if (typeof filter.maxLength !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<=",
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (typeof filter.minLength !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">=",
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
     }
 
-    if (typeof filter.in !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "in",
-          args: [value, filter.in.map(inValue => ${syntheticNamePrefix}toLiteral(inValue))],
-        }
-      });
-    }
-
-    if (typeof filter.maxLength !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: "<=",
-          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.maxLength)],
-        }
-      });
-    }
-
-    if (typeof filter.minLength !== "undefined") {
-      patterns.push({
-        type: "filter",
-        expression: {
-          type: "operation",
-          operator: ">=",
-          args: [{ args: [value], operator: "strlen", type: "operation" }, ${syntheticNamePrefix}toLiteral(filter.minLength)],
-        }
-      });
-    }
-
-    return patterns;
-  }
-}`,
-          )
+    return ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+            dependencies: {
+              ...sharedSnippetDeclarations.literalSchemaSparqlWherePatterns,
+              ...sharedSnippetDeclarations.sparqlValueInPattern,
+              ...sharedSnippetDeclarations.toLiteral,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+            },
+          })
         : {},
     );
   }
@@ -193,5 +184,21 @@ namespace ${syntheticNamePrefix}StringFilter {
           `(${variables.value} !== "${defaultValue}" ? [${variables.value}] : [])`,
       )
       .orDefault(`[${variables.value}]`);
+  }
+
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<
+    AbstractPrimitiveType<string>["fromRdfExpressionChain"]
+  >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
+    const inChain =
+      this.primitiveIn.length > 0
+        ? `.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return purify.Either.of<Error, ${this.name}>(string_); default: return purify.Left<Error, ${this.name}>(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`
+        : "";
+
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      valueTo: `chain(values => values.chainMap(value => value.toString()${inChain}))`,
+    };
   }
 }

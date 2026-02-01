@@ -1,7 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
 import { NodeShape as ShaclCoreNodeShape } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import { Either, List, Maybe } from "purify-ts";
+import { Either, List, type Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import type {
   IdentifierMintingStrategy,
@@ -55,6 +56,17 @@ export class NodeShape extends ShaclCoreNodeShape<
     shapesGraph: ShapesGraph;
   }) {
     super(generatedShaclmateNodeShape, shapesGraph);
+
+    if (
+      ancestorClassIris.length > 0 ||
+      childClassIris.length > 0 ||
+      descendantClassIris.length > 0 ||
+      isList ||
+      parentClassIris.length > 0
+    ) {
+      invariant(isClass);
+    }
+
     this.ancestorClassIris = ancestorClassIris;
     this.childClassIris = childClassIris;
     this.descendantClassIris = descendantClassIris;
@@ -71,22 +83,18 @@ export class NodeShape extends ShaclCoreNodeShape<
   @Memoize()
   get ancestorNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
-      this.isClass
-        ? this.ancestorClassIris
-            .filter((classIri) => !classIri.equals(rdf.List))
-            .map((classIri) => this.shapesGraph.nodeShapeByIdentifier(classIri))
-        : [],
+      this.ancestorClassIris
+        .filter((classIri) => !classIri.equals(rdf.List))
+        .map((classIri) => this.shapesGraph.nodeShapeByIdentifier(classIri)),
     );
   }
 
   @Memoize()
   get childNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
-      this.isClass
-        ? this.childClassIris.flatMap((classIri) =>
-            this.shapesGraph.nodeShapeByIdentifier(classIri),
-          )
-        : [],
+      this.childClassIris.flatMap((classIri) =>
+        this.shapesGraph.nodeShapeByIdentifier(classIri),
+      ),
     );
   }
 
@@ -98,11 +106,9 @@ export class NodeShape extends ShaclCoreNodeShape<
   @Memoize()
   get descendantNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
-      this.isClass
-        ? this.descendantClassIris.flatMap((classIri) =>
-            this.shapesGraph.nodeShapeByIdentifier(classIri),
-          )
-        : [],
+      this.descendantClassIris.flatMap((classIri) =>
+        this.shapesGraph.nodeShapeByIdentifier(classIri),
+      ),
     );
   }
 
@@ -160,33 +166,15 @@ export class NodeShape extends ShaclCoreNodeShape<
   @Memoize()
   get parentNodeShapes(): Either<Error, readonly NodeShape[]> {
     return Either.sequence(
-      this.isClass
-        ? this.parentClassIris
-            .filter((classIri) => !classIri.equals(rdf.List))
-            .map((classIri) => this.shapesGraph.nodeShapeByIdentifier(classIri))
-        : [],
+      this.parentClassIris
+        .filter((classIri) => !classIri.equals(rdf.List))
+        .map((classIri) => this.shapesGraph.nodeShapeByIdentifier(classIri)),
     );
   }
 
   @Memoize()
   get rdfType(): Maybe<NamedNode> {
-    // Check for an explicit shaclmate:rdfType
-    const rdfType = this.generatedShaclmateNodeShape.rdfType;
-    if (rdfType.isJust()) {
-      return rdfType;
-    }
-
-    // No explicit shaclmate:rdfType
-    // If the shape is a class, not abstract, and identified by an IRI then use the shape IRI as the fromRdfType.
-    if (
-      !this.abstract.orDefault(false) &&
-      this.isClass &&
-      this.identifier.termType === "NamedNode"
-    ) {
-      return Maybe.of(this.identifier);
-    }
-
-    return Maybe.empty();
+    return this.generatedShaclmateNodeShape.rdfType;
   }
 
   get shaclmateName(): Maybe<string> {

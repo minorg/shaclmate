@@ -1,20 +1,17 @@
 import { Maybe } from "purify-ts";
+
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-type Super = AbstractLazyObjectType<
-  AbstractLazyObjectType.ObjectTypeConstraint,
-  AbstractLazyObjectType.ObjectTypeConstraint
->;
-
 export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
   AbstractLazyObjectType.ObjectTypeConstraint
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.empty();
+  override readonly kind = "LazyObjectType";
 
   constructor({
     partialType,
@@ -114,3 +111,8 @@ export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends rdfjs.Bl
     return `${variables.value}.resolve().then(either => either.unsafeCoerce())`;
   }
 }
+
+type Super = AbstractLazyObjectType<
+  AbstractLazyObjectType.ObjectTypeConstraint,
+  AbstractLazyObjectType.ObjectTypeConstraint
+>;

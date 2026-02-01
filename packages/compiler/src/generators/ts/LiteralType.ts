@@ -1,7 +1,7 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -9,23 +9,10 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction = `${syntheticNamePrefix}filterLiteral`;
   override readonly filterType = `${syntheticNamePrefix}LiteralFilter`;
+  override readonly kind = "LiteralType";
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
-  }
-
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractLiteralType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...this.preferredLanguagesSparqlWherePatterns({ variables }),
-      {
-        patterns: `${syntheticNamePrefix}LiteralFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 
   override fromJsonExpression({
@@ -70,49 +57,15 @@ export class LiteralType extends AbstractLiteralType {
 
   override snippetDeclarations(
     parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
-      parameters.features.has("sparql") && this.languageIn.length > 0
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}arrayIntersection`,
-            `\
-function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
-  if (left.length === 0) {
-    return right;
-  }
-  if (right.length === 0) {
-    return left;
-  }
 
-  const intersection = new Set<T>();
-  if (left.length <= right.length) {
-    const rightSet = new Set(right);
-    for (const leftElement of left) {
-      if (rightSet.has(leftElement)) {
-        intersection.add(leftElement);
-      }
-    }
-  } else {
-    const leftSet = new Set(left);
-    for (const rightElement of right) {
-      if (leftSet.has(rightElement)) {
-        intersection.add(rightElement);
-      }  
-    }
-  }
-  return [...intersection];
-}`,
-          )
-        : {},
       singleEntryRecord(
         `${syntheticNamePrefix}filterLiteral`,
         `\
 function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  return ${syntheticNamePrefix}filterTerm({
-    ...filter,
-    in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
-  }, value);
+  return ${syntheticNamePrefix}filterTerm(filter, value);
 }`,
       ),
       sharedSnippetDeclarations.filterTerm,
@@ -120,28 +73,34 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}Liter
         `${syntheticNamePrefix}LiteralFilter`,
         `\
 interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix}TermFilter, "in" | "type"> {
-  readonly in?: readonly { readonly datatype?: string; readonly language?: string; readonly value: string; }[];
+  readonly in?: readonly rdfjs.Literal[];
 }`,
       ),
+
       parameters.features.has("sparql")
         ? singleEntryRecord(
-            `${syntheticNamePrefix}LiteralFilter.sparqlWherePatterns`,
-            `\
-namespace ${syntheticNamePrefix}LiteralFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns(filter: ${syntheticNamePrefix}LiteralFilter | undefined, value: rdfjs.Variable) {
-    return ${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(filter ? {
-      ...filter,
-      in: filter.in ? filter.in.map(inLiteral => ({ ...inLiteral, type: "Literal" as const })) : undefined
-    } : undefined, value);
-  }
-}`,
+            `${syntheticNamePrefix}literalSparqlWherePatterns`,
+            {
+              code: `\
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${syntheticNamePrefix}termFilterSparqlPatterns(parameters), ...parameters });`,
+              dependencies: {
+                ...sharedSnippetDeclarations.literalSchemaSparqlWherePatterns,
+                ...sharedSnippetDeclarations.termFilterSparqlPatterns,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+              },
+            },
           )
         : {},
-      sharedSnippetDeclarations.TermFilter,
-      parameters.features.has("sparql")
-        ? sharedSnippetDeclarations.TermFilter_sparqlWherePatterns
-        : {},
     );
+  }
+
+  override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": "rdfjs.Literal",
+      "in?": "readonly rdfjs.Literal[]",
+    };
   }
 
   override toJsonExpression({

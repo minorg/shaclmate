@@ -1,24 +1,22 @@
-import { Maybe } from "purify-ts";
 import {
   StructureKind,
   VariableDeclarationKind,
   type VariableStatementStructure,
 } from "ts-morph";
+
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { objectInitializer } from "../objectInitializer.js";
-import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 
-export function propertiesVariableStatement(
+export function schemaVariableStatement(
   this: ObjectUnionType,
-): Maybe<VariableStatementStructure> {
+): VariableStatementStructure {
   const commonPropertiesByName: Record<
     string,
     {
       memberTypesWithProperty: boolean[];
-      path: ObjectType.ShaclProperty<Type>["path"];
+      property: ObjectType.ShaclProperty<Type>;
     }
   > = {};
 
@@ -33,7 +31,7 @@ export function propertiesVariableStatement(
       }
       let commonProperty = commonPropertiesByName[memberTypeProperty.name];
       if (commonProperty) {
-        if (commonProperty.path.equals(memberTypeProperty.path)) {
+        if (commonProperty.property.path.equals(memberTypeProperty.path)) {
           commonProperty.memberTypesWithProperty[memberTypeI] = true;
         }
       } else {
@@ -41,7 +39,7 @@ export function propertiesVariableStatement(
           memberTypesWithProperty: new Array<boolean>(
             this.memberTypes.length,
           ).fill(false),
-          path: memberTypeProperty.path,
+          property: memberTypeProperty,
         };
         commonProperty.memberTypesWithProperty[memberTypeI] = true;
       }
@@ -50,29 +48,22 @@ export function propertiesVariableStatement(
 
   const propertiesObject: string[] = [];
   for (const name of Object.keys(commonPropertiesByName).toSorted()) {
-    const { memberTypesWithProperty, path } = commonPropertiesByName[name];
+    const { memberTypesWithProperty, property } = commonPropertiesByName[name];
     if (!memberTypesWithProperty.every((value) => value)) {
       continue;
     }
-    const propertyObject: Record<string, string> = {};
-    if (this.features.has("rdf")) {
-      propertyObject["identifier"] = rdfjsTermExpression(path);
-    }
-    propertiesObject.push(`${name}: ${objectInitializer(propertyObject)}`);
-  }
-  if (propertiesObject.length === 0) {
-    return Maybe.empty();
+    propertiesObject.push(`${property.name}: ${property.schema}`);
   }
 
-  return Maybe.of({
+  return {
     declarationKind: VariableDeclarationKind.Const,
     kind: StructureKind.VariableStatement,
     declarations: [
       {
-        name: `${syntheticNamePrefix}properties`,
-        initializer: `{${propertiesObject.join(", ")}}`,
+        name: `${syntheticNamePrefix}schema`,
+        initializer: `{ properties: { ${propertiesObject.join(", ")} } } as const`,
       },
     ],
     isExported: true,
-  } satisfies VariableStatementStructure);
+  };
 }

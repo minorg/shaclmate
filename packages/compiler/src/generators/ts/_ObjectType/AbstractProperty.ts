@@ -6,15 +6,21 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+import { Memoize } from "typescript-memoize";
+
 import type { PropertyVisibility } from "../../../enums/index.js";
+import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
-import type { Sparql } from "../Sparql.js";
+import { objectInitializer } from "../objectInitializer.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import type { Type } from "../Type.js";
 
 export abstract class AbstractProperty<
-  TypeT extends Pick<Type, "filterFunction" | "mutable" | "name">,
+  TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
 > {
+  protected readonly objectType: ObjectType;
+
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
@@ -28,19 +34,19 @@ export abstract class AbstractProperty<
   abstract readonly equalsFunction: Maybe<string>;
 
   /**
-   * Optional get accessor to include in a class declaration of the object type.
-   */
-  abstract readonly getAccessorDeclaration: Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  >;
-
-  /**
    * Optional property in the object type's filter.
    */
   abstract readonly filterProperty: Maybe<{
     readonly name: string;
     readonly type: string;
   }>;
+
+  /**
+   * Optional get accessor to include in a class declaration of the object type.
+   */
+  abstract readonly getAccessorDeclaration: Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  >;
 
   /**
    * GraphQL.js field definition.
@@ -66,6 +72,7 @@ export abstract class AbstractProperty<
   abstract readonly jsonPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   >;
+  abstract readonly kind: string;
 
   /**
    * Is the property reassignable?
@@ -104,10 +111,7 @@ export abstract class AbstractProperty<
   /**
    * Property visibility: private, protected, public.
    */
-
   readonly visibility: PropertyVisibility;
-
-  protected readonly objectType: ObjectType;
 
   constructor({
     name,
@@ -131,17 +135,20 @@ export abstract class AbstractProperty<
    */
   abstract get declarationImports(): readonly Import[];
 
-  protected static visibilityToScope(
-    visibility: PropertyVisibility,
-  ): Scope | undefined {
-    switch (visibility) {
-      case "private":
-        return Scope.Private;
-      case "protected":
-        return Scope.Protected;
-      case "public":
-        return undefined;
-    }
+  /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  protected get schemaObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)} as const`,
+      name: JSON.stringify(this.name),
+      type: `() => (${this.type.schema})`,
+    };
   }
 
   /**
@@ -207,7 +214,7 @@ export abstract class AbstractProperty<
    */
   abstract snippetDeclarations(
     parameters: Parameters<Type["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>>;
+  ): Readonly<Record<string, SnippetDeclaration>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for this property as strings (so they can incorporate runtime calls).
@@ -219,10 +226,10 @@ export abstract class AbstractProperty<
    */
   abstract sparqlConstructTriples(parameters: {
     variables: { focusIdentifier: string; variablePrefix: string };
-  }): readonly (Sparql.Triple | string)[];
+  }): readonly (AbstractType.SparqlConstructTriple | string)[];
 
   /**
-   * An array of SPARQL.js WHERE patterns for this property as strings (so they can incorporate runtime calls).
+   * SPARQL where patterns for this property.
    *
    * Parameters:
    *   variables: (at runtime)
@@ -230,6 +237,10 @@ export abstract class AbstractProperty<
    *     - focusIdentifier: identifier (rdfjs.BlankNode or rdfjs.NamedNode) of the object that is the focus of the patterns
    *     - preferredLanguages: array of preferred language code (strings)
    *     - variablePrefix: prefix to use for new variables
+   *
+   * Returns:
+   *   - condition: optional runtime condition to evaluate in an if statement before including the patterns
+   *   - patterns: runtime array of SparqlPattern's.
    */
   abstract sparqlWherePatterns(parameters: {
     variables: {
@@ -238,7 +249,7 @@ export abstract class AbstractProperty<
       preferredLanguages: string;
       variablePrefix: string;
     };
-  }): { condition?: string; patterns: readonly Sparql.Pattern[] };
+  }): { condition?: string; patterns: string };
 
   /**
    * property: expression to serialize a property to a JSON object member.
@@ -256,4 +267,17 @@ export abstract class AbstractProperty<
       "predicate"
     >;
   }): readonly string[];
+
+  protected static visibilityToScope(
+    visibility: PropertyVisibility,
+  ): Scope | undefined {
+    switch (visibility) {
+      case "private":
+        return Scope.Private;
+      case "protected":
+        return Scope.Protected;
+      case "public":
+        return undefined;
+    }
+  }
 }

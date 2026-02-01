@@ -1,11 +1,14 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { Sparql } from "./Sparql.js";
+import { objectInitializer } from "./objectInitializer.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -88,17 +91,6 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
     });
   }
 
-  @Memoize()
-  override jsonType(
-    parameters?: Parameters<AbstractType["jsonType"]>[0],
-  ): AbstractType.JsonType {
-    const itemTypeJsonType = this.itemType.jsonType(parameters);
-    invariant(!itemTypeJsonType.optional);
-    return new AbstractType.JsonType(itemTypeJsonType.name, {
-      optional: true,
-    });
-  }
-
   override get mutable(): boolean {
     return this.itemType.mutable;
   }
@@ -106,6 +98,23 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
   @Memoize()
   override get name(): string {
     return `purify.Maybe<${this.itemType.name}>`;
+  }
+
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      item: this.itemType.schema,
+    };
+  }
+
+  @Memoize()
+  override get schemaType(): string {
+    return `${syntheticNamePrefix}MaybeSchema<${this.itemType.schemaType}>`;
   }
 
   override fromJsonExpression({
@@ -150,6 +159,17 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
     ];
   }
 
+  @Memoize()
+  override jsonType(
+    parameters?: Parameters<AbstractType["jsonType"]>[0],
+  ): AbstractType.JsonType {
+    const itemTypeJsonType = this.itemType.jsonType(parameters);
+    invariant(!itemTypeJsonType.optional);
+    return new AbstractType.JsonType(itemTypeJsonType.name, {
+      optional: true,
+    });
+  }
+
   override jsonUiSchemaElement(
     parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
   ): ReturnType<AbstractType["jsonUiSchemaElement"]> {
@@ -164,7 +184,7 @@ export class OptionType<ItemTypeT extends Type> extends AbstractType {
 
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
 
@@ -233,57 +253,50 @@ function ${syntheticNamePrefix}maybeEquals<T>(
 type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
       ),
 
+      singleEntryRecord(
+        `${syntheticNamePrefix}MaybeSchema`,
+        `type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }`,
+      ),
+
       parameters.features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}MaybeFilter.sparqlWherePatterns`,
-            `\
-namespace ${syntheticNamePrefix}MaybeFilter {
-  export function ${syntheticNamePrefix}sparqlWherePatterns<ItemFilterT>(filter: ${syntheticNamePrefix}MaybeFilter<ItemFilterT> | undefined, itemSparqlWherePatterns: (itemFilter: ItemFilterT | undefined) => readonly sparqljs.Pattern[]): readonly sparqljs.Pattern[] {  
+        ? singleEntryRecord(`${syntheticNamePrefix}maybeSparqlWherePatterns`, {
+            code: `\
+function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}MaybeFilter<ItemFilterT>, ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>> {  
+  return ({ filter, schema, ...otherParameters }) => {
+    if (typeof filter === "undefined") {
+      // Treat the item's patterns as optional
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
+      return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
+    }
+      
     if (filter === null) {
-      return [{ expression: { args: itemSparqlWherePatterns(undefined).concat(), operator: "notexists", type: "operation" }, type: "filter" }]
+      // Use FILTER NOT EXISTS around the item's patterns
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
+      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 
-    return [{ patterns: itemSparqlWherePatterns(filter).concat(), type: "optional" }];
+    // Treat the item as required.
+    return itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item });
   }
 }`,
-          )
+            dependencies: {
+              ...sharedSnippetDeclarations.liftSparqlPatterns,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+            },
+          })
         : {},
     );
   }
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (Sparql.Triple | string)[] {
+  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
-  override sparqlWherePatterns(
-    parameters: Parameters<AbstractType["sparqlWherePatterns"]>[0],
-  ): readonly Sparql.Pattern[] {
-    const { variables } = parameters;
-    return variables.filter
-      .map((filterVariable) => {
-        const itemPatterns = this.itemType.sparqlWherePatterns({
-          ...parameters,
-          variables: {
-            ...variables,
-            filter: Maybe.of("itemFilter"),
-          },
-        });
-
-        return [
-          {
-            patterns: `${syntheticNamePrefix}MaybeFilter.${syntheticNamePrefix}sparqlWherePatterns(${filterVariable}, (itemFilter) => [${itemPatterns.map(Sparql.Pattern.stringify).join(", ")}])`,
-            type: "opaque-block",
-          },
-        ] as readonly Sparql.Pattern[];
-      })
-      .orDefaultLazy(() => [
-        {
-          patterns: this.itemType.sparqlWherePatterns(parameters),
-          type: "optional",
-        },
-      ]);
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}maybeSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override toJsonExpression({

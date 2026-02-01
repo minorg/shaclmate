@@ -14,6 +14,10 @@ export class MemberType {
     this.universe = universe;
   }
 
+  get abstract() {
+    return this.delegate.abstract;
+  }
+
   get ancestorObjectTypes() {
     return this.delegate.ancestorObjectTypes;
   }

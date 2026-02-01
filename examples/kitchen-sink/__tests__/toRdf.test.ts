@@ -45,8 +45,8 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ConcreteChildClass.$properties.concreteChildClassProperty
-            .identifier,
+          kitchenSink.ConcreteChildClass.$schema.properties
+            .concreteChildClassProperty.identifier,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -72,8 +72,8 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ExplicitRdfTypeClass.$properties.explicitRdfTypeProperty
-            .identifier,
+          kitchenSink.ExplicitRdfTypeClass.$schema.properties
+            .explicitRdfTypeProperty.identifier,
         )
         .chain((value) => value.toString())
         .unsafeCoerce(),
@@ -96,7 +96,7 @@ describe("toRdf", async () => {
     expect(
       resource
         .value(
-          kitchenSink.ExplicitFromToRdfTypesClass.$properties
+          kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
             .explicitFromToRdfTypesProperty.identifier,
         )
         .chain((value) => value.toString())
@@ -106,17 +106,17 @@ describe("toRdf", async () => {
 
   it("should not serialize default values", ({ expect }) => {
     const resource = harnesses.defaultValuePropertiesClass.toRdf();
-    expect(resource.dataset.size).toStrictEqual(0);
+    expect(resource.dataset.size).toStrictEqual(1); // Only the rdf:type
   });
 
   it("should serialize non-default values", ({ expect }) => {
     const resource =
       harnesses.defaultValuePropertiesOverriddenDifferent.toRdf();
-    expect(resource.dataset.size).toStrictEqual(4);
+    expect(resource.dataset.size).toStrictEqual(5); // Properties + the rdf:type
     expect(
       resource
         .value(
-          kitchenSink.DefaultValuePropertiesClass.$properties
+          kitchenSink.DefaultValuePropertiesClass.$schema.properties
             .falseBooleanDefaultValueProperty.identifier,
         )
         .chain((value) => value.toBoolean())

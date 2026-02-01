@@ -7,9 +7,10 @@ import type {
   PropertySignatureStructure,
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
-
+import type { AbstractType } from "../AbstractType.js";
 import type { Import } from "../Import.js";
-import type { Sparql } from "../Sparql.js";
+import { objectInitializer } from "../objectInitializer.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
@@ -22,7 +23,6 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override readonly equalsFunction = Maybe.of(
     `${syntheticNamePrefix}strictEquals`,
   );
-  readonly kind = "TypeDiscriminantProperty";
   override readonly filterProperty: AbstractProperty<TypeDiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly getAccessorDeclaration: Maybe<
@@ -30,6 +30,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   > = Maybe.empty();
   override readonly graphqlField: AbstractProperty<TypeDiscriminantProperty.Type>["graphqlField"] =
     Maybe.empty();
+  readonly kind = "TypeDiscriminantProperty";
   override readonly mutable = false;
   override readonly recursive = false;
 
@@ -43,14 +44,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     invariant(this.visibility === "public");
   }
 
-  private get abstract(): boolean {
-    return this.objectType.abstract;
-  }
-
-  private get initializer(): string {
-    return this.objectType.discriminantValue;
-  }
-
+  @Memoize()
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -59,6 +53,45 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
       name: this.name,
       type: this.type.name,
     });
+  }
+
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    return Maybe.of({
+      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
+      isAbstract: this.abstract && this.override ? undefined : this.abstract,
+      hasOverrideKeyword:
+        this.abstract && this.override ? undefined : this.override,
+      initializer: !this.abstract ? `"${this.initializer}"` : undefined,
+      isReadonly: true,
+      leadingTrivia:
+        this.abstract && this.override ? "abstract override " : undefined,
+      name: this.name,
+      type:
+        !this.abstract && this.type.name === `"${this.initializer}"`
+          ? undefined
+          : this.type.name,
+    });
+  }
+
+  @Memoize()
+  override get propertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: true,
+      name: this.name,
+      type: this.type.name,
+    });
+  }
+
+  private get abstract(): boolean {
+    return this.objectType.abstract;
+  }
+
+  private get initializer(): string {
+    return this.objectType.discriminantValue;
   }
 
   private get override(): boolean {
@@ -126,51 +159,24 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     });
   }
 
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return Maybe.of({
-      // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-      isAbstract: this.abstract && this.override ? undefined : this.abstract,
-      hasOverrideKeyword:
-        this.abstract && this.override ? undefined : this.override,
-      initializer: !this.abstract ? `"${this.initializer}"` : undefined,
-      isReadonly: true,
-      leadingTrivia:
-        this.abstract && this.override ? "abstract override " : undefined,
-      name: this.name,
-      type:
-        !this.abstract && this.type.name === `"${this.initializer}"`
-          ? undefined
-          : this.type.name,
-    });
-  }
-
-  override get propertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.type.name,
-    });
-  }
-
-  override snippetDeclarations(): Readonly<Record<string, string>> {
+  override snippetDeclarations(): Readonly<Record<string, SnippetDeclaration>> {
     if (this.objectType.features.has("equals")) {
       return sharedSnippetDeclarations.strictEquals;
     }
     return {};
   }
 
-  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
+  override sparqlConstructTriples(): readonly (
+    | AbstractType.SparqlConstructTriple
+    | string
+  )[] {
     return [];
   }
 
   override sparqlWherePatterns(): ReturnType<
     AbstractProperty<TypeDiscriminantProperty.Type>["sparqlWherePatterns"]
   > {
-    return { patterns: [] };
+    return { patterns: "" };
   }
 
   override toJsonObjectMember({
@@ -210,6 +216,20 @@ export namespace TypeDiscriminantProperty {
     @Memoize()
     get name(): string {
       return this.values.map((name) => `"${name}"`).join(" | ");
+    }
+
+    @Memoize()
+    get schema(): string {
+      return objectInitializer({
+        descendantValues:
+          this.descendantValues.length > 0
+            ? this.descendantValues.map((_) => JSON.stringify(_))
+            : undefined,
+        ownValues:
+          this.ownValues.length > 0
+            ? this.ownValues.map((_) => JSON.stringify(_))
+            : undefined,
+      });
     }
 
     @Memoize()

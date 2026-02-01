@@ -15,10 +15,6 @@ export function interfaceDeclaration(
     return Maybe.empty();
   }
 
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
   const properties: OptionalKind<PropertySignatureStructure>[] =
     this.properties.flatMap((property) => property.propertySignature.toList());
 

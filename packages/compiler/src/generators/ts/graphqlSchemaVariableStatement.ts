@@ -60,13 +60,13 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
           resolve: `\
 async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${objectType.name}[]> =>
 (await purify.EitherAsync<Error, readonly ${objectType.name}[]>(async ({ liftEither }) => {
-  let where: $ObjectSet.Where<${objectType.identifierTypeAlias}> | undefined;
+  let filter: ${objectType.filterType} | undefined;
   if (args.identifiers) {
     const identifiers: ${objectType.identifierTypeAlias}[] = [];
     for (const identifierArg of args.identifiers) {
       identifiers.push(await liftEither(${objectType.identifierTypeAlias}.fromString(identifierArg)));
     }
-    where = { identifiers, type: "identifiers" };
+    filter = { ${syntheticNamePrefix}: { in: identifiers } };
   }
   return await liftEither(await objectSet.${objectType.objectSetMethodNames.objects}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined, where }));
 })).unsafeCoerce()`,

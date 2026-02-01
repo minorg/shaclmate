@@ -1,7 +1,9 @@
 import { Maybe } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -12,6 +14,14 @@ export abstract class AbstractPrimitiveType<
     `${syntheticNamePrefix}strictEquals`;
   readonly primitiveDefaultValue: Maybe<ValueT>;
   readonly primitiveIn: readonly ValueT[];
+  abstract override readonly kind:
+    | "BooleanType"
+    | "DateTimeType"
+    | "DateType"
+    | "FloatType"
+    | "IntType"
+    | "NumberType"
+    | "StringType";
 
   constructor({
     primitiveDefaultValue,
@@ -28,11 +38,6 @@ export abstract class AbstractPrimitiveType<
 
   override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
     return Maybe.empty();
-  }
-
-  @Memoize()
-  override jsonType(): AbstractLiteralType.JsonType {
-    return new AbstractLiteralType.JsonType(this.name);
   }
 
   override fromJsonExpression({
@@ -53,9 +58,14 @@ export abstract class AbstractPrimitiveType<
     return [`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
+  @Memoize()
+  override jsonType(): AbstractLiteralType.JsonType {
+    return new AbstractLiteralType.JsonType(this.name);
+  }
+
   override snippetDeclarations(
     parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
       parameters.features.has("equals")

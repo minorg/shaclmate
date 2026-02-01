@@ -1,8 +1,11 @@
 import type { Literal } from "@rdfjs/types";
+
+import { invariant } from "ts-invariant";
+import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -26,21 +29,32 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     this.languageIn = languageIn;
   }
 
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
-  >[0]): ReturnType<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
-  > {
+  override get constrained(): boolean {
+    return super.constrained || this.languageIn.length > 0;
+  }
+
+  @Memoize()
+  override get schema(): string {
+    invariant(this.kind.endsWith("Type"));
+    return this.constrained
+      ? objectInitializer(this.schemaObject)
+      : `${syntheticNamePrefix}unconstrained${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
+  }
+
+  protected override get schemaObject() {
     return {
-      ...super.fromRdfExpressionChain({ variables }),
+      ...super.schemaObject,
       languageIn:
         this.languageIn.length > 0
-          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          ? this.languageIn.map((_) => JSON.stringify(_))
           : undefined,
-      preferredLanguages: `chain(values => ${syntheticNamePrefix}fromRdfPreferredLanguages({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
-      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "languageIn?": "readonly string[]",
     };
   }
 
@@ -48,9 +62,17 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     parameters: Parameters<
       AbstractTermType<Literal, Literal>["snippetDeclarations"]
     >[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
+
+      !this.constrained
+        ? singleEntryRecord(
+            this.schema,
+            `const ${this.schema} = ${objectInitializer(this.schemaObject)};`,
+          )
+        : {},
+
       parameters.features.has("rdf")
         ? singleEntryRecord(
             `${syntheticNamePrefix}fromRdfPreferredLanguages`,
@@ -86,52 +108,22 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     );
   }
 
-  protected preferredLanguagesSparqlWherePatterns({
+  protected override fromRdfExpressionChain({
     variables,
-  }: {
-    variables: {
-      preferredLanguages: string;
-      valueVariable: string;
+  }: Parameters<
+    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+  >[0]): ReturnType<
+    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+  > {
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn:
+        this.languageIn.length > 0
+          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          : undefined,
+      preferredLanguages: `chain(values => ${syntheticNamePrefix}fromRdfPreferredLanguages({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
+      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
     };
-  }): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `[${
-          this.languageIn.length > 0
-            ? `[...${syntheticNamePrefix}arrayIntersection(${JSON.stringify(this.languageIn)}, ${variables.preferredLanguages} ?? [])]`
-            : `(${variables.preferredLanguages} ?? [])`
-        }]
-        .filter(languages => languages.length > 0)
-        .map(languages =>
-          languages.map(language => 
-            ({
-              type: "operation" as const,
-              operator: "=",
-              args: [
-                { type: "operation" as const, operator: "lang", args: [${variables.valueVariable}] },
-                dataFactory.literal(language)
-              ]
-            })
-          )
-        )
-        .map(langEqualsExpressions => 
-          ({
-            type: "filter" as const,
-            expression: langEqualsExpressions.reduce((reducedExpression, langEqualsExpression) => {
-              if (reducedExpression === null) {
-                return langEqualsExpression;
-              }
-              return {
-                type: "operation" as const,
-                operator: "||",
-                args: [reducedExpression, langEqualsExpression]
-              };
-            }, null as sparqljs.Expression | null) as sparqljs.Expression
-          })
-        )`,
-        type: "opaque-block" as const,
-      },
-    ];
   }
 }
 

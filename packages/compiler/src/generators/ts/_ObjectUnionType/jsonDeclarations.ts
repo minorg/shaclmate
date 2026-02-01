@@ -21,7 +21,7 @@ function fromJsonFunctionDeclaration(
     ],
     returnType: `purify.Either<zod.ZodError, ${this.name}>`,
     statements: [
-      `return ${this.memberTypes.reduce((expression, memberType) => {
+      `return ${this.concreteMemberTypes.reduce((expression, memberType) => {
         const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
         return expression.length > 0
           ? `${expression}.altLazy(() => ${memberTypeExpression})`
@@ -53,7 +53,7 @@ function jsonTypeAliasDeclaration(
     isExported: true,
     kind: StructureKind.TypeAlias,
     name: `${syntheticNamePrefix}Json`,
-    type: this.memberTypes
+    type: this.concreteMemberTypes
       .map((memberType) => memberType.jsonType().name)
       .join(" | "),
   };
@@ -67,7 +67,7 @@ function jsonZodSchemaFunctionDeclaration(
     isExported: true,
     kind: StructureKind.Function,
     name: `${syntheticNamePrefix}jsonZodSchema`,
-    statements: `return ${variables.zod}.discriminatedUnion("${this._discriminantProperty.name}", [${this.memberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
+    statements: `return ${variables.zod}.discriminatedUnion("${this._discriminantProperty.name}", [${this.concreteMemberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
   };
 }
 
@@ -85,7 +85,7 @@ function toJsonFunctionDeclaration(
       },
     ],
     returnType: this.jsonType().name,
-    statements: this.memberTypes
+    statements: this.concreteMemberTypes
       .map((memberType) => {
         let returnExpression: string;
         switch (memberType.declarationType) {
@@ -98,8 +98,6 @@ function toJsonFunctionDeclaration(
         }
         return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
       })
-      .concat(
-        `${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-      ),
+      .concat(`throw new Error("unrecognized type");`),
   };
 }

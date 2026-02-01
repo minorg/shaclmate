@@ -1,16 +1,11 @@
-import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function isTypeFunctionDeclaration(
   this: ObjectType,
-): Maybe<FunctionDeclarationStructure> {
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
-  return Maybe.of({
+): FunctionDeclarationStructure {
+  return {
     isExported: true,
     kind: StructureKind.Function,
     name: `is${this.name}`,
@@ -27,5 +22,5 @@ export function isTypeFunctionDeclaration(
         .map((value) => `case "${value}":`)
         .join("\n")} return true; default: return false; }`,
     ],
-  });
+  };
 }

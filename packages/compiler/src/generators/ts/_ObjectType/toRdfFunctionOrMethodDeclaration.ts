@@ -50,7 +50,7 @@ export function toRdfFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     }
     statements.push(`const ${variables.resource} = ${superToRdfCall};`);
     usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
-  } else if (this.identifierType.isNamedNodeKind) {
+  } else if (this.identifierType.kind === "NamedNodeType") {
     statements.push(
       `const ${variables.resource} = ${variables.resourceSet}.mutableNamedResource(${this.thisVariable}.${this.identifierProperty.name}, { ${variables.mutateGraph} });`,
     );

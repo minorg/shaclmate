@@ -1,15 +1,10 @@
-import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function filterFunctionDeclaration(
   this: ObjectType,
-): Maybe<FunctionDeclarationStructure> {
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
+): FunctionDeclarationStructure {
   const statements: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     statements.push(
@@ -29,7 +24,7 @@ export function filterFunctionDeclaration(
 
   statements.push(`return true;`);
 
-  return Maybe.of({
+  return {
     isExported: true,
     kind: StructureKind.Function,
     parameters: [
@@ -45,5 +40,5 @@ export function filterFunctionDeclaration(
     name: `${syntheticNamePrefix}filter`,
     returnType: "boolean",
     statements,
-  } satisfies FunctionDeclarationStructure);
+  } satisfies FunctionDeclarationStructure;
 }

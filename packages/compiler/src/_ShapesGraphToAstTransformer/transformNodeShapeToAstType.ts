@@ -1,4 +1,5 @@
-import type { NodeKind } from "@shaclmate/shacl-ast";
+import type { NamedNode } from "@rdfjs/types";
+import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
@@ -8,8 +9,8 @@ import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
-import { logger } from "../logger.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
+import { createIdentifierType } from "./createIdentifierType.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
@@ -19,6 +20,43 @@ const defaultNodeShapeNodeKinds: ReadonlySet<NodeKind> = new Set([
   "BlankNode",
   "NamedNode",
 ]);
+
+function isObjectTypePropertyRequired(property: {
+  type: ast.ObjectType.Property["type"];
+}): boolean {
+  switch (property.type.kind) {
+    case "LazyObjectOptionType":
+      return false;
+    case "LazyObjectSetType":
+      return property.type.partialType.minCount > 0;
+    case "OptionType":
+      return false;
+    case "SetType":
+      return property.type.minCount > 0;
+    case "IntersectionType":
+    case "ObjectIntersectionType":
+      throw new Error("unsupported");
+    case "BlankNodeType":
+    case "IdentifierType":
+    case "LiteralType":
+    case "NamedNodeType":
+    case "TermType":
+      return property.type.defaultValue.isNothing();
+    case "LazyObjectType":
+    case "ListType":
+    case "ObjectType":
+    case "ObjectUnionType":
+    case "PlaceholderType":
+      return true;
+    case "UnionType":
+      return property.type.memberTypes.every((memberType) =>
+        isObjectTypePropertyRequired({ type: memberType }),
+      );
+    default:
+      property.type satisfies never;
+      throw new Error("should never reach this point");
+  }
+}
 
 const listPropertiesObjectType = new ast.ObjectType({
   abstract: false,
@@ -30,10 +68,7 @@ const listPropertiesObjectType = new ast.ObjectType({
   identifierType: new ast.IdentifierType({
     comment: Maybe.empty(),
     defaultValue: Maybe.empty(),
-    hasValues: [],
     label: Maybe.empty(),
-    in_: [],
-    nodeKinds: new Set(["BlankNode", "NamedNode"]),
   }),
   fromRdfType: Maybe.empty(),
   name: Maybe.empty(),
@@ -317,17 +352,36 @@ export function transformNodeShapeToAstType(
         });
       }
 
-      const fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
-      const toRdfTypes = nodeShape.toRdfTypes.concat();
-      if (toRdfTypes.length === 0) {
-        toRdfTypes.push(...nodeShape.rdfType.toList());
-      }
-      // Ensure toRdfTypes has fromRdfType
-      fromRdfType.ifJust((fromRdfType) => {
-        if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
-          toRdfTypes.push(fromRdfType);
+      let fromRdfType: Maybe<NamedNode>;
+      let toRdfTypes: NamedNode[];
+      if (!abstract && nodeShape.isClass) {
+        fromRdfType = nodeShape.fromRdfType
+          .alt(nodeShape.rdfType)
+          .alt(
+            nodeShape.identifier.termType === "NamedNode"
+              ? Maybe.of(nodeShape.identifier)
+              : Maybe.empty(),
+          );
+        toRdfTypes = nodeShape.toRdfTypes.concat();
+        if (toRdfTypes.length === 0) {
+          toRdfTypes.push(...nodeShape.rdfType.toList());
         }
-      });
+        // Ensure toRdfTypes has fromRdfType
+        fromRdfType.ifJust((fromRdfType) => {
+          if (!toRdfTypes.some((toRdfType) => toRdfType.equals(fromRdfType))) {
+            toRdfTypes.push(fromRdfType);
+          }
+        });
+      } else {
+        fromRdfType = Maybe.empty();
+        toRdfTypes = [];
+      }
+
+      if (nodeKinds.has("Literal")) {
+        return Left(
+          new Error(`${nodeShape} should not have a nodeKind "Literal"`),
+        );
+      }
 
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
@@ -340,14 +394,10 @@ export function transformNodeShapeToAstType(
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
         label: nodeShape.label,
-        identifierType: new ast.IdentifierType({
-          comment: Maybe.empty(),
-          defaultValue: Maybe.empty(),
-          hasValues: [],
-          in_: nodeShape.identifierIn,
-          label: Maybe.empty(),
-          nodeKinds,
-        }),
+        identifierType: createIdentifierType(
+          nodeKinds as ReadonlySet<IdentifierNodeKind>,
+          { in_: nodeShape.identifierIn },
+        ),
         identifierMintingStrategy,
         name: nodeShape.shaclmateName,
         shapeIdentifier: this.shapeIdentifier(nodeShape),
@@ -385,21 +435,30 @@ export function transformNodeShapeToAstType(
 
         // Populate properties
         for (const propertyShape of propertyShapes) {
-          this.transformPropertyShapeToAstObjectTypeProperty({
-            objectType,
-            propertyShape,
-          })
-            .ifLeft((error) => {
-              logger.warn(
-                "error transforming %s %s: %s",
-                nodeShape,
-                propertyShape,
-                error.message,
-              );
-            })
-            .ifRight((property) => {
-              objectType.addProperties(property);
+          const propertyEither =
+            this.transformPropertyShapeToAstObjectTypeProperty({
+              objectType,
+              propertyShape,
             });
+          if (propertyEither.isLeft()) {
+            return propertyEither;
+          }
+          propertyEither.ifRight((property) => {
+            objectType.addProperties(property);
+          });
+        }
+
+        if (
+          !objectType.abstract &&
+          !objectType.extern &&
+          objectType.fromRdfType.isNothing() &&
+          !objectType.properties.some(isObjectTypePropertyRequired)
+        ) {
+          return Left(
+            new Error(
+              `${nodeShape} has no required properties and no implicitly required rdf:type`,
+            ),
+          );
         }
 
         objectType.sortProperties();

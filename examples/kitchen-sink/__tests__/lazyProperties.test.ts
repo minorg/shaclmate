@@ -1,5 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as kitchenSink from "@shaclmate/kitchen-sink-example";
+
 import N3 from "n3";
 import { MutableResourceSet } from "rdfjs-resource";
 import { beforeAll, describe, expect, it } from "vitest";
@@ -34,34 +35,6 @@ async function expectEmptySet<
   expect(actual.partials).toHaveLength(0);
   const resolvedObjects = (await actual.resolve()).unsafeCoerce();
   expect(resolvedObjects).toHaveLength(0);
-}
-
-async function expectedNonEmptyOptional<
-  ObjectIdentifierT extends BlankNode | NamedNode,
-  PartialObjectT extends { $identifier: ObjectIdentifierT },
-  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
->({
-  actual,
-  equals,
-  expected,
-}: {
-  actual: kitchenSink.$LazyObjectOption<
-    ObjectIdentifierT,
-    PartialObjectT,
-    ResolvedObjectT
-  >;
-  equals: (
-    left: ResolvedObjectT,
-    right: ResolvedObjectT,
-  ) => kitchenSink.$EqualsResult;
-  expected: ResolvedObjectT;
-}): Promise<void> {
-  expect(
-    actual.partial.unsafeCoerce().$identifier.equals(expected.$identifier),
-  ).toStrictEqual(true);
-
-  const resolvedObject = (await actual.resolve()).unsafeCoerce().unsafeCoerce();
-  expect(equals(resolvedObject, expected).extract()).toStrictEqual(true);
 }
 
 async function expectRequired<
@@ -135,6 +108,34 @@ async function expectSet<
     ).unsafeCoerce();
     expect(resolvedObjects).toHaveLength(0);
   }
+}
+
+async function expectedNonEmptyOptional<
+  ObjectIdentifierT extends BlankNode | NamedNode,
+  PartialObjectT extends { $identifier: ObjectIdentifierT },
+  ResolvedObjectT extends { $identifier: ObjectIdentifierT },
+>({
+  actual,
+  equals,
+  expected,
+}: {
+  actual: kitchenSink.$LazyObjectOption<
+    ObjectIdentifierT,
+    PartialObjectT,
+    ResolvedObjectT
+  >;
+  equals: (
+    left: ResolvedObjectT,
+    right: ResolvedObjectT,
+  ) => kitchenSink.$EqualsResult;
+  expected: ResolvedObjectT;
+}): Promise<void> {
+  expect(
+    actual.partial.unsafeCoerce().$identifier.equals(expected.$identifier),
+  ).toStrictEqual(true);
+
+  const resolvedObject = (await actual.resolve()).unsafeCoerce().unsafeCoerce();
+  expect(equals(resolvedObject, expected).extract()).toStrictEqual(true);
 }
 
 describe("lazyProperties", () => {
@@ -292,11 +293,13 @@ describe("lazyProperties", () => {
   });
 
   for (const propertyNameString of Object.keys(
-    kitchenSink.LazyPropertiesClass.$properties,
-  ).concat(Object.keys(kitchenSink.LazyPropertiesInterface.$properties))) {
+    kitchenSink.LazyPropertiesClass.$schema.properties,
+  ).concat(
+    Object.keys(kitchenSink.LazyPropertiesInterface.$schema.properties),
+  )) {
     const propertyName = propertyNameString as
-      | keyof typeof kitchenSink.LazyPropertiesClass.$properties
-      | keyof typeof kitchenSink.LazyPropertiesInterface.$properties;
+      | keyof typeof kitchenSink.LazyPropertiesClass.$schema.properties
+      | keyof typeof kitchenSink.LazyPropertiesInterface.$schema.properties;
 
     for (const empty of [false, true]) {
       it(`${propertyName} ${empty ? "empty" : "non-empty"}`, async () => {
@@ -620,6 +623,9 @@ describe("lazyProperties", () => {
                 });
               }
             }
+            break;
+          case "$identifier":
+          case "$type":
             break;
           default:
             throw new Error(`not implemented: ${propertyName}`);

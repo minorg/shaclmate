@@ -9,10 +9,6 @@ export function hashFunctionDeclarations(
     return [];
   }
 
-  if (this.extern) {
-    return [];
-  }
-
   return hashFunctionOrMethodDeclarations
     .bind(this)()
     .map((hashFunctionOrMethodDeclaration) => ({

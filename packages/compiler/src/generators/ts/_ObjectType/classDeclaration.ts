@@ -91,10 +91,6 @@ export function classDeclaration(
     return Maybe.empty();
   }
 
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
   this.ensureAtMostOneSuperObjectType();
 
   const getAccessors: OptionalKind<GetAccessorDeclarationStructure>[] = [];

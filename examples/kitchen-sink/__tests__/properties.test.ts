@@ -4,21 +4,21 @@ import { describe, it } from "vitest";
 describe("properties", () => {
   it("class properties should have an own property", ({ expect }) => {
     expect(
-      kitchenSink.ConcreteChildClass.$properties.concreteChildClassProperty
-        .identifier.value,
+      kitchenSink.ConcreteChildClass.$schema.properties
+        .concreteChildClassProperty.identifier.value,
     ).toStrictEqual("http://example.com/concreteChildClassProperty");
   });
 
   it("class properties should have a parent property", ({ expect }) => {
     expect(
-      kitchenSink.ConcreteChildClass.$properties.concreteParentClassProperty
-        .identifier.value,
+      kitchenSink.ConcreteChildClass.$schema.properties
+        .concreteParentClassProperty.identifier.value,
     ).toStrictEqual("http://example.com/concreteParentClassProperty");
   });
 
   it("class properties should have an ancestor property", ({ expect }) => {
     expect(
-      kitchenSink.ConcreteChildClass.$properties
+      kitchenSink.ConcreteChildClass.$schema.properties
         .abstractBaseClassWithPropertiesProperty.identifier.value,
     ).toStrictEqual(
       "http://example.com/abstractBaseClassWithPropertiesProperty",
@@ -27,21 +27,21 @@ describe("properties", () => {
 
   it("interface properties should have an own property", ({ expect }) => {
     expect(
-      kitchenSink.ConcreteChildInterface.$properties
+      kitchenSink.ConcreteChildInterface.$schema.properties
         .concreteChildInterfaceProperty.identifier.value,
     ).toStrictEqual("http://example.com/concreteChildInterfaceProperty");
   });
 
   it("interface properties should have a parent property", ({ expect }) => {
     expect(
-      kitchenSink.ConcreteChildInterface.$properties
+      kitchenSink.ConcreteChildInterface.$schema.properties
         .concreteParentInterfaceProperty.identifier.value,
     ).toStrictEqual("http://example.com/concreteParentInterfaceProperty");
   });
 
   it("interface properties should have an ancestor property", ({ expect }) => {
     expect(
-      kitchenSink.ConcreteChildInterface.$properties
+      kitchenSink.ConcreteChildInterface.$schema.properties
         .baseInterfaceWithPropertiesProperty.identifier.value,
     ).toStrictEqual("http://example.com/baseInterfaceWithPropertiesProperty");
   });
@@ -50,8 +50,8 @@ describe("properties", () => {
     expect,
   }) => {
     expect(
-      kitchenSink.ClassUnion.$properties.classUnionMemberCommonParentProperty
-        .identifier.value,
+      kitchenSink.ClassUnion.$schema.properties
+        .classUnionMemberCommonParentProperty.identifier.value,
     ).toStrictEqual("http://example.com/classUnionMemberCommonParentProperty");
   });
 
@@ -59,7 +59,7 @@ describe("properties", () => {
     expect,
   }) => {
     expect(
-      kitchenSink.InterfaceUnion.$properties
+      kitchenSink.InterfaceUnion.$schema.properties
         .interfaceUnionMemberCommonParentProperty.identifier.value,
     ).toStrictEqual(
       "http://example.com/interfaceUnionMemberCommonParentProperty",

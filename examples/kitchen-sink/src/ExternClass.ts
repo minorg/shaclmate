@@ -1,9 +1,10 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import * as N3 from "n3";
-
 import { Either } from "purify-ts";
 import * as rdfjsResource from "rdfjs-resource";
+
 import {
+  type $Object,
   type $ObjectSet,
   AbstractBaseClassForExternClass,
   AbstractBaseClassForExternClassStatic,
@@ -102,7 +103,14 @@ export namespace ExternClass {
     return hasher;
   }
 
+  export function isExternClass(object: $Object): object is ExternClass {
+    return object.$type === "ExternClass";
+  }
+
   export const $filter = AbstractBaseClassForExternClassStatic.$filter;
+  export const $fromRdfType = N3.DataFactory.namedNode(
+    "http://example.com/ExternClass",
+  );
   export type $Filter = AbstractBaseClassForExternClassStatic.$Filter;
   export type $Identifier = AbstractBaseClassForExternClassStatic.$Identifier;
   export type $Json = AbstractBaseClassForExternClassStatic.$Json;
@@ -110,6 +118,8 @@ export namespace ExternClass {
     AbstractBaseClassForExternClassStatic.$jsonZodSchema;
   export const $jsonUiSchema =
     AbstractBaseClassForExternClassStatic.$jsonUiSchema;
+
+  export const $schema = AbstractBaseClassForExternClassStatic.$schema;
 
   export const $sparqlConstructTriples =
     AbstractBaseClassForExternClassStatic.$sparqlConstructTriples;

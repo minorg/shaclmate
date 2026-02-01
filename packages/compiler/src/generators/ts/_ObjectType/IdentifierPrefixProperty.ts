@@ -7,11 +7,11 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
-
 import { Memoize } from "typescript-memoize";
+import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { Import } from "../Import.js";
-import type { Sparql } from "../Sparql.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import type { StringType } from "../StringType.js";
 import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
@@ -25,14 +25,14 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<StringType>["graphqlField"] =
     Maybe.empty();
-  readonly kind = "IdentifierPrefixProperty";
-  override readonly propertySignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > = Maybe.empty();
   override readonly jsonPropertySignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
+  readonly kind = "IdentifierPrefixProperty";
   override readonly mutable = false;
+  override readonly propertySignature: Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > = Maybe.empty();
   override readonly recursive = false;
 
   constructor({
@@ -65,6 +65,33 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
       : Maybe.empty();
   }
 
+  override get getAccessorDeclaration(): Maybe<
+    OptionalKind<GetAccessorDeclarationStructure>
+  > {
+    return Maybe.of({
+      leadingTrivia: `protected ${!this.own ? "override " : ""}`,
+      name: this.name,
+      returnType: this.type.name,
+      statements: [
+        `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\``,
+      ],
+    } satisfies OptionalKind<GetAccessorDeclarationStructure>);
+  }
+
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    return this.own
+      ? Maybe.of({
+          hasQuestionToken: true,
+          isReadonly: true,
+          name: `_${this.name}`,
+          scope: Scope.Protected,
+          type: this.type.name,
+        })
+      : Maybe.empty();
+  }
+
   override constructorStatements({
     variables,
   }: Parameters<
@@ -90,19 +117,6 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     return Maybe.empty();
   }
 
-  override get getAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
-    return Maybe.of({
-      leadingTrivia: `protected ${!this.own ? "override " : ""}`,
-      name: this.name,
-      returnType: this.type.name,
-      statements: [
-        `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\``,
-      ],
-    } satisfies OptionalKind<GetAccessorDeclarationStructure>);
-  }
-
   override hashStatements(): readonly string[] {
     return [];
   }
@@ -117,35 +131,24 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     return Maybe.empty();
   }
 
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return this.own
-      ? Maybe.of({
-          hasQuestionToken: true,
-          isReadonly: true,
-          name: `_${this.name}`,
-          scope: Scope.Protected,
-          type: this.type.name,
-        })
-      : Maybe.empty();
-  }
-
-  override snippetDeclarations(): Readonly<Record<string, string>> {
+  override snippetDeclarations(): Readonly<Record<string, SnippetDeclaration>> {
     if (this.objectType.features.has("equals")) {
       return sharedSnippetDeclarations.strictEquals;
     }
     return {};
   }
 
-  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
+  override sparqlConstructTriples(): readonly (
+    | AbstractType.SparqlConstructTriple
+    | string
+  )[] {
     return [];
   }
 
   override sparqlWherePatterns(): ReturnType<
     AbstractProperty<StringType>["sparqlWherePatterns"]
   > {
-    return { patterns: [] };
+    return { patterns: "" };
   }
 
   override toJsonObjectMember(): Maybe<string> {

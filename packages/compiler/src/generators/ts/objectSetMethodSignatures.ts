@@ -4,6 +4,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export function objectSetMethodSignatures(parameters: {
   objectType: {
+    readonly filterType: string;
     readonly identifierTypeAlias: string;
     readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
     readonly name: string;
@@ -36,7 +37,7 @@ export function objectSetMethodSignatures(parameters: {
         {
           hasQuestionToken: true,
           name: "query",
-          type: `${queryT}<${objectType.identifierTypeAlias}>`,
+          type: `${queryT}<${objectType.filterType}>`,
         },
       ],
       returnType: `Promise<purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
@@ -47,7 +48,7 @@ export function objectSetMethodSignatures(parameters: {
         {
           hasQuestionToken: true,
           name: "query",
-          type: `${queryT}<${objectType.identifierTypeAlias}>`,
+          type: `${queryT}<${objectType.filterType}>`,
         },
       ],
       returnType: `Promise<purify.Either<Error, readonly ${objectType.name}[]>>`,
@@ -58,7 +59,7 @@ export function objectSetMethodSignatures(parameters: {
         {
           hasQuestionToken: true,
           name: "query",
-          type: `Pick<${queryT}<${objectType.identifierTypeAlias}>, "where">`,
+          type: `Pick<${queryT}<${objectType.filterType}>, "filter">`,
         },
       ],
       returnType: "Promise<purify.Either<Error, number>>",

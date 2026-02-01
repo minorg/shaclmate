@@ -6,6 +6,7 @@ export function unsupportedObjectSetMethodDeclarations({
   objectType,
 }: {
   objectType: {
+    readonly filterType: string;
     readonly identifierTypeAlias: string;
     readonly objectSetMethodNames: ObjectType.ObjectSetMethodNames;
     readonly name: string;

@@ -12,17 +12,24 @@ import {
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
+import type { AbstractType } from "../AbstractType.js";
+import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import { Import } from "../Import.js";
+import type { NamedNodeType } from "../NamedNodeType.js";
+import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import type { Sparql } from "../Sparql.js";
+import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
-export class IdentifierProperty extends AbstractProperty<IdentifierType> {
+export class IdentifierProperty extends AbstractProperty<
+  BlankNodeType | IdentifierType | NamedNodeType
+> {
   private readonly identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
   private readonly identifierPrefixPropertyName: string;
   private readonly typeAlias: string;
+
   readonly kind = "IdentifierProperty";
   override readonly mutable = false;
   override readonly recursive = false;
@@ -35,7 +42,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   }: {
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
     identifierPrefixPropertyName: string;
-    type: IdentifierType;
+    type: BlankNodeType | IdentifierType | NamedNodeType;
     typeAlias: string;
   } & ConstructorParameters<typeof AbstractProperty>[0]) {
     super(superParameters);
@@ -43,10 +50,6 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     this.identifierMintingStrategy = identifierMintingStrategy;
     this.identifierPrefixPropertyName = identifierPrefixPropertyName;
     this.typeAlias = typeAlias;
-  }
-
-  private get abstract(): boolean {
-    return this.objectType.abstract;
   }
 
   @Memoize()
@@ -83,6 +86,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get declarationImports(): readonly Import[] {
     const imports = this.type
       .useImports({ features: this.objectType.features })
@@ -115,6 +119,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get getAccessorDeclaration(): Maybe<
     OptionalKind<GetAccessorDeclarationStructure>
   > {
@@ -129,11 +134,8 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
         return [];
       }
 
-      const expectedNodeKind: IdentifierNodeKind = this.type.nodeKinds.has(
-        "BlankNode",
-      )
-        ? "BlankNode"
-        : "NamedNode";
+      const expectedNodeKind: IdentifierNodeKind =
+        this.type.kind !== "NamedNodeType" ? "BlankNode" : "NamedNode";
 
       if (identifierVariableNodeKinds) {
         if (
@@ -233,6 +235,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     return Maybe.empty();
   }
 
+  @Memoize()
   override get graphqlField(): AbstractProperty<IdentifierType>["graphqlField"] {
     invariant(this.name.startsWith(syntheticNamePrefix));
     return Maybe.of({
@@ -244,6 +247,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
+  @Memoize()
   override get jsonPropertySignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
@@ -252,6 +256,83 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
       name: "@id",
       type: "string",
     });
+  }
+
+  @Memoize()
+  override get propertyDeclaration(): Maybe<
+    OptionalKind<PropertyDeclarationStructure>
+  > {
+    if (this.objectType.parentObjectTypes.length > 0) {
+      // An ancestor will declare the identifier property.
+      return Maybe.empty();
+    }
+
+    if (
+      this.identifierMintingStrategy.isJust() ||
+      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      ) ||
+      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      )
+    ) {
+      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
+      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
+      return Maybe.of({
+        hasQuestionToken: true,
+        name: `_${this.name}`,
+        scope: this.objectType.descendantObjectTypes.some(
+          (descendantObjectType) =>
+            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        )
+          ? Scope.Protected
+          : Scope.Private,
+        type: this.typeAlias,
+      });
+    }
+
+    if (this.abstract) {
+      // Declare the property abstract and public
+      return Maybe.of({
+        isReadonly: true,
+        // Work around a ts-morph bug that puts the override keyword before the abstract keyword
+        leadingTrivia: this.override ? "abstract override " : "abstract ",
+        name: this.name,
+        type: this.typeAlias,
+      });
+    }
+
+    // Declare the property public
+    return Maybe.of({
+      hasOverrideKeyword: this.override,
+      isReadonly: true,
+      name: this.name,
+      type: this.typeAlias,
+    });
+  }
+
+  @Memoize()
+  override get propertySignature(): Maybe<
+    OptionalKind<PropertySignatureStructure>
+  > {
+    return Maybe.of({
+      isReadonly: true,
+      name: this.name,
+      type: this.typeAlias,
+    });
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      identifierMintingStrategy: this.identifierMintingStrategy
+        .map((_) => `${JSON.stringify(_)} as const`)
+        .extract(),
+    };
+  }
+
+  private get abstract(): boolean {
+    return this.objectType.abstract;
   }
 
   private get override(): boolean {
@@ -351,7 +432,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
   >[0]): Maybe<string> {
-    if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
+    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
@@ -359,9 +440,12 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
       );
     }
 
-    if (this.type.isBlankNodeKind || this.type.isNamedNodeKind) {
+    if (
+      this.type.kind === "BlankNodeType" ||
+      this.type.kind === "NamedNodeType"
+    ) {
       return Maybe.of(
-        `${variables.resource}.identifier.termType === "${this.type.isBlankNodeKind ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        `${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -394,7 +478,7 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     AbstractProperty<IdentifierType>["jsonZodSchema"]
   >[0]): ReturnType<AbstractProperty<IdentifierType>["jsonZodSchema"]> {
     let schema: string;
-    if (this.type.in_.length > 0 && this.type.isNamedNodeKind) {
+    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       schema = `${variables.zod}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
@@ -408,78 +492,18 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
     });
   }
 
-  @Memoize()
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    if (this.objectType.parentObjectTypes.length > 0) {
-      // An ancestor will declare the identifier property.
-      return Maybe.empty();
-    }
-
-    if (
-      this.identifierMintingStrategy.isJust() ||
-      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
-        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      ) ||
-      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      )
-    ) {
-      // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
-      // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
-      return Maybe.of({
-        hasQuestionToken: true,
-        name: `_${this.name}`,
-        scope: this.objectType.descendantObjectTypes.some(
-          (descendantObjectType) =>
-            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        )
-          ? Scope.Protected
-          : Scope.Private,
-        type: this.typeAlias,
-      });
-    }
-
-    if (this.abstract) {
-      // Declare the property abstract and public
-      return Maybe.of({
-        isReadonly: true,
-        // Work around a ts-morph bug that puts the override keyword before the abstract keyword
-        leadingTrivia: this.override ? "abstract override " : "abstract ",
-        name: this.name,
-        type: this.typeAlias,
-      });
-    }
-
-    // Declare the property public
-    return Maybe.of({
-      hasOverrideKeyword: this.override,
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
-    });
-  }
-
-  override get propertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: true,
-      name: this.name,
-      type: this.typeAlias,
-    });
-  }
-
   override snippetDeclarations(
     parameters: Parameters<
       AbstractProperty<IdentifierType>["snippetDeclarations"]
     >[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return this.type.snippetDeclarations(parameters);
   }
 
-  override sparqlConstructTriples(): readonly (Sparql.Triple | string)[] {
+  override sparqlConstructTriples(): readonly (
+    | AbstractType.SparqlConstructTriple
+    | string
+  )[] {
     return [];
   }
 
@@ -488,16 +512,14 @@ export class IdentifierProperty extends AbstractProperty<IdentifierType> {
   }: Parameters<AbstractProperty<IdentifierType>["sparqlWherePatterns"]>[0]) {
     return {
       condition: `${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: this.type.sparqlWherePatterns({
-        allowIgnoreRdfType: false,
-        propertyPatterns: [],
-        variables: {
-          filter: Maybe.of(`${variables.filter}?.${this.name}`),
-          preferredLanguages: variables.preferredLanguages,
-          valueVariable: variables.focusIdentifier,
-          variablePrefix: variables.variablePrefix, // Unused
-        },
-      }),
+      patterns: `${this.type.sparqlWherePatternsFunction}(${objectInitializer({
+        filter: `${variables.filter}?.${this.name}`,
+        preferredLanguages: variables.preferredLanguages,
+        propertyPatterns: "[]",
+        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
+        valueVariable: variables.focusIdentifier,
+        variablePrefix: variables.variablePrefix, // Unused
+      })})`,
     };
   }
 

@@ -15,10 +15,6 @@ export function createFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
   const parametersPropertySignatures = this.properties.flatMap((property) =>
     property.constructorParametersPropertySignature.toList(),
   );

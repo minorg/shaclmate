@@ -1,3 +1,4 @@
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";
@@ -5,6 +6,7 @@ import type { LazyObjectSetType } from "./LazyObjectSetType.js";
 import type { LazyObjectType } from "./LazyObjectType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -15,6 +17,7 @@ import type { TermType } from "./TermType.js";
 import type { UnionType } from "./UnionType.js";
 
 export type Type =
+  | BlankNodeType
   | IdentifierType
   | IntersectionType
   | LazyObjectOptionType
@@ -22,6 +25,7 @@ export type Type =
   | LazyObjectType
   | ListType
   | LiteralType
+  | NamedNodeType
   | ObjectIntersectionType
   | ObjectType
   | ObjectUnionType
@@ -38,6 +42,8 @@ export namespace Type {
     }
 
     switch (left.kind) {
+      case "BlankNodeType":
+        return left.equals(right as BlankNodeType);
       case "IdentifierType":
         return left.equals(right as IdentifierType);
       case "IntersectionType":
@@ -52,6 +58,8 @@ export namespace Type {
         return left.equals(right as LazyObjectType);
       case "ListType":
         return left.equals(right as ListType);
+      case "NamedNodeType":
+        return left.equals(right as NamedNodeType);
       case "ObjectIntersectionType":
         return left.equals(right as ObjectIntersectionType);
       case "ObjectType":

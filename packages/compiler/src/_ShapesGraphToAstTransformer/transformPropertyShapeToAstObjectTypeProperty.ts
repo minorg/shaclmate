@@ -1,6 +1,5 @@
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/index.js";
@@ -13,20 +12,19 @@ function synthesizePartialAstObjectType({
   identifierType,
   tsFeatures,
 }: {
-  identifierType: ast.IdentifierType;
+  identifierType: ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType;
   tsFeatures: ReadonlySet<TsFeature>;
 }): ast.ObjectType {
   let syntheticName: string;
-  switch (identifierType.nodeKinds.size) {
-    case 1:
-      invariant(identifierType.nodeKinds.has("NamedNode"));
-      syntheticName = "NamedDefaultPartial";
-      break;
-    case 2:
+  switch (identifierType.kind) {
+    case "BlankNodeType":
+      throw new Error("should never happen");
+    case "IdentifierType":
       syntheticName = "DefaultPartial";
       break;
-    default:
-      throw new Error("should never happen");
+    case "NamedNodeType":
+      syntheticName = "NamedDefaultPartial";
+      break;
   }
 
   return new ast.ObjectType({

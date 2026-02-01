@@ -1,26 +1,21 @@
-import { Maybe } from "purify-ts";
 import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function filterTypeDeclaration(
   this: ObjectType,
-): Maybe<TypeAliasDeclarationStructure> {
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
+): TypeAliasDeclarationStructure {
   const members: string[] = [];
-  if (this.ownProperties.length > 0) {
-    const combinedProperties: Record<string, string> = {};
-    for (const ownProperty of this.ownProperties) {
-      ownProperty.filterProperty.ifJust(({ name, type }) => {
-        combinedProperties[name] = type;
+  if (this.properties.length > 0) {
+    const filterProperties: Record<string, string> = {};
+    for (const property of this.properties) {
+      property.filterProperty.ifJust(({ name, type }) => {
+        filterProperties[name] = type;
       });
     }
-    if (Object.entries(combinedProperties).length > 0) {
+    if (Object.entries(filterProperties).length > 0) {
       members.push(
-        `{ ${Object.entries(combinedProperties)
+        `{ ${Object.entries(filterProperties)
           .map(([name, type]) => `readonly ${name}?: ${type}`)
           .join(";")} }`,
       );
@@ -32,10 +27,10 @@ export function filterTypeDeclaration(
     );
   }
 
-  return Maybe.of({
+  return {
     isExported: true,
     kind: StructureKind.TypeAlias,
     name: `${syntheticNamePrefix}Filter`,
     type: members.length > 0 ? members.join(" & ") : "object",
-  });
+  };
 }

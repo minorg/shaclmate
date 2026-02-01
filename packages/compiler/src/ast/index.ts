@@ -1,4 +1,5 @@
 export * from "./Ast.js";
+export * from "./BlankNodeType.js";
 export * from "./Curie.js";
 export * from "./IdentifierType.js";
 export * from "./IntersectionType.js";
@@ -7,6 +8,7 @@ export * from "./LazyObjectSetType.js";
 export * from "./LazyObjectType.js";
 export * from "./ListType.js";
 export * from "./LiteralType.js";
+export * from "./NamedNodeType.js";
 export * from "./ObjectIntersectionType.js";
 export * from "./ObjectType.js";
 export * from "./ObjectUnionType.js";

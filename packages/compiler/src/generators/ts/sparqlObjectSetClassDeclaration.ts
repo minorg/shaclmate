@@ -25,37 +25,37 @@ export function sparqlObjectSetClassDeclaration({
     ObjectT: {
       name: "ObjectT",
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
+    ObjectFilterT: {
+      constraint:
+        "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }",
+      name: "ObjectFilterT",
+    },
     ObjectIdentifierT: {
       constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
       name: "ObjectIdentifierT",
     } satisfies OptionalKind<TypeParameterDeclarationStructure>,
   };
 
-  const sparqlWherePatternsFunctionType = `(parameters?: { subject?: sparqljs.Triple["subject"]; }) => readonly sparqljs.Pattern[]`;
+  const sparqlWherePatternsFunctionType = `(parameters?: { filter?: ${typeParameters.ObjectFilterT.name}; subject?: sparqljs.Triple["subject"]; }) => readonly sparqljs.Pattern[]`;
 
   const parameters = {
     constructObjectType: {
       name: "objectType",
       type: `{\
   ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
-  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
+  ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ${typeParameters.ObjectFilterT.name}; subject?: sparqljs.Triple["subject"]; } & Omit<sparqljs.ConstructQuery, "prefixes" | "queryType" | "type"> & sparqljs.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
     query: {
       hasQuestionToken: true,
       name: "query",
-      type: `${syntheticNamePrefix}SparqlObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>`,
+      type: `${syntheticNamePrefix}SparqlObjectSet.Query<${typeParameters.ObjectFilterT.name}>`,
     } satisfies OptionalKind<ParameterDeclarationStructure>,
     selectObjectTypeType: {
       name: "objectType",
       type: `{ ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
     },
-    where: {
-      hasQuestionToken: true,
-      name: "where",
-      type: `${syntheticNamePrefix}SparqlObjectSet.Where<${typeParameters.ObjectIdentifierT.name}>`,
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
   };
 
   return [
@@ -99,7 +99,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return (await this.${methodSignatures.objects.name}({ where: { identifiers: [identifier], type: "identifiers" } })).map(objects => objects[0]);`,
+                `return (await this.${methodSignatures.objects.name}({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } })).map(objects => objects[0]);`,
               ],
             },
             {
@@ -107,7 +107,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.${syntheticNamePrefix}objectIdentifiers<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+                `return this.${syntheticNamePrefix}objectIdentifiers<${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -115,7 +115,7 @@ export function sparqlObjectSetClassDeclaration({
               kind: StructureKind.Method,
               isAsync: true,
               statements: [
-                `return this.${syntheticNamePrefix}objects<${objectType.name}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+                `return this.${syntheticNamePrefix}objects<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
               ],
             },
             {
@@ -123,7 +123,7 @@ export function sparqlObjectSetClassDeclaration({
               isAsync: true,
               kind: StructureKind.Method,
               statements: [
-                `return this.${syntheticNamePrefix}objectsCount<${objectType.identifierTypeAlias}>(${runtimeObjectType}, query);`,
+                `return this.${syntheticNamePrefix}objectsCount<${objectType.filterType}>(${runtimeObjectType}, query);`,
               ],
             },
           ];
@@ -215,9 +215,9 @@ if (offset < 0) {
   offset = 0;
 }
 
-const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where).filter(pattern => pattern.type !== "optional");
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
 if (wherePatterns.length === 0) {
-  return purify.Left(new Error("no required SPARQL WHERE patterns for identifiers"));
+  return purify.Left(new Error("no SPARQL WHERE patterns for identifiers"));
 }
 
 const selectQueryString = \
@@ -240,7 +240,10 @@ return purify.EitherAsync(async () =>
   ) as readonly ${typeParameters.ObjectIdentifierT.name}[],
 );`,
           ],
-          typeParameters: [typeParameters.ObjectIdentifierT],
+          typeParameters: [
+            typeParameters.ObjectFilterT,
+            typeParameters.ObjectIdentifierT,
+          ],
         },
         {
           isAsync: true,
@@ -251,7 +254,7 @@ return purify.EitherAsync(async () =>
           statements: [
             `\
 return purify.EitherAsync(async ({ liftEither }) => {
-  const identifiers = await liftEither(await this.${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectIdentifierT.name}>(objectType, query));
+  const identifiers = await liftEither(await this.${syntheticNamePrefix}objectIdentifiers<${typeParameters.ObjectFilterT.name}, ${typeParameters.ObjectIdentifierT.name}>(objectType, query));
   if (identifiers.length === 0) {
     return [];
   }
@@ -280,6 +283,7 @@ return purify.EitherAsync(async ({ liftEither }) => {
           ],
           typeParameters: [
             typeParameters.ObjectT,
+            typeParameters.ObjectFilterT,
             typeParameters.ObjectIdentifierT,
           ],
         },
@@ -292,9 +296,9 @@ return purify.EitherAsync(async ({ liftEither }) => {
           scope: Scope.Protected,
           statements: [
             `\
-const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query?.where).filter(pattern => pattern.type !== "optional");
+const wherePatterns = this.${syntheticNamePrefix}wherePatterns(objectType, query);
 if (wherePatterns.length === 0) {
-  return purify.Left(new Error("no required SPARQL WHERE patterns for count"));
+  return purify.Left(new Error("no SPARQL WHERE patterns for count"));
 }
 
 const selectQueryString = \
@@ -313,7 +317,7 @@ const selectQueryString = \
         variable: this.${syntheticNamePrefix}countVariable,
       },
     ],
-    where: wherePatterns
+    where: wherePatterns.concat()
   });
 
 return purify.EitherAsync(async ({ liftEither }) =>
@@ -325,12 +329,12 @@ return purify.EitherAsync(async ({ liftEither }) =>
   ),
 );`,
           ],
-          typeParameters: [typeParameters.ObjectIdentifierT],
+          typeParameters: [typeParameters.ObjectFilterT],
         },
         {
           kind: StructureKind.Method,
           name: `${syntheticNamePrefix}wherePatterns`,
-          parameters: [parameters.selectObjectTypeType, parameters.where],
+          parameters: [parameters.selectObjectTypeType, parameters.query],
           returnType: "readonly sparqljs.Pattern[]",
           scope: Scope.Protected,
           statements: [
@@ -338,96 +342,15 @@ return purify.EitherAsync(async ({ liftEither }) =>
 // Patterns should be most to least specific.
 const patterns: sparqljs.Pattern[] = [];
 
-const where_ = where ?? { "type": "type" };
-switch (where_.type) {
-  case "identifiers": {
-    const valuePatternRowKey = \`?\${this.${syntheticNamePrefix}objectVariable.value}\`;
-    patterns.push({
-      type: "values" as const,
-      values: where_.identifiers.map((identifier) => {
-        const valuePatternRow: sparqljs.ValuePatternRow = {};
-        valuePatternRow[valuePatternRowKey] = identifier as rdfjs.NamedNode;
-        return valuePatternRow;
-      }),
-      });
-    break;
-  }
-
-  case "sparql-patterns": {
-    patterns.push(...where_.sparqlPatterns(this.${syntheticNamePrefix}objectVariable));
-    break;
-  }
-
-  case "triple-objects": {
-    patterns.push({
-      triples: [{
-        subject: where_.subject ?? dataFactory.blankNode(),
-        predicate: where_.predicate,
-        object: this.${syntheticNamePrefix}objectVariable
-      }],
-      type: "bgp"
-    });
-
-    if (where_.objectTermType === "NamedNode") {
-      patterns.push({
-        type: "filter" as const,
-        expression: {
-          type: "operation" as const,
-          operator: "isIRI",
-          args: [this.${syntheticNamePrefix}objectVariable],
-        }        
-      });
-    }
-
-    break;
-  }
-
-  case "triple-subjects": {
-    patterns.push({
-      triples: [{
-        subject: this.${syntheticNamePrefix}objectVariable,
-        predicate: where_.predicate,
-        object: where_.object ?? dataFactory.blankNode()
-      }],
-      type: "bgp"
-    });
-
-    if (where_.subjectTermType === "NamedNode") {
-      patterns.push({
-        type: "filter" as const,
-        expression: {
-          type: "operation" as const,
-          operator: "isIRI",
-          args: [this.${syntheticNamePrefix}objectVariable],
-        }        
-      });
-    }
-
-    break;
-  }
-
-  case "type": {
-    // The type patterns are always added below.
-
-    if (where_.identifierType === "NamedNode") {
-      patterns.push({
-        type: "filter" as const,
-        expression: {
-          type: "operation" as const,
-          operator: "isIRI",
-          args: [this.${syntheticNamePrefix}objectVariable],
-        }
-      });
-    }
-    break;
-  }
+if (query?.where) {
+  patterns.push(...query.where(this.${syntheticNamePrefix}objectVariable));
 }
 
-patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ subject: this.${syntheticNamePrefix}objectVariable }));
+patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
 
-return ${syntheticNamePrefix}insertSeedSparqlWherePattern(${syntheticNamePrefix}optimizeSparqlWherePatterns(patterns));`,
+return ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns);`,
           ],
-          typeParameters: [typeParameters.ObjectIdentifierT],
+          typeParameters: [typeParameters.ObjectFilterT],
         },
       ),
       properties: [
@@ -466,15 +389,8 @@ return ${syntheticNamePrefix}insertSeedSparqlWherePattern(${syntheticNamePrefix}
           isExported: true,
           kind: StructureKind.TypeAlias,
           name: "Query",
-          type: `Omit<${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectIdentifierT.name}>, "where"> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: Where<${typeParameters.ObjectIdentifierT.name}> }`,
-          typeParameters: [typeParameters.ObjectIdentifierT],
-        },
-        {
-          kind: StructureKind.TypeAlias,
-          isExported: true,
-          name: "Where",
-          type: `${syntheticNamePrefix}ObjectSet.Where<${typeParameters.ObjectIdentifierT.name}> | { readonly sparqlPatterns: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[]; readonly type: "sparql-patterns" }`,
-          typeParameters: [typeParameters.ObjectIdentifierT],
+          type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectFilterT.name}> & { readonly order?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Ordering[]; readonly where?: (objectVariable: rdfjs.Variable) => readonly sparqljs.Pattern[] }`,
+          typeParameters: [typeParameters.ObjectFilterT],
         },
       ],
     },

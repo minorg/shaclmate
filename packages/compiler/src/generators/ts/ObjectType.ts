@@ -16,53 +16,18 @@ import type {
 } from "../../enums/index.js";
 import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
 import { objectInitializer } from "./objectInitializer.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
-
-const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
-  `${syntheticNamePrefix}sparqlInstancesOfPattern`,
-  `\
-/**
- * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
- */
-function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.Pattern {
-  return {
-    triples: [
-      {
-        subject,
-        predicate: {
-          items: [
-            $RdfVocabularies.rdf.type,
-            {
-              items: [$RdfVocabularies.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-        object: rdfType,
-      },
-    ],
-    type: "bgp",
-  };
-}`,
-);
-
-// export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
-const UnwrapRSnippetDeclaration = singleEntryRecord(
-  `${syntheticNamePrefix}UnwrapR`,
-  `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`,
-);
 
 export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
@@ -75,7 +40,7 @@ export class ObjectType extends AbstractDeclaredType {
   readonly fromRdfType: Maybe<NamedNode>;
   override readonly graphqlArgs: AbstractDeclaredType["graphqlArgs"] =
     Maybe.empty();
-  readonly identifierType: IdentifierType;
+  readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
   readonly kind = "ObjectType";
   readonly staticModuleName: string;
   readonly synthetic: boolean;
@@ -104,7 +69,7 @@ export class ObjectType extends AbstractDeclaredType {
     extern: boolean;
     fromRdfType: Maybe<NamedNode>;
     identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    identifierType: IdentifierType;
+    identifierType: BlankNodeType | IdentifierType | NamedNodeType;
     imports: readonly string[];
     label: Maybe<string>;
     lazyAncestorObjectTypes: () => readonly ObjectType[];
@@ -193,6 +158,10 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   get declarations() {
+    if (this.extern) {
+      return [];
+    }
+
     const declarations: (
       | ClassDeclarationStructure
       | InterfaceDeclarationStructure
@@ -205,17 +174,16 @@ export class ObjectType extends AbstractDeclaredType {
     const staticModuleStatements: StaticModuleStatementStructure[] = [
       ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
       ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.filterFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.filterTypeDeclaration.bind(this)().toList(),
+      _ObjectType.filterFunctionDeclaration.bind(this)(),
+      _ObjectType.filterTypeDeclaration.bind(this)(),
       ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
       ..._ObjectType.identifierTypeDeclarations.bind(this)(),
-      ..._ObjectType.jsonTypeAliasDeclaration.bind(this)().toList(),
-      ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
+      ..._ObjectType.jsonDeclarations.bind(this)(),
       ..._ObjectType.hashFunctionDeclarations.bind(this)(),
-      ..._ObjectType.isTypeFunctionDeclaration.bind(this)().toList(),
+      _ObjectType.isTypeFunctionDeclaration.bind(this)(),
       ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-      ..._ObjectType.propertiesVariableStatement.bind(this)().toList(),
+      _ObjectType.schemaVariableStatement.bind(this)(),
       ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
     ];
 
@@ -234,16 +202,16 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get descendantFromRdfTypes(): readonly NamedNode[] {
+  get descendantFromRdfTypeVariables(): readonly string[] {
     return this.descendantObjectTypes.flatMap((descendantObjectType) =>
-      descendantObjectType.fromRdfType.toList(),
+      descendantObjectType.fromRdfTypeVariable.toList(),
     );
   }
 
   @Memoize()
-  get descendantFromRdfTypeVariables(): readonly string[] {
+  get descendantFromRdfTypes(): readonly NamedNode[] {
     return this.descendantObjectTypes.flatMap((descendantObjectType) =>
-      descendantObjectType.fromRdfTypeVariable.toList(),
+      descendantObjectType.fromRdfType.toList(),
     );
   }
 
@@ -313,24 +281,8 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  override jsonType(): AbstractDeclaredType.JsonType {
-    return new AbstractDeclaredType.JsonType(
-      `${this.staticModuleName}.${syntheticNamePrefix}Json`,
-    );
-  }
-
-  @Memoize()
   override get mutable(): boolean {
     return this.properties.some((property) => property.mutable);
-  }
-
-  newExpression({ parameters }: { parameters: string }): string {
-    switch (this.declarationType) {
-      case "class":
-        return `new ${this.name}(${parameters})`;
-      case "interface":
-        return `${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
-    }
   }
 
   @Memoize()
@@ -374,12 +326,27 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
+  override get schema(): string {
+    return `${this.staticModuleName}.${syntheticNamePrefix}schema`;
+  }
+
+  @Memoize()
+  override get schemaType(): string {
+    return `typeof ${this.schema}`;
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${syntheticNamePrefix}SparqlPattern[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, subject: valueVariable, ...otherParameters })))`;
+  }
+
+  @Memoize()
   get toRdfjsResourceType(): string {
     if (this.parentObjectTypes.length > 0) {
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return `rdfjsResource.MutableResource${this.identifierType.isNamedNodeKind ? "<rdfjs.NamedNode>" : ""}`;
+    return `rdfjsResource.MutableResource${this.identifierType.kind === "NamedNodeType" ? "<rdfjs.NamedNode>" : ""}`;
   }
 
   @Memoize()
@@ -430,6 +397,13 @@ export class ObjectType extends AbstractDeclaredType {
     }
   }
 
+  @Memoize()
+  override jsonType(): AbstractDeclaredType.JsonType {
+    return new AbstractDeclaredType.JsonType(
+      `${this.staticModuleName}.${syntheticNamePrefix}Json`,
+    );
+  }
+
   override jsonUiSchemaElement({
     variables,
   }: Parameters<
@@ -456,16 +430,26 @@ export class ObjectType extends AbstractDeclaredType {
     return expression;
   }
 
+  newExpression({ parameters }: { parameters: string }): string {
+    switch (this.declarationType) {
+      case "class":
+        return `new ${this.name}(${parameters})`;
+      case "interface":
+        return `${this.staticModuleName}.${syntheticNamePrefix}create(${parameters})`;
+    }
+  }
+
   override snippetDeclarations({
     recursionStack,
   }: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0]): Readonly<
-    Record<string, string>
+    Record<string, SnippetDeclaration>
   > {
     if (recursionStack.some((type) => Object.is(type, this))) {
       return {};
     }
 
-    let snippetDeclarations: Record<string, string> = {};
+    let snippetDeclarations: Record<string, SnippetDeclaration> = {};
+
     if (this.features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
@@ -475,6 +459,7 @@ export class ObjectType extends AbstractDeclaredType {
     if (this.features.has("rdf")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
+        sharedSnippetDeclarations.IdentifierSet, // For $RdfjsDatasetObjectSet
         sharedSnippetDeclarations.RdfVocabularies,
       );
     }
@@ -487,9 +472,10 @@ export class ObjectType extends AbstractDeclaredType {
       }
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
-        sharedSnippetDeclarations.deduplicateSparqlWherePatterns,
-        sharedSnippetDeclarations.insertSeedSparqlWherePattern,
-        sharedSnippetDeclarations.optimizeSparqlWherePatterns,
+        sharedSnippetDeclarations.liftSparqlPatterns,
+        sharedSnippetDeclarations.normalizeSparqlWherePatterns,
+        sharedSnippetDeclarations.SparqlPattern,
+        sharedSnippetDeclarations.SparqlWherePatternsFunction,
       );
     }
     if (
@@ -519,7 +505,7 @@ export class ObjectType extends AbstractDeclaredType {
     allowIgnoreRdfType,
     variables,
   }: Parameters<AbstractDeclaredType["sparqlConstructTriples"]>[0]): readonly (
-    | Sparql.Triple
+    | AbstractDeclaredType.SparqlConstructTriple
     | string
   )[] {
     return [
@@ -530,30 +516,6 @@ export class ObjectType extends AbstractDeclaredType {
           variablePrefix: variables.variablePrefix,
         },
       )})`,
-    ];
-  }
-
-  override sparqlWherePatterns({
-    allowIgnoreRdfType,
-    propertyPatterns,
-    variables,
-  }: Parameters<
-    AbstractDeclaredType["sparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      ...propertyPatterns,
-      {
-        patterns: `${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer(
-          {
-            filter: variables.filter.extract(),
-            ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-            preferredLanguages: variables.preferredLanguages,
-            subject: variables.valueVariable,
-            variablePrefix: variables.variablePrefix,
-          },
-        )})`,
-        type: "opaque-block",
-      },
     ];
   }
 
@@ -604,6 +566,43 @@ export class ObjectType extends AbstractDeclaredType {
     objectType: ObjectType,
   ) => readonly ObjectType.Property[];
 }
+
+const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}sparqlInstancesOfPattern`,
+  `\
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.BgpPattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            $RdfVocabularies.rdf.type,
+            {
+              items: [$RdfVocabularies.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}`,
+);
+
+// export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
+const UnwrapRSnippetDeclaration = singleEntryRecord(
+  `${syntheticNamePrefix}UnwrapR`,
+  `type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`,
+);
 
 export namespace ObjectType {
   export const IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;

@@ -7,6 +7,6 @@ export * from "./identifierTypeDeclarations.js";
 export * from "./isTypeFunctionDeclaration.js";
 export * from "./jsonDeclarations.js";
 export * from "./MemberType.js";
-export * from "./propertiesVariableStatement.js";
 export * from "./rdfFunctionDeclarations.js";
+export * from "./schemaVariableStatement.js";
 export * from "./sparqlFunctionDeclarations.js";

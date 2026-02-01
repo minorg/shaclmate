@@ -1,22 +1,15 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import type { TsFeature } from "../../enums/index.js";
 import type { Import } from "./Import.js";
-import type { Sparql } from "./Sparql.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import type { Type } from "./Type.js";
 
 /**
  * Abstract base class all types.
  */
 export abstract class AbstractType {
-  constructor({
-    comment,
-    label,
-  }: { comment: Maybe<string>; label: Maybe<string> }) {
-    this.comment = comment;
-    this.label = label;
-  }
-
   /**
    * Comment from rdfs:comment.
    */
@@ -67,6 +60,11 @@ export abstract class AbstractType {
   abstract readonly graphqlType: AbstractType.GraphqlType;
 
   /**
+   * Type discriminator.
+   */
+  abstract readonly kind: string;
+
+  /**
    * Label from rdfs:label.
    */
   readonly label: Maybe<string>;
@@ -82,11 +80,60 @@ export abstract class AbstractType {
   abstract readonly name: string;
 
   /**
+   * TypeScript object describing this type, for runtime use.
+   */
+  abstract readonly schema: string;
+
+  /**
+   * TypeScript type describing .schema.
+   */
+  abstract readonly schemaType: string;
+
+  /**
+   * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
+   *
+   * The function takes a parameters object (type: SparqlWherePatternsFunctionParameters) with the following parameters:
+   * - filter?: an instance of filterType
+   * - preferredLanguages: array of preferred language code (strings); may be empty
+   * - propertyPatterns: array of sparqljs.BgpPattern's for the property; may be empty
+   * - schema: instance of this.schemaType
+   * - valueVariable: rdfjs.Variable of the value of this type
+   * - variablePrefix: prefix to use for new variables
+   */
+  abstract readonly sparqlWherePatternsFunction: string;
+
+  /**
    * JavaScript typeof(s) the type.
    */
   abstract readonly typeofs: NonEmptyList<
     "boolean" | "object" | "number" | "string"
   >;
+
+  constructor({
+    comment,
+    label,
+  }: { comment: Maybe<string>; label: Maybe<string> }) {
+    this.comment = comment;
+    this.label = label;
+  }
+
+  /**
+   * Helper to compose the result of schema along the type hierarchy.
+   */
+  protected get schemaObject() {
+    return {
+      kind: `${JSON.stringify(this.kind)} as const`,
+    };
+  }
+
+  /**
+   * Helper to compose the result of schemaType along the type hierarchy.
+   */
+  protected get schemaTypeObject() {
+    return {
+      kind: JSON.stringify(this.kind),
+    };
+  }
 
   /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
@@ -194,7 +241,7 @@ export abstract class AbstractType {
   abstract snippetDeclarations(parameters: {
     features: ReadonlySet<TsFeature>;
     recursionStack: Type[];
-  }): Readonly<Record<string, string>>;
+  }): Readonly<Record<string, SnippetDeclaration>>;
 
   /**
    * An array of SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
@@ -211,30 +258,7 @@ export abstract class AbstractType {
       valueVariable: string;
       variablePrefix: string;
     };
-  }): readonly (Sparql.Triple | string)[];
-
-  /**
-   * An array of SPARQL.js WHERE patterns for a value of this type, as strings (so they can incorporate runtime calls).
-   *
-   * Parameters:
-   *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
-   *   propertyPattern: if Just, should be included in the patterns for this type
-   *   variables: (at runtime)
-   *     - filter: if Just, an instance of filterType or undefined
-   *     - preferredLanguages: array of preferred language code (strings)
-   *     - valueVariable: rdfjs.Variable of the value of this type
-   *     - variablePrefix: prefix to use for new variables
-   */
-  abstract sparqlWherePatterns(parameters: {
-    allowIgnoreRdfType: boolean;
-    propertyPatterns: readonly Sparql.Pattern[];
-    variables: {
-      filter: Maybe<string>;
-      preferredLanguages: string;
-      valueVariable: string;
-      variablePrefix: string;
-    };
-  }): readonly Sparql.Pattern[];
+  }): readonly (AbstractType.SparqlConstructTriple | string)[];
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence
@@ -333,5 +357,11 @@ export namespace AbstractType {
         ? `(${this.requiredName}) | undefined`
         : this.requiredName;
     }
+  }
+
+  export interface SparqlConstructTriple {
+    readonly object: string;
+    readonly predicate: string;
+    readonly subject: string;
   }
 }

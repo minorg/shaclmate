@@ -28,7 +28,7 @@ export function hashFunctionDeclaration(
       },
     ],
     returnType: "HasherT",
-    statements: this.memberTypes
+    statements: this.concreteMemberTypes
       .map((memberType) => {
         let returnExpression: string;
         switch (memberType.declarationType) {
@@ -41,9 +41,7 @@ export function hashFunctionDeclaration(
         }
         return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
       })
-      .concat(
-        `${this.thisVariable} satisfies never; throw new Error("unrecognized type");`,
-      ),
+      .concat(`throw new Error("unrecognized type");`),
     typeParameters: [
       {
         name: "HasherT",

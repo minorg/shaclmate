@@ -79,6 +79,17 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
     expect((error as Error).message).includes("not in its parent's");
   });
 
+  it("no required property property", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.noRequiredProperty.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    invariant(error instanceof Error);
+    expect(error.message).includes("no required properties");
+  });
+
   it("undefined parent class", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
       testData.undefinedParentClass.unsafeCoerce(),

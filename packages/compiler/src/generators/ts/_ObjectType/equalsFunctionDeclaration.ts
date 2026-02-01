@@ -10,10 +10,6 @@ export function equalsFunctionDeclaration(
     return Maybe.empty();
   }
 
-  if (this.extern) {
-    return Maybe.empty();
-  }
-
   return equalsFunctionOrMethodDeclaration
     .bind(this)()
     .map((equalsFunctionOrMethodDeclaration) => ({

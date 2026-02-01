@@ -25,8 +25,11 @@ describe("fromRdf", () => {
           : dataFactory.literal("value");
 
       for (const property of Object.values(
-        kitchenSink.LanguageInPropertiesClass.$properties,
+        kitchenSink.LanguageInPropertiesClass.$schema.properties,
       )) {
+        if (property.kind !== "ShaclProperty") {
+          continue;
+        }
         const predicate = dataFactory.namedNode(property.identifier.value);
 
         languageInDataset.add(
@@ -89,7 +92,7 @@ describe("fromRdf", () => {
       dataFactory.namedNode("http://example.com/ExplicitFromToRdfTypes"),
     );
     resource.add(
-      kitchenSink.ExplicitFromToRdfTypesClass.$properties
+      kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
         .explicitFromToRdfTypesProperty.identifier,
       dataFactory.literal("test"),
     );
@@ -109,7 +112,7 @@ describe("fromRdf", () => {
       dataFactory.namedNode("http://example.com/FromRdfType"),
     );
     resource.add(
-      kitchenSink.ExplicitFromToRdfTypesClass.$properties
+      kitchenSink.ExplicitFromToRdfTypesClass.$schema.properties
         .explicitFromToRdfTypesProperty.identifier,
       dataFactory.literal("test"),
     );
@@ -161,16 +164,16 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.HasValuePropertiesClass.$properties.hasIriValueProperty
-          .identifier,
+        kitchenSink.HasValuePropertiesClass.$schema.properties
+          .hasIriValueProperty.identifier,
         dataFactory.namedNode("http://example.com/HasValuePropertiesClassIri1"),
       ),
     );
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.HasValuePropertiesClass.$properties.hasLiteralValueProperty
-          .identifier,
+        kitchenSink.HasValuePropertiesClass.$schema.properties
+          .hasLiteralValueProperty.identifier,
         dataFactory.literal("nottest"),
       ),
     );
@@ -193,7 +196,7 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.InIdentifierClass.$properties.inIdentifierProperty
+        kitchenSink.InIdentifierClass.$schema.properties.inIdentifierProperty
           .identifier,
         dataFactory.literal("whatever"),
       ),
@@ -213,7 +216,8 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.InPropertiesClass.$properties.inIrisProperty.identifier,
+        kitchenSink.InPropertiesClass.$schema.properties.inIrisProperty
+          .identifier,
         dataFactory.namedNode("http://example.com/WithInPropertiesIriInvalid"),
       ),
     );
@@ -234,7 +238,15 @@ describe("fromRdf", () => {
     dataset.add(
       dataFactory.quad(
         identifier,
-        kitchenSink.InPropertiesClass.$properties.inStringsProperty.identifier,
+        rdf.type,
+        kitchenSink.InPropertiesClass.$fromRdfType,
+      ),
+    );
+    dataset.add(
+      dataFactory.quad(
+        identifier,
+        kitchenSink.InPropertiesClass.$schema.properties.inStringsProperty
+          .identifier,
         object,
       ),
     );
@@ -362,7 +374,7 @@ describe("fromRdf", () => {
           .mutableResource(
             dataFactory.namedNode("http://example.com/identifier"),
           )
-          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+          .add(rdf.type, kitchenSink.IriIdentifierClass.$fromRdfType),
       ).isRight(),
     ).toBe(true);
   });
@@ -377,7 +389,7 @@ describe("fromRdf", () => {
           .mutableResource(
             dataFactory.namedNode("http://example.com/InIdentifierInstance1"),
           )
-          .add(rdf.type, dataFactory.namedNode("http://example.com/type")),
+          .add(rdf.type, kitchenSink.InIdentifierClass.$fromRdfType),
       ).isRight(),
     ).toBe(true);
   });
@@ -419,7 +431,8 @@ describe("fromRdf", () => {
       dataFactory.blankNode(),
     );
     instanceResource.add(
-      kitchenSink.ListPropertiesClass.$properties.stringListProperty.identifier,
+      kitchenSink.ListPropertiesClass.$schema.properties.stringListProperty
+        .identifier,
       dataFactory.blankNode(),
     );
     const result = kitchenSink.ListPropertiesClass.$fromRdf(instanceResource);
@@ -437,7 +450,8 @@ describe("fromRdf", () => {
     );
     const listResource = resourceSet.mutableResource(dataFactory.blankNode());
     instanceResource.add(
-      kitchenSink.ListPropertiesClass.$properties.stringListProperty.identifier,
+      kitchenSink.ListPropertiesClass.$schema.properties.stringListProperty
+        .identifier,
       listResource.identifier,
     );
     listResource.add(rdf.first, dataFactory.blankNode());
@@ -456,8 +470,8 @@ describe("fromRdf", () => {
       dataFactory.blankNode(),
     );
     instanceResource.add(
-      kitchenSink.PropertyCardinalitiesClass.$properties.emptyStringSetProperty
-        .identifier,
+      kitchenSink.PropertyCardinalitiesClass.$schema.properties
+        .emptyStringSetProperty.identifier,
       dataFactory.blankNode(),
     );
     const result =

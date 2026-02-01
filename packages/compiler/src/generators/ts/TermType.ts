@@ -1,12 +1,16 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { Sparql } from "./Sparql.js";
+import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
+import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 /**
@@ -24,6 +28,7 @@ export class TermType<
 > extends AbstractTermType {
   override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
   override readonly filterType = `${syntheticNamePrefix}TermFilter`;
+  override readonly kind = "TermType";
 
   constructor(
     superParameters: ConstructorParameters<
@@ -42,29 +47,25 @@ export class TermType<
     throw new Error("not implemented");
   }
 
-  protected override filterSparqlWherePatterns({
-    variables,
-  }: Parameters<
-    AbstractTermType["filterSparqlWherePatterns"]
-  >[0]): readonly Sparql.Pattern[] {
-    return [
-      {
-        patterns: `${syntheticNamePrefix}TermFilter.${syntheticNamePrefix}sparqlWherePatterns(${variables.filter}, ${variables.valueVariable})`,
-        type: "opaque-block" as const,
-      },
-    ];
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
   }
 
-  @Memoize()
-  override jsonType(): AbstractTermType.JsonType {
-    return new AbstractTermType.JsonType(
-      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
-        .filter((nodeKind) => nodeKind !== "Literal")
-        .map((nodeKind) => `"${nodeKind}"`)
-        .join(
-          " | ",
-        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
-    );
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
+      in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
+    };
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      "defaultValue?": `rdfjs.Literal | rdfjs.NamedNode`,
+      "in?": `readonly (rdfjs.Literal | rdfjs.NamedNode)[]`,
+    };
   }
 
   override fromJsonExpression({
@@ -97,6 +98,18 @@ export class TermType<
     throw new Error("not implemented");
   }
 
+  @Memoize()
+  override jsonType(): AbstractTermType.JsonType {
+    return new AbstractTermType.JsonType(
+      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
+        .filter((nodeKind) => nodeKind !== "Literal")
+        .map((nodeKind) => `"${nodeKind}"`)
+        .join(
+          " | ",
+        )} } | { readonly "@language"?: string, readonly "@type"?: string, readonly "@value": string, readonly termType: "Literal" }`,
+    );
+  }
+
   override jsonZodSchema({
     variables,
   }: Parameters<AbstractTermType["jsonZodSchema"]>[0]): ReturnType<
@@ -121,12 +134,22 @@ export class TermType<
 
   override snippetDeclarations(
     parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, string>> {
+  ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
       sharedSnippetDeclarations.filterTerm,
       sharedSnippetDeclarations.TermFilter,
-      sharedSnippetDeclarations.TermFilter_sparqlWherePatterns,
+      parameters.features.has("sparql")
+        ? singleEntryRecord(`${syntheticNamePrefix}termSparqlWherePatterns`, {
+            code: `\
+const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
+  (parameters) => ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns: ${syntheticNamePrefix}termFilterSparqlPatterns(parameters), ...parameters })`,
+            dependencies: {
+              ...sharedSnippetDeclarations.termFilterSparqlPatterns,
+              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
+            },
+          } satisfies SnippetDeclaration)
+        : {},
     );
   }
 
