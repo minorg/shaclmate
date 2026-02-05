@@ -20,7 +20,11 @@ export abstract class AbstractContainerType<
   ItemTypeT extends
     AbstractContainerType.ItemType = AbstractContainerType.ItemType,
 > extends AbstractType {
-  abstract readonly kind: "ListType" | "OptionType" | "SetType";
+  abstract readonly kind:
+    | "DefaultValueType"
+    | "ListType"
+    | "OptionType"
+    | "SetType";
 
   /**
    * Container item type.
@@ -86,6 +90,7 @@ export namespace AbstractContainerType {
       case "TermType":
       case "UnionType":
         return true;
+      case "DefaultValueType":
       case "LazyObjectOptionType":
       case "LazyObjectSetType":
       case "LazyObjectType":

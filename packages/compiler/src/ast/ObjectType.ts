@@ -532,6 +532,7 @@ export namespace ObjectType {
             }
             return false;
           }
+          case "DefaultValueType":
           case "ListType":
           case "OptionType":
           case "SetType":

@@ -1,7 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { type Either, Left } from "purify-ts";
-import type * as ast from "../ast/index.js";
+import * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import { createIdentifierType } from "./createIdentifierType.js";
@@ -16,7 +16,15 @@ export function transformShapeToAstIdentifierType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType> {
+): Either<
+  Error,
+  | ast.DefaultValueType<
+      ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType
+    >
+  | ast.BlankNodeType
+  | ast.IdentifierType
+  | ast.NamedNodeType
+> {
   shapeStack.push(shape);
   try {
     // defaultValue / hasValue / in only makes sense with IRIs
@@ -38,13 +46,33 @@ export function transformShapeToAstIdentifierType(
         (nodeKinds.size > 0 && nodeKinds.size <= 2 && !nodeKinds.has("Literal"))
       ) {
         return transformShapeToAstAbstractTypeProperties(shape).map(
-          (astAbstractTypeProperties) =>
-            createIdentifierType(nodeKinds as ReadonlySet<IdentifierNodeKind>, {
-              ...astAbstractTypeProperties,
-              defaultValue: identifierDefaultValue,
-              hasValues: identifierHasValues,
-              in_: identifierIn,
-            }),
+          (astAbstractTypeProperties) => {
+            const identifierType = createIdentifierType(
+              nodeKinds as ReadonlySet<IdentifierNodeKind>,
+              {
+                ...astAbstractTypeProperties,
+                hasValues: identifierHasValues,
+                in_: identifierIn,
+              },
+            );
+
+            return identifierDefaultValue
+              .map(
+                (defaultValue) =>
+                  new ast.DefaultValueType<
+                    ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType
+                  >({ defaultValue, itemType: identifierType }) as
+                    | ast.DefaultValueType<
+                        | ast.BlankNodeType
+                        | ast.IdentifierType
+                        | ast.NamedNodeType
+                      >
+                    | ast.BlankNodeType
+                    | ast.IdentifierType
+                    | ast.NamedNodeType,
+              )
+              .orDefault(identifierType);
+          },
         );
       }
 

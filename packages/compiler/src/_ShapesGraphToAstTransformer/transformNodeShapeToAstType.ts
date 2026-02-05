@@ -25,6 +25,8 @@ function isObjectTypePropertyRequired(property: {
   type: ast.ObjectType.Property["type"];
 }): boolean {
   switch (property.type.kind) {
+    case "DefaultValueType":
+      return false;
     case "LazyObjectOptionType":
       return false;
     case "LazyObjectSetType":
@@ -33,25 +35,24 @@ function isObjectTypePropertyRequired(property: {
       return false;
     case "SetType":
       return property.type.minCount > 0;
-    case "IntersectionType":
-    case "ObjectIntersectionType":
-      throw new Error("unsupported");
-    case "BlankNodeType":
-    case "IdentifierType":
-    case "LiteralType":
-    case "NamedNodeType":
-    case "TermType":
-      return property.type.defaultValue.isNothing();
-    case "LazyObjectType":
-    case "ListType":
-    case "ObjectType":
-    case "ObjectUnionType":
-    case "PlaceholderType":
-      return true;
     case "UnionType":
       return property.type.memberTypes.every((memberType) =>
         isObjectTypePropertyRequired({ type: memberType }),
       );
+    case "BlankNodeType":
+    case "IdentifierType":
+    case "LazyObjectType":
+    case "ListType":
+    case "LiteralType":
+    case "NamedNodeType":
+    case "ObjectType":
+    case "ObjectUnionType":
+    case "PlaceholderType":
+    case "TermType":
+      return true;
+    case "IntersectionType":
+    case "ObjectIntersectionType":
+      throw new Error("unsupported");
     default:
       property.type satisfies never;
       throw new Error("should never reach this point");
@@ -67,7 +68,6 @@ const listPropertiesObjectType = new ast.ObjectType({
   identifierMintingStrategy: Maybe.empty(),
   identifierType: new ast.IdentifierType({
     comment: Maybe.empty(),
-    defaultValue: Maybe.empty(),
     label: Maybe.empty(),
   }),
   fromRdfType: Maybe.empty(),
