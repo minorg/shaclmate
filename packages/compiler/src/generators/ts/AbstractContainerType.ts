@@ -1,26 +1,28 @@
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { BooleanType } from "./BooleanType.js";
+import type { DateTimeType } from "./DateTimeType.js";
+import type { DateType } from "./DateType.js";
+import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import type { IntersectionType } from "./IntersectionType.js";
+import type { IntType } from "./IntType.js";
 import type { ListType } from "./ListType.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
-import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import type { PlaceholderType } from "./PlaceholderType.js";
+import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
-import { Type } from "./Type.js";
+import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
 
 /**
  * Abstract base class for types that contain other types e.g., ListType, OptionType, SetType.
  */
 export abstract class AbstractContainerType<
-  ItemTypeT extends
-    AbstractContainerType.ItemType = AbstractContainerType.ItemType,
+  ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
-  abstract readonly kind: "ListType" | "OptionType" | "SetType";
+  abstract override readonly kind: "ListType" | "OptionType" | "SetType";
 
   /**
    * Container item type.
@@ -38,51 +40,46 @@ export abstract class AbstractContainerType<
     super(superParameters);
     this.itemType = itemType;
   }
-
-  override equals(other: AbstractContainerType<ItemTypeT>): boolean {
-    if (!super.equals(other)) {
-      return false;
-    }
-
-    if (!Type.equals(this.itemType, other.itemType)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  toString(): string {
-    return `${this.kind}(itemType=${this.itemType})`;
-  }
 }
 
 export namespace AbstractContainerType {
+  export type Conversion = AbstractType.Conversion;
+  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
+  export const GraphqlType = AbstractType.GraphqlType;
+  export type GraphqlType = AbstractType.GraphqlType;
+
   export type ItemType =
     | BlankNodeType
+    | BooleanType
+    | DateTimeType
+    | DateType
+    | FloatType
     | IdentifierType
-    | IntersectionType
-    | ListType
+    | IntType
+    | ListType<ListType.ItemType>
     | LiteralType
     | NamedNodeType
-    | ObjectIntersectionType
     | ObjectType
     | ObjectUnionType
-    | PlaceholderType
+    | StringType
     | TermType
     | UnionType;
 
   export function isItemType(type: Type): type is ItemType {
     switch (type.kind) {
       case "BlankNodeType":
+      case "BooleanType":
+      case "DateTimeType":
+      case "DateType":
+      case "FloatType":
       case "IdentifierType":
-      case "IntersectionType":
+      case "IntType":
       case "ListType":
       case "LiteralType":
       case "NamedNodeType":
-      case "ObjectIntersectionType":
       case "ObjectType":
       case "ObjectUnionType":
-      case "PlaceholderType":
+      case "StringType":
       case "TermType":
       case "UnionType":
         return true;
@@ -94,4 +91,8 @@ export namespace AbstractContainerType {
         return false;
     }
   }
+
+  export const JsonType = AbstractType.JsonType;
+  export type JsonType = AbstractType.JsonType;
+  export type SparqlConstructTriple = AbstractType.SparqlConstructTriple;
 }

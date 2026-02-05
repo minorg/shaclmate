@@ -9,10 +9,9 @@ import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { Type } from "./Type.js";
 
 export class SetType<
-  ItemTypeT extends Type,
+  ItemTypeT extends SetType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
   override readonly graphqlArgs: AbstractCollectionType<ItemTypeT>["graphqlArgs"] =
     Maybe.empty();
@@ -111,4 +110,9 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
   ): readonly Import[] {
     return this.itemType.useImports(parameters);
   }
+}
+
+export namespace SetType {
+  export type ItemType = AbstractCollectionType.ItemType;
+  export const isItemType = AbstractCollectionType.isItemType;
 }

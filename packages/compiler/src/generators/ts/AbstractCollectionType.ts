@@ -1,43 +1,38 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-
-import { AbstractType } from "./AbstractType.js";
+import { AbstractContainerType } from "./AbstractContainerType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { Type } from "./Type.js";
 
 /**
  * Abstract base class for ListType and SetType.
  */
 export abstract class AbstractCollectionType<
-  ItemTypeT extends Type,
-> extends AbstractType {
+  ItemTypeT extends AbstractCollectionType.ItemType,
+> extends AbstractContainerType<ItemTypeT> {
   protected readonly _mutable: boolean;
   protected readonly minCount: number;
 
-  override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
+  override readonly discriminantProperty: Maybe<AbstractContainerType.DiscriminantProperty> =
     Maybe.empty();
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly itemType: ItemTypeT;
+  override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
+    Maybe.empty();
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
-    itemType,
     minCount,
     mutable,
     ...superParameters
   }: {
-    itemType: ItemTypeT;
     minCount: number;
     mutable: boolean;
-  } & ConstructorParameters<typeof AbstractType>[0]) {
+  } & ConstructorParameters<typeof AbstractContainerType<ItemTypeT>>[0]) {
     super(superParameters);
-    this.itemType = itemType;
     this.minCount = minCount;
     invariant(this.minCount >= 0);
     this._mutable = mutable;
@@ -47,8 +42,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
+  override get conversions(): readonly AbstractContainerType.Conversion[] {
+    const conversions: AbstractContainerType.Conversion[] = [];
 
     // Try to do some conversions from types itemType can be converted to
     // For example, if itemType is a NamedNode, it can be converted from a string, so here we'd accept:
@@ -61,7 +56,7 @@ export abstract class AbstractCollectionType<
 
     const itemTypeConversionsByTypeof = {} as Record<
       "boolean" | "object" | "number" | "string",
-      AbstractType.Conversion
+      AbstractContainerType.Conversion
     >;
     if (this.itemType.typeofs.length === 1) {
       itemTypeConversionsByTypeof[this.itemType.typeofs[0]] = {
@@ -150,8 +145,8 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  override get graphqlType(): AbstractType.GraphqlType {
-    return new AbstractType.GraphqlType(
+  override get graphqlType(): AbstractContainerType.GraphqlType {
+    return new AbstractContainerType.GraphqlType(
       `new graphql.GraphQLList(${this.itemType.graphqlType.name})`,
     );
   }
@@ -191,7 +186,9 @@ export abstract class AbstractCollectionType<
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["fromJsonExpression"]
+  >[0]): string {
     let expression = variables.value;
     if (!this._mutable && this.minCount > 0) {
       expression = `purify.NonEmptyList.fromArray(${expression}).unsafeCoerce()`;
@@ -206,14 +203,18 @@ export abstract class AbstractCollectionType<
 
   override graphqlResolveExpression({
     variables,
-  }: Parameters<AbstractType["graphqlResolveExpression"]>[0]): string {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
+  >[0]): string {
     return variables.value;
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["hashStatements"]
+  >[0]): readonly string[] {
     return [
       `for (const item${depth} of ${variables.value}) { ${this.itemType
         .hashStatements({
@@ -228,14 +229,18 @@ export abstract class AbstractCollectionType<
   }
 
   override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): ReturnType<AbstractType["jsonUiSchemaElement"]> {
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
+    >[0],
+  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
-    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
-  ): ReturnType<AbstractType["jsonZodSchema"]> {
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonZodSchema"]
+    >[0],
+  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonZodSchema"]> {
     let schema = `${this.itemType.jsonZodSchema(parameters)}.array()`;
     if (this.minCount > 0) {
       schema = `${schema}.nonempty().min(${this.minCount})`;
@@ -246,7 +251,9 @@ export abstract class AbstractCollectionType<
   }
 
   override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
     let snippetDeclarations = {
       ...this.itemType.snippetDeclarations(parameters),
@@ -433,7 +440,9 @@ function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (item
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toJsonExpression"]
+  >[0]): string {
     return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })}))`;
   }
 }
@@ -453,11 +462,14 @@ function isTypeofString(
 }
 
 export namespace AbstractCollectionType {
-  export type Conversion = AbstractType.Conversion;
-  export type DiscriminantProperty = AbstractType.DiscriminantProperty;
-  export const GraphqlType = AbstractType.GraphqlType;
-  export type GraphqlType = AbstractType.GraphqlType;
-  export const JsonType = AbstractType.JsonType;
-  export type JsonType = AbstractType.JsonType;
-  export type SparqlConstructTriple = AbstractType.SparqlConstructTriple;
+  export type Conversion = AbstractContainerType.Conversion;
+  export type DiscriminantProperty = AbstractContainerType.DiscriminantProperty;
+  export const GraphqlType = AbstractContainerType.GraphqlType;
+  export type GraphqlType = AbstractContainerType.GraphqlType;
+  export const isItemType = AbstractContainerType.isItemType;
+  export type ItemType = AbstractContainerType.ItemType;
+  export const JsonType = AbstractContainerType.JsonType;
+  export type JsonType = AbstractContainerType.JsonType;
+  export type SparqlConstructTriple =
+    AbstractContainerType.SparqlConstructTriple;
 }

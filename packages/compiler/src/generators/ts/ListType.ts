@@ -8,18 +8,32 @@ import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractType } from "./AbstractType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
+import type { BooleanType } from "./BooleanType.js";
+import type { DateTimeType } from "./DateTimeType.js";
+import type { DateType } from "./DateType.js";
+import type { FloatType } from "./FloatType.js";
+import type { IdentifierType } from "./IdentifierType.js";
 import { Import } from "./Import.js";
+import type { IntType } from "./IntType.js";
+import type { LiteralType } from "./LiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import type { StringType } from "./StringType.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import type { UnionType } from "./UnionType.js";
 
 export class ListType<
-  ItemTypeT extends Type,
+  ItemTypeT extends ListType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
   private readonly identifierMintingStrategy: IdentifierMintingStrategy;
   private readonly identifierNodeKind: IdentifierNodeKind;
@@ -372,5 +386,50 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       imports.push(Import.SHA256);
     }
     return imports;
+  }
+}
+
+export namespace ListType {
+  export type ItemType =
+    | BlankNodeType
+    | BooleanType
+    | DateTimeType
+    | DateType
+    | FloatType
+    | IdentifierType
+    | IntType
+    | LiteralType
+    | NamedNodeType
+    | ObjectType
+    | ObjectUnionType
+    | StringType
+    | TermType
+    | UnionType;
+
+  export function isItemType(type: Type): type is ItemType {
+    switch (type.kind) {
+      case "BlankNodeType":
+      case "BooleanType":
+      case "DateTimeType":
+      case "DateType":
+      case "FloatType":
+      case "IdentifierType":
+      case "IntType":
+      case "LiteralType":
+      case "NamedNodeType":
+      case "ObjectType":
+      case "ObjectUnionType":
+      case "StringType":
+      case "TermType":
+      case "UnionType":
+        return true;
+      case "LazyObjectOptionType":
+      case "LazyObjectSetType":
+      case "LazyObjectType":
+      case "ListType":
+      case "OptionType":
+      case "SetType":
+        return false;
+    }
   }
 }

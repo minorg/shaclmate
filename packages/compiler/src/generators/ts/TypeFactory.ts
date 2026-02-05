@@ -5,9 +5,8 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
-
+import { invariant } from "ts-invariant";
 import type * as ast from "../../ast/index.js";
-
 import { logger } from "../../logger.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
@@ -343,10 +342,12 @@ export class TypeFactory {
   }
 
   private createListType(astType: ast.ListType) {
+    const itemType = this.createType(astType.itemType);
+    invariant(ListType.isItemType(itemType));
     return new ListType({
       comment: astType.comment,
       identifierNodeKind: astType.identifierNodeKind,
-      itemType: this.createType(astType.itemType),
+      itemType,
       label: astType.label,
       minCount: 0,
       mutable: astType.mutable,
@@ -516,17 +517,21 @@ export class TypeFactory {
   }
 
   private createOptionType(astType: ast.OptionType) {
+    const itemType = this.createType(astType.itemType);
+    invariant(OptionType.isItemType(itemType));
     return new OptionType({
       comment: astType.comment,
-      itemType: this.createType(astType.itemType),
+      itemType,
       label: astType.label,
     });
   }
 
   private createSetType(astType: ast.SetType) {
+    const itemType = this.createType(astType.itemType);
+    invariant(SetType.isItemType(itemType));
     return new SetType({
       comment: astType.comment,
-      itemType: this.createType(astType.itemType),
+      itemType,
       label: astType.label,
       mutable: astType.mutable,
       minCount: astType.minCount,
