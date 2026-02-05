@@ -1,14 +1,18 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe, NonEmptyList } from "purify-ts";
+import { fromRdf } from "rdf-literal";
+import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import type { Type } from "./Type.js";
 
 export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,
@@ -31,11 +35,15 @@ export class DefaultValueType<
   }
 
   get conversions(): readonly AbstractContainerType.Conversion[] {
-    return this.itemType.conversions.concat({
-      conversionExpression: () => `"${defaultValue}"`,
-      sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-      sourceTypeName: "undefined",
+    let conversions = this.itemType.conversions;
+    this.defaultValuePrimitiveExpression.ifJust((defaultValue) => {
+      conversions = conversions.concat({
+        conversionExpression: () => `${defaultValue}`,
+        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
+        sourceTypeName: "undefined",
+      });
     });
+    return conversions;
   }
 
   override get equalsFunction(): string {
@@ -62,16 +70,41 @@ export class DefaultValueType<
     return this.itemType.name;
   }
 
-  override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
-    return this.itemType.sparqlConstructTriples(parameters);
+  @Memoize()
+  private get defaultValuePrimitiveExpression(): Maybe<string> {
+    switch (this.itemType.kind) {
+      case "BooleanType":
+      case "DateTimeType":
+      case "DateType":
+      case "FloatType":
+      case "IntType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(fromRdf(this.defaultValue, true));
+      case "StringType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(JSON.stringify(this.defaultValue.value));
+      case "IdentifierType":
+      case "NamedNodeType":
+        invariant(this.defaultValue.termType === "NamedNode");
+        return Maybe.of(this.defaultValueTermExpression);
+      case "LiteralType":
+      case "TermType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(this.defaultValueTermExpression);
+      case "ListType":
+      case "ObjectType":
+      case "ObjectUnionType":
+      case "UnionType":
+        return Maybe.empty();
+      default:
+        this.itemType satisfies never;
+        throw new Error("should never reach this point");
+    }
   }
 
-  override toJsonExpression(
-    parameters: Parameters<AbstractType["toJsonExpression"]>[0],
-  ): string {
-    return this.itemType.toJsonExpression(parameters);
+  @Memoize()
+  private get defaultValueTermExpression(): string {
+    return rdfjsTermExpression(this.defaultValue);
   }
 
   override snippetDeclarations(
@@ -85,12 +118,24 @@ export class DefaultValueType<
     );
   }
 
+  override sparqlConstructTriples(
+    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
+  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
+    return this.itemType.sparqlConstructTriples(parameters);
+  }
+
+  override toJsonExpression(
+    parameters: Parameters<AbstractType["toJsonExpression"]>[0],
+  ): string {
+    return this.itemType.toJsonExpression(parameters);
+  }
+
   override toRdfExpression(
     parameters: Parameters<AbstractType["toRdfExpression"]>[0],
   ): string {
     // Convert the item to an RDF/JS term (actually an array with one term) and then filter it out if it's the same as the default value,
     // so the default value is never serialized.
-    return `${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueExpression}))`;
+    return `${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`;
   }
 
   override useImports(
@@ -98,14 +143,15 @@ export class DefaultValueType<
   ): readonly Import[] {
     return this.itemType.useImports(parameters);
   }
-
-  @Memoize()
-  private defaultValueExpression(): string {
-    return rdfjsTermExpression(this.defaultValue);
-  }
 }
 
 export namespace DefaultValueType {
-  export type ItemType = AbstractContainerType.ItemType;
-  export const isItemType = AbstractContainerType.isItemType;
+  export type ItemType = Exclude<AbstractContainerType.ItemType, BlankNodeType>;
+
+  export function isItemType(type: Type): type is ItemType {
+    if (type.kind === "BlankNodeType") {
+      return false;
+    }
+    return AbstractContainerType.isItemType(type);
+  }
 }

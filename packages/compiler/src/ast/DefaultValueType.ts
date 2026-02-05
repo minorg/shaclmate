@@ -1,6 +1,9 @@
 import type { Literal, NamedNode } from "@rdfjs/types";
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
 import { termEquals } from "./equals.js";
+import type { PlaceholderType } from "./PlaceholderType.js";
+import type { Type } from "./Type.js";
 
 /**
  * A type with an sh:defaultValue.
@@ -45,6 +48,15 @@ export class DefaultValueType<
 }
 
 export namespace DefaultValueType {
-  export type ItemType = AbstractContainerType.ItemType;
-  export const isItemType = AbstractContainerType.isItemType;
+  export type ItemType = Exclude<
+    AbstractContainerType.ItemType,
+    BlankNodeType | PlaceholderType
+  >;
+
+  export function isItemType(type: Type): type is ItemType {
+    if (type.kind === "BlankNodeType") {
+      return false;
+    }
+    return AbstractContainerType.isItemType(type);
+  }
 }

@@ -1,4 +1,5 @@
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { PlaceholderType } from "./PlaceholderType.js";
 
 /**
  * An unordered set of items of a specific type.
@@ -44,6 +45,9 @@ export class SetType<
 }
 
 export namespace SetType {
-  export type ItemType = AbstractCollectionType.ItemType;
+  export type ItemType = Exclude<
+    AbstractCollectionType.ItemType,
+    PlaceholderType
+  >;
   export const isItemType = AbstractCollectionType.isItemType;
 }

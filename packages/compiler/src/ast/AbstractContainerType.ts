@@ -86,7 +86,6 @@ export namespace AbstractContainerType {
       case "ObjectIntersectionType":
       case "ObjectType":
       case "ObjectUnionType":
-      case "PlaceholderType":
       case "TermType":
       case "UnionType":
         return true;
@@ -97,6 +96,8 @@ export namespace AbstractContainerType {
       case "OptionType":
       case "SetType":
         return false;
+      case "PlaceholderType":
+        throw new Error("should never happen");
     }
   }
 }
