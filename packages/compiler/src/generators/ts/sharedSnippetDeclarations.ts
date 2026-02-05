@@ -232,7 +232,7 @@ function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${synthetic
 const toLiteral = singleEntryRecord(
   `${syntheticNamePrefix}toLiteral`,
   `\
-function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
+function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | rdfjs.Literal | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
   switch (typeof value) {
     case "boolean":
       return dataFactory.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
@@ -250,8 +250,8 @@ function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string
           
         return dataFactory.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
       }
-      value satisfies never;
-      throw new Error("should never happen");
+
+      return value;
     }
     case "number": {
       if (datatype) {

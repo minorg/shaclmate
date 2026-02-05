@@ -1,9 +1,10 @@
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -128,16 +129,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): string {
-    return this.primitiveDefaultValue
-      .map((defaultValue) => {
-        if (defaultValue) {
-          // If the default is true, only serialize the value if it's false
-          return `(!${variables.value} ? [false] : [])`;
-        }
-        // If the default is false, only serialize the value if it's true
-        return `(${variables.value} ? [true] : [])`;
-      })
-      .orDefault(`[${variables.value}]`);
+    return `[dataFactory.literal(${variables.value}.toString(), ${rdfjsTermExpression(xsd.boolean)})]`;
   }
 
   protected override fromRdfExpressionChain({

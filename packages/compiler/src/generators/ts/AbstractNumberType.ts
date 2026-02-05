@@ -226,13 +226,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
-    const valueToRdf = `dataFactory.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})`;
-    return this.primitiveDefaultValue
-      .map(
-        (defaultValue) =>
-          `(${variables.value} !== ${defaultValue} ? [${valueToRdf}] : [])`,
-      )
-      .orDefault(`[${valueToRdf}]`);
+    return `[dataFactory.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({

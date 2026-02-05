@@ -177,12 +177,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
-    return this.primitiveDefaultValue
-      .map(
-        (defaultValue) =>
-          `(${variables.value} !== "${defaultValue}" ? [${variables.value}] : [])`,
-      )
-      .orDefault(`[${variables.value}]`);
+    return `[dataFactory.literal(${variables.value})]`;
   }
 
   protected override fromRdfExpressionChain({

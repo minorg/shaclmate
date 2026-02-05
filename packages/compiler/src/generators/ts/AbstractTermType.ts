@@ -230,12 +230,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   override toRdfExpression({
     variables,
   }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
-    return this.defaultValue
-      .map(
-        (defaultValue) =>
-          `(!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? [${variables.value}] : [])`,
-      )
-      .orDefault(`[${variables.value}]`);
+    return `[${variables.value}]`;
   }
 
   override useImports(_object: {

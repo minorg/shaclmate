@@ -253,13 +253,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): string {
-    const valueToRdf = `dataFactory.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})`;
-    return this.primitiveDefaultValue
-      .map(
-        (defaultValue) =>
-          `(${variables.value}.getTime() !== ${defaultValue.getTime()} ? [${valueToRdf}] : [])`,
-      )
-      .orDefault(`[${valueToRdf}]`);
+    return `[dataFactory.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
   }
 
   override useImports({
