@@ -30,13 +30,13 @@ export type Type =
   | LazyObjectOptionType
   | LazyObjectSetType
   | LazyObjectType
-  | ListType<Type>
+  | ListType<ListType.ItemType>
   | LiteralType
   | NamedNodeType
   | ObjectType
   | ObjectUnionType
-  | OptionType<Type>
-  | SetType<Type>
+  | OptionType<OptionType.ItemType>
+  | SetType<SetType.ItemType>
   | StringType
   | TermType
   | UnionType;

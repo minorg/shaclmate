@@ -1,11 +1,10 @@
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { Type } from "./Type.js";
 
 /**
  * An unordered set of items of a specific type.
  */
 export class SetType<
-  ItemTypeT extends Type = Type,
+  ItemTypeT extends SetType.ItemType = SetType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
   readonly kind = "SetType";
 
@@ -42,4 +41,9 @@ export class SetType<
 
     return true;
   }
+}
+
+export namespace SetType {
+  export type ItemType = AbstractCollectionType.ItemType;
+  export const isItemType = AbstractCollectionType.isItemType;
 }

@@ -3,7 +3,18 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import type { Maybe } from "purify-ts";
 import type { IdentifierMintingStrategy } from "../enums/IdentifierMintingStrategy.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import type { BlankNodeType } from "./BlankNodeType.js";
+import type { IdentifierType } from "./IdentifierType.js";
+import type { IntersectionType } from "./IntersectionType.js";
+import type { LiteralType } from "./LiteralType.js";
+import type { NamedNodeType } from "./NamedNodeType.js";
+import type { ObjectIntersectionType } from "./ObjectIntersectionType.js";
+import type { ObjectType } from "./ObjectType.js";
+import type { ObjectUnionType } from "./ObjectUnionType.js";
+import type { PlaceholderType } from "./PlaceholderType.js";
+import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import type { UnionType } from "./UnionType.js";
 
 /**
  * An ordered sequence of items with zero or one values of an item type.
@@ -13,7 +24,7 @@ import type { Type } from "./Type.js";
  * Contrast SetType, which is transformed from any SHACL property shape with no maxCount or maxCount greater than 1.
  */
 export class ListType<
-  ItemTypeT extends Type = Type,
+  ItemTypeT extends ListType.ItemType = ListType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
   /**
    * Type of identifier (blank or named node) to use for lists and sub-lists.
@@ -62,5 +73,44 @@ export class ListType<
   override equals(other: ListType<ItemTypeT>): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
+  }
+}
+
+export namespace ListType {
+  export type ItemType =
+    | BlankNodeType
+    | IdentifierType
+    | IntersectionType
+    | LiteralType
+    | NamedNodeType
+    | ObjectIntersectionType
+    | ObjectType
+    | ObjectUnionType
+    | PlaceholderType
+    | TermType
+    | UnionType;
+
+  export function isItemType(type: Type): type is ItemType {
+    switch (type.kind) {
+      case "BlankNodeType":
+      case "IdentifierType":
+      case "IntersectionType":
+      case "LiteralType":
+      case "NamedNodeType":
+      case "ObjectIntersectionType":
+      case "ObjectType":
+      case "ObjectUnionType":
+      case "PlaceholderType":
+      case "TermType":
+      case "UnionType":
+        return true;
+      case "LazyObjectOptionType":
+      case "LazyObjectSetType":
+      case "LazyObjectType":
+      case "ListType":
+      case "OptionType":
+      case "SetType":
+        return false;
+    }
   }
 }

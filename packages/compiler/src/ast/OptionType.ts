@@ -1,11 +1,10 @@
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import type { Type } from "./Type.js";
 
 /**
  * A type with zero or one values of an item type.
  */
 export class OptionType<
-  ItemTypeT extends Type = Type,
+  ItemTypeT extends OptionType.ItemType = OptionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
   readonly kind = "OptionType";
 
@@ -21,4 +20,9 @@ export class OptionType<
       label: itemType.label,
     });
   }
+}
+
+export namespace OptionType {
+  export type ItemType = AbstractContainerType.ItemType;
+  export const isItemType = AbstractContainerType.isItemType;
 }

@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
+import { AbstractContainerType } from "./AbstractContainerType.js";
 import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
@@ -11,23 +12,15 @@ import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import type { Type } from "./Type.js";
 
-export class OptionType<ItemTypeT extends Type> extends AbstractType {
+export class OptionType<
+  ItemTypeT extends OptionType.ItemType,
+> extends AbstractContainerType<ItemTypeT> {
   override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
     Maybe.empty();
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
-  readonly itemType: ItemTypeT;
   readonly kind = "OptionType";
   override readonly typeofs = NonEmptyList(["object" as const]);
-
-  constructor({
-    itemType,
-    ...superParameters
-  }: { itemType: ItemTypeT } & ConstructorParameters<typeof AbstractType>[0]) {
-    super(superParameters);
-    this.itemType = itemType;
-  }
 
   @Memoize()
   override get conversions(): readonly AbstractType.Conversion[] {
@@ -323,4 +316,9 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
   ): readonly Import[] {
     return [...this.itemType.useImports(parameters), Import.PURIFY];
   }
+}
+
+export namespace OptionType {
+  export type ItemType = AbstractContainerType.ItemType;
+  export const isItemType = AbstractContainerType.isItemType;
 }
