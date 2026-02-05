@@ -2,6 +2,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
 import type { DateTimeType } from "./DateTimeType.js";
 import type { DateType } from "./DateType.js";
+import type { DefaultValueType } from "./DefaultValueType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
@@ -24,6 +25,7 @@ export type Type =
   | BooleanType
   | DateTimeType
   | DateType
+  | DefaultValueType<DefaultValueType.ItemType>
   | FloatType
   | IdentifierType
   | IntType

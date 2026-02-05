@@ -22,7 +22,11 @@ import type { UnionType } from "./UnionType.js";
 export abstract class AbstractContainerType<
   ItemTypeT extends AbstractContainerType.ItemType,
 > extends AbstractType {
-  abstract override readonly kind: "ListType" | "OptionType" | "SetType";
+  abstract override readonly kind:
+    | "DefaultValueType"
+    | "ListType"
+    | "OptionType"
+    | "SetType";
 
   /**
    * Container item type.
@@ -83,6 +87,7 @@ export namespace AbstractContainerType {
       case "TermType":
       case "UnionType":
         return true;
+      case "DefaultValueType":
       case "LazyObjectOptionType":
       case "LazyObjectSetType":
       case "LazyObjectType":

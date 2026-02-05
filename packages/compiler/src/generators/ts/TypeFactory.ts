@@ -3,15 +3,17 @@ import TermSet from "@rdfjs/term-set";
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
-import { Maybe } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
+
 import type * as ast from "../../ast/index.js";
+
 import { logger } from "../../logger.js";
 import { BlankNodeType } from "./BlankNodeType.js";
 import { BooleanType } from "./BooleanType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { DateType } from "./DateType.js";
+import { DefaultValueType } from "./DefaultValueType.js";
 import { FloatType } from "./FloatType.js";
 import { IdentifierType } from "./IdentifierType.js";
 import { IntType } from "./IntType.js";
@@ -155,12 +157,10 @@ export class TypeFactory {
               ),
               type: new StringType({
                 comment: astType.comment,
-                defaultValue: Maybe.empty(),
                 hasValues: [],
                 in_: [],
                 label: astType.label,
                 languageIn: [],
-                primitiveDefaultValue: Maybe.empty(),
                 primitiveIn: [],
               }),
               visibility: "protected",
@@ -232,6 +232,8 @@ export class TypeFactory {
     switch (astType.kind) {
       case "BlankNodeType":
         return this.createBlankNodeType(astType);
+      case "DefaultValueType":
+        return this.createDefaultValueType(astType);
       case "IdentifierType":
         return this.createIdentifierType(astType);
       case "IntersectionType":
@@ -274,6 +276,17 @@ export class TypeFactory {
     });
   }
 
+  private createDefaultValueType(astType: ast.DefaultValueType) {
+    const itemType = this.createType(astType.itemType);
+    invariant(DefaultValueType.isItemType(itemType));
+    return new DefaultValueType({
+      comment: astType.comment,
+      defaultValue: astType.defaultValue,
+      itemType,
+      label: astType.label,
+    });
+  }
+
   private createIdentifierType(
     astType: ast.BlankNodeType | ast.IdentifierType | ast.NamedNodeType,
   ): BlankNodeType | IdentifierType | NamedNodeType {
@@ -283,22 +296,11 @@ export class TypeFactory {
       case "IdentifierType":
         return new IdentifierType({
           comment: astType.comment,
-          defaultValue: astType.defaultValue,
           label: astType.label,
         });
       case "NamedNodeType":
         return this.createNamedNodeType(astType);
     }
-  }
-
-  private createNamedNodeType(astType: ast.NamedNodeType): NamedNodeType {
-    return new NamedNodeType({
-      comment: astType.comment,
-      defaultValue: astType.defaultValue,
-      hasValues: astType.hasValues,
-      in_: astType.in_,
-      label: astType.label,
-    });
   }
 
   private createLazyObjectOptionType(astType: ast.LazyObjectOptionType): Type {
@@ -362,9 +364,6 @@ export class TypeFactory {
     // Otherwise default to rdfjs.Literal
     const datatypes = new TermSet<NamedNode>();
     astType.datatype.ifJust((datatype) => datatypes.add(datatype));
-    astType.defaultValue.ifJust((defaultValue) =>
-      datatypes.add(defaultValue.datatype),
-    );
     for (const hasValue of astType.hasValues) {
       datatypes.add(hasValue.datatype);
     }
@@ -378,14 +377,10 @@ export class TypeFactory {
       if (datatype.equals(xsd.boolean)) {
         return new BooleanType({
           comment: astType.comment,
-          defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           label: astType.label,
           languageIn: [],
           in_: astType.in_,
-          primitiveDefaultValue: astType.defaultValue
-            .map((value) => fromRdf(value, true))
-            .filter((value) => typeof value === "boolean"),
           primitiveIn: astType.in_
             .map((value) => fromRdf(value, true))
             .filter((value) => typeof value === "boolean"),
@@ -395,16 +390,10 @@ export class TypeFactory {
       if (datatype.equals(xsd.date) || datatype.equals(xsd.dateTime)) {
         return new (datatype.equals(xsd.date) ? DateType : DateTimeType)({
           comment: astType.comment,
-          defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           in_: astType.in_,
           label: astType.label,
           languageIn: [],
-          primitiveDefaultValue: astType.defaultValue
-            .map((value) => fromRdf(value, true))
-            .filter(
-              (value) => typeof value === "object" && value instanceof Date,
-            ),
           primitiveIn: astType.in_
             .map((value) => fromRdf(value, true))
             .filter(
@@ -421,14 +410,10 @@ export class TypeFactory {
             return new (floatOrInt === "float" ? FloatType : IntType)({
               comment: astType.comment,
               datatype: numberDatatype,
-              defaultValue: astType.defaultValue,
               hasValues: astType.hasValues,
               in_: astType.in_,
               label: astType.label,
               languageIn: [],
-              primitiveDefaultValue: astType.defaultValue
-                .map((value) => fromRdf(value, true))
-                .filter((value) => typeof value === "number"),
               primitiveIn: astType.in_
                 .map((value) => fromRdf(value, true))
                 .filter((value) => typeof value === "number"),
@@ -440,14 +425,10 @@ export class TypeFactory {
       if (datatype.equals(xsd.string)) {
         return new StringType({
           comment: astType.comment,
-          defaultValue: astType.defaultValue,
           hasValues: astType.hasValues,
           label: astType.label,
           languageIn: astType.languageIn,
           in_: astType.in_,
-          primitiveDefaultValue: astType.defaultValue.map(
-            (value) => value.value,
-          ),
           primitiveIn: astType.in_.map((value) => value.value),
         });
       }
@@ -468,11 +449,19 @@ export class TypeFactory {
 
     return new LiteralType({
       comment: astType.comment,
-      defaultValue: astType.defaultValue,
       hasValues: astType.hasValues,
       in_: astType.in_,
       label: astType.label,
       languageIn: astType.languageIn,
+    });
+  }
+
+  private createNamedNodeType(astType: ast.NamedNodeType): NamedNodeType {
+    return new NamedNodeType({
+      comment: astType.comment,
+      hasValues: astType.hasValues,
+      in_: astType.in_,
+      label: astType.label,
     });
   }
 
@@ -541,11 +530,10 @@ export class TypeFactory {
   private createTermType(astType: ast.TermType) {
     return new TermType({
       comment: astType.comment,
-      defaultValue: astType["defaultValue"],
-      hasValues: astType["hasValues"],
-      in_: astType["in_"],
+      hasValues: astType.hasValues,
+      in_: astType.in_,
       label: astType.label,
-      nodeKinds: astType["nodeKinds"],
+      nodeKinds: astType.nodeKinds,
     });
   }
 

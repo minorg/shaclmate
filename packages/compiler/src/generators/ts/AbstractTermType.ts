@@ -31,7 +31,6 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
@@ -43,19 +42,16 @@ export abstract class AbstractTermType<
   ]);
 
   constructor({
-    defaultValue,
     hasValues,
     in_,
     nodeKinds,
     ...superParameters
   }: {
-    defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
@@ -63,11 +59,7 @@ export abstract class AbstractTermType<
   }
 
   get constrained(): boolean {
-    return (
-      this.defaultValue.isJust() ||
-      this.hasValues.length > 0 ||
-      this.in_.length > 0
-    );
+    return this.hasValues.length > 0 || this.in_.length > 0;
   }
 
   @Memoize()

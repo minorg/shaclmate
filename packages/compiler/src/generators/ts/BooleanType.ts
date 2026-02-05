@@ -48,7 +48,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.primitiveDefaultValue.extract(),
       in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
     };
   }

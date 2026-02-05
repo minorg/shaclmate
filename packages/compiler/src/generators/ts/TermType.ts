@@ -55,7 +55,6 @@ export class TermType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
       in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
     };
   }

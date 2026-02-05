@@ -24,7 +24,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   ) {
     super({
       ...superParameters,
-      defaultValue: Maybe.empty(),
       hasValues: [],
       in_: [],
       nodeKinds,

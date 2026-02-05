@@ -423,6 +423,7 @@ export namespace ListType {
       case "TermType":
       case "UnionType":
         return true;
+      case "DefaultValueType":
       case "LazyObjectOptionType":
       case "LazyObjectSetType":
       case "LazyObjectType":

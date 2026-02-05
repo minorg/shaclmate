@@ -26,7 +26,7 @@ export class IdentifierType extends AbstractIdentifierType<
       ConstructorParameters<
         typeof AbstractIdentifierType<BlankNode | NamedNode>
       >[0],
-      "comment" | "defaultValue" | "label"
+      "comment" | "label"
     >,
   ) {
     super({
@@ -62,7 +62,6 @@ export class IdentifierType extends AbstractIdentifierType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
       in:
         this.in_.length > 0
           ? this.in_.map(rdfjsTermExpression).concat()

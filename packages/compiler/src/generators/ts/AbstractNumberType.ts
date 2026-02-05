@@ -60,7 +60,6 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.primitiveDefaultValue.extract(),
       in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
     };
   }
