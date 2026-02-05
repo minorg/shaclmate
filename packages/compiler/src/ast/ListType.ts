@@ -13,7 +13,7 @@ import type { Type } from "./Type.js";
  * Contrast SetType, which is transformed from any SHACL property shape with no maxCount or maxCount greater than 1.
  */
 export class ListType<
-  ItemTypeT extends Type = Type,
+  ItemTypeT extends ListType.ItemType = ListType.ItemType,
 > extends AbstractCollectionType<ItemTypeT> {
   /**
    * Type of identifier (blank or named node) to use for lists and sub-lists.
@@ -62,5 +62,19 @@ export class ListType<
   override equals(other: ListType<ItemTypeT>): boolean {
     // Don't recurse
     return this.shapeIdentifier.equals(other.shapeIdentifier);
+  }
+}
+
+export namespace ListType {
+  export type ItemType = Exclude<
+    AbstractCollectionType.ItemType,
+    ListType<AbstractCollectionType.ItemType>
+  >;
+
+  export function isItemType(type: Type): type is ItemType {
+    if (type.kind === "ListType") {
+      return false;
+    }
+    return AbstractCollectionType.isItemType(type);
   }
 }

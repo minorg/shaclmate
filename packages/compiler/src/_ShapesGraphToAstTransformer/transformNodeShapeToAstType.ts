@@ -97,12 +97,12 @@ function transformNodeShapeToAstListType(
   ).chain(([identifierMintingStrategy, nodeKinds, xone]) => {
     // Put a placeholder in the cache to deal with cyclic references
     // Remove the placeholder if the transformation fails.
-    const listType = new ast.ListType<ast.Type>({
+    const listType = new ast.ListType({
       comment: nodeShape.comment,
       identifierNodeKind: nodeKinds.has("BlankNode")
         ? "BlankNode"
         : "NamedNode",
-      itemType: ast.PlaceholderType.instance,
+      itemType: ast.PlaceholderType.instance as ast.ListType.ItemType,
       label: nodeShape.label,
       mutable: nodeShape.mutable.orDefault(false),
       identifierMintingStrategy,
@@ -193,6 +193,14 @@ function transformNodeShapeToAstListType(
             objectType: listPropertiesObjectType,
             propertyShape: firstPropertyShape,
           }).chain((firstProperty) => {
+            if (!ast.ListType.isItemType(firstProperty.type)) {
+              return Left(
+                new Error(
+                  `${nodeShape}: ${firstProperty.type.kind} is not a valid list item type`,
+                ),
+              );
+            }
+
             listType.itemType = firstProperty.type;
 
             return this.transformPropertyShapeToAstObjectTypeProperty({
@@ -211,7 +219,7 @@ function transformNodeShapeToAstListType(
                 );
               }
 
-              return Either.of<Error, ast.ListType<ast.Type>>(listType);
+              return Either.of<Error, ast.ListType>(listType);
             });
           });
         },

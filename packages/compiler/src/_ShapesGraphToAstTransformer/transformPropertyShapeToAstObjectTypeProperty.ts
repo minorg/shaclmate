@@ -1,5 +1,6 @@
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
+import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/index.js";
@@ -59,7 +60,7 @@ function transformPropertyShapeToAstType(
   // }
 
   return this.transformShapeToAstType(propertyShape, new ShapeStack()).chain(
-    (itemType) => {
+    (propertyShapeAstType) => {
       let maxCount = propertyShape.constraints.maxCount.orDefault(
         Number.MAX_SAFE_INTEGER,
       );
@@ -95,24 +96,27 @@ function transformPropertyShapeToAstType(
         // treat its type as required. The generated type will fill in the sh:defaultValue on
         // construction/deserialization.
 
-        return Either.of(itemType);
+        return Either.of(propertyShapeAstType);
+      }
+
+      if (minCount === 1 && maxCount === 1) {
+        return Either.of(propertyShapeAstType);
       }
 
       if (minCount === 0 && maxCount === 1) {
+        invariant(ast.OptionType.isItemType(propertyShapeAstType));
+
         return Either.of(
           new ast.OptionType({
-            itemType,
+            itemType: propertyShapeAstType,
           }),
         );
       }
 
-      if (minCount === 1 && maxCount === 1) {
-        return Either.of(itemType);
-      }
-
+      invariant(ast.SetType.isItemType(propertyShapeAstType));
       return Either.of(
         new ast.SetType({
-          itemType,
+          itemType: propertyShapeAstType,
           minCount,
           mutable: propertyShape.mutable.orDefault(false),
         }),

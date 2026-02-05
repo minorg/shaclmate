@@ -1,11 +1,11 @@
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import type { Type } from "./Type.js";
 
 /**
  * Abstract base class for a collection of items of a single type. This is the parent of ListType and SetType.
  */
 export abstract class AbstractCollectionType<
-  ItemTypeT extends Type = Type,
+  ItemTypeT extends
+    AbstractCollectionType.ItemType = AbstractCollectionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
   abstract override readonly kind: "ListType" | "SetType";
 
@@ -35,4 +35,9 @@ export abstract class AbstractCollectionType<
 
     return true;
   }
+}
+
+export namespace AbstractCollectionType {
+  export type ItemType = AbstractContainerType.ItemType;
+  export const isItemType = AbstractContainerType.isItemType;
 }
