@@ -92,11 +92,13 @@ function transformPropertyShapeToAstType(
           );
         }
 
-        // If a property shape has sh:defaultValue, sh:minCount = 0, and sh:maxCount = 1,
-        // treat its type as required. The generated type will fill in the sh:defaultValue on
-        // construction/deserialization.
-
-        return Either.of(propertyShapeAstType);
+        invariant(ast.DefaultValueType.isItemType(propertyShapeAstType));
+        return Either.of(
+          new ast.DefaultValueType({
+            defaultValue: propertyShape.defaultValue.unsafeCoerce(),
+            itemType: propertyShapeAstType,
+          }),
+        );
       }
 
       if (minCount === 1 && maxCount === 1) {
