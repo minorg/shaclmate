@@ -32,6 +32,18 @@ export abstract class AbstractPrimitiveType<
     this.primitiveIn = primitiveIn;
   }
 
+  @Memoize()
+  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
+    return [
+      {
+        conversionExpression: (value) => value,
+        sourceTypeCheckExpression: (value) =>
+          `typeof ${value} === "${this.typeofs[0]}"`,
+        sourceTypeName: this.name,
+      },
+    ];
+  }
+
   override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {
     return Maybe.empty();
   }

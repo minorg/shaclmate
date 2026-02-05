@@ -30,6 +30,38 @@ export class DefaultValueType<
     this.defaultValue = defaultValue;
   }
 
+  get conversions(): readonly AbstractContainerType.Conversion[] {
+    return this.itemType.conversions.concat({
+      conversionExpression: () => `"${defaultValue}"`,
+      sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
+      sourceTypeName: "undefined",
+    });
+  }
+
+  override get equalsFunction(): string {
+    return this.itemType.equalsFunction;
+  }
+
+  override get filterFunction(): string {
+    return this.itemType.filterFunction;
+  }
+
+  override get filterType(): string {
+    return this.itemType.filterType;
+  }
+
+  override get graphqlType(): AbstractContainerType.GraphqlType {
+    return this.itemType.graphqlType;
+  }
+
+  override get mutable(): boolean {
+    return this.itemType.mutable;
+  }
+
+  override get name(): string {
+    return this.itemType.name;
+  }
+
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
   ): readonly (AbstractType.SparqlConstructTriple | string)[] {

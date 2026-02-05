@@ -24,7 +24,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
 
   @Memoize()
   override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    const conversions: AbstractPrimitiveType.Conversion[] = [
+    return [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
@@ -32,16 +32,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
         sourceTypeName: this.name,
       },
     ];
-
-    this.primitiveDefaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => `new Date("${defaultValue.toISOString()}")`,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
-
-    return conversions;
   }
 
   override get name(): string {

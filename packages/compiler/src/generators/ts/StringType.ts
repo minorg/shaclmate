@@ -18,25 +18,6 @@ export class StringType extends AbstractPrimitiveType<string> {
   readonly kind = "StringType";
   override readonly typeofs = NonEmptyList(["string" as const]);
 
-  @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    const conversions: AbstractPrimitiveType.Conversion[] = [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
-        sourceTypeName: this.name,
-      },
-    ];
-    this.primitiveDefaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => `"${defaultValue}"`,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
-    return conversions;
-  }
-
   protected override get schemaObject() {
     return {
       ...super.schemaObject,

@@ -31,25 +31,6 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   }
 
   @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    const conversions: AbstractPrimitiveType.Conversion[] = [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
-        sourceTypeName: this.name,
-      },
-    ];
-    this.primitiveDefaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => defaultValue.toString(),
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
-    return conversions;
-  }
-
-  @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");

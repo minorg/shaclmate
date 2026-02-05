@@ -96,14 +96,6 @@ export abstract class AbstractTermType<
       );
     }
 
-    this.defaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => rdfjsTermExpression(defaultValue),
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
-
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
@@ -155,7 +147,6 @@ export abstract class AbstractTermType<
     const { variables } = parameters;
     return [
       variables.resourceValues,
-      chain.defaultValue,
       chain.hasValues,
       chain.languageIn,
       chain.preferredLanguages,
@@ -252,7 +243,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   protected fromRdfExpressionChain({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
     preferredLanguages?: string;
@@ -270,12 +260,12 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
     }
 
     return {
-      defaultValue: this.defaultValue
-        .map(
-          (defaultValue) =>
-            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
-        )
-        .extract(),
+      // defaultValue: this.defaultValue
+      //   .map(
+      //     (defaultValue) =>
+      //       `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
+      //   )
+      //   .extract(),
       hasValues:
         this.hasValues.length > 0
           ? `\

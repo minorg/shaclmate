@@ -77,11 +77,14 @@ export class OptionType<
   }
 
   @Memoize()
-  override get graphqlType(): AbstractType.GraphqlType {
+  override get graphqlType(): AbstractContainerType.GraphqlType {
     invariant(!this.itemType.graphqlType.nullable);
-    return new AbstractType.GraphqlType(this.itemType.graphqlType.name, {
-      nullable: true,
-    });
+    return new AbstractContainerType.GraphqlType(
+      this.itemType.graphqlType.name,
+      {
+        nullable: true,
+      },
+    );
   }
 
   override get mutable(): boolean {
