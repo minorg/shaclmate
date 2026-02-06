@@ -92,7 +92,13 @@ function transformPropertyShapeToAstType(
           );
         }
 
-        invariant(ast.DefaultValueType.isItemType(propertyShapeAstType));
+        if (!ast.DefaultValueType.isItemType(propertyShapeAstType)) {
+          return Left(
+            new Error(
+              `${propertyShape}: ${propertyShapeAstType} is not a DefaultValueType item type`,
+            ),
+          );
+        }
         return Either.of(
           new ast.DefaultValueType({
             defaultValue: propertyShape.defaultValue.unsafeCoerce(),
@@ -106,7 +112,13 @@ function transformPropertyShapeToAstType(
       }
 
       if (minCount === 0 && maxCount === 1) {
-        invariant(ast.OptionType.isItemType(propertyShapeAstType));
+        if (!ast.OptionType.isItemType(propertyShapeAstType)) {
+          return Left(
+            new Error(
+              `${propertyShape}: ${propertyShapeAstType} is not an OptionType item type`,
+            ),
+          );
+        }
 
         return Either.of(
           new ast.OptionType({
@@ -115,7 +127,13 @@ function transformPropertyShapeToAstType(
         );
       }
 
-      invariant(ast.SetType.isItemType(propertyShapeAstType));
+      if (!ast.SetType.isItemType(propertyShapeAstType)) {
+        return Left(
+          new Error(
+            `${propertyShape}: ${propertyShapeAstType} is not a SetType item type`,
+          ),
+        );
+      }
       return Either.of(
         new ast.SetType({
           itemType: propertyShapeAstType,
