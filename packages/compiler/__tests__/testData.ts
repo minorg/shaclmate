@@ -52,6 +52,39 @@ function parseShapesGraph(filePath: string): Either<
 
 class TestData {
   @Memoize()
+  get defaultValueHasValueConflict() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "data",
+        "default-value-has-value-conflict.shaclmate.ttl",
+      ),
+    );
+  }
+
+  @Memoize()
+  get defaultValueMultipleHasValues() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "data",
+        "default-value-multiple-has-values.shaclmate.ttl",
+      ),
+    );
+  }
+
+  @Memoize()
+  get defaultValueInConflict() {
+    return parseShapesGraph(
+      path.join(
+        thisDirectoryPath,
+        "data",
+        "default-value-in-conflict.shaclmate.ttl",
+      ),
+    );
+  }
+
+  @Memoize()
   get externalProject() {
     return Maybe.of(
       path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
@@ -66,7 +99,7 @@ class TestData {
       path.join(
         thisDirectoryPath,
         "data",
-        "incompatible-node-shape-identifiers.ttl",
+        "incompatible-node-shape-identifiers.shaclmate.ttl",
       ),
     );
   }

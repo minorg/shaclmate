@@ -1,5 +1,5 @@
 import type { NamedNode } from "@rdfjs/types";
-import type { IdentifierNodeKind, NodeKind } from "@shaclmate/shacl-ast";
+import type { NodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
@@ -10,7 +10,6 @@ import { Eithers } from "../Eithers.js";
 import type * as input from "../input/index.js";
 import { tsFeaturesDefault } from "../input/tsFeatures.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
-import { createIdentifierType } from "./createIdentifierType.js";
 import type { NodeShapeAstType } from "./NodeShapeAstType.js";
 import { nodeShapeIdentifierMintingStrategy } from "./nodeShapeIdentifierMintingStrategy.js";
 import { nodeShapeTsFeatures } from "./nodeShapeTsFeatures.js";
@@ -391,6 +390,38 @@ export function transformNodeShapeToAstType(
         );
       }
 
+      let identifierType:
+        | ast.BlankNodeType
+        | ast.IdentifierType
+        | ast.NamedNodeType;
+      if (nodeKinds.size === 2) {
+        invariant(nodeShape.identifierIn.length === 0);
+        identifierType = new ast.IdentifierType({
+          comment: Maybe.empty(),
+          label: Maybe.empty(),
+        });
+      } else {
+        switch ([...nodeKinds][0]) {
+          case "BlankNode":
+            invariant(nodeShape.identifierIn.length === 0);
+            identifierType = new ast.BlankNodeType({
+              comment: Maybe.empty(),
+              label: Maybe.empty(),
+            });
+            break;
+          case "Literal":
+            throw new Error("should never happen");
+          case "NamedNode":
+            identifierType = new ast.NamedNodeType({
+              comment: Maybe.empty(),
+              hasValues: [],
+              in_: nodeShape.identifierIn,
+              label: Maybe.empty(),
+            });
+            break;
+        }
+      }
+
       // Put a placeholder in the cache to deal with cyclic references
       // Remove the placeholder if the transformation fails.
       // If this node shape's properties (directly or indirectly) refer to the node shape itself,
@@ -402,10 +433,7 @@ export function transformNodeShapeToAstType(
         extern: nodeShape.extern.orDefault(false),
         fromRdfType,
         label: nodeShape.label,
-        identifierType: createIdentifierType(
-          nodeKinds as ReadonlySet<IdentifierNodeKind>,
-          { in_: nodeShape.identifierIn },
-        ),
+        identifierType,
         identifierMintingStrategy,
         name: nodeShape.shaclmateName,
         shapeIdentifier: this.shapeIdentifier(nodeShape),

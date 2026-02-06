@@ -2,8 +2,4 @@ export * from "./NodeShapeAstType.js";
 export * from "./shapeIdentifier.js";
 export * from "./transformNodeShapeToAstType.js";
 export * from "./transformPropertyShapeToAstObjectTypeProperty.js";
-export * from "./transformShapeToAstCompoundType.js";
-export * from "./transformShapeToAstIdentifierType.js";
-export * from "./transformShapeToAstLiteralType.js";
-export * from "./transformShapeToAstTermType.js";
 export * from "./transformShapeToAstType.js";

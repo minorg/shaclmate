@@ -69,6 +69,42 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
 });
 
 describe("ShapesGraphToAstTransformer: error cases", () => {
+  it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.defaultValueHasValueConflict.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes(
+      "default value conflicts with has-value",
+    );
+  });
+
+  it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.defaultValueMultipleHasValues.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes(
+      "default value and multiple has-values",
+    );
+  });
+
+  it("sh:defaultValue and sh:in conflict", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.defaultValueInConflict.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes(
+      "default value conflicts with in value",
+    );
+  });
+
   it("incompatible node shape identifiers", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
       testData.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
