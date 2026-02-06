@@ -48,7 +48,6 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "rdfjs.NamedNode",
       "in?": "readonly rdfjs.NamedNode[]",
     };
   }

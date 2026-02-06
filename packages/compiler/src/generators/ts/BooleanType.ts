@@ -37,7 +37,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "boolean",
       "in?": `readonly boolean[]`,
     };
   }

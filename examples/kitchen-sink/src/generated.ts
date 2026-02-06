@@ -131,7 +131,6 @@ interface $BooleanFilter {
 }
 
 type $BooleanSchema = Readonly<{
-  defaultValue?: boolean;
   in?: readonly boolean[];
   kind: "BooleanType";
   languageIn?: readonly string[];
@@ -190,7 +189,6 @@ interface $DateFilter {
 }
 
 type $DateSchema = Readonly<{
-  defaultValue?: Date;
   in?: readonly Date[];
   kind: "DateTimeType" | "DateType";
   languageIn?: readonly string[];
@@ -695,10 +693,7 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
-type $IdentifierSchema = Readonly<{
-  defaultValue?: rdfjs.NamedNode;
-  kind: "IdentifierType";
-}>;
+type $IdentifierSchema = Readonly<{ kind: "IdentifierType" }>;
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -727,8 +722,8 @@ class $IdentifierSet {
 const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
   $IdentifierFilter,
   $IdentifierSchema
-> = ({ filter, valueVariable, ...otherParameters }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
+> = ({ filter, propertyPatterns, valueVariable }) => {
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (filter) {
     if (typeof filter.in !== "undefined") {
@@ -736,14 +731,14 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
         (identifier) => identifier.termType === "NamedNode",
       );
       if (valueIn.length > 0) {
-        filterPatterns.push(
+        patterns.push(
           $sparqlValueInPattern({ lift: true, valueVariable, valueIn }),
         );
       }
     }
 
     if (typeof filter.type !== "undefined") {
-      filterPatterns.push({
+      patterns.push({
         expression: {
           type: "operation",
           operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
@@ -755,11 +750,7 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
     }
   }
 
-  return $termSchemaSparqlWherePatterns({
-    filterPatterns,
-    valueVariable,
-    ...otherParameters,
-  });
+  return patterns;
 };
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
@@ -1048,7 +1039,6 @@ interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
 }
 
 type $LiteralSchema = Readonly<{
-  defaultValue?: rdfjs.Literal;
   in?: readonly rdfjs.Literal[];
   kind: "LiteralType";
   languageIn?: readonly string[];
@@ -1064,13 +1054,6 @@ function $literalSchemaSparqlWherePatterns({
   preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?:
-      | boolean
-      | Date
-      | string
-      | number
-      | rdfjs.Literal
-      | rdfjs.NamedNode;
     languageIn?: readonly string[];
     in?: readonly (
       | boolean
@@ -1083,7 +1066,7 @@ function $literalSchemaSparqlWherePatterns({
   }>;
   valueVariable: rdfjs.Variable;
 }): readonly $SparqlPattern[] {
-  let patterns: $SparqlPattern[] = propertyPatterns.concat();
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
     patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
@@ -1105,14 +1088,6 @@ function $literalSchemaSparqlWherePatterns({
       },
       type: "filter",
     });
-  }
-
-  if (
-    filterPatterns.length === 0 &&
-    typeof schema.defaultValue !== "undefined"
-  ) {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);
@@ -1220,7 +1195,6 @@ interface $NamedNodeFilter {
 
 const $namedNodeIdentifierTypeSchema = { kind: "NamedNodeType" as const };
 type $NamedNodeSchema = Readonly<{
-  defaultValue?: rdfjs.NamedNode;
   in?: readonly rdfjs.NamedNode[];
   kind: "NamedNodeType";
 }>;
@@ -1365,7 +1339,6 @@ interface $NumberFilter {
 }
 
 type $NumberSchema = Readonly<{
-  defaultValue?: number;
   in?: readonly number[];
   kind: "FloatType" | "IntType";
   languageIn?: readonly string[];
@@ -1675,7 +1648,6 @@ interface $StringFilter {
 }
 
 type $StringSchema = Readonly<{
-  defaultValue?: string;
   in?: readonly string[];
   kind: "StringType";
   languageIn?: readonly string[];

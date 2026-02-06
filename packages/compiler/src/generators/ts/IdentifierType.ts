@@ -69,13 +69,6 @@ export class IdentifierType extends AbstractIdentifierType<
     };
   }
 
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "defaultValue?": "rdfjs.NamedNode",
-    };
-  }
-
   override fromJsonExpression({
     variables,
   }: Parameters<
@@ -148,19 +141,19 @@ interface ${syntheticNamePrefix}IdentifierFilter {
             {
               code: `\
 const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+  ({ filter, propertyPatterns, valueVariable }) => {
+    const patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
         const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
         if (valueIn.length > 0) {
-          filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn }));
+          patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn }));
         }
       }
 
       if (typeof filter.type !== "undefined") {
-        filterPatterns.push({
+        patterns.push({
           expression: {
             type: "operation",
             operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
@@ -172,11 +165,10 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${syntheticNamePrefix
       }
     }
 
-    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return patterns;
   }`,
               dependencies: {
                 ...sharedSnippetDeclarations.sparqlValueInPattern,
-                ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
                 ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
               },
             },

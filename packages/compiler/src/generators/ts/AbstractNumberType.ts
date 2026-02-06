@@ -58,7 +58,6 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "number",
       kind: '"FloatType" | "IntType"',
       "in?": `readonly number[]`,
     };

@@ -63,7 +63,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "Date",
       kind: '"DateTimeType" | "DateType"',
       "in?": "readonly Date[]",
     };

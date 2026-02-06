@@ -31,7 +31,6 @@ export class StringType extends AbstractPrimitiveType<string> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "string",
       "in?": `readonly string[]`,
     };
   }
