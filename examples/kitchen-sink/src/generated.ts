@@ -292,6 +292,31 @@ function $deduplicateSparqlPatterns(
   return deduplicatedPatterns;
 }
 
+type $DefaultValueSchema<ItemSchemaT> = {
+  readonly defaultValue: rdfjs.Literal | rdfjs.NamedNode;
+  readonly item: ItemSchemaT;
+};
+
+function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
+  itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $SparqlWherePatternsFunction<ItemFilterT, $DefaultValueSchema<ItemSchemaT>> {
+  return ({ schema, ...otherParameters }) => {
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
+      itemSparqlWherePatternsFunction({
+        schema: schema.item,
+        ...otherParameters,
+      }),
+    );
+    return [
+      { patterns: itemSparqlWherePatterns.concat(), type: "optional" },
+      ...liftSparqlPatterns,
+    ];
+  };
+}
+
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
 
 export namespace $EqualsResult {
@@ -1147,9 +1172,9 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       // Treat the item's patterns as optional
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
-          ...otherParameters,
           filter,
           schema: schema.item,
+          ...otherParameters,
         }),
       );
       return [
@@ -1162,8 +1187,8 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       // Use FILTER NOT EXISTS around the item's patterns
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
-          ...otherParameters,
           schema: schema.item,
+          ...otherParameters,
         }),
       );
       return [
@@ -1182,9 +1207,9 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
 
     // Treat the item as required.
     return itemSparqlWherePatternsFunction({
-      ...otherParameters,
       filter,
       schema: schema.item,
+      ...otherParameters,
     });
   };
 }
@@ -1820,7 +1845,6 @@ function $termFilterSparqlPatterns({
 }
 
 type $TermSchema = Readonly<{
-  defaultValue?: rdfjs.Literal | rdfjs.NamedNode;
   in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
   kind: "TermType";
 }>;
@@ -1833,13 +1857,6 @@ function $termSchemaSparqlWherePatterns({
   filterPatterns: readonly $SparqlFilterPattern[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?:
-      | boolean
-      | Date
-      | string
-      | number
-      | rdfjs.Literal
-      | rdfjs.NamedNode;
     in?: readonly (
       | boolean
       | Date
@@ -1851,18 +1868,10 @@ function $termSchemaSparqlWherePatterns({
   }>;
   valueVariable: rdfjs.Variable;
 }): readonly $SparqlPattern[] {
-  let patterns: $SparqlPattern[] = propertyPatterns.concat();
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
     patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
-  }
-
-  if (
-    filterPatterns.length === 0 &&
-    typeof schema.defaultValue !== "undefined"
-  ) {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);
@@ -1877,7 +1886,7 @@ const $termSparqlWherePatterns: $SparqlWherePatternsFunction<
     ...parameters,
   });
 function $toLiteral(
-  value: boolean | Date | number | string,
+  value: boolean | Date | number | rdfjs.Literal | string,
   datatype?: rdfjs.NamedNode,
 ): rdfjs.Literal {
   switch (typeof value) {
@@ -1906,8 +1915,8 @@ function $toLiteral(
           $RdfVocabularies.xsd.dateTime,
         );
       }
-      value satisfies never;
-      throw new Error("should never happen");
+
+      return value;
     }
     case "number": {
       if (datatype) {
@@ -3183,7 +3192,7 @@ export namespace UuidV4IriIdentifierInterface {
     resource.add(
       UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty
         .identifier,
-      ...[_uuidV4IriIdentifierInterface.uuidV4IriProperty],
+      ...[dataFactory.literal(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
     );
     return resource;
   }
@@ -3339,7 +3348,7 @@ export class UuidV4IriIdentifierClass {
     });
     resource.add(
       UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier,
-      ...[this.uuidV4IriProperty],
+      ...[dataFactory.literal(this.uuidV4IriProperty)],
     );
     return resource;
   }
@@ -4673,7 +4682,7 @@ export class UnionDiscriminantsClass {
         .optionalClassOrClassOrStringProperty.identifier,
       ...this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         value.type === "2-string"
-          ? ([value.value] as readonly Parameters<
+          ? ([dataFactory.literal(value.value)] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : ([
@@ -4703,11 +4712,14 @@ export class UnionDiscriminantsClass {
         .identifier,
       ...this.optionalIriOrStringProperty
         .toList()
-        .flatMap(
-          (value) =>
-            [value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][],
+        .flatMap((value) =>
+          typeof value === "string"
+            ? ([dataFactory.literal(value)] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
         ),
     );
     resource.add(
@@ -4715,7 +4727,9 @@ export class UnionDiscriminantsClass {
         .requiredClassOrClassOrStringProperty.identifier,
       ...(this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
-            this.requiredClassOrClassOrStringProperty.value,
+            dataFactory.literal(
+              this.requiredClassOrClassOrStringProperty.value,
+            ),
           ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
         : ([
             this.requiredClassOrClassOrStringProperty.value.$toRdf({
@@ -4734,16 +4748,20 @@ export class UnionDiscriminantsClass {
     resource.add(
       UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty
         .identifier,
-      ...([this.requiredIriOrStringProperty] as readonly Parameters<
-        rdfjsResource.MutableResource["add"]
-      >[1][]),
+      ...(typeof this.requiredIriOrStringProperty === "string"
+        ? ([
+            dataFactory.literal(this.requiredIriOrStringProperty),
+          ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
+        : ([this.requiredIriOrStringProperty] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][])),
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty
         .identifier,
       ...this.setClassOrClassOrStringProperty.flatMap((item) =>
         item.type === "2-string"
-          ? ([item.value] as readonly Parameters<
+          ? ([dataFactory.literal(item.value)] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : ([
@@ -4769,11 +4787,14 @@ export class UnionDiscriminantsClass {
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty
         .identifier,
-      ...this.setIriOrStringProperty.flatMap(
-        (item) =>
-          [item] as readonly Parameters<
-            rdfjsResource.MutableResource["add"]
-          >[1][],
+      ...this.setIriOrStringProperty.flatMap((item) =>
+        typeof item === "string"
+          ? ([dataFactory.literal(item)] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][])
+          : ([item] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][]),
       ),
     );
     return resource;
@@ -8386,7 +8407,11 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$schema.properties.booleanTermProperty.identifier,
-      ...this.booleanTermProperty.toList(),
+      ...this.booleanTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(), $RdfVocabularies.xsd.boolean),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$schema.properties.dateTermProperty.identifier,
@@ -8428,7 +8453,9 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$schema.properties.stringTermProperty.identifier,
-      ...this.stringTermProperty.toList(),
+      ...this.stringTermProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
       TermPropertiesClass.$schema.properties.termProperty.identifier,
@@ -9960,7 +9987,7 @@ export class Sha256IriIdentifierClass {
     });
     resource.add(
       Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier,
-      ...[this.sha256IriProperty],
+      ...[dataFactory.literal(this.sha256IriProperty)],
     );
     return resource;
   }
@@ -11737,15 +11764,15 @@ export class PropertyVisibilitiesClass {
     });
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier,
-      ...[this.privateProperty],
+      ...[dataFactory.literal(this.privateProperty)],
     );
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier,
-      ...[this.protectedProperty],
+      ...[dataFactory.literal(this.protectedProperty)],
     );
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier,
-      ...[this.publicProperty],
+      ...[dataFactory.literal(this.publicProperty)],
     );
     return resource;
   }
@@ -12477,22 +12504,28 @@ export class PropertyCardinalitiesClass {
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty
         .identifier,
-      ...this.emptyStringSetProperty.flatMap((item) => [item]),
+      ...this.emptyStringSetProperty.flatMap((item) => [
+        dataFactory.literal(item),
+      ]),
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty
         .identifier,
-      ...this.nonEmptyStringSetProperty.flatMap((item) => [item]),
+      ...this.nonEmptyStringSetProperty.flatMap((item) => [
+        dataFactory.literal(item),
+      ]),
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.optionalStringProperty
         .identifier,
-      ...this.optionalStringProperty.toList(),
+      ...this.optionalStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.requiredStringProperty
         .identifier,
-      ...[this.requiredStringProperty],
+      ...[dataFactory.literal(this.requiredStringProperty)],
     );
     return resource;
   }
@@ -13827,7 +13860,11 @@ export namespace PartialInterfaceUnionMember2 {
     resource.add(
       PartialInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_partialInterfaceUnionMember2.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -14451,7 +14488,11 @@ export namespace PartialInterfaceUnionMember1 {
     resource.add(
       PartialInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_partialInterfaceUnionMember1.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -14591,7 +14632,7 @@ export class PartialClassUnionMember2 {
     resource.add(
       PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -15189,7 +15230,7 @@ export class PartialClassUnionMember1 {
     resource.add(
       PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -15810,15 +15851,15 @@ export class OrderedPropertiesClass {
     });
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier,
-      ...[this.orderedPropertyC],
+      ...[dataFactory.literal(this.orderedPropertyC)],
     );
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier,
-      ...[this.orderedPropertyB],
+      ...[dataFactory.literal(this.orderedPropertyB)],
     );
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier,
-      ...[this.orderedPropertyA],
+      ...[dataFactory.literal(this.orderedPropertyA)],
     );
     return resource;
   }
@@ -16479,7 +16520,7 @@ export class NonClass {
     });
     resource.add(
       NonClass.$schema.properties.nonClassProperty.identifier,
-      ...[this.nonClassProperty],
+      ...[dataFactory.literal(this.nonClassProperty)],
     );
     return resource;
   }
@@ -16942,7 +16983,7 @@ export class NoRdfTypeClassUnionMember2 {
     resource.add(
       NoRdfTypeClassUnionMember2.$schema.properties
         .noRdfTypeClassUnionMember2Property.identifier,
-      ...[this.noRdfTypeClassUnionMember2Property],
+      ...[dataFactory.literal(this.noRdfTypeClassUnionMember2Property)],
     );
     return resource;
   }
@@ -17440,7 +17481,7 @@ export class NoRdfTypeClassUnionMember1 {
     resource.add(
       NoRdfTypeClassUnionMember1.$schema.properties
         .noRdfTypeClassUnionMember1Property.identifier,
-      ...[this.noRdfTypeClassUnionMember1Property],
+      ...[dataFactory.literal(this.noRdfTypeClassUnionMember1Property)],
     );
     return resource;
   }
@@ -18083,7 +18124,7 @@ export class MutablePropertiesClass {
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[item],
+                  ...[dataFactory.literal(item)],
                 );
 
                 if (itemIndex + 1 === list.length) {
@@ -18111,12 +18152,14 @@ export class MutablePropertiesClass {
     );
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableSetProperty.identifier,
-      ...this.mutableSetProperty.flatMap((item) => [item]),
+      ...this.mutableSetProperty.flatMap((item) => [dataFactory.literal(item)]),
     );
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableStringProperty
         .identifier,
-      ...this.mutableStringProperty.toList(),
+      ...this.mutableStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
@@ -19275,7 +19318,7 @@ export class ListPropertiesClass {
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[item],
+                  ...[dataFactory.literal(item)],
                 );
 
                 if (itemIndex + 1 === list.length) {
@@ -20726,7 +20769,7 @@ export namespace PartialInterface {
     resource.add(
       PartialInterface.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[_partialInterface.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(_partialInterface.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -24423,7 +24466,7 @@ export class PartialClass {
     });
     resource.add(
       PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -28685,7 +28728,11 @@ export namespace LazilyResolvedIriIdentifierInterface {
     resource.add(
       LazilyResolvedIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -28806,7 +28853,7 @@ export class LazilyResolvedIriIdentifierClass {
     resource.add(
       LazilyResolvedIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -29804,7 +29851,11 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     resource.add(
       LazilyResolvedInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -30431,7 +30482,11 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     resource.add(
       LazilyResolvedInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -30571,7 +30626,7 @@ export class LazilyResolvedClassUnionMember2 {
     resource.add(
       LazilyResolvedClassUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -31172,7 +31227,7 @@ export class LazilyResolvedClassUnionMember1 {
     resource.add(
       LazilyResolvedClassUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -32279,7 +32334,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty.identifier,
       ...[
-        _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+        dataFactory.literal(
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+        ),
       ],
     );
     return resource;
@@ -32423,7 +32480,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     resource.add(
       LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -33679,7 +33736,7 @@ export class JsPrimitiveUnionPropertyClass {
         .identifier,
       ...this.jsPrimitiveUnionProperty.flatMap((item) =>
         typeof item === "string"
-          ? ([item] as readonly Parameters<
+          ? ([dataFactory.literal(item)] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : typeof item === "number"
@@ -33691,7 +33748,12 @@ export class JsPrimitiveUnionPropertyClass {
               ] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][])
-            : ([item] as readonly Parameters<
+            : ([
+                dataFactory.literal(
+                  item.toString(),
+                  $RdfVocabularies.xsd.boolean,
+                ),
+              ] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][]),
       ),
@@ -35777,7 +35839,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       InterfaceUnionMemberCommonParentStatic.$schema.properties
         .interfaceUnionMemberCommonParentProperty.identifier,
       ...[
-        _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+        dataFactory.literal(
+          _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+        ),
       ],
     );
     return resource;
@@ -36358,7 +36422,11 @@ export namespace InterfaceUnionMember2 {
     resource.add(
       InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property
         .identifier,
-      ...[_interfaceUnionMember2.interfaceUnionMember2Property],
+      ...[
+        dataFactory.literal(
+          _interfaceUnionMember2.interfaceUnionMember2Property,
+        ),
+      ],
     );
     return resource;
   }
@@ -36937,7 +37005,11 @@ export namespace InterfaceUnionMember1 {
     resource.add(
       InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property
         .identifier,
-      ...[_interfaceUnionMember1.interfaceUnionMember1Property],
+      ...[
+        dataFactory.literal(
+          _interfaceUnionMember1.interfaceUnionMember1Property,
+        ),
+      ],
     );
     return resource;
   }
@@ -37411,7 +37483,7 @@ export namespace Interface {
     });
     resource.add(
       Interface.$schema.properties.interfaceProperty.identifier,
-      ...[_interface.interfaceProperty],
+      ...[dataFactory.literal(_interface.interfaceProperty)],
     );
     return resource;
   }
@@ -38936,7 +39008,11 @@ export class InPropertiesClass {
 
     resource.add(
       InPropertiesClass.$schema.properties.inBooleansProperty.identifier,
-      ...this.inBooleansProperty.toList(),
+      ...this.inBooleansProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(), $RdfVocabularies.xsd.boolean),
+        ]),
     );
     resource.add(
       InPropertiesClass.$schema.properties.inDateTimesProperty.identifier,
@@ -38963,7 +39039,9 @@ export class InPropertiesClass {
     );
     resource.add(
       InPropertiesClass.$schema.properties.inStringsProperty.identifier,
-      ...this.inStringsProperty.toList(),
+      ...this.inStringsProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
@@ -40142,7 +40220,9 @@ export class InIdentifierClass {
 
     resource.add(
       InIdentifierClass.$schema.properties.inIdentifierProperty.identifier,
-      ...this.inIdentifierProperty.toList(),
+      ...this.inIdentifierProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
@@ -40812,7 +40892,7 @@ export abstract class IdentifierOverride1Class {
     resource.add(
       IdentifierOverride1ClassStatic.$schema.properties
         .identifierOverrideProperty.identifier,
-      ...[this.identifierOverrideProperty],
+      ...[dataFactory.literal(this.identifierOverrideProperty)],
     );
     return resource;
   }
@@ -42883,7 +42963,7 @@ export class HasValuePropertiesClass {
     resource.add(
       HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty
         .identifier,
-      ...[this.hasLiteralValueProperty],
+      ...[dataFactory.literal(this.hasLiteralValueProperty)],
     );
     return resource;
   }
@@ -43483,7 +43563,7 @@ export class FlattenClassUnionMember3 {
     resource.add(
       FlattenClassUnionMember3.$schema.properties
         .flattenClassUnionMember3Property.identifier,
-      ...[this.flattenClassUnionMember3Property],
+      ...[dataFactory.literal(this.flattenClassUnionMember3Property)],
     );
     return resource;
   }
@@ -44744,7 +44824,7 @@ export abstract class AbstractBaseClassForExternClass {
     resource.add(
       AbstractBaseClassForExternClassStatic.$schema.properties
         .abstractBaseClassForExternClassProperty.identifier,
-      ...[this.abstractBaseClassForExternClassProperty],
+      ...[dataFactory.literal(this.abstractBaseClassForExternClassProperty)],
     );
     return resource;
   }
@@ -45220,7 +45300,7 @@ export class ExplicitRdfTypeClass {
     resource.add(
       ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty
         .identifier,
-      ...[this.explicitRdfTypeProperty],
+      ...[dataFactory.literal(this.explicitRdfTypeProperty)],
     );
     return resource;
   }
@@ -45825,7 +45905,7 @@ export class ExplicitFromToRdfTypesClass {
     resource.add(
       ExplicitFromToRdfTypesClass.$schema.properties
         .explicitFromToRdfTypesProperty.identifier,
-      ...[this.explicitFromToRdfTypesProperty],
+      ...[dataFactory.literal(this.explicitFromToRdfTypesProperty)],
     );
     return resource;
   }
@@ -46916,22 +46996,52 @@ export class DefaultValuePropertiesClass {
   private _$identifier?: DefaultValuePropertiesClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "DefaultValuePropertiesClass";
-  readonly dateDefaultValueProperty: Date;
-  readonly dateTimeDefaultValueProperty: Date;
-  readonly falseBooleanDefaultValueProperty: boolean;
-  readonly numberDefaultValueProperty: number;
-  readonly stringDefaultValueProperty: string;
-  readonly trueBooleanDefaultValueProperty: boolean;
+  readonly dateDefaultValueProperty: rdfjs.Literal;
+  readonly dateTimeDefaultValueProperty: rdfjs.Literal;
+  readonly falseBooleanDefaultValueProperty: rdfjs.Literal;
+  readonly numberDefaultValueProperty: rdfjs.Literal;
+  readonly stringDefaultValueProperty: rdfjs.Literal;
+  readonly trueBooleanDefaultValueProperty: rdfjs.Literal;
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly $identifierPrefix?: string;
-    readonly dateDefaultValueProperty?: Date;
-    readonly dateTimeDefaultValueProperty?: Date;
-    readonly falseBooleanDefaultValueProperty?: boolean;
-    readonly numberDefaultValueProperty?: number;
-    readonly stringDefaultValueProperty?: string;
-    readonly trueBooleanDefaultValueProperty?: boolean;
+    readonly dateDefaultValueProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly dateTimeDefaultValueProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly falseBooleanDefaultValueProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly numberDefaultValueProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly stringDefaultValueProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
+    readonly trueBooleanDefaultValueProperty?:
+      | rdfjs.Literal
+      | Date
+      | boolean
+      | number
+      | string;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -46943,70 +47053,205 @@ export class DefaultValuePropertiesClass {
     }
 
     this._$identifierPrefix = parameters?.$identifierPrefix;
-    if (
+    if (typeof parameters?.dateDefaultValueProperty === "boolean") {
+      this.dateDefaultValueProperty = $toLiteral(
+        parameters?.dateDefaultValueProperty,
+      );
+    } else if (
       typeof parameters?.dateDefaultValueProperty === "object" &&
       parameters?.dateDefaultValueProperty instanceof Date
     ) {
+      this.dateDefaultValueProperty = $toLiteral(
+        parameters?.dateDefaultValueProperty,
+      );
+    } else if (typeof parameters?.dateDefaultValueProperty === "number") {
+      this.dateDefaultValueProperty = $toLiteral(
+        parameters?.dateDefaultValueProperty,
+      );
+    } else if (typeof parameters?.dateDefaultValueProperty === "string") {
+      this.dateDefaultValueProperty = $toLiteral(
+        parameters?.dateDefaultValueProperty,
+      );
+    } else if (typeof parameters?.dateDefaultValueProperty === "object") {
       this.dateDefaultValueProperty = parameters?.dateDefaultValueProperty;
     } else if (typeof parameters?.dateDefaultValueProperty === "undefined") {
-      this.dateDefaultValueProperty = new Date("2018-04-09T00:00:00.000Z");
+      this.dateDefaultValueProperty = dataFactory.literal(
+        "2018-04-09",
+        $RdfVocabularies.xsd.date,
+      );
     } else {
       this.dateDefaultValueProperty =
         parameters?.dateDefaultValueProperty satisfies never;
     }
 
-    if (
+    if (typeof parameters?.dateTimeDefaultValueProperty === "boolean") {
+      this.dateTimeDefaultValueProperty = $toLiteral(
+        parameters?.dateTimeDefaultValueProperty,
+      );
+    } else if (
       typeof parameters?.dateTimeDefaultValueProperty === "object" &&
       parameters?.dateTimeDefaultValueProperty instanceof Date
     ) {
+      this.dateTimeDefaultValueProperty = $toLiteral(
+        parameters?.dateTimeDefaultValueProperty,
+      );
+    } else if (typeof parameters?.dateTimeDefaultValueProperty === "number") {
+      this.dateTimeDefaultValueProperty = $toLiteral(
+        parameters?.dateTimeDefaultValueProperty,
+      );
+    } else if (typeof parameters?.dateTimeDefaultValueProperty === "string") {
+      this.dateTimeDefaultValueProperty = $toLiteral(
+        parameters?.dateTimeDefaultValueProperty,
+      );
+    } else if (typeof parameters?.dateTimeDefaultValueProperty === "object") {
       this.dateTimeDefaultValueProperty =
         parameters?.dateTimeDefaultValueProperty;
     } else if (
       typeof parameters?.dateTimeDefaultValueProperty === "undefined"
     ) {
-      this.dateTimeDefaultValueProperty = new Date("2018-04-09T10:00:00.000Z");
+      this.dateTimeDefaultValueProperty = dataFactory.literal(
+        "2018-04-09T10:00:00Z",
+        $RdfVocabularies.xsd.dateTime,
+      );
     } else {
       this.dateTimeDefaultValueProperty =
         parameters?.dateTimeDefaultValueProperty satisfies never;
     }
 
     if (typeof parameters?.falseBooleanDefaultValueProperty === "boolean") {
+      this.falseBooleanDefaultValueProperty = $toLiteral(
+        parameters?.falseBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.falseBooleanDefaultValueProperty === "object" &&
+      parameters?.falseBooleanDefaultValueProperty instanceof Date
+    ) {
+      this.falseBooleanDefaultValueProperty = $toLiteral(
+        parameters?.falseBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.falseBooleanDefaultValueProperty === "number"
+    ) {
+      this.falseBooleanDefaultValueProperty = $toLiteral(
+        parameters?.falseBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.falseBooleanDefaultValueProperty === "string"
+    ) {
+      this.falseBooleanDefaultValueProperty = $toLiteral(
+        parameters?.falseBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.falseBooleanDefaultValueProperty === "object"
+    ) {
       this.falseBooleanDefaultValueProperty =
         parameters?.falseBooleanDefaultValueProperty;
     } else if (
       typeof parameters?.falseBooleanDefaultValueProperty === "undefined"
     ) {
-      this.falseBooleanDefaultValueProperty = false;
+      this.falseBooleanDefaultValueProperty = dataFactory.literal(
+        "false",
+        $RdfVocabularies.xsd.boolean,
+      );
     } else {
       this.falseBooleanDefaultValueProperty =
         parameters?.falseBooleanDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters?.numberDefaultValueProperty === "number") {
+    if (typeof parameters?.numberDefaultValueProperty === "boolean") {
+      this.numberDefaultValueProperty = $toLiteral(
+        parameters?.numberDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.numberDefaultValueProperty === "object" &&
+      parameters?.numberDefaultValueProperty instanceof Date
+    ) {
+      this.numberDefaultValueProperty = $toLiteral(
+        parameters?.numberDefaultValueProperty,
+      );
+    } else if (typeof parameters?.numberDefaultValueProperty === "number") {
+      this.numberDefaultValueProperty = $toLiteral(
+        parameters?.numberDefaultValueProperty,
+      );
+    } else if (typeof parameters?.numberDefaultValueProperty === "string") {
+      this.numberDefaultValueProperty = $toLiteral(
+        parameters?.numberDefaultValueProperty,
+      );
+    } else if (typeof parameters?.numberDefaultValueProperty === "object") {
       this.numberDefaultValueProperty = parameters?.numberDefaultValueProperty;
     } else if (typeof parameters?.numberDefaultValueProperty === "undefined") {
-      this.numberDefaultValueProperty = 0;
+      this.numberDefaultValueProperty = dataFactory.literal(
+        "0",
+        $RdfVocabularies.xsd.integer,
+      );
     } else {
       this.numberDefaultValueProperty =
         parameters?.numberDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters?.stringDefaultValueProperty === "string") {
+    if (typeof parameters?.stringDefaultValueProperty === "boolean") {
+      this.stringDefaultValueProperty = $toLiteral(
+        parameters?.stringDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.stringDefaultValueProperty === "object" &&
+      parameters?.stringDefaultValueProperty instanceof Date
+    ) {
+      this.stringDefaultValueProperty = $toLiteral(
+        parameters?.stringDefaultValueProperty,
+      );
+    } else if (typeof parameters?.stringDefaultValueProperty === "number") {
+      this.stringDefaultValueProperty = $toLiteral(
+        parameters?.stringDefaultValueProperty,
+      );
+    } else if (typeof parameters?.stringDefaultValueProperty === "string") {
+      this.stringDefaultValueProperty = $toLiteral(
+        parameters?.stringDefaultValueProperty,
+      );
+    } else if (typeof parameters?.stringDefaultValueProperty === "object") {
       this.stringDefaultValueProperty = parameters?.stringDefaultValueProperty;
     } else if (typeof parameters?.stringDefaultValueProperty === "undefined") {
-      this.stringDefaultValueProperty = "";
+      this.stringDefaultValueProperty = dataFactory.literal("");
     } else {
       this.stringDefaultValueProperty =
         parameters?.stringDefaultValueProperty satisfies never;
     }
 
     if (typeof parameters?.trueBooleanDefaultValueProperty === "boolean") {
+      this.trueBooleanDefaultValueProperty = $toLiteral(
+        parameters?.trueBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.trueBooleanDefaultValueProperty === "object" &&
+      parameters?.trueBooleanDefaultValueProperty instanceof Date
+    ) {
+      this.trueBooleanDefaultValueProperty = $toLiteral(
+        parameters?.trueBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.trueBooleanDefaultValueProperty === "number"
+    ) {
+      this.trueBooleanDefaultValueProperty = $toLiteral(
+        parameters?.trueBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.trueBooleanDefaultValueProperty === "string"
+    ) {
+      this.trueBooleanDefaultValueProperty = $toLiteral(
+        parameters?.trueBooleanDefaultValueProperty,
+      );
+    } else if (
+      typeof parameters?.trueBooleanDefaultValueProperty === "object"
+    ) {
       this.trueBooleanDefaultValueProperty =
         parameters?.trueBooleanDefaultValueProperty;
     } else if (
       typeof parameters?.trueBooleanDefaultValueProperty === "undefined"
     ) {
-      this.trueBooleanDefaultValueProperty = true;
+      this.trueBooleanDefaultValueProperty = dataFactory.literal(
+        "true",
+        $RdfVocabularies.xsd.boolean,
+      );
     } else {
       this.trueBooleanDefaultValueProperty =
         parameters?.trueBooleanDefaultValueProperty satisfies never;
@@ -47061,7 +47306,7 @@ export class DefaultValuePropertiesClass {
         ),
       )
       .chain(() =>
-        $dateEquals(
+        $booleanEquals(
           this.dateDefaultValueProperty,
           other.dateDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47073,7 +47318,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $dateEquals(
+        $booleanEquals(
           this.dateTimeDefaultValueProperty,
           other.dateTimeDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47085,7 +47330,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $strictEquals(
+        $booleanEquals(
           this.falseBooleanDefaultValueProperty,
           other.falseBooleanDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47097,7 +47342,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $strictEquals(
+        $booleanEquals(
           this.numberDefaultValueProperty,
           other.numberDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47109,7 +47354,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $strictEquals(
+        $booleanEquals(
           this.stringDefaultValueProperty,
           other.stringDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47121,7 +47366,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $strictEquals(
+        $booleanEquals(
           this.trueBooleanDefaultValueProperty,
           other.trueBooleanDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47150,12 +47395,30 @@ export class DefaultValuePropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    _hasher.update(this.dateDefaultValueProperty.toISOString());
-    _hasher.update(this.dateTimeDefaultValueProperty.toISOString());
-    _hasher.update(this.falseBooleanDefaultValueProperty.toString());
-    _hasher.update(this.numberDefaultValueProperty.toString());
-    _hasher.update(this.stringDefaultValueProperty);
-    _hasher.update(this.trueBooleanDefaultValueProperty.toString());
+    _hasher.update(this.dateDefaultValueProperty.datatype.value);
+    _hasher.update(this.dateDefaultValueProperty.language);
+    _hasher.update(this.dateDefaultValueProperty.termType);
+    _hasher.update(this.dateDefaultValueProperty.value);
+    _hasher.update(this.dateTimeDefaultValueProperty.datatype.value);
+    _hasher.update(this.dateTimeDefaultValueProperty.language);
+    _hasher.update(this.dateTimeDefaultValueProperty.termType);
+    _hasher.update(this.dateTimeDefaultValueProperty.value);
+    _hasher.update(this.falseBooleanDefaultValueProperty.datatype.value);
+    _hasher.update(this.falseBooleanDefaultValueProperty.language);
+    _hasher.update(this.falseBooleanDefaultValueProperty.termType);
+    _hasher.update(this.falseBooleanDefaultValueProperty.value);
+    _hasher.update(this.numberDefaultValueProperty.datatype.value);
+    _hasher.update(this.numberDefaultValueProperty.language);
+    _hasher.update(this.numberDefaultValueProperty.termType);
+    _hasher.update(this.numberDefaultValueProperty.value);
+    _hasher.update(this.stringDefaultValueProperty.datatype.value);
+    _hasher.update(this.stringDefaultValueProperty.language);
+    _hasher.update(this.stringDefaultValueProperty.termType);
+    _hasher.update(this.stringDefaultValueProperty.value);
+    _hasher.update(this.trueBooleanDefaultValueProperty.datatype.value);
+    _hasher.update(this.trueBooleanDefaultValueProperty.language);
+    _hasher.update(this.trueBooleanDefaultValueProperty.termType);
+    _hasher.update(this.trueBooleanDefaultValueProperty.value);
     return _hasher;
   }
 
@@ -47167,15 +47430,78 @@ export class DefaultValuePropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        dateDefaultValueProperty: this.dateDefaultValueProperty
-          .toISOString()
-          .replace(/T.*$/, ""),
-        dateTimeDefaultValueProperty:
-          this.dateTimeDefaultValueProperty.toISOString(),
-        falseBooleanDefaultValueProperty: this.falseBooleanDefaultValueProperty,
-        numberDefaultValueProperty: this.numberDefaultValueProperty,
-        stringDefaultValueProperty: this.stringDefaultValueProperty,
-        trueBooleanDefaultValueProperty: this.trueBooleanDefaultValueProperty,
+        dateDefaultValueProperty: {
+          "@language":
+            this.dateDefaultValueProperty.language.length > 0
+              ? this.dateDefaultValueProperty.language
+              : undefined,
+          "@type":
+            this.dateDefaultValueProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.dateDefaultValueProperty.datatype.value
+              : undefined,
+          "@value": this.dateDefaultValueProperty.value,
+        },
+        dateTimeDefaultValueProperty: {
+          "@language":
+            this.dateTimeDefaultValueProperty.language.length > 0
+              ? this.dateTimeDefaultValueProperty.language
+              : undefined,
+          "@type":
+            this.dateTimeDefaultValueProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.dateTimeDefaultValueProperty.datatype.value
+              : undefined,
+          "@value": this.dateTimeDefaultValueProperty.value,
+        },
+        falseBooleanDefaultValueProperty: {
+          "@language":
+            this.falseBooleanDefaultValueProperty.language.length > 0
+              ? this.falseBooleanDefaultValueProperty.language
+              : undefined,
+          "@type":
+            this.falseBooleanDefaultValueProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.falseBooleanDefaultValueProperty.datatype.value
+              : undefined,
+          "@value": this.falseBooleanDefaultValueProperty.value,
+        },
+        numberDefaultValueProperty: {
+          "@language":
+            this.numberDefaultValueProperty.language.length > 0
+              ? this.numberDefaultValueProperty.language
+              : undefined,
+          "@type":
+            this.numberDefaultValueProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.numberDefaultValueProperty.datatype.value
+              : undefined,
+          "@value": this.numberDefaultValueProperty.value,
+        },
+        stringDefaultValueProperty: {
+          "@language":
+            this.stringDefaultValueProperty.language.length > 0
+              ? this.stringDefaultValueProperty.language
+              : undefined,
+          "@type":
+            this.stringDefaultValueProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.stringDefaultValueProperty.datatype.value
+              : undefined,
+          "@value": this.stringDefaultValueProperty.value,
+        },
+        trueBooleanDefaultValueProperty: {
+          "@language":
+            this.trueBooleanDefaultValueProperty.language.length > 0
+              ? this.trueBooleanDefaultValueProperty.language
+              : undefined,
+          "@type":
+            this.trueBooleanDefaultValueProperty.datatype.value !==
+            "http://www.w3.org/2001/XMLSchema#string"
+              ? this.trueBooleanDefaultValueProperty.datatype.value
+              : undefined,
+          "@value": this.trueBooleanDefaultValueProperty.value,
+        },
       } satisfies DefaultValuePropertiesClass.$Json),
     );
   }
@@ -47208,55 +47534,60 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
         .identifier,
-      ...(this.dateDefaultValueProperty.getTime() !== 1523232000000
-        ? [
-            dataFactory.literal(
-              this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
-              $RdfVocabularies.xsd.date,
-            ),
-          ]
-        : []),
+      ...[this.dateDefaultValueProperty].filter(
+        (value) =>
+          !value.equals(
+            dataFactory.literal("2018-04-09", $RdfVocabularies.xsd.date),
+          ),
+      ),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .dateTimeDefaultValueProperty.identifier,
-      ...(this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
-        ? [
+      ...[this.dateTimeDefaultValueProperty].filter(
+        (value) =>
+          !value.equals(
             dataFactory.literal(
-              this.dateTimeDefaultValueProperty.toISOString(),
+              "2018-04-09T10:00:00Z",
               $RdfVocabularies.xsd.dateTime,
             ),
-          ]
-        : []),
+          ),
+      ),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .falseBooleanDefaultValueProperty.identifier,
-      ...(this.falseBooleanDefaultValueProperty ? [true] : []),
+      ...[this.falseBooleanDefaultValueProperty].filter(
+        (value) =>
+          !value.equals(
+            dataFactory.literal("false", $RdfVocabularies.xsd.boolean),
+          ),
+      ),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty
         .identifier,
-      ...(this.numberDefaultValueProperty !== 0
-        ? [
-            dataFactory.literal(
-              this.numberDefaultValueProperty.toString(10),
-              $RdfVocabularies.xsd.integer,
-            ),
-          ]
-        : []),
+      ...[this.numberDefaultValueProperty].filter(
+        (value) =>
+          !value.equals(dataFactory.literal("0", $RdfVocabularies.xsd.integer)),
+      ),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty
         .identifier,
-      ...(this.stringDefaultValueProperty !== ""
-        ? [this.stringDefaultValueProperty]
-        : []),
+      ...[this.stringDefaultValueProperty].filter(
+        (value) => !value.equals(dataFactory.literal("")),
+      ),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .trueBooleanDefaultValueProperty.identifier,
-      ...(!this.trueBooleanDefaultValueProperty ? [false] : []),
+      ...[this.trueBooleanDefaultValueProperty].filter(
+        (value) =>
+          !value.equals(
+            dataFactory.literal("true", $RdfVocabularies.xsd.boolean),
+          ),
+      ),
     );
     return resource;
   }
@@ -47280,7 +47611,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.dateDefaultValueProperty !== "undefined" &&
-      !$filterDate(
+      !$filterLiteral(
         filter.dateDefaultValueProperty,
         value.dateDefaultValueProperty,
       )
@@ -47290,7 +47621,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.dateTimeDefaultValueProperty !== "undefined" &&
-      !$filterDate(
+      !$filterLiteral(
         filter.dateTimeDefaultValueProperty,
         value.dateTimeDefaultValueProperty,
       )
@@ -47300,7 +47631,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.falseBooleanDefaultValueProperty !== "undefined" &&
-      !$filterBoolean(
+      !$filterLiteral(
         filter.falseBooleanDefaultValueProperty,
         value.falseBooleanDefaultValueProperty,
       )
@@ -47310,7 +47641,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.numberDefaultValueProperty !== "undefined" &&
-      !$filterNumber(
+      !$filterLiteral(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
       )
@@ -47320,7 +47651,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.stringDefaultValueProperty !== "undefined" &&
-      !$filterString(
+      !$filterLiteral(
         filter.stringDefaultValueProperty,
         value.stringDefaultValueProperty,
       )
@@ -47330,7 +47661,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.trueBooleanDefaultValueProperty !== "undefined" &&
-      !$filterBoolean(
+      !$filterLiteral(
         filter.trueBooleanDefaultValueProperty,
         value.trueBooleanDefaultValueProperty,
       )
@@ -47343,12 +47674,12 @@ export namespace DefaultValuePropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly dateDefaultValueProperty?: $DateFilter;
-    readonly dateTimeDefaultValueProperty?: $DateFilter;
-    readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
-    readonly numberDefaultValueProperty?: $NumberFilter;
-    readonly stringDefaultValueProperty?: $StringFilter;
-    readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
+    readonly dateDefaultValueProperty?: $LiteralFilter;
+    readonly dateTimeDefaultValueProperty?: $LiteralFilter;
+    readonly falseBooleanDefaultValueProperty?: $LiteralFilter;
+    readonly numberDefaultValueProperty?: $LiteralFilter;
+    readonly stringDefaultValueProperty?: $LiteralFilter;
+    readonly trueBooleanDefaultValueProperty?: $LiteralFilter;
   };
 
   export function $fromJson(
@@ -47411,12 +47742,36 @@ export namespace DefaultValuePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "DefaultValuePropertiesClass";
-    readonly dateDefaultValueProperty: string;
-    readonly dateTimeDefaultValueProperty: string;
-    readonly falseBooleanDefaultValueProperty: boolean;
-    readonly numberDefaultValueProperty: number;
-    readonly stringDefaultValueProperty: string;
-    readonly trueBooleanDefaultValueProperty: boolean;
+    readonly dateDefaultValueProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly dateTimeDefaultValueProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly falseBooleanDefaultValueProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly numberDefaultValueProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly stringDefaultValueProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
+    readonly trueBooleanDefaultValueProperty: {
+      readonly "@language"?: string;
+      readonly "@type"?: string;
+      readonly "@value": string;
+    };
   };
 
   export function $jsonSchema() {
@@ -47477,12 +47832,36 @@ export namespace DefaultValuePropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("DefaultValuePropertiesClass"),
-      dateDefaultValueProperty: zod.iso.date(),
-      dateTimeDefaultValueProperty: zod.iso.datetime(),
-      falseBooleanDefaultValueProperty: zod.boolean(),
-      numberDefaultValueProperty: zod.number(),
-      stringDefaultValueProperty: zod.string(),
-      trueBooleanDefaultValueProperty: zod.boolean(),
+      dateDefaultValueProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
+      dateTimeDefaultValueProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
+      falseBooleanDefaultValueProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
+      numberDefaultValueProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
+      stringDefaultValueProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
+      trueBooleanDefaultValueProperty: zod.object({
+        "@language": zod.string().optional(),
+        "@type": zod.string().optional(),
+        "@value": zod.string(),
+      }),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -47490,12 +47869,12 @@ export namespace DefaultValuePropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      dateDefaultValueProperty: Date;
-      dateTimeDefaultValueProperty: Date;
-      falseBooleanDefaultValueProperty: boolean;
-      numberDefaultValueProperty: number;
-      stringDefaultValueProperty: string;
-      trueBooleanDefaultValueProperty: boolean;
+      dateDefaultValueProperty: rdfjs.Literal;
+      dateTimeDefaultValueProperty: rdfjs.Literal;
+      falseBooleanDefaultValueProperty: rdfjs.Literal;
+      numberDefaultValueProperty: rdfjs.Literal;
+      stringDefaultValueProperty: rdfjs.Literal;
+      trueBooleanDefaultValueProperty: rdfjs.Literal;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -47507,20 +47886,78 @@ export namespace DefaultValuePropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const dateDefaultValueProperty = new Date(
-      $jsonObject["dateDefaultValueProperty"],
+    const dateDefaultValueProperty = dataFactory.literal(
+      $jsonObject["dateDefaultValueProperty"]["@value"],
+      typeof $jsonObject["dateDefaultValueProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["dateDefaultValueProperty"]["@language"]
+        : typeof $jsonObject["dateDefaultValueProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["dateDefaultValueProperty"]["@type"],
+            )
+          : undefined,
     );
-    const dateTimeDefaultValueProperty = new Date(
-      $jsonObject["dateTimeDefaultValueProperty"],
+    const dateTimeDefaultValueProperty = dataFactory.literal(
+      $jsonObject["dateTimeDefaultValueProperty"]["@value"],
+      typeof $jsonObject["dateTimeDefaultValueProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["dateTimeDefaultValueProperty"]["@language"]
+        : typeof $jsonObject["dateTimeDefaultValueProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["dateTimeDefaultValueProperty"]["@type"],
+            )
+          : undefined,
     );
-    const falseBooleanDefaultValueProperty =
-      $jsonObject["falseBooleanDefaultValueProperty"];
-    const numberDefaultValueProperty =
-      $jsonObject["numberDefaultValueProperty"];
-    const stringDefaultValueProperty =
-      $jsonObject["stringDefaultValueProperty"];
-    const trueBooleanDefaultValueProperty =
-      $jsonObject["trueBooleanDefaultValueProperty"];
+    const falseBooleanDefaultValueProperty = dataFactory.literal(
+      $jsonObject["falseBooleanDefaultValueProperty"]["@value"],
+      typeof $jsonObject["falseBooleanDefaultValueProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["falseBooleanDefaultValueProperty"]["@language"]
+        : typeof $jsonObject["falseBooleanDefaultValueProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["falseBooleanDefaultValueProperty"]["@type"],
+            )
+          : undefined,
+    );
+    const numberDefaultValueProperty = dataFactory.literal(
+      $jsonObject["numberDefaultValueProperty"]["@value"],
+      typeof $jsonObject["numberDefaultValueProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["numberDefaultValueProperty"]["@language"]
+        : typeof $jsonObject["numberDefaultValueProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["numberDefaultValueProperty"]["@type"],
+            )
+          : undefined,
+    );
+    const stringDefaultValueProperty = dataFactory.literal(
+      $jsonObject["stringDefaultValueProperty"]["@value"],
+      typeof $jsonObject["stringDefaultValueProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["stringDefaultValueProperty"]["@language"]
+        : typeof $jsonObject["stringDefaultValueProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["stringDefaultValueProperty"]["@type"],
+            )
+          : undefined,
+    );
+    const trueBooleanDefaultValueProperty = dataFactory.literal(
+      $jsonObject["trueBooleanDefaultValueProperty"]["@value"],
+      typeof $jsonObject["trueBooleanDefaultValueProperty"]["@language"] !==
+        "undefined"
+        ? $jsonObject["trueBooleanDefaultValueProperty"]["@language"]
+        : typeof $jsonObject["trueBooleanDefaultValueProperty"]["@type"] !==
+            "undefined"
+          ? dataFactory.namedNode(
+              $jsonObject["trueBooleanDefaultValueProperty"]["@type"],
+            )
+          : undefined,
+    );
     return purify.Either.of({
       $identifier,
       dateDefaultValueProperty,
@@ -47542,12 +47979,12 @@ export namespace DefaultValuePropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      dateDefaultValueProperty: Date;
-      dateTimeDefaultValueProperty: Date;
-      falseBooleanDefaultValueProperty: boolean;
-      numberDefaultValueProperty: number;
-      stringDefaultValueProperty: string;
-      trueBooleanDefaultValueProperty: boolean;
+      dateDefaultValueProperty: rdfjs.Literal;
+      dateTimeDefaultValueProperty: rdfjs.Literal;
+      falseBooleanDefaultValueProperty: rdfjs.Literal;
+      numberDefaultValueProperty: rdfjs.Literal;
+      stringDefaultValueProperty: rdfjs.Literal;
+      trueBooleanDefaultValueProperty: rdfjs.Literal;
     }
   > {
     return (
@@ -47606,7 +48043,17 @@ export namespace DefaultValuePropertiesClass {
                   ),
                 }).toValues(),
           )
-          .chain((values) => values.chainMap((value) => value.toDate()))
+          .chain((values) =>
+            $fromRdfPreferredLanguages({
+              focusResource: $parameters.resource,
+              predicate:
+                DefaultValuePropertiesClass.$schema.properties
+                  .dateDefaultValueProperty.identifier,
+              preferredLanguages: $parameters.preferredLanguages,
+              values,
+            }),
+          )
+          .chain((values) => values.chainMap((value) => value.toLiteral()))
           .chain((values) => values.head())
           .chain((dateDefaultValueProperty) =>
             purify.Either.of<
@@ -47632,7 +48079,17 @@ export namespace DefaultValuePropertiesClass {
                       ),
                     }).toValues(),
               )
-              .chain((values) => values.chainMap((value) => value.toDate()))
+              .chain((values) =>
+                $fromRdfPreferredLanguages({
+                  focusResource: $parameters.resource,
+                  predicate:
+                    DefaultValuePropertiesClass.$schema.properties
+                      .dateTimeDefaultValueProperty.identifier,
+                  preferredLanguages: $parameters.preferredLanguages,
+                  values,
+                }),
+              )
+              .chain((values) => values.chainMap((value) => value.toLiteral()))
               .chain((values) => values.head())
               .chain((dateTimeDefaultValueProperty) =>
                 purify.Either.of<
@@ -47660,7 +48117,17 @@ export namespace DefaultValuePropertiesClass {
                         }).toValues(),
                   )
                   .chain((values) =>
-                    values.chainMap((value) => value.toBoolean()),
+                    $fromRdfPreferredLanguages({
+                      focusResource: $parameters.resource,
+                      predicate:
+                        DefaultValuePropertiesClass.$schema.properties
+                          .falseBooleanDefaultValueProperty.identifier,
+                      preferredLanguages: $parameters.preferredLanguages,
+                      values,
+                    }),
+                  )
+                  .chain((values) =>
+                    values.chainMap((value) => value.toLiteral()),
                   )
                   .chain((values) => values.head())
                   .chain((falseBooleanDefaultValueProperty) =>
@@ -47689,7 +48156,17 @@ export namespace DefaultValuePropertiesClass {
                             }).toValues(),
                       )
                       .chain((values) =>
-                        values.chainMap((value) => value.toNumber()),
+                        $fromRdfPreferredLanguages({
+                          focusResource: $parameters.resource,
+                          predicate:
+                            DefaultValuePropertiesClass.$schema.properties
+                              .numberDefaultValueProperty.identifier,
+                          preferredLanguages: $parameters.preferredLanguages,
+                          values,
+                        }),
+                      )
+                      .chain((values) =>
+                        values.chainMap((value) => value.toLiteral()),
                       )
                       .chain((values) => values.head())
                       .chain((numberDefaultValueProperty) =>
@@ -47727,7 +48204,7 @@ export namespace DefaultValuePropertiesClass {
                             }),
                           )
                           .chain((values) =>
-                            values.chainMap((value) => value.toString()),
+                            values.chainMap((value) => value.toLiteral()),
                           )
                           .chain((values) => values.head())
                           .chain((stringDefaultValueProperty) =>
@@ -47758,7 +48235,20 @@ export namespace DefaultValuePropertiesClass {
                                     }).toValues(),
                               )
                               .chain((values) =>
-                                values.chainMap((value) => value.toBoolean()),
+                                $fromRdfPreferredLanguages({
+                                  focusResource: $parameters.resource,
+                                  predicate:
+                                    DefaultValuePropertiesClass.$schema
+                                      .properties
+                                      .trueBooleanDefaultValueProperty
+                                      .identifier,
+                                  preferredLanguages:
+                                    $parameters.preferredLanguages,
+                                  values,
+                                }),
+                              )
+                              .chain((values) =>
+                                values.chainMap((value) => value.toLiteral()),
                               )
                               .chain((values) => values.head())
                               .map((trueBooleanDefaultValueProperty) => ({
@@ -47804,8 +48294,12 @@ export namespace DefaultValuePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "dateDefaultValueProperty",
         type: () => ({
-          defaultValue: new Date("2018-04-09T00:00:00.000Z"),
-          kind: "DateType" as const,
+          defaultValue: dataFactory.literal(
+            "2018-04-09",
+            $RdfVocabularies.xsd.date,
+          ),
+          item: $unconstrainedLiteralSchema,
+          kind: "DefaultValueType" as const,
         }),
       },
       dateTimeDefaultValueProperty: {
@@ -47815,8 +48309,12 @@ export namespace DefaultValuePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "dateTimeDefaultValueProperty",
         type: () => ({
-          defaultValue: new Date("2018-04-09T10:00:00.000Z"),
-          kind: "DateTimeType" as const,
+          defaultValue: dataFactory.literal(
+            "2018-04-09T10:00:00Z",
+            $RdfVocabularies.xsd.dateTime,
+          ),
+          item: $unconstrainedLiteralSchema,
+          kind: "DefaultValueType" as const,
         }),
       },
       falseBooleanDefaultValueProperty: {
@@ -47825,7 +48323,14 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "falseBooleanDefaultValueProperty",
-        type: () => ({ defaultValue: false, kind: "BooleanType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal(
+            "false",
+            $RdfVocabularies.xsd.boolean,
+          ),
+          item: $unconstrainedLiteralSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
       numberDefaultValueProperty: {
         identifier: dataFactory.namedNode(
@@ -47833,7 +48338,11 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "numberDefaultValueProperty",
-        type: () => ({ defaultValue: 0, kind: "IntType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
+          item: $unconstrainedLiteralSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
       stringDefaultValueProperty: {
         identifier: dataFactory.namedNode(
@@ -47841,7 +48350,11 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "stringDefaultValueProperty",
-        type: () => ({ defaultValue: "", kind: "StringType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal(""),
+          item: $unconstrainedLiteralSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
       trueBooleanDefaultValueProperty: {
         identifier: dataFactory.namedNode(
@@ -47849,7 +48362,14 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "trueBooleanDefaultValueProperty",
-        type: () => ({ defaultValue: true, kind: "BooleanType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal(
+            "true",
+            $RdfVocabularies.xsd.boolean,
+          ),
+          item: $unconstrainedLiteralSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
     },
   } as const;
@@ -48070,7 +48590,9 @@ export namespace DefaultValuePropertiesClass {
     }
 
     patterns = patterns.concat(
-      $dateSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
+        $literalSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.dateDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48098,7 +48620,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $dateSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
+        $literalSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.dateTimeDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48126,7 +48650,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $booleanSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
+        $literalSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.falseBooleanDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48154,7 +48680,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $numberSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
+        $literalSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.numberDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48182,7 +48710,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
+        $literalSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.stringDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48210,7 +48740,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $booleanSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
+        $literalSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.trueBooleanDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48741,7 +49273,7 @@ export class DateUnionPropertiesClass {
         .toList()
         .flatMap((value) =>
           value.type === "string"
-            ? ([value.value] as readonly Parameters<
+            ? ([dataFactory.literal(value.value)] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][])
             : ([
@@ -48794,7 +49326,7 @@ export class DateUnionPropertiesClass {
               ] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][])
-            : ([value.value] as readonly Parameters<
+            : ([dataFactory.literal(value.value)] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][]),
         ),
@@ -53696,7 +54228,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
     resource.add(
       BaseInterfaceWithPropertiesStatic.$schema.properties
         .baseInterfaceWithPropertiesProperty.identifier,
-      ...[_baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty],
+      ...[
+        dataFactory.literal(
+          _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -54803,7 +55339,11 @@ export namespace ConcreteParentInterfaceStatic {
     resource.add(
       ConcreteParentInterfaceStatic.$schema.properties
         .concreteParentInterfaceProperty.identifier,
-      ...[_concreteParentInterface.concreteParentInterfaceProperty],
+      ...[
+        dataFactory.literal(
+          _concreteParentInterface.concreteParentInterfaceProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -55387,7 +55927,11 @@ export namespace ConcreteChildInterface {
     resource.add(
       ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty
         .identifier,
-      ...[_concreteChildInterface.concreteChildInterfaceProperty],
+      ...[
+        dataFactory.literal(
+          _concreteChildInterface.concreteChildInterfaceProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -55548,7 +56092,7 @@ export abstract class AbstractBaseClassWithProperties {
     resource.add(
       AbstractBaseClassWithPropertiesStatic.$schema.properties
         .abstractBaseClassWithPropertiesProperty.identifier,
-      ...[this.abstractBaseClassWithPropertiesProperty],
+      ...[dataFactory.literal(this.abstractBaseClassWithPropertiesProperty)],
     );
     return resource;
   }
@@ -56289,7 +56833,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     resource.add(
       ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty
         .identifier,
-      ...[this.concreteParentClassProperty],
+      ...[dataFactory.literal(this.concreteParentClassProperty)],
     );
     return resource;
   }
@@ -56868,7 +57412,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     resource.add(
       ConcreteChildClass.$schema.properties.concreteChildClassProperty
         .identifier,
-      ...[this.concreteChildClassProperty],
+      ...[dataFactory.literal(this.concreteChildClassProperty)],
     );
     return resource;
   }
@@ -57427,7 +57971,7 @@ export abstract class ClassUnionMemberCommonParent {
     resource.add(
       ClassUnionMemberCommonParentStatic.$schema.properties
         .classUnionMemberCommonParentProperty.identifier,
-      ...[this.classUnionMemberCommonParentProperty],
+      ...[dataFactory.literal(this.classUnionMemberCommonParentProperty)],
     );
     return resource;
   }
@@ -57871,7 +58415,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 
     resource.add(
       ClassUnionMember2.$schema.properties.classUnionMember2Property.identifier,
-      ...[this.classUnionMember2Property],
+      ...[dataFactory.literal(this.classUnionMember2Property)],
     );
     return resource;
   }
@@ -58409,7 +58953,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 
     resource.add(
       ClassUnionMember1.$schema.properties.classUnionMember1Property.identifier,
-      ...[this.classUnionMember1Property],
+      ...[dataFactory.literal(this.classUnionMember1Property)],
     );
     return resource;
   }

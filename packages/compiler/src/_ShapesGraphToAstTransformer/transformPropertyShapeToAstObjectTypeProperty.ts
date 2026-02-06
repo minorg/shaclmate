@@ -1,6 +1,5 @@
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/index.js";

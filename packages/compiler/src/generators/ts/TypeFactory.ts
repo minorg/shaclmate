@@ -402,6 +402,17 @@ export class TypeFactory {
         });
       }
 
+      if (datatype.equals(xsd.string)) {
+        return new StringType({
+          comment: astType.comment,
+          hasValues: astType.hasValues,
+          label: astType.label,
+          languageIn: astType.languageIn,
+          in_: astType.in_,
+          primitiveIn: astType.in_.map((value) => value.value),
+        });
+      }
+
       for (const [floatOrInt, numberDatatypes_] of Object.entries(
         numberDatatypes,
       )) {
@@ -420,17 +431,6 @@ export class TypeFactory {
             });
           }
         }
-      }
-
-      if (datatype.equals(xsd.string)) {
-        return new StringType({
-          comment: astType.comment,
-          hasValues: astType.hasValues,
-          label: astType.label,
-          languageIn: astType.languageIn,
-          in_: astType.in_,
-          primitiveIn: astType.in_.map((value) => value.value),
-        });
       }
 
       if (datatype.equals(rdf.langString)) {

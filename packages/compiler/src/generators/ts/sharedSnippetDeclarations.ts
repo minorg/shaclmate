@@ -341,7 +341,6 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
   filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
     in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
   }>,
   valueVariable: rdfjs.Variable;
@@ -350,11 +349,6 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
 
   if (schema.in && schema.in.length > 0) {
     patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
-  }
-
-  if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);
