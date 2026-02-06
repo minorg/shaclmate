@@ -10,8 +10,10 @@ import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
+import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -77,6 +79,11 @@ export class DefaultValueType<
     return `${syntheticNamePrefix}DefaultValueSchema<${this.itemType.schemaType}>`;
   }
 
+  @Memoize()
+  override get sparqlWherePatternsFunction(): string {
+    return `${syntheticNamePrefix}defaultValueSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
@@ -125,6 +132,19 @@ export class DefaultValueType<
     parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
   ): string {
     return this.itemType.fromJsonExpression(parameters);
+  }
+
+  override fromRdfExpression({
+    variables,
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["fromRdfExpression"]
+  >[0]): string {
+    return this.itemType.fromRdfExpression({
+      variables: {
+        ...variables,
+        resourceValues: `${variables.resourceValues}.map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: this.defaultValueTermExpression })}).toValues())`,
+      },
+    });
   }
 
   override graphqlResolveExpression(
@@ -177,6 +197,25 @@ export class DefaultValueType<
         `${syntheticNamePrefix}DefaultValueSchema`,
         `type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: rdfjs.Literal | rdfjs.NamedNode; readonly item: ItemSchemaT; }`,
       ),
+
+      parameters.features.has("sparql")
+        ? singleEntryRecord(
+            `${syntheticNamePrefix}defaultValueSparqlWherePatterns`,
+            {
+              code: `\
+function ${syntheticNamePrefix}defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT>> {  
+  return ({ schema, ...otherParameters }) => {
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
+    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
+  }
+}`,
+              dependencies: {
+                ...sharedSnippetDeclarations.liftSparqlPatterns,
+                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+              },
+            },
+          )
+        : {},
     );
   }
 

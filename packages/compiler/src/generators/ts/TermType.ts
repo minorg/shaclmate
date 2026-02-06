@@ -13,12 +13,6 @@ import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-/**
- * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
- * RuntimeTermT is the type of values at runtime.
- *
- * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:defaultValue et al.
- */
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
   RuntimeTermT extends BlankNode | Literal | NamedNode =
@@ -62,7 +56,6 @@ export class TermType<
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": `rdfjs.Literal | rdfjs.NamedNode`,
       "in?": `readonly (rdfjs.Literal | rdfjs.NamedNode)[]`,
     };
   }

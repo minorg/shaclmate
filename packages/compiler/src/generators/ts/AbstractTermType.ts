@@ -19,10 +19,10 @@ import type { Type } from "./Type.js";
 /**
  * Abstract base class for IdentifierType and LiteralType.
  *
- * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
+ * ConstantTermT is the type of sh:hasValue and sh:in.
  * RuntimeTermT is the type of values at runtime.
  *
- * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:defaultValue et al.
+ * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:hasValue and sh:in.
  */
 export abstract class AbstractTermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -233,7 +233,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   /**
    * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
    *
-   * defaultValues: add the default value to the values sequence if the latter doesn't contain values already
    * hasValues: test whether the values sequence has sh:hasValue values
    * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)
    * valueTo: convert values in the values sequence to the appropriate term type/sub-type (literal, string, etc.)
@@ -260,12 +259,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
     }
 
     return {
-      // defaultValue: this.defaultValue
-      //   .map(
-      //     (defaultValue) =>
-      //       `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
-      //   )
-      //   .extract(),
       hasValues:
         this.hasValues.length > 0
           ? `\
