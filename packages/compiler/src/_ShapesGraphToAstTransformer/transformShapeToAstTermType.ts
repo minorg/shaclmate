@@ -72,22 +72,23 @@ export function transformShapeToAstTermType(
             });
             break;
         }
+      } else if (
+        nodeKinds.size === 2 &&
+        nodeKinds.has("BlankNode") &&
+        nodeKinds.has("NamedNode")
+      ) {
+        invariant(in_.length === 0);
+        termType = new ast.IdentifierType({
+          ...astAbstractTypeProperties,
+        });
       } else {
-        invariant(nodeKinds.size >= 2);
-        if (nodeKinds.has("BlankNode") && nodeKinds.has("NamedNode")) {
-          invariant(in_.length === 0);
-          termType = new ast.IdentifierType({
-            ...astAbstractTypeProperties,
-          });
-        } else {
-          invariant(nodeKinds.has("Literal"));
-          termType = new ast.TermType({
-            ...astAbstractTypeProperties,
-            hasValues,
-            in_,
-            nodeKinds,
-          });
-        }
+        invariant(nodeKinds.size >= 2 && nodeKinds.has("Literal"));
+        termType = new ast.TermType({
+          ...astAbstractTypeProperties,
+          hasValues,
+          in_,
+          nodeKinds,
+        });
       }
 
       if (termType.in_.length > 0) {

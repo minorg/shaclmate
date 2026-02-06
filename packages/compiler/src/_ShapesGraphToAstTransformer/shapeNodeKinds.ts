@@ -77,6 +77,12 @@ export function shapeNodeKinds(
       ],
       ["sh:in", shape.constraints.in_.map((in_) => in_.termType)],
       [
+        "sh:languageIn",
+        shape.constraints.languageIn.length > 0
+          ? ["Literal" as const]
+          : ([] as readonly NodeKind[]),
+      ],
+      [
         "sh:maxExclusive",
         shape.constraints.maxExclusive
           .map(() => ["Literal"])

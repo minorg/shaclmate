@@ -54,7 +54,7 @@ function transformPropertyShapeToAstType(
 ): Either<Error, ast.Type> {
   // if (
   //   propertyShape.path.kind === "PredicatePath" &&
-  //   propertyShape.path.iri.value.endsWith("optionalIriOrLiteralProperty")
+  //   propertyShape.path.iri.value.endsWith("termProperty")
   // ) {
   // }
 
