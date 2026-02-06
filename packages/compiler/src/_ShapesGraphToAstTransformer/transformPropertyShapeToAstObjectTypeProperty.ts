@@ -75,7 +75,7 @@ function transformPropertyShapeToAstType(
         maxCount = minCount;
       }
 
-      if (propertyShape.defaultValue.isJust()) {
+      if (propertyShapeAstType.kind === "DefaultValueType") {
         if (minCount > 0) {
           return Left(
             new Error(
@@ -92,19 +92,7 @@ function transformPropertyShapeToAstType(
           );
         }
 
-        if (!ast.DefaultValueType.isItemType(propertyShapeAstType)) {
-          return Left(
-            new Error(
-              `${propertyShape}: ${propertyShapeAstType} is not a DefaultValueType item type`,
-            ),
-          );
-        }
-        return Either.of(
-          new ast.DefaultValueType({
-            defaultValue: propertyShape.defaultValue.unsafeCoerce(),
-            itemType: propertyShapeAstType,
-          }),
-        );
+        return Either.of(propertyShapeAstType);
       }
 
       if (minCount === 1 && maxCount === 1) {
