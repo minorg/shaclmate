@@ -69,6 +69,16 @@ describe("ShapesGraphToAstTransformer: kitchen sink", () => {
 });
 
 describe("ShapesGraphToAstTransformer: error cases", () => {
+  it("sh:defaultValue and sh:in conflict", ({ expect }) => {
+    const error = new ShapesGraphToAstTransformer(
+      testData.defaultValueInConflict.unsafeCoerce(),
+    )
+      .transform()
+      .extract();
+    expect(error).toBeInstanceOf(Error);
+    expect((error as Error).message).includes("default value");
+  });
+
   it("incompatible node shape identifiers", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
       testData.incompatibleNodeShapeIdentifiers.unsafeCoerce(),

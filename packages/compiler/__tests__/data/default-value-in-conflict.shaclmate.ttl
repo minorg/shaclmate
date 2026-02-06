@@ -1,0 +1,9 @@
+@prefix : <http://example.com/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+:NodeShape
+    a sh:NodeShape ;
+    sh:property [
+        sh:defaultValue :defaultValue ;
+        sh:in :otherValue
+    ] .
