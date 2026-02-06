@@ -94,9 +94,11 @@ export class DefaultValueType<
   @Memoize()
   private get defaultValuePrimitiveExpression(): Maybe<string> {
     switch (this.itemType.kind) {
-      case "BooleanType":
       case "DateTimeType":
       case "DateType":
+        invariant(this.defaultValue.termType === "Literal");
+        return Maybe.of(`new Date("${fromRdf(this.defaultValue, true)}")`);
+      case "BooleanType":
       case "FloatType":
       case "IntType":
         invariant(this.defaultValue.termType === "Literal");

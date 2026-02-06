@@ -1,6 +1,6 @@
 import TermMap from "@rdfjs/term-map";
 import TermSet from "@rdfjs/term-set";
-import type { BlankNode, NamedNode } from "@rdfjs/types";
+import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { fromRdf } from "rdf-literal";
@@ -228,7 +228,10 @@ export class TypeFactory {
     return objectUnionType;
   }
 
-  createType(astType: ast.Type): Type {
+  createType(
+    astType: ast.Type,
+    parameters?: { defaultValue?: Literal | NamedNode },
+  ): Type {
     switch (astType.kind) {
       case "BlankNodeType":
         return this.createBlankNodeType(astType);
@@ -247,7 +250,7 @@ export class TypeFactory {
       case "ListType":
         return this.createListType(astType);
       case "LiteralType":
-        return this.createLiteralType(astType);
+        return this.createLiteralType(astType, parameters);
       case "NamedNodeType":
         return this.createNamedNodeType(astType);
       case "ObjectIntersectionType":
@@ -277,7 +280,9 @@ export class TypeFactory {
   }
 
   private createDefaultValueType(astType: ast.DefaultValueType) {
-    const itemType = this.createType(astType.itemType);
+    const itemType = this.createType(astType.itemType, {
+      defaultValue: astType.defaultValue,
+    });
     invariant(DefaultValueType.isItemType(itemType));
     return new DefaultValueType({
       comment: astType.comment,
@@ -358,12 +363,21 @@ export class TypeFactory {
     });
   }
 
-  private createLiteralType(astType: ast.LiteralType): Type {
-    // Look at sh:datatype as well as sh:defaultValue/sh:hasValue/sh:in term datatypes
+  private createLiteralType(
+    astType: ast.LiteralType,
+    parameters?: { defaultValue?: Literal | NamedNode },
+  ): Type {
+    // Look at sh:datatype as well as sh:defaultValue, sh:hasValue, and sh:in datatypes
     // If there's one common datatype than we can refine the type
     // Otherwise default to rdfjs.Literal
     const datatypes = new TermSet<NamedNode>();
     astType.datatype.ifJust((datatype) => datatypes.add(datatype));
+    if (
+      parameters?.defaultValue &&
+      parameters.defaultValue.termType === "Literal"
+    ) {
+      datatypes.add(parameters.defaultValue.datatype);
+    }
     for (const hasValue of astType.hasValues) {
       datatypes.add(hasValue.datatype);
     }

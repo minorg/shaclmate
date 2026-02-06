@@ -1948,6 +1948,7 @@ const $unconstrainedDateSchema = { kind: "DateType" as const };
 const $unconstrainedDateTimeSchema = { kind: "DateTimeType" as const };
 const $unconstrainedFloatSchema = { kind: "FloatType" as const };
 const $unconstrainedIdentifierSchema = { kind: "IdentifierType" as const };
+const $unconstrainedIntSchema = { kind: "IntType" as const };
 const $unconstrainedLiteralSchema = { kind: "LiteralType" as const };
 const $unconstrainedStringSchema = { kind: "StringType" as const };
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
@@ -46996,52 +46997,22 @@ export class DefaultValuePropertiesClass {
   private _$identifier?: DefaultValuePropertiesClass.$Identifier;
   protected readonly _$identifierPrefix?: string;
   readonly $type = "DefaultValuePropertiesClass";
-  readonly dateDefaultValueProperty: rdfjs.Literal;
-  readonly dateTimeDefaultValueProperty: rdfjs.Literal;
-  readonly falseBooleanDefaultValueProperty: rdfjs.Literal;
-  readonly numberDefaultValueProperty: rdfjs.Literal;
-  readonly stringDefaultValueProperty: rdfjs.Literal;
-  readonly trueBooleanDefaultValueProperty: rdfjs.Literal;
+  readonly dateDefaultValueProperty: Date;
+  readonly dateTimeDefaultValueProperty: Date;
+  readonly falseBooleanDefaultValueProperty: boolean;
+  readonly numberDefaultValueProperty: number;
+  readonly stringDefaultValueProperty: string;
+  readonly trueBooleanDefaultValueProperty: boolean;
 
   constructor(parameters?: {
     readonly $identifier?: (rdfjs.BlankNode | rdfjs.NamedNode) | string;
     readonly $identifierPrefix?: string;
-    readonly dateDefaultValueProperty?:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
-    readonly dateTimeDefaultValueProperty?:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
-    readonly falseBooleanDefaultValueProperty?:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
-    readonly numberDefaultValueProperty?:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
-    readonly stringDefaultValueProperty?:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
-    readonly trueBooleanDefaultValueProperty?:
-      | rdfjs.Literal
-      | Date
-      | boolean
-      | number
-      | string;
+    readonly dateDefaultValueProperty?: Date;
+    readonly dateTimeDefaultValueProperty?: Date;
+    readonly falseBooleanDefaultValueProperty?: boolean;
+    readonly numberDefaultValueProperty?: number;
+    readonly stringDefaultValueProperty?: string;
+    readonly trueBooleanDefaultValueProperty?: boolean;
   }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -47053,65 +47024,31 @@ export class DefaultValuePropertiesClass {
     }
 
     this._$identifierPrefix = parameters?.$identifierPrefix;
-    if (typeof parameters?.dateDefaultValueProperty === "boolean") {
-      this.dateDefaultValueProperty = $toLiteral(
-        parameters?.dateDefaultValueProperty,
-      );
-    } else if (
+    if (
       typeof parameters?.dateDefaultValueProperty === "object" &&
       parameters?.dateDefaultValueProperty instanceof Date
     ) {
-      this.dateDefaultValueProperty = $toLiteral(
-        parameters?.dateDefaultValueProperty,
-      );
-    } else if (typeof parameters?.dateDefaultValueProperty === "number") {
-      this.dateDefaultValueProperty = $toLiteral(
-        parameters?.dateDefaultValueProperty,
-      );
-    } else if (typeof parameters?.dateDefaultValueProperty === "string") {
-      this.dateDefaultValueProperty = $toLiteral(
-        parameters?.dateDefaultValueProperty,
-      );
-    } else if (typeof parameters?.dateDefaultValueProperty === "object") {
       this.dateDefaultValueProperty = parameters?.dateDefaultValueProperty;
     } else if (typeof parameters?.dateDefaultValueProperty === "undefined") {
-      this.dateDefaultValueProperty = dataFactory.literal(
-        "2018-04-09",
-        $RdfVocabularies.xsd.date,
+      this.dateDefaultValueProperty = new Date(
+        "Sun Apr 08 2018 20:00:00 GMT-0400 (Eastern Daylight Time)",
       );
     } else {
       this.dateDefaultValueProperty =
         parameters?.dateDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters?.dateTimeDefaultValueProperty === "boolean") {
-      this.dateTimeDefaultValueProperty = $toLiteral(
-        parameters?.dateTimeDefaultValueProperty,
-      );
-    } else if (
+    if (
       typeof parameters?.dateTimeDefaultValueProperty === "object" &&
       parameters?.dateTimeDefaultValueProperty instanceof Date
     ) {
-      this.dateTimeDefaultValueProperty = $toLiteral(
-        parameters?.dateTimeDefaultValueProperty,
-      );
-    } else if (typeof parameters?.dateTimeDefaultValueProperty === "number") {
-      this.dateTimeDefaultValueProperty = $toLiteral(
-        parameters?.dateTimeDefaultValueProperty,
-      );
-    } else if (typeof parameters?.dateTimeDefaultValueProperty === "string") {
-      this.dateTimeDefaultValueProperty = $toLiteral(
-        parameters?.dateTimeDefaultValueProperty,
-      );
-    } else if (typeof parameters?.dateTimeDefaultValueProperty === "object") {
       this.dateTimeDefaultValueProperty =
         parameters?.dateTimeDefaultValueProperty;
     } else if (
       typeof parameters?.dateTimeDefaultValueProperty === "undefined"
     ) {
-      this.dateTimeDefaultValueProperty = dataFactory.literal(
-        "2018-04-09T10:00:00Z",
-        $RdfVocabularies.xsd.dateTime,
+      this.dateTimeDefaultValueProperty = new Date(
+        "Mon Apr 09 2018 06:00:00 GMT-0400 (Eastern Daylight Time)",
       );
     } else {
       this.dateTimeDefaultValueProperty =
@@ -47119,139 +47056,42 @@ export class DefaultValuePropertiesClass {
     }
 
     if (typeof parameters?.falseBooleanDefaultValueProperty === "boolean") {
-      this.falseBooleanDefaultValueProperty = $toLiteral(
-        parameters?.falseBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.falseBooleanDefaultValueProperty === "object" &&
-      parameters?.falseBooleanDefaultValueProperty instanceof Date
-    ) {
-      this.falseBooleanDefaultValueProperty = $toLiteral(
-        parameters?.falseBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.falseBooleanDefaultValueProperty === "number"
-    ) {
-      this.falseBooleanDefaultValueProperty = $toLiteral(
-        parameters?.falseBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.falseBooleanDefaultValueProperty === "string"
-    ) {
-      this.falseBooleanDefaultValueProperty = $toLiteral(
-        parameters?.falseBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.falseBooleanDefaultValueProperty === "object"
-    ) {
       this.falseBooleanDefaultValueProperty =
         parameters?.falseBooleanDefaultValueProperty;
     } else if (
       typeof parameters?.falseBooleanDefaultValueProperty === "undefined"
     ) {
-      this.falseBooleanDefaultValueProperty = dataFactory.literal(
-        "false",
-        $RdfVocabularies.xsd.boolean,
-      );
+      this.falseBooleanDefaultValueProperty = false;
     } else {
       this.falseBooleanDefaultValueProperty =
         parameters?.falseBooleanDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters?.numberDefaultValueProperty === "boolean") {
-      this.numberDefaultValueProperty = $toLiteral(
-        parameters?.numberDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.numberDefaultValueProperty === "object" &&
-      parameters?.numberDefaultValueProperty instanceof Date
-    ) {
-      this.numberDefaultValueProperty = $toLiteral(
-        parameters?.numberDefaultValueProperty,
-      );
-    } else if (typeof parameters?.numberDefaultValueProperty === "number") {
-      this.numberDefaultValueProperty = $toLiteral(
-        parameters?.numberDefaultValueProperty,
-      );
-    } else if (typeof parameters?.numberDefaultValueProperty === "string") {
-      this.numberDefaultValueProperty = $toLiteral(
-        parameters?.numberDefaultValueProperty,
-      );
-    } else if (typeof parameters?.numberDefaultValueProperty === "object") {
+    if (typeof parameters?.numberDefaultValueProperty === "number") {
       this.numberDefaultValueProperty = parameters?.numberDefaultValueProperty;
     } else if (typeof parameters?.numberDefaultValueProperty === "undefined") {
-      this.numberDefaultValueProperty = dataFactory.literal(
-        "0",
-        $RdfVocabularies.xsd.integer,
-      );
+      this.numberDefaultValueProperty = 0;
     } else {
       this.numberDefaultValueProperty =
         parameters?.numberDefaultValueProperty satisfies never;
     }
 
-    if (typeof parameters?.stringDefaultValueProperty === "boolean") {
-      this.stringDefaultValueProperty = $toLiteral(
-        parameters?.stringDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.stringDefaultValueProperty === "object" &&
-      parameters?.stringDefaultValueProperty instanceof Date
-    ) {
-      this.stringDefaultValueProperty = $toLiteral(
-        parameters?.stringDefaultValueProperty,
-      );
-    } else if (typeof parameters?.stringDefaultValueProperty === "number") {
-      this.stringDefaultValueProperty = $toLiteral(
-        parameters?.stringDefaultValueProperty,
-      );
-    } else if (typeof parameters?.stringDefaultValueProperty === "string") {
-      this.stringDefaultValueProperty = $toLiteral(
-        parameters?.stringDefaultValueProperty,
-      );
-    } else if (typeof parameters?.stringDefaultValueProperty === "object") {
+    if (typeof parameters?.stringDefaultValueProperty === "string") {
       this.stringDefaultValueProperty = parameters?.stringDefaultValueProperty;
     } else if (typeof parameters?.stringDefaultValueProperty === "undefined") {
-      this.stringDefaultValueProperty = dataFactory.literal("");
+      this.stringDefaultValueProperty = "";
     } else {
       this.stringDefaultValueProperty =
         parameters?.stringDefaultValueProperty satisfies never;
     }
 
     if (typeof parameters?.trueBooleanDefaultValueProperty === "boolean") {
-      this.trueBooleanDefaultValueProperty = $toLiteral(
-        parameters?.trueBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.trueBooleanDefaultValueProperty === "object" &&
-      parameters?.trueBooleanDefaultValueProperty instanceof Date
-    ) {
-      this.trueBooleanDefaultValueProperty = $toLiteral(
-        parameters?.trueBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.trueBooleanDefaultValueProperty === "number"
-    ) {
-      this.trueBooleanDefaultValueProperty = $toLiteral(
-        parameters?.trueBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.trueBooleanDefaultValueProperty === "string"
-    ) {
-      this.trueBooleanDefaultValueProperty = $toLiteral(
-        parameters?.trueBooleanDefaultValueProperty,
-      );
-    } else if (
-      typeof parameters?.trueBooleanDefaultValueProperty === "object"
-    ) {
       this.trueBooleanDefaultValueProperty =
         parameters?.trueBooleanDefaultValueProperty;
     } else if (
       typeof parameters?.trueBooleanDefaultValueProperty === "undefined"
     ) {
-      this.trueBooleanDefaultValueProperty = dataFactory.literal(
-        "true",
-        $RdfVocabularies.xsd.boolean,
-      );
+      this.trueBooleanDefaultValueProperty = true;
     } else {
       this.trueBooleanDefaultValueProperty =
         parameters?.trueBooleanDefaultValueProperty satisfies never;
@@ -47306,7 +47146,7 @@ export class DefaultValuePropertiesClass {
         ),
       )
       .chain(() =>
-        $booleanEquals(
+        $dateEquals(
           this.dateDefaultValueProperty,
           other.dateDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47318,7 +47158,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $booleanEquals(
+        $dateEquals(
           this.dateTimeDefaultValueProperty,
           other.dateTimeDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47330,7 +47170,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $booleanEquals(
+        $strictEquals(
           this.falseBooleanDefaultValueProperty,
           other.falseBooleanDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47342,7 +47182,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $booleanEquals(
+        $strictEquals(
           this.numberDefaultValueProperty,
           other.numberDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47354,7 +47194,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $booleanEquals(
+        $strictEquals(
           this.stringDefaultValueProperty,
           other.stringDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47366,7 +47206,7 @@ export class DefaultValuePropertiesClass {
         })),
       )
       .chain(() =>
-        $booleanEquals(
+        $strictEquals(
           this.trueBooleanDefaultValueProperty,
           other.trueBooleanDefaultValueProperty,
         ).mapLeft((propertyValuesUnequal) => ({
@@ -47395,30 +47235,12 @@ export class DefaultValuePropertiesClass {
       update: (message: string | number[] | ArrayBuffer | Uint8Array) => void;
     },
   >(_hasher: HasherT): HasherT {
-    _hasher.update(this.dateDefaultValueProperty.datatype.value);
-    _hasher.update(this.dateDefaultValueProperty.language);
-    _hasher.update(this.dateDefaultValueProperty.termType);
-    _hasher.update(this.dateDefaultValueProperty.value);
-    _hasher.update(this.dateTimeDefaultValueProperty.datatype.value);
-    _hasher.update(this.dateTimeDefaultValueProperty.language);
-    _hasher.update(this.dateTimeDefaultValueProperty.termType);
-    _hasher.update(this.dateTimeDefaultValueProperty.value);
-    _hasher.update(this.falseBooleanDefaultValueProperty.datatype.value);
-    _hasher.update(this.falseBooleanDefaultValueProperty.language);
-    _hasher.update(this.falseBooleanDefaultValueProperty.termType);
-    _hasher.update(this.falseBooleanDefaultValueProperty.value);
-    _hasher.update(this.numberDefaultValueProperty.datatype.value);
-    _hasher.update(this.numberDefaultValueProperty.language);
-    _hasher.update(this.numberDefaultValueProperty.termType);
-    _hasher.update(this.numberDefaultValueProperty.value);
-    _hasher.update(this.stringDefaultValueProperty.datatype.value);
-    _hasher.update(this.stringDefaultValueProperty.language);
-    _hasher.update(this.stringDefaultValueProperty.termType);
-    _hasher.update(this.stringDefaultValueProperty.value);
-    _hasher.update(this.trueBooleanDefaultValueProperty.datatype.value);
-    _hasher.update(this.trueBooleanDefaultValueProperty.language);
-    _hasher.update(this.trueBooleanDefaultValueProperty.termType);
-    _hasher.update(this.trueBooleanDefaultValueProperty.value);
+    _hasher.update(this.dateDefaultValueProperty.toISOString());
+    _hasher.update(this.dateTimeDefaultValueProperty.toISOString());
+    _hasher.update(this.falseBooleanDefaultValueProperty.toString());
+    _hasher.update(this.numberDefaultValueProperty.toString());
+    _hasher.update(this.stringDefaultValueProperty);
+    _hasher.update(this.trueBooleanDefaultValueProperty.toString());
     return _hasher;
   }
 
@@ -47430,78 +47252,15 @@ export class DefaultValuePropertiesClass {
             ? `_:${this.$identifier.value}`
             : this.$identifier.value,
         $type: this.$type,
-        dateDefaultValueProperty: {
-          "@language":
-            this.dateDefaultValueProperty.language.length > 0
-              ? this.dateDefaultValueProperty.language
-              : undefined,
-          "@type":
-            this.dateDefaultValueProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.dateDefaultValueProperty.datatype.value
-              : undefined,
-          "@value": this.dateDefaultValueProperty.value,
-        },
-        dateTimeDefaultValueProperty: {
-          "@language":
-            this.dateTimeDefaultValueProperty.language.length > 0
-              ? this.dateTimeDefaultValueProperty.language
-              : undefined,
-          "@type":
-            this.dateTimeDefaultValueProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.dateTimeDefaultValueProperty.datatype.value
-              : undefined,
-          "@value": this.dateTimeDefaultValueProperty.value,
-        },
-        falseBooleanDefaultValueProperty: {
-          "@language":
-            this.falseBooleanDefaultValueProperty.language.length > 0
-              ? this.falseBooleanDefaultValueProperty.language
-              : undefined,
-          "@type":
-            this.falseBooleanDefaultValueProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.falseBooleanDefaultValueProperty.datatype.value
-              : undefined,
-          "@value": this.falseBooleanDefaultValueProperty.value,
-        },
-        numberDefaultValueProperty: {
-          "@language":
-            this.numberDefaultValueProperty.language.length > 0
-              ? this.numberDefaultValueProperty.language
-              : undefined,
-          "@type":
-            this.numberDefaultValueProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.numberDefaultValueProperty.datatype.value
-              : undefined,
-          "@value": this.numberDefaultValueProperty.value,
-        },
-        stringDefaultValueProperty: {
-          "@language":
-            this.stringDefaultValueProperty.language.length > 0
-              ? this.stringDefaultValueProperty.language
-              : undefined,
-          "@type":
-            this.stringDefaultValueProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.stringDefaultValueProperty.datatype.value
-              : undefined,
-          "@value": this.stringDefaultValueProperty.value,
-        },
-        trueBooleanDefaultValueProperty: {
-          "@language":
-            this.trueBooleanDefaultValueProperty.language.length > 0
-              ? this.trueBooleanDefaultValueProperty.language
-              : undefined,
-          "@type":
-            this.trueBooleanDefaultValueProperty.datatype.value !==
-            "http://www.w3.org/2001/XMLSchema#string"
-              ? this.trueBooleanDefaultValueProperty.datatype.value
-              : undefined,
-          "@value": this.trueBooleanDefaultValueProperty.value,
-        },
+        dateDefaultValueProperty: this.dateDefaultValueProperty
+          .toISOString()
+          .replace(/T.*$/, ""),
+        dateTimeDefaultValueProperty:
+          this.dateTimeDefaultValueProperty.toISOString(),
+        falseBooleanDefaultValueProperty: this.falseBooleanDefaultValueProperty,
+        numberDefaultValueProperty: this.numberDefaultValueProperty,
+        stringDefaultValueProperty: this.stringDefaultValueProperty,
+        trueBooleanDefaultValueProperty: this.trueBooleanDefaultValueProperty,
       } satisfies DefaultValuePropertiesClass.$Json),
     );
   }
@@ -47534,7 +47293,12 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
         .identifier,
-      ...[this.dateDefaultValueProperty].filter(
+      ...[
+        dataFactory.literal(
+          this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
+          $RdfVocabularies.xsd.date,
+        ),
+      ].filter(
         (value) =>
           !value.equals(
             dataFactory.literal("2018-04-09", $RdfVocabularies.xsd.date),
@@ -47544,7 +47308,12 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .dateTimeDefaultValueProperty.identifier,
-      ...[this.dateTimeDefaultValueProperty].filter(
+      ...[
+        dataFactory.literal(
+          this.dateTimeDefaultValueProperty.toISOString(),
+          $RdfVocabularies.xsd.dateTime,
+        ),
+      ].filter(
         (value) =>
           !value.equals(
             dataFactory.literal(
@@ -47557,7 +47326,12 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .falseBooleanDefaultValueProperty.identifier,
-      ...[this.falseBooleanDefaultValueProperty].filter(
+      ...[
+        dataFactory.literal(
+          this.falseBooleanDefaultValueProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
+      ].filter(
         (value) =>
           !value.equals(
             dataFactory.literal("false", $RdfVocabularies.xsd.boolean),
@@ -47567,7 +47341,12 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty
         .identifier,
-      ...[this.numberDefaultValueProperty].filter(
+      ...[
+        dataFactory.literal(
+          this.numberDefaultValueProperty.toString(10),
+          $RdfVocabularies.xsd.integer,
+        ),
+      ].filter(
         (value) =>
           !value.equals(dataFactory.literal("0", $RdfVocabularies.xsd.integer)),
       ),
@@ -47575,14 +47354,19 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty
         .identifier,
-      ...[this.stringDefaultValueProperty].filter(
+      ...[dataFactory.literal(this.stringDefaultValueProperty)].filter(
         (value) => !value.equals(dataFactory.literal("")),
       ),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .trueBooleanDefaultValueProperty.identifier,
-      ...[this.trueBooleanDefaultValueProperty].filter(
+      ...[
+        dataFactory.literal(
+          this.trueBooleanDefaultValueProperty.toString(),
+          $RdfVocabularies.xsd.boolean,
+        ),
+      ].filter(
         (value) =>
           !value.equals(
             dataFactory.literal("true", $RdfVocabularies.xsd.boolean),
@@ -47611,7 +47395,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.dateDefaultValueProperty !== "undefined" &&
-      !$filterLiteral(
+      !$filterDate(
         filter.dateDefaultValueProperty,
         value.dateDefaultValueProperty,
       )
@@ -47621,7 +47405,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.dateTimeDefaultValueProperty !== "undefined" &&
-      !$filterLiteral(
+      !$filterDate(
         filter.dateTimeDefaultValueProperty,
         value.dateTimeDefaultValueProperty,
       )
@@ -47631,7 +47415,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.falseBooleanDefaultValueProperty !== "undefined" &&
-      !$filterLiteral(
+      !$filterBoolean(
         filter.falseBooleanDefaultValueProperty,
         value.falseBooleanDefaultValueProperty,
       )
@@ -47641,7 +47425,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.numberDefaultValueProperty !== "undefined" &&
-      !$filterLiteral(
+      !$filterNumber(
         filter.numberDefaultValueProperty,
         value.numberDefaultValueProperty,
       )
@@ -47651,7 +47435,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.stringDefaultValueProperty !== "undefined" &&
-      !$filterLiteral(
+      !$filterString(
         filter.stringDefaultValueProperty,
         value.stringDefaultValueProperty,
       )
@@ -47661,7 +47445,7 @@ export namespace DefaultValuePropertiesClass {
 
     if (
       typeof filter.trueBooleanDefaultValueProperty !== "undefined" &&
-      !$filterLiteral(
+      !$filterBoolean(
         filter.trueBooleanDefaultValueProperty,
         value.trueBooleanDefaultValueProperty,
       )
@@ -47674,12 +47458,12 @@ export namespace DefaultValuePropertiesClass {
 
   export type $Filter = {
     readonly $identifier?: $IdentifierFilter;
-    readonly dateDefaultValueProperty?: $LiteralFilter;
-    readonly dateTimeDefaultValueProperty?: $LiteralFilter;
-    readonly falseBooleanDefaultValueProperty?: $LiteralFilter;
-    readonly numberDefaultValueProperty?: $LiteralFilter;
-    readonly stringDefaultValueProperty?: $LiteralFilter;
-    readonly trueBooleanDefaultValueProperty?: $LiteralFilter;
+    readonly dateDefaultValueProperty?: $DateFilter;
+    readonly dateTimeDefaultValueProperty?: $DateFilter;
+    readonly falseBooleanDefaultValueProperty?: $BooleanFilter;
+    readonly numberDefaultValueProperty?: $NumberFilter;
+    readonly stringDefaultValueProperty?: $StringFilter;
+    readonly trueBooleanDefaultValueProperty?: $BooleanFilter;
   };
 
   export function $fromJson(
@@ -47742,36 +47526,12 @@ export namespace DefaultValuePropertiesClass {
   export type $Json = {
     readonly "@id": string;
     readonly $type: "DefaultValuePropertiesClass";
-    readonly dateDefaultValueProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly dateTimeDefaultValueProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly falseBooleanDefaultValueProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly numberDefaultValueProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly stringDefaultValueProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
-    readonly trueBooleanDefaultValueProperty: {
-      readonly "@language"?: string;
-      readonly "@type"?: string;
-      readonly "@value": string;
-    };
+    readonly dateDefaultValueProperty: string;
+    readonly dateTimeDefaultValueProperty: string;
+    readonly falseBooleanDefaultValueProperty: boolean;
+    readonly numberDefaultValueProperty: number;
+    readonly stringDefaultValueProperty: string;
+    readonly trueBooleanDefaultValueProperty: boolean;
   };
 
   export function $jsonSchema() {
@@ -47832,36 +47592,12 @@ export namespace DefaultValuePropertiesClass {
     return zod.object({
       "@id": zod.string().min(1),
       $type: zod.literal("DefaultValuePropertiesClass"),
-      dateDefaultValueProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
-      dateTimeDefaultValueProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
-      falseBooleanDefaultValueProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
-      numberDefaultValueProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
-      stringDefaultValueProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
-      trueBooleanDefaultValueProperty: zod.object({
-        "@language": zod.string().optional(),
-        "@type": zod.string().optional(),
-        "@value": zod.string(),
-      }),
+      dateDefaultValueProperty: zod.iso.date(),
+      dateTimeDefaultValueProperty: zod.iso.datetime(),
+      falseBooleanDefaultValueProperty: zod.boolean(),
+      numberDefaultValueProperty: zod.number(),
+      stringDefaultValueProperty: zod.string(),
+      trueBooleanDefaultValueProperty: zod.boolean(),
     }) satisfies zod.ZodType<$Json>;
   }
 
@@ -47869,12 +47605,12 @@ export namespace DefaultValuePropertiesClass {
     zod.ZodError,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      dateDefaultValueProperty: rdfjs.Literal;
-      dateTimeDefaultValueProperty: rdfjs.Literal;
-      falseBooleanDefaultValueProperty: rdfjs.Literal;
-      numberDefaultValueProperty: rdfjs.Literal;
-      stringDefaultValueProperty: rdfjs.Literal;
-      trueBooleanDefaultValueProperty: rdfjs.Literal;
+      dateDefaultValueProperty: Date;
+      dateTimeDefaultValueProperty: Date;
+      falseBooleanDefaultValueProperty: boolean;
+      numberDefaultValueProperty: number;
+      stringDefaultValueProperty: string;
+      trueBooleanDefaultValueProperty: boolean;
     }
   > {
     const $jsonSafeParseResult = $jsonZodSchema().safeParse(_json);
@@ -47886,78 +47622,20 @@ export namespace DefaultValuePropertiesClass {
     const $identifier = $jsonObject["@id"].startsWith("_:")
       ? dataFactory.blankNode($jsonObject["@id"].substring(2))
       : dataFactory.namedNode($jsonObject["@id"]);
-    const dateDefaultValueProperty = dataFactory.literal(
-      $jsonObject["dateDefaultValueProperty"]["@value"],
-      typeof $jsonObject["dateDefaultValueProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["dateDefaultValueProperty"]["@language"]
-        : typeof $jsonObject["dateDefaultValueProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["dateDefaultValueProperty"]["@type"],
-            )
-          : undefined,
+    const dateDefaultValueProperty = new Date(
+      $jsonObject["dateDefaultValueProperty"],
     );
-    const dateTimeDefaultValueProperty = dataFactory.literal(
-      $jsonObject["dateTimeDefaultValueProperty"]["@value"],
-      typeof $jsonObject["dateTimeDefaultValueProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["dateTimeDefaultValueProperty"]["@language"]
-        : typeof $jsonObject["dateTimeDefaultValueProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["dateTimeDefaultValueProperty"]["@type"],
-            )
-          : undefined,
+    const dateTimeDefaultValueProperty = new Date(
+      $jsonObject["dateTimeDefaultValueProperty"],
     );
-    const falseBooleanDefaultValueProperty = dataFactory.literal(
-      $jsonObject["falseBooleanDefaultValueProperty"]["@value"],
-      typeof $jsonObject["falseBooleanDefaultValueProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["falseBooleanDefaultValueProperty"]["@language"]
-        : typeof $jsonObject["falseBooleanDefaultValueProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["falseBooleanDefaultValueProperty"]["@type"],
-            )
-          : undefined,
-    );
-    const numberDefaultValueProperty = dataFactory.literal(
-      $jsonObject["numberDefaultValueProperty"]["@value"],
-      typeof $jsonObject["numberDefaultValueProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["numberDefaultValueProperty"]["@language"]
-        : typeof $jsonObject["numberDefaultValueProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["numberDefaultValueProperty"]["@type"],
-            )
-          : undefined,
-    );
-    const stringDefaultValueProperty = dataFactory.literal(
-      $jsonObject["stringDefaultValueProperty"]["@value"],
-      typeof $jsonObject["stringDefaultValueProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["stringDefaultValueProperty"]["@language"]
-        : typeof $jsonObject["stringDefaultValueProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["stringDefaultValueProperty"]["@type"],
-            )
-          : undefined,
-    );
-    const trueBooleanDefaultValueProperty = dataFactory.literal(
-      $jsonObject["trueBooleanDefaultValueProperty"]["@value"],
-      typeof $jsonObject["trueBooleanDefaultValueProperty"]["@language"] !==
-        "undefined"
-        ? $jsonObject["trueBooleanDefaultValueProperty"]["@language"]
-        : typeof $jsonObject["trueBooleanDefaultValueProperty"]["@type"] !==
-            "undefined"
-          ? dataFactory.namedNode(
-              $jsonObject["trueBooleanDefaultValueProperty"]["@type"],
-            )
-          : undefined,
-    );
+    const falseBooleanDefaultValueProperty =
+      $jsonObject["falseBooleanDefaultValueProperty"];
+    const numberDefaultValueProperty =
+      $jsonObject["numberDefaultValueProperty"];
+    const stringDefaultValueProperty =
+      $jsonObject["stringDefaultValueProperty"];
+    const trueBooleanDefaultValueProperty =
+      $jsonObject["trueBooleanDefaultValueProperty"];
     return purify.Either.of({
       $identifier,
       dateDefaultValueProperty,
@@ -47979,12 +47657,12 @@ export namespace DefaultValuePropertiesClass {
     Error,
     {
       $identifier: rdfjs.BlankNode | rdfjs.NamedNode;
-      dateDefaultValueProperty: rdfjs.Literal;
-      dateTimeDefaultValueProperty: rdfjs.Literal;
-      falseBooleanDefaultValueProperty: rdfjs.Literal;
-      numberDefaultValueProperty: rdfjs.Literal;
-      stringDefaultValueProperty: rdfjs.Literal;
-      trueBooleanDefaultValueProperty: rdfjs.Literal;
+      dateDefaultValueProperty: Date;
+      dateTimeDefaultValueProperty: Date;
+      falseBooleanDefaultValueProperty: boolean;
+      numberDefaultValueProperty: number;
+      stringDefaultValueProperty: string;
+      trueBooleanDefaultValueProperty: boolean;
     }
   > {
     return (
@@ -48043,17 +47721,7 @@ export namespace DefaultValuePropertiesClass {
                   ),
                 }).toValues(),
           )
-          .chain((values) =>
-            $fromRdfPreferredLanguages({
-              focusResource: $parameters.resource,
-              predicate:
-                DefaultValuePropertiesClass.$schema.properties
-                  .dateDefaultValueProperty.identifier,
-              preferredLanguages: $parameters.preferredLanguages,
-              values,
-            }),
-          )
-          .chain((values) => values.chainMap((value) => value.toLiteral()))
+          .chain((values) => values.chainMap((value) => value.toDate()))
           .chain((values) => values.head())
           .chain((dateDefaultValueProperty) =>
             purify.Either.of<
@@ -48079,17 +47747,7 @@ export namespace DefaultValuePropertiesClass {
                       ),
                     }).toValues(),
               )
-              .chain((values) =>
-                $fromRdfPreferredLanguages({
-                  focusResource: $parameters.resource,
-                  predicate:
-                    DefaultValuePropertiesClass.$schema.properties
-                      .dateTimeDefaultValueProperty.identifier,
-                  preferredLanguages: $parameters.preferredLanguages,
-                  values,
-                }),
-              )
-              .chain((values) => values.chainMap((value) => value.toLiteral()))
+              .chain((values) => values.chainMap((value) => value.toDate()))
               .chain((values) => values.head())
               .chain((dateTimeDefaultValueProperty) =>
                 purify.Either.of<
@@ -48117,17 +47775,7 @@ export namespace DefaultValuePropertiesClass {
                         }).toValues(),
                   )
                   .chain((values) =>
-                    $fromRdfPreferredLanguages({
-                      focusResource: $parameters.resource,
-                      predicate:
-                        DefaultValuePropertiesClass.$schema.properties
-                          .falseBooleanDefaultValueProperty.identifier,
-                      preferredLanguages: $parameters.preferredLanguages,
-                      values,
-                    }),
-                  )
-                  .chain((values) =>
-                    values.chainMap((value) => value.toLiteral()),
+                    values.chainMap((value) => value.toBoolean()),
                   )
                   .chain((values) => values.head())
                   .chain((falseBooleanDefaultValueProperty) =>
@@ -48156,17 +47804,7 @@ export namespace DefaultValuePropertiesClass {
                             }).toValues(),
                       )
                       .chain((values) =>
-                        $fromRdfPreferredLanguages({
-                          focusResource: $parameters.resource,
-                          predicate:
-                            DefaultValuePropertiesClass.$schema.properties
-                              .numberDefaultValueProperty.identifier,
-                          preferredLanguages: $parameters.preferredLanguages,
-                          values,
-                        }),
-                      )
-                      .chain((values) =>
-                        values.chainMap((value) => value.toLiteral()),
+                        values.chainMap((value) => value.toNumber()),
                       )
                       .chain((values) => values.head())
                       .chain((numberDefaultValueProperty) =>
@@ -48204,7 +47842,7 @@ export namespace DefaultValuePropertiesClass {
                             }),
                           )
                           .chain((values) =>
-                            values.chainMap((value) => value.toLiteral()),
+                            values.chainMap((value) => value.toString()),
                           )
                           .chain((values) => values.head())
                           .chain((stringDefaultValueProperty) =>
@@ -48235,20 +47873,7 @@ export namespace DefaultValuePropertiesClass {
                                     }).toValues(),
                               )
                               .chain((values) =>
-                                $fromRdfPreferredLanguages({
-                                  focusResource: $parameters.resource,
-                                  predicate:
-                                    DefaultValuePropertiesClass.$schema
-                                      .properties
-                                      .trueBooleanDefaultValueProperty
-                                      .identifier,
-                                  preferredLanguages:
-                                    $parameters.preferredLanguages,
-                                  values,
-                                }),
-                              )
-                              .chain((values) =>
-                                values.chainMap((value) => value.toLiteral()),
+                                values.chainMap((value) => value.toBoolean()),
                               )
                               .chain((values) => values.head())
                               .map((trueBooleanDefaultValueProperty) => ({
@@ -48298,7 +47923,7 @@ export namespace DefaultValuePropertiesClass {
             "2018-04-09",
             $RdfVocabularies.xsd.date,
           ),
-          item: $unconstrainedLiteralSchema,
+          item: $unconstrainedDateSchema,
           kind: "DefaultValueType" as const,
         }),
       },
@@ -48313,7 +47938,7 @@ export namespace DefaultValuePropertiesClass {
             "2018-04-09T10:00:00Z",
             $RdfVocabularies.xsd.dateTime,
           ),
-          item: $unconstrainedLiteralSchema,
+          item: $unconstrainedDateTimeSchema,
           kind: "DefaultValueType" as const,
         }),
       },
@@ -48328,7 +47953,7 @@ export namespace DefaultValuePropertiesClass {
             "false",
             $RdfVocabularies.xsd.boolean,
           ),
-          item: $unconstrainedLiteralSchema,
+          item: $unconstrainedBooleanSchema,
           kind: "DefaultValueType" as const,
         }),
       },
@@ -48340,7 +47965,7 @@ export namespace DefaultValuePropertiesClass {
         name: "numberDefaultValueProperty",
         type: () => ({
           defaultValue: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
-          item: $unconstrainedLiteralSchema,
+          item: $unconstrainedIntSchema,
           kind: "DefaultValueType" as const,
         }),
       },
@@ -48352,7 +47977,7 @@ export namespace DefaultValuePropertiesClass {
         name: "stringDefaultValueProperty",
         type: () => ({
           defaultValue: dataFactory.literal(""),
-          item: $unconstrainedLiteralSchema,
+          item: $unconstrainedStringSchema,
           kind: "DefaultValueType" as const,
         }),
       },
@@ -48367,7 +47992,7 @@ export namespace DefaultValuePropertiesClass {
             "true",
             $RdfVocabularies.xsd.boolean,
           ),
-          item: $unconstrainedLiteralSchema,
+          item: $unconstrainedBooleanSchema,
           kind: "DefaultValueType" as const,
         }),
       },
@@ -48590,8 +48215,8 @@ export namespace DefaultValuePropertiesClass {
     }
 
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
+      $defaultValueSparqlWherePatterns<$DateFilter, $DateSchema>(
+        $dateSparqlWherePatterns,
       )({
         filter: parameters?.filter?.dateDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -48620,8 +48245,8 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
+      $defaultValueSparqlWherePatterns<$DateFilter, $DateSchema>(
+        $dateSparqlWherePatterns,
       )({
         filter: parameters?.filter?.dateTimeDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -48650,8 +48275,8 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
+      $defaultValueSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
+        $booleanSparqlWherePatterns,
       )({
         filter: parameters?.filter?.falseBooleanDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -48680,8 +48305,8 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
+      $defaultValueSparqlWherePatterns<$NumberFilter, $NumberSchema>(
+        $numberSparqlWherePatterns,
       )({
         filter: parameters?.filter?.numberDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -48710,8 +48335,8 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
+      $defaultValueSparqlWherePatterns<$StringFilter, $StringSchema>(
+        $stringSparqlWherePatterns,
       )({
         filter: parameters?.filter?.stringDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
@@ -48740,8 +48365,8 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $defaultValueSparqlWherePatterns<$LiteralFilter, $LiteralSchema>(
-        $literalSparqlWherePatterns,
+      $defaultValueSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
+        $booleanSparqlWherePatterns,
       )({
         filter: parameters?.filter?.trueBooleanDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
