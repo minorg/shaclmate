@@ -1,3 +1,4 @@
+import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { BooleanType } from "./BooleanType.js";
@@ -11,6 +12,7 @@ import type { LiteralType } from "./LiteralType.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
+import { objectInitializer } from "./objectInitializer.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -43,6 +45,18 @@ export abstract class AbstractContainerType<
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     this.itemType = itemType;
+  }
+
+  @Memoize()
+  get schema(): string {
+    return objectInitializer(this.schemaObject);
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      item: this.itemType.schema,
+    };
   }
 }
 

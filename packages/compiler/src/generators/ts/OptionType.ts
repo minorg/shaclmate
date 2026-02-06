@@ -6,7 +6,6 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -94,18 +93,6 @@ export class OptionType<
   @Memoize()
   override get name(): string {
     return `purify.Maybe<${this.itemType.name}>`;
-  }
-
-  @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      item: this.itemType.schema,
-    };
   }
 
   @Memoize()

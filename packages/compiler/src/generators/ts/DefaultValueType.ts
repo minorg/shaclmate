@@ -4,6 +4,7 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -11,7 +12,8 @@ import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { singleEntryRecord } from "./singleEntryRecord.js";
+import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 export class DefaultValueType<
@@ -71,6 +73,18 @@ export class DefaultValueType<
   }
 
   @Memoize()
+  override get schemaType(): string {
+    return `${syntheticNamePrefix}DefaultValueSchema<${this.itemType.schemaType}>`;
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      defaultValue: this.defaultValueTermExpression,
+    };
+  }
+
+  @Memoize()
   private get defaultValuePrimitiveExpression(): Maybe<string> {
     switch (this.itemType.kind) {
       case "BooleanType":
@@ -107,6 +121,50 @@ export class DefaultValueType<
     return rdfjsTermExpression(this.defaultValue);
   }
 
+  override fromJsonExpression(
+    parameters: Parameters<AbstractType["fromJsonExpression"]>[0],
+  ): string {
+    return this.itemType.fromJsonExpression(parameters);
+  }
+
+  override graphqlResolveExpression(
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
+    >[0],
+  ): string {
+    return this.itemType.graphqlResolveExpression(parameters);
+  }
+
+  override hashStatements(
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["hashStatements"]
+    >[0],
+  ): readonly string[] {
+    return this.itemType.hashStatements(parameters);
+  }
+
+  override jsonType(
+    parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
+  ): AbstractType.JsonType {
+    return this.itemType.jsonType(parameters);
+  }
+
+  override jsonUiSchemaElement(
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
+    >[0],
+  ): Maybe<string> {
+    return this.itemType.jsonUiSchemaElement(parameters);
+  }
+
+  override jsonZodSchema(
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonZodSchema"]
+    >[0],
+  ): string {
+    return this.itemType.jsonZodSchema(parameters);
+  }
+
   override snippetDeclarations(
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["snippetDeclarations"]
@@ -114,7 +172,11 @@ export class DefaultValueType<
   ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
-      sharedSnippetDeclarations.toLiteral,
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}DefaultValueSchema`,
+        `type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: rdfjs.Literal | rdfjs.NamedNode; readonly item: ItemSchemaT; }`,
+      ),
     );
   }
 
