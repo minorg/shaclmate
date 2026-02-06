@@ -352,7 +352,7 @@ export namespace ShapesGraph {
         }
 
         // Object of a shape-expecting, non-list-taking parameter such as sh:node
-        for (const predicate of [sh.node, sh.property]) {
+        for (const predicate of [sh.node, sh.not, sh.property]) {
           for (const quad of dataset.match(null, predicate, null, graph)) {
             addShapeNode(quad.object);
 
@@ -398,19 +398,21 @@ export namespace ShapesGraph {
         for (const shapeNode of shapeNodeSet) {
           if (dataset.match(shapeNode, sh.path, null, graph).size > 0) {
             // A property shape is a shape in the shapes graph that is the subject of a triple that has sh:path as its predicate. A shape has at most one value for sh:path. Each value of sh:path in a shape must be a well-formed SHACL property path. It is recommended, but not required, for a property shape to be declared as a SHACL instance of sh:PropertyShape. SHACL instances of sh:PropertyShape have one value for the property sh:path.
-            this.createPropertyShape({
-              resource: resourceSet.resource(shapeNode),
-              shapesGraph,
-            }).ifRight((propertyShape) =>
-              propertyShapesByIdentifier.set(shapeNode, propertyShape),
+            propertyShapesByIdentifier.set(
+              shapeNode,
+              this.createPropertyShape({
+                resource: resourceSet.resource(shapeNode),
+                shapesGraph,
+              }).unsafeCoerce(),
             );
           } else {
             // A node shape is a shape in the shapes graph that is not the subject of a triple with sh:path as its predicate. It is recommended, but not required, for a node shape to be declared as a SHACL instance of sh:NodeShape. SHACL instances of sh:NodeShape cannot have a value for the property sh:path.
-            this.createNodeShape({
-              resource: resourceSet.resource(shapeNode),
-              shapesGraph,
-            }).ifRight((nodeShape) =>
-              nodeShapesByIdentifier.set(shapeNode, nodeShape),
+            nodeShapesByIdentifier.set(
+              shapeNode,
+              this.createNodeShape({
+                resource: resourceSet.resource(shapeNode),
+                shapesGraph,
+              }).unsafeCoerce(),
             );
           }
         }

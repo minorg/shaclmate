@@ -5,5 +5,6 @@
     a sh:NodeShape ;
     sh:property [
         sh:defaultValue :defaultValue ;
-        sh:in :otherValue
+        sh:in ( :otherValue );
+        sh:path :path
     ] .
