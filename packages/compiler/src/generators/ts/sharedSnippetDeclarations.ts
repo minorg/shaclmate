@@ -232,7 +232,7 @@ function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${synthetic
 const toLiteral = singleEntryRecord(
   `${syntheticNamePrefix}toLiteral`,
   `\
-function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
+function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | rdfjs.Literal | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
   switch (typeof value) {
     case "boolean":
       return dataFactory.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
@@ -250,8 +250,8 @@ function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | string
           
         return dataFactory.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
       }
-      value satisfies never;
-      throw new Error("should never happen");
+
+      return value;
     }
     case "number": {
       if (datatype) {
@@ -341,7 +341,6 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
   filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
     in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
   }>,
   valueVariable: rdfjs.Variable;
@@ -350,11 +349,6 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
 
   if (schema.in && schema.in.length > 0) {
     patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
-  }
-
-  if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);
@@ -459,7 +453,6 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
   preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?: boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode;
     languageIn?: readonly string[];
     in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
   }>,
@@ -481,11 +474,6 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
       },
       type: "filter",
     });
-  }
-
-  if (filterPatterns.length === 0 && typeof schema.defaultValue !== "undefined") {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);

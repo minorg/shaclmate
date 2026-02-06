@@ -1,5 +1,4 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { Maybe } from "purify-ts";
 import { AbstractTermType } from "./AbstractTermType.js";
 
 const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);
@@ -16,7 +15,6 @@ export class BlankNodeType extends AbstractTermType<NamedNode, BlankNode> {
   ) {
     super({
       ...superParameters,
-      defaultValue: Maybe.empty(),
       hasValues: [],
       in_: [],
       nodeKinds,

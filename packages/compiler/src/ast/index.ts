@@ -1,6 +1,7 @@
 export * from "./Ast.js";
 export * from "./BlankNodeType.js";
 export * from "./Curie.js";
+export * from "./DefaultValueType.js";
 export * from "./IdentifierType.js";
 export * from "./IntersectionType.js";
 export * from "./LazyObjectOptionType.js";

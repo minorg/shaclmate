@@ -754,8 +754,11 @@
           "path": "http://example.com/stringDefaultValueProperty",
           "shapeIdentifier": "_:n3-174",
           "type": {
-            "kind": "LiteralType",
-            "hasValue": []
+            "kind": "DefaultValueType",
+            "itemType": {
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -765,8 +768,11 @@
           "path": "http://example.com/trueBooleanDefaultValueProperty",
           "shapeIdentifier": "_:n3-175",
           "type": {
-            "kind": "LiteralType",
-            "hasValue": []
+            "kind": "DefaultValueType",
+            "itemType": {
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -776,8 +782,11 @@
           "path": "http://example.com/falseBooleanDefaultValueProperty",
           "shapeIdentifier": "_:n3-176",
           "type": {
-            "kind": "LiteralType",
-            "hasValue": []
+            "kind": "DefaultValueType",
+            "itemType": {
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -787,8 +796,11 @@
           "path": "http://example.com/dateDefaultValueProperty",
           "shapeIdentifier": "_:n3-177",
           "type": {
-            "kind": "LiteralType",
-            "hasValue": []
+            "kind": "DefaultValueType",
+            "itemType": {
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -798,8 +810,11 @@
           "path": "http://example.com/dateTimeDefaultValueProperty",
           "shapeIdentifier": "_:n3-178",
           "type": {
-            "kind": "LiteralType",
-            "hasValue": []
+            "kind": "DefaultValueType",
+            "itemType": {
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         },
@@ -809,8 +824,11 @@
           "path": "http://example.com/numberDefaultValueProperty",
           "shapeIdentifier": "_:n3-179",
           "type": {
-            "kind": "LiteralType",
-            "hasValue": []
+            "kind": "DefaultValueType",
+            "itemType": {
+              "kind": "LiteralType",
+              "hasValue": []
+            }
           },
           "visibility": "public"
         }

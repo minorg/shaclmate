@@ -3,7 +3,6 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -167,11 +166,6 @@ export abstract class AbstractCollectionType<
   }
 
   @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
-  }
-
-  @Memoize()
   override get schemaType(): string {
     return `${syntheticNamePrefix}CollectionSchema<${this.itemType.schemaType}>`;
   }
@@ -179,7 +173,6 @@ export abstract class AbstractCollectionType<
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      item: this.itemType.schema,
       minCount: this.minCount,
     };
   }
@@ -255,9 +248,46 @@ export abstract class AbstractCollectionType<
       AbstractContainerType<ItemTypeT>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
-    let snippetDeclarations = {
-      ...this.itemType.snippetDeclarations(parameters),
-    };
+    let snippetDeclarations = mergeSnippetDeclarations(
+      this.itemType.snippetDeclarations(parameters),
+      singleEntryRecord(
+        `${syntheticNamePrefix}CollectionFilter`,
+        `\
+type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
+  readonly ${syntheticNamePrefix}maxCount?: number;
+  readonly ${syntheticNamePrefix}minCount?: number;
+};`,
+      ),
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}CollectionSchema`,
+        `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
+      ),
+
+      singleEntryRecord(
+        `${syntheticNamePrefix}filterArray`,
+        `\
+function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${syntheticNamePrefix}CollectionFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
+    for (const value of values) {
+      if (!filterItem(filter, value)) {
+        return false;
+      }
+    }
+
+    if (typeof filter.${syntheticNamePrefix}maxCount !== "undefined" && values.length > filter.${syntheticNamePrefix}maxCount) {
+      return false;
+    }
+
+    if (typeof filter.${syntheticNamePrefix}minCount !== "undefined" && values.length < filter.${syntheticNamePrefix}minCount) {
+      return false;
+    }
+
+    return true;
+  }
+}`,
+      ),
+    );
 
     if (parameters.features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(
@@ -392,48 +422,6 @@ function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly 
         );
       }
     }
-
-    snippetDeclarations = mergeSnippetDeclarations(
-      snippetDeclarations,
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}CollectionFilter`,
-        `\
-type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
-  readonly ${syntheticNamePrefix}maxCount?: number;
-  readonly ${syntheticNamePrefix}minCount?: number;
-};`,
-      ),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}CollectionSchema`,
-        `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
-      ),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterArray`,
-        `\
-function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${syntheticNamePrefix}CollectionFilter<ItemFilterT>, values: readonly ItemT[]): boolean => {
-    for (const value of values) {
-      if (!filterItem(filter, value)) {
-        return false;
-      }
-    }
-
-    if (typeof filter.${syntheticNamePrefix}maxCount !== "undefined" && values.length > filter.${syntheticNamePrefix}maxCount) {
-      return false;
-    }
-
-    if (typeof filter.${syntheticNamePrefix}minCount !== "undefined" && values.length < filter.${syntheticNamePrefix}minCount) {
-      return false;
-    }
-
-    return true;
-  }
-}`,
-      ),
-    );
 
     return snippetDeclarations;
   }

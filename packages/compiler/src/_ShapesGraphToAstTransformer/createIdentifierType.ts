@@ -10,20 +10,17 @@ export function createIdentifierType(
   nodeKinds: ReadonlySet<IdentifierNodeKind>,
   options?: {
     comment?: Maybe<string>;
-    defaultValue?: Maybe<NamedNode>;
     hasValues?: readonly NamedNode[];
     in_?: readonly NamedNode[];
     label?: Maybe<string>;
   },
 ): BlankNodeType | IdentifierType | NamedNodeType {
   const comment = options?.comment ?? Maybe.empty();
-  const defaultValue = options?.defaultValue ?? Maybe.empty();
   const label = options?.label ?? Maybe.empty();
 
   if (nodeKinds.size === 2) {
     return new IdentifierType({
       comment,
-      defaultValue,
       label,
     });
   }
@@ -38,7 +35,6 @@ export function createIdentifierType(
     case "NamedNode":
       return new NamedNodeType({
         comment,
-        defaultValue,
         hasValues: options?.hasValues ?? [],
         in_: options?.in_ ?? [],
         label,

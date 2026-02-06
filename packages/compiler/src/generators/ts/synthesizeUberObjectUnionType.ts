@@ -31,7 +31,6 @@ export function synthesizeUberObjectUnionType({
   if (nodeKinds.size === 2) {
     identifierType = new IdentifierType({
       comment: Maybe.empty(),
-      defaultValue: Maybe.empty(),
       label: Maybe.empty(),
     });
   } else {
@@ -45,7 +44,6 @@ export function synthesizeUberObjectUnionType({
       case "NamedNode":
         identifierType = new NamedNodeType({
           comment: Maybe.empty(),
-          defaultValue: Maybe.empty(),
           hasValues: [],
           in_: [],
           label: Maybe.empty(),

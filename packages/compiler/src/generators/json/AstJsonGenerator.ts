@@ -128,6 +128,7 @@ function typeToJson(type: ast.Type): AstJson.Type {
             ? type.toRdfTypes.map(termToJson)
             : undefined,
       };
+    case "DefaultValueType":
     case "OptionType":
       return {
         ...common,

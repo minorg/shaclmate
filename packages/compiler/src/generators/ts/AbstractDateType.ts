@@ -24,7 +24,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
 
   @Memoize()
   override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    const conversions: AbstractPrimitiveType.Conversion[] = [
+    return [
       {
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
@@ -32,16 +32,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
         sourceTypeName: this.name,
       },
     ];
-
-    this.primitiveDefaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => `new Date("${defaultValue.toISOString()}")`,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
-
-    return conversions;
   }
 
   override get name(): string {
@@ -61,9 +51,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.primitiveDefaultValue
-        .map((defaultValue) => `new Date("${defaultValue.toISOString()}")`)
-        .extract(),
       in:
         this.primitiveIn.length > 0
           ? this.primitiveIn.map(
@@ -76,7 +63,6 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "Date",
       kind: '"DateTimeType" | "DateType"',
       "in?": "readonly Date[]",
     };
@@ -256,13 +242,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}Sparq
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): string {
-    const valueToRdf = `dataFactory.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})`;
-    return this.primitiveDefaultValue
-      .map(
-        (defaultValue) =>
-          `(${variables.value}.getTime() !== ${defaultValue.getTime()} ? [${valueToRdf}] : [])`,
-      )
-      .orDefault(`[${valueToRdf}]`);
+    return `[dataFactory.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
   }
 
   override useImports({

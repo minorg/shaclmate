@@ -1,5 +1,4 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-import { Maybe } from "purify-ts";
 import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
@@ -24,7 +23,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   ) {
     super({
       ...superParameters,
-      defaultValue: Maybe.empty(),
       hasValues: [],
       in_: [],
       nodeKinds,

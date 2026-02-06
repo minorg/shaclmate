@@ -12,7 +12,6 @@ export abstract class AbstractPrimitiveType<
 > extends AbstractLiteralType {
   override readonly equalsFunction: string =
     `${syntheticNamePrefix}strictEquals`;
-  readonly primitiveDefaultValue: Maybe<ValueT>;
   readonly primitiveIn: readonly ValueT[];
   abstract override readonly kind:
     | "BooleanType"
@@ -24,16 +23,25 @@ export abstract class AbstractPrimitiveType<
     | "StringType";
 
   constructor({
-    primitiveDefaultValue,
     primitiveIn,
     ...superParameters
   }: {
-    primitiveDefaultValue: Maybe<ValueT>;
     primitiveIn: readonly ValueT[];
   } & ConstructorParameters<typeof AbstractLiteralType>[0]) {
     super(superParameters);
-    this.primitiveDefaultValue = primitiveDefaultValue;
     this.primitiveIn = primitiveIn;
+  }
+
+  @Memoize()
+  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
+    return [
+      {
+        conversionExpression: (value) => value,
+        sourceTypeCheckExpression: (value) =>
+          `typeof ${value} === "${this.typeofs[0]}"`,
+        sourceTypeName: this.name,
+      },
+    ];
   }
 
   override get discriminantProperty(): Maybe<AbstractLiteralType.DiscriminantProperty> {

@@ -20,7 +20,11 @@ export abstract class AbstractContainerType<
   ItemTypeT extends
     AbstractContainerType.ItemType = AbstractContainerType.ItemType,
 > extends AbstractType {
-  abstract readonly kind: "ListType" | "OptionType" | "SetType";
+  abstract readonly kind:
+    | "DefaultValueType"
+    | "ListType"
+    | "OptionType"
+    | "SetType";
 
   /**
    * Container item type.
@@ -82,16 +86,18 @@ export namespace AbstractContainerType {
       case "ObjectIntersectionType":
       case "ObjectType":
       case "ObjectUnionType":
-      case "PlaceholderType":
       case "TermType":
       case "UnionType":
         return true;
+      case "DefaultValueType":
       case "LazyObjectOptionType":
       case "LazyObjectSetType":
       case "LazyObjectType":
       case "OptionType":
       case "SetType":
         return false;
+      case "PlaceholderType":
+        throw new Error("should never happen");
     }
   }
 }

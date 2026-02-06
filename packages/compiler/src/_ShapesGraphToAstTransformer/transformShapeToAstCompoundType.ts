@@ -15,7 +15,7 @@ export function transformShapeToAstCompoundType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.Type> {
+): Either<Error, Exclude<ast.Type, ast.PlaceholderType>> {
   shapeStack.push(shape);
   try {
     return Eithers.chain4(
@@ -69,7 +69,7 @@ export function transformShapeToAstCompoundType(
         }
 
         const memberDiscriminantValues: string[] = [];
-        const memberTypes: ast.Type[] = [];
+        const memberTypes: Exclude<ast.Type, ast.PlaceholderType>[] = [];
         if (memberNodeShapes) {
           invariant(memberNodeShapes.length > 0);
           invariant(!memberShapes);

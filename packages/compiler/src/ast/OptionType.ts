@@ -1,4 +1,5 @@
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import type { PlaceholderType } from "./PlaceholderType.js";
 
 /**
  * A type with zero or one values of an item type.
@@ -23,6 +24,9 @@ export class OptionType<
 }
 
 export namespace OptionType {
-  export type ItemType = AbstractContainerType.ItemType;
+  export type ItemType = Exclude<
+    AbstractContainerType.ItemType,
+    PlaceholderType
+  >;
   export const isItemType = AbstractContainerType.isItemType;
 }

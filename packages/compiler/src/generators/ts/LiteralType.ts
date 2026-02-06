@@ -98,7 +98,6 @@ const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}Sp
   override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "rdfjs.Literal",
       "in?": "readonly rdfjs.Literal[]",
     };
   }

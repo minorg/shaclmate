@@ -14,25 +14,35 @@ export function transformShapeToAstTermType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.TermType> {
+): Either<Error, ast.DefaultValueType<ast.TermType> | ast.TermType> {
   shapeStack.push(shape);
   try {
     return Eithers.chain2(
       transformShapeToAstAbstractTypeProperties(shape),
       shapeNodeKinds(shape),
-    ).chain(([astAbstractTypeProperties, nodeKinds]) =>
-      nodeKinds.size > 0
-        ? Either.of(
-            new ast.TermType({
-              ...astAbstractTypeProperties,
-              defaultValue: shapeStack.defaultValue,
-              hasValues: shapeStack.constraints.hasValues,
-              in_: shapeStack.constraints.in_,
-              nodeKinds,
-            }),
+    ).chain(([astAbstractTypeProperties, nodeKinds]) => {
+      if (nodeKinds.size === 0) {
+        return Left(new Error(`${shape} has no nodeKinds`));
+      }
+
+      const termType = new ast.TermType({
+        ...astAbstractTypeProperties,
+        hasValues: shapeStack.constraints.hasValues,
+        in_: shapeStack.constraints.in_,
+        nodeKinds,
+      });
+
+      return Either.of(
+        shapeStack.defaultValue
+          .map(
+            (defaultValue) =>
+              new ast.DefaultValueType({ defaultValue, itemType: termType }) as
+                | ast.DefaultValueType<ast.TermType>
+                | ast.TermType,
           )
-        : Left(new Error(`${shape} has no nodeKinds`)),
-    );
+          .orDefault(termType),
+      );
+    });
   } finally {
     shapeStack.pop(shape);
   }

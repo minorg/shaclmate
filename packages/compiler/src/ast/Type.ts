@@ -1,4 +1,5 @@
 import type { BlankNodeType } from "./BlankNodeType.js";
+import type { DefaultValueType } from "./DefaultValueType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntersectionType } from "./IntersectionType.js";
 import type { LazyObjectOptionType } from "./LazyObjectOptionType.js";
@@ -18,6 +19,7 @@ import type { UnionType } from "./UnionType.js";
 
 export type Type =
   | BlankNodeType
+  | DefaultValueType
   | IdentifierType
   | IntersectionType
   | LazyObjectOptionType
@@ -44,6 +46,8 @@ export namespace Type {
     switch (left.kind) {
       case "BlankNodeType":
         return left.equals(right as BlankNodeType);
+      case "DefaultValueType":
+        return left.equals(right as DefaultValueType);
       case "IdentifierType":
         return left.equals(right as IdentifierType);
       case "IntersectionType":

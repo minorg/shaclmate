@@ -93,7 +93,6 @@ export abstract class AbstractObjectCompoundType<
     if (memberIdentifierTypeNodeKinds.size === 2) {
       return new IdentifierType({
         comment: Maybe.empty(),
-        defaultValue: Maybe.empty(),
         label: Maybe.empty(),
       });
     }
@@ -108,7 +107,6 @@ export abstract class AbstractObjectCompoundType<
       case "NamedNode":
         return new NamedNodeType({
           comment: Maybe.empty(),
-          defaultValue: Maybe.empty(),
           hasValues: [],
           in_: [...memberIdentifierTypesIn],
           label: Maybe.empty(),

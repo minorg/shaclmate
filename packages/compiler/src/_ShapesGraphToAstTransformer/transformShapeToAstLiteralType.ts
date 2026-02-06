@@ -14,7 +14,7 @@ export function transformShapeToAstLiteralType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, ast.LiteralType> {
+): Either<Error, ast.DefaultValueType<ast.LiteralType> | ast.LiteralType> {
   shapeStack.push(shape);
   try {
     const literalDefaultValue = shapeStack.defaultValue.filter(
@@ -45,11 +45,10 @@ export function transformShapeToAstLiteralType(
         (nodeKinds.size === 1 && nodeKinds.has("Literal"))
       )
         return transformShapeToAstAbstractTypeProperties(shape).map(
-          (astAbstractTypeProperties) =>
-            new ast.LiteralType({
+          (astAbstractTypeProperties) => {
+            const literalType = new ast.LiteralType({
               ...astAbstractTypeProperties,
               datatype: shape.constraints.datatype,
-              defaultValue: literalDefaultValue,
               hasValues: literalHasValues,
               in_: literalIn,
               languageIn: [...new Set(shape.constraints.languageIn)],
@@ -57,7 +56,18 @@ export function transformShapeToAstLiteralType(
               maxInclusive: shape.constraints.maxInclusive,
               minExclusive: shape.constraints.minExclusive,
               minInclusive: shape.constraints.minInclusive,
-            }),
+            });
+
+            return literalDefaultValue
+              .map(
+                (defaultValue) =>
+                  new ast.DefaultValueType<ast.LiteralType>({
+                    defaultValue,
+                    itemType: literalType,
+                  }) as ast.DefaultValueType<ast.LiteralType> | ast.LiteralType,
+              )
+              .orDefault(literalType);
+          },
         );
 
       return Left(new Error(`unable to transform ${shape} into an AST type`));

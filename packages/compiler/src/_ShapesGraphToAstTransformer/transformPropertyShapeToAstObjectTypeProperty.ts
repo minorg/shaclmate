@@ -1,6 +1,5 @@
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
-import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
 import type { TsFeature } from "../enums/index.js";
@@ -75,7 +74,7 @@ function transformPropertyShapeToAstType(
         maxCount = minCount;
       }
 
-      if (propertyShape.defaultValue.isJust()) {
+      if (propertyShapeAstType.kind === "DefaultValueType") {
         if (minCount > 0) {
           return Left(
             new Error(
@@ -92,10 +91,6 @@ function transformPropertyShapeToAstType(
           );
         }
 
-        // If a property shape has sh:defaultValue, sh:minCount = 0, and sh:maxCount = 1,
-        // treat its type as required. The generated type will fill in the sh:defaultValue on
-        // construction/deserialization.
-
         return Either.of(propertyShapeAstType);
       }
 
@@ -104,7 +99,13 @@ function transformPropertyShapeToAstType(
       }
 
       if (minCount === 0 && maxCount === 1) {
-        invariant(ast.OptionType.isItemType(propertyShapeAstType));
+        if (!ast.OptionType.isItemType(propertyShapeAstType)) {
+          return Left(
+            new Error(
+              `${propertyShape}: ${propertyShapeAstType} is not an OptionType item type`,
+            ),
+          );
+        }
 
         return Either.of(
           new ast.OptionType({
@@ -113,7 +114,13 @@ function transformPropertyShapeToAstType(
         );
       }
 
-      invariant(ast.SetType.isItemType(propertyShapeAstType));
+      if (!ast.SetType.isItemType(propertyShapeAstType)) {
+        return Left(
+          new Error(
+            `${propertyShape}: ${propertyShapeAstType} is not a SetType item type`,
+          ),
+        );
+      }
       return Either.of(
         new ast.SetType({
           itemType: propertyShapeAstType,

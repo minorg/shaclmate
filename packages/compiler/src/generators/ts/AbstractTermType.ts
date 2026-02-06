@@ -19,10 +19,10 @@ import type { Type } from "./Type.js";
 /**
  * Abstract base class for IdentifierType and LiteralType.
  *
- * ConstantTermT is the type of sh:defaultValue, sh:hasValue, and sh:in.
+ * ConstantTermT is the type of sh:hasValue and sh:in.
  * RuntimeTermT is the type of values at runtime.
  *
- * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:defaultValue et al.
+ * The two are differentiated because identifiers can have BlankNode or NamedNode values at runtime but only NamedNode values for sh:hasValue and sh:in.
  */
 export abstract class AbstractTermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -31,7 +31,6 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly defaultValue: Maybe<ConstantTermT>;
   readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
@@ -43,19 +42,16 @@ export abstract class AbstractTermType<
   ]);
 
   constructor({
-    defaultValue,
     hasValues,
     in_,
     nodeKinds,
     ...superParameters
   }: {
-    defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<RuntimeTermT["termType"]>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
@@ -63,11 +59,7 @@ export abstract class AbstractTermType<
   }
 
   get constrained(): boolean {
-    return (
-      this.defaultValue.isJust() ||
-      this.hasValues.length > 0 ||
-      this.in_.length > 0
-    );
+    return this.hasValues.length > 0 || this.in_.length > 0;
   }
 
   @Memoize()
@@ -103,14 +95,6 @@ export abstract class AbstractTermType<
         },
       );
     }
-
-    this.defaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => rdfjsTermExpression(defaultValue),
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
 
     conversions.push({
       conversionExpression: (value) => value,
@@ -163,7 +147,6 @@ export abstract class AbstractTermType<
     const { variables } = parameters;
     return [
       variables.resourceValues,
-      chain.defaultValue,
       chain.hasValues,
       chain.languageIn,
       chain.preferredLanguages,
@@ -238,12 +221,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   override toRdfExpression({
     variables,
   }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
-    return this.defaultValue
-      .map(
-        (defaultValue) =>
-          `(!${variables.value}.equals(${rdfjsTermExpression(defaultValue)}) ? [${variables.value}] : [])`,
-      )
-      .orDefault(`[${variables.value}]`);
+    return `[${variables.value}]`;
   }
 
   override useImports(_object: {
@@ -255,7 +233,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   /**
    * The fromRdfExpression for a term type can be decomposed into multiple sub-expressions with different purposes:
    *
-   * defaultValues: add the default value to the values sequence if the latter doesn't contain values already
    * hasValues: test whether the values sequence has sh:hasValue values
    * languageIn: filter the values sequence to literals with the right sh:languageIn (or runtime languageIn)
    * valueTo: convert values in the values sequence to the appropriate term type/sub-type (literal, string, etc.)
@@ -265,7 +242,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   protected fromRdfExpressionChain({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): {
-    defaultValue?: string;
     hasValues?: string;
     languageIn?: string;
     preferredLanguages?: string;
@@ -283,12 +259,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
     }
 
     return {
-      defaultValue: this.defaultValue
-        .map(
-          (defaultValue) =>
-            `map(values => values.length > 0 ? values : new rdfjsResource.Resource.TermValue(${objectInitializer({ focusResource: variables.resource, predicate: variables.predicate, term: rdfjsTermExpression(defaultValue) })}).toValues())`,
-        )
-        .extract(),
       hasValues:
         this.hasValues.length > 0
           ? `\

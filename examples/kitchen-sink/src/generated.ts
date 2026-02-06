@@ -131,7 +131,6 @@ interface $BooleanFilter {
 }
 
 type $BooleanSchema = Readonly<{
-  defaultValue?: boolean;
   in?: readonly boolean[];
   kind: "BooleanType";
   languageIn?: readonly string[];
@@ -190,7 +189,6 @@ interface $DateFilter {
 }
 
 type $DateSchema = Readonly<{
-  defaultValue?: Date;
   in?: readonly Date[];
   kind: "DateTimeType" | "DateType";
   languageIn?: readonly string[];
@@ -290,6 +288,31 @@ function $deduplicateSparqlPatterns(
     }
   }
   return deduplicatedPatterns;
+}
+
+type $DefaultValueSchema<ItemSchemaT> = {
+  readonly defaultValue: rdfjs.Literal | rdfjs.NamedNode;
+  readonly item: ItemSchemaT;
+};
+
+function $defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
+  itemSparqlWherePatternsFunction: $SparqlWherePatternsFunction<
+    ItemFilterT,
+    ItemSchemaT
+  >,
+): $SparqlWherePatternsFunction<ItemFilterT, $DefaultValueSchema<ItemSchemaT>> {
+  return ({ schema, ...otherParameters }) => {
+    const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
+      itemSparqlWherePatternsFunction({
+        schema: schema.item,
+        ...otherParameters,
+      }),
+    );
+    return [
+      { patterns: itemSparqlWherePatterns.concat(), type: "optional" },
+      ...liftSparqlPatterns,
+    ];
+  };
 }
 
 export type $EqualsResult = purify.Either<$EqualsResult.Unequal, true>;
@@ -670,10 +693,7 @@ interface $IdentifierFilter {
   readonly type?: "BlankNode" | "NamedNode";
 }
 
-type $IdentifierSchema = Readonly<{
-  defaultValue?: rdfjs.NamedNode;
-  kind: "IdentifierType";
-}>;
+type $IdentifierSchema = Readonly<{ kind: "IdentifierType" }>;
 class $IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
@@ -702,8 +722,8 @@ class $IdentifierSet {
 const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
   $IdentifierFilter,
   $IdentifierSchema
-> = ({ filter, valueVariable, ...otherParameters }) => {
-  const filterPatterns: $SparqlFilterPattern[] = [];
+> = ({ filter, propertyPatterns, valueVariable }) => {
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (filter) {
     if (typeof filter.in !== "undefined") {
@@ -711,14 +731,14 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
         (identifier) => identifier.termType === "NamedNode",
       );
       if (valueIn.length > 0) {
-        filterPatterns.push(
+        patterns.push(
           $sparqlValueInPattern({ lift: true, valueVariable, valueIn }),
         );
       }
     }
 
     if (typeof filter.type !== "undefined") {
-      filterPatterns.push({
+      patterns.push({
         expression: {
           type: "operation",
           operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
@@ -730,11 +750,7 @@ const $identifierSparqlWherePatterns: $SparqlWherePatternsFunction<
     }
   }
 
-  return $termSchemaSparqlWherePatterns({
-    filterPatterns,
-    valueVariable,
-    ...otherParameters,
-  });
+  return patterns;
 };
 
 function $isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
@@ -1023,7 +1039,6 @@ interface $LiteralFilter extends Omit<$TermFilter, "in" | "type"> {
 }
 
 type $LiteralSchema = Readonly<{
-  defaultValue?: rdfjs.Literal;
   in?: readonly rdfjs.Literal[];
   kind: "LiteralType";
   languageIn?: readonly string[];
@@ -1039,13 +1054,6 @@ function $literalSchemaSparqlWherePatterns({
   preferredLanguages?: readonly string[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?:
-      | boolean
-      | Date
-      | string
-      | number
-      | rdfjs.Literal
-      | rdfjs.NamedNode;
     languageIn?: readonly string[];
     in?: readonly (
       | boolean
@@ -1058,7 +1066,7 @@ function $literalSchemaSparqlWherePatterns({
   }>;
   valueVariable: rdfjs.Variable;
 }): readonly $SparqlPattern[] {
-  let patterns: $SparqlPattern[] = propertyPatterns.concat();
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
     patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
@@ -1080,14 +1088,6 @@ function $literalSchemaSparqlWherePatterns({
       },
       type: "filter",
     });
-  }
-
-  if (
-    filterPatterns.length === 0 &&
-    typeof schema.defaultValue !== "undefined"
-  ) {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);
@@ -1147,9 +1147,9 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       // Treat the item's patterns as optional
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
-          ...otherParameters,
           filter,
           schema: schema.item,
+          ...otherParameters,
         }),
       );
       return [
@@ -1162,8 +1162,8 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       // Use FILTER NOT EXISTS around the item's patterns
       const [itemSparqlWherePatterns, liftSparqlPatterns] = $liftSparqlPatterns(
         itemSparqlWherePatternsFunction({
-          ...otherParameters,
           schema: schema.item,
+          ...otherParameters,
         }),
       );
       return [
@@ -1182,9 +1182,9 @@ function $maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
 
     // Treat the item as required.
     return itemSparqlWherePatternsFunction({
-      ...otherParameters,
       filter,
       schema: schema.item,
+      ...otherParameters,
     });
   };
 }
@@ -1195,7 +1195,6 @@ interface $NamedNodeFilter {
 
 const $namedNodeIdentifierTypeSchema = { kind: "NamedNodeType" as const };
 type $NamedNodeSchema = Readonly<{
-  defaultValue?: rdfjs.NamedNode;
   in?: readonly rdfjs.NamedNode[];
   kind: "NamedNodeType";
 }>;
@@ -1340,7 +1339,6 @@ interface $NumberFilter {
 }
 
 type $NumberSchema = Readonly<{
-  defaultValue?: number;
   in?: readonly number[];
   kind: "FloatType" | "IntType";
   languageIn?: readonly string[];
@@ -1650,7 +1648,6 @@ interface $StringFilter {
 }
 
 type $StringSchema = Readonly<{
-  defaultValue?: string;
   in?: readonly string[];
   kind: "StringType";
   languageIn?: readonly string[];
@@ -1820,7 +1817,6 @@ function $termFilterSparqlPatterns({
 }
 
 type $TermSchema = Readonly<{
-  defaultValue?: rdfjs.Literal | rdfjs.NamedNode;
   in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
   kind: "TermType";
 }>;
@@ -1833,13 +1829,6 @@ function $termSchemaSparqlWherePatterns({
   filterPatterns: readonly $SparqlFilterPattern[];
   propertyPatterns: readonly sparqljs.BgpPattern[];
   schema: Readonly<{
-    defaultValue?:
-      | boolean
-      | Date
-      | string
-      | number
-      | rdfjs.Literal
-      | rdfjs.NamedNode;
     in?: readonly (
       | boolean
       | Date
@@ -1851,18 +1840,10 @@ function $termSchemaSparqlWherePatterns({
   }>;
   valueVariable: rdfjs.Variable;
 }): readonly $SparqlPattern[] {
-  let patterns: $SparqlPattern[] = propertyPatterns.concat();
+  const patterns: $SparqlPattern[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
     patterns.push($sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
-  }
-
-  if (
-    filterPatterns.length === 0 &&
-    typeof schema.defaultValue !== "undefined"
-  ) {
-    // Filter patterns make the property required
-    patterns = [{ patterns, type: "optional" }];
   }
 
   return patterns.concat(filterPatterns);
@@ -1877,7 +1858,7 @@ const $termSparqlWherePatterns: $SparqlWherePatternsFunction<
     ...parameters,
   });
 function $toLiteral(
-  value: boolean | Date | number | string,
+  value: boolean | Date | number | rdfjs.Literal | string,
   datatype?: rdfjs.NamedNode,
 ): rdfjs.Literal {
   switch (typeof value) {
@@ -1906,8 +1887,8 @@ function $toLiteral(
           $RdfVocabularies.xsd.dateTime,
         );
       }
-      value satisfies never;
-      throw new Error("should never happen");
+
+      return value;
     }
     case "number": {
       if (datatype) {
@@ -1939,6 +1920,7 @@ const $unconstrainedDateSchema = { kind: "DateType" as const };
 const $unconstrainedDateTimeSchema = { kind: "DateTimeType" as const };
 const $unconstrainedFloatSchema = { kind: "FloatType" as const };
 const $unconstrainedIdentifierSchema = { kind: "IdentifierType" as const };
+const $unconstrainedIntSchema = { kind: "IntType" as const };
 const $unconstrainedLiteralSchema = { kind: "LiteralType" as const };
 const $unconstrainedStringSchema = { kind: "StringType" as const };
 type $UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never;
@@ -3183,7 +3165,7 @@ export namespace UuidV4IriIdentifierInterface {
     resource.add(
       UuidV4IriIdentifierInterface.$schema.properties.uuidV4IriProperty
         .identifier,
-      ...[_uuidV4IriIdentifierInterface.uuidV4IriProperty],
+      ...[dataFactory.literal(_uuidV4IriIdentifierInterface.uuidV4IriProperty)],
     );
     return resource;
   }
@@ -3339,7 +3321,7 @@ export class UuidV4IriIdentifierClass {
     });
     resource.add(
       UuidV4IriIdentifierClass.$schema.properties.uuidV4IriProperty.identifier,
-      ...[this.uuidV4IriProperty],
+      ...[dataFactory.literal(this.uuidV4IriProperty)],
     );
     return resource;
   }
@@ -4673,7 +4655,7 @@ export class UnionDiscriminantsClass {
         .optionalClassOrClassOrStringProperty.identifier,
       ...this.optionalClassOrClassOrStringProperty.toList().flatMap((value) =>
         value.type === "2-string"
-          ? ([value.value] as readonly Parameters<
+          ? ([dataFactory.literal(value.value)] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : ([
@@ -4703,11 +4685,14 @@ export class UnionDiscriminantsClass {
         .identifier,
       ...this.optionalIriOrStringProperty
         .toList()
-        .flatMap(
-          (value) =>
-            [value] as readonly Parameters<
-              rdfjsResource.MutableResource["add"]
-            >[1][],
+        .flatMap((value) =>
+          typeof value === "string"
+            ? ([dataFactory.literal(value)] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][])
+            : ([value] as readonly Parameters<
+                rdfjsResource.MutableResource["add"]
+              >[1][]),
         ),
     );
     resource.add(
@@ -4715,7 +4700,9 @@ export class UnionDiscriminantsClass {
         .requiredClassOrClassOrStringProperty.identifier,
       ...(this.requiredClassOrClassOrStringProperty.type === "2-string"
         ? ([
-            this.requiredClassOrClassOrStringProperty.value,
+            dataFactory.literal(
+              this.requiredClassOrClassOrStringProperty.value,
+            ),
           ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
         : ([
             this.requiredClassOrClassOrStringProperty.value.$toRdf({
@@ -4734,16 +4721,20 @@ export class UnionDiscriminantsClass {
     resource.add(
       UnionDiscriminantsClass.$schema.properties.requiredIriOrStringProperty
         .identifier,
-      ...([this.requiredIriOrStringProperty] as readonly Parameters<
-        rdfjsResource.MutableResource["add"]
-      >[1][]),
+      ...(typeof this.requiredIriOrStringProperty === "string"
+        ? ([
+            dataFactory.literal(this.requiredIriOrStringProperty),
+          ] as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])
+        : ([this.requiredIriOrStringProperty] as readonly Parameters<
+            rdfjsResource.MutableResource["add"]
+          >[1][])),
     );
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setClassOrClassOrStringProperty
         .identifier,
       ...this.setClassOrClassOrStringProperty.flatMap((item) =>
         item.type === "2-string"
-          ? ([item.value] as readonly Parameters<
+          ? ([dataFactory.literal(item.value)] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : ([
@@ -4769,11 +4760,14 @@ export class UnionDiscriminantsClass {
     resource.add(
       UnionDiscriminantsClass.$schema.properties.setIriOrStringProperty
         .identifier,
-      ...this.setIriOrStringProperty.flatMap(
-        (item) =>
-          [item] as readonly Parameters<
-            rdfjsResource.MutableResource["add"]
-          >[1][],
+      ...this.setIriOrStringProperty.flatMap((item) =>
+        typeof item === "string"
+          ? ([dataFactory.literal(item)] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][])
+          : ([item] as readonly Parameters<
+              rdfjsResource.MutableResource["add"]
+            >[1][]),
       ),
     );
     return resource;
@@ -8386,7 +8380,11 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$schema.properties.booleanTermProperty.identifier,
-      ...this.booleanTermProperty.toList(),
+      ...this.booleanTermProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(), $RdfVocabularies.xsd.boolean),
+        ]),
     );
     resource.add(
       TermPropertiesClass.$schema.properties.dateTermProperty.identifier,
@@ -8428,7 +8426,9 @@ export class TermPropertiesClass {
     );
     resource.add(
       TermPropertiesClass.$schema.properties.stringTermProperty.identifier,
-      ...this.stringTermProperty.toList(),
+      ...this.stringTermProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
       TermPropertiesClass.$schema.properties.termProperty.identifier,
@@ -9960,7 +9960,7 @@ export class Sha256IriIdentifierClass {
     });
     resource.add(
       Sha256IriIdentifierClass.$schema.properties.sha256IriProperty.identifier,
-      ...[this.sha256IriProperty],
+      ...[dataFactory.literal(this.sha256IriProperty)],
     );
     return resource;
   }
@@ -11737,15 +11737,15 @@ export class PropertyVisibilitiesClass {
     });
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.privateProperty.identifier,
-      ...[this.privateProperty],
+      ...[dataFactory.literal(this.privateProperty)],
     );
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.protectedProperty.identifier,
-      ...[this.protectedProperty],
+      ...[dataFactory.literal(this.protectedProperty)],
     );
     resource.add(
       PropertyVisibilitiesClass.$schema.properties.publicProperty.identifier,
-      ...[this.publicProperty],
+      ...[dataFactory.literal(this.publicProperty)],
     );
     return resource;
   }
@@ -12477,22 +12477,28 @@ export class PropertyCardinalitiesClass {
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.emptyStringSetProperty
         .identifier,
-      ...this.emptyStringSetProperty.flatMap((item) => [item]),
+      ...this.emptyStringSetProperty.flatMap((item) => [
+        dataFactory.literal(item),
+      ]),
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.nonEmptyStringSetProperty
         .identifier,
-      ...this.nonEmptyStringSetProperty.flatMap((item) => [item]),
+      ...this.nonEmptyStringSetProperty.flatMap((item) => [
+        dataFactory.literal(item),
+      ]),
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.optionalStringProperty
         .identifier,
-      ...this.optionalStringProperty.toList(),
+      ...this.optionalStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     resource.add(
       PropertyCardinalitiesClass.$schema.properties.requiredStringProperty
         .identifier,
-      ...[this.requiredStringProperty],
+      ...[dataFactory.literal(this.requiredStringProperty)],
     );
     return resource;
   }
@@ -13827,7 +13833,11 @@ export namespace PartialInterfaceUnionMember2 {
     resource.add(
       PartialInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_partialInterfaceUnionMember2.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _partialInterfaceUnionMember2.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -14451,7 +14461,11 @@ export namespace PartialInterfaceUnionMember1 {
     resource.add(
       PartialInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_partialInterfaceUnionMember1.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _partialInterfaceUnionMember1.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -14591,7 +14605,7 @@ export class PartialClassUnionMember2 {
     resource.add(
       PartialClassUnionMember2.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -15189,7 +15203,7 @@ export class PartialClassUnionMember1 {
     resource.add(
       PartialClassUnionMember1.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -15810,15 +15824,15 @@ export class OrderedPropertiesClass {
     });
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyC.identifier,
-      ...[this.orderedPropertyC],
+      ...[dataFactory.literal(this.orderedPropertyC)],
     );
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyB.identifier,
-      ...[this.orderedPropertyB],
+      ...[dataFactory.literal(this.orderedPropertyB)],
     );
     resource.add(
       OrderedPropertiesClass.$schema.properties.orderedPropertyA.identifier,
-      ...[this.orderedPropertyA],
+      ...[dataFactory.literal(this.orderedPropertyA)],
     );
     return resource;
   }
@@ -16479,7 +16493,7 @@ export class NonClass {
     });
     resource.add(
       NonClass.$schema.properties.nonClassProperty.identifier,
-      ...[this.nonClassProperty],
+      ...[dataFactory.literal(this.nonClassProperty)],
     );
     return resource;
   }
@@ -16942,7 +16956,7 @@ export class NoRdfTypeClassUnionMember2 {
     resource.add(
       NoRdfTypeClassUnionMember2.$schema.properties
         .noRdfTypeClassUnionMember2Property.identifier,
-      ...[this.noRdfTypeClassUnionMember2Property],
+      ...[dataFactory.literal(this.noRdfTypeClassUnionMember2Property)],
     );
     return resource;
   }
@@ -17440,7 +17454,7 @@ export class NoRdfTypeClassUnionMember1 {
     resource.add(
       NoRdfTypeClassUnionMember1.$schema.properties
         .noRdfTypeClassUnionMember1Property.identifier,
-      ...[this.noRdfTypeClassUnionMember1Property],
+      ...[dataFactory.literal(this.noRdfTypeClassUnionMember1Property)],
     );
     return resource;
   }
@@ -18083,7 +18097,7 @@ export class MutablePropertiesClass {
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[item],
+                  ...[dataFactory.literal(item)],
                 );
 
                 if (itemIndex + 1 === list.length) {
@@ -18111,12 +18125,14 @@ export class MutablePropertiesClass {
     );
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableSetProperty.identifier,
-      ...this.mutableSetProperty.flatMap((item) => [item]),
+      ...this.mutableSetProperty.flatMap((item) => [dataFactory.literal(item)]),
     );
     resource.add(
       MutablePropertiesClass.$schema.properties.mutableStringProperty
         .identifier,
-      ...this.mutableStringProperty.toList(),
+      ...this.mutableStringProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
@@ -19275,7 +19291,7 @@ export class ListPropertiesClass {
 
                 currentSubListResource.add(
                   $RdfVocabularies.rdf.first,
-                  ...[item],
+                  ...[dataFactory.literal(item)],
                 );
 
                 if (itemIndex + 1 === list.length) {
@@ -20726,7 +20742,7 @@ export namespace PartialInterface {
     resource.add(
       PartialInterface.$schema.properties.lazilyResolvedStringProperty
         .identifier,
-      ...[_partialInterface.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(_partialInterface.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -24423,7 +24439,7 @@ export class PartialClass {
     });
     resource.add(
       PartialClass.$schema.properties.lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -28685,7 +28701,11 @@ export namespace LazilyResolvedIriIdentifierInterface {
     resource.add(
       LazilyResolvedIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _lazilyResolvedIriIdentifierInterface.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -28806,7 +28826,7 @@ export class LazilyResolvedIriIdentifierClass {
     resource.add(
       LazilyResolvedIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -29804,7 +29824,11 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
     resource.add(
       LazilyResolvedInterfaceUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _lazilyResolvedInterfaceUnionMember2.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -30431,7 +30455,11 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
     resource.add(
       LazilyResolvedInterfaceUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[_lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty],
+      ...[
+        dataFactory.literal(
+          _lazilyResolvedInterfaceUnionMember1.lazilyResolvedStringProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -30571,7 +30599,7 @@ export class LazilyResolvedClassUnionMember2 {
     resource.add(
       LazilyResolvedClassUnionMember2.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -31172,7 +31200,7 @@ export class LazilyResolvedClassUnionMember1 {
     resource.add(
       LazilyResolvedClassUnionMember1.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -32279,7 +32307,9 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$schema.properties
         .lazilyResolvedStringProperty.identifier,
       ...[
-        _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+        dataFactory.literal(
+          _lazilyResolvedBlankNodeOrIriIdentifierInterface.lazilyResolvedStringProperty,
+        ),
       ],
     );
     return resource;
@@ -32423,7 +32453,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     resource.add(
       LazilyResolvedBlankNodeOrIriIdentifierClass.$schema.properties
         .lazilyResolvedStringProperty.identifier,
-      ...[this.lazilyResolvedStringProperty],
+      ...[dataFactory.literal(this.lazilyResolvedStringProperty)],
     );
     return resource;
   }
@@ -33679,7 +33709,7 @@ export class JsPrimitiveUnionPropertyClass {
         .identifier,
       ...this.jsPrimitiveUnionProperty.flatMap((item) =>
         typeof item === "string"
-          ? ([item] as readonly Parameters<
+          ? ([dataFactory.literal(item)] as readonly Parameters<
               rdfjsResource.MutableResource["add"]
             >[1][])
           : typeof item === "number"
@@ -33691,7 +33721,12 @@ export class JsPrimitiveUnionPropertyClass {
               ] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][])
-            : ([item] as readonly Parameters<
+            : ([
+                dataFactory.literal(
+                  item.toString(),
+                  $RdfVocabularies.xsd.boolean,
+                ),
+              ] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][]),
       ),
@@ -35777,7 +35812,9 @@ export namespace InterfaceUnionMemberCommonParentStatic {
       InterfaceUnionMemberCommonParentStatic.$schema.properties
         .interfaceUnionMemberCommonParentProperty.identifier,
       ...[
-        _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+        dataFactory.literal(
+          _interfaceUnionMemberCommonParent.interfaceUnionMemberCommonParentProperty,
+        ),
       ],
     );
     return resource;
@@ -36358,7 +36395,11 @@ export namespace InterfaceUnionMember2 {
     resource.add(
       InterfaceUnionMember2.$schema.properties.interfaceUnionMember2Property
         .identifier,
-      ...[_interfaceUnionMember2.interfaceUnionMember2Property],
+      ...[
+        dataFactory.literal(
+          _interfaceUnionMember2.interfaceUnionMember2Property,
+        ),
+      ],
     );
     return resource;
   }
@@ -36937,7 +36978,11 @@ export namespace InterfaceUnionMember1 {
     resource.add(
       InterfaceUnionMember1.$schema.properties.interfaceUnionMember1Property
         .identifier,
-      ...[_interfaceUnionMember1.interfaceUnionMember1Property],
+      ...[
+        dataFactory.literal(
+          _interfaceUnionMember1.interfaceUnionMember1Property,
+        ),
+      ],
     );
     return resource;
   }
@@ -37411,7 +37456,7 @@ export namespace Interface {
     });
     resource.add(
       Interface.$schema.properties.interfaceProperty.identifier,
-      ...[_interface.interfaceProperty],
+      ...[dataFactory.literal(_interface.interfaceProperty)],
     );
     return resource;
   }
@@ -38936,7 +38981,11 @@ export class InPropertiesClass {
 
     resource.add(
       InPropertiesClass.$schema.properties.inBooleansProperty.identifier,
-      ...this.inBooleansProperty.toList(),
+      ...this.inBooleansProperty
+        .toList()
+        .flatMap((value) => [
+          dataFactory.literal(value.toString(), $RdfVocabularies.xsd.boolean),
+        ]),
     );
     resource.add(
       InPropertiesClass.$schema.properties.inDateTimesProperty.identifier,
@@ -38963,7 +39012,9 @@ export class InPropertiesClass {
     );
     resource.add(
       InPropertiesClass.$schema.properties.inStringsProperty.identifier,
-      ...this.inStringsProperty.toList(),
+      ...this.inStringsProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
@@ -40142,7 +40193,9 @@ export class InIdentifierClass {
 
     resource.add(
       InIdentifierClass.$schema.properties.inIdentifierProperty.identifier,
-      ...this.inIdentifierProperty.toList(),
+      ...this.inIdentifierProperty
+        .toList()
+        .flatMap((value) => [dataFactory.literal(value)]),
     );
     return resource;
   }
@@ -40812,7 +40865,7 @@ export abstract class IdentifierOverride1Class {
     resource.add(
       IdentifierOverride1ClassStatic.$schema.properties
         .identifierOverrideProperty.identifier,
-      ...[this.identifierOverrideProperty],
+      ...[dataFactory.literal(this.identifierOverrideProperty)],
     );
     return resource;
   }
@@ -42883,7 +42936,7 @@ export class HasValuePropertiesClass {
     resource.add(
       HasValuePropertiesClass.$schema.properties.hasLiteralValueProperty
         .identifier,
-      ...[this.hasLiteralValueProperty],
+      ...[dataFactory.literal(this.hasLiteralValueProperty)],
     );
     return resource;
   }
@@ -43483,7 +43536,7 @@ export class FlattenClassUnionMember3 {
     resource.add(
       FlattenClassUnionMember3.$schema.properties
         .flattenClassUnionMember3Property.identifier,
-      ...[this.flattenClassUnionMember3Property],
+      ...[dataFactory.literal(this.flattenClassUnionMember3Property)],
     );
     return resource;
   }
@@ -44744,7 +44797,7 @@ export abstract class AbstractBaseClassForExternClass {
     resource.add(
       AbstractBaseClassForExternClassStatic.$schema.properties
         .abstractBaseClassForExternClassProperty.identifier,
-      ...[this.abstractBaseClassForExternClassProperty],
+      ...[dataFactory.literal(this.abstractBaseClassForExternClassProperty)],
     );
     return resource;
   }
@@ -45220,7 +45273,7 @@ export class ExplicitRdfTypeClass {
     resource.add(
       ExplicitRdfTypeClass.$schema.properties.explicitRdfTypeProperty
         .identifier,
-      ...[this.explicitRdfTypeProperty],
+      ...[dataFactory.literal(this.explicitRdfTypeProperty)],
     );
     return resource;
   }
@@ -45825,7 +45878,7 @@ export class ExplicitFromToRdfTypesClass {
     resource.add(
       ExplicitFromToRdfTypesClass.$schema.properties
         .explicitFromToRdfTypesProperty.identifier,
-      ...[this.explicitFromToRdfTypesProperty],
+      ...[dataFactory.literal(this.explicitFromToRdfTypesProperty)],
     );
     return resource;
   }
@@ -47208,7 +47261,10 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
         .identifier,
-      ...(this.dateDefaultValueProperty.getTime() !== 1523232000000
+      ...($dateEquals(
+        this.dateDefaultValueProperty,
+        new Date("2018-04-09T00:00:00.000Z"),
+      ).isLeft()
         ? [
             dataFactory.literal(
               this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
@@ -47220,7 +47276,10 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .dateTimeDefaultValueProperty.identifier,
-      ...(this.dateTimeDefaultValueProperty.getTime() !== 1523268000000
+      ...($dateEquals(
+        this.dateTimeDefaultValueProperty,
+        new Date("2018-04-09T10:00:00.000Z"),
+      ).isLeft()
         ? [
             dataFactory.literal(
               this.dateTimeDefaultValueProperty.toISOString(),
@@ -47232,12 +47291,19 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .falseBooleanDefaultValueProperty.identifier,
-      ...(this.falseBooleanDefaultValueProperty ? [true] : []),
+      ...($strictEquals(this.falseBooleanDefaultValueProperty, false).isLeft()
+        ? [
+            dataFactory.literal(
+              this.falseBooleanDefaultValueProperty.toString(),
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty
         .identifier,
-      ...(this.numberDefaultValueProperty !== 0
+      ...($strictEquals(this.numberDefaultValueProperty, 0).isLeft()
         ? [
             dataFactory.literal(
               this.numberDefaultValueProperty.toString(10),
@@ -47249,14 +47315,21 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty
         .identifier,
-      ...(this.stringDefaultValueProperty !== ""
-        ? [this.stringDefaultValueProperty]
+      ...($strictEquals(this.stringDefaultValueProperty, "").isLeft()
+        ? [dataFactory.literal(this.stringDefaultValueProperty)]
         : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .trueBooleanDefaultValueProperty.identifier,
-      ...(!this.trueBooleanDefaultValueProperty ? [false] : []),
+      ...($strictEquals(this.trueBooleanDefaultValueProperty, true).isLeft()
+        ? [
+            dataFactory.literal(
+              this.trueBooleanDefaultValueProperty.toString(),
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
+        : []),
     );
     return resource;
   }
@@ -47804,8 +47877,12 @@ export namespace DefaultValuePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "dateDefaultValueProperty",
         type: () => ({
-          defaultValue: new Date("2018-04-09T00:00:00.000Z"),
-          kind: "DateType" as const,
+          defaultValue: dataFactory.literal(
+            "2018-04-09",
+            $RdfVocabularies.xsd.date,
+          ),
+          item: $unconstrainedDateSchema,
+          kind: "DefaultValueType" as const,
         }),
       },
       dateTimeDefaultValueProperty: {
@@ -47815,8 +47892,12 @@ export namespace DefaultValuePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "dateTimeDefaultValueProperty",
         type: () => ({
-          defaultValue: new Date("2018-04-09T10:00:00.000Z"),
-          kind: "DateTimeType" as const,
+          defaultValue: dataFactory.literal(
+            "2018-04-09T10:00:00Z",
+            $RdfVocabularies.xsd.dateTime,
+          ),
+          item: $unconstrainedDateTimeSchema,
+          kind: "DefaultValueType" as const,
         }),
       },
       falseBooleanDefaultValueProperty: {
@@ -47825,7 +47906,14 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "falseBooleanDefaultValueProperty",
-        type: () => ({ defaultValue: false, kind: "BooleanType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal(
+            "false",
+            $RdfVocabularies.xsd.boolean,
+          ),
+          item: $unconstrainedBooleanSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
       numberDefaultValueProperty: {
         identifier: dataFactory.namedNode(
@@ -47833,7 +47921,11 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "numberDefaultValueProperty",
-        type: () => ({ defaultValue: 0, kind: "IntType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal("0", $RdfVocabularies.xsd.integer),
+          item: $unconstrainedIntSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
       stringDefaultValueProperty: {
         identifier: dataFactory.namedNode(
@@ -47841,7 +47933,11 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "stringDefaultValueProperty",
-        type: () => ({ defaultValue: "", kind: "StringType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal(""),
+          item: $unconstrainedStringSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
       trueBooleanDefaultValueProperty: {
         identifier: dataFactory.namedNode(
@@ -47849,7 +47945,14 @@ export namespace DefaultValuePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "trueBooleanDefaultValueProperty",
-        type: () => ({ defaultValue: true, kind: "BooleanType" as const }),
+        type: () => ({
+          defaultValue: dataFactory.literal(
+            "true",
+            $RdfVocabularies.xsd.boolean,
+          ),
+          item: $unconstrainedBooleanSchema,
+          kind: "DefaultValueType" as const,
+        }),
       },
     },
   } as const;
@@ -48070,7 +48173,9 @@ export namespace DefaultValuePropertiesClass {
     }
 
     patterns = patterns.concat(
-      $dateSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$DateFilter, $DateSchema>(
+        $dateSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.dateDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48098,7 +48203,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $dateSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$DateFilter, $DateSchema>(
+        $dateSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.dateTimeDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48126,7 +48233,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $booleanSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
+        $booleanSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.falseBooleanDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48154,7 +48263,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $numberSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$NumberFilter, $NumberSchema>(
+        $numberSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.numberDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48182,7 +48293,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $stringSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$StringFilter, $StringSchema>(
+        $stringSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.stringDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48210,7 +48323,9 @@ export namespace DefaultValuePropertiesClass {
       }),
     );
     patterns = patterns.concat(
-      $booleanSparqlWherePatterns({
+      $defaultValueSparqlWherePatterns<$BooleanFilter, $BooleanSchema>(
+        $booleanSparqlWherePatterns,
+      )({
         filter: parameters?.filter?.trueBooleanDefaultValueProperty,
         preferredLanguages: parameters?.preferredLanguages,
         propertyPatterns: [
@@ -48741,7 +48856,7 @@ export class DateUnionPropertiesClass {
         .toList()
         .flatMap((value) =>
           value.type === "string"
-            ? ([value.value] as readonly Parameters<
+            ? ([dataFactory.literal(value.value)] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][])
             : ([
@@ -48794,7 +48909,7 @@ export class DateUnionPropertiesClass {
               ] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][])
-            : ([value.value] as readonly Parameters<
+            : ([dataFactory.literal(value.value)] as readonly Parameters<
                 rdfjsResource.MutableResource["add"]
               >[1][]),
         ),
@@ -53696,7 +53811,11 @@ export namespace BaseInterfaceWithPropertiesStatic {
     resource.add(
       BaseInterfaceWithPropertiesStatic.$schema.properties
         .baseInterfaceWithPropertiesProperty.identifier,
-      ...[_baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty],
+      ...[
+        dataFactory.literal(
+          _baseInterfaceWithProperties.baseInterfaceWithPropertiesProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -54803,7 +54922,11 @@ export namespace ConcreteParentInterfaceStatic {
     resource.add(
       ConcreteParentInterfaceStatic.$schema.properties
         .concreteParentInterfaceProperty.identifier,
-      ...[_concreteParentInterface.concreteParentInterfaceProperty],
+      ...[
+        dataFactory.literal(
+          _concreteParentInterface.concreteParentInterfaceProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -55387,7 +55510,11 @@ export namespace ConcreteChildInterface {
     resource.add(
       ConcreteChildInterface.$schema.properties.concreteChildInterfaceProperty
         .identifier,
-      ...[_concreteChildInterface.concreteChildInterfaceProperty],
+      ...[
+        dataFactory.literal(
+          _concreteChildInterface.concreteChildInterfaceProperty,
+        ),
+      ],
     );
     return resource;
   }
@@ -55548,7 +55675,7 @@ export abstract class AbstractBaseClassWithProperties {
     resource.add(
       AbstractBaseClassWithPropertiesStatic.$schema.properties
         .abstractBaseClassWithPropertiesProperty.identifier,
-      ...[this.abstractBaseClassWithPropertiesProperty],
+      ...[dataFactory.literal(this.abstractBaseClassWithPropertiesProperty)],
     );
     return resource;
   }
@@ -56289,7 +56416,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     resource.add(
       ConcreteParentClassStatic.$schema.properties.concreteParentClassProperty
         .identifier,
-      ...[this.concreteParentClassProperty],
+      ...[dataFactory.literal(this.concreteParentClassProperty)],
     );
     return resource;
   }
@@ -56868,7 +56995,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     resource.add(
       ConcreteChildClass.$schema.properties.concreteChildClassProperty
         .identifier,
-      ...[this.concreteChildClassProperty],
+      ...[dataFactory.literal(this.concreteChildClassProperty)],
     );
     return resource;
   }
@@ -57427,7 +57554,7 @@ export abstract class ClassUnionMemberCommonParent {
     resource.add(
       ClassUnionMemberCommonParentStatic.$schema.properties
         .classUnionMemberCommonParentProperty.identifier,
-      ...[this.classUnionMemberCommonParentProperty],
+      ...[dataFactory.literal(this.classUnionMemberCommonParentProperty)],
     );
     return resource;
   }
@@ -57871,7 +57998,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
 
     resource.add(
       ClassUnionMember2.$schema.properties.classUnionMember2Property.identifier,
-      ...[this.classUnionMember2Property],
+      ...[dataFactory.literal(this.classUnionMember2Property)],
     );
     return resource;
   }
@@ -58409,7 +58536,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
 
     resource.add(
       ClassUnionMember1.$schema.properties.classUnionMember1Property.identifier,
-      ...[this.classUnionMember1Property],
+      ...[dataFactory.literal(this.classUnionMember1Property)],
     );
     return resource;
   }

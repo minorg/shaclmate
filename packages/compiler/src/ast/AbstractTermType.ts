@@ -1,14 +1,7 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import type { NodeKind } from "@shaclmate/shacl-ast";
-import type { Maybe } from "purify-ts";
 import { AbstractType } from "./AbstractType.js";
-import {
-  arrayEquals,
-  maybeEquals,
-  setEquals,
-  strictEquals,
-  termEquals,
-} from "./equals.js";
+import { arrayEquals, setEquals, strictEquals, termEquals } from "./equals.js";
 
 /**
  * Abstract base class of term types (BlankNodeType, IdentifierType, LiteralType, NamedNodeType, TermType).
@@ -25,7 +18,6 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly defaultValue: Maybe<ConstantTermT>;
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
   abstract readonly kind:
@@ -37,19 +29,16 @@ export abstract class AbstractTermType<
   readonly nodeKinds: ReadonlySet<_RuntimeTermT["termType"]>;
 
   constructor({
-    defaultValue,
     hasValues,
     in_,
     nodeKinds,
     ...superParameters
   }: {
-    defaultValue: Maybe<ConstantTermT>;
     hasValues: readonly ConstantTermT[];
     in_: readonly ConstantTermT[];
     nodeKinds: ReadonlySet<NodeKind>;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
-    this.defaultValue = defaultValue;
     this.hasValues = hasValues;
     this.in_ = in_;
     this.nodeKinds = nodeKinds;
@@ -63,10 +52,6 @@ export abstract class AbstractTermType<
     }
 
     if (this.kind !== other.kind) {
-      return false;
-    }
-
-    if (!maybeEquals(termEquals)(this.defaultValue, other.defaultValue)) {
       return false;
     }
 

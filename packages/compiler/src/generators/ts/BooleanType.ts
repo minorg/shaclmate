@@ -1,9 +1,10 @@
+import { xsd } from "@tpluscode/rdf-ns-builders";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
+import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -19,25 +20,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
-  override get conversions(): readonly AbstractPrimitiveType.Conversion[] {
-    const conversions: AbstractPrimitiveType.Conversion[] = [
-      {
-        conversionExpression: (value) => value,
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
-        sourceTypeName: this.name,
-      },
-    ];
-    this.primitiveDefaultValue.ifJust((defaultValue) => {
-      conversions.push({
-        conversionExpression: () => defaultValue.toString(),
-        sourceTypeCheckExpression: (value) => `typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
-      });
-    });
-    return conversions;
-  }
-
-  @Memoize()
   override get name(): string {
     if (this.primitiveIn.length > 0) {
       return this.primitiveIn.map((value) => value.toString()).join(" | ");
@@ -48,7 +30,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.primitiveDefaultValue.extract(),
       in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
     };
   }
@@ -56,7 +37,6 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   protected override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "boolean",
       "in?": `readonly boolean[]`,
     };
   }
@@ -129,16 +109,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${syntheticNamePrefix}Sp
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): string {
-    return this.primitiveDefaultValue
-      .map((defaultValue) => {
-        if (defaultValue) {
-          // If the default is true, only serialize the value if it's false
-          return `(!${variables.value} ? [false] : [])`;
-        }
-        // If the default is false, only serialize the value if it's true
-        return `(${variables.value} ? [true] : [])`;
-      })
-      .orDefault(`[${variables.value}]`);
+    return `[dataFactory.literal(${variables.value}.toString(), ${rdfjsTermExpression(xsd.boolean)})]`;
   }
 
   protected override fromRdfExpressionChain({

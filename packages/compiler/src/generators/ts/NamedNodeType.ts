@@ -38,7 +38,6 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
-      defaultValue: this.defaultValue.map(rdfjsTermExpression).extract(),
       in:
         this.in_.length > 0
           ? this.in_.map(rdfjsTermExpression).concat()
@@ -49,7 +48,6 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   override get schemaTypeObject() {
     return {
       ...super.schemaTypeObject,
-      "defaultValue?": "rdfjs.NamedNode",
       "in?": "readonly rdfjs.NamedNode[]",
     };
   }

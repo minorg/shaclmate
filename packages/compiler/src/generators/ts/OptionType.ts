@@ -4,10 +4,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
-import { AbstractType } from "./AbstractType.js";
 import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
@@ -16,15 +14,16 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
 > extends AbstractContainerType<ItemTypeT> {
-  override readonly discriminantProperty: Maybe<AbstractType.DiscriminantProperty> =
+  override readonly discriminantProperty: Maybe<AbstractContainerType.DiscriminantProperty> =
     Maybe.empty();
-  override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
+  override readonly graphqlArgs: AbstractContainerType<ItemTypeT>["graphqlArgs"] =
+    Maybe.empty();
   readonly kind = "OptionType";
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
-  override get conversions(): readonly AbstractType.Conversion[] {
-    const conversions: AbstractType.Conversion[] = [];
+  override get conversions(): readonly AbstractContainerType.Conversion[] {
+    const conversions: AbstractContainerType.Conversion[] = [];
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) => `purify.Maybe.isMaybe(${value})`,
@@ -77,11 +76,14 @@ export class OptionType<
   }
 
   @Memoize()
-  override get graphqlType(): AbstractType.GraphqlType {
+  override get graphqlType(): AbstractContainerType.GraphqlType {
     invariant(!this.itemType.graphqlType.nullable);
-    return new AbstractType.GraphqlType(this.itemType.graphqlType.name, {
-      nullable: true,
-    });
+    return new AbstractContainerType.GraphqlType(
+      this.itemType.graphqlType.name,
+      {
+        nullable: true,
+      },
+    );
   }
 
   override get mutable(): boolean {
@@ -94,25 +96,15 @@ export class OptionType<
   }
 
   @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      item: this.itemType.schema,
-    };
-  }
-
-  @Memoize()
   override get schemaType(): string {
     return `${syntheticNamePrefix}MaybeSchema<${this.itemType.schemaType}>`;
   }
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["fromJsonExpression"]
+  >[0]): string {
     const expression = `purify.Maybe.fromNullable(${variables.value})`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
       variables: { value: "item" },
@@ -123,14 +115,18 @@ export class OptionType<
   }
 
   override fromRdfExpression(
-    parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["fromRdfExpression"]
+    >[0],
   ): string {
     const { variables } = parameters;
     return `${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => purify.Maybe.of(value)) : rdfjsResource.Resource.Values.fromValue<purify.Maybe<${this.itemType.name}>>({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: purify.Maybe.empty() }))`;
   }
 
   override graphqlResolveExpression(
-    parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
+    >[0],
   ): string {
     return `${this.itemType.graphqlResolveExpression(parameters)}.extractNullable()`;
   }
@@ -138,7 +134,9 @@ export class OptionType<
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["hashStatements"]
+  >[0]): readonly string[] {
     return [
       `${variables.value}.ifJust((value${depth}) => { ${this.itemType
         .hashStatements({
@@ -154,29 +152,35 @@ export class OptionType<
 
   @Memoize()
   override jsonType(
-    parameters?: Parameters<AbstractType["jsonType"]>[0],
-  ): AbstractType.JsonType {
+    parameters?: Parameters<AbstractContainerType<ItemTypeT>["jsonType"]>[0],
+  ): AbstractContainerType.JsonType {
     const itemTypeJsonType = this.itemType.jsonType(parameters);
     invariant(!itemTypeJsonType.optional);
-    return new AbstractType.JsonType(itemTypeJsonType.name, {
+    return new AbstractContainerType.JsonType(itemTypeJsonType.name, {
       optional: true,
     });
   }
 
   override jsonUiSchemaElement(
-    parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): ReturnType<AbstractType["jsonUiSchemaElement"]> {
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
+    >[0],
+  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 
   override jsonZodSchema(
-    parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
-  ): ReturnType<AbstractType["jsonZodSchema"]> {
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["jsonZodSchema"]
+    >[0],
+  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonZodSchema"]> {
     return `${this.itemType.jsonZodSchema(parameters)}.optional()`;
   }
 
   override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["snippetDeclarations"]
+    >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
@@ -258,18 +262,18 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
   return ({ filter, schema, ...otherParameters }) => {
     if (typeof filter === "undefined") {
       // Treat the item's patterns as optional
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item }));
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters }));
       return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
     }
       
     if (filter === null) {
       // Use FILTER NOT EXISTS around the item's patterns
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ ...otherParameters, schema: schema.item }));
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
       return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 
     // Treat the item as required.
-    return itemSparqlWherePatternsFunction({ ...otherParameters, filter, schema: schema.item });
+    return itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
   }
 }`,
             dependencies: {
@@ -282,8 +286,10 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
   }
 
   override sparqlConstructTriples(
-    parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
+    parameters: Parameters<
+      AbstractContainerType<ItemTypeT>["sparqlConstructTriples"]
+    >[0],
+  ): readonly (AbstractContainerType.SparqlConstructTriple | string)[] {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
@@ -294,13 +300,17 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toJsonExpression"]
+  >[0]): string {
     return `${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: "item" } })})).extract()`;
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["toRdfExpression"]
+  >[0]): string {
     const itemTypeToRdfExpression = this.itemType.toRdfExpression({
       variables: { ...variables, value: "value" },
     });
@@ -312,7 +322,7 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
   }
 
   override useImports(
-    parameters: Parameters<AbstractType["useImports"]>[0],
+    parameters: Parameters<AbstractContainerType<ItemTypeT>["useImports"]>[0],
   ): readonly Import[] {
     return [...this.itemType.useImports(parameters), Import.PURIFY];
   }
