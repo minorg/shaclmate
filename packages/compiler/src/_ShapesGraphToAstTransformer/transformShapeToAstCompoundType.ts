@@ -15,7 +15,7 @@ export function transformShapeToAstCompoundType(
   this: ShapesGraphToAstTransformer,
   shape: input.Shape,
   shapeStack: ShapeStack,
-): Either<Error, Exclude<ast.Type, ast.PlaceholderType>> {
+): Either<Error, Maybe<Exclude<ast.Type, ast.PlaceholderType>>> {
   shapeStack.push(shape);
   try {
     return Eithers.chain4(
@@ -63,9 +63,7 @@ export function transformShapeToAstCompoundType(
           memberShapes = xoneConstraintShapes;
           compoundTypeKind = "UnionType";
         } else {
-          return Left(
-            new Error(`unable to transform ${shape} into an AST type`),
-          );
+          return Either.of(Maybe.empty());
         }
 
         const memberDiscriminantValues: string[] = [];
@@ -138,7 +136,7 @@ export function transformShapeToAstCompoundType(
         }
 
         if (memberTypes.length === 1) {
-          return Either.of(memberTypes[0]);
+          return Either.of(Maybe.of(memberTypes[0]));
         }
 
         return transformShapeToAstAbstractTypeProperties(shape).chain(
@@ -182,10 +180,12 @@ export function transformShapeToAstCompoundType(
             switch (compoundTypeKind) {
               case "IntersectionType":
                 return Either.of(
-                  new ast.IntersectionType({
-                    ...astAbstractTypeProperties,
-                    memberTypes,
-                  }),
+                  Maybe.of(
+                    new ast.IntersectionType({
+                      ...astAbstractTypeProperties,
+                      memberTypes,
+                    }),
+                  ),
                 );
               case "UnionType":
                 if (
@@ -200,11 +200,13 @@ export function transformShapeToAstCompoundType(
                 }
 
                 return Either.of(
-                  new ast.UnionType({
-                    ...astAbstractTypeProperties,
-                    memberDiscriminantValues,
-                    memberTypes,
-                  }),
+                  Maybe.of(
+                    new ast.UnionType({
+                      ...astAbstractTypeProperties,
+                      memberDiscriminantValues,
+                      memberTypes,
+                    }),
+                  ),
                 );
             }
           },

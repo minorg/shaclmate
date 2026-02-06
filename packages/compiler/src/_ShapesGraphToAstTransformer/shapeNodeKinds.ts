@@ -68,29 +68,51 @@ export function shapeNodeKinds(
   ).chain((explicitNodeKinds) => {
     const implicitNodeKinds = new Set<NodeKind>();
 
-    for (const [constraint, constraintNodeKinds] of Object.entries({
-      "sh:datatype": shape.constraints.datatype
-        .map(() => ["Literal"])
-        .orDefault([]) as readonly NodeKind[],
-      "sh:defaultValue":
+    for (const [constraint, constraintNodeKinds] of [
+      [
+        "sh:datatype",
+        shape.constraints.datatype
+          .map(() => ["Literal"])
+          .orDefault([]) as readonly NodeKind[],
+      ],
+      ["sh:in", shape.constraints.in_.map((in_) => in_.termType)],
+      [
+        "sh:maxExclusive",
+        shape.constraints.maxExclusive
+          .map(() => ["Literal"])
+          .orDefault([]) as readonly NodeKind[],
+      ],
+      [
+        "sh:maxInclusive",
+        shape.constraints.maxInclusive
+          .map(() => ["Literal"])
+          .orDefault([]) as readonly NodeKind[],
+      ],
+      [
+        "sh:minExclusive",
+        shape.constraints.minExclusive
+          .map(() => ["Literal"])
+          .orDefault([]) as readonly NodeKind[],
+      ],
+      [
+        "sh:minInclusive",
+        shape.constraints.minInclusive
+          .map(() => ["Literal"])
+          .orDefault([]) as readonly NodeKind[],
+      ],
+      // Order is important here
+      // We don't want sh:defaultValue earlier because it should only determine the node kinds if nothing else did.
+      [
+        "sh:hasValue",
+        shape.constraints.hasValues.map((value) => value.termType),
+      ],
+      [
+        "sh:defaultValue",
         shape.kind === "PropertyShape"
           ? shape.defaultValue.map((value) => value.termType).toList()
           : [],
-      "sh:hasValue": shape.constraints.hasValues.map((value) => value.termType),
-      "sh:in": shape.constraints.in_.map((in_) => in_.termType),
-      "sh:maxExclusive": shape.constraints.maxExclusive
-        .map(() => ["Literal"])
-        .orDefault([]) as readonly NodeKind[],
-      "sh:maxInclusive": shape.constraints.maxInclusive
-        .map(() => ["Literal"])
-        .orDefault([]) as readonly NodeKind[],
-      "sh:minExclusive": shape.constraints.minExclusive
-        .map(() => ["Literal"])
-        .orDefault([]) as readonly NodeKind[],
-      "sh:minInclusive": shape.constraints.minInclusive
-        .map(() => ["Literal"])
-        .orDefault([]) as readonly NodeKind[],
-    })) {
+      ],
+    ] as const) {
       for (const constraintNodeKind of constraintNodeKinds) {
         // Check if the constraint's node kind conflicts with sh:nodeKind
         if (

@@ -1,4 +1,4 @@
-import type { Either } from "purify-ts";
+import { Either } from "purify-ts";
 import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
@@ -20,5 +20,11 @@ export function transformShapeToAstType(
   // Try to transform the property shape into an AST type without cardinality constraints
   return transformShapeToAstCompoundType
     .bind(this)(shape, shapeStack)
-    .altLazy(() => transformShapeToAstTermType.bind(this)(shape, shapeStack));
+    .chain((astType) =>
+      astType
+        .map((_) => Either.of<Error, Exclude<ast.Type, ast.PlaceholderType>>(_))
+        .orDefaultLazy(() =>
+          transformShapeToAstTermType.bind(this)(shape, shapeStack),
+        ),
+    );
 }

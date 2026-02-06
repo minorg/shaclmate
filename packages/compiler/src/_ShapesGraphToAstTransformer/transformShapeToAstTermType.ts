@@ -42,57 +42,52 @@ export function transformShapeToAstTermType(
         | ast.NamedNodeType
         | ast.TermType;
 
-      switch (nodeKinds.size) {
-        case 0:
-          return Left(new Error(`${shape} has no nodeKinds`));
-        case 1: {
-          const nodeKind = [...nodeKinds][0];
-          switch (nodeKind) {
-            case "BlankNode":
-              invariant(in_.length === 0);
-              termType = new ast.BlankNodeType({
-                ...astAbstractTypeProperties,
-              });
-              break;
-            case "Literal":
-              termType = new ast.LiteralType({
-                ...astAbstractTypeProperties,
-                datatype: shape.constraints.datatype,
-                hasValues: hasValues.filter((_) => _.termType === "Literal"),
-                in_: in_.filter((_) => _.termType === "Literal"),
-                languageIn: [...new Set(shape.constraints.languageIn)],
-                maxExclusive: shape.constraints.maxExclusive,
-                maxInclusive: shape.constraints.maxInclusive,
-                minExclusive: shape.constraints.minExclusive,
-                minInclusive: shape.constraints.minInclusive,
-              });
-              break;
-            case "NamedNode":
-              termType = new ast.NamedNodeType({
-                ...astAbstractTypeProperties,
-                hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
-                in_: in_.filter((_) => _.termType === "NamedNode"),
-              });
-              break;
-          }
-          break;
-        }
-        default:
-          if (nodeKinds.has("BlankNode") && nodeKinds.has("NamedNode")) {
+      if (nodeKinds.size === 1) {
+        const nodeKind = [...nodeKinds][0];
+        switch (nodeKind) {
+          case "BlankNode":
             invariant(in_.length === 0);
-            termType = new ast.IdentifierType({
+            termType = new ast.BlankNodeType({
               ...astAbstractTypeProperties,
             });
-          } else {
-            invariant(nodeKinds.has("Literal"));
-            termType = new ast.TermType({
+            break;
+          case "Literal":
+            termType = new ast.LiteralType({
               ...astAbstractTypeProperties,
-              hasValues,
-              in_,
-              nodeKinds,
+              datatype: shape.constraints.datatype,
+              hasValues: hasValues.filter((_) => _.termType === "Literal"),
+              in_: in_.filter((_) => _.termType === "Literal"),
+              languageIn: [...new Set(shape.constraints.languageIn)],
+              maxExclusive: shape.constraints.maxExclusive,
+              maxInclusive: shape.constraints.maxInclusive,
+              minExclusive: shape.constraints.minExclusive,
+              minInclusive: shape.constraints.minInclusive,
             });
-          }
-          break;
+            break;
+          case "NamedNode":
+            termType = new ast.NamedNodeType({
+              ...astAbstractTypeProperties,
+              hasValues: hasValues.filter((_) => _.termType === "NamedNode"),
+              in_: in_.filter((_) => _.termType === "NamedNode"),
+            });
+            break;
+        }
+      } else {
+        invariant(nodeKinds.size >= 2);
+        if (nodeKinds.has("BlankNode") && nodeKinds.has("NamedNode")) {
+          invariant(in_.length === 0);
+          termType = new ast.IdentifierType({
+            ...astAbstractTypeProperties,
+          });
+        } else {
+          invariant(nodeKinds.has("Literal"));
+          termType = new ast.TermType({
+            ...astAbstractTypeProperties,
+            hasValues,
+            in_,
+            nodeKinds,
+          });
+        }
       }
 
       if (termType.in_.length > 0) {
