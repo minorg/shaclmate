@@ -3,6 +3,8 @@ import type * as ast from "../ast/index.js";
 import type * as input from "../input/index.js";
 import type { ShapesGraphToAstTransformer } from "../ShapesGraphToAstTransformer.js";
 import type { ShapeStack } from "./ShapeStack.js";
+import { transformShapeToAstCompoundType } from "./transformShapeToAstCompoundType.js";
+import { transformShapeToAstTermType } from "./transformShapeToAstTermType.js";
 
 /**
  * Try to convert a shape to a type using some heuristics.
@@ -16,8 +18,7 @@ export function transformShapeToAstType(
   shapeStack: ShapeStack,
 ): Either<Error, Exclude<ast.Type, ast.PlaceholderType>> {
   // Try to transform the property shape into an AST type without cardinality constraints
-  return this.transformShapeToAstCompoundType(shape, shapeStack)
-    .altLazy(() => this.transformShapeToAstIdentifierType(shape, shapeStack))
-    .altLazy(() => this.transformShapeToAstLiteralType(shape, shapeStack))
-    .altLazy(() => this.transformShapeToAstTermType(shape, shapeStack));
+  return transformShapeToAstCompoundType
+    .bind(this)(shape, shapeStack)
+    .altLazy(() => transformShapeToAstTermType.bind(this)(shape, shapeStack));
 }
