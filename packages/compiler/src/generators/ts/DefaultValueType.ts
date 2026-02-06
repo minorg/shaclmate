@@ -97,7 +97,9 @@ export class DefaultValueType<
       case "DateTimeType":
       case "DateType":
         invariant(this.defaultValue.termType === "Literal");
-        return Maybe.of(`new Date("${fromRdf(this.defaultValue, true)}")`);
+        return Maybe.of(
+          `new Date("${fromRdf(this.defaultValue, true).toISOString()}")`,
+        );
       case "BooleanType":
       case "FloatType":
       case "IntType":
@@ -236,9 +238,15 @@ function ${syntheticNamePrefix}defaultValueSparqlWherePatterns<ItemFilterT, Item
   override toRdfExpression(
     parameters: Parameters<AbstractType["toRdfExpression"]>[0],
   ): string {
-    // Convert the item to an RDF/JS term (actually an array with one term) and then filter it out if it's the same as the default value,
-    // so the default value is never serialized.
-    return `${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`;
+    const { variables } = parameters;
+    return this.defaultValuePrimitiveExpression
+      .map(
+        (defaultValuePrimitiveExpression) =>
+          `${this.itemType.equalsFunction}(${variables.value}, ${defaultValuePrimitiveExpression}).isLeft() ? ${this.itemType.toRdfExpression(parameters)} : []`,
+      )
+      .orDefault(
+        `${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
+      );
   }
 
   override useImports(

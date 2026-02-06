@@ -47030,9 +47030,7 @@ export class DefaultValuePropertiesClass {
     ) {
       this.dateDefaultValueProperty = parameters?.dateDefaultValueProperty;
     } else if (typeof parameters?.dateDefaultValueProperty === "undefined") {
-      this.dateDefaultValueProperty = new Date(
-        "Sun Apr 08 2018 20:00:00 GMT-0400 (Eastern Daylight Time)",
-      );
+      this.dateDefaultValueProperty = new Date("2018-04-09T00:00:00.000Z");
     } else {
       this.dateDefaultValueProperty =
         parameters?.dateDefaultValueProperty satisfies never;
@@ -47047,9 +47045,7 @@ export class DefaultValuePropertiesClass {
     } else if (
       typeof parameters?.dateTimeDefaultValueProperty === "undefined"
     ) {
-      this.dateTimeDefaultValueProperty = new Date(
-        "Mon Apr 09 2018 06:00:00 GMT-0400 (Eastern Daylight Time)",
-      );
+      this.dateTimeDefaultValueProperty = new Date("2018-04-09T10:00:00.000Z");
     } else {
       this.dateTimeDefaultValueProperty =
         parameters?.dateTimeDefaultValueProperty satisfies never;
@@ -47293,85 +47289,75 @@ export class DefaultValuePropertiesClass {
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.dateDefaultValueProperty
         .identifier,
-      ...[
-        dataFactory.literal(
-          this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
-          $RdfVocabularies.xsd.date,
-        ),
-      ].filter(
-        (value) =>
-          !value.equals(
-            dataFactory.literal("2018-04-09", $RdfVocabularies.xsd.date),
-          ),
-      ),
+      ...($dateEquals(
+        this.dateDefaultValueProperty,
+        new Date("2018-04-09T00:00:00.000Z"),
+      ).isLeft()
+        ? [
+            dataFactory.literal(
+              this.dateDefaultValueProperty.toISOString().replace(/T.*$/, ""),
+              $RdfVocabularies.xsd.date,
+            ),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .dateTimeDefaultValueProperty.identifier,
-      ...[
-        dataFactory.literal(
-          this.dateTimeDefaultValueProperty.toISOString(),
-          $RdfVocabularies.xsd.dateTime,
-        ),
-      ].filter(
-        (value) =>
-          !value.equals(
+      ...($dateEquals(
+        this.dateTimeDefaultValueProperty,
+        new Date("2018-04-09T10:00:00.000Z"),
+      ).isLeft()
+        ? [
             dataFactory.literal(
-              "2018-04-09T10:00:00Z",
+              this.dateTimeDefaultValueProperty.toISOString(),
               $RdfVocabularies.xsd.dateTime,
             ),
-          ),
-      ),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .falseBooleanDefaultValueProperty.identifier,
-      ...[
-        dataFactory.literal(
-          this.falseBooleanDefaultValueProperty.toString(),
-          $RdfVocabularies.xsd.boolean,
-        ),
-      ].filter(
-        (value) =>
-          !value.equals(
-            dataFactory.literal("false", $RdfVocabularies.xsd.boolean),
-          ),
-      ),
+      ...($strictEquals(this.falseBooleanDefaultValueProperty, false).isLeft()
+        ? [
+            dataFactory.literal(
+              this.falseBooleanDefaultValueProperty.toString(),
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.numberDefaultValueProperty
         .identifier,
-      ...[
-        dataFactory.literal(
-          this.numberDefaultValueProperty.toString(10),
-          $RdfVocabularies.xsd.integer,
-        ),
-      ].filter(
-        (value) =>
-          !value.equals(dataFactory.literal("0", $RdfVocabularies.xsd.integer)),
-      ),
+      ...($strictEquals(this.numberDefaultValueProperty, 0).isLeft()
+        ? [
+            dataFactory.literal(
+              this.numberDefaultValueProperty.toString(10),
+              $RdfVocabularies.xsd.integer,
+            ),
+          ]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties.stringDefaultValueProperty
         .identifier,
-      ...[dataFactory.literal(this.stringDefaultValueProperty)].filter(
-        (value) => !value.equals(dataFactory.literal("")),
-      ),
+      ...($strictEquals(this.stringDefaultValueProperty, "").isLeft()
+        ? [dataFactory.literal(this.stringDefaultValueProperty)]
+        : []),
     );
     resource.add(
       DefaultValuePropertiesClass.$schema.properties
         .trueBooleanDefaultValueProperty.identifier,
-      ...[
-        dataFactory.literal(
-          this.trueBooleanDefaultValueProperty.toString(),
-          $RdfVocabularies.xsd.boolean,
-        ),
-      ].filter(
-        (value) =>
-          !value.equals(
-            dataFactory.literal("true", $RdfVocabularies.xsd.boolean),
-          ),
-      ),
+      ...($strictEquals(this.trueBooleanDefaultValueProperty, true).isLeft()
+        ? [
+            dataFactory.literal(
+              this.trueBooleanDefaultValueProperty.toString(),
+              $RdfVocabularies.xsd.boolean,
+            ),
+          ]
+        : []),
     );
     return resource;
   }
