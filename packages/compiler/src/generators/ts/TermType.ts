@@ -50,6 +50,9 @@ export class TermType<
     return {
       ...super.schemaObject,
       in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
+      nodeKinds: [...this.nodeKinds].map(
+        (_) => `${JSON.stringify(_)} as const`,
+      ),
     };
   }
 
@@ -57,6 +60,7 @@ export class TermType<
     return {
       ...super.schemaTypeObject,
       "in?": `readonly (rdfjs.Literal | rdfjs.NamedNode)[]`,
+      nodeKinds: `readonly ("BlankNode" | "Literal" | "NamedNode")[]`,
     };
   }
 
