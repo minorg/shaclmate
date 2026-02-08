@@ -363,6 +363,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 
     if (features.has("sparql")) {
       snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
         singleEntryRecord(
           `${syntheticNamePrefix}CollectionSchema`,
           `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
