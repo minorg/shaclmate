@@ -173,78 +173,63 @@ shaclmate:BaseShaclCoreShape-xone
 shaclmate:IdentifierList
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property shaclmate:IdentifierList-first, shaclmate:IdentifierList-rest .
-
-shaclmate:IdentifierList-first
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:path rdf:first .
-
-shaclmate:IdentifierList-rest
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:rest ;
     sh:xone ([
-            sh:class shaclmate:IdentifierList
+            sh:hasValue ( )
         ]
         [
-            sh:hasValue ( )
+            sh:property [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:nodeKind sh:BlankNodeOrIRI ;
+                sh:path rdf:first
+            ], [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node shaclmate:IdentifierList ;
+                sh:path rdf:rest
+            ]
         ]
     ) .
 
 shaclmate:InList
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property shaclmate:InList-first, shaclmate:InList-rest .
-
-shaclmate:InList-first
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:nodeKind sh:IRIOrLiteral ;
-    sh:path rdf:first .
-
-shaclmate:InList-rest
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:rest ;
     sh:xone ([
-            sh:class shaclmate:InList
+            sh:hasValue ( )
         ]
         [
-            sh:hasValue ( )
+            sh:property [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:nodeKind sh:IRIOrLiteral ;
+                sh:path rdf:first
+            ], [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node shaclmate:InList ;
+                sh:path rdf:rest
+            ]
         ]
     ) .
 
 shaclmate:IriList
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property shaclmate:IriList-first, shaclmate:IriList-rest .
-
-shaclmate:IriList-first
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:nodeKind sh:IRI ;
-    sh:path rdf:first .
-
-shaclmate:IriList-rest
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:rest ;
     sh:xone ([
-            sh:class shaclmate:IriList
+            sh:hasValue ( )
         ]
         [
-            sh:hasValue ( )
+            sh:property [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:nodeKind sh:IRI ;
+                sh:path rdf:first
+            ], [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node shaclmate:IriList ;
+                sh:path rdf:rest
+            ]
         ]
     ) .
 
@@ -365,26 +350,21 @@ shaclmate:ShaclCoreShape
 shaclmate:StringList
     a owl:Class, sh:NodeShape ;
     rdfs:subClassOf rdf:List ;
-    sh:nodeKind sh:BlankNodeOrIRI ;
-    sh:property shaclmate:StringList-first, shaclmate:StringList-rest .
-
-shaclmate:StringList-first
-    a sh:PropertyShape ;
-    sh:datatype xsd:string ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:first .
-
-shaclmate:StringList-rest
-    a sh:PropertyShape ;
-    sh:maxCount 1 ;
-    sh:minCount 1 ;
-    sh:path rdf:rest ;
     sh:xone ([
-            sh:class shaclmate:StringList
+            sh:hasValue ( )
         ]
         [
-            sh:hasValue ( )
+            sh:property [
+                sh:datatype xsd:string ;
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:path rdf:first
+            ], [
+                sh:maxCount 1 ;
+                sh:minCount 1 ;
+                sh:node shaclmate:StringList ;
+                sh:path rdf:rest
+            ]
         ]
     ) .
 
