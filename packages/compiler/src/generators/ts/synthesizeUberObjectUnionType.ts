@@ -11,14 +11,12 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 /**
  * Synthesize the $Object union.
  */
-export function synthesizeUberObjectUnionType({
-  objectTypes,
-}: {
+export function synthesizeUberObjectUnionType(parameters: {
   objectTypes: readonly ObjectType[];
 }): ObjectUnionType {
-  //   const objectTypes = parameters.objectTypes.filter(
-  //     (objectType) => !objectType.abstract,
-  //   );
+  const objectTypes = parameters.objectTypes.filter(
+    (objectType) => !objectType.extern,
+  );
 
   const nodeKinds = objectTypes.reduce((nodeKinds, objectType) => {
     for (const nodeKind of objectType.identifierType.nodeKinds) {

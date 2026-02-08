@@ -78,7 +78,7 @@ export class PropertyShape<
       `identifier=${Resource.Identifier.toString(this.identifier)}`,
     ];
     const path = this.path;
-    if (path.kind === "PredicatePath") {
+    if (path.$type === "PredicatePath") {
       keyValues.push(`path=${path.iri.value}`);
     }
     return `PropertyShape(${keyValues.join(", ")})`;

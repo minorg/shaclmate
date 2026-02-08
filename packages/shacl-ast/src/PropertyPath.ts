@@ -5,37 +5,37 @@ import { Either, Left } from "purify-ts";
 import { Resource } from "rdfjs-resource";
 
 export interface AlternativePath {
-  readonly kind: "AlternativePath";
+  readonly $type: "AlternativePath";
   readonly members: readonly PropertyPath[];
 }
 
 export interface InversePath {
-  readonly kind: "InversePath";
+  readonly $type: "InversePath";
   readonly path: PropertyPath;
 }
 
 export interface OneOrMorePath {
-  readonly kind: "OneOrMorePath";
+  readonly $type: "OneOrMorePath";
   readonly path: PropertyPath;
 }
 
 export interface PredicatePath {
   readonly iri: NamedNode;
-  readonly kind: "PredicatePath";
+  readonly $type: "PredicatePath";
 }
 
 export interface SequencePath {
-  readonly kind: "SequencePath";
+  readonly $type: "SequencePath";
   readonly members: readonly PropertyPath[];
 }
 
 export interface ZeroOrMorePath {
-  readonly kind: "ZeroOrMorePath";
+  readonly $type: "ZeroOrMorePath";
   readonly path: PropertyPath;
 }
 
 export interface ZeroOrOnePath {
-  readonly kind: "ZeroOrOnePath";
+  readonly $type: "ZeroOrOnePath";
   readonly path: PropertyPath;
 }
 
@@ -61,7 +61,7 @@ export namespace PropertyPath {
     // Predicate path
     // sh:path ex:parent
     if (resource.identifier.termType === "NamedNode") {
-      return Either.of({ iri: resource.identifier, kind: "PredicatePath" });
+      return Either.of({ iri: resource.identifier, $type: "PredicatePath" });
     }
 
     // The other property path types are BlankNodes
@@ -92,7 +92,7 @@ export namespace PropertyPath {
       const list = resource.toList();
       if (list.isRight()) {
         return getPropertyPathList(list).map((members) => ({
-          kind: "SequencePath",
+          $type: "SequencePath",
           members,
         }));
       }
@@ -124,7 +124,7 @@ export namespace PropertyPath {
       // sh:path: [ sh:alternativePath ( ex:father ex:mother  ) ]
       if (quad.predicate.equals(sh.alternativePath)) {
         return getPropertyPathList(objectResource.toList()).map((members) => ({
-          kind: "AlternativePath",
+          $type: "AlternativePath",
           members,
         }));
       }
@@ -133,7 +133,7 @@ export namespace PropertyPath {
       // sh:path: [ sh:inversePath ex:parent ]
       if (quad.predicate.equals(sh.inversePath)) {
         return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          kind: "InversePath",
+          $type: "InversePath",
           path,
         }));
       }
@@ -141,7 +141,7 @@ export namespace PropertyPath {
       // One or more path
       if (quad.predicate.equals(sh.oneOrMorePath)) {
         return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          kind: "OneOrMorePath",
+          $type: "OneOrMorePath",
           path,
         }));
       }
@@ -149,14 +149,14 @@ export namespace PropertyPath {
       // Zero or more path
       if (quad.predicate.equals(sh.zeroOrMorePath)) {
         return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          kind: "ZeroOrMorePath",
+          $type: "ZeroOrMorePath",
           path,
         }));
       }
 
       if (quad.predicate.equals(sh.zeroOrOnePath)) {
         return PropertyPath.$fromRdf(objectResource).map((path) => ({
-          kind: "ZeroOrOnePath",
+          $type: "ZeroOrOnePath",
           path,
         }));
       }
@@ -169,10 +169,22 @@ export namespace PropertyPath {
     );
   }
 
+  export type $Filter = object;
+
+  export function $filter(_filter: $Filter, _value: PropertyPath): boolean {
+    return true;
+  }
+
+  export function isPropertyPath(): boolean {
+    return false;
+  }
+
   export function $toRdf(
     _propertyPath: PropertyPath,
     _options?: any,
   ): Resource {
     throw new Error("not implemented");
   }
+
+  export const $schema = {};
 }
