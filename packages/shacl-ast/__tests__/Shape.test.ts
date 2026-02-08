@@ -19,7 +19,7 @@ describe("Shape", () => {
       .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
-          propertyShapePath.kind === "PredicatePath" &&
+          propertyShapePath.$type === "PredicatePath" &&
           propertyShapePath.iri.equals(path)
         );
       });

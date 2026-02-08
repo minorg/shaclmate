@@ -26,7 +26,7 @@ describe("PropertyShape", () => {
       .find((propertyShape) => {
         const propertyShapePath = propertyShape.path;
         return (
-          propertyShapePath.kind === "PredicatePath" &&
+          propertyShapePath.$type === "PredicatePath" &&
           propertyShapePath.iri.equals(path)
         );
       });
@@ -61,7 +61,7 @@ describe("PropertyShape", () => {
       dash.ScriptAPIShape,
       dash.generatePrefixClasses,
     ).path;
-    expect(path.kind).toStrictEqual("PredicatePath");
+    expect(path.$type).toStrictEqual("PredicatePath");
     expect(
       (path as PredicatePath).iri.equals(dash.generatePrefixClasses),
     ).toStrictEqual(true);
@@ -72,10 +72,10 @@ describe("PropertyShape", () => {
       .nodeShapeByIdentifier(schema.Person)
       .unsafeCoerce();
     for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
-      if (propertyShape.path.kind !== "InversePath") {
+      if (propertyShape.path.$type !== "InversePath") {
         continue;
       }
-      expect(propertyShape.path.path.kind).toStrictEqual("PredicatePath");
+      expect(propertyShape.path.path.$type).toStrictEqual("PredicatePath");
       expect(
         (propertyShape.path.path as PredicatePath).iri.equals(schema.parent),
       ).toStrictEqual(true);
@@ -89,10 +89,10 @@ describe("PropertyShape", () => {
       .nodeShapeByIdentifier(dash.ListShape)
       .unsafeCoerce();
     for (const propertyShape of nodeShape.constraints.properties.unsafeCoerce()) {
-      if (propertyShape.path.kind !== "ZeroOrMorePath") {
+      if (propertyShape.path.$type !== "ZeroOrMorePath") {
         continue;
       }
-      expect(propertyShape.path.path.kind).toStrictEqual("PredicatePath");
+      expect(propertyShape.path.path.$type).toStrictEqual("PredicatePath");
       expect(
         (propertyShape.path.path as PredicatePath).iri.equals(rdf.rest),
       ).toStrictEqual(true);
