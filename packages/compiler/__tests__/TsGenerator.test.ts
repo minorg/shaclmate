@@ -65,9 +65,11 @@ function compile(source: string, sourceDirectoryPath?: string): void {
 
   const program = ts.createProgram([generatedFilePath], compilerOptions, host);
   const emitResult = program.emit();
-  const diagnostics = emitResult.diagnostics.concat(
-    ts.getPreEmitDiagnostics(program),
-  );
+  const diagnostics = emitResult.diagnostics
+    .concat(ts.getPreEmitDiagnostics(program))
+    .filter(
+      (diagnostic) => diagnostic.category !== 1 || diagnostic.code !== 6133,
+    ); // Ignore unused code
   expect(diagnostics).toHaveLength(0);
 }
 
@@ -85,10 +87,6 @@ function generate(parameters: {
 describe("TsGenerator", () => {
   for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
     if (shapesGraphEither === null) {
-      continue;
-    }
-
-    if (id !== "shaclAst") {
       continue;
     }
 
