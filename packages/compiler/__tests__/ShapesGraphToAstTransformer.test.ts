@@ -1,77 +1,114 @@
-// biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
-import { type ast, ShapesGraphToAstTransformer } from "@shaclmate/compiler";
+import type { PrefixMap } from "@rdfjs/prefix-map/PrefixMap.js";
+import {
+  // biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
+  type ast,
+  type ShapesGraph,
+  ShapesGraphToAstTransformer,
+} from "@shaclmate/compiler";
+import { type Either, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";
 
-describe("ShapesGraphToAstTransformer: kitchen sink", () => {
-  let ast: ast.Ast;
-  const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> = {};
-
-  beforeAll(() => {
-    ast = new ShapesGraphToAstTransformer(testData.kitchenSink.unsafeCoerce())
-      .transform()
-      .unsafeCoerce();
-    for (const astObjectType of ast.objectTypes) {
-      if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
-        continue;
+describe("ShapesGraphToAstTransformer: well-formed", () => {
+  for (const [id, shapesGraphMaybe] of Object.entries(testData.wellFormed)) {
+    let shapesGraphEither: Either<
+      Error,
+      {
+        iriPrefixMap: PrefixMap;
+        shapesGraph: ShapesGraph;
       }
-      invariant(
-        !astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value],
-      );
-      astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value] =
-        astObjectType;
+    > | null;
+    if (Maybe.isMaybe(shapesGraphMaybe)) {
+      shapesGraphEither = shapesGraphMaybe.extractNullable();
+    } else {
+      shapesGraphEither = shapesGraphMaybe;
     }
-  });
+    if (shapesGraphEither === null) {
+      continue;
+    }
 
-  it("should transform kitchen object types", ({ expect }) => {
-    expect(ast.objectTypes).toHaveLength(76);
-  });
+    describe(id, () => {
+      let ast: ast.Ast;
+      const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> =
+        {};
 
-  it("should transform object intersection types", ({ expect }) => {
-    expect(ast.objectIntersectionTypes).toHaveLength(0);
-  });
+      beforeAll(() => {
+        ast = new ShapesGraphToAstTransformer(shapesGraphEither.unsafeCoerce())
+          .transform()
+          .unsafeCoerce();
+        for (const astObjectType of ast.objectTypes) {
+          if (astObjectType.shapeIdentifier.termType !== "NamedNode") {
+            continue;
+          }
+          invariant(
+            !astObjectTypesByShapeIdentifier[
+              astObjectType.shapeIdentifier.value
+            ],
+          );
+          astObjectTypesByShapeIdentifier[astObjectType.shapeIdentifier.value] =
+            astObjectType;
+        }
+      });
 
-  it("should transform object union types", ({ expect }) => {
-    expect(ast.objectUnionTypes).toHaveLength(9);
-  });
+      it("should transform object types", ({ expect }) => {
+        if (id === "kitchenSink") {
+          expect(ast.objectTypes).toHaveLength(76);
+        } else {
+          expect(ast.objectTypes).not.toHaveLength(0);
+        }
+      });
 
-  for (const [classIri, recursivePropertyIri] of [
-    [
-      "http://example.com/DirectRecursiveClass",
-      "http://example.com/directRecursiveProperty",
-    ],
-    [
-      "http://example.com/IndirectRecursiveClass",
-      "http://example.com/indirectRecursiveHelperProperty",
-    ],
-    [
-      "http://example.com/RecursiveClassUnionMember1",
-      "http://example.com/recursiveClassUnionMember1Property",
-    ],
-    [
-      "http://example.com/RecursiveClassUnionMember2",
-      "http://example.com/recursiveClassUnionMember2Property",
-    ],
-  ]) {
-    it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
-      expect,
-    }) => {
-      const astObjectType = astObjectTypesByShapeIdentifier[classIri];
-      expect(astObjectType).toBeDefined();
-      const recursiveProperty = astObjectType.properties.find(
-        (property) => property.path.value === recursivePropertyIri,
-      );
-      expect(recursiveProperty).toBeDefined();
-      expect(recursiveProperty!.recursive).toStrictEqual(true);
+      it("should transform object intersection types", ({ expect }) => {
+        expect(ast.objectIntersectionTypes).toHaveLength(0);
+      });
+
+      it("should transform object union types", ({ expect }) => {
+        if (id === "kitchenSink") {
+          expect(ast.objectUnionTypes).toHaveLength(9);
+        }
+      });
+
+      if (id === "kitchenSink") {
+        for (const [classIri, recursivePropertyIri] of [
+          [
+            "http://example.com/DirectRecursiveClass",
+            "http://example.com/directRecursiveProperty",
+          ],
+          [
+            "http://example.com/IndirectRecursiveClass",
+            "http://example.com/indirectRecursiveHelperProperty",
+          ],
+          [
+            "http://example.com/RecursiveClassUnionMember1",
+            "http://example.com/recursiveClassUnionMember1Property",
+          ],
+          [
+            "http://example.com/RecursiveClassUnionMember2",
+            "http://example.com/recursiveClassUnionMember2Property",
+          ],
+        ]) {
+          it(`${classIri} property ${recursivePropertyIri} should be marked recursive`, ({
+            expect,
+          }) => {
+            const astObjectType = astObjectTypesByShapeIdentifier[classIri];
+            expect(astObjectType).toBeDefined();
+            const recursiveProperty = astObjectType.properties.find(
+              (property) => property.path.value === recursivePropertyIri,
+            );
+            expect(recursiveProperty).toBeDefined();
+            expect(recursiveProperty!.recursive).toStrictEqual(true);
+          });
+        }
+      }
     });
   }
 });
 
-describe("ShapesGraphToAstTransformer: error cases", () => {
+describe("ShapesGraphToAstTransformer: illFormed", () => {
   it("sh:defaultValue and sh:hasValue conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.defaultValueHasValueConflict.unsafeCoerce(),
+      testData.illFormed.defaultValueHasValueConflict.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -83,7 +120,7 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
 
   it("sh:defaultValue and multiple sh:hasValue", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.defaultValueMultipleHasValues.unsafeCoerce(),
+      testData.illFormed.defaultValueMultipleHasValues.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -95,7 +132,7 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
 
   it("sh:defaultValue and sh:in conflict", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.defaultValueInConflict.unsafeCoerce(),
+      testData.illFormed.defaultValueInConflict.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -107,7 +144,7 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
 
   it("incompatible node shape identifiers", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
+      testData.illFormed.incompatibleNodeShapeIdentifiers.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -117,7 +154,7 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
 
   it("no required property property", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.noRequiredProperty.unsafeCoerce(),
+      testData.illFormed.noRequiredProperty.unsafeCoerce(),
     )
       .transform()
       .extract();
@@ -128,7 +165,7 @@ describe("ShapesGraphToAstTransformer: error cases", () => {
 
   it("undefined parent class", ({ expect }) => {
     const error = new ShapesGraphToAstTransformer(
-      testData.undefinedParentClass.unsafeCoerce(),
+      testData.illFormed.undefinedParentClass.unsafeCoerce(),
     )
       .transform()
       .extract();
