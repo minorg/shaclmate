@@ -71,6 +71,8 @@ export class StringType extends AbstractPrimitiveType<string> {
       AbstractPrimitiveType<string>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
@@ -104,7 +106,7 @@ function ${syntheticNamePrefix}filterString(filter: ${syntheticNamePrefix}String
 }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}stringSparqlWherePatterns`, {
             code: `\
 const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =

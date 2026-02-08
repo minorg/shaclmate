@@ -95,10 +95,12 @@ export class ListType<
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}listSparqlWherePatterns`, {
             code: `\
 function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}CollectionSchema<ItemSchemaT>> {
@@ -378,11 +380,10 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
   override useImports(
     parameters: Parameters<AbstractCollectionType<ItemTypeT>["useImports"]>[0],
   ): readonly Import[] {
+    const { features } = parameters;
+
     const imports: Import[] = this.itemType.useImports(parameters).concat();
-    if (
-      parameters.features.has("hash") &&
-      this.identifierNodeKind === "NamedNode"
-    ) {
+    if (features.has("hash") && this.identifierNodeKind === "NamedNode") {
       imports.push(Import.SHA256);
     }
     return imports;

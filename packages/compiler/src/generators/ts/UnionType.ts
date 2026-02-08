@@ -576,7 +576,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   override snippetDeclarations(
     parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
-    const { recursionStack } = parameters;
+    const { features, recursionStack } = parameters;
     if (recursionStack.some((type) => Object.is(type, this))) {
       return {};
     }
@@ -589,7 +589,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
         ),
       {} as Record<string, SnippetDeclaration>,
     );
-    if (parameters.features.has("sparql")) {
+    if (features.has("sparql")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
         sharedSnippetDeclarations.liftSparqlPatterns,

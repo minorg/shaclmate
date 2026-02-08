@@ -182,6 +182,8 @@ export class OptionType<
       AbstractContainerType<ItemTypeT>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
 
@@ -209,7 +211,7 @@ function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (item
 }`,
       ),
 
-      parameters.features.has("equals")
+      features.has("equals")
         ? singleEntryRecord(
             `${syntheticNamePrefix}maybeEquals`,
             `\
@@ -250,14 +252,17 @@ function ${syntheticNamePrefix}maybeEquals<T>(
 type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
       ),
 
-      singleEntryRecord(
-        `${syntheticNamePrefix}MaybeSchema`,
-        `type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }`,
-      ),
+      features.has("sparql")
+        ? mergeSnippetDeclarations(
+            singleEntryRecord(
+              `${syntheticNamePrefix}MaybeSchema`,
+              `type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }`,
+            ),
 
-      parameters.features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}maybeSparqlWherePatterns`, {
-            code: `\
+            singleEntryRecord(
+              `${syntheticNamePrefix}maybeSparqlWherePatterns`,
+              {
+                code: `\
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}MaybeFilter<ItemFilterT>, ${syntheticNamePrefix}MaybeSchema<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (typeof filter === "undefined") {
@@ -276,11 +281,13 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
     return itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
   }
 }`,
-            dependencies: {
-              ...sharedSnippetDeclarations.liftSparqlPatterns,
-              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-            },
-          })
+                dependencies: {
+                  ...sharedSnippetDeclarations.liftSparqlPatterns,
+                  ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+                },
+              },
+            ),
+          )
         : {},
     );
   }

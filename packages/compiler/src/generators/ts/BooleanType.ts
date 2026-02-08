@@ -57,6 +57,8 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
       AbstractPrimitiveType<boolean>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
@@ -79,7 +81,7 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${syntheticNamePrefix}Boole
 }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}booleanSparqlWherePatterns`,
             {

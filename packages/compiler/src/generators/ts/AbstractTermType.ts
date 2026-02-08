@@ -181,11 +181,6 @@ export abstract class AbstractTermType<
     Record<string, SnippetDeclaration>
   > {
     return mergeSnippetDeclarations(
-      singleEntryRecord(
-        this.schemaType,
-        `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
-      ),
-
       features.has("equals")
         ? singleEntryRecord(`${syntheticNamePrefix}booleanEquals`, {
             code: `\
@@ -204,6 +199,13 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
 }`,
             dependencies: sharedSnippetDeclarations.EqualsResult,
           })
+        : {},
+
+      features.has("sparql")
+        ? singleEntryRecord(
+            this.schemaType,
+            `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
+          )
         : {},
 
       sharedSnippetDeclarations.toLiteral, // For initializers

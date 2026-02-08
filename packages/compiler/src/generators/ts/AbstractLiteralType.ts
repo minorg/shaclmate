@@ -64,6 +64,8 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       AbstractTermType<Literal, Literal>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
@@ -74,7 +76,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
           )
         : {},
 
-      parameters.features.has("rdf")
+      features.has("rdf")
         ? singleEntryRecord(
             `${syntheticNamePrefix}fromRdfPreferredLanguages`,
             `\

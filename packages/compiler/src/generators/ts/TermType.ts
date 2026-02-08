@@ -127,11 +127,13 @@ export class TermType<
   override snippetDeclarations(
     parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
       sharedSnippetDeclarations.filterTerm,
       sharedSnippetDeclarations.TermFilter,
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}termSparqlWherePatterns`, {
             code: `\
 const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =

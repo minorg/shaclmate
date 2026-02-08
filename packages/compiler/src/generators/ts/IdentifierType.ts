@@ -108,6 +108,8 @@ export class IdentifierType extends AbstractIdentifierType<
   override snippetDeclarations(
     parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
       singleEntryRecord(
@@ -135,7 +137,7 @@ interface ${syntheticNamePrefix}IdentifierFilter {
 }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}identifierSparqlWherePatterns`,
             {

@@ -74,11 +74,11 @@ export abstract class AbstractPrimitiveType<
   override snippetDeclarations(
     parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
-      parameters.features.has("equals")
-        ? sharedSnippetDeclarations.strictEquals
-        : {},
+      features.has("equals") ? sharedSnippetDeclarations.strictEquals : {},
     );
   }
 

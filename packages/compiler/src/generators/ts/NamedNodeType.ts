@@ -164,6 +164,8 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   override snippetDeclarations(
     parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
@@ -187,7 +189,7 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
 }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}namedNodeSparqlWherePatterns`,
             {

@@ -58,6 +58,8 @@ export class LiteralType extends AbstractLiteralType {
   override snippetDeclarations(
     parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
@@ -77,7 +79,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix
 }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}literalSparqlWherePatterns`,
             {
