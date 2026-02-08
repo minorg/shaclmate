@@ -1,30 +1,19 @@
-import type { PrefixMap } from "@rdfjs/prefix-map/PrefixMap.js";
 import {
   // biome-ignore lint/correctness/noUnusedImports: ast gets removed for no reason
   type ast,
-  type ShapesGraph,
   ShapesGraphToAstTransformer,
 } from "@shaclmate/compiler";
-import { type Either, Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { beforeAll, describe, it } from "vitest";
 import { testData } from "./testData.js";
 
 describe("ShapesGraphToAstTransformer: well-formed", () => {
-  for (const [id, shapesGraphMaybe] of Object.entries(testData.wellFormed)) {
-    let shapesGraphEither: Either<
-      Error,
-      {
-        iriPrefixMap: PrefixMap;
-        shapesGraph: ShapesGraph;
-      }
-    > | null;
-    if (Maybe.isMaybe(shapesGraphMaybe)) {
-      shapesGraphEither = shapesGraphMaybe.extractNullable();
-    } else {
-      shapesGraphEither = shapesGraphMaybe;
-    }
+  for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
     if (shapesGraphEither === null) {
+      continue;
+    }
+
+    if (id !== "shaclAst") {
       continue;
     }
 

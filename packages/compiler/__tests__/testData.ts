@@ -140,7 +140,8 @@ export const testData = {
         path.join(thisDirectoryPath, "external-project.shaclmate.ttl"),
       )
         .filter((filePath) => fs.existsSync(filePath))
-        .map(parseShapesGraph);
+        .map(parseShapesGraph)
+        .extractNullable();
     },
 
     get kitchenSink() {
@@ -187,7 +188,8 @@ export const testData = {
         ),
       )
         .filter((filePath) => fs.existsSync(filePath))
-        .map(parseShapesGraph);
+        .map(parseShapesGraph)
+        .extractNullable();
     },
   },
 } as const;

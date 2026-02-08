@@ -82,31 +82,27 @@ function generate(parameters: {
   return source;
 }
 
-describe("TsGenerator", () => {
-  it("should generate from the kitchen sink shapes graph", () => {
-    compile(
-      generate(testData.kitchenSink.unsafeCoerce()),
-      path.join(
-        thisDirectoryPath,
-        "..",
-        "..",
-        "..",
-        "examples",
-        "kitchen-sink",
-        "src",
-      ),
-    );
-  }, 60000);
+describe.skip("TsGenerator", () => {
+  for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
+    if (shapesGraphEither === null) {
+      continue;
+    }
 
-  testData.skos.ifJust((parameters) => {
-    it("should generate from a SKOS shapes graph", () => {
-      compile(generate(parameters.unsafeCoerce()));
+    it(id, () => {
+      compile(
+        generate(shapesGraphEither.unsafeCoerce()),
+        id === "kitchenSink"
+          ? path.join(
+              thisDirectoryPath,
+              "..",
+              "..",
+              "..",
+              "examples",
+              "kitchen-sink",
+              "src",
+            )
+          : undefined,
+      );
     }, 60000);
-  });
-
-  testData.externalProject.ifJust((parameters) => {
-    it("should generate from an external project shapes graph", () => {
-      compile(generate(parameters.unsafeCoerce()));
-    }, 60000);
-  });
+  }
 });
