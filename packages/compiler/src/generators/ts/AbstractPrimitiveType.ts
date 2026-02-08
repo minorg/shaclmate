@@ -12,7 +12,6 @@ export abstract class AbstractPrimitiveType<
 > extends AbstractLiteralType {
   override readonly equalsFunction: string =
     `${syntheticNamePrefix}strictEquals`;
-  readonly primitiveIn: readonly ValueT[];
   abstract override readonly kind:
     | "BooleanType"
     | "DateTimeType"
@@ -21,6 +20,7 @@ export abstract class AbstractPrimitiveType<
     | "IntType"
     | "NumberType"
     | "StringType";
+  readonly primitiveIn: readonly ValueT[];
 
   constructor({
     primitiveIn,
