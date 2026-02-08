@@ -82,27 +82,46 @@ function generate(parameters: {
   return source;
 }
 
-describe.skip("TsGenerator", () => {
+describe("TsGenerator", () => {
   for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
     if (shapesGraphEither === null) {
       continue;
     }
 
     it(id, () => {
-      compile(
-        generate(shapesGraphEither.unsafeCoerce()),
-        id === "kitchenSink"
-          ? path.join(
-              thisDirectoryPath,
-              "..",
-              "..",
-              "..",
-              "examples",
-              "kitchen-sink",
-              "src",
-            )
-          : undefined,
-      );
+      let sourceDirectoryPath: string | undefined;
+      switch (id) {
+        case "compilerInput":
+          sourceDirectoryPath = path.join(
+            thisDirectoryPath,
+            "..",
+            "src",
+            "input",
+          );
+          break;
+        case "kitchenSink":
+          sourceDirectoryPath = path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "..",
+            "examples",
+            "kitchen-sink",
+            "src",
+          );
+          break;
+        case "shaclAst":
+          sourceDirectoryPath = path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "shacl-ast",
+            "src",
+          );
+          break;
+      }
+
+      compile(generate(shapesGraphEither.unsafeCoerce()), sourceDirectoryPath);
     }, 60000);
   }
 });
