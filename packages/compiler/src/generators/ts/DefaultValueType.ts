@@ -194,6 +194,8 @@ export class DefaultValueType<
       AbstractContainerType<ItemTypeT>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
 
@@ -202,7 +204,7 @@ export class DefaultValueType<
         `type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: rdfjs.Literal | rdfjs.NamedNode; readonly item: ItemSchemaT; }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(
             `${syntheticNamePrefix}defaultValueSparqlWherePatterns`,
             {

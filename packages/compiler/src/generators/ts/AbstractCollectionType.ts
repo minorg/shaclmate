@@ -248,6 +248,8 @@ export abstract class AbstractCollectionType<
       AbstractContainerType<ItemTypeT>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     let snippetDeclarations = mergeSnippetDeclarations(
       this.itemType.snippetDeclarations(parameters),
       singleEntryRecord(
@@ -257,11 +259,6 @@ type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
   readonly ${syntheticNamePrefix}maxCount?: number;
   readonly ${syntheticNamePrefix}minCount?: number;
 };`,
-      ),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}CollectionSchema`,
-        `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
       ),
 
       singleEntryRecord(
@@ -289,7 +286,7 @@ function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (item
       ),
     );
 
-    if (parameters.features.has("equals")) {
+    if (features.has("equals")) {
       snippetDeclarations = mergeSnippetDeclarations(
         snippetDeclarations,
         singleEntryRecord(`${syntheticNamePrefix}arrayEquals`, {
@@ -361,6 +358,16 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 }`,
           dependencies: { ...sharedSnippetDeclarations.EqualsResult },
         }),
+      );
+    }
+
+    if (features.has("sparql")) {
+      snippetDeclarations = mergeSnippetDeclarations(
+        snippetDeclarations,
+        singleEntryRecord(
+          `${syntheticNamePrefix}CollectionSchema`,
+          `type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
+        ),
       );
     }
 

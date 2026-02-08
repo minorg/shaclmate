@@ -1819,6 +1819,7 @@ function $termFilterSparqlPatterns({
 type $TermSchema = Readonly<{
   in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
   kind: "TermType";
+  nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }>;
 function $termSchemaSparqlWherePatterns({
   filterPatterns,
@@ -9306,7 +9307,14 @@ export namespace TermPropertiesClass {
         kind: "ShaclProperty" as const,
         name: "termProperty",
         type: () => ({
-          item: { kind: "TermType" as const },
+          item: {
+            kind: "TermType" as const,
+            nodeKinds: [
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
+            ],
+          },
           kind: "OptionType" as const,
         }),
       },
@@ -52474,7 +52482,14 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "convertibleTermNonEmptySetProperty",
         type: () => ({
-          item: { kind: "TermType" as const },
+          item: {
+            kind: "TermType" as const,
+            nodeKinds: [
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
+            ],
+          },
           kind: "SetType" as const,
           minCount: 1,
         }),
@@ -52486,7 +52501,14 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "convertibleTermOptionProperty",
         type: () => ({
-          item: { kind: "TermType" as const },
+          item: {
+            kind: "TermType" as const,
+            nodeKinds: [
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
+            ],
+          },
           kind: "OptionType" as const,
         }),
       },
@@ -52496,7 +52518,14 @@ export namespace ConvertibleTypePropertiesClass {
         ),
         kind: "ShaclProperty" as const,
         name: "convertibleTermProperty",
-        type: () => ({ kind: "TermType" as const }),
+        type: () => ({
+          kind: "TermType" as const,
+          nodeKinds: [
+            "BlankNode" as const,
+            "Literal" as const,
+            "NamedNode" as const,
+          ],
+        }),
       },
       convertibleTermSetProperty: {
         identifier: dataFactory.namedNode(
@@ -52505,7 +52534,14 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "ShaclProperty" as const,
         name: "convertibleTermSetProperty",
         type: () => ({
-          item: { kind: "TermType" as const },
+          item: {
+            kind: "TermType" as const,
+            nodeKinds: [
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
+            ],
+          },
           kind: "SetType" as const,
           minCount: 0,
         }),
@@ -64425,7 +64461,6 @@ export type $Object =
   | DirectRecursiveClass
   | ExplicitFromToRdfTypesClass
   | ExplicitRdfTypeClass
-  | ExternClass
   | AbstractBaseClassForExternClass
   | ExternClassPropertyClass
   | FlattenClassUnionMember3
@@ -64567,9 +64602,6 @@ export namespace $Object {
       }
       if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(left)) {
         return left.$equals(right as unknown as ExplicitRdfTypeClass);
-      }
-      if (ExternClass.isExternClass(left)) {
-        return left.$equals(right as unknown as ExternClass);
       }
       if (ExternClassPropertyClass.isExternClassPropertyClass(left)) {
         return left.$equals(right as unknown as ExternClassPropertyClass);
@@ -65042,14 +65074,6 @@ export namespace $Object {
         filter.on.ExplicitRdfTypeClass,
         value as ExplicitRdfTypeClass,
       )
-    ) {
-      return false;
-    }
-
-    if (
-      ExternClass.isExternClass(value) &&
-      filter.on?.ExternClass &&
-      !ExternClass.$filter(filter.on.ExternClass, value as ExternClass)
     ) {
       return false;
     }
@@ -65749,7 +65773,6 @@ export namespace $Object {
         ExplicitRdfTypeClass.$Filter,
         "$identifier"
       >;
-      readonly ExternClass?: Omit<ExternClass.$Filter, "$identifier">;
       readonly AbstractBaseClassForExternClass?: Omit<
         AbstractBaseClassForExternClassStatic.$Filter,
         "$identifier"
@@ -66081,10 +66104,6 @@ export namespace $Object {
             zod.ZodError,
             $Object
           >,
-      )
-      .altLazy(
-        () =>
-          ExternClass.$fromJson(json) as purify.Either<zod.ZodError, $Object>,
       )
       .altLazy(
         () =>
@@ -66561,13 +66580,6 @@ export namespace $Object {
       )
       .altLazy(
         () =>
-          ExternClass.$fromRdf(resource, {
-            ...options,
-            ignoreRdfType: false,
-          }) as purify.Either<Error, $Object>,
-      )
-      .altLazy(
-        () =>
           ExternClassPropertyClass.$fromRdf(resource, {
             ...options,
             ignoreRdfType: false,
@@ -67009,10 +67021,6 @@ export namespace $Object {
       return _object.$hash(_hasher);
     }
 
-    if (ExternClass.isExternClass(_object)) {
-      return _object.$hash(_hasher);
-    }
-
     if (ExternClassPropertyClass.isExternClassPropertyClass(_object)) {
       return _object.$hash(_hasher);
     }
@@ -67286,7 +67294,6 @@ export namespace $Object {
     | DirectRecursiveClass.$Json
     | ExplicitFromToRdfTypesClass.$Json
     | ExplicitRdfTypeClass.$Json
-    | ExternClass.$Json
     | ExternClassPropertyClass.$Json
     | FlattenClassUnionMember3.$Json
     | HasValuePropertiesClass.$Json
@@ -67358,7 +67365,6 @@ export namespace $Object {
       DirectRecursiveClass.$jsonZodSchema(),
       ExplicitFromToRdfTypesClass.$jsonZodSchema(),
       ExplicitRdfTypeClass.$jsonZodSchema(),
-      ExternClass.$jsonZodSchema(),
       ExternClassPropertyClass.$jsonZodSchema(),
       FlattenClassUnionMember3.$jsonZodSchema(),
       HasValuePropertiesClass.$jsonZodSchema(),
@@ -67616,13 +67622,6 @@ export namespace $Object {
         variablePrefix: parameters?.variablePrefix
           ? `${parameters.variablePrefix}ExplicitRdfTypeClass`
           : "objectExplicitRdfTypeClass",
-      }).concat(),
-      ...ExternClass.$sparqlConstructTriples({
-        subject:
-          parameters?.subject ?? dataFactory.variable!("objectExternClass"),
-        variablePrefix: parameters?.variablePrefix
-          ? `${parameters.variablePrefix}ExternClass`
-          : "objectExternClass",
       }).concat(),
       ...ExternClassPropertyClass.$sparqlConstructTriples({
         subject:
@@ -68272,17 +68271,6 @@ export namespace $Object {
             variablePrefix: parameters?.variablePrefix
               ? `${parameters.variablePrefix}ExplicitRdfTypeClass`
               : "objectExplicitRdfTypeClass",
-          }).concat(),
-          type: "group",
-        },
-        {
-          patterns: ExternClass.$sparqlWherePatterns({
-            filter: parameters?.filter?.on?.ExternClass,
-            subject:
-              parameters?.subject ?? dataFactory.variable!("objectExternClass"),
-            variablePrefix: parameters?.variablePrefix
-              ? `${parameters.variablePrefix}ExternClass`
-              : "objectExternClass",
           }).concat(),
           type: "group",
         },
@@ -68937,7 +68925,6 @@ export namespace $Object {
     | DirectRecursiveClass.$Json
     | ExplicitFromToRdfTypesClass.$Json
     | ExplicitRdfTypeClass.$Json
-    | ExternClass.$Json
     | AbstractBaseClassForExternClassStatic.$Json
     | ExternClassPropertyClass.$Json
     | FlattenClassUnionMember3.$Json
@@ -69075,10 +69062,6 @@ export namespace $Object {
     }
 
     if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
-      return _object.$toJson();
-    }
-
-    if (ExternClass.isExternClass(_object)) {
       return _object.$toJson();
     }
 
@@ -69405,10 +69388,6 @@ export namespace $Object {
     }
 
     if (ExplicitRdfTypeClass.isExplicitRdfTypeClass(_object)) {
-      return _object.$toRdf(_parameters);
-    }
-
-    if (ExternClass.isExternClass(_object)) {
       return _object.$toRdf(_parameters);
     }
 
@@ -78421,11 +78400,6 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
           $filter: $Object.$filter,
           $fromRdf: ExplicitRdfTypeClass.$fromRdf,
           $fromRdfTypes: [ExplicitRdfTypeClass.$fromRdfType],
-        },
-        {
-          $filter: $Object.$filter,
-          $fromRdf: ExternClass.$fromRdf,
-          $fromRdfTypes: [ExternClass.$fromRdfType],
         },
         {
           $filter: $Object.$filter,

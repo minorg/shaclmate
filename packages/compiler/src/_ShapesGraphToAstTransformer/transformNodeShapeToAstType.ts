@@ -141,7 +141,7 @@ function transformNodeShapeToAstListType(
           let firstPropertyShape: input.PropertyShape | undefined;
           let restPropertyShape: input.PropertyShape | undefined;
           for (const propertyShape of nonEmptyListShapeProperties) {
-            if (propertyShape.path.kind !== "PredicatePath") {
+            if (propertyShape.path.$type !== "PredicatePath") {
               continue;
             }
             if (propertyShape.path.iri.equals(rdf.first)) {
@@ -361,14 +361,14 @@ export function transformNodeShapeToAstType(
 
       let fromRdfType: Maybe<NamedNode>;
       let toRdfTypes: NamedNode[];
-      if (!abstract && nodeShape.isClass) {
-        fromRdfType = nodeShape.fromRdfType
-          .alt(nodeShape.rdfType)
-          .alt(
-            nodeShape.identifier.termType === "NamedNode"
-              ? Maybe.of(nodeShape.identifier)
-              : Maybe.empty(),
-          );
+      if (!abstract) {
+        fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
+        if (
+          nodeShape.isClass &&
+          nodeShape.identifier.termType === "NamedNode"
+        ) {
+          fromRdfType = fromRdfType.alt(Maybe.of(nodeShape.identifier));
+        }
         toRdfTypes = nodeShape.toRdfTypes.concat();
         if (toRdfTypes.length === 0) {
           toRdfTypes.push(...nodeShape.rdfType.toList());

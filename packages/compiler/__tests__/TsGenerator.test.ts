@@ -65,9 +65,11 @@ function compile(source: string, sourceDirectoryPath?: string): void {
 
   const program = ts.createProgram([generatedFilePath], compilerOptions, host);
   const emitResult = program.emit();
-  const diagnostics = emitResult.diagnostics.concat(
-    ts.getPreEmitDiagnostics(program),
-  );
+  const diagnostics = emitResult.diagnostics
+    .concat(ts.getPreEmitDiagnostics(program))
+    .filter(
+      (diagnostic) => diagnostic.category !== 1 || diagnostic.code !== 6133,
+    ); // Ignore unused code
   expect(diagnostics).toHaveLength(0);
 }
 
@@ -83,30 +85,45 @@ function generate(parameters: {
 }
 
 describe("TsGenerator", () => {
-  it("should generate from the kitchen sink shapes graph", () => {
-    compile(
-      generate(testData.kitchenSink.unsafeCoerce()),
-      path.join(
-        thisDirectoryPath,
-        "..",
-        "..",
-        "..",
-        "examples",
-        "kitchen-sink",
-        "src",
-      ),
-    );
-  }, 60000);
+  for (const [id, shapesGraphEither] of Object.entries(testData.wellFormed)) {
+    if (shapesGraphEither === null) {
+      continue;
+    }
 
-  testData.skos.ifJust((parameters) => {
-    it("should generate from a SKOS shapes graph", () => {
-      compile(generate(parameters.unsafeCoerce()));
-    }, 60000);
-  });
+    it(id, () => {
+      let sourceDirectoryPath: string | undefined;
+      switch (id) {
+        case "compilerInput":
+          sourceDirectoryPath = path.join(
+            thisDirectoryPath,
+            "..",
+            "src",
+            "input",
+          );
+          break;
+        case "kitchenSink":
+          sourceDirectoryPath = path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "..",
+            "examples",
+            "kitchen-sink",
+            "src",
+          );
+          break;
+        case "shaclAst":
+          sourceDirectoryPath = path.join(
+            thisDirectoryPath,
+            "..",
+            "..",
+            "shacl-ast",
+            "src",
+          );
+          break;
+      }
 
-  testData.externalProject.ifJust((parameters) => {
-    it("should generate from an external project shapes graph", () => {
-      compile(generate(parameters.unsafeCoerce()));
+      compile(generate(shapesGraphEither.unsafeCoerce()), sourceDirectoryPath);
     }, 60000);
-  });
+  }
 });

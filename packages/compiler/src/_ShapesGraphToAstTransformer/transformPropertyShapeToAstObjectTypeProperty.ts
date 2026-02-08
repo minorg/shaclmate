@@ -252,7 +252,7 @@ export function transformPropertyShapeToAstObjectTypeProperty(
       }
 
       const path = propertyShape.path;
-      if (path.kind !== "PredicatePath") {
+      if (path.$type !== "PredicatePath") {
         return Left(
           new Error(`${propertyShape} has non-predicate path, unsupported`),
         );

@@ -92,10 +92,12 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
       AbstractPrimitiveType<Date>["snippetDeclarations"]
     >[0],
   ): Readonly<Record<string, SnippetDeclaration>> {
+    const { features } = parameters;
+
     return mergeSnippetDeclarations(
       super.snippetDeclarations(parameters),
 
-      parameters.features.has("equals")
+      features.has("equals")
         ? singleEntryRecord(
             `${syntheticNamePrefix}dateEquals`,
             `\
@@ -152,7 +154,7 @@ function ${syntheticNamePrefix}filterDate(filter: ${syntheticNamePrefix}DateFilt
 }`,
       ),
 
-      parameters.features.has("sparql")
+      features.has("sparql")
         ? singleEntryRecord(`${syntheticNamePrefix}dateSparqlWherePatterns`, {
             code: `\
 const ${syntheticNamePrefix}dateSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
