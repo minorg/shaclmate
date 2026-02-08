@@ -4,7 +4,6 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
-import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
