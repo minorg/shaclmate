@@ -208,7 +208,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
           )
         : {},
 
-      sharedSnippetDeclarations.toLiteral, // For initializers
+      this.nodeKinds.has("Literal") ? sharedSnippetDeclarations.toLiteral : {}, // For initializers
     );
   }
 

@@ -127,12 +127,8 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
       ),
 
       features.has("sparql")
-        ? {
-            ...sharedSnippetDeclarations.toLiteral,
-            ...singleEntryRecord(
-              `${syntheticNamePrefix}numberSparqlWherePatterns`,
-              {
-                code: `\
+        ? singleEntryRecord(`${syntheticNamePrefix}numberSparqlWherePatterns`, {
+            code: `\
 const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
@@ -193,15 +189,13 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
 
     return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
-                dependencies: {
-                  ...sharedSnippetDeclarations.sparqlValueInPattern,
-                  ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
-                  ...sharedSnippetDeclarations.toLiteral,
-                  ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-                },
-              },
-            ),
-          }
+            dependencies: {
+              ...sharedSnippetDeclarations.sparqlValueInPattern,
+              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
+              ...sharedSnippetDeclarations.toLiteral,
+              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
+            },
+          })
         : {},
     );
   }

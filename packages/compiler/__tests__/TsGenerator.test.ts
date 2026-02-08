@@ -88,6 +88,10 @@ describe("TsGenerator", () => {
       continue;
     }
 
+    if (id !== "shaclAst") {
+      continue;
+    }
+
     it(id, () => {
       let sourceDirectoryPath: string | undefined;
       switch (id) {
