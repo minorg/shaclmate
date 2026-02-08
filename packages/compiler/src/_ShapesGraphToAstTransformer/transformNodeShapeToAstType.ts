@@ -4,6 +4,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import type { TsFeature } from "enums/TsFeature.js";
 import { DataFactory } from "n3";
 import { Either, Left, Maybe } from "purify-ts";
+import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
 import * as ast from "../ast/index.js";
 import { Eithers } from "../Eithers.js";
@@ -361,14 +362,14 @@ export function transformNodeShapeToAstType(
 
       let fromRdfType: Maybe<NamedNode>;
       let toRdfTypes: NamedNode[];
-      if (!abstract && nodeShape.isClass) {
-        fromRdfType = nodeShape.fromRdfType
-          .alt(nodeShape.rdfType)
-          .alt(
-            nodeShape.identifier.termType === "NamedNode"
-              ? Maybe.of(nodeShape.identifier)
-              : Maybe.empty(),
-          );
+      if (!abstract) {
+        fromRdfType = nodeShape.fromRdfType.alt(nodeShape.rdfType);
+        if (
+          nodeShape.isClass &&
+          nodeShape.identifier.termType === "NamedNode"
+        ) {
+          fromRdfType = fromRdfType.alt(Maybe.of(nodeShape.identifier));
+        }
         toRdfTypes = nodeShape.toRdfTypes.concat();
         if (toRdfTypes.length === 0) {
           toRdfTypes.push(...nodeShape.rdfType.toList());

@@ -13,10 +13,6 @@ describe("ShapesGraphToAstTransformer: well-formed", () => {
       continue;
     }
 
-    if (id !== "shaclAst") {
-      continue;
-    }
-
     describe(id, () => {
       let ast: ast.Ast;
       const astObjectTypesByShapeIdentifier: Record<string, ast.ObjectType> =
