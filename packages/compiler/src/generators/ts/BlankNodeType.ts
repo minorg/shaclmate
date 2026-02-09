@@ -6,7 +6,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 

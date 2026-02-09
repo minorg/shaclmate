@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractPrimitiveType<

@@ -2,7 +2,7 @@ import type { Maybe, NonEmptyList } from "purify-ts";
 import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/index.js";
-import type { Import } from "./Import.js";
+import type { Import } from "./sharedImports.js";
 
 /**
  * Abstract base class all types.

@@ -3,10 +3,10 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import type { AbstractType } from "./AbstractType.js";
-import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import type { Import } from "./sharedImports.js";
+import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 

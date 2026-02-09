@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 

@@ -6,12 +6,12 @@ import {
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
-import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { Import } from "./sharedImports.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 

@@ -10,10 +10,10 @@ import type {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
-import type { Import } from "../Import.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
+import type { Import } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";

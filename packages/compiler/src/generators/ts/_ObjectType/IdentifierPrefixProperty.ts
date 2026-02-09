@@ -10,10 +10,10 @@ import {
 import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
-import type { Import } from "../Import.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
 import type { StringType } from "../StringType.js";
-import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
+import type { Import } from "../sharedImports.js";
+import { sharedSnippetDeclarations } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 

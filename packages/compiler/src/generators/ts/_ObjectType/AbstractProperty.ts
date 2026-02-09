@@ -10,10 +10,10 @@ import { Memoize } from "typescript-memoize";
 
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { AbstractType } from "../AbstractType.js";
-import type { Import } from "../Import.js";
 import type { ObjectType } from "../ObjectType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
+import type { Import } from "../sharedImports.js";
 import type { Type } from "../Type.js";
 
 export abstract class AbstractProperty<

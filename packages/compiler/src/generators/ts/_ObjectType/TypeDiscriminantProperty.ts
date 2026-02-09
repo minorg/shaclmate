@@ -8,10 +8,10 @@ import type {
 } from "ts-morph";
 import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
-import type { Import } from "../Import.js";
 import { objectInitializer } from "../objectInitializer.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "../sharedSnippetDeclarations.js";
+import type { Import } from "../sharedImports.js";
+import { sharedSnippetDeclarations } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 

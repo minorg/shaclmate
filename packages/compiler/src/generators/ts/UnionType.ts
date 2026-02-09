@@ -3,11 +3,11 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
-import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import type { Import } from "./sharedImports.js";
+import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import type { Type } from "./Type.js";
 
 class MemberType {

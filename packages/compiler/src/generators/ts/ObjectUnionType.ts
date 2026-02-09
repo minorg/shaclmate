@@ -12,13 +12,13 @@ import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
-import type { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { StaticModuleStatementStructure } from "./StaticModuleStatementStructure.js";
+import type { Import } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { tsComment } from "./tsComment.js";
 

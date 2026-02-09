@@ -3,12 +3,12 @@ import type { TsFeature } from "enums/TsFeature.js";
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippetDeclarations.js";
+import { Import } from "./sharedImports.js";
+import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 

@@ -15,11 +15,11 @@ import { logger } from "../../../logger.js";
 import type { AbstractType } from "../AbstractType.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import type { IdentifierType } from "../IdentifierType.js";
-import { Import } from "../Import.js";
 import type { NamedNodeType } from "../NamedNodeType.js";
 import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "../SnippetDeclaration.js";
+import { Import } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 

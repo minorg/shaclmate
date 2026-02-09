@@ -4,7 +4,6 @@ import { Memoize } from "typescript-memoize";
 
 import type { TsFeature } from "../../enums/TsFeature.js";
 import { AbstractType } from "./AbstractType.js";
-import { Import } from "./Import.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -12,6 +11,7 @@ import type { OptionType } from "./OptionType.js";
 import { objectInitializer } from "./objectInitializer.js";
 import type { SetType } from "./SetType.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { Import } from "./sharedImports.js";
 
 export abstract class AbstractLazyObjectType<
   PartialTypeT extends AbstractLazyObjectType.PartialTypeConstraint,
