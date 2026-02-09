@@ -1,6 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 import type { TsFeature } from "enums/TsFeature.js";
 import { NonEmptyList } from "purify-ts";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
@@ -34,8 +35,8 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     ];
   }
 
-  override get name(): string {
-    return "Date";
+  override get name(): Code {
+    return code`Date`;
   }
 
   @Memoize()

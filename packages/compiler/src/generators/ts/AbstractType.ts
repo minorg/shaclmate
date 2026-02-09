@@ -2,7 +2,6 @@ import type { Maybe, NonEmptyList } from "purify-ts";
 import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/index.js";
-import type { Import } from "./sharedImports.js";
 
 /**
  * Abstract base class all types.
@@ -75,17 +74,17 @@ export abstract class AbstractType {
   /**
    * TypeScript name of the type.
    */
-  abstract readonly name: string;
+  abstract readonly name: Code;
 
   /**
    * TypeScript object describing this type, for runtime use.
    */
-  abstract readonly schema: string;
+  abstract readonly schema: Code;
 
   /**
    * TypeScript type describing .schema.
    */
-  abstract readonly schemaType: string;
+  abstract readonly schemaType: Code;
 
   /**
    * A SparqlWherePatternsFunction (reference or declaration) that returns an array of SparqlPattern's for a property of this type.
@@ -225,7 +224,7 @@ export abstract class AbstractType {
     includeDiscriminantProperty?: boolean;
     context: "property" | "type";
     variables: { zod: Code };
-  }): string;
+  }): Code;
 
   /**
    * SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
@@ -270,20 +269,13 @@ export abstract class AbstractType {
       value: Code;
     };
   }): Code;
-
-  /**
-   * Imports necessary to use this type.
-   */
-  abstract useImports(parameters: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[];
 }
 
 export namespace AbstractType {
   export interface Conversion {
     readonly conversionExpression: (value: Code) => Code;
     readonly sourceTypeCheckExpression: (value: Code) => Code;
-    readonly sourceTypeName: string;
+    readonly sourceTypeName: Code;
   }
 
   export interface DiscriminantProperty {
