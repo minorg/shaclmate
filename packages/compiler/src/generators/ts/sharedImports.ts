@@ -14,6 +14,8 @@ export const sharedImports = {
   BlankNode: imp("BlankNode@@rdfjs/types"),
   Either: imp("Either@purify-ts"),
   GraphQLBoolean: imp("GraphQLBoolean@graphql"),
+  GraphQLDate: imp("Date:GraphQLDate@graphql-scalars"),
+  GraphQLDateTime: imp("DateTime:GraphQLDateTime@graphql-scalars"),
   GraphQLList: imp("GraphQLList@graphql"),
   GraphQLString: imp("GraphQLString@graphql"),
   Left: imp("Left@purify-ts"),
