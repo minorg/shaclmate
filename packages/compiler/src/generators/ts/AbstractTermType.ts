@@ -30,13 +30,13 @@ export abstract class AbstractTermType<
     `${syntheticNamePrefix}booleanEquals`,
     code`\
 /**
- * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
+ * Compare two objects with equals(other: T): boolean methods and return an ${sharedSnippets.EqualsResult}.
  */
 function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+): ${sharedSnippets.EqualsResult} {
+  return ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
     left,
     right,
     left.equals(right),

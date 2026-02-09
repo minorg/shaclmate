@@ -14,6 +14,7 @@ export const sharedImports = {
   BlankNode: imp("BlankNode@@rdfjs/types"),
   Either: imp("Either@purify-ts"),
   GraphQLList: imp("GraphQLList@graphql"),
+  GraphQLString: imp("GraphQLString@graphql"),
   Left: imp("Left@purify-ts"),
   Literal: imp("Literal@@rdfjs/types"),
   Maybe: imp("Maybe@purify-ts"),

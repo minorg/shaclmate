@@ -582,6 +582,7 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
 `,
   ),
 
+  SparqlFilterPattern,
   SparqlPattern,
 
   sparqlValueInPattern,

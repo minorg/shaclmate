@@ -1,95 +1,18 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { NonEmptyList } from "purify-ts";
+import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippets.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedImports } from "./sharedImports.js";
+import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
-  private readonly datatype: NamedNode;
-
-  override readonly filterFunction = `${syntheticNamePrefix}filterNumber`;
-  override readonly filterType = `${syntheticNamePrefix}NumberFilter`;
-  abstract override readonly kind: "FloatType" | "IntType";
-  override readonly typeofs = NonEmptyList(["number" as const]);
-
-  constructor({
-    datatype,
-    ...superParameters
-  }: {
-    datatype: NamedNode;
-  } & ConstructorParameters<typeof AbstractPrimitiveType<number>>[0]) {
-    super(superParameters);
-    this.datatype = datatype;
-  }
-
-  @Memoize()
-  override get name(): string {
-    if (this.primitiveIn.length > 0) {
-      return this.primitiveIn.map((value) => value.toString()).join(" | ");
-    }
-    return "number";
-  }
-
-  protected override get schemaObject() {
-    return {
-      ...super.schemaObject,
-      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
-    };
-  }
-
-  @Memoize()
-  override get schemaType(): string {
-    return `${syntheticNamePrefix}NumberSchema`;
-  }
-
-  @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}numberSparqlWherePatterns`;
-  }
-
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      kind: '"FloatType" | "IntType"',
-      "in?": `readonly number[]`,
-    };
-  }
-
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0]): ReturnType<
-    AbstractPrimitiveType<number>["jsonZodSchema"]
-  > {
-    switch (this.primitiveIn.length) {
-      case 0:
-        return `${variables.zod}.number()`;
-      case 1:
-        return `${variables.zod}.literal(${this.primitiveIn[0]})`;
-      default:
-        return `${variables.zod}.union([${this.primitiveIn.map((value) => `${variables.zod}.literal(${value})`).join(", ")}])`;
-    }
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractPrimitiveType<number>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-      singleEntryRecord(
-        `${syntheticNamePrefix}NumberFilter`,
-        `\
+const localSnippets = {
+  NumberFilter: conditionalOutput(
+    `${syntheticNamePrefix}NumberFilter`,
+    code`\
 interface ${syntheticNamePrefix}NumberFilter {
   readonly in?: readonly number[];
   readonly maxExclusive?: number;
@@ -97,11 +20,16 @@ interface ${syntheticNamePrefix}NumberFilter {
   readonly minExclusive?: number;
   readonly minInclusive?: number;
 }`,
-      ),
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterNumber`,
-        `\
-function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}NumberFilter, value: number) {
+  ),
+};
+
+export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
+  private readonly datatype: NamedNode;
+
+  override readonly filterFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}filterNumber`,
+    code`\
+function ${syntheticNamePrefix}filterNumber(filter: ${localSnippets.NumberFilter}, value: number) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
     return false;
   }
@@ -124,18 +52,54 @@ function ${syntheticNamePrefix}filterNumber(filter: ${syntheticNamePrefix}Number
 
   return true;
 }`,
-      ),
+  )}`;
 
-      features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}numberSparqlWherePatterns`, {
-            code: `\
-const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
+  override readonly filterType = code`${localSnippets.NumberFilter}`;
+  abstract override readonly kind: "FloatType" | "IntType";
+  override readonly typeofs = NonEmptyList(["number" as const]);
+
+  constructor({
+    datatype,
+    ...superParameters
+  }: {
+    datatype: NamedNode;
+  } & ConstructorParameters<typeof AbstractPrimitiveType<number>>[0]) {
+    super(superParameters);
+    this.datatype = datatype;
+  }
+
+  @Memoize()
+  override get name(): Code {
+    if (this.primitiveIn.length > 0) {
+      return code`${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
+    }
+    return code`number`;
+  }
+
+  protected override get schemaObject() {
+    return {
+      ...super.schemaObject,
+      in: this.primitiveIn.length > 0 ? this.primitiveIn.concat() : undefined,
+    };
+  }
+
+  @Memoize()
+  override get schemaType(): Code {
+    return code`${conditionalOutput(`${syntheticNamePrefix}NumberSchema`, code`type ${syntheticNamePrefix}NumberSchema = Readonly<${this.schemaTypeObject}>;`)}`;
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): Code {
+    return code`${conditionalOutput(
+      `${syntheticNamePrefix}numberSparqlWherePatterns`,
+      code`\
+const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+    const filterPatterns: ${sharedSnippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-        filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
+        filterPatterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (typeof filter.maxExclusive !== "undefined") {
@@ -143,7 +107,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxExclusive)],
+            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.maxExclusive)],
           },
           lift: true,
           type: "filter",
@@ -155,7 +119,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.maxInclusive)],
+            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.maxInclusive)],
           },
           lift: true,
           type: "filter",
@@ -167,7 +131,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minExclusive)],
+            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.minExclusive)],
           },
           lift: true,
           type: "filter",
@@ -179,7 +143,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${syntheticNamePrefix}toLiteral(filter.minInclusive)],
+            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.minInclusive)],
           },
           lift: true,
           type: "filter",
@@ -187,23 +151,36 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
       }
     }
 
-    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
-            dependencies: {
-              ...sharedSnippetDeclarations.sparqlValueInPattern,
-              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
-              ...sharedSnippetDeclarations.toLiteral,
-              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-            },
-          })
-        : {},
-    );
+    )}`;
+  }
+
+  protected override get schemaTypeObject() {
+    return {
+      ...super.schemaTypeObject,
+      kind: code`"FloatType" | "IntType"`,
+      "in?": `readonly number[]`,
+    };
+  }
+
+  override jsonZodSchema({
+    variables,
+  }: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0]): Code {
+    switch (this.primitiveIn.length) {
+      case 0:
+        return code`${variables.zod}.number()`;
+      case 1:
+        return code`${variables.zod}.literal(${this.primitiveIn[0]})`;
+      default:
+        return code`${variables.zod}.union([${this.primitiveIn.map((value) => `${variables.zod}.literal(${value})`).join(", ")}])`;
+    }
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): string {
-    return `[dataFactory.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})]`;
+  }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
+    return code`[${sharedImports.dataFactory}.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -214,14 +191,14 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${syntheticNamePrefix}Spa
     let fromRdfResourceValueExpression = "value.toNumber()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return purify.Either.of${eitherTypeParameters}(primitiveValue); default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "value.toTerm()", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return ${sharedImports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
     }
 
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn: undefined,
       preferredLanguages: undefined,
-      valueTo: `chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
+      valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
   }
 }

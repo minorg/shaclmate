@@ -113,5 +113,4 @@ export namespace AbstractContainerType {
 
   export const JsonType = AbstractType.JsonType;
   export type JsonType = AbstractType.JsonType;
-  export type SparqlConstructTriple = AbstractType.SparqlConstructTriple;
 }

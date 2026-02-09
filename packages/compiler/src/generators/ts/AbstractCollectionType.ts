@@ -209,10 +209,10 @@ export abstract class AbstractCollectionType<
       };
 
       for (const itemTypeConversion of this.itemType.conversions) {
-        if (isTypeofString(itemTypeConversion.sourceTypeName)) {
-          if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName]) {
-            itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeName] =
-              itemTypeConversion;
+        const sourceTypeName = itemTypeConversion.sourceTypeName.toString();
+        if (isTypeofString(sourceTypeName)) {
+          if (!itemTypeConversionsByTypeof[sourceTypeName]) {
+            itemTypeConversionsByTypeof[sourceTypeName] = itemTypeConversion;
           }
         }
       }
@@ -223,7 +223,7 @@ export abstract class AbstractCollectionType<
         conversionExpression: () => code`${arrayOf([])}`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
+        sourceTypeName: code`undefined`,
       });
 
       if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
@@ -235,7 +235,7 @@ export abstract class AbstractCollectionType<
             code`${value}${this.mutable ? ".concat()" : ""}`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
-          sourceTypeName: `readonly (${this.itemType.name})[]`,
+          sourceTypeName: code`readonly (${this.itemType.name})[]`,
         });
       } else {
         // There were additional conversions with different item typeof's.
@@ -329,41 +329,37 @@ export abstract class AbstractCollectionType<
   >[0]): Code {
     let expression = variables.value;
     if (!this._mutable && this.minCount > 0) {
-      expression = `purify.NonEmptyList.fromArray(${expression}).unsafeCoerce()`;
+      expression = code`${sharedImports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: "item" },
+      variables: { value: code`item` },
     });
     return itemFromJsonExpression === "item"
       ? expression
-      : `${expression}.map(item => (${itemFromJsonExpression}))`;
+      : code`${expression}.map(item => (${itemFromJsonExpression}))`;
   }
 
   override graphqlResolveExpression({
     variables,
   }: Parameters<
     AbstractContainerType<ItemTypeT>["graphqlResolveExpression"]
-  >[0]): string {
+  >[0]): Code {
     return variables.value;
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<
-    AbstractContainerType<ItemTypeT>["hashStatements"]
-  >[0]): readonly string[] {
-    return [
-      `for (const item${depth} of ${variables.value}) { ${this.itemType
-        .hashStatements({
-          depth: depth + 1,
-          variables: {
-            hasher: variables.hasher,
-            value: `item${depth}`,
-          },
-        })
-        .join("\n")} }`,
-    ];
+  }: Parameters<AbstractContainerType<ItemTypeT>["hashStatements"]>[0]): Code {
+    return code`for (const item${depth} of ${variables.value}) { ${this.itemType.hashStatements(
+      {
+        depth: depth + 1,
+        variables: {
+          hasher: variables.hasher,
+          value: code`item${depth}`,
+        },
+      },
+    )} }`;
   }
 
   override jsonUiSchemaElement(
@@ -378,12 +374,12 @@ export abstract class AbstractCollectionType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["jsonZodSchema"]
     >[0],
-  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonZodSchema"]> {
-    let schema = `${this.itemType.jsonZodSchema(parameters)}.array()`;
+  ): Code {
+    let schema = code`${this.itemType.jsonZodSchema(parameters)}.array()`;
     if (this.minCount > 0) {
-      schema = `${schema}.nonempty().min(${this.minCount})`;
+      schema = code`${schema}.nonempty().min(${this.minCount})`;
     } else {
-      schema = `${schema}.default(() => [])`;
+      schema = code`${schema}.default(() => [])`;
     }
     return schema;
   }
@@ -420,6 +416,4 @@ export namespace AbstractCollectionType {
   export type ItemType = AbstractContainerType.ItemType;
   export const JsonType = AbstractContainerType.JsonType;
   export type JsonType = AbstractContainerType.JsonType;
-  export type SparqlConstructTriple =
-    AbstractContainerType.SparqlConstructTriple;
 }
