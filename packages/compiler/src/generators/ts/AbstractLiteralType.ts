@@ -1,13 +1,10 @@
 import type { Literal } from "@rdfjs/types";
 
 import { invariant } from "ts-invariant";
+import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
@@ -35,11 +32,13 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   }
 
   @Memoize()
-  override get schema(): string {
+  override get schema(): Code {
     invariant(this.kind.endsWith("Type"));
-    return this.constrained
-      ? objectInitializer(this.schemaObject)
-      : `${syntheticNamePrefix}unconstrained${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
+    if (this.constrained) {
+      return code`${this.schemaObject}`;
+    }
+
+    return code`${conditionalOutput(`${syntheticNamePrefix}unconstrained${this.kind.substring(0, this.kind.length - "Type".length)}Schema`, code`const ${this.kind.substring(0, this.kind.length - "Type".length)}Schema = ${this.schemaObject};`)}`;
   }
 
   protected override get schemaObject() {
@@ -59,42 +58,31 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     };
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractTermType<Literal, Literal>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-
-      !this.constrained
-        ? singleEntryRecord(
-            this.schema,
-            `const ${this.schema} = ${objectInitializer(this.schemaObject)};`,
-          )
-        : {},
-
-      features.has("rdf")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}fromRdfPreferredLanguages`,
-            `\
+  protected override fromRdfExpressionChain({
+    variables,
+  }: Parameters<
+    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+  >[0]): ReturnType<
+    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
+  > {
+    const fromRdfPreferredLanguages = conditionalOutput(
+      `${syntheticNamePrefix}fromRdfPreferredLanguages`,
+      code`\
 function ${syntheticNamePrefix}fromRdfPreferredLanguages(
   { focusResource, predicate, preferredLanguages, values }: {
-    focusResource: rdfjsResource.Resource;
-    predicate: rdfjs.NamedNode;
+    focusResource: ${sharedImports}Resource;
+    predicate: ${sharedImports.NamedNode};
     preferredLanguages?: readonly string[];
-    values: rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>
-  }): purify.Either<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>> {
+    values: ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>
+  }): purify.Either<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(values);
+    return purify.Either.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(values);
   }
 
   return values.chainMap(value => value.toLiteral()).map(literalValues => {
     // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
     // Within a preferredLanguage the literals may be in any order.
-    let filteredLiteralValues: rdfjsResource.Resource.Values<rdfjs.Literal> | undefined;
+    let filteredLiteralValues: ${sharedImports.Resource}.Values<${sharedImports.Literal}> | undefined;
     for (const preferredLanguage of preferredLanguages) {
       if (!filteredLiteralValues) {
         filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
@@ -103,29 +91,19 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
       }
     }
 
-    return filteredLiteralValues!.map(literalValue => new rdfjsResource.Resource.TermValue({ focusResource, predicate, term: literalValue }));
+    return filteredLiteralValues!.map(literalValue => new ${sharedImports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
   });
 }`,
-          )
-        : {},
     );
-  }
 
-  protected override fromRdfExpressionChain({
-    variables,
-  }: Parameters<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
-  >[0]): ReturnType<
-    AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
-  > {
     return {
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
-          ? `chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return purify.Either.of(value); default: return purify.Left(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "literalValue", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })})); } })))`
+          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${sharedImports.Either}.of(value); default: return ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "literalValue", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })))`
           : undefined,
-      preferredLanguages: `chain(values => ${syntheticNamePrefix}fromRdfPreferredLanguages({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
-      valueTo: "chain(values => values.chainMap(value => value.toLiteral()))",
+      preferredLanguages: code`chain(values => ${fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
     };
   }
 }

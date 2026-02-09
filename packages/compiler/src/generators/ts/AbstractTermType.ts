@@ -1,18 +1,13 @@
 import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 
-import { camelCase } from "change-case";
-import type { TsFeature } from "enums/TsFeature.js";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { Import } from "./sharedImports.js";
-import { sharedSnippetDeclarations } from "./sharedSnippets.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedImports } from "./sharedImports.js";
+import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -31,7 +26,23 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly equalsFunction: string = `${syntheticNamePrefix}booleanEquals`;
+  readonly equalsFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}booleanEquals`,
+    code`\
+/**
+ * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
+ */
+function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): ${syntheticNamePrefix}EqualsResult {
+  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
+    left,
+    right,
+    left.equals(right),
+  );
+}`,
+  )}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -70,35 +81,38 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            `${syntheticNamePrefix}toLiteral(${value})`,
-          sourceTypeCheckExpression: (value) => `typeof ${value} === "boolean"`,
-          sourceTypeName: "boolean",
-        },
-        {
-          conversionExpression: (value) =>
-            `${syntheticNamePrefix}toLiteral(${value})`,
+            code`${sharedSnippets.toLiteral}(${value})`,
           sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "object" && ${value} instanceof Date`,
-          sourceTypeName: "Date",
+            code`typeof ${value} === "boolean"`,
+          sourceTypeName: code`boolean`,
         },
         {
           conversionExpression: (value) =>
-            `${syntheticNamePrefix}toLiteral(${value})`,
-          sourceTypeCheckExpression: (value) => `typeof ${value} === "number"`,
-          sourceTypeName: "number",
+            code`${sharedSnippets.toLiteral}(${value})`,
+          sourceTypeCheckExpression: (value) =>
+            code`typeof ${value} === "object" && ${value} instanceof Date`,
+          sourceTypeName: code`Date`,
         },
         {
           conversionExpression: (value) =>
-            `${syntheticNamePrefix}toLiteral(${value})`,
-          sourceTypeCheckExpression: (value) => `typeof ${value} === "string"`,
-          sourceTypeName: "string",
+            code`${sharedSnippets.toLiteral}(${value})`,
+          sourceTypeCheckExpression: (value) =>
+            code`typeof ${value} === "number"`,
+          sourceTypeName: code`number`,
+        },
+        {
+          conversionExpression: (value) =>
+            code`${sharedSnippets.toLiteral}(${value})`,
+          sourceTypeCheckExpression: (value) =>
+            code`typeof ${value} === "string"`,
+          sourceTypeName: code`string`,
         },
       );
     }
 
     conversions.push({
       conversionExpression: (value) => value,
-      sourceTypeCheckExpression: (value) => `typeof ${value} === "object"`,
+      sourceTypeCheckExpression: (value) => code`typeof ${value} === "object"`,
       sourceTypeName: this.name,
     });
 
@@ -116,27 +130,27 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
-  override get name(): string {
-    return `(${[...this.nodeKinds]
-      .map((nodeKind) => `rdfjs.${nodeKind}`)
+  override get name(): Code {
+    return code`(${[...this.nodeKinds]
+      .map((nodeKind) => (sharedImports as any)[nodeKind])
       .join(" | ")})`;
   }
 
   @Memoize()
-  override get schemaType(): string {
+  override get schemaType(): Code {
     invariant(this.kind.endsWith("Type"));
-    return `${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema`;
+    return code`${conditionalOutput(`${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema`, code`type ${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema = Readonly<${this.schemaTypeObject}>;`)}`;
   }
 
-  @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    invariant(this.kind.endsWith("Type"));
-    return `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}SparqlWherePatterns`;
-  }
+  // @Memoize()
+  // override get sparqlWherePatternsFunction(): Code {
+  //   invariant(this.kind.endsWith("Type"));
+  //   return `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}SparqlWherePatterns`;
+  // }
 
   override fromRdfExpression(
     parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
-  ): string {
+  ): Code {
     // invariant(
     //   this.nodeKinds.has("Literal") &&
     //     (this.nodeKinds.has("BlankNode") || this.nodeKinds.has("NamedNode")),
@@ -145,91 +159,46 @@ export abstract class AbstractTermType<
 
     const chain = this.fromRdfExpressionChain(parameters);
     const { variables } = parameters;
-    return [
-      variables.resourceValues,
-      chain.hasValues,
-      chain.languageIn,
-      chain.preferredLanguages,
-      chain.valueTo,
-    ]
-      .filter((_) => typeof _ !== "undefined")
-      .join(".");
+    return joinCode(
+      [
+        variables.resourceValues,
+        chain.hasValues,
+        chain.languageIn,
+        chain.preferredLanguages,
+        chain.valueTo,
+      ].filter((_) => typeof _ !== "undefined"),
+      { on: "." },
+    );
   }
 
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
-  ): string {
+  ): Code {
     throw new Error("not implemented");
   }
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
-    return [
-      `${variables.hasher}.update(${variables.value}.termType);`,
-      `${variables.hasher}.update(${variables.value}.value);`,
-    ];
+  }: Parameters<AbstractType["hashStatements"]>[0]): Code {
+    return joinCode([
+      code`${variables.hasher}.update(${variables.value}.termType);`,
+      code`${variables.hasher}.update(${variables.value}.value);`,
+    ]);
   }
 
   override jsonUiSchemaElement(): Maybe<string> {
     return Maybe.empty();
   }
 
-  override snippetDeclarations({
-    features,
-  }: Parameters<AbstractType["snippetDeclarations"]>[0]): Readonly<
-    Record<string, SnippetDeclaration>
-  > {
-    return mergeSnippetDeclarations(
-      features.has("equals")
-        ? singleEntryRecord(`${syntheticNamePrefix}booleanEquals`, {
-            code: `\
-/**
- * Compare two objects with equals(other: T): boolean methods and return an ${syntheticNamePrefix}EqualsResult.
- */
-function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(
-    left,
-    right,
-    left.equals(right),
-  );
-}`,
-            dependencies: sharedSnippetDeclarations.EqualsResult,
-          })
-        : {},
-
-      features.has("sparql")
-        ? singleEntryRecord(
-            this.schemaType,
-            `type ${this.schemaType} = Readonly<${objectInitializer(this.schemaTypeObject)}>;`,
-          )
-        : {},
-
-      this.nodeKinds.has("Literal") ? sharedSnippetDeclarations.toLiteral : {}, // For initializers
-    );
-  }
-
-  override sparqlConstructTriples(): readonly (
-    | AbstractType.SparqlConstructTriple
-    | string
-  )[] {
+  override sparqlConstructTriples(): Code {
     // Terms never have other triples hanging off them.
-    return [];
+    return code`${arrayOf([])}`;
   }
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
-    return `[${variables.value}]`;
-  }
-
-  override useImports(_object: {
-    features: ReadonlySet<TsFeature>;
-  }): readonly Import[] {
-    return [Import.RDFJS_TYPES];
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
+    return code`[${variables.value}]`;
   }
 
   /**
@@ -244,29 +213,28 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   protected fromRdfExpressionChain({
     variables,
   }: Parameters<Type["fromRdfExpression"]>[0]): {
-    hasValues?: string;
-    languageIn?: string;
-    preferredLanguages?: string;
-    valueTo: string;
+    hasValues?: Code;
+    languageIn?: Code;
+    preferredLanguages?: Code;
+    valueTo: Code;
   } {
-    let valueToExpression =
-      "purify.Either.of<Error, rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode>(value.toTerm())";
+    let valueToExpression = code`${sharedImports.Either}.of<Error, ${sharedImports.BlankNode} | ${sharedImports.Literal} | ${sharedImports.NamedNode}>(value.toTerm())`;
     if (this.nodeKinds.size < 3) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      valueToExpression = `${valueToExpression}.chain(term => {
+      valueToExpression = code`${valueToExpression}.chain(term => {
   switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return purify.Either.of${eitherTypeParameters}(term);
-  default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError(${objectInitializer({ actualValue: "term", expectedValueType: JSON.stringify(this.name), focusResource: variables.resource, predicate: variables.predicate })}));         
+  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${sharedImports.Either}.of${eitherTypeParameters}(term);
+  default: return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }}));         
 }})`;
     }
 
     return {
       hasValues:
         this.hasValues.length > 0
-          ? `\
-chain(values => purify.Either.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
+          ? code`\
+chain(values => ${sharedImports.Either}.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
           : undefined,
-      valueTo: `chain(values => values.chainMap(value => ${valueToExpression}))`,
+      valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };
   }
 }
