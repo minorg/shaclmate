@@ -1,12 +1,12 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { code, conditionalOutput } from "ts-poet";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const arrayIntersection = singleEntryRecord(
+const arrayIntersection = conditionalOutput(
   `${syntheticNamePrefix}arrayIntersection`,
-  `\
+  code`\
 function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: readonly T[]): readonly T[] {
   if (left.length === 0) {
     return right;
@@ -35,13 +35,13 @@ function ${syntheticNamePrefix}arrayIntersection<T>(left: readonly T[], right: r
 }`,
 );
 
-const EqualsResult = singleEntryRecord(
+const EqualsResult = conditionalOutput(
   `${syntheticNamePrefix}EqualsResult`,
-  `\
-export type ${syntheticNamePrefix}EqualsResult = purify.Either<${syntheticNamePrefix}EqualsResult.Unequal, true>;
+  code`\
+export type ${syntheticNamePrefix}EqualsResult = ${sharedImports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
 export namespace ${syntheticNamePrefix}EqualsResult {
-  export const Equal: ${syntheticNamePrefix}EqualsResult = purify.Either.of<Unequal, true>(true);
+  export const Equal: ${syntheticNamePrefix}EqualsResult = ${sharedImports.Either}.of<Unequal, true>(true);
 
   export function fromBooleanEqualsResult(
     left: any,
@@ -56,7 +56,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
       return Equal;
     }
 
-    return purify.Left({ left, right, type: "BooleanEquals" });
+    return ${sharedImports.Left}({ left, right, type: "BooleanEquals" });
   }
 
   export type Unequal =
@@ -115,42 +115,44 @@ export namespace ${syntheticNamePrefix}EqualsResult {
 }`,
 );
 
-const SparqlPattern = singleEntryRecord(
-  `SparqlPattern`,
-  `\
-type ${syntheticNamePrefix}SparqlFilterPattern = sparqljs.FilterPattern & { lift?: boolean };
-type ${syntheticNamePrefix}SparqlPattern = Exclude<sparqljs.Pattern, sparqljs.FilterPattern> | ${syntheticNamePrefix}SparqlFilterPattern;`,
+const SparqlFilterPattern = conditionalOutput(
+  `${syntheticNamePrefix}SparqlFilterPattern`,
+  code`type ${syntheticNamePrefix}SparqlFilterPattern = ${sharedImports.sparqljs}.FilterPattern & { lift?: boolean };`,
 );
 
-const SparqlWherePatternsFunction = singleEntryRecord(
-  `SparqlWherePatternsFunction`,
-  {
-    code: `\
+const SparqlPattern = conditionalOutput(
+  `SparqlPattern`,
+  code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${sharedImports.sparqljs}.Pattern, ${sharedImports.sparqljs}.FilterPattern> | ${SparqlFilterPattern};`,
+);
+
+const SparqlWherePatternsFunctionParameters = conditionalOutput(
+  `${syntheticNamePrefix}SparqlWherePatternsFunctionParameters`,
+  code`\
 type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT> = Readonly<{
   filter?: FilterT;
   ignoreRdfType?: boolean;
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly sparqljs.BgpPattern[];
+  propertyPatterns: readonly ${sharedImports.sparqljs}.BgpPattern[];
   schema: SchemaT;
-  valueVariable: rdfjs.Variable;
+  valueVariable: ${sharedImports.Variable};
   variablePrefix: string;
-}>;
-type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, SchemaT>) => readonly ${syntheticNamePrefix}SparqlPattern[];
-`,
-    dependencies: SparqlPattern,
-  } satisfies SnippetDeclaration,
+}>;`,
 );
 
-const deduplicateSparqlPatterns = singleEntryRecord(
+const SparqlWherePatternsFunction = conditionalOutput(
+  `${syntheticNamePrefix}SparqlWherePatternsFunction`,
+  code`type ${syntheticNamePrefix}SparqlWherePatternsFunction<FilterT, SchemaT> = (parameters: ${SparqlWherePatternsFunctionParameters}<FilterT, SchemaT>) => readonly ${SparqlPattern}[];`,
+);
+
+const deduplicateSparqlPatterns = conditionalOutput(
   `${syntheticNamePrefix}deduplicateSparqlPatterns`,
-  {
-    code: `\
-function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+  code`\
+function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${SparqlPattern}[]): readonly ${SparqlPattern}[] {
   if (patterns.length === 0) {
     return patterns;
   }
 
-  const deduplicatedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  const deduplicatedPatterns: ${SparqlPattern}[] = [];
   const deduplicatePatternStrings = new Set<string>();
   for (const pattern of patterns) {
     const patternString = JSON.stringify(pattern);
@@ -161,16 +163,13 @@ function ${syntheticNamePrefix}deduplicateSparqlPatterns(patterns: readonly ${sy
   }
   return deduplicatedPatterns;
 }`,
-    dependendencies: SparqlPattern,
-  },
 );
 
-const SparqlPattern_isSolutionGenerating = singleEntryRecord(
+const SparqlPattern_isSolutionGenerating = conditionalOutput(
   `${syntheticNamePrefix}SparqlPattern_isSolutionGenerating`,
-  {
-    code: `\
+  code`\
 namespace ${syntheticNamePrefix}SparqlPattern {
-  export function isSolutionGenerating(pattern: ${syntheticNamePrefix}SparqlPattern): boolean {
+  export function isSolutionGenerating(pattern: ${SparqlPattern}): boolean {
     switch (pattern.type) {
       case "bind":
       case "bgp":        
@@ -196,18 +195,15 @@ namespace ${syntheticNamePrefix}SparqlPattern {
     }
   }
 }`,
-    dependencies: SparqlPattern,
-  },
 );
 
-const sortSparqlPatterns = singleEntryRecord(
+const sortSparqlPatterns = conditionalOutput(
   `${syntheticNamePrefix}sortSparqlPatterns`,
-  {
-    code: `\
-function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
-  const filterPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
-  const otherPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
-  const valuesPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+  code`\
+function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${SparqlPattern}[]): readonly ${SparqlPattern}[] {
+  const filterPatterns: ${SparqlPattern}[] = [];
+  const otherPatterns: ${SparqlPattern}[] = [];
+  const valuesPatterns: ${SparqlPattern}[] = [];
 
   for (const pattern of patterns) {
     switch (pattern.type) {
@@ -225,63 +221,60 @@ function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${synthetic
 
   return valuesPatterns.concat(otherPatterns).concat(filterPatterns);
 }`,
-    dependencies: SparqlPattern,
-  },
 );
 
-const toLiteral = singleEntryRecord(
+const toLiteral = conditionalOutput(
   `${syntheticNamePrefix}toLiteral`,
-  `\
-function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | rdfjs.Literal | string, datatype?: rdfjs.NamedNode): rdfjs.Literal {
+  code`\
+function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | ${sharedImports.Literal} | string, datatype?: ${sharedImports.NamedNode}): ${sharedImports.Literal} {
   switch (typeof value) {
     case "boolean":
-      return dataFactory.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
+      return ${sharedImports.dataFactory}.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
     case "object": {
       if (value instanceof Date) {
         if (datatype) {
           if (datatype.equals(${rdfjsTermExpression(xsd.date)})) {
-            return dataFactory.literal(value.toISOString().replace(/T.*$/, ''), datatype);
+            return ${sharedImports.dataFactory}.literal(value.toISOString().replace(/T.*$/, ''), datatype);
           } else if (datatype.equals(${rdfjsTermExpression(xsd.dateTime)})) {
-            return dataFactory.literal(value.toISOString(), datatype);             
+            return ${sharedImports.dataFactory}.literal(value.toISOString(), datatype);             
           } else {
             throw new RangeError(datatype.value);
           }
         }
           
-        return dataFactory.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
+        return ${sharedImports.dataFactory}.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
       }
 
       return value;
     }
     case "number": {
       if (datatype) {
-        return dataFactory.literal(value.toString(10), datatype);
+        return ${sharedImports.dataFactory}.literal(value.toString(10), datatype);
       }
 
       // Convert the number to a literal following SPARQL rules = tests on the lexical form
       const valueString = value.toString(10);
       if (/^[+-]?[0-9]+$/.test(valueString)) {
         // No decimal point, no exponent: xsd:integer
-        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
+        return ${sharedImports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
       }
       if (/^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)[eE][+-]?[0-9]+$/.test(valueString)) {
         // Has exponent: xsd:double
-        return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.double)});
+        return ${sharedImports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.double)});
       }
       // Default: xsd:decimal
-      return dataFactory.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
+      return ${sharedImports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
     }
     case "string":
-      return dataFactory.literal(value, datatype);
+      return ${sharedImports.dataFactory}.literal(value, datatype);
   }
 }`,
 );
 
-const sparqlValueInPattern = singleEntryRecord(
+const sparqlValueInPattern = conditionalOutput(
   `${syntheticNamePrefix}sparqlValueInPattern`,
-  {
-    code: `\
-function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | rdfjs.Literal | rdfjs.NamedNode)[], valueVariable: rdfjs.Variable}): ${syntheticNamePrefix}SparqlFilterPattern {
+  code`\
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | ${sharedImports.Literal} | ${sharedImports.NamedNode})[], valueVariable: ${sharedImports.Variable}}): ${SparqlFilterPattern} {
   if (valueIn.length === 0) {
     throw new RangeError("expected valueIn not to be empty");
   }
@@ -293,10 +286,10 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
           case "boolean":
           case "number":
           case "string":
-            return ${syntheticNamePrefix}toLiteral(inValue)
+            return ${toLiteral}(inValue)
           case "object":
             if (inValue instanceof Date) {
-              return ${syntheticNamePrefix}toLiteral(inValue)
+              return ${toLiteral}(inValue)
             }
 
             return inValue;
@@ -313,60 +306,52 @@ function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariab
     type: "filter",
   };
 }`,
-    dependencies: toLiteral,
-  } satisfies SnippetDeclaration,
 );
 
-const TermFilter = singleEntryRecord(
+const TermFilter = conditionalOutput(
   `${syntheticNamePrefix}TermFilter`,
-  `\
+  code`\
 interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly rdfjs.NamedNode[];
-  readonly in?: readonly (rdfjs.Literal | rdfjs.NamedNode)[];
+  readonly datatypeIn?: readonly ${sharedImports.NamedNode}[];
+  readonly in?: readonly (${sharedImports.Literal} | ${sharedImports.NamedNode})[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }`,
 );
 
-const termSchemaSparqlWherePatterns = singleEntryRecord(
+const termSchemaSparqlWherePatterns = conditionalOutput(
   `${syntheticNamePrefix}termSchemaSparqlWherePatterns`,
-  {
-    code: `\
+  code`\
 function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
   filterPatterns,
   propertyPatterns,
   schema,
   valueVariable
 }: {
-  filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
-  propertyPatterns: readonly sparqljs.BgpPattern[];
+  filterPatterns: readonly ${SparqlFilterPattern}[],
+  propertyPatterns: readonly ${sharedImports.sparqljs}.BgpPattern[];
   schema: Readonly<{
-    in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
+    in?: readonly (boolean | Date | string | number | ${sharedImports.Literal} | ${sharedImports.NamedNode})[];
   }>,
-  valueVariable: rdfjs.Variable;
-}): readonly ${syntheticNamePrefix}SparqlPattern[] {
-  let patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
+  valueVariable: ${sharedImports.Variable};
+}): readonly ${SparqlPattern}[] {
+  let patterns: ${SparqlPattern}[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
+    patterns.push(${sparqlValueInPattern}({ valueVariable, valueIn: schema.in }));
   }
 
   return patterns.concat(filterPatterns);
 }`,
-    dependencies: {
-      ...arrayIntersection,
-      ...sparqlValueInPattern,
-      ...SparqlPattern,
-    },
-  } satisfies SnippetDeclaration,
 );
 
-export const sharedSnippetDeclarations = {
+export const sharedSnippets = {
   EqualsResult,
 
-  filterTerm: singleEntryRecord(`${syntheticNamePrefix}filterTerm`, {
-    code: `\
-  function ${syntheticNamePrefix}filterTerm(filter: ${syntheticNamePrefix}TermFilter, value: rdfjs.BlankNode | rdfjs.Literal | rdfjs.NamedNode): boolean {  
+  filterTerm: conditionalOutput(
+    `${syntheticNamePrefix}filterTerm`,
+    code`\
+  function ${syntheticNamePrefix}filterTerm(filter: ${TermFilter}, value: ${sharedImports.BlankNode} | ${sharedImports.Literal} | ${sharedImports.NamedNode}): boolean {
     if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype.equals(value.datatype)))) {
       return false;
     }
@@ -386,17 +371,16 @@ export const sharedSnippetDeclarations = {
     
     return true;
   }`,
-    dependencies: TermFilter,
-  } satisfies SnippetDeclaration),
+  ),
 
-  IdentifierSet: singleEntryRecord(
+  IdentifierSet: conditionalOutput(
     `${syntheticNamePrefix}IdentifierSet`,
-    `\
+    code`\
 class ${syntheticNamePrefix}IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
 
-  add(identifier: rdfjs.BlankNode | rdfjs.NamedNode): this {
+  add(identifier: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}): this {
     switch (identifier.termType) {
       case "BlankNode":
         this.blankNodeValues.add(identifier.value);
@@ -407,7 +391,7 @@ class ${syntheticNamePrefix}IdentifierSet {
     }
   }
 
-  has(identifier: rdfjs.BlankNode | rdfjs.NamedNode): boolean {
+  has(identifier: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}): boolean {
     switch (identifier.termType) {
       case "BlankNode":
         return this.blankNodeValues.has(identifier.value);
@@ -418,13 +402,12 @@ class ${syntheticNamePrefix}IdentifierSet {
 }`,
   ),
 
-  liftSparqlPatterns: singleEntryRecord(
+  liftSparqlPatterns: conditionalOutput(
     `${syntheticNamePrefix}liftSparqlPatterns`,
-    {
-      code: `\
-function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${syntheticNamePrefix}SparqlPattern>): [readonly ${syntheticNamePrefix}SparqlPattern[], readonly ${syntheticNamePrefix}SparqlFilterPattern[]] {
-  const liftedPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
-  const unliftedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
+    code`\
+function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${SparqlPattern}>): [readonly ${SparqlPattern}[], readonly ${SparqlFilterPattern}[]] {
+  const liftedPatterns: ${SparqlFilterPattern}[] = [];
+  const unliftedPatterns: ${SparqlPattern}[] = [];
   for (const pattern of patterns) {
     if (pattern.type === "filter" && pattern.lift) {
       liftedPatterns.push(pattern);
@@ -434,14 +417,11 @@ function ${syntheticNamePrefix}liftSparqlPatterns(patterns: Iterable<${synthetic
   }
   return [unliftedPatterns, liftedPatterns];
 }`,
-      dependencies: SparqlPattern,
-    },
   ),
 
-  literalSchemaSparqlWherePatterns: singleEntryRecord(
+  literalSchemaSparqlWherePatterns: conditionalOutput(
     `${syntheticNamePrefix}literalSchemaSparqlWherePatterns`,
-    {
-      code: `\
+    code`\
 function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
   filterPatterns,
   preferredLanguages,
@@ -449,26 +429,26 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
   schema,
   valueVariable
 }: {
-  filterPatterns: readonly ${syntheticNamePrefix}SparqlFilterPattern[],
+  filterPatterns: readonly ${SparqlFilterPattern}[],
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly sparqljs.BgpPattern[];
+  propertyPatterns: readonly ${sharedImports.sparqljs}.BgpPattern[];
   schema: Readonly<{
     languageIn?: readonly string[];
-    in?: readonly (boolean | Date | string | number | rdfjs.Literal | rdfjs.NamedNode)[];
+    in?: readonly (boolean | Date | string | number | ${sharedImports.Literal} | ${sharedImports.NamedNode})[];
   }>,
-  valueVariable: rdfjs.Variable;
-}): readonly ${syntheticNamePrefix}SparqlPattern[] {
-  let patterns: ${syntheticNamePrefix}SparqlPattern[] = propertyPatterns.concat();
+  valueVariable: ${sharedImports.Variable};
+}): readonly ${SparqlPattern}[] {
+  let patterns: ${SparqlPattern}[] = propertyPatterns.concat();
 
   if (schema.in && schema.in.length > 0) {
-    patterns.push(${syntheticNamePrefix}sparqlValueInPattern({ valueVariable, valueIn: schema.in }));
+    patterns.push(${sparqlValueInPattern}({ valueVariable, valueIn: schema.in }));
   }
 
-  const languageIn = ${syntheticNamePrefix}arrayIntersection(schema.languageIn ?? [], preferredLanguages ?? []);
+  const languageIn = ${arrayIntersection}(schema.languageIn ?? [], preferredLanguages ?? []);
   if (languageIn.length > 0) {
     patterns.push({
       expression: {
-        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, languageIn.map(_ => dataFactory.literal(_))],
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, languageIn.map(_ => ${sharedImports.dataFactory}.literal(_))],
         operator: "in",
         type: "operation"
       },
@@ -478,25 +458,19 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
 
   return patterns.concat(filterPatterns);
 }`,
-      dependencies: {
-        ...arrayIntersection,
-        ...SparqlPattern,
-      },
-    } satisfies SnippetDeclaration,
   ),
 
-  normalizeSparqlWherePatterns: singleEntryRecord(
+  normalizeSparqlWherePatterns: conditionalOutput(
     `${syntheticNamePrefix}normalizeSparqlWherePatterns`,
-    {
-      code: `\
-function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
-  function normalizePatternsRecursive(patternsRecursive: readonly ${syntheticNamePrefix}SparqlPattern[]): readonly ${syntheticNamePrefix}SparqlPattern[] {
+    code`\
+function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly ${SparqlPattern}[]): readonly ${SparqlPattern}[] {
+  function normalizePatternsRecursive(patternsRecursive: readonly ${SparqlPattern}[]): readonly ${SparqlPattern}[] {
     if (patternsRecursive.length === 0) {
       return patternsRecursive;
     }
 
-    const compactedPatterns: ${syntheticNamePrefix}SparqlPattern[] = [];
-    for (const pattern of ${syntheticNamePrefix}deduplicateSparqlPatterns(patternsRecursive)) {
+    const compactedPatterns: ${SparqlPattern}[] = [];
+    for (const pattern of ${deduplicateSparqlPatterns}(patternsRecursive)) {
       switch (pattern.type) {
         case "bgp": {
           if (pattern.triples.length === 0) {
@@ -532,7 +506,7 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
           break;
         }
         case "union": {
-          const unionPatterns = ${syntheticNamePrefix}deduplicateSparqlPatterns(pattern.patterns.flatMap(pattern => {
+          const unionPatterns = ${deduplicateSparqlPatterns}(pattern.patterns.flatMap(pattern => {
             switch (pattern.type) {
               case "group":
                 // Don't flatten the groups in a union
@@ -544,7 +518,7 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
                 if (patterns_.length > 0) {
                   return [{ ...pattern, patterns: patterns_.concat() }];
                 }
-                return [] as ${syntheticNamePrefix}SparqlPattern[];
+                return [] as ${SparqlPattern}[];
               }
               default:
                 return [pattern];
@@ -568,49 +542,44 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
       }
     }
 
-    return ${syntheticNamePrefix}sortSparqlPatterns(${syntheticNamePrefix}deduplicateSparqlPatterns(compactedPatterns));
+    return ${sortSparqlPatterns}(${deduplicateSparqlPatterns}(compactedPatterns));
   }
 
   const normalizedPatterns = normalizePatternsRecursive(patterns);
-  if (!normalizedPatterns.some(${syntheticNamePrefix}SparqlPattern.isSolutionGenerating)) {
+  if (!normalizedPatterns.some(${SparqlPattern_isSolutionGenerating})) {
     throw new Error("SPARQL WHERE patterns must have at least one solution-generating pattern");
   }
 
   return normalizedPatterns;
 }`,
-      dependencies: {
-        ...deduplicateSparqlPatterns,
-        ...sortSparqlPatterns,
-        ...SparqlPattern_isSolutionGenerating,
-      },
-    },
   ),
 
-  RdfVocabularies: singleEntryRecord(
+  RdfVocabularies: conditionalOutput(
     `${syntheticNamePrefix}RdfVocabularies`,
-    `\
+    code`\
 namespace ${syntheticNamePrefix}RdfVocabularies {
   export namespace rdf {
-    export const first = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
-    export const nil = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
-    export const rest = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
-    export const subject = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
-    export const type = dataFactory.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+    export const first = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
+    export const nil = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
+    export const rest = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+    export const subject = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
+    export const type = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
   }
 
   export namespace rdfs {
-    export const subClassOf = dataFactory.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
+    export const subClassOf = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
   }
 
   export namespace xsd {
-    export const boolean = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
-    export const date = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#date");
-    export const dateTime = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
-    export const decimal = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
-    export const double = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#double");
-    export const integer = dataFactory.namedNode("http://www.w3.org/2001/XMLSchema#integer");
+    export const boolean = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
+    export const date = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date");
+    export const dateTime = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
+    export const decimal = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
+    export const double = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double");
+    export const integer = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
-}`,
+}
+`,
   ),
 
   SparqlPattern,
@@ -619,39 +588,44 @@ namespace ${syntheticNamePrefix}RdfVocabularies {
 
   SparqlWherePatternsFunction,
 
-  strictEquals: singleEntryRecord(`${syntheticNamePrefix}strictEquals`, {
-    code: `\
+  strictEquals: conditionalOutput(
+    `${syntheticNamePrefix}strictEquals`,
+    code`\
 /**
- * Compare two values for strict equality (===), returning an ${syntheticNamePrefix}EqualsResult rather than a boolean.
+ * Compare two values for strict equality (===), returning an ${EqualsResult} rather than a boolean.
  */
 function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number | string>(
   left: T,
   right: T,
-): ${syntheticNamePrefix}EqualsResult {
-  return ${syntheticNamePrefix}EqualsResult.fromBooleanEqualsResult(left, right, left === right);
+): ${EqualsResult} {
+  return ${EqualsResult}.fromBooleanEqualsResult(left, right, left === right);
 }`,
-    dependencies: EqualsResult,
-  } satisfies SnippetDeclaration),
+  ),
 
   TermFilter,
 
-  termFilterSparqlPatterns: singleEntryRecord(
+  termFilterSparqlPatterns: conditionalOutput(
     `${syntheticNamePrefix}termFilterSparqlPatterns`,
-    {
-      code: `\
-function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${syntheticNamePrefix}TermFilter; valueVariable: rdfjs.Variable }): readonly ${syntheticNamePrefix}SparqlFilterPattern[] {
+    code`\
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${TermFilter}; valueVariable: ${sharedImports.Variable} }): readonly ${SparqlFilterPattern}[] {
   if (!filter) {
     return [];
   }
 
-  const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
+  const filterPatterns: ${SparqlFilterPattern}[] = [];
 
-  if (typeof filter.datatypeIn !== "undefined" && filter.datatypeIn.length > 0) {
+  if (
+    typeof filter.datatypeIn !== "undefined" &&
+    filter.datatypeIn.length > 0
+  ) {
     filterPatterns.push({
       expression: {
         type: "operation",
         operator: "in",
-        args: [{ args: [valueVariable], operator: "datatype", type: "operation" }, filter.datatypeIn.concat()]
+        args: [
+          { args: [valueVariable], operator: "datatype", type: "operation" },
+          filter.datatypeIn.concat(),
+        ],
       },
       lift: true,
       type: "filter",
@@ -659,15 +633,18 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
   }
 
   if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-    filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
+    filterPatterns.push(${sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
   }
 
-  if (typeof filter.languageIn !== "undefined" && filter.languageIn.length > 0) {
+  if (
+    typeof filter.languageIn !== "undefined" &&
+    filter.languageIn.length > 0
+  ) {
     filterPatterns.push({
       expression: {
         type: "operation",
         operator: "in",
-        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => dataFactory.literal(value))]
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => ${sharedImports.dataFactory}.literal(value))]
       },
       lift: true,
       type: "filter",
@@ -675,36 +652,42 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
   }
 
   if (typeof filter.typeIn !== "undefined") {
-    const typeInExpressions = filter.typeIn.map(inType => {
-      switch (inType) {
-        case "BlankNode":
-          return "isBlank";
-        case "Literal":
-          return "isLiteral";
-        case "NamedNode":
-          return "isIRI";
-        default:
-          inType satisfies never;
-          throw new RangeError(inType);
-      }
-    }).map(operator => ({
-      type: "operation" as const,
-      operator,
-      args: [valueVariable]
-    }));
+    const typeInExpressions = filter.typeIn
+      .map((inType) => {
+        switch (inType) {
+          case "BlankNode":
+            return "isBlank";
+          case "Literal":
+            return "isLiteral";
+          case "NamedNode":
+            return "isIRI";
+          default:
+            inType satisfies never;
+            throw new RangeError(inType);
+        }
+      })
+      .map((operator) => ({
+        type: "operation" as const,
+        operator,
+        args: [valueVariable],
+      }));
 
     switch (typeInExpressions.length) {
       case 0:
         break;
       case 1:
-        filterPatterns.push({ expression: typeInExpressions[0], lift: true, type: "filter" });
+        filterPatterns.push({
+          expression: typeInExpressions[0],
+          lift: true,
+          type: "filter",
+        });
         break;
       default:
         filterPatterns.push({
           expression: {
             type: "operation",
             operator: "||",
-            args: typeInExpressions
+            args: typeInExpressions,
           },
           lift: true,
           type: "filter",
@@ -714,13 +697,9 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
 
   return filterPatterns;
 }`,
-      dependencies: { ...sparqlValueInPattern, ...SparqlPattern },
-    } satisfies SnippetDeclaration,
   ),
 
   termSchemaSparqlWherePatterns,
 
   toLiteral,
 };
-
-export namespace SnippetDeclarations {}
