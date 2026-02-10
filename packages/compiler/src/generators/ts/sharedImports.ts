@@ -16,6 +16,8 @@ export const sharedImports = {
   GraphQLBoolean: imp("GraphQLBoolean@graphql"),
   GraphQLDate: imp("Date:GraphQLDate@graphql-scalars"),
   GraphQLDateTime: imp("DateTime:GraphQLDateTime@graphql-scalars"),
+  GraphQLFloat: imp("GraphQLFloat@graphql"),
+  GraphQLInt: imp("GraphQLInt@graphql"),
   GraphQLList: imp("GraphQLList@graphql"),
   GraphQLString: imp("GraphQLString@graphql"),
   Left: imp("Left@purify-ts"),
