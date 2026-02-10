@@ -1,15 +1,39 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+import { type Code, code, conditionalOutput } from "ts-poet";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import { sharedSnippetDeclarations } from "./sharedSnippets.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedImports } from "./sharedImports.js";
+import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
+const localSnippets = {
+  LiteralFilter: conditionalOutput(
+    `${syntheticNamePrefix}LiteralFilter`,
+    code`\
+interface ${syntheticNamePrefix}LiteralFilter extends Omit<${sharedSnippets.TermFilter}, "in" | "type"> {
+  readonly in?: readonly ${sharedImports.Literal}[];
+}`,
+  ),
+};
+
 export class LiteralType extends AbstractLiteralType {
-  override readonly filterFunction = `${syntheticNamePrefix}filterLiteral`;
-  override readonly filterType = `${syntheticNamePrefix}LiteralFilter`;
+  override readonly filterFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}filterLiteral`,
+    code`\
+function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${sharedImports.Literal}): boolean {
+  return ${sharedSnippets.filterTerm}(filter, value);
+}`,
+  )}`;
+
+  override readonly filterType = code`${localSnippets.LiteralFilter}`;
+
   override readonly kind = "LiteralType";
+
+  override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}literalSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${sharedSnippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+  )}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
@@ -17,18 +41,19 @@ export class LiteralType extends AbstractLiteralType {
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): string {
-    return `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
+  }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
+    return code`${sharedImports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${sharedImports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly string[] {
-    return [
-      `${variables.hasher}.update(${variables.value}.datatype.value);`,
-      `${variables.hasher}.update(${variables.value}.language);`,
-    ].concat(super.hashStatements({ depth, variables }));
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): Code {
+    return code`\
+${super.hashStatements({ depth, variables })}
+${variables.hasher}.update(${variables.value}.datatype.value);
+${variables.hasher}.update(${variables.value}.language);
+`;
   }
 
   override jsonType(
@@ -38,63 +63,19 @@ export class LiteralType extends AbstractLiteralType {
       ? `, readonly termType: "Literal"`
       : "";
     return new AbstractLiteralType.JsonType(
-      `{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
+      code`{ readonly "@language"?: string${discriminantProperty}, readonly "@type"?: string, readonly "@value": string }`,
     );
   }
 
   override jsonZodSchema({
     includeDiscriminantProperty,
     variables,
-  }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractLiteralType["jsonZodSchema"]
-  > {
+  }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
       ? `, termType: ${variables.zod}.literal("Literal")`
       : "";
 
-    return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional()${discriminantProperty}, "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
-  }
-
-  override snippetDeclarations(
-    parameters: Parameters<AbstractLiteralType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-
-      singleEntryRecord(
-        `${syntheticNamePrefix}filterLiteral`,
-        `\
-function ${syntheticNamePrefix}filterLiteral(filter: ${syntheticNamePrefix}LiteralFilter, value: rdfjs.Literal): boolean {
-  return ${syntheticNamePrefix}filterTerm(filter, value);
-}`,
-      ),
-      sharedSnippetDeclarations.filterTerm,
-      singleEntryRecord(
-        `${syntheticNamePrefix}LiteralFilter`,
-        `\
-interface ${syntheticNamePrefix}LiteralFilter extends Omit<${syntheticNamePrefix}TermFilter, "in" | "type"> {
-  readonly in?: readonly rdfjs.Literal[];
-}`,
-      ),
-
-      features.has("sparql")
-        ? singleEntryRecord(
-            `${syntheticNamePrefix}literalSparqlWherePatterns`,
-            {
-              code: `\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${this.filterType}, ${this.schemaType}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${syntheticNamePrefix}termFilterSparqlPatterns(parameters), ...parameters });`,
-              dependencies: {
-                ...sharedSnippetDeclarations.literalSchemaSparqlWherePatterns,
-                ...sharedSnippetDeclarations.termFilterSparqlPatterns,
-                ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-              },
-            },
-          )
-        : {},
-    );
+    return code`${variables.zod}.object({ "@language": ${variables.zod}.string().optional()${discriminantProperty}, "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
   }
 
   override get schemaTypeObject() {
@@ -107,7 +88,7 @@ const ${syntheticNamePrefix}literalSparqlWherePatterns: ${syntheticNamePrefix}Sp
   override toJsonExpression({
     includeDiscriminantProperty,
     variables,
-  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): string {
-    return `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
+  }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
+    return code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
 }
