@@ -59,6 +59,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolvedType.itemType.name}[]`,
+        sourceTypeof: "object",
       });
     } else if (
       this.resolvedType.itemType.kind === "ObjectUnionType" &&
@@ -72,6 +73,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolvedType.itemType.name}[]`,
+        sourceTypeof: "object",
       });
     }
 
@@ -81,6 +83,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
       sourceTypeCheckExpression: (value) =>
         code`typeof ${value} === "undefined"`,
       sourceTypeName: code`undefined`,
+      sourceTypeof: "object",
     });
 
     return conversions;
@@ -152,5 +155,5 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${sha
     return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier));
   }
 }`,
-  ),
+  );
 }
