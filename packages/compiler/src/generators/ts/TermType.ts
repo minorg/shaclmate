@@ -2,16 +2,13 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { invariant } from "ts-invariant";
-import { type Code, code } from "ts-poet";
+import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
 import { sharedImports } from "./sharedImports.js";
-import { sharedSnippetDeclarations } from "./sharedSnippets.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class TermType<
@@ -21,9 +18,12 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
-  override readonly filterFunction = `${syntheticNamePrefix}filterTerm`;
-  override readonly filterType = `${syntheticNamePrefix}TermFilter`;
+  override readonly filterFunction = code`${sharedSnippets.filterTerm}`;
+  override readonly filterType = code`${sharedSnippets.TermFilter}`;
   override readonly kind = "TermType";
+  override readonly schemaType = code`${localSnippets.TermSchema}`;
+  override readonly sparqlWherePatternsFunction =
+    code`${localSnippets.termSparqlWherePatterns}`;
 
   constructor(
     superParameters: ConstructorParameters<
@@ -50,8 +50,8 @@ export class TermType<
   }
 
   @Memoize()
-  get schema(): string {
-    return objectInitializer(this.schemaObject);
+  get schema(): Code {
+    return code`${this.schemaObject}`;
   }
 
   protected override get schemaObject() {
@@ -64,48 +64,43 @@ export class TermType<
     };
   }
 
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "in?": `readonly (rdfjs.Literal | rdfjs.NamedNode)[]`,
-      nodeKinds: `readonly ("BlankNode" | "Literal" | "NamedNode")[]`,
-    };
-  }
-
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): string {
-    return [...this.nodeKinds].reduce((expression, nodeKind) => {
-      let valueToNodeKind: string;
-      switch (nodeKind) {
-        case "BlankNode":
-          valueToNodeKind = `dataFactory.blankNode(${variables.value}["@id"].substring(2))`;
-          break;
-        case "Literal":
-          valueToNodeKind = `dataFactory.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? dataFactory.namedNode(${variables.value}["@type"]) : undefined))`;
-          break;
-        case "NamedNode":
-          valueToNodeKind = `dataFactory.namedNode(${variables.value}["@id"])`;
-          break;
-        default:
-          throw new RangeError(nodeKind);
-      }
-      return expression.length === 0
-        ? valueToNodeKind
-        : `((${variables.value}.termType === "${nodeKind}") ? (${valueToNodeKind}) : (${expression}))`;
-    }, "");
+  }: Parameters<AbstractTermType["fromJsonExpression"]>[0]): Code {
+    return [...this.nodeKinds].reduce(
+      (expression, nodeKind) => {
+        let valueToNodeKind: Code;
+        switch (nodeKind) {
+          case "BlankNode":
+            valueToNodeKind = code`${sharedImports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+            break;
+          case "Literal":
+            valueToNodeKind = code`${sharedImports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${sharedImports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+            break;
+          case "NamedNode":
+            valueToNodeKind = code`${sharedImports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            break;
+          default:
+            throw new RangeError(nodeKind);
+        }
+        return expression == null
+          ? valueToNodeKind
+          : code`((${variables.value}.termType === "${nodeKind}") ? (${valueToNodeKind}) : (${expression}))`;
+      },
+      null as Code | null,
+    )!;
   }
 
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractTermType["graphqlResolveExpression"]>[0],
-  ): string {
+  ): Code {
     throw new Error("not implemented");
   }
 
   @Memoize()
   override jsonType(): AbstractTermType.JsonType {
     return new AbstractTermType.JsonType(
-      `{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
+      code`{ readonly "@id": string, readonly termType: ${[...this.nodeKinds]
         .filter((nodeKind) => nodeKind !== "Literal")
         .map((nodeKind) => `"${nodeKind}"`)
         .join(
@@ -116,19 +111,17 @@ export class TermType<
 
   override jsonZodSchema({
     variables,
-  }: Parameters<AbstractTermType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractTermType["jsonZodSchema"]
-  > {
-    return `${variables.zod}.discriminatedUnion("termType", [${[
+  }: Parameters<AbstractTermType["jsonZodSchema"]>[0]): Code {
+    return code`${variables.zod}.discriminatedUnion("termType", [${[
       ...this.nodeKinds,
     ]
       .map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
           case "NamedNode":
-            return `${variables.zod}.object({ "@id": ${variables.zod}.string().min(1), termType: ${variables.zod}.literal("${nodeKind}") })`;
+            return code`${variables.zod}.object({ "@id": ${variables.zod}.string().min(1), termType: ${variables.zod}.literal("${nodeKind}") })`;
           case "Literal":
-            return `${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string(), termType: ${variables.zod}.literal("Literal") })`;
+            return code`${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string(), termType: ${variables.zod}.literal("Literal") })`;
           default:
             throw new RangeError(nodeKind);
         }
@@ -136,50 +129,49 @@ export class TermType<
       .join(", ")}])`;
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<AbstractTermType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
-
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
-      sharedSnippetDeclarations.filterTerm,
-      sharedSnippetDeclarations.TermFilter,
-      features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}termSparqlWherePatterns`, {
-            code: `\
-const ${syntheticNamePrefix}termSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}TermFilter, ${syntheticNamePrefix}TermSchema> =
-  (parameters) => ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns: ${syntheticNamePrefix}termFilterSparqlPatterns(parameters), ...parameters })`,
-            dependencies: {
-              ...sharedSnippetDeclarations.termFilterSparqlPatterns,
-              ...sharedSnippetDeclarations.termSchemaSparqlWherePatterns,
-            },
-          } satisfies SnippetDeclaration)
-        : {},
-    );
-  }
-
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractTermType["toJsonExpression"]>[0]): string {
-    return [...this.nodeKinds].reduce((expression, nodeKind) => {
-      let valueToNodeKind: string;
-      switch (nodeKind) {
-        case "BlankNode":
-          valueToNodeKind = `{ "@id": \`_:\${${variables.value}.value}\`, termType: "${nodeKind}" as const }`;
-          break;
-        case "Literal":
-          valueToNodeKind = `{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${nodeKind}" as const }`;
-          break;
-        case "NamedNode":
-          valueToNodeKind = `{ "@id": ${variables.value}.value, termType: "${nodeKind}" as const }`;
-          break;
-        default:
-          throw new RangeError(nodeKind);
-      }
-      return expression.length === 0
-        ? valueToNodeKind
-        : `(${variables.value}.termType === "${nodeKind}") ? ${valueToNodeKind} : ${expression}`;
-    }, "");
+  }: Parameters<AbstractTermType["toJsonExpression"]>[0]): Code {
+    return [...this.nodeKinds].reduce(
+      (expression, nodeKind) => {
+        let valueToNodeKind: Code;
+        switch (nodeKind) {
+          case "BlankNode":
+            valueToNodeKind = code`{ "@id": \`_:\${${variables.value}.value}\`, termType: "${nodeKind}" as const }`;
+            break;
+          case "Literal":
+            valueToNodeKind = code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value, termType: "${nodeKind}" as const }`;
+            break;
+          case "NamedNode":
+            valueToNodeKind = code`{ "@id": ${variables.value}.value, termType: "${nodeKind}" as const }`;
+            break;
+          default:
+            throw new RangeError(nodeKind);
+        }
+        return expression === null
+          ? valueToNodeKind
+          : code`(${variables.value}.termType === "${nodeKind}") ? ${valueToNodeKind} : ${expression}`;
+      },
+      null as Code | null,
+    )!;
   }
+}
+
+namespace localSnippets {
+  export const TermSchema = conditionalOutput(
+    `${syntheticNamePrefix}TermSchema`,
+    code`\
+interface ${syntheticNamePrefix}TermSchema {
+  readonly in?: readonly (${sharedImports.Literal} | ${sharedImports.NamedNode})[];
+  readonly kind: "TermType";
+  readonly nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[],
+}`,
+  );
+
+  export const termSparqlWherePatterns = conditionalOutput(
+    `${syntheticNamePrefix}termSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}termSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${sharedSnippets.TermFilter}, ${TermSchema}> =
+  (parameters) => ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns: ${sharedSnippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
+  );
 }
