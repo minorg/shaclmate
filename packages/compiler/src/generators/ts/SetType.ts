@@ -1,13 +1,10 @@
 import { Maybe } from "purify-ts";
+import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import type { AbstractType } from "./AbstractType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import type { Import } from "./sharedImports.js";
-import { sharedSnippetDeclarations } from "./sharedSnippets.js";
-import { singleEntryRecord } from "./singleEntryRecord.js";
+import { sharedImports } from "./sharedImports.js";
+import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class SetType<
@@ -18,53 +15,67 @@ export class SetType<
   readonly kind = "SetType";
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `${syntheticNamePrefix}setSparqlWherePatterns<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  override get sparqlWherePatternsFunction(): Code {
+    return code`${localSnippets.setSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression(
     parameters: Parameters<
       AbstractCollectionType<ItemTypeT>["fromRdfExpression"]
     >[0],
-  ): string {
+  ): Code {
     const { variables } = parameters;
-    const chain = [this.itemType.fromRdfExpression(parameters)];
+    const chain: Code[] = [this.itemType.fromRdfExpression(parameters)];
     if (this.minCount === 0 || this._mutable) {
       chain.push(
-        `map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
+        code`map(values => values.toArray()${this._mutable ? ".concat()" : ""})`,
       );
     } else {
       chain.push(
-        `chain(values => purify.NonEmptyList.fromArray(values.toArray()).toEither(new Error(\`\${rdfjsResource.Resource.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
+        code`chain(values => ${sharedImports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${sharedImports.Resource}.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
       );
     }
     chain.push(
-      `map(valuesArray => rdfjsResource.Resource.Values.fromValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: valuesArray }))`,
+      code`map(valuesArray => ${sharedImports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: valuesArray }))`,
     );
-    return chain.join(".");
+    return joinCode(chain, { on: "." });
   }
 
   @Memoize()
   override jsonType(): AbstractCollectionType.JsonType {
-    const name = `readonly (${this.itemType.jsonType().name})[]`;
+    const name = code`readonly (${this.itemType.jsonType().name})[]`;
     if (this.minCount === 0) {
       return new AbstractCollectionType.JsonType(name, { optional: true });
     }
     return new AbstractCollectionType.JsonType(name);
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features } = parameters;
+  override sparqlConstructTriples(
+    parameters: Parameters<
+      AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
+    >[0],
+  ): Code {
+    return this.itemType.sparqlConstructTriples(parameters);
+  }
 
-    return mergeSnippetDeclarations(
-      super.snippetDeclarations(parameters),
+  override toRdfExpression({
+    variables,
+  }: Parameters<
+    AbstractCollectionType<ItemTypeT>["toRdfExpression"]
+  >[0]): Code {
+    return code`${variables.value}.flatMap((item) => ${this.itemType.toRdfExpression(
+      {
+        variables: { ...variables, value: code`item` },
+      },
+    )})`;
+  }
+}
 
-      features.has("sparql")
-        ? singleEntryRecord(`${syntheticNamePrefix}setSparqlWherePatterns`, {
-            code: `\
-function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${syntheticNamePrefix}SparqlWherePatternsFunction<ItemFilterT, ItemSchemaT>): ${syntheticNamePrefix}SparqlWherePatternsFunction<${syntheticNamePrefix}CollectionFilter<ItemFilterT>, ${syntheticNamePrefix}CollectionSchema<ItemSchemaT>> {
+namespace localSnippets {
+  export const setSparqlWherePatterns = conditionalOutput(
+    `${syntheticNamePrefix}setSparqlWherePatterns`,
+    code`\
+function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${sharedSnippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${sharedSnippets.SparqlWherePatternsFunction}<${sharedSnippets.CollectionFilter}<ItemFilterT>, ${sharedSnippets.CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
 
@@ -74,44 +85,11 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       return itemSparqlWherePatterns;
     }
     
-    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${syntheticNamePrefix}liftSparqlPatterns(itemSparqlWherePatterns);
+    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${sharedSnippets.liftSparqlPatterns}(itemSparqlWherePatterns);
     return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,
-            dependencies: {
-              ...sharedSnippetDeclarations.liftSparqlPatterns,
-              ...sharedSnippetDeclarations.SparqlWherePatternsFunction,
-            },
-          })
-        : {},
-    );
-  }
-
-  override sparqlConstructTriples(
-    parameters: Parameters<
-      AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
-    >[0],
-  ): readonly (AbstractCollectionType.SparqlConstructTriple | string)[] {
-    return this.itemType.sparqlConstructTriples(parameters);
-  }
-
-  override toRdfExpression({
-    variables,
-  }: Parameters<
-    AbstractCollectionType<ItemTypeT>["toRdfExpression"]
-  >[0]): string {
-    return `${variables.value}.flatMap((item) => ${this.itemType.toRdfExpression(
-      {
-        variables: { ...variables, value: "item" },
-      },
-    )})`;
-  }
-
-  override useImports(
-    parameters: Parameters<AbstractCollectionType<ItemTypeT>["useImports"]>[0],
-  ): readonly Import[] {
-    return this.itemType.useImports(parameters);
-  }
+  );
 }
 
 export namespace SetType {
