@@ -1,55 +1,21 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
+
 import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const localSnippets = {
-  IdentifierFilter: conditionalOutput(
-    `${syntheticNamePrefix}IdentifierFilter`,
-    code`\
-interface ${syntheticNamePrefix}IdentifierFilter {
-  readonly in?: readonly (${sharedImports.BlankNode} | ${sharedImports.NamedNode})[];
-  readonly type?: "BlankNode" | "NamedNode";
-}`,
-  ),
-};
-
-const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([
-  "BlankNode",
-  "NamedNode",
-]);
-
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
-  readonly kind = "IdentifierType";
-
-  constructor(
-    parameters: Pick<
-      ConstructorParameters<
-        typeof AbstractIdentifierType<BlankNode | NamedNode>
-      >[0],
-      "comment" | "label"
-    >,
-  ) {
-    super({
-      ...parameters,
-      hasValues: [],
-      in_: [],
-      nodeKinds,
-    });
-  }
-
-  @Memoize()
-  get filterFunction(): Code {
-    return code`${conditionalOutput(
-      `${syntheticNamePrefix}filterIdentifier`,
-      code`\
+  override readonly filterFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}filterIdentifier`,
+    code`\
 function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.IdentifierFilter}, value: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
@@ -61,19 +27,14 @@ function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.Identifi
 
   return true;
 }`,
-    )}`;
-  }
-
-  @Memoize()
-  get filterType(): Code {
-    return code`${localSnippets.IdentifierFilter}`;
-  }
-
-  @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${conditionalOutput(
-      `${syntheticNamePrefix}identifierSparqlWherePatterns`,
-      code`\
+  )}`;
+  override readonly filterType = code`${localSnippets.IdentifierFilter}`;
+  override readonly kind = "IdentifierType";
+  override readonly name =
+    code`(${sharedImports.BlankNode} | ${sharedImports.NamedNode})`;
+  override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}identifierSparqlWherePatterns`,
+    code`\
 const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
   ({ filter, propertyPatterns, valueVariable }) => {
     const patterns: ${sharedSnippets.SparqlPattern}[] = propertyPatterns.concat();
@@ -101,12 +62,30 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.Spar
 
     return patterns;
   }`,
-    )}`;
+  )}`;
+
+  constructor(
+    parameters: Pick<
+      ConstructorParameters<
+        typeof AbstractIdentifierType<BlankNode | NamedNode>
+      >[0],
+      "comment" | "label"
+    >,
+  ) {
+    super({
+      ...parameters,
+      hasValues: [],
+      in_: [],
+      nodeKinds,
+    });
   }
 
   @Memoize()
-  override get name(): Code {
-    return code`(${sharedImports.BlankNode} | ${sharedImports.NamedNode})`;
+  get fromStringFunctionDeclaration(): Code {
+    return code`\
+export function fromString(identifier: string): ${sharedImports.Either}<Error, ${this.name}> {
+  return ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }));
+}`;
   }
 
   override fromJsonExpression({
@@ -143,14 +122,6 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.Spar
     return code`${variables.zod}.object({ "@id": ${variables.zod}.string().min(1)${discriminantProperty} })`;
   }
 
-  @Memoize()
-  get fromStringFunctionDeclaration(): Code {
-    return code`\
-export function fromString(identifier: string): ${sharedImports.Either}<Error, ${this.name}> {
-  return ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }));
-}`;
-  }
-
   override toJsonExpression({
     includeDiscriminantProperty,
     variables,
@@ -176,3 +147,18 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     };
   }
 }
+
+const localSnippets = {
+  IdentifierFilter: conditionalOutput(
+    `${syntheticNamePrefix}IdentifierFilter`,
+    code`\
+interface ${syntheticNamePrefix}IdentifierFilter {
+  readonly in?: readonly (${sharedImports.BlankNode} | ${sharedImports.NamedNode})[];
+  readonly type?: "BlankNode" | "NamedNode";
+}`,
+  ),
+};
+const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([
+  "BlankNode",
+  "NamedNode",
+]);

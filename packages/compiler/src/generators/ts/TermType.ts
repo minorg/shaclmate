@@ -2,13 +2,14 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { invariant } from "ts-invariant";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
 import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
 import { objectInitializer } from "./objectInitializer.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { SnippetDeclaration } from "./SnippetDeclaration.js";
+import { sharedImports } from "./sharedImports.js";
 import { sharedSnippetDeclarations } from "./sharedSnippets.js";
 import { singleEntryRecord } from "./singleEntryRecord.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -39,6 +40,13 @@ export class TermType<
 
   override get graphqlType(): AbstractTermType.GraphqlType {
     throw new Error("not implemented");
+  }
+
+  @Memoize()
+  override get name(): Code {
+    return code`(${[...this.nodeKinds]
+      .map((nodeKind) => (sharedImports as any)[nodeKind])
+      .join(" | ")})`;
   }
 
   @Memoize()

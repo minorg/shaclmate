@@ -21,6 +21,25 @@ const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly kind = "BlankNodeType";
 
+  readonly filterFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}filterBlankNode`,
+    code`\
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${sharedImports.BlankNode}) {
+  return true;
+}`,
+  )}`;
+
+  readonly filterType = code`${localSnippets.BlankNodeFilter}`;
+
+  readonly name = code`${sharedImports.BlankNode}`;
+
+  readonly sparqlWherePatternsFunction = code`${conditionalOutput(
+    `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
+  ({ propertyPatterns }) => propertyPatterns;`,
+  )}`;
+
   constructor(
     superParameters: Pick<
       ConstructorParameters<typeof AbstractIdentifierType<BlankNode>>[0],
@@ -33,36 +52,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       in_: [],
       nodeKinds,
     });
-  }
-
-  @Memoize()
-  get filterFunction() {
-    return code`${conditionalOutput(
-      `${syntheticNamePrefix}filterBlankNode`,
-      code`\
-function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${sharedImports.BlankNode}) {
-  return true;
-}`,
-    )}`;
-  }
-
-  @Memoize()
-  get filterType(): Code {
-    return code`${localSnippets.BlankNodeFilter}`;
-  }
-
-  override get name(): Code {
-    return code`${sharedImports.BlankNode}`;
-  }
-
-  @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${conditionalOutput(
-      `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
-      code`\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
-  ({ propertyPatterns }) => propertyPatterns;`,
-    )}`;
   }
 
   override fromJsonExpression({

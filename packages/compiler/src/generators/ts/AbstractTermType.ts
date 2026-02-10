@@ -130,13 +130,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
   }
 
   @Memoize()
-  override get name(): Code {
-    return code`(${[...this.nodeKinds]
-      .map((nodeKind) => (sharedImports as any)[nodeKind])
-      .join(" | ")})`;
-  }
-
-  @Memoize()
   override get schemaType(): Code {
     invariant(this.kind.endsWith("Type"));
     return code`${conditionalOutput(`${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema`, code`type ${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema = Readonly<${this.schemaTypeObject}>;`)}`;

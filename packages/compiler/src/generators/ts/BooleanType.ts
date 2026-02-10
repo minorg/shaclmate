@@ -1,22 +1,14 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { NonEmptyList } from "purify-ts";
 import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-
-const localSnippets = {
-  BooleanFilter: conditionalOutput(
-    `${syntheticNamePrefix}BooleanFilter`,
-    code`\
-interface ${syntheticNamePrefix}BooleanFilter {
-  readonly value?: boolean;
-}`,
-  ),
-};
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction = code`${conditionalOutput(
@@ -30,13 +22,11 @@ function ${syntheticNamePrefix}filterBoolean(filter: ${localSnippets.BooleanFilt
   return true;
 }`,
   )}`;
-
   override readonly filterType = code`${localSnippets.BooleanFilter}`;
-
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${sharedImports.GraphQLBoolean}`,
   );
-
+  readonly kind = "BooleanType";
   override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
     `${syntheticNamePrefix}booleanSparqlWherePatterns`,
     code`\
@@ -53,8 +43,6 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
     return ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   )}`;
-
-  readonly kind = "BooleanType";
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -113,3 +101,13 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
     };
   }
 }
+
+const localSnippets = {
+  BooleanFilter: conditionalOutput(
+    `${syntheticNamePrefix}BooleanFilter`,
+    code`\
+interface ${syntheticNamePrefix}BooleanFilter {
+  readonly value?: boolean;
+}`,
+  ),
+};

@@ -1,6 +1,8 @@
 import type { NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { type Code, code } from "ts-poet";
+
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
 import { sharedImports } from "./sharedImports.js";
