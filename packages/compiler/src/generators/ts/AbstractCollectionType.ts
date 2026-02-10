@@ -7,15 +7,6 @@ import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const CollectionFilter = conditionalOutput(
-  `${syntheticNamePrefix}CollectionFilter`,
-  code`\
-type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
-  readonly ${syntheticNamePrefix}maxCount?: number;
-  readonly ${syntheticNamePrefix}minCount?: number;
-};`,
-);
-
 const localSnippets = {
   arrayEquals: conditionalOutput(
     `${syntheticNamePrefix}arrayEquals`,
@@ -87,18 +78,11 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 }`,
   ),
 
-  CollectionFilter,
-
-  CollectionSchema: conditionalOutput(
-    `${syntheticNamePrefix}CollectionSchema`,
-    code`type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
-  ),
-
   filterArray: conditionalOutput(
     `${syntheticNamePrefix}filterArray`,
     code`\
 function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
+  return (filter: ${sharedSnippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
     for (const value of values) {
       if (!filterItem(filter, value)) {
         return false;
@@ -285,7 +269,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   get filterType(): Code {
-    return code`${CollectionFilter}<${this.itemType.filterType}>`;
+    return code`${sharedSnippets.CollectionFilter}<${this.itemType.filterType}>`;
   }
 
   @Memoize()
@@ -312,7 +296,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${localSnippets.CollectionSchema}<${this.itemType.schemaType}>`;
+    return code`${sharedSnippets.CollectionSchema}<${this.itemType.schemaType}>`;
   }
 
   protected override get schemaObject() {

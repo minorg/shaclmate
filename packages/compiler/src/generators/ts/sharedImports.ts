@@ -23,6 +23,7 @@ export const sharedImports = {
   Left: imp("Left@purify-ts"),
   Literal: imp("Literal@@rdfjs/types"),
   Maybe: imp("Maybe@purify-ts"),
+  MutableResource: imp("MutableResource@rdfjs-resource"),
   NamedNode: imp("NamedNode@@rdfjs/types"),
   NonEmptyList: imp("NonEmptyList@purify-ts"),
   Resource: imp("Resource@rdfjs-resource"),

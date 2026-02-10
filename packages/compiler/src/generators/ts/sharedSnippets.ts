@@ -346,6 +346,20 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
 );
 
 export const sharedSnippets = {
+  CollectionFilter: conditionalOutput(
+    `${syntheticNamePrefix}CollectionFilter`,
+    code`\
+type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
+  readonly ${syntheticNamePrefix}maxCount?: number;
+  readonly ${syntheticNamePrefix}minCount?: number;
+};`,
+  ),
+
+  CollectionSchema: conditionalOutput(
+    `${syntheticNamePrefix}CollectionSchema`,
+    code`type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
+  ),
+
   EqualsResult,
 
   filterTerm: conditionalOutput(
