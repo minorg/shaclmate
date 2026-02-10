@@ -4,6 +4,7 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractType } from "./AbstractType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { sharedImports } from "./sharedImports.js";
@@ -26,23 +27,7 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly equalsFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}booleanEquals`,
-    code`\
-/**
- * Compare two objects with equals(other: T): boolean methods and return an ${sharedSnippets.EqualsResult}.
- */
-function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): ${sharedSnippets.EqualsResult} {
-  return ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
-    left,
-    right,
-    left.equals(right),
-  );
-}`,
-  )}`;
+  readonly equalsFunction = code`${localSnippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -85,6 +70,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "boolean"`,
           sourceTypeName: code`boolean`,
+          sourceTypeof: "boolean",
         },
         {
           conversionExpression: (value) =>
@@ -92,6 +78,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: code`Date`,
+          sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
@@ -99,6 +86,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "number"`,
           sourceTypeName: code`number`,
+          sourceTypeof: "number",
         },
         {
           conversionExpression: (value) =>
@@ -106,6 +94,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "string"`,
           sourceTypeName: code`string`,
+          sourceTypeof: "string",
         },
       );
     }
@@ -114,6 +103,7 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) => code`typeof ${value} === "object"`,
       sourceTypeName: this.name,
+      sourceTypeof: "object",
     });
 
     return conversions;
@@ -128,18 +118,6 @@ function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => b
       type: "string" as const,
     });
   }
-
-  @Memoize()
-  override get schemaType(): Code {
-    invariant(this.kind.endsWith("Type"));
-    return code`${conditionalOutput(`${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema`, code`type ${syntheticNamePrefix}${this.kind.substring(0, this.kind.length - "Type".length)}Schema = Readonly<${this.schemaTypeObject}>;`)}`;
-  }
-
-  // @Memoize()
-  // override get sparqlWherePatternsFunction(): Code {
-  //   invariant(this.kind.endsWith("Type"));
-  //   return `${syntheticNamePrefix}${camelCase(this.kind.substring(0, this.kind.length - "Type".length))}SparqlWherePatterns`;
-  // }
 
   override fromRdfExpression(
     parameters: Parameters<AbstractType["fromRdfExpression"]>[0],
@@ -230,6 +208,26 @@ chain(values => ${sharedImports.Either}.sequence([${this.hasValues.map(rdfjsTerm
       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };
   }
+}
+
+namespace localSnippets {
+  export const booleanEquals = conditionalOutput(
+    `${syntheticNamePrefix}booleanEquals`,
+    code`\
+/**
+ * Compare two objects with equals(other: T): boolean methods and return an ${sharedSnippets.EqualsResult}.
+ */
+function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
+  left: T,
+  right: T,
+): ${sharedSnippets.EqualsResult} {
+  return ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
+    left,
+    right,
+    left.equals(right),
+  );
+}`,
+  );
 }
 
 export namespace AbstractTermType {

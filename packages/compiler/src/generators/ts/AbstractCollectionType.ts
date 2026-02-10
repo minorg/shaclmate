@@ -7,8 +7,8 @@ import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const localSnippets = {
-  arrayEquals: conditionalOutput(
+namespace localSnippets {
+  export const arrayEquals = conditionalOutput(
     `${syntheticNamePrefix}arrayEquals`,
     code`\
 /**
@@ -76,9 +76,9 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 
   return ${sharedSnippets.EqualsResult}.Equal;
 }`,
-  ),
+  );
 
-  filterArray: conditionalOutput(
+  export const filterArray = conditionalOutput(
     `${syntheticNamePrefix}filterArray`,
     code`\
 function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
@@ -100,40 +100,40 @@ function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (item
     return true;
   }
 }`,
-  ),
+  );
 
-  isReadonlyBooleanArray: conditionalOutput(
+  export const isReadonlyBooleanArray = conditionalOutput(
     `${syntheticNamePrefix}isReadonlyBooleanArray`,
     code`\
 function ${syntheticNamePrefix}isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
   return Array.isArray(x) && x.every(z => typeof z === "boolean");
 }`,
-  ),
+  );
 
-  isReadonlyNumberArray: conditionalOutput(
+  export const isReadonlyNumberArray = conditionalOutput(
     `${syntheticNamePrefix}isReadonlyNumberArray`,
     code`\
 function ${syntheticNamePrefix}isReadonlyNumberArray(x: unknown): x is readonly number[] {
   return Array.isArray(x) && x.every(z => typeof z === "number");
 }`,
-  ),
+  );
 
-  isReadonlyObjectArray: conditionalOutput(
+  export const isReadonlyObjectArray = conditionalOutput(
     `${syntheticNamePrefix}isReadonlyObjectArray`,
     code`\
 function ${syntheticNamePrefix}isReadonlyObjectArray(x: unknown): x is readonly object[] {
   return Array.isArray(x) && x.every(z => typeof z === "object");
 }`,
-  ),
+  );
 
-  isReadonlyStringArray: conditionalOutput(
+  export const isReadonlyStringArray = conditionalOutput(
     `${syntheticNamePrefix}isReadonlyStringArray`,
     code`\
 function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly string[] {
   return Array.isArray(x) && x.every(z => typeof z === "string");
 }`,
-  ),
-};
+  );
+}
 
 /**
  * Abstract base class for ListType and SetType.
@@ -190,14 +190,13 @@ export abstract class AbstractCollectionType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === ${this.itemType.typeofs[0]}`,
         sourceTypeName: this.itemType.name,
+        sourceTypeof: this.itemType.typeofs[0],
       };
 
       for (const itemTypeConversion of this.itemType.conversions) {
-        const sourceTypeName = itemTypeConversion.sourceTypeName.toString();
-        if (isTypeofString(sourceTypeName)) {
-          if (!itemTypeConversionsByTypeof[sourceTypeName]) {
-            itemTypeConversionsByTypeof[sourceTypeName] = itemTypeConversion;
-          }
+        if (!itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeof]) {
+          itemTypeConversionsByTypeof[itemTypeConversion.sourceTypeof] =
+            itemTypeConversion;
         }
       }
     }
@@ -208,6 +207,7 @@ export abstract class AbstractCollectionType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "undefined"`,
         sourceTypeName: code`undefined`,
+        sourceTypeof: "undefined",
       });
 
       if (Object.keys(itemTypeConversionsByTypeof).length <= 1) {
@@ -220,6 +220,7 @@ export abstract class AbstractCollectionType<
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
           sourceTypeName: code`readonly (${this.itemType.name})[]`,
+          sourceTypeof: "object",
         });
       } else {
         // There were additional conversions with different item typeof's.
@@ -240,6 +241,7 @@ export abstract class AbstractCollectionType<
               // Use the type guard functions to discriminate different array types.
               code`${(localSnippets as any)[`isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array`]}(${value})`,
             sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,
+            sourceTypeof: itemTypeofConversion.sourceTypeof,
           });
         }
       }
@@ -251,6 +253,7 @@ export abstract class AbstractCollectionType<
         sourceTypeCheckExpression: (value) =>
           code`${sharedImports.NonEmptyList}.isNonEmpty(${value})`,
         sourceTypeName: this.name,
+        sourceTypeof: "object",
       });
     }
 

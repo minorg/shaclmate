@@ -11,17 +11,7 @@ import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
-  override readonly filterFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}filterBoolean`,
-    code`\
-function ${syntheticNamePrefix}filterBoolean(filter: ${localSnippets.BooleanFilter}, value: boolean) {
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
-    return false;
-  }
-
-  return true;
-}`,
-  )}`;
+  override readonly filterFunction = code`${localSnippets.filterBoolean}`;
   override readonly filterType = code`${localSnippets.BooleanFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${sharedImports.GraphQLBoolean}`,
@@ -60,13 +50,6 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
     };
   }
 
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "in?": `readonly boolean[]`,
-    };
-  }
-
   override jsonZodSchema({
     variables,
   }: Parameters<AbstractPrimitiveType<boolean>["jsonZodSchema"]>[0]): Code {
@@ -102,12 +85,32 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
   }
 }
 
-const localSnippets = {
-  BooleanFilter: conditionalOutput(
+namespace localSnippets {
+  export const BooleanFilter = conditionalOutput(
     `${syntheticNamePrefix}BooleanFilter`,
     code`\
 interface ${syntheticNamePrefix}BooleanFilter {
   readonly value?: boolean;
 }`,
-  ),
-};
+  );
+
+  export const BooleanSchema = conditionalOutput(
+    `${syntheticNamePrefix}BooleanSchema`,
+    code`\
+interface ${syntheticNamePrefix}BooleanSchema {
+  readonly in?: readonly boolean[];
+}`,
+  );
+
+  export const filterBoolean = conditionalOutput(
+    `${syntheticNamePrefix}filterBoolean`,
+    code`\
+function ${syntheticNamePrefix}filterBoolean(filter: ${BooleanFilter}, value: boolean) {
+  if (typeof filter.value !== "undefined" && value !== filter.value) {
+    return false;
+  }
+
+  return true;
+}`,
+  );
+}

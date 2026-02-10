@@ -13,56 +13,16 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
-  override readonly filterFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}filterIdentifier`,
-    code`\
-function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.IdentifierFilter}, value: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
-    return false;
-  }
-
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
-    return false;
-  }
-
-  return true;
-}`,
-  )}`;
+  override readonly filterFunction = code`${localSnippets.filterIdentifier}`;
   override readonly filterType = code`${localSnippets.IdentifierFilter}`;
+  override readonly fromStringFunction =
+    code`${localSnippets.identifierFromString}`;
   override readonly kind = "IdentifierType";
   override readonly name =
     code`(${sharedImports.BlankNode} | ${sharedImports.NamedNode})`;
-  override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}identifierSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
-  ({ filter, propertyPatterns, valueVariable }) => {
-    const patterns: ${sharedSnippets.SparqlPattern}[] = propertyPatterns.concat();
-
-    if (filter) {
-      if (typeof filter.in !== "undefined") {
-        const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
-        if (valueIn.length > 0) {
-          patterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
-        }
-      }
-
-      if (typeof filter.type !== "undefined") {
-        patterns.push({
-          expression: {
-            type: "operation",
-            operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
-            args: [valueVariable],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-    }
-
-    return patterns;
-  }`,
-  )}`;
+  override readonly schemaType = code`${localSnippets.IdentifierSchema}`;
+  override readonly sparqlWherePatternsFunction =
+    code`${localSnippets.identifierSparqlWherePatterns}`;
 
   constructor(
     parameters: Pick<
@@ -78,14 +38,6 @@ const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.Spar
       in_: [],
       nodeKinds,
     });
-  }
-
-  @Memoize()
-  get fromStringFunctionDeclaration(): Code {
-    return code`\
-export function fromString(identifier: string): ${sharedImports.Either}<Error, ${this.name}> {
-  return ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }));
-}`;
   }
 
   override fromJsonExpression({
@@ -148,16 +100,81 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
   }
 }
 
-const localSnippets = {
-  IdentifierFilter: conditionalOutput(
+namespace localSnippets {
+  export const IdentifierFilter = conditionalOutput(
     `${syntheticNamePrefix}IdentifierFilter`,
     code`\
 interface ${syntheticNamePrefix}IdentifierFilter {
   readonly in?: readonly (${sharedImports.BlankNode} | ${sharedImports.NamedNode})[];
   readonly type?: "BlankNode" | "NamedNode";
 }`,
-  ),
-};
+  );
+
+  export const IdentifierSchema = conditionalOutput(
+    `${syntheticNamePrefix}IdentifierSchema`,
+    code`\
+interface ${syntheticNamePrefix}IdentifierSchema {
+  readonly kind: "IdentifierType";
+}`,
+  );
+
+  export const filterIdentifier = conditionalOutput(
+    `${syntheticNamePrefix}filterIdentifier`,
+    code`\
+function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.IdentifierFilter}, value: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}) {
+  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
+    return false;
+  }
+
+  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
+    return false;
+  }
+
+  return true;
+}`,
+  );
+
+  export const identifierFromString = conditionalOutput(
+    `${syntheticNamePrefix}identifierFromString`,
+    code`\
+function ${syntheticNamePrefix}identifierFromString(identifier: string): ${sharedImports.Either}<Error, ${sharedImports.BlankNode} | ${sharedImports.NamedNode}> {
+  return ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }));
+}`,
+  );
+
+  export const identifierSparqlWherePatterns = conditionalOutput(
+    `${syntheticNamePrefix}identifierSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${IdentifierFilter}, ${IdentifierSchema}> =
+  ({ filter, propertyPatterns, valueVariable }) => {
+    const patterns: ${sharedSnippets.SparqlPattern}[] = propertyPatterns.concat();
+
+    if (filter) {
+      if (typeof filter.in !== "undefined") {
+        const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
+        if (valueIn.length > 0) {
+          patterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
+        }
+      }
+
+      if (typeof filter.type !== "undefined") {
+        patterns.push({
+          expression: {
+            type: "operation",
+            operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
+            args: [valueVariable],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+    }
+
+    return patterns;
+  }`,
+  );
+}
+
 const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([
   "BlankNode",
   "NamedNode",

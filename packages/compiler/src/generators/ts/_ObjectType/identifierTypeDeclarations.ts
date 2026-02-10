@@ -44,8 +44,8 @@ export function identifierTypeDeclarations(
       kind: StructureKind.Module,
       name: `${syntheticNamePrefix}Identifier`,
       statements: [
-        this.identifierType.fromStringFunctionDeclaration,
-        this.identifierType.toStringFunctionDeclaration,
+        this.identifierType.fromStringFunction,
+        this.identifierType.toStringFunction,
       ],
     },
   ];

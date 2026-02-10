@@ -1,44 +1,23 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
+
 import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const localSnippets = {
-  BlankNodeFilter: conditionalOutput(
-    `${syntheticNamePrefix}BlankNodeFilter`,
-    code`\
-interface ${syntheticNamePrefix}BlankNodeFilter {
-}`,
-  ),
-};
-
-const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);
-
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
-  readonly kind = "BlankNodeType";
-
-  readonly filterFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}filterBlankNode`,
-    code`\
-function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${sharedImports.BlankNode}) {
-  return true;
-}`,
-  )}`;
-
+  readonly filterFunction = code`${localSnippets.filterBlankNode}`;
   readonly filterType = code`${localSnippets.BlankNodeFilter}`;
-
+  readonly fromStringFunction = code`${localSnippets.blankNodeFromString}`;
+  readonly kind = "BlankNodeType";
   readonly name = code`${sharedImports.BlankNode}`;
-
-  readonly sparqlWherePatternsFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
-  ({ propertyPatterns }) => propertyPatterns;`,
-  )}`;
+  readonly schemaType = code`${localSnippets.BlankNodeSchema}`;
+  readonly sparqlWherePatternsFunction =
+    code`${localSnippets.blankNodeSparqlWherePatterns}`;
 
   constructor(
     superParameters: Pick<
@@ -60,17 +39,6 @@ const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.Sparq
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
     return code`${sharedImports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
-  }
-
-  @Memoize()
-  get fromStringFunctionDeclaration(): Code {
-    return code`\
-export function fromString(identifier: string): ${sharedImports.Either}<Error, ${this.name}> {
-    return \
-      ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }))
-      .chain((identifier) => (identifier.termType === "BlankNode") ? ${sharedImports.Either}.of(identifier) : ${sharedImports.Left}(new Error("expected identifier to be BlankNode")))
-      as ${sharedImports.Either}<Error, ${this.name}>;
-}`;
   }
 
   @Memoize()
@@ -120,3 +88,47 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     };
   }
 }
+
+namespace localSnippets {
+  export const BlankNodeFilter = conditionalOutput(
+    `${syntheticNamePrefix}BlankNodeFilter`,
+    code`\
+interface ${syntheticNamePrefix}BlankNodeFilter {
+}`,
+  );
+
+  export const blankNodeFromString = conditionalOutput(
+    `${syntheticNamePrefix}blankNodeFromString`,
+    code`\
+export function ${syntheticNamePrefix}blankNodeFromString(identifier: string): ${sharedImports.Either}<Error, ${sharedImports.BlankNode}> {
+    return \
+      ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }))
+      .chain((identifier) => (identifier.termType === "BlankNode") ? ${sharedImports.Either}.of(identifier) : ${sharedImports.Left}(new Error("expected identifier to be BlankNode")))
+      as ${sharedImports.Either}<Error, ${sharedImports.BlankNode}>;
+}`,
+  );
+
+  export const BlankNodeSchema = conditionalOutput(
+    `${syntheticNamePrefix}BlankNodeSchema`,
+    code`\
+interface ${syntheticNamePrefix}BlankNodeSchema {
+}`,
+  );
+
+  export const blankNodeSparqlWherePatterns = conditionalOutput(
+    `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${BlankNodeFilter}, ${BlankNodeSchema}> =
+  ({ propertyPatterns }) => propertyPatterns;`,
+  );
+
+  export const filterBlankNode = conditionalOutput(
+    `${syntheticNamePrefix}filterBlankNode`,
+    code`\
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${sharedImports.BlankNode}) {
+  return true;
+}`,
+  );
+}
+
+const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);

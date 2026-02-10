@@ -1,56 +1,13 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
 import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-
-const localSnippets = {
-  LazyObjectSet: conditionalOutput(
-    `${syntheticNamePrefix}LazyObjectSet`,
-    code`\
-/**
- * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
-  readonly partials: readonly PartialObjectT[];
-  private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>>;
-
-  constructor({ partials, resolver }: {
-    partials: readonly PartialObjectT[]
-    resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>>,
-  }) {
-    this.partials = partials;
-    this.resolver = resolver;
-  }
-
-  get length(): number {
-    return this.partials.length;
-  }
-
-  async resolve(options?: { limit?: number; offset?: number }): Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>> {
-    if (this.partials.length === 0) {
-      return ${sharedImports.Either}.of([]);
-    }
-
-    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
-    if (limit <= 0) {
-      return ${sharedImports.Either}.of([]);
-    }
-
-    let offset = options?.offset ?? 0;
-    if (offset < 0) {
-      offset = 0;
-    }
-
-    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier));
-  }
-}`,
-  ),
-};
 
 export class LazyObjectSetType extends AbstractLazyObjectType<
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
@@ -153,3 +110,47 @@ type Super = AbstractLazyObjectType<
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>,
   SetType<AbstractLazyObjectType.ObjectTypeConstraint>
 >;
+
+namespace localSnippets {
+  export const LazyObjectSet = conditionalOutput(
+    `${syntheticNamePrefix}LazyObjectSet`,
+    code`\
+/**
+ * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+  readonly partials: readonly PartialObjectT[];
+  private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>>;
+
+  constructor({ partials, resolver }: {
+    partials: readonly PartialObjectT[]
+    resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>>,
+  }) {
+    this.partials = partials;
+    this.resolver = resolver;
+  }
+
+  get length(): number {
+    return this.partials.length;
+  }
+
+  async resolve(options?: { limit?: number; offset?: number }): Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>> {
+    if (this.partials.length === 0) {
+      return ${sharedImports.Either}.of([]);
+    }
+
+    const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
+    if (limit <= 0) {
+      return ${sharedImports.Either}.of([]);
+    }
+
+    let offset = options?.offset ?? 0;
+    if (offset < 0) {
+      offset = 0;
+    }
+
+    return await this.resolver(this.partials.slice(offset, offset + limit).map(partial => partial.${syntheticNamePrefix}identifier));
+  }
+}`,
+  ),
+}

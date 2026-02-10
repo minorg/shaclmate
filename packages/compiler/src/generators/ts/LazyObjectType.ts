@@ -1,36 +1,11 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, conditionalOutput } from "ts-poet";
+
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-
-const localSnippets = {
-  LazyObject: conditionalOutput(
-    `${syntheticNamePrefix}LazyObject`,
-    code`\
-/**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
-  readonly partial: PartialObjectT;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${sharedImports.Either}<Error, ResolvedObjectT>>;
-
-  constructor({ partial, resolver }: {
-    partial: PartialObjectT
-    resolver: (identifier: ObjectIdentifierT) => Promise<${sharedImports.Either}<Error, ResolvedObjectT>>,
-  }) {
-    this.partial = partial;
-    this.resolver = resolver;
-  }
-
-  resolve(): Promise<${sharedImports.Either}<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
-  }
-}`,
-  ),
-};
 
 export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
@@ -76,6 +51,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: this.resolvedType.name,
+        sourceTypeof: "object",
       });
     } else if (
       this.resolvedType.kind === "ObjectUnionType" &&
@@ -91,6 +67,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: this.resolvedType.name,
+        sourceTypeof: "object",
       });
     }
 
@@ -121,3 +98,29 @@ type Super = AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
   AbstractLazyObjectType.ObjectTypeConstraint
 >;
+
+namespace localSnippets {
+  export const LazyObject = conditionalOutput(
+    `${syntheticNamePrefix}LazyObject`,
+    code`\
+/**
+ * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
+ */
+export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+  readonly partial: PartialObjectT;
+  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${sharedImports.Either}<Error, ResolvedObjectT>>;
+
+  constructor({ partial, resolver }: {
+    partial: PartialObjectT
+    resolver: (identifier: ObjectIdentifierT) => Promise<${sharedImports.Either}<Error, ResolvedObjectT>>,
+  }) {
+    this.partial = partial;
+    this.resolver = resolver;
+  }
+
+  resolve(): Promise<${sharedImports.Either}<Error, ResolvedObjectT>> {
+    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
+  }
+}`,
+  );
+}

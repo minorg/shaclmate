@@ -3,6 +3,7 @@ import type { Literal } from "@rdfjs/types";
 import { invariant } from "ts-invariant";
 import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -51,13 +52,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     };
   }
 
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "languageIn?": "readonly string[]",
-    };
-  }
-
   protected override fromRdfExpressionChain({
     variables,
   }: Parameters<
@@ -65,9 +59,22 @@ export abstract class AbstractLiteralType extends AbstractTermType<
   >[0]): ReturnType<
     AbstractTermType<Literal, Literal>["fromRdfExpressionChain"]
   > {
-    const fromRdfPreferredLanguages = conditionalOutput(
-      `${syntheticNamePrefix}fromRdfPreferredLanguages`,
-      code`\
+    return {
+      ...super.fromRdfExpressionChain({ variables }),
+      languageIn:
+        this.languageIn.length > 0
+          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${sharedImports.Either}.of(value); default: return ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "literalValue", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })))`
+          : undefined,
+      preferredLanguages: code`chain(values => ${localSnippets.fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
+      valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
+    };
+  }
+}
+
+namespace localSnippets {
+  export const fromRdfPreferredLanguages = conditionalOutput(
+    `${syntheticNamePrefix}fromRdfPreferredLanguages`,
+    code`\
 function ${syntheticNamePrefix}fromRdfPreferredLanguages(
   { focusResource, predicate, preferredLanguages, values }: {
     focusResource: ${sharedImports}Resource;
@@ -94,19 +101,8 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     return filteredLiteralValues!.map(literalValue => new ${sharedImports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
   });
 }`,
-    );
-
-    return {
-      ...super.fromRdfExpressionChain({ variables }),
-      languageIn:
-        this.languageIn.length > 0
-          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${sharedImports.Either}.of(value); default: return ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "literalValue", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })))`
-          : undefined,
-      preferredLanguages: code`chain(values => ${fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
-      valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
-    };
-  }
-}
+  ),
+};
 
 export namespace AbstractLiteralType {
   export type Conversion = AbstractTermType.Conversion;

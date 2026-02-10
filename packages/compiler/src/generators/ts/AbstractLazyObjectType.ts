@@ -51,6 +51,7 @@ export abstract class AbstractLazyObjectType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object" && ${value} instanceof ${this.runtimeClass.rawName}`,
         sourceTypeName: this.name,
+        sourceTypeof: "object",
       } satisfies AbstractType.Conversion,
     ];
   }
@@ -84,7 +85,11 @@ export abstract class AbstractLazyObjectType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${this.schemaTypeObject}`;
+    return code`${{
+      kind: this.kind,
+      partialType: this.partialType.schemaType,
+      resolvedType: this.resolvedType.schemaType,
+    }}`;
   }
 
   @Memoize()
@@ -97,14 +102,6 @@ export abstract class AbstractLazyObjectType<
       ...super.schemaObject,
       partialType: this.partialType.schema,
       resolvedType: this.resolvedType.schema,
-    };
-  }
-
-  protected override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      partialType: this.partialType.schemaType,
-      resolvedType: this.resolvedType.schemaType,
     };
   }
 

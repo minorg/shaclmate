@@ -1,39 +1,20 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
+
 import { type Code, code, conditionalOutput } from "ts-poet";
+
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const localSnippets = {
-  LiteralFilter: conditionalOutput(
-    `${syntheticNamePrefix}LiteralFilter`,
-    code`\
-interface ${syntheticNamePrefix}LiteralFilter extends Omit<${sharedSnippets.TermFilter}, "in" | "type"> {
-  readonly in?: readonly ${sharedImports.Literal}[];
-}`,
-  ),
-};
-
 export class LiteralType extends AbstractLiteralType {
-  override readonly filterFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}filterLiteral`,
-    code`\
-function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${sharedImports.Literal}): boolean {
-  return ${sharedSnippets.filterTerm}(filter, value);
-}`,
-  )}`;
-
+  override readonly filterFunction = code`${localSnippets.filterLiteral}`;
   override readonly filterType = code`${localSnippets.LiteralFilter}`;
-
   override readonly kind = "LiteralType";
-
-  override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}literalSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${sharedSnippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
-  )}`;
+  override readonly name = code`${sharedImports.Literal}`;
+  override readonly schemaType = code`${localSnippets.LiteralSchema}`;
+  override readonly sparqlWherePatternsFunction =
+    code`${localSnippets.literalSparqlWherePatterns}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
@@ -78,17 +59,45 @@ ${variables.hasher}.update(${variables.value}.language);
     return code`${variables.zod}.object({ "@language": ${variables.zod}.string().optional()${discriminantProperty}, "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
   }
 
-  override get schemaTypeObject() {
-    return {
-      ...super.schemaTypeObject,
-      "in?": "readonly rdfjs.Literal[]",
-    };
-  }
-
   override toJsonExpression({
     includeDiscriminantProperty,
     variables,
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
+}
+
+namespace localSnippets {
+  export const LiteralFilter = conditionalOutput(
+    `${syntheticNamePrefix}LiteralFilter`,
+    code`\
+interface ${syntheticNamePrefix}LiteralFilter extends Omit<${sharedSnippets.TermFilter}, "in" | "type"> {
+  readonly in?: readonly ${sharedImports.Literal}[];
+}`,
+  );
+
+  export const LiteralSchema = conditionalOutput(
+    `${syntheticNamePrefix}LiteralSchema`,
+    code`\
+interface ${syntheticNamePrefix}LiteralSchema {
+  readonly kind: "LiteralType";
+  readonly in?: readonly ${sharedImports.Literal}[];
+  readonly languageIn?: readonly string[];
+}`,
+  );
+
+  export const filterLiteral = conditionalOutput(
+    `${syntheticNamePrefix}filterLiteral`,
+    code`\
+function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${sharedImports.Literal}): boolean {
+  return ${sharedSnippets.filterTerm}(filter, value);
+}`,
+  );
+
+  export const literalSparqlWherePatterns = conditionalOutput(
+    `${syntheticNamePrefix}literalSparqlWherePatterns`,
+    code`\
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${LiteralFilter}, ${LiteralSchema}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${sharedSnippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+  );
 }

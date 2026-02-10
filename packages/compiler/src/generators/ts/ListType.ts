@@ -27,38 +27,10 @@ import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
 
-export class ListType<
-  ItemTypeT extends ListType.ItemType,
-> extends AbstractCollectionType<ItemTypeT> {
-  private readonly identifierMintingStrategy: IdentifierMintingStrategy;
-  private readonly identifierNodeKind: IdentifierNodeKind;
-  private readonly toRdfTypes: readonly NamedNode[];
-
-  readonly kind = "ListType";
-
-  constructor({
-    identifierNodeKind,
-    identifierMintingStrategy,
-    toRdfTypes,
-    ...superParameters
-  }: {
-    identifierNodeKind: ListType<ItemTypeT>["identifierNodeKind"];
-    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
-    toRdfTypes: readonly NamedNode[];
-  } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
-    super(superParameters);
-    this.identifierNodeKind = identifierNodeKind;
-    this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
-      identifierNodeKind === "BlankNode" ? "blankNode" : "sha256",
-    );
-    this.toRdfTypes = toRdfTypes;
-  }
-
-  @Memoize()
-  override get sparqlWherePatternsFunction(): Code {
-    return code`${conditionalOutput(
-      `${syntheticNamePrefix}listSparqlWherePatterns`,
-      code`\
+namespace localSnippets {
+  export const listSparqlWherePatterns = conditionalOutput(
+    `${syntheticNamePrefix}listSparqlWherePatterns`,
+    code`\
 function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${sharedSnippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${sharedSnippets.SparqlWherePatternsFunction}<${sharedSnippets.CollectionFilter}<ItemFilterT>, ${sharedSnippets.CollectionSchema}<ItemSchemaT>> {
   return (parameters) => {
     // Need to handle two cases:
@@ -169,7 +141,39 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
     return [...parameters.propertyPatterns, { patterns, type: "optional" }];
   }
 }`,
-    )}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+  );
+}
+
+export class ListType<
+  ItemTypeT extends ListType.ItemType,
+> extends AbstractCollectionType<ItemTypeT> {
+  private readonly identifierMintingStrategy: IdentifierMintingStrategy;
+  private readonly identifierNodeKind: IdentifierNodeKind;
+  private readonly toRdfTypes: readonly NamedNode[];
+
+  readonly kind = "ListType";
+
+  constructor({
+    identifierNodeKind,
+    identifierMintingStrategy,
+    toRdfTypes,
+    ...superParameters
+  }: {
+    identifierNodeKind: ListType<ItemTypeT>["identifierNodeKind"];
+    identifierMintingStrategy: Maybe<IdentifierMintingStrategy>;
+    toRdfTypes: readonly NamedNode[];
+  } & ConstructorParameters<typeof AbstractCollectionType<ItemTypeT>>[0]) {
+    super(superParameters);
+    this.identifierNodeKind = identifierNodeKind;
+    this.identifierMintingStrategy = identifierMintingStrategy.orDefault(
+      identifierNodeKind === "BlankNode" ? "blankNode" : "sha256",
+    );
+    this.toRdfTypes = toRdfTypes;
+  }
+
+  @Memoize()
+  override get sparqlWherePatternsFunction(): Code {
+    return code`${localSnippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression({

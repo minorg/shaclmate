@@ -124,15 +124,6 @@ export abstract class AbstractType {
   }
 
   /**
-   * Helper to compose the result of schemaType along the type hierarchy.
-   */
-  protected get schemaTypeObject() {
-    return {
-      kind: literalOf(this.kind),
-    };
-  }
-
-  /**
    * An expression that converts this type's JSON type to a value of this type. It doesn't return a purify.Either because the JSON has
    * already been validated and converted to the expected JSON type with Zod.
    */

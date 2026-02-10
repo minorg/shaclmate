@@ -97,7 +97,7 @@ export class OptionType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${}<${this.itemType.schemaType}>`;
+    return code`${localSnippets.MaybeSchema}<${this.itemType.schemaType}>`;
   }
 
   @Memoize()
@@ -208,45 +208,20 @@ export class OptionType<
   }
 }
 
-const MaybeFilter = conditionalOutput(
-  `${syntheticNamePrefix}MaybeFilter`,
-  code`\
+namespace localSnippets {
+  export const MaybeFilter = conditionalOutput(
+    `${syntheticNamePrefix}MaybeFilter`,
+    code`\
 type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
-);
-const MaybeSchema = conditionalOutput(
-      `${syntheticNamePrefix}MaybeSchema`,
-      code`type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }`,
-    );
-const localSnippets = {
-  filterMaybe: conditionalOutput(
-      `${syntheticNamePrefix}filterMaybe`,
-      code`\
-function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${MaybeFilter}<ItemFilterT>, value: ${sharedImports.Maybe}<ItemT>): boolean => {
-    if (filter !== null) {
-      if (value.isNothing()) {
-        return false;
-      }
+  );
+  export const MaybeSchema = conditionalOutput(
+    `${syntheticNamePrefix}MaybeSchema`,
+    code`type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }`,
+  );
 
-      if (!filterItem(filter, value.extract()!)) {
-        return false;
-      }
-    } else {
-      if (value.isJust()) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-}`,
-    ),
-
-  MaybeFilter,
-
-  maybeEquals: conditionalOutput(
-      `${syntheticNamePrefix}maybeEquals`,
-      code`\
+  export const maybeEquals = conditionalOutput(
+    `${syntheticNamePrefix}maybeEquals`,
+    code`\
 function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: ${sharedImports.Maybe}<T>,
   rightMaybe: ${sharedImports.Maybe}<T>,
@@ -275,11 +250,9 @@ function ${syntheticNamePrefix}maybeEquals<T>(
 
   return ${sharedSnippets.EqualsResult}.Equal;
 }`,
-    ),
+  );
 
-  MaybeSchema,
-
-  maybeSparqlWherePatterns: conditionalOutput(
+  export const maybeSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}maybeSparqlWherePatterns`,
     code`\
 function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${sharedSnippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${sharedSnippets.SparqlWherePatternsFunction}<${MaybeFilter}<ItemFilterT>, ${MaybeSchema}<ItemSchemaT>> {  
@@ -300,8 +273,32 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
     return itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
   }
 }`,
-  ),
-};
+  );
+
+  export const filterMaybe = conditionalOutput(
+    `${syntheticNamePrefix}filterMaybe`,
+    code`\
+function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
+  return (filter: ${MaybeFilter}<ItemFilterT>, value: ${sharedImports.Maybe}<ItemT>): boolean => {
+    if (filter !== null) {
+      if (value.isNothing()) {
+        return false;
+      }
+
+      if (!filterItem(filter, value.extract()!)) {
+        return false;
+      }
+    } else {
+      if (value.isJust()) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}`,
+  );
+}
 
 export namespace OptionType {
   export type ItemType = AbstractContainerType.ItemType;

@@ -3,6 +3,7 @@ import type { BlankNode, NamedNode } from "@rdfjs/types";
 import { invariant } from "ts-invariant";
 import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractTermType } from "./AbstractTermType.js";
 import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -10,7 +11,7 @@ import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,
 > extends AbstractTermType<NamedNode, IdentifierT> {
-  abstract readonly fromStringFunctionDeclaration: Code;
+  abstract readonly fromStringFunction: Code;
   override readonly graphqlType = new AbstractTermType.GraphqlType(
     code`${sharedImports.GraphQLString}`,
   );
@@ -32,6 +33,7 @@ export abstract class AbstractIdentifierType<
           this.in_.length > 0
             ? code`${this.in_.map((iri) => `"${iri.value}"`).join(" | ")}`
             : code`string`,
+        sourceTypeof: "string",
       });
     }
     return conversions;
@@ -48,7 +50,7 @@ export abstract class AbstractIdentifierType<
   }
 
   @Memoize()
-  get toStringFunctionDeclaration(): Code {
+  get toStringFunction(): Code {
     // Re-export rdfjsResource.Resource.Identifier.toString
     return code`\
 // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString

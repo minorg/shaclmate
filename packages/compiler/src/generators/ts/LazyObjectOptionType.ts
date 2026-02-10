@@ -8,8 +8,8 @@ import type { OptionType } from "./OptionType.js";
 import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-const localSnippets = {
-  LazyObjectOption: conditionalOutput(
+namespace localSnippets {
+  export const LazyObjectOption = conditionalOutput(
     `${syntheticNamePrefix}LazyObjectOption`,
     code`\
 /**
@@ -34,8 +34,8 @@ export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${
     return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier)).map(${sharedImports.Maybe}.of);
   }
 }`,
-  ),
-};
+  );
+}
 
 type Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
@@ -87,6 +87,7 @@ export class LazyObjectOptionType extends Super {
           sourceTypeCheckExpression: (value) =>
             code`${sharedImports.Maybe}.isMaybe(${value})`,
           sourceTypeName: code`${sharedImports.Maybe}<${this.resolvedType.itemType.name}>`,
+          sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
@@ -96,6 +97,7 @@ export class LazyObjectOptionType extends Super {
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
           sourceTypeName: this.resolvedType.itemType.name,
+          sourceTypeof: "object",
         },
       );
     } else if (
@@ -113,6 +115,7 @@ export class LazyObjectOptionType extends Super {
           sourceTypeCheckExpression: (value) =>
             code`${sharedImports.Maybe}.isMaybe(${value})`,
           sourceTypeName: code`${sharedImports.Maybe}<${this.resolvedType.itemType.name}>`,
+          sourceTypeof: "object",
         },
         {
           conversionExpression: (value) =>
@@ -122,6 +125,7 @@ export class LazyObjectOptionType extends Super {
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object"`,
           sourceTypeName: this.resolvedType.itemType.name,
+          sourceTypeof: "object",
         },
       );
     }
@@ -132,6 +136,7 @@ export class LazyObjectOptionType extends Super {
       sourceTypeCheckExpression: (value) =>
         code`typeof ${value} === "undefined"`,
       sourceTypeName: code`undefined`,
+      sourceTypeof: "undefined",
     });
 
     return conversions;
