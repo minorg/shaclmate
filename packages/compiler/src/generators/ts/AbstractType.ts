@@ -276,6 +276,12 @@ export namespace AbstractType {
     readonly conversionExpression: (value: Code) => Code;
     readonly sourceTypeCheckExpression: (value: Code) => Code;
     readonly sourceTypeName: Code;
+    readonly sourceTypeof:
+      | "boolean"
+      | "number"
+      | "object"
+      | "string"
+      | "undefined";
   }
 
   export interface DiscriminantProperty {
