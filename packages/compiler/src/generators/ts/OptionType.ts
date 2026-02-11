@@ -5,6 +5,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import { codeEquals } from "./codeEquals.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -111,10 +112,11 @@ export class OptionType<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
     const expression = code`${sharedImports.Maybe}.fromNullable(${variables.value})`;
+    const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: code`item` },
+      variables: { value: valueVariable },
     });
-    return itemFromJsonExpression.toString() === "item"
+    return codeEquals(itemFromJsonExpression, valueVariable)
       ? expression
       : code`${expression}.map(item => (${itemFromJsonExpression}))`;
   }

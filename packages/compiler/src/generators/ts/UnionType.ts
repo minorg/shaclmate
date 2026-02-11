@@ -3,6 +3,7 @@ import { invariant } from "ts-invariant";
 import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
+import { codeEquals } from "./codeEquals.js";
 import { sharedImports } from "./sharedImports.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
@@ -674,7 +675,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
         }
 
         const memberTypeExpression_ = memberTypeExpression(memberType);
-        if (memberTypeExpression_.toString() === expression.toString()) {
+        if (codeEquals(memberTypeExpression_, expression)) {
           return expression;
         }
 
