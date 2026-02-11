@@ -173,12 +173,10 @@ export class UnionType extends AbstractType {
   constructor({
     memberDiscriminantValues,
     memberTypes,
-    name,
     ...superParameters
   }: {
     memberDiscriminantValues: readonly string[];
     memberTypes: readonly Type[];
-    name?: Code;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     invariant(memberTypes.length >= 2);
@@ -186,7 +184,6 @@ export class UnionType extends AbstractType {
       memberDiscriminantValues.length === 0 ||
         memberDiscriminantValues.length === memberTypes.length,
     );
-    this.#name = name;
 
     let discriminant: Discriminant | undefined;
     if (memberDiscriminantValues.length === 0) {
