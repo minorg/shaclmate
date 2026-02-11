@@ -6,6 +6,7 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import type { Typeof } from "./Typeof.js";
 
 namespace localSnippets {
   export const arrayEquals = conditionalOutput(
@@ -181,7 +182,7 @@ export abstract class AbstractCollectionType<
     // array.every(item => typeof item === "string")
 
     const itemTypeConversionsByTypeof = {} as Record<
-      "boolean" | "object" | "number" | "string",
+      Typeof,
       AbstractContainerType.Conversion
     >;
     if (this.itemType.typeofs.length === 1) {
@@ -377,20 +378,6 @@ export abstract class AbstractCollectionType<
     AbstractContainerType<ItemTypeT>["toJsonExpression"]
   >[0]): Code {
     return code`${variables.value}.map(item => (${this.itemType.toJsonExpression({ variables: { value: code`item` } })}))`;
-  }
-}
-
-function isTypeofString(
-  x: string,
-): x is "boolean" | "object" | "number" | "string" {
-  switch (x) {
-    case "boolean":
-    case "object":
-    case "number":
-    case "string":
-      return true;
-    default:
-      return false;
   }
 }
 

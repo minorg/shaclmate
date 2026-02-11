@@ -5,6 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { sharedImports } from "./sharedImports.js";
 import type { Type } from "./Type.js";
+import type { Typeof } from "./Typeof.js";
 
 class MemberType {
   private readonly delegate: Type;
@@ -257,11 +258,7 @@ export class UnionType extends AbstractType {
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "${memberType.discriminantValues[0]}"`,
           sourceTypeName: memberType.name,
-          sourceTypeof: memberType.discriminantValues[0] as
-            | "boolean"
-            | "number"
-            | "object"
-            | "string",
+          sourceTypeof: memberType.discriminantValues[0] as Typeof,
         }));
       default:
         throw this.discriminant satisfies never;

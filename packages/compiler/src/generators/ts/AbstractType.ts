@@ -2,6 +2,7 @@ import type { Maybe, NonEmptyList } from "purify-ts";
 import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { TsFeature } from "../../enums/index.js";
+import type { Typeof } from "./Typeof.js";
 
 /**
  * Abstract base class all types.
@@ -102,9 +103,7 @@ export abstract class AbstractType {
   /**
    * JavaScript typeof(s) the type.
    */
-  abstract readonly typeofs: NonEmptyList<
-    "boolean" | "object" | "number" | "string"
-  >;
+  abstract readonly typeofs: NonEmptyList<Typeof>;
 
   constructor({
     comment,
@@ -267,12 +266,7 @@ export namespace AbstractType {
     readonly conversionExpression: (value: Code) => Code;
     readonly sourceTypeCheckExpression: (value: Code) => Code;
     readonly sourceTypeName: Code;
-    readonly sourceTypeof:
-      | "boolean"
-      | "number"
-      | "object"
-      | "string"
-      | "undefined";
+    readonly sourceTypeof: Typeof;
   }
 
   export interface DiscriminantProperty {
