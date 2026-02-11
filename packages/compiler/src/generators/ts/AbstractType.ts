@@ -199,7 +199,7 @@ export abstract class AbstractType {
    */
   abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: Code };
-  }): Maybe<string>;
+  }): Maybe<Code>;
 
   /**
    * Zod schema for the JSON type of this type.

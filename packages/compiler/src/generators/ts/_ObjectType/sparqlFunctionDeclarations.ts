@@ -8,6 +8,37 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
 
+// const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
+//   `${syntheticNamePrefix}sparqlInstancesOfPattern`,
+//   `\
+// /**
+//  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+//  */
+// function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.BgpPattern {
+//   return {
+//     triples: [
+//       {
+//         subject,
+//         predicate: {
+//           items: [
+//             $RdfVocabularies.rdf.type,
+//             {
+//               items: [$RdfVocabularies.rdfs.subClassOf],
+//               pathType: "*",
+//               type: "path",
+//             },
+//           ],
+//           pathType: "/",
+//           type: "path",
+//         },
+//         object: rdfType,
+//       },
+//     ],
+//     type: "bgp",
+//   };
+// }`,
+// );
+
 export function sparqlFunctionDeclarations(
   this: ObjectType,
 ): readonly FunctionDeclarationStructure[] {

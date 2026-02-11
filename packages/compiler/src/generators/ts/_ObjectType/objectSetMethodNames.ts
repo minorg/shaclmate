@@ -1,9 +1,9 @@
 import { camelCase, trainCase } from "change-case";
 import plur from "plur";
 
-export function objectSetMethodNames(this: { readonly name: string }) {
-  const prefixSingular = camelCase(this.name);
-  const thisNameParts = trainCase(this.name).split("-");
+export function objectSetMethodNames(this: { readonly nameString: string }) {
+  const prefixSingular = camelCase(this.nameString);
+  const thisNameParts = trainCase(this.nameString).split("-");
   let prefixPlural = camelCase(
     `${thisNameParts.slice(0, thisNameParts.length - 1).join("")}${plur(thisNameParts[thisNameParts.length - 1])}`,
   );
