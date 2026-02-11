@@ -358,8 +358,10 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     };
   }
 
-  override toJsonObjectMember(
-    parameters: Parameters<AbstractProperty<TypeT>["toJsonObjectMember"]>[0],
+  override toJsonObjectMemberExpression(
+    parameters: Parameters<
+      AbstractProperty<TypeT>["toJsonObjectMemberExpression"]
+    >[0],
   ): Maybe<string> {
     return Maybe.of(`${this.name}: ${this.type.toJsonExpression(parameters)}`);
   }

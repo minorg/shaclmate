@@ -179,10 +179,10 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     return { patterns: "" };
   }
 
-  override toJsonObjectMember({
+  override toJsonObjectMemberExpression({
     variables,
   }: Parameters<
-    AbstractProperty<TypeDiscriminantProperty.Type>["toJsonObjectMember"]
+    AbstractProperty<TypeDiscriminantProperty.Type>["toJsonObjectMemberExpression"]
   >[0]): Maybe<string> {
     return Maybe.of(`${this.name}: ${variables.value}`);
   }

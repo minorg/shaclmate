@@ -523,10 +523,10 @@ export class IdentifierProperty extends AbstractProperty<
     };
   }
 
-  override toJsonObjectMember({
+  override toJsonObjectMemberExpression({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["toJsonObjectMember"]
+    AbstractProperty<IdentifierType>["toJsonObjectMemberExpression"]
   >[0]): Maybe<string> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {

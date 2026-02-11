@@ -48,7 +48,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     jsonObjectMembers.push(
       ...this.ownProperties.flatMap((property) =>
         property
-          .toJsonObjectMember({
+          .toJsonObjectMemberExpression({
             variables: { value: `${this.thisVariable}.${property.name}` },
           })
           .toList(),

@@ -151,7 +151,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     return { patterns: "" };
   }
 
-  override toJsonObjectMember(): Maybe<string> {
+  override toJsonObjectMemberExpression(): Maybe<string> {
     return Maybe.empty();
   }
 

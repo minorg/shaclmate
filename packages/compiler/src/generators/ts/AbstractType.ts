@@ -217,7 +217,7 @@ export abstract class AbstractType {
   }): Code;
 
   /**
-   * SPARQL.js CONSTRUCT template triples for a value of this type, as strings (so they can incorporate runtime calls).
+   * SPARQL.js CONSTRUCT template triples for a value of this type as a (runtime) array of sparqljs.Triple.
    *
    * Parameters:
    *   allowIgnoreRdfType: respect ignoreRdfType passed in at runtime
