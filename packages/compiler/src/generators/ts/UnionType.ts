@@ -1,13 +1,9 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractType } from "./AbstractType.js";
-import { mergeSnippetDeclarations } from "./mergeSnippetDeclarations.js";
-import { objectInitializer } from "./objectInitializer.js";
-import type { SnippetDeclaration } from "./SnippetDeclaration.js";
-import type { Import } from "./sharedImports.js";
-import { sharedSnippetDeclarations } from "./sharedSnippets.js";
+import { sharedImports } from "./sharedImports.js";
 import type { Type } from "./Type.js";
 
 class MemberType {
@@ -136,20 +132,14 @@ class MemberType {
     return this.delegate.jsonZodSchema(parameters);
   }
 
-  payload(instance: string): string {
+  payload(instance: Code): Code {
     switch (this.discriminant.kind) {
       case "envelope":
-        return `${instance}.value`;
+        return code`${instance}.value`;
       case "inline":
       case "typeof":
         return instance;
     }
-  }
-
-  snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ) {
-    return this.delegate.snippetDeclarations(parameters);
   }
 
   sparqlConstructTriples(
@@ -167,17 +157,13 @@ class MemberType {
   toRdfExpression(parameters: Parameters<AbstractType["toRdfExpression"]>[0]) {
     return this.delegate.toRdfExpression(parameters);
   }
-
-  useImports(parameters: Parameters<AbstractType["useImports"]>[0]) {
-    return this.delegate.useImports(parameters);
-  }
 }
 
 export class UnionType extends AbstractType {
   private readonly discriminant: Discriminant;
   private readonly memberTypes: readonly MemberType[];
 
-  #name?: string;
+  #name?: Code;
 
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly kind = "UnionType";
@@ -190,7 +176,7 @@ export class UnionType extends AbstractType {
   }: {
     memberDiscriminantValues: readonly string[];
     memberTypes: readonly Type[];
-    name?: string;
+    name?: Code;
   } & ConstructorParameters<typeof AbstractType>[0]) {
     super(superParameters);
     invariant(memberTypes.length >= 2);
@@ -260,16 +246,22 @@ export class UnionType extends AbstractType {
           {
             conversionExpression: (value) => value,
             sourceTypeCheckExpression: (value) =>
-              `typeof ${value} === "object"`,
+              code`typeof ${value} === "object"`,
             sourceTypeName: this.name,
+            sourceTypeof: "object",
           },
         ];
       case "typeof":
         return this.memberTypes.map((memberType) => ({
           conversionExpression: (value) => value,
           sourceTypeCheckExpression: (value) =>
-            `typeof ${value} === "${memberType.discriminantValues[0]}"`,
+            code`typeof ${value} === "${memberType.discriminantValues[0]}"`,
           sourceTypeName: memberType.name,
+          sourceTypeof: memberType.discriminantValues[0] as
+            | "boolean"
+            | "number"
+            | "object"
+            | "string",
         }));
       default:
         throw this.discriminant satisfies never;
@@ -290,51 +282,57 @@ export class UnionType extends AbstractType {
   }
 
   @Memoize()
-  override get equalsFunction(): string {
-    return `\
+  override get equalsFunction(): Code {
+    return code`\
 ((left: ${this.name}, right: ${this.name}) => {
-${this.memberTypes
-  .flatMap((memberType) =>
+${joinCode(
+  this.memberTypes.flatMap((memberType) =>
     memberType.discriminantValues.map(
       (
         value,
-      ) => `if (${this.discriminantVariable("left")} === "${value}" && ${this.discriminantVariable("right")} === "${value}") {
-  return ${memberType.equalsFunction}(${memberType.payload("left")}, ${memberType.payload("right")});
+      ) => code`if (${this.discriminantVariable(code`left`)} === "${value}" && ${this.discriminantVariable(code`right`)} === "${value}") {
+  return ${memberType.equalsFunction}(${memberType.payload(code`left`)}, ${memberType.payload(code`right`)});
 }`,
     ),
-  )
-  .join("\n")}
+  ),
+)}
 
-  return purify.Left({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "BooleanEquals" as const }, type: "Property" as const });
+  return ${sharedImports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "BooleanEquals" as const }, type: "Property" as const });
 })`;
   }
 
   @Memoize()
-  get filterFunction(): string {
-    return `\
+  get filterFunction(): Code {
+    return code`\
 ((filter: ${this.filterType}, value: ${this.name}) => {
-${this.memberTypes
-  .map(
-    (memberType) => `\
+${joinCode(
+  this.memberTypes.map(
+    (memberType) => code`\
 if (typeof filter.on?.["${memberType.discriminantValues[0]}"] !== "undefined") {
-  switch (${this.discriminantVariable("value")}) {
+  switch (${this.discriminantVariable(code`value`)}) {
 ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminantValue}":`)}
-    if (!${memberType.filterFunction}(filter.on["${memberType.discriminantValues[0]}"], ${memberType.payload("value")})) {
+    if (!${memberType.filterFunction}(filter.on["${memberType.discriminantValues[0]}"], ${memberType.payload(code`value`)})) {
       return false;
     }
     break;
   }
 }`,
-  )
-  .join("\n\n")}
+  ),
+)}
 
   return true;
 })`;
   }
 
   @Memoize()
-  get filterType(): string {
-    return `{ readonly on?: { ${this.memberTypes.map((memberType) => `readonly "${memberType.discriminantValues[0]}"?: ${memberType.filterType}`).join(";")} } }`;
+  get filterType(): Code {
+    return code`{ readonly on?: { ${joinCode(
+      this.memberTypes.map(
+        (memberType) =>
+          code`readonly "${memberType.discriminantValues[0]}"?: ${memberType.filterType}`,
+      ),
+      { on: ";" },
+    )} } }`;
   }
 
   override get graphqlType(): AbstractType.GraphqlType {
@@ -347,21 +345,33 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 
   @Memoize()
-  override get name(): string {
+  override get name(): Code {
     if (typeof this.#name === "undefined") {
       switch (this.discriminant.kind) {
         case "envelope":
-          this.#name = `(${this.memberTypes.map((memberType) => `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.name} }`).join(" | ")})`;
+          this.#name = code`(${joinCode(
+            this.memberTypes.map(
+              (memberType) =>
+                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.name} }`,
+            ),
+            { on: "|" },
+          )})`;
           break;
         case "inline":
           // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
           // just join their names with "|"
-          this.#name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
+          this.#name = code`(${joinCode(
+            this.memberTypes.map((memberType) => memberType.name),
+            { on: "|" },
+          )})`;
           break;
         case "typeof":
           // The memberType.name may include literal values, but they should still be unambiguous with other member types since the typeofs
           // of the different member types are known to be different.
-          this.#name = `(${this.memberTypes.map((memberType) => memberType.name).join(" | ")})`;
+          this.#name = code`(${joinCode(
+            this.memberTypes.map((memberType) => memberType.name),
+            { on: "|" },
+          )})`;
           break;
       }
     }
@@ -369,60 +379,58 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   }
 
   @Memoize()
-  override get schema(): string {
-    return objectInitializer({
+  override get schema(): Code {
+    return code`${{
       // discriminant: {
       //   kind: `${JSON.stringify(this.discriminant.kind)} as const`,
       // },
       kind: '"UnionType" as const',
-      members: `{ ${this.memberTypes
-        .map(
+      members: `{ ${joinCode(
+        this.memberTypes.map(
           (memberType) =>
-            `"${memberType.discriminantValues[0]}": ${objectInitializer({
-              discriminantValues: memberType.discriminantValues.map((_) =>
-                JSON.stringify(_),
-              ),
+            code`"${memberType.discriminantValues[0]}": ${{
+              discriminantValues: memberType.discriminantValues,
               type: memberType.schema,
-            })}`,
-        )
-        .join(",")} }`,
-    });
+            }}`,
+        ),
+        { on: "," },
+      )} }`,
+    }}`;
   }
 
-  override get schemaType(): string {
-    return objectInitializer({
+  override get schemaType(): Code {
+    return code`${{
       // discriminant: {
       //   kind: '"envelope" | "inline" | "typeof"',
       // },
       kind: '"UnionType"',
-      members: `{ ${this.memberTypes
-        .map(
+      members: `{ ${joinCode(
+        this.memberTypes.map(
           (memberType) =>
-            `readonly "${memberType.discriminantValues[0]}": ${objectInitializer(
-              {
-                discriminantValues: "readonly string[]",
-                type: memberType.schemaType,
-              },
-            )}`,
-        )
-        .join(";")} }`,
-    });
+            code`readonly "${memberType.discriminantValues[0]}": ${{
+              discriminantValues: "readonly string[]",
+              type: memberType.schemaType,
+            }}`,
+        ),
+        { on: ";" },
+      )} }`,
+    }}`;
   }
 
   @Memoize()
-  override get sparqlWherePatternsFunction(): string {
-    return `\
+  override get sparqlWherePatternsFunction(): Code {
+    return code`\
 (({ filter, schema, ...otherParameters }) => {
-  const unionPatterns: sparqljs.GroupPattern[] = [];
+  const unionPatterns: ${sharedImports.sparqljs}.GroupPattern[] = [];
 
-  ${this.memberTypes
-    .map(
-      (memberType) => `\
+  ${joinCode(
+    this.memberTypes.map(
+      (memberType) => code`\
 {
   unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });
 }`,
-    )
-    .join("\n")}
+    ),
+  )}
   
   return [{ patterns: unionPatterns, type: "union" }];
 })`;
@@ -437,16 +445,16 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override fromJsonExpression({
     variables,
-  }: Parameters<AbstractType["fromJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["fromJsonExpression"]>[0]): Code {
     return this.ternaryExpression({
       memberTypeExpression: (memberType) => {
-        let typeExpression = memberType.fromJsonExpression({
+        let typeExpression: Code = memberType.fromJsonExpression({
           variables: {
             value: memberType.payload(variables.value),
           },
         });
         if (this.discriminant.kind === "envelope") {
-          typeExpression = `{ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value: ${typeExpression} }`;
+          typeExpression = code`{ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value: ${typeExpression} }`;
         }
         return typeExpression;
       },
@@ -456,58 +464,59 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override fromRdfExpression({
     variables,
-  }: Parameters<AbstractType["fromRdfExpression"]>[0]): string {
-    return `${variables.resourceValues}.chain(values => values.chainMap(value => {
-      const valueAsValues = purify.Either.of(value.toValues());
-      return ${this.memberTypes.reduce((expression, memberType) => {
-        let typeExpression = memberType.fromRdfExpression({
-          variables: {
-            ...variables,
-            ignoreRdfType: false,
-            resourceValues: "valueAsValues",
-          },
-        });
-        if (this.discriminant.kind === "envelope") {
-          typeExpression = `${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value }) as (${this.name})))`;
-        }
-        typeExpression = `(${typeExpression} as purify.Either<Error, rdfjsResource.Resource.Values<${this.name}>>)`;
-        return expression.length > 0
-          ? `${expression}.altLazy(() => ${typeExpression})`
-          : typeExpression;
-      }, "")}.chain(values => values.head());
+  }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
+    return code`${variables.resourceValues}.chain(values => values.chainMap(value => {
+      const valueAsValues = ${sharedImports.Either}.of(value.toValues());
+      return ${this.memberTypes.reduce(
+        (expression, memberType) => {
+          let typeExpression: Code = memberType.fromRdfExpression({
+            variables: {
+              ...variables,
+              ignoreRdfType: false,
+              resourceValues: code`valueAsValues`,
+            },
+          });
+          if (this.discriminant.kind === "envelope") {
+            typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value }) as (${this.name})))`;
+          }
+          typeExpression = code`(${typeExpression} as ${sharedImports.Either}<Error, ${sharedImports.Resource}.Values<${this.name}>>)`;
+          return expression !== null
+            ? code`${expression}.altLazy(() => ${typeExpression})`
+            : typeExpression;
+        },
+        null as Code | null,
+      )!}.chain(values => values.head());
       }))`;
   }
 
   override graphqlResolveExpression(
     _parameters: Parameters<AbstractType["graphqlResolveExpression"]>[0],
-  ): string {
+  ): Code {
     throw new Error("not implemented");
   }
 
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): readonly string[] {
-    const caseBlocks: string[] = [];
+  }: Parameters<AbstractType["hashStatements"]>[0]): Code {
+    const caseBlocks: Code[] = [];
     for (const memberType of this.memberTypes) {
       caseBlocks.push(
-        `${memberType.discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} { ${memberType
-          .hashStatements({
+        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case "${discriminantPropertyValue}":`))} { ${memberType.hashStatements(
+          {
             depth: depth + 1,
             variables: {
               hasher: variables.hasher,
-              value: `${memberType.payload(variables.value)}`,
+              value: memberType.payload(variables.value),
             },
-          })
-          .join("\n")}; break; }`,
+          },
+        )}; break; }`,
       );
     }
     caseBlocks.push(
-      `default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
+      code`default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
     );
-    return [
-      `switch (${this.discriminantVariable(variables.value)}) { ${caseBlocks.join("\n")} }`,
-    ];
+    return code`switch (${this.discriminantVariable(variables.value)}) { ${joinCode(caseBlocks)} }`;
   }
 
   @Memoize()
@@ -515,20 +524,27 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     switch (this.discriminant.kind) {
       case "envelope":
         return new AbstractType.JsonType(
-          `(${this.memberTypes.map((memberType) => `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonType().name} }`).join(" | ")})`,
+          code`(${joinCode(
+            this.memberTypes.map(
+              (memberType) =>
+                code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}", value: ${memberType.jsonType().name} }`,
+            ),
+            { on: "|" },
+          )})`,
         );
       case "inline":
       case "typeof":
         return new AbstractType.JsonType(
-          this.memberTypes
-            .map(
+          joinCode(
+            this.memberTypes.map(
               (memberType) =>
                 memberType.jsonType({
                   includeDiscriminantProperty:
                     this.discriminant.kind === "inline",
                 }).name,
-            )
-            .join(" | "),
+            ),
+            { on: "|" },
+          ),
         );
       default:
         throw this.discriminant satisfies never;
@@ -541,83 +557,62 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override jsonZodSchema({
     variables,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): ReturnType<
-    AbstractType["jsonZodSchema"]
-  > {
+  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
     switch (this.discriminant.kind) {
       case "envelope":
-        return `${variables.zod}.discriminatedUnion("${this.discriminant.name}", [${this.memberTypes
-          .map(
+        return code`${variables.zod}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+          this.memberTypes.map(
             (memberType) =>
-              `${variables.zod}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${variables.zod}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type", variables })} })`,
-          )
-          .join(", ")}])`;
+              code`${variables.zod}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${variables.zod}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type", variables })} })`,
+          ),
+          { on: "," },
+        )}])`;
       case "inline":
-        return `${variables.zod}.discriminatedUnion("${this.discriminant.name}", [${this.memberTypes
-          .map((memberType) =>
+        return code`${variables.zod}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+          this.memberTypes.map((memberType) =>
             memberType.jsonZodSchema({
               includeDiscriminantProperty: true,
               context: "type",
               variables,
             }),
-          )
-          .join(", ")}])`;
+          ),
+          { on: "," },
+        )}])`;
       case "typeof":
-        return `${variables.zod}.union([${this.memberTypes
-          .map((memberType) =>
+        return code`${variables.zod}.union([${joinCode(
+          this.memberTypes.map((memberType) =>
             memberType.jsonZodSchema({ context: "type", variables }),
-          )
-          .join(", ")}])`;
+          ),
+          { on: "," },
+        )}])`;
       default:
         throw this.discriminant satisfies never;
     }
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<AbstractType["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    const { features, recursionStack } = parameters;
-    if (recursionStack.some((type) => Object.is(type, this))) {
-      return {};
-    }
-    recursionStack.push(this);
-    let snippetDeclarations = this.memberTypes.reduce(
-      (snippetDeclarations, memberType) =>
-        mergeSnippetDeclarations(
-          snippetDeclarations,
-          memberType.snippetDeclarations(parameters),
-        ),
-      {} as Record<string, SnippetDeclaration>,
-    );
-    if (features.has("sparql")) {
-      snippetDeclarations = mergeSnippetDeclarations(
-        snippetDeclarations,
-        sharedSnippetDeclarations.liftSparqlPatterns,
-      );
-    }
-    invariant(Object.is(recursionStack.pop(), this));
-    return snippetDeclarations;
-  }
-
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): readonly (AbstractType.SparqlConstructTriple | string)[] {
-    return this.memberTypes.flatMap((memberType) =>
-      memberType.sparqlConstructTriples({
-        ...parameters,
-        allowIgnoreRdfType: false,
-      }),
-    );
+  ): Code {
+    return code`[${joinCode(
+      this.memberTypes.map(
+        (memberType) =>
+          code`...${memberType.sparqlConstructTriples({
+            ...parameters,
+            allowIgnoreRdfType: false,
+          })}`,
+      ),
+      { on: "," },
+    )}]`;
   }
 
   override toJsonExpression({
     variables,
-  }: Parameters<AbstractType["toJsonExpression"]>[0]): string {
+  }: Parameters<AbstractType["toJsonExpression"]>[0]): Code {
     switch (this.discriminant.kind) {
       case "envelope":
         return this.ternaryExpression({
           memberTypeExpression: (memberType) =>
-            `{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}" as const, value: ${memberType.toJsonExpression(
+            code`{ ${(this.discriminant as EnvelopeDiscriminant).name}: "${memberType.discriminantValues[0]}" as const, value: ${memberType.toJsonExpression(
               {
                 variables: {
                   ...variables,
@@ -645,34 +640,26 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override toRdfExpression({
     variables,
-  }: Parameters<AbstractType["toRdfExpression"]>[0]): string {
+  }: Parameters<AbstractType["toRdfExpression"]>[0]): Code {
     return this.ternaryExpression({
       memberTypeExpression: (memberType) =>
-        `(${memberType.toRdfExpression({
+        code`(${memberType.toRdfExpression({
           variables: {
             ...variables,
             value: memberType.payload(variables.value),
           },
-        })} as readonly Parameters<rdfjsResource.MutableResource["add"]>[1][])`,
+        })} as readonly Parameters<${sharedImports.MutableResource}["add"]>[1][])`,
       variables,
     });
   }
 
-  override useImports(
-    parameters: Parameters<AbstractType["useImports"]>[0],
-  ): readonly Import[] {
-    return this.memberTypes.flatMap((memberType) =>
-      memberType.useImports(parameters),
-    );
-  }
-
-  private discriminantVariable(variableValue: string) {
+  private discriminantVariable(variableValue: Code): Code {
     switch (this.discriminant.kind) {
       case "envelope":
       case "inline":
-        return `${variableValue}.${this.discriminant.name}`;
+        return code`${variableValue}.${this.discriminant.name}`;
       case "typeof":
-        return `(typeof ${variableValue})`;
+        return code`(typeof ${variableValue})`;
     }
   }
 
@@ -680,26 +667,30 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     memberTypeExpression,
     variables,
   }: {
-    memberTypeExpression: (memberType: MemberType) => string;
-    variables: { value: string };
-  }): string {
-    return this.memberTypes.reduce((expression, memberType) => {
-      if (expression.length === 0) {
-        return memberTypeExpression(memberType);
-      }
+    memberTypeExpression: (memberType: MemberType) => Code;
+    variables: { value: Code };
+  }): Code {
+    return this.memberTypes.reduce(
+      (expression, memberType) => {
+        if (expression === null) {
+          return memberTypeExpression(memberType);
+        }
 
-      const memberTypeExpression_ = memberTypeExpression(memberType);
-      if (memberTypeExpression_ === expression) {
-        return expression;
-      }
+        const memberTypeExpression_ = memberTypeExpression(memberType);
+        if (memberTypeExpression_.toString() === expression.toString()) {
+          return expression;
+        }
 
-      return `(${memberType.discriminantValues
-        .map(
-          (value) =>
-            `${this.discriminantVariable(variables.value)} === "${value}"`,
-        )
-        .join(" || ")}) ? ${memberTypeExpression_} : ${expression}`;
-    }, "");
+        return code`(${joinCode(
+          memberType.discriminantValues.map(
+            (value) =>
+              code`${this.discriminantVariable(variables.value)} === "${value}"`,
+          ),
+          { on: "||" },
+        )}) ? ${memberTypeExpression_} : ${expression}`;
+      },
+      null as Code | null,
+    )!;
   }
 }
 
