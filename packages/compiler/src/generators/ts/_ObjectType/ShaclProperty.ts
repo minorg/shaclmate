@@ -2,18 +2,12 @@ import type * as rdfjs from "@rdfjs/types";
 
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
-import type {
-  GetAccessorDeclarationStructure,
-  OptionalKind,
-  PropertyDeclarationStructure,
-  PropertySignatureStructure,
-} from "ts-morph";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
-import { objectInitializer } from "../objectInitializer.js";
+import { codeEquals } from "../codeEquals.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "../SnippetDeclaration.js";
-import type { Import } from "../sharedImports.js";
+import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -55,35 +49,28 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
+  override get constructorParametersPropertySignature(): Maybe<Code> {
     let hasQuestionToken = false;
-    const typeNames = new Set<string>(); // Remove duplicates with a set
+    const typeNames: Code[] = [];
     for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName === "undefined") {
+      if (conversion.sourceTypeof === "undefined") {
         hasQuestionToken = true;
-      } else {
-        typeNames.add(conversion.sourceTypeName);
+      } else if (
+        !typeNames.some((typeName) =>
+          codeEquals(typeName, conversion.sourceTypeName),
+        )
+      ) {
+        typeNames.push(conversion.sourceTypeName);
       }
     }
 
-    return Maybe.of({
-      hasQuestionToken,
-      isReadonly: true,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
+    return Maybe.of(
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })}`,
+    );
   }
 
   @Memoize()
-  override get declarationImports(): readonly Import[] {
-    return this.type.useImports({ features: this.objectType.features });
-  }
-
-  @Memoize()
-  override get equalsFunction(): Maybe<string> {
+  override get equalsFunction(): Maybe<Code> {
     return Maybe.of(this.type.equalsFunction);
   }
 
@@ -99,61 +86,43 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  override get getAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
+  override get getAccessorDeclaration(): Maybe<Code> {
     return Maybe.empty();
   }
 
   @Memoize()
   override get graphqlField(): AbstractProperty<TypeT>["graphqlField"] {
     const args = this.type.graphqlArgs;
-    const argsVariable = args.isJust() ? "args" : "_args";
+    const argsVariable = args.isJust() ? code`args` : code`_args`;
     return Maybe.of({
       args,
       description: this.comment.map(JSON.stringify),
       name: this.name,
-      resolve: `(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: `source.${this.name}` } })}`,
+      resolve: code`(source, ${argsVariable}) => ${this.type.graphqlResolveExpression({ variables: { args: argsVariable, value: code`source.${this.name}` } })}`,
       type: this.type.graphqlType.name,
     });
   }
 
   @Memoize()
-  override get jsonPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
+  override get jsonPropertySignature(): Maybe<Code> {
     const typeJsonType = this.type.jsonType();
-    return Maybe.of({
-      hasQuestionToken: typeJsonType.optional,
-      isReadonly: true,
-      name: this.name,
-      type: typeJsonType.requiredName,
-    });
+    return Maybe.of(
+      code`readonly ${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredName}`,
+    );
   }
 
   @Memoize()
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return Maybe.of({
-      isReadonly: !this.mutable,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      scope: ShaclProperty.visibilityToScope(this.visibility),
-      type: this.type.name,
-    });
+  override get propertyDeclaration(): Maybe<Code> {
+    return Maybe.of(
+      code`${this.declarationComment}${this.visibility !== "public" ? `${this.visibility} ` : ""}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name}`,
+    );
   }
 
   @Memoize()
-  override get propertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      isReadonly: !this.mutable,
-      leadingTrivia: this.declarationComment,
-      name: this.name,
-      type: this.type.name,
-    });
+  override get propertySignature(): Maybe<Code> {
+    return Maybe.of(
+      code`${this.declarationComment}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name}`,
+    );
   }
 
   protected override get schemaObject() {
@@ -174,86 +143,81 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     };
   }
 
-  protected get declarationComment(): string | undefined {
-    return this.comment
+  protected get declarationComment(): Code {
+    const comment = this.comment
       .alt(this.description)
       .alt(this.label)
       .map(tsComment)
       .extract();
+    return comment ? code`/* ${comment} */` : code``;
   }
 
   @Memoize()
-  protected get predicate(): string {
-    return `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
+  protected get predicate(): Code {
+    return code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
   }
 
   override constructorStatements({
     variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["constructorStatements"]
-  >[0]): readonly string[] {
+  }: Parameters<AbstractProperty<TypeT>["constructorStatements"]>[0]): Code {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
       switch (this.objectType.declarationType) {
         case "class":
-          return [`this.${this.name} = ${variables.parameter};`];
+          return code`this.${this.name} = ${variables.parameter};`;
         case "interface":
-          return [`const ${this.name} = ${variables.parameter};`];
+          return code`const ${this.name} = ${variables.parameter};`;
       }
     }
 
     let lhs: string;
-    const statements: string[] = [];
+    const statements: Code[] = [];
     switch (this.objectType.declarationType) {
       case "class":
         lhs = `this.${this.name}`;
         break;
       case "interface":
-        lhs = this.name;
-        statements.push(`let ${this.name}: ${this.type.name};`);
+        lhs = `${this.name}`;
+        statements.push(code`let ${this.name}: ${this.type.name};`);
         break;
     }
 
     statements.push(
-      typeConversions
-        .map(
-          (conversion) =>
-            `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
-        )
-        // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
-        .concat(`{ ${lhs} = (${variables.parameter}) satisfies never; }`)
-        .join(" else "),
+      joinCode(
+        typeConversions
+          .map(
+            (conversion) =>
+              code`if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
+          )
+          // We shouldn't need this else, since the parameter now has the never type, but have to add it to appease the TypeScript compiler
+          .concat(code`{ ${lhs} = (${variables.parameter}) satisfies never; }`),
+        { on: " else " },
+      ),
     );
 
-    return statements;
+    return joinCode(statements);
   }
 
   override fromJsonStatements({
     variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["fromJsonStatements"]
-  >[0]): readonly string[] {
-    return [
-      `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: `${variables.jsonObject}["${this.name}"]` } })};`,
-    ];
+  }: Parameters<AbstractProperty<TypeT>["fromJsonStatements"]>[0]): Code {
+    return code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: code`${variables.jsonObject}["${this.name}"]` } })};`;
   }
 
   override fromRdfExpression({
     variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["fromRdfExpression"]
-  >[0]): Maybe<string> {
+  }: Parameters<AbstractProperty<TypeT>["fromRdfExpression"]>[0]): Maybe<Code> {
     // Assume the property has the correct range and ignore the object's RDF type.
     // This also accommodates the case where the object of a property is a dangling identifier that's not the
     // subject of any statements.
 
     return Maybe.of(
-      `${this.type.fromRdfExpression({
+      code`${this.type.fromRdfExpression({
         variables: {
           ...variables,
           ignoreRdfType: true,
           predicate: this.predicate,
-          resourceValues: `purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
+          resourceValues: code`purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
         },
       })}.chain(values => values.head())`,
     );
@@ -261,7 +225,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override hashStatements(
     parameters: Parameters<AbstractProperty<TypeT>["hashStatements"]>[0],
-  ): readonly string[] {
+  ): Code {
     return this.type.hashStatements(parameters);
   }
 
@@ -269,13 +233,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     variables,
   }: Parameters<
     AbstractProperty<TypeT>["jsonUiSchemaElement"]
-  >[0]): Maybe<string> {
-    const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+  >[0]): Maybe<Code> {
+    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return this.type
       .jsonUiSchemaElement({ variables: { scopePrefix: scope } })
       .altLazy(() =>
         Maybe.of(
-          `{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
+          code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
         ),
       );
   }
@@ -288,7 +252,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       context: "property",
     });
     this.comment.alt(this.description).ifJust((description) => {
-      schema = `${schema}.describe(${JSON.stringify(description)})`;
+      schema = code`${schema}.describe(${JSON.stringify(description)})`;
     });
     return Maybe.of({
       key: this.name,
@@ -296,34 +260,22 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     });
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<AbstractProperty<TypeT>["snippetDeclarations"]>[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    return this.type.snippetDeclarations(parameters);
-  }
-
   override sparqlConstructTriples({
     variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["sparqlConstructTriples"]
-  >[0]): readonly (AbstractType.SparqlConstructTriple | string)[] {
-    const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = `dataFactory.variable!(${valueString})`;
-    return [
-      {
-        object: valueVariable,
-        predicate: this.predicate,
-        subject: variables.focusIdentifier,
-      } as AbstractType.SparqlConstructTriple | string,
-    ].concat(
-      this.type.sparqlConstructTriples({
-        allowIgnoreRdfType: true,
-        variables: {
-          valueVariable,
-          variablePrefix: valueString,
-        },
-      }),
-    );
+  }: Parameters<AbstractProperty<TypeT>["sparqlConstructTriples"]>[0]): Code {
+    const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
+    const valueVariable = code`${sharedImports.dataFactory}.variable!(${valueString})`;
+    return code`[${{
+      object: valueVariable,
+      predicate: this.predicate,
+      subject: variables.focusIdentifier,
+    }}, ...${this.type.sparqlConstructTriples({
+      allowIgnoreRdfType: true,
+      variables: {
+        valueVariable,
+        variablePrefix: valueString,
+      },
+    })}]`;
   }
 
   override sparqlWherePatterns({
@@ -334,13 +286,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
     return {
-      patterns: `${this.type.sparqlWherePatternsFunction}(${objectInitializer({
+      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: this.filterProperty
           .map(({ name }) => `${variables.filter}?.${name}`)
           .extract(),
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: [
-          `${objectInitializer({
+          `${{
             triples: [
               {
                 object: valueVariable,
@@ -349,12 +301,12 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
               },
             ],
             type: JSON.stringify("bgp"),
-          })} satisfies sparqljs.BgpPattern`,
+          }} satisfies sparqljs.BgpPattern`,
         ],
-        schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
+        schema: code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.type()`,
         valueVariable,
         variablePrefix: valueString,
-      })})`,
+      }})`,
     };
   }
 
@@ -362,21 +314,19 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     parameters: Parameters<
       AbstractProperty<TypeT>["toJsonObjectMemberExpression"]
     >[0],
-  ): Maybe<string> {
-    return Maybe.of(`${this.name}: ${this.type.toJsonExpression(parameters)}`);
+  ): Maybe<Code> {
+    return Maybe.of(
+      code`${this.name}: ${this.type.toJsonExpression(parameters)}`,
+    );
   }
 
   override toRdfStatements({
     variables,
-  }: Parameters<
-    AbstractProperty<TypeT>["toRdfStatements"]
-  >[0]): readonly string[] {
-    return [
-      `${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
-        {
-          variables: { ...variables, predicate: this.predicate },
-        },
-      )});`,
-    ];
+  }: Parameters<AbstractProperty<TypeT>["toRdfStatements"]>[0]): Code {
+    return code`${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
+      {
+        variables: { ...variables, predicate: this.predicate },
+      },
+    )});`;
   }
 }
