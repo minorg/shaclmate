@@ -64,7 +64,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     }
 
     return Maybe.of(
-      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })}`,
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })};`,
     );
   }
 
@@ -76,7 +76,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       .map(tsComment)
       .extract();
     return Maybe.of(
-      code`${comment ? code`/* ${comment} */` : ""}${this.objectType.declarationType === "class" && this.visibility !== "public" ? `${this.visibility} ` : ""}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name}`,
+      code`${comment ? code`/* ${comment} */` : ""}${this.objectType.declarationType === "class" && this.visibility !== "public" ? `${this.visibility} ` : ""}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name};`,
     );
   }
 

@@ -1,39 +1,22 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import {
-  type GetAccessorDeclarationStructure,
-  type OptionalKind,
-  type PropertyDeclarationStructure,
-  type PropertySignatureStructure,
-  Scope,
-} from "ts-morph";
-import type { Code } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-import type { AbstractType } from "../AbstractType.js";
-import type { IdentifierType } from "../IdentifierType.js";
-import type { SnippetDeclaration } from "../SnippetDeclaration.js";
+
 import type { StringType } from "../StringType.js";
-import type { Import } from "../sharedImports.js";
-import { sharedSnippetDeclarations } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   private readonly own: boolean;
 
-  override readonly declarationImports: readonly Import[] = [];
   override readonly filterProperty: AbstractProperty<StringType>["filterProperty"] =
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<StringType>["graphqlField"] =
     Maybe.empty();
-  override readonly jsonSignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > = Maybe.empty();
+  override readonly jsonSignature: Maybe<Code> = Maybe.empty();
   readonly kind = "IdentifierPrefixProperty";
   override readonly mutable = false;
-  override readonly propertySignature: Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > = Maybe.empty();
   override readonly recursive = false;
 
   constructor({
@@ -48,77 +31,62 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     this.own = own;
   }
 
-  override get constructorParametersSignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
-    return Maybe.of({
-      hasQuestionToken: true,
-      isReadonly: true,
-      name: this.name,
-      type: this.type.name,
-    });
+  override get constructorParametersSignature(): Maybe<Code> {
+    return Maybe.of(code`readonly ${this.name}?: ${this.type.name};`);
+  }
+
+  override get declaration(): Maybe<Code> {
+    if (this.objectType.declarationType === "interface") {
+      return Maybe.empty();
+    }
+
+    if (!this.own) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(
+      code`protected readonly _${this.name}?: ${this.type.name};`,
+    );
   }
 
   @Memoize()
-  override get equalsFunction(): Maybe<string> {
+  override get equalsFunction(): Maybe<Code> {
     return this.objectType.declarationType === "class"
-      ? Maybe.of(`${syntheticNamePrefix}strictEquals`)
+      ? Maybe.of(code`${syntheticNamePrefix}strictEquals`)
       : Maybe.empty();
   }
 
-  override get getAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
-    return Maybe.of({
-      leadingTrivia: `protected ${!this.own ? "override " : ""}`,
-      name: this.name,
-      returnType: this.type.name,
-      statements: [
-        `return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\``,
-      ],
-    } satisfies OptionalKind<GetAccessorDeclarationStructure>);
-  }
-
-  override get propertyDeclaration(): Maybe<
-    OptionalKind<PropertyDeclarationStructure>
-  > {
-    return this.own
-      ? Maybe.of({
-          hasQuestionToken: true,
-          isReadonly: true,
-          name: `_${this.name}`,
-          scope: Scope.Protected,
-          type: this.type.name,
-        })
-      : Maybe.empty();
+  override get getAccessorDeclaration(): Maybe<Code> {
+    return Maybe.of(code`\
+protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} {
+  return (typeof this._${this.name} !== "undefined") ? this._${this.name} : \`urn:shaclmate:\${this.${syntheticNamePrefix}type}:\`;
+}`);
   }
 
   override constructorStatements({
     variables,
   }: Parameters<
-    AbstractProperty<IdentifierType>["constructorStatements"]
-  >[0]): readonly string[] {
+    AbstractProperty<StringType>["constructorStatements"]
+  >[0]): readonly Code[] {
     switch (this.objectType.declarationType) {
       case "class":
-        return this.propertyDeclaration
-          .map((propertyDeclaration) => [
-            `this.${propertyDeclaration.name} = ${variables.parameter};`,
-          ])
+        return this.declaration
+          .map(() => [code`this._${this.name} = ${variables.parameter};`])
           .orDefault([]);
       case "interface":
         return [];
     }
   }
 
-  override fromJsonStatements(): readonly string[] {
+  override fromJsonStatements(): readonly Code[] {
     return [];
   }
 
-  override fromRdfExpression(): Maybe<string> {
+  override fromRdfExpression(): Maybe<Code> {
     return Maybe.empty();
   }
 
-  override hashStatements(): readonly string[] {
+  override hashStatements(): readonly Code[] {
     return [];
   }
 
@@ -127,36 +95,26 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   }
 
   override jsonZodSchema(): ReturnType<
-    AbstractProperty<IdentifierType>["jsonZodSchema"]
+    AbstractProperty<StringType>["jsonZodSchema"]
   > {
     return Maybe.empty();
   }
 
-  override snippetDeclarations(): Readonly<Record<string, SnippetDeclaration>> {
-    if (this.objectType.features.has("equals")) {
-      return sharedSnippetDeclarations.strictEquals;
-    }
-    return {};
-  }
-
-  override sparqlConstructTriples(): readonly (
-    | AbstractType.SparqlConstructTriple
-    | string
-  )[] {
-    return [];
+  override sparqlConstructTriples(): Maybe<Code> {
+    return Maybe.empty();
   }
 
   override sparqlWherePatterns(): ReturnType<
     AbstractProperty<StringType>["sparqlWherePatterns"]
   > {
-    return { patterns: "" };
-  }
-
-  override toJsonObjectMemberExpression(): Maybe<string> {
     return Maybe.empty();
   }
 
-  override toRdfStatements(): readonly string[] {
+  override toJsonObjectMemberExpression(): Maybe<Code> {
+    return Maybe.empty();
+  }
+
+  override toRdfStatements(): readonly Code[] {
     return [];
   }
 }
