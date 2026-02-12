@@ -1,12 +1,10 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-export function createFunctionDeclaration(
-  this: ObjectType,
-): Maybe<FunctionDeclarationStructure> {
+export function createFunctionDeclaration(this: ObjectType): Maybe<Code> {
   if (!this.features.has("create")) {
     return Maybe.empty();
   }
@@ -19,29 +17,22 @@ export function createFunctionDeclaration(
     property.constructorParametersSignature.toList(),
   );
 
-  const parametersType: string[] = [];
+  const parametersType: Code[] = [];
   if (parametersPropertySignatures.length > 0) {
-    parametersType.push(
-      `{ ${parametersPropertySignatures
-        .map(
-          (propertySignature) =>
-            `readonly ${propertySignature.name}${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,
-        )
-        .join(", ")} }`,
-    );
+    parametersType.push(code`{ ${joinCode(parametersPropertySignatures)} }`);
   }
   for (const parentObjectType of this.parentObjectTypes) {
     parametersType.push(
-      `Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
+      code`Parameters<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}create>[0]`,
     );
   }
   if (parametersType.length === 0) {
-    parametersType.push("object");
+    parametersType.push(code`object`);
   }
 
   const propertyInitializers: string[] = [];
   const omitPropertyNames: string[] = [];
-  const propertyStatements: string[] = [];
+  const propertyStatements: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     propertyInitializers.push(
       `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}create(parameters)`,
@@ -50,13 +41,14 @@ export function createFunctionDeclaration(
   const parametersHasQuestionToken =
     this.parentObjectTypes.length === 0 &&
     parametersPropertySignatures.every(
-      (propertySignature) => !!propertySignature.hasQuestionToken,
+      (propertySignature) =>
+        propertySignature.toCodeString([]).indexOf("?") !== -1,
     );
-  const parametersVariable = `parameters${parametersHasQuestionToken ? "?" : ""}`;
+  const parametersVariable = code`parameters${parametersHasQuestionToken ? "?" : ""}`;
   for (const property of this.properties) {
     const thisPropertyStatements = property.constructorStatements({
       variables: {
-        parameter: `${parametersVariable}.${property.name}`,
+        parameter: code`${parametersVariable}.${property.name}`,
         parameters: parametersVariable,
       },
     });
@@ -70,23 +62,9 @@ export function createFunctionDeclaration(
   invariant(propertyInitializers.length > 0);
   invariant(propertyStatements.length > 0);
 
-  return Maybe.of({
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}create`,
-    parameters: [
-      {
-        hasQuestionToken: parametersHasQuestionToken,
-        name: "parameters",
-        type: parametersType.join(" & "),
-      },
-    ],
-    returnType:
-      omitPropertyNames.length === 0
-        ? this.name
-        : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`,
-    statements: propertyStatements.concat([
-      `return { ${propertyInitializers.join(", ")} }`,
-    ]),
-  });
+  return Maybe.of(code`\
+export ${syntheticNamePrefix}create(parameters${parametersHasQuestionToken}: ${joinCode(parametersType, { on: " & " })}): ${omitPropertyNames.length === 0 ? this.name : `Omit<${this.name}, ${omitPropertyNames.map((omitPropertyName) => `"${omitPropertyName}"`).join(" | ")}>`} {
+  ${joinCode(propertyStatements)}
+  return { ${propertyInitializers.join(", ")} };
+}`);
 }
