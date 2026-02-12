@@ -29,12 +29,12 @@ export class LiteralType extends AbstractLiteralType {
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): Code {
-    return code`\
-${super.hashStatements({ depth, variables })}
-${variables.hasher}.update(${variables.value}.datatype.value);
-${variables.hasher}.update(${variables.value}.language);
-`;
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
+    return [
+      ...super.hashStatements({ depth, variables }),
+      code`${variables.hasher}.update(${variables.value}.datatype.value);`,
+      code`${variables.hasher}.update(${variables.value}.language);`,
+    ];
   }
 
   override jsonType(

@@ -225,8 +225,10 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`;
+  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly Code[] {
+    return [
+      code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+    ];
   }
 
   @Memoize()

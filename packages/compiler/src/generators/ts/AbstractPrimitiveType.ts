@@ -36,6 +36,7 @@ export abstract class AbstractPrimitiveType<
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "${this.typeofs[0]}"`,
         sourceTypeName: this.name,
+        sourceTypeof: this.typeofs[0],
       },
     ];
   }
@@ -58,8 +59,8 @@ export abstract class AbstractPrimitiveType<
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): Code {
-    return code`${variables.hasher}.update(${variables.value}.toString());`;
+  }: Parameters<AbstractLiteralType["hashStatements"]>[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value}.toString());`];
   }
 
   @Memoize()

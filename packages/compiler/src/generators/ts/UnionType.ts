@@ -493,25 +493,29 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): Code {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     const caseBlocks: Code[] = [];
     for (const memberType of this.memberTypes) {
       caseBlocks.push(
-        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case "${discriminantPropertyValue}":`))} { ${memberType.hashStatements(
-          {
-            depth: depth + 1,
-            variables: {
-              hasher: variables.hasher,
-              value: memberType.payload(variables.value),
-            },
-          },
+        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case "${discriminantPropertyValue}":`))} { ${joinCode(
+          memberType
+            .hashStatements({
+              depth: depth + 1,
+              variables: {
+                hasher: variables.hasher,
+                value: memberType.payload(variables.value),
+              },
+            })
+            .concat(),
         )}; break; }`,
       );
     }
     caseBlocks.push(
       code`default: ${variables.value} satisfies never; throw new Error("unrecognized type");`,
     );
-    return code`switch (${this.discriminantVariable(variables.value)}) { ${joinCode(caseBlocks)} }`;
+    return [
+      code`switch (${this.discriminantVariable(variables.value)}) { ${joinCode(caseBlocks)} }`,
+    ];
   }
 
   @Memoize()

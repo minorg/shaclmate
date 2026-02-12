@@ -101,8 +101,8 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     return filteredLiteralValues!.map(literalValue => new ${sharedImports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
   });
 }`,
-  ),
-};
+  );
+}
 
 export namespace AbstractLiteralType {
   export type Conversion = AbstractTermType.Conversion;

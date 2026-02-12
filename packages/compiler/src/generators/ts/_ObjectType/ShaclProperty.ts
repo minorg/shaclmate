@@ -4,7 +4,6 @@ import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-import type { AbstractType } from "../AbstractType.js";
 import { codeEquals } from "../codeEquals.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { sharedImports } from "../sharedImports.js";
@@ -70,6 +69,18 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
+  override get declaration(): Maybe<Code> {
+    const comment = this.comment
+      .alt(this.description)
+      .alt(this.label)
+      .map(tsComment)
+      .extract();
+    return Maybe.of(
+      code`${comment ? code`/* ${comment} */` : ""}${this.objectType.declarationType === "class" && this.visibility !== "public" ? `${this.visibility} ` : ""}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name}`,
+    );
+  }
+
+  @Memoize()
   override get equalsFunction(): Maybe<Code> {
     return Maybe.of(this.type.equalsFunction);
   }
@@ -112,17 +123,8 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get propertyDeclaration(): Maybe<Code> {
-    return Maybe.of(
-      code`${this.declarationComment}${this.visibility !== "public" ? `${this.visibility} ` : ""}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name}`,
-    );
-  }
-
-  @Memoize()
-  override get propertySignature(): Maybe<Code> {
-    return Maybe.of(
-      code`${this.declarationComment}${!this.mutable ? "readonly " : " "}${this.name}: ${this.type.name}`,
-    );
+  protected get predicate(): Code {
+    return code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
   }
 
   protected override get schemaObject() {
@@ -143,30 +145,18 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     };
   }
 
-  protected get declarationComment(): Code {
-    const comment = this.comment
-      .alt(this.description)
-      .alt(this.label)
-      .map(tsComment)
-      .extract();
-    return comment ? code`/* ${comment} */` : code``;
-  }
-
-  @Memoize()
-  protected get predicate(): Code {
-    return code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
-  }
-
   override constructorStatements({
     variables,
-  }: Parameters<AbstractProperty<TypeT>["constructorStatements"]>[0]): Code {
+  }: Parameters<
+    AbstractProperty<TypeT>["constructorStatements"]
+  >[0]): readonly Code[] {
     const typeConversions = this.type.conversions;
     if (typeConversions.length === 1) {
       switch (this.objectType.declarationType) {
         case "class":
-          return code`this.${this.name} = ${variables.parameter};`;
+          return [code`this.${this.name} = ${variables.parameter};`];
         case "interface":
-          return code`const ${this.name} = ${variables.parameter};`;
+          return [code`const ${this.name} = ${variables.parameter};`];
       }
     }
 
@@ -195,13 +185,17 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       ),
     );
 
-    return joinCode(statements);
+    return statements;
   }
 
   override fromJsonStatements({
     variables,
-  }: Parameters<AbstractProperty<TypeT>["fromJsonStatements"]>[0]): Code {
-    return code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: code`${variables.jsonObject}["${this.name}"]` } })};`;
+  }: Parameters<
+    AbstractProperty<TypeT>["fromJsonStatements"]
+  >[0]): readonly Code[] {
+    return [
+      code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: code`${variables.jsonObject}["${this.name}"]` } })};`,
+    ];
   }
 
   override fromRdfExpression({
@@ -225,7 +219,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override hashStatements(
     parameters: Parameters<AbstractProperty<TypeT>["hashStatements"]>[0],
-  ): Code {
+  ): readonly Code[] {
     return this.type.hashStatements(parameters);
   }
 
@@ -262,20 +256,24 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override sparqlConstructTriples({
     variables,
-  }: Parameters<AbstractProperty<TypeT>["sparqlConstructTriples"]>[0]): Code {
+  }: Parameters<
+    AbstractProperty<TypeT>["sparqlConstructTriples"]
+  >[0]): Maybe<Code> {
     const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = code`${sharedImports.dataFactory}.variable!(${valueString})`;
-    return code`[${{
-      object: valueVariable,
-      predicate: this.predicate,
-      subject: variables.focusIdentifier,
-    }}, ...${this.type.sparqlConstructTriples({
-      allowIgnoreRdfType: true,
-      variables: {
-        valueVariable,
-        variablePrefix: valueString,
-      },
-    })}]`;
+    return Maybe.of(
+      code`[${{
+        object: valueVariable,
+        predicate: this.predicate,
+        subject: variables.focusIdentifier,
+      }}, ...${this.type.sparqlConstructTriples({
+        allowIgnoreRdfType: true,
+        variables: {
+          valueVariable,
+          variablePrefix: valueString,
+        },
+      })}]`,
+    );
   }
 
   override sparqlWherePatterns({
@@ -285,7 +283,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   > {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
     const valueVariable = `dataFactory.variable!(${valueString})`;
-    return {
+    return Maybe.of({
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: this.filterProperty
           .map(({ name }) => `${variables.filter}?.${name}`)
@@ -307,7 +305,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         valueVariable,
         variablePrefix: valueString,
       }})`,
-    };
+    });
   }
 
   override toJsonObjectMemberExpression(
@@ -322,11 +320,15 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   override toRdfStatements({
     variables,
-  }: Parameters<AbstractProperty<TypeT>["toRdfStatements"]>[0]): Code {
-    return code`${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
-      {
-        variables: { ...variables, predicate: this.predicate },
-      },
-    )});`;
+  }: Parameters<
+    AbstractProperty<TypeT>["toRdfStatements"]
+  >[0]): readonly Code[] {
+    return [
+      code`${variables.resource}.add(${this.predicate}, ...${this.type.toRdfExpression(
+        {
+          variables: { ...variables, predicate: this.predicate },
+        },
+      )});`,
+    ];
   }
 }

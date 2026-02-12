@@ -1,8 +1,9 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { arrayOf, type Code, code, conditionalOutput } from "ts-poet";
+import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
+import { codeEquals } from "./codeEquals.js";
 import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
@@ -319,10 +320,11 @@ export abstract class AbstractCollectionType<
     if (!this._mutable && this.minCount > 0) {
       expression = code`${sharedImports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
+    const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
-      variables: { value: code`item` },
+      variables: { value: valueVariable },
     });
-    return itemFromJsonExpression === "item"
+    return codeEquals(itemFromJsonExpression, valueVariable)
       ? expression
       : code`${expression}.map(item => (${itemFromJsonExpression}))`;
   }
@@ -338,16 +340,22 @@ export abstract class AbstractCollectionType<
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractContainerType<ItemTypeT>["hashStatements"]>[0]): Code {
-    return code`for (const item${depth} of ${variables.value}) { ${this.itemType.hashStatements(
-      {
-        depth: depth + 1,
-        variables: {
-          hasher: variables.hasher,
-          value: code`item${depth}`,
-        },
-      },
-    )} }`;
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["hashStatements"]
+  >[0]): readonly Code[] {
+    return [
+      code`for (const item${depth} of ${variables.value}) { ${joinCode(
+        this.itemType
+          .hashStatements({
+            depth: depth + 1,
+            variables: {
+              hasher: variables.hasher,
+              value: code`item${depth}`,
+            },
+          })
+          .concat(),
+      )} }`,
+    ];
   }
 
   override jsonUiSchemaElement(

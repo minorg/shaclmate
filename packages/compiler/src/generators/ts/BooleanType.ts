@@ -17,6 +17,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     code`${sharedImports.GraphQLBoolean}`,
   );
   readonly kind = "BooleanType";
+  override readonly schemaType = code`${localSnippets.BooleanSchema}`;
   override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
     `${syntheticNamePrefix}booleanSparqlWherePatterns`,
     code`\

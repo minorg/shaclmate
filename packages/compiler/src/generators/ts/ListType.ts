@@ -308,7 +308,7 @@ export class ListType<
           case "sha256":
             listIdentifier = code`${sharedImports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
         (hasher, item) => {
-          ${this.itemType.hashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`item` } })}
+          ${joinCode(this.itemType.hashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`item` } }).concat())}
           return hasher;
         },
         ${sharedImports.sha256}.create(),

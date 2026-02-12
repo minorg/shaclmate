@@ -4,6 +4,7 @@ import {
   Scope,
   type TypeParameterDeclarationStructure,
 } from "ts-morph";
+import { code } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
@@ -103,7 +104,7 @@ export function hashFunctionOrMethodDeclarations(this: ObjectType): readonly {
               depth: 0,
               variables: {
                 hasher: hasherVariable,
-                value: `${this.thisVariable}.${property.name}`,
+                value: code`${this.thisVariable}.${property.name}`,
               },
             }),
           ),

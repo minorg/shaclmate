@@ -162,7 +162,7 @@ export class DefaultValueType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["hashStatements"]
     >[0],
-  ): Code {
+  ): readonly Code[] {
     return this.itemType.hashStatements(parameters);
   }
 

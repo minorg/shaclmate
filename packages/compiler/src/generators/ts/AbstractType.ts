@@ -1,7 +1,6 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-import type { TsFeature } from "../../enums/index.js";
 import type { Typeof } from "./Typeof.js";
 
 /**
@@ -185,7 +184,7 @@ export abstract class AbstractType {
       hasher: Code;
       value: Code;
     };
-  }): Code;
+  }): readonly Code[];
 
   /**
    * JSON-compatible version of the type.

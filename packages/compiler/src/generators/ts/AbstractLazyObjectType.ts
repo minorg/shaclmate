@@ -108,7 +108,7 @@ export abstract class AbstractLazyObjectType<
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): Code {
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
     return this.partialType.hashStatements({
       depth: depth + 1,
       variables: {
@@ -170,7 +170,7 @@ export abstract class AbstractLazyObjectType<
   }: {
     resolvedObjectUnionType: ObjectUnionType;
     partialObjectUnionType: ObjectUnionType;
-    variables: { resolvedObjectUnion: string };
+    variables: { resolvedObjectUnion: Code };
   }) {
     invariant(
       resolvedObjectUnionType.memberTypes.length ===

@@ -17,6 +17,11 @@ export abstract class AbstractProperty<
   abstract readonly constructorParametersPropertySignature: Maybe<Code>;
 
   /**
+   * Optional property declaration to include in a class or interface declaration of the object type.
+   */
+  abstract readonly declaration: Maybe<Code>;
+
+  /**
    * Function declaration that takes two values of the property and compares them, returning an $EqualsResult.
    */
   abstract readonly equalsFunction: Maybe<Code>;
@@ -71,16 +76,6 @@ export abstract class AbstractProperty<
    * TypeScript identifier-safe name of the property.
    */
   readonly name: string;
-
-  /**
-   * Optional property declaration to include in a class declaration of the object type.
-   */
-  abstract readonly propertyDeclaration: Maybe<Code>;
-
-  /**
-   * Signature of the property in an interface version of the object.
-   */
-  abstract readonly propertySignature: Maybe<Code>;
 
   /**
    * Is the property's type the ObjectType or does its type indirectly reference the ObjectType?
@@ -138,7 +133,7 @@ export abstract class AbstractProperty<
       parameter: Code;
       parameters: Code;
     };
-  }): Code;
+  }): readonly Code[];
 
   /**
    * Statements to deserialize JSON for this property (as described by toJsonObjectMember) to a typed value of the property.
@@ -147,7 +142,7 @@ export abstract class AbstractProperty<
     variables: {
       jsonObject: Code;
     };
-  }): Code;
+  }): readonly Code[];
 
   /**
    * Expression to deserialize this property on the given rdfjsResource.Resource to a Either<Error, this property type>.
@@ -166,7 +161,7 @@ export abstract class AbstractProperty<
    */
   abstract hashStatements(
     parameters: Parameters<Type["hashStatements"]>[0],
-  ): Code;
+  ): readonly Code[];
 
   /**
    * Element object (usually a control https://jsonforms.io/docs/uischema/controls) for a JSON Forms UI schema.
@@ -195,7 +190,7 @@ export abstract class AbstractProperty<
    */
   abstract sparqlConstructTriples(parameters: {
     variables: { focusIdentifier: Code; variablePrefix: Code };
-  }): Code;
+  }): Maybe<Code>;
 
   /**
    * SPARQL where patterns for this property.
@@ -218,7 +213,7 @@ export abstract class AbstractProperty<
       preferredLanguages: Code;
       variablePrefix: Code;
     };
-  }): { condition?: Code; patterns: Code };
+  }): Maybe<{ condition?: Code; patterns: Code }>;
 
   /**
    * Expression to serialize a property to a JSON object member.
@@ -235,5 +230,5 @@ export abstract class AbstractProperty<
       Parameters<Type["toRdfExpression"]>[0]["variables"],
       "predicate"
     >;
-  }): Code;
+  }): readonly Code[];
 }

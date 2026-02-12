@@ -2,25 +2,17 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import {
-  type GetAccessorDeclarationStructure,
-  type OptionalKind,
-  type PropertyDeclarationStructure,
-  type PropertySignatureStructure,
-  Scope,
-} from "ts-morph";
-import { type Code, code } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { AbstractType } from "../AbstractType.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
+import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
 import type { NamedNodeType } from "../NamedNodeType.js";
-import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import type { SnippetDeclaration } from "../SnippetDeclaration.js";
-import { Import } from "../sharedImports.js";
+import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -54,9 +46,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get constructorParametersPropertySignature(): Maybe<
-    OptionalKind<PropertySignatureStructure>
-  > {
+  override get constructorParametersPropertySignature(): Maybe<Code> {
     if (this.abstract) {
       // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
       const propertyDeclaration = this.propertyDeclaration.extractNullable();
@@ -65,50 +55,34 @@ export class IdentifierProperty extends AbstractProperty<
       }
     }
 
-    const typeNames = new Set<string>(); // Remove duplicates with a set
+    const hasQuestionToken =
+      this.identifierMintingStrategy.isJust() ||
+      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      ) ||
+      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+      );
+
+    const typeNames: Code[] = [];
     for (const conversion of this.type.conversions) {
-      if (conversion.sourceTypeName !== "undefined") {
-        typeNames.add(conversion.sourceTypeName);
+      if (
+        conversion.sourceTypeof !== "undefined" &&
+        !typeNames.some((typeName) =>
+          codeEquals(typeName, conversion.sourceTypeName),
+        )
+      ) {
+        typeNames.push(conversion.sourceTypeName);
       }
     }
 
-    return Maybe.of({
-      hasQuestionToken:
-        this.identifierMintingStrategy.isJust() ||
-        this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
-          ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        ) ||
-        this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-          descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-        ),
-      isReadonly: true,
-      name: this.name,
-      type: [...typeNames].sort().join(" | "),
-    });
+    return Maybe.of(
+      code`readonly ${this.name}${hasQuestionToken ? "?" : ""}: ${joinCode(typeNames, { on: "|" })}`,
+    );
   }
 
   @Memoize()
-  override get declarationImports(): readonly Import[] {
-    const imports = this.type
-      .useImports({ features: this.objectType.features })
-      .concat();
-
-    this.identifierMintingStrategy.ifJust((identifierMintingStrategy) => {
-      switch (identifierMintingStrategy) {
-        case "sha256":
-          imports.push(Import.SHA256);
-          break;
-        case "uuidv4":
-          imports.push(Import.UUID);
-          break;
-      }
-    });
-
-    return imports;
-  }
-
-  @Memoize()
-  get equalsFunction(): Maybe<string> {
+  get equalsFunction(): Maybe<Code> {
     return Maybe.of(this.type.equalsFunction);
   }
 
@@ -121,9 +95,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get getAccessorDeclaration(): Maybe<
-    OptionalKind<GetAccessorDeclarationStructure>
-  > {
+  override get getAccessorDeclaration(): Maybe<Code> {
     // If this, an ancestor, or a descendant has an identifier minting strategy then all classes in the hierarchy must
     // have get accessors.
 
@@ -155,33 +127,37 @@ export class IdentifierProperty extends AbstractProperty<
     if (this.identifierMintingStrategy.isJust()) {
       // Mint the identifier lazily in the get accessor
       let memoizeMintedIdentifier: boolean;
-      let mintIdentifier: string;
+      let mintIdentifier: Code;
       switch (this.identifierMintingStrategy.unsafeCoerce()) {
         case "blankNode":
           memoizeMintedIdentifier = true;
-          mintIdentifier = "dataFactory.blankNode()";
+          mintIdentifier = code`${sharedImports.dataFactory}.blankNode()`;
           break;
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
           memoizeMintedIdentifier = !this.objectType.mutable;
-          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(sha256.create())}\`)`;
+          mintIdentifier = code`${sharedImports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${sharedImports.sha256}.create())}\`)`;
           break;
         case "uuidv4":
           memoizeMintedIdentifier = true;
-          mintIdentifier = `dataFactory.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${uuid.v4()}\`)`;
+          mintIdentifier = code`${sharedImports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${sharedImports.uuid}.v4()}\`)`;
           break;
       }
 
-      return Maybe.of({
-        leadingTrivia: this.override ? "override " : undefined,
-        name: this.name,
-        returnType: this.typeAlias,
-        statements: [
-          `if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? `this._${this.name} = ${mintIdentifier};` : `return ${mintIdentifier};`} }`,
-          ...checkIdentifierTermTypeStatements(`this._${this.name}`),
-          `return this._${this.name};`,
-        ],
-      });
+      //       return Maybe.of(code`\
+      // ${this.override ? "override " :
+      // `
+
+      //         {
+      //         leadingTrivia: this.override ? "override " : undefined,
+      //         name: this.name,
+      //         returnType: this.typeAlias,
+      //         statements: [
+      //           `if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? `this._${this.name} = ${mintIdentifier};` : `return ${mintIdentifier};`} }`,
+      //           ...checkIdentifierTermTypeStatements(`this._${this.name}`),
+      //           `return this._${this.name};`,
+      //         ],
+      //       });
     }
 
     // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
@@ -243,7 +219,7 @@ export class IdentifierProperty extends AbstractProperty<
       args: Maybe.empty(),
       description: Maybe.empty(),
       name: `_${this.name.substring(syntheticNamePrefix.length)}`,
-      resolve: `(source) => ${this.typeAlias}.toString(source.${this.name})`,
+      resolve: code`(source) => ${this.typeAlias}.toString(source.${this.name})`,
       type: this.type.graphqlType.name,
     });
   }
@@ -344,7 +320,7 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["constructorStatements"]
-  >[0]): readonly string[] {
+  >[0]): readonly Code[] {
     const constructorParametersPropertySignature =
       this.constructorParametersPropertySignature.extractNullable();
     if (constructorParametersPropertySignature === null) {
@@ -352,7 +328,7 @@ export class IdentifierProperty extends AbstractProperty<
     }
 
     let lhs: string;
-    const statements: string[] = [];
+    const statements: Code[] = [];
     const typeConversions = this.type.conversions;
     switch (this.objectType.declarationType) {
       case "class": {
@@ -365,13 +341,13 @@ export class IdentifierProperty extends AbstractProperty<
       }
       case "interface":
         lhs = this.name;
-        statements.push(`let ${this.name}: ${this.typeAlias};`);
+        statements.push(code`let ${this.name}: ${this.typeAlias};`);
         break;
     }
 
     const conversionBranches: string[] = [];
     for (const conversion of typeConversions) {
-      invariant(conversion.sourceTypeName !== "undefined");
+      invariant(conversion.sourceTypeof !== "undefined");
       conversionBranches.push(
         `if (${conversion.sourceTypeCheckExpression(variables.parameter)}) { ${lhs} = ${conversion.conversionExpression(variables.parameter)}; }`,
       );
@@ -422,9 +398,9 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["fromJsonStatements"]
-  >[0]): readonly string[] {
+  >[0]): readonly Code[] {
     return [
-      `const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: variables.jsonObject } })};`,
+      code`const ${this.name} = ${this.type.fromJsonExpression({ variables: { value: variables.jsonObject } })};`,
     ];
   }
 
@@ -432,12 +408,12 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["fromRdfExpression"]
-  >[0]): Maybe<string> {
+  >[0]): Maybe<Code> {
     if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
-        `(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? ${sharedImports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -446,12 +422,12 @@ export class IdentifierProperty extends AbstractProperty<
       this.type.kind === "NamedNodeType"
     ) {
       return Maybe.of(
-        `${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : purify.Left(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${sharedImports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
     return Maybe.of(
-      `purify.Either.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
+      code`${sharedImports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
     );
   }
 
@@ -459,8 +435,8 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["hashStatements"]
-  >[0]): readonly string[] {
-    return [`${variables.hasher}.update(${variables.value}.value);`];
+  >[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value}.value);`];
   }
 
   override jsonUiSchemaElement({
@@ -478,13 +454,13 @@ export class IdentifierProperty extends AbstractProperty<
   }: Parameters<
     AbstractProperty<IdentifierType>["jsonZodSchema"]
   >[0]): ReturnType<AbstractProperty<IdentifierType>["jsonZodSchema"]> {
-    let schema: string;
+    let schema: Code;
     if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = `${variables.zod}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
+      schema = code`${variables.zod}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
     } else {
-      schema = `${variables.zod}.string().min(1)`;
+      schema = code`${variables.zod}.string().min(1)`;
     }
 
     return Maybe.of({
@@ -493,63 +469,52 @@ export class IdentifierProperty extends AbstractProperty<
     });
   }
 
-  override snippetDeclarations(
-    parameters: Parameters<
-      AbstractProperty<IdentifierType>["snippetDeclarations"]
-    >[0],
-  ): Readonly<Record<string, SnippetDeclaration>> {
-    return this.type.snippetDeclarations(parameters);
-  }
-
-  override sparqlConstructTriples(): readonly (
-    | AbstractType.SparqlConstructTriple
-    | string
-  )[] {
-    return [];
+  override sparqlConstructTriples(): Maybe<Code> {
+    return Maybe.empty();
   }
 
   override sparqlWherePatterns({
     variables,
   }: Parameters<AbstractProperty<IdentifierType>["sparqlWherePatterns"]>[0]) {
-    return {
-      condition: `${variables.focusIdentifier}.termType === "Variable"`,
-      patterns: `${this.type.sparqlWherePatternsFunction}(${objectInitializer({
+    return Maybe.of({
+      condition: code`${variables.focusIdentifier}.termType === "Variable"`,
+      patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: `${variables.filter}?.${this.name}`,
         preferredLanguages: variables.preferredLanguages,
         propertyPatterns: "[]",
         schema: `${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.objectType.identifierProperty.name}.type()`,
         valueVariable: variables.focusIdentifier,
         variablePrefix: variables.variablePrefix, // Unused
-      })})`,
-    };
+      }})`,
+    });
   }
 
   override toJsonObjectMemberExpression({
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["toJsonObjectMemberExpression"]
-  >[0]): Maybe<string> {
+  >[0]): Maybe<Code> {
     const nodeKinds = [...this.type.nodeKinds];
     const valueToNodeKinds = nodeKinds.map((nodeKind) => {
       switch (nodeKind) {
         case "BlankNode":
-          return `\`_:\${${variables.value}.value}\``;
+          return code`\`_:\${${variables.value}.value}\``;
         case "NamedNode":
-          return `${variables.value}.value`;
+          return code`${variables.value}.value`;
         default:
           throw new RangeError(nodeKind);
       }
     });
     if (valueToNodeKinds.length === 1) {
-      return Maybe.of(`"@id": ${valueToNodeKinds[0]}`);
+      return Maybe.of(code`"@id": ${valueToNodeKinds[0]}`);
     }
     invariant(valueToNodeKinds.length === 2);
     return Maybe.of(
-      `"@id": ${variables.value}.termType === "${nodeKinds[0]}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
+      code`"@id": ${variables.value}.termType === "${nodeKinds[0]}" ? ${valueToNodeKinds[0]} : ${valueToNodeKinds[1]}`,
     );
   }
 
-  override toRdfStatements(): readonly string[] {
+  override toRdfStatements(): readonly Code[] {
     return [];
   }
 }

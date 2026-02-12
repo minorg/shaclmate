@@ -352,12 +352,16 @@ export class ObjectType extends AbstractDeclaredType {
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): Code {
+  }: Parameters<AbstractDeclaredType["hashStatements"]>[0]): readonly Code[] {
     switch (this.declarationType) {
       case "class":
-        return code`${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`;
+        return [
+          code`${variables.value}.${syntheticNamePrefix}hash(${variables.hasher});`,
+        ];
       case "interface":
-        return code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`;
+        return [
+          code`${this.staticModuleName}.${syntheticNamePrefix}hash(${variables.value}, ${variables.hasher});`,
+        ];
     }
   }
 

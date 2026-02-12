@@ -1,6 +1,6 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -141,16 +141,22 @@ export class OptionType<
   override hashStatements({
     depth,
     variables,
-  }: Parameters<AbstractContainerType<ItemTypeT>["hashStatements"]>[0]): Code {
-    return code`${variables.value}.ifJust((value${depth}) => { ${this.itemType.hashStatements(
-      {
-        depth: depth + 1,
-        variables: {
-          hasher: variables.hasher,
-          value: code`value${depth}`,
-        },
-      },
-    )} })`;
+  }: Parameters<
+    AbstractContainerType<ItemTypeT>["hashStatements"]
+  >[0]): readonly Code[] {
+    return [
+      code`${variables.value}.ifJust((value${depth}) => { ${joinCode(
+        this.itemType
+          .hashStatements({
+            depth: depth + 1,
+            variables: {
+              hasher: variables.hasher,
+              value: code`value${depth}`,
+            },
+          })
+          .concat(),
+      )} })`,
+    ];
   }
 
   @Memoize()
@@ -203,7 +209,7 @@ export class OptionType<
       variables: { ...variables, value: code`value` },
     });
     let toRdfExpression = code`${variables.value}.toList()`;
-    if (itemTypeToRdfExpression !== "[value]") {
+    if (!codeEquals(itemTypeToRdfExpression, code`[value]`)) {
       toRdfExpression = code`${toRdfExpression}.flatMap((value) => ${itemTypeToRdfExpression})`;
     }
     return toRdfExpression;

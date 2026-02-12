@@ -150,11 +150,11 @@ export abstract class AbstractTermType<
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractType["hashStatements"]>[0]): Code {
-    return joinCode([
+  }: Parameters<AbstractType["hashStatements"]>[0]): readonly Code[] {
+    return [
       code`${variables.hasher}.update(${variables.value}.termType);`,
       code`${variables.hasher}.update(${variables.value}.value);`,
-    ]);
+    ];
   }
 
   override jsonUiSchemaElement(): Maybe<Code> {

@@ -39,7 +39,7 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`${}`;
+    return code`${localSnippets.numberSparqlWherePatterns}`;
   }
 
   protected override get schemaObject() {
@@ -139,8 +139,8 @@ function ${syntheticNamePrefix}filterNumber(filter: ${NumberFilter}, value: numb
   );
 
   export const numberSparqlWherePatterns = conditionalOutput(
-      `${syntheticNamePrefix}numberSparqlWherePatterns`,
-      code`\
+    `${syntheticNamePrefix}numberSparqlWherePatterns`,
+    code`\
 const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${NumberFilter}, ${NumberSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
     const filterPatterns: ${sharedSnippets.SparqlFilterPattern}[] = [];
@@ -201,5 +201,5 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWh
 
     return ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
-    );
+  );
 }

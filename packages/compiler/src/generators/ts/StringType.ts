@@ -39,8 +39,10 @@ export class StringType extends AbstractPrimitiveType<string> {
 
   override hashStatements({
     variables,
-  }: Parameters<AbstractPrimitiveType<string>["hashStatements"]>[0]): Code {
-    return code`${variables.hasher}.update(${variables.value});`;
+  }: Parameters<
+    AbstractPrimitiveType<string>["hashStatements"]
+  >[0]): readonly Code[] {
+    return [code`${variables.hasher}.update(${variables.value});`];
   }
 
   override jsonZodSchema({
