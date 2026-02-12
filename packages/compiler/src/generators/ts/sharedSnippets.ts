@@ -50,6 +50,11 @@ type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
     code`type ${syntheticNamePrefix}CollectionSchema<ItemSchemaT> = { readonly item: ItemSchemaT; readonly minCount: number; }`,
   );
 
+  export const datasetFactory = conditionalOutput(
+    `${syntheticNamePrefix}datasetFactory`,
+    code`const ${syntheticNamePrefix}datasetFactory = new ${sharedImports.DatasetFactory}();`,
+  );
+
   export const EqualsResult = conditionalOutput(
     `${syntheticNamePrefix}EqualsResult`,
     code`\
