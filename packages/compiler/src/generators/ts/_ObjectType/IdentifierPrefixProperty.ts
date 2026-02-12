@@ -4,6 +4,7 @@ import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import type { StringType } from "../StringType.js";
+import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -52,7 +53,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   @Memoize()
   override get equalsFunction(): Maybe<Code> {
     return this.objectType.declarationType === "class"
-      ? Maybe.of(code`${syntheticNamePrefix}strictEquals`)
+      ? Maybe.of(code`${sharedSnippets.strictEquals}`)
       : Maybe.empty();
   }
 
