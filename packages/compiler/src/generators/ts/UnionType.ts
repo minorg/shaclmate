@@ -546,7 +546,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     }
   }
 
-  override jsonUiSchemaElement(): Maybe<string> {
+  override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
   }
 

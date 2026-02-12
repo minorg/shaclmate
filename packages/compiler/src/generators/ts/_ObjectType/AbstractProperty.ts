@@ -173,7 +173,7 @@ export abstract class AbstractProperty<
    */
   abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: Code };
-  }): Maybe<string>;
+  }): Maybe<Code>;
 
   /**
    * zod Object key: schema pair on the property serialized by toJsonObjectMember.

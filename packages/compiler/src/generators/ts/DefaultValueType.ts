@@ -42,7 +42,7 @@ export class DefaultValueType<
         conversionExpression: () => code`${defaultValue}`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "undefined"`,
-        sourceTypeName: "undefined",
+        sourceTypeName: code`undefined`,
         sourceTypeof: "undefined",
       });
     });
@@ -176,7 +176,7 @@ export class DefaultValueType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
     >[0],
-  ): Maybe<string> {
+  ): Maybe<Code> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 

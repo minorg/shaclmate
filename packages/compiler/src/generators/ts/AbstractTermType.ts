@@ -157,7 +157,7 @@ export abstract class AbstractTermType<
     ]);
   }
 
-  override jsonUiSchemaElement(): Maybe<string> {
+  override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
   }
 

@@ -9,6 +9,7 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
@@ -466,9 +467,9 @@ export class IdentifierProperty extends AbstractProperty<
     variables,
   }: Parameters<
     AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
-  >[0]): Maybe<string> {
+  >[0]): Maybe<Code> {
     return Maybe.of(
-      `{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/${this.jsonPropertySignature.unsafeCoerce().name}\`, type: "Control" }`,
+      code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/${this.jsonPropertySignature.unsafeCoerce().name}\`, type: "Control" }`,
     );
   }
 

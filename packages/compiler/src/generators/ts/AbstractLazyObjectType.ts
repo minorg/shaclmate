@@ -126,7 +126,7 @@ export abstract class AbstractLazyObjectType<
 
   override jsonUiSchemaElement(
     parameters: Parameters<AbstractType["jsonUiSchemaElement"]>[0],
-  ): Maybe<string> {
+  ): Maybe<Code> {
     return this.partialType.jsonUiSchemaElement(parameters);
   }
 

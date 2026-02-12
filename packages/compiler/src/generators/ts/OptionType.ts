@@ -168,7 +168,7 @@ export class OptionType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]
     >[0],
-  ): ReturnType<AbstractContainerType<ItemTypeT>["jsonUiSchemaElement"]> {
+  ): Maybe<Code> {
     return this.itemType.jsonUiSchemaElement(parameters);
   }
 

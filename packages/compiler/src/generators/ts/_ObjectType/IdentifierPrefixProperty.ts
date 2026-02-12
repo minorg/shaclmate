@@ -7,6 +7,7 @@ import {
   type PropertySignatureStructure,
   Scope,
 } from "ts-morph";
+import type { Code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { AbstractType } from "../AbstractType.js";
 import type { IdentifierType } from "../IdentifierType.js";
@@ -121,7 +122,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     return [];
   }
 
-  override jsonUiSchemaElement(): Maybe<string> {
+  override jsonUiSchemaElement(): Maybe<Code> {
     return Maybe.empty();
   }
 
