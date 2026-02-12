@@ -1,15 +1,11 @@
 import { Maybe } from "purify-ts";
-import type { OptionalKind, ParameterDeclarationStructure } from "ts-morph";
-
+import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
-  name: string;
-  parameters: OptionalKind<ParameterDeclarationStructure>[];
-  returnType: string;
-  statements: string[];
-}> {
+export function toJsonFunctionOrMethodDeclaration(
+  this: ObjectType,
+): Maybe<Code> {
   if (!this.features.has("json")) {
     return Maybe.empty();
   }
@@ -22,25 +18,26 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
     return Maybe.empty();
   }
 
-  const jsonObjectMembers: string[] = [];
-  const parameters: OptionalKind<ParameterDeclarationStructure>[] = [];
-
+  const jsonObjectMembers: Code[] = [];
+  const parameters: Code[] = [];
+  let preamble: string;
   switch (this.declarationType) {
     case "class":
       if (this.parentObjectTypes.length > 0) {
-        jsonObjectMembers.push(`...super.${syntheticNamePrefix}toJson()`);
+        jsonObjectMembers.push(code`...super.${syntheticNamePrefix}toJson()`);
+        preamble = "override ";
+      } else {
+        preamble = "";
       }
       break;
     case "interface":
       for (const parentObjectType of this.parentObjectTypes) {
         jsonObjectMembers.push(
-          `...${parentObjectType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
+          code`...${parentObjectType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`,
         );
       }
-      parameters.push({
-        name: this.thisVariable,
-        type: this.name,
-      });
+      parameters.push(code`${this.thisVariable}: ${this.name}`);
+      preamble = "export function ";
       break;
   }
 
@@ -49,7 +46,7 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
       ...this.ownProperties.flatMap((property) =>
         property
           .toJsonObjectMemberExpression({
-            variables: { value: `${this.thisVariable}.${property.name}` },
+            variables: { value: code`${this.thisVariable}.${property.name}` },
           })
           .toList(),
       ),
@@ -70,13 +67,8 @@ export function toJsonFunctionOrMethodDeclaration(this: ObjectType): Maybe<{
   //     break;
   // }
 
-  const jsonType = this.jsonType();
-  return Maybe.of({
-    name: `${syntheticNamePrefix}toJson`,
-    parameters,
-    returnType: jsonType.name,
-    statements: [
-      `return JSON.parse(JSON.stringify({ ${jsonObjectMembers.join(",")} } satisfies ${jsonType.name}));`,
-    ],
-  });
+  return Maybe.of(code`\
+${preamble}${syntheticNamePrefix}toJson(${parameters.length > 0 ? code`parameters: ${joinCode(parameters, { on: ", " })}` : ""}): ${this.jsonType.name} {
+  return JSON.parse(JSON.stringify({ ${jsonObjectMembers.join(",")} } satisfies ${this.jsonType.name}));
+}`);
 }
