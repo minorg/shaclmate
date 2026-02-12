@@ -2,7 +2,7 @@ export * from "./classDeclaration.js";
 
 export * from "./createFunctionDeclaration.js";
 
-export * from "./equalsFunctionDeclaration.js";
+export * from "./equalsFunctionOrMethodDeclaration.js";
 
 export * from "./filterFunctionDeclaration.js";
 export * from "./filterTypeDeclaration.js";

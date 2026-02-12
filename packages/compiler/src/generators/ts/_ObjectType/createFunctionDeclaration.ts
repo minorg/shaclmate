@@ -42,7 +42,7 @@ export function createFunctionDeclaration(this: ObjectType): Maybe<Code> {
     this.parentObjectTypes.length === 0 &&
     parametersPropertySignatures.every(
       (propertySignature) =>
-        propertySignature.toCodeString([]).indexOf("?") !== -1,
+        propertySignature.toCodeString([]).indexOf("?:") !== -1,
     );
   const parametersVariable = code`parameters${parametersHasQuestionToken ? "?" : ""}`;
   for (const property of this.properties) {
