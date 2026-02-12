@@ -21,7 +21,7 @@ function constructorDeclaration(
   this: ObjectType,
 ): OptionalKind<ConstructorDeclarationStructure> {
   const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParametersPropertySignature.toList(),
+    property.constructorParametersSignature.toList(),
   );
 
   const parametersType: string[] = [];

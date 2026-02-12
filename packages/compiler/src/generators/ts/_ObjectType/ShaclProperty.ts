@@ -48,7 +48,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get constructorParametersPropertySignature(): Maybe<Code> {
+  override get constructorParametersSignature(): Maybe<Code> {
     let hasQuestionToken = false;
     const typeNames: Code[] = [];
     for (const conversion of this.type.conversions) {

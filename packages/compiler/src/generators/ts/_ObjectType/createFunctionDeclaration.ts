@@ -16,7 +16,7 @@ export function createFunctionDeclaration(
   }
 
   const parametersPropertySignatures = this.properties.flatMap((property) =>
-    property.constructorParametersPropertySignature.toList(),
+    property.constructorParametersSignature.toList(),
   );
 
   const parametersType: string[] = [];

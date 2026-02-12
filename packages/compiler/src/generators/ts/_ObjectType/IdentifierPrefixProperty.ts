@@ -48,7 +48,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     this.own = own;
   }
 
-  override get constructorParametersPropertySignature(): Maybe<
+  override get constructorParametersSignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({

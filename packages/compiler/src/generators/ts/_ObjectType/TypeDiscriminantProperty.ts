@@ -16,7 +16,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantProperty.Type> {
-  override readonly constructorParametersPropertySignature: Maybe<
+  override readonly constructorParametersSignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
   override readonly declarationImports: readonly Import[] = [];

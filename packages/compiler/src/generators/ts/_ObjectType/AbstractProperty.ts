@@ -14,7 +14,7 @@ export abstract class AbstractProperty<
   /**
    * Optional property to include in the parameters object of a class constructor.
    */
-  abstract readonly constructorParametersPropertySignature: Maybe<Code>;
+  abstract readonly constructorParametersSignature: Maybe<Code>;
 
   /**
    * Optional property declaration to include in a class or interface declaration of the object type.
@@ -126,7 +126,7 @@ export abstract class AbstractProperty<
   }
 
   /**
-   * Statements to assign the parameter of described by constructorParametersPropertySignature to a class or interface member.
+   * Statements to assign the parameter of described by constructorParametersSignature to a class or interface member.
    */
   abstract constructorStatements(parameters: {
     variables: {
