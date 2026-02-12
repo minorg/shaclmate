@@ -26,7 +26,7 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
     Maybe.empty();
   override readonly graphqlField: AbstractProperty<StringType>["graphqlField"] =
     Maybe.empty();
-  override readonly jsonPropertySignature: Maybe<
+  override readonly jsonSignature: Maybe<
     OptionalKind<PropertySignatureStructure>
   > = Maybe.empty();
   readonly kind = "IdentifierPrefixProperty";

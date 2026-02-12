@@ -225,7 +225,7 @@ export class IdentifierProperty extends AbstractProperty<
   }
 
   @Memoize()
-  override get jsonPropertySignature(): Maybe<
+  override get jsonSignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({
@@ -445,7 +445,7 @@ export class IdentifierProperty extends AbstractProperty<
     AbstractProperty<IdentifierType>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
     return Maybe.of(
-      code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/${this.jsonPropertySignature.unsafeCoerce().name}\`, type: "Control" }`,
+      code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/${this.jsonSignature.unsafeCoerce().name}\`, type: "Control" }`,
     );
   }
 
@@ -464,7 +464,7 @@ export class IdentifierProperty extends AbstractProperty<
     }
 
     return Maybe.of({
-      key: this.jsonPropertySignature.unsafeCoerce().name,
+      key: this.jsonSignature.unsafeCoerce().name,
       schema,
     });
   }

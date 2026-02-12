@@ -115,7 +115,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
-  override get jsonPropertySignature(): Maybe<Code> {
+  override get jsonSignature(): Maybe<Code> {
     const typeJsonType = this.type.jsonType();
     return Maybe.of(
       code`readonly ${this.name}${typeJsonType.optional ? "?" : ""}: ${typeJsonType.requiredName}`,

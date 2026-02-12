@@ -14,7 +14,7 @@ export function jsonTypeAliasDeclaration(
   if (this.ownProperties.length > 0) {
     members.push(
       `{ ${this.ownProperties
-        .flatMap((property) => property.jsonPropertySignature.toList())
+        .flatMap((property) => property.jsonSignature.toList())
         .map(
           (propertySignature) =>
             `readonly "${propertySignature.name}"${propertySignature.hasQuestionToken ? "?" : ""}: ${propertySignature.type}`,

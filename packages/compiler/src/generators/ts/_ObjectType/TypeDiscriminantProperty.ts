@@ -45,7 +45,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   }
 
   @Memoize()
-  override get jsonPropertySignature(): Maybe<
+  override get jsonSignature(): Maybe<
     OptionalKind<PropertySignatureStructure>
   > {
     return Maybe.of({

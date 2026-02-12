@@ -60,7 +60,7 @@ export abstract class AbstractProperty<
   /**
    * Signature of the property when serialized to JSON (the type of toJsonObjectMember).
    */
-  abstract readonly jsonPropertySignature: Maybe<Code>;
+  abstract readonly jsonSignature: Maybe<Code>;
 
   /**
    * Property type discriminator e.g., "ShaclProperty".
