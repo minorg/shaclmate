@@ -161,8 +161,8 @@ export class ObjectUnionType extends AbstractDeclaredType {
     return code`(({ propertyPatterns, valueVariable, ...otherParameters }) => (propertyPatterns as readonly ${sharedSnippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ subject: valueVariable, ...otherParameters })))`;
   }
 
-  get staticModuleName() {
-    return this.name;
+  get staticModuleName(): string {
+    return this.nameString;
   }
 
   @Memoize()
