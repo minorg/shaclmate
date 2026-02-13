@@ -1,18 +1,11 @@
-import { StructureKind, type TypeAliasDeclarationStructure } from "ts-morph";
+import { type Code, code } from "ts-poet";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-export function filterTypeDeclaration(
-  this: ObjectUnionType,
-): TypeAliasDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.TypeAlias,
-    name: `${syntheticNamePrefix}Filter`,
-    type: `\
-{
+export function filterTypeDeclaration(this: ObjectUnionType): Code {
+  return code`\
+export interface ${syntheticNamePrefix}Filter {
   readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType};
   readonly on?: { ${this.memberTypes.map((memberType) => `readonly ${memberType.name}?: Omit<${memberType.filterType}, "${syntheticNamePrefix}identifier">`).join(";")} }
-}`,
-  };
+}`;
 }
