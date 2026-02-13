@@ -75,6 +75,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         .alt(this.description)
         .alt(this.label)
         .map(tsComment)
+        .map((_) => code`${_}`)
         .toList(),
     ];
     if (

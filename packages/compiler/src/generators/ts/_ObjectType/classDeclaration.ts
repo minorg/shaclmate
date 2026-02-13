@@ -66,7 +66,7 @@ export function classDeclaration(this: ObjectType): Maybe<Code> {
   this.ensureAtMostOneSuperObjectType();
 
   return Maybe.of(code`\
-${this.comment.alt(this.label).map(tsComment).orDefault(code``)}
+${this.comment.alt(this.label).map(tsComment).orDefault("")}
 ${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? `extends ${this.parentObjectTypes[0].name}` : ""} {
 ${joinCode([
   ...this.properties.flatMap((property) => property.declaration.toList()),

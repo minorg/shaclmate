@@ -537,10 +537,12 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
           joinCode(
             this.memberTypes.map(
               (memberType) =>
-                memberType.jsonType({
-                  includeDiscriminantProperty:
-                    this.discriminant.kind === "inline",
-                }).name,
+                code`${
+                  memberType.jsonType({
+                    includeDiscriminantProperty:
+                      this.discriminant.kind === "inline",
+                  }).name
+                }`,
             ),
             { on: "|" },
           ),

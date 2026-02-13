@@ -1,5 +1,9 @@
 import type { Code } from "ts-poet";
 
-export function codeEquals(left: Code, right: Code): boolean {
-  return left.toString() === right.toString();
+function codeToString(code: Code | string) {
+  return typeof code === "string" ? code : code.toString();
+}
+
+export function codeEquals(left: Code | string, right: Code | string): boolean {
+  return codeToString(left) === codeToString(right);
 }

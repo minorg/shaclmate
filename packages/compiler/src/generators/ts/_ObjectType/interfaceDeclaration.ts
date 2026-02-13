@@ -9,7 +9,7 @@ export function interfaceDeclaration(this: ObjectType): Maybe<Code> {
   }
 
   return Maybe.of(code`\
-${this.comment.alt(this.label).map(tsComment).orDefault(code``)}
+${this.comment.alt(this.label).map(tsComment).orDefault("")}
 export interface ${this.name}${
     this.parentObjectTypes.length > 0
       ? `extends ${this.parentObjectTypes

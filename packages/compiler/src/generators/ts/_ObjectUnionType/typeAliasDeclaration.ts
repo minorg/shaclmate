@@ -4,9 +4,9 @@ import { tsComment } from "../tsComment.js";
 
 export function typeAliasDeclaration(this: ObjectUnionType): Code {
   return code`\
-${this.comment.alt(this.label).map(tsComment).orDefault(code``)}
+${this.comment.alt(this.label).map(tsComment).orDefault("")}
 export type ${this.name} = ${joinCode(
-    this.memberTypes.map((memberType) => memberType.name),
+    this.memberTypes.map((memberType) => code`${memberType.name}`),
     { on: " | " },
   )}
 `;
