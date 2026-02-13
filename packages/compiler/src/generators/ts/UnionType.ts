@@ -554,33 +554,32 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     return Maybe.empty();
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractType["jsonZodSchema"]>[0]): Code {
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractType["jsonZodSchema"]>[0],
+  ): Code {
     switch (this.discriminant.kind) {
       case "envelope":
-        return code`${variables.zod}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+        return code`${sharedImports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.memberTypes.map(
             (memberType) =>
-              code`${variables.zod}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${variables.zod}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type", variables })} })`,
+              code`${sharedImports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${sharedImports.z}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
           ),
           { on: "," },
         )}])`;
       case "inline":
-        return code`${variables.zod}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+        return code`${sharedImports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.memberTypes.map((memberType) =>
             memberType.jsonZodSchema({
               includeDiscriminantProperty: true,
               context: "type",
-              variables,
             }),
           ),
           { on: "," },
         )}])`;
       case "typeof":
-        return code`${variables.zod}.union([${joinCode(
+        return code`${sharedImports.z}.union([${joinCode(
           this.memberTypes.map((memberType) =>
-            memberType.jsonZodSchema({ context: "type", variables }),
+            memberType.jsonZodSchema({ context: "type" }),
           ),
           { on: "," },
         )}])`;

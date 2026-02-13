@@ -212,7 +212,6 @@ export abstract class AbstractType {
   abstract jsonZodSchema(parameters: {
     includeDiscriminantProperty?: boolean;
     context: "property" | "type";
-    variables: { zod: Code };
   }): Code;
 
   /**

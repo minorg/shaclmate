@@ -127,17 +127,7 @@ export class MemberType {
     return this.delegate.newExpression(parameters);
   }
 
-  snippetDeclarations(
-    parameters: Parameters<AbstractDeclaredType["snippetDeclarations"]>[0],
-  ) {
-    return this.delegate.snippetDeclarations(parameters);
-  }
-
   toObjectType(): ObjectType {
     return this.delegate;
-  }
-
-  useImports() {
-    return this.delegate.useImports();
   }
 }

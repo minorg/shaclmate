@@ -263,6 +263,23 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(code`readonly @id: string`);
   }
 
+  @Memoize()
+  override get jsonZodSchema(): AbstractProperty<IdentifierType>["jsonZodSchema"] {
+    let schema: Code;
+    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
+      // Treat sh:in as a union of the IRIs
+      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
+      schema = code`${sharedImports.z}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
+    } else {
+      schema = code`${sharedImports.z}.string().min(1)`;
+    }
+
+    return Maybe.of({
+      key: "@id",
+      schema,
+    });
+  }
+
   protected override get schemaObject() {
     return {
       ...super.schemaObject,
@@ -428,26 +445,6 @@ export class IdentifierProperty extends AbstractProperty<
     return Maybe.of(
       code`{ label: "Identifier", scope: \`\${${variables.scopePrefix}}/properties/@id\`, type: "Control" }`,
     );
-  }
-
-  override jsonZodSchema({
-    variables,
-  }: Parameters<
-    AbstractProperty<IdentifierType>["jsonZodSchema"]
-  >[0]): ReturnType<AbstractProperty<IdentifierType>["jsonZodSchema"]> {
-    let schema: Code;
-    if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
-      // Treat sh:in as a union of the IRIs
-      // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = code`${variables.zod}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
-    } else {
-      schema = code`${variables.zod}.string().min(1)`;
-    }
-
-    return Maybe.of({
-      key: "@id",
-      schema,
-    });
   }
 
   override sparqlConstructTriples(): Maybe<Code> {

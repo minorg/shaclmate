@@ -63,6 +63,14 @@ export abstract class AbstractProperty<
   abstract readonly jsonSignature: Maybe<Code>;
 
   /**
+   * zod Object key: schema pair on the property serialized by toJsonObjectMember.
+   */
+  abstract readonly jsonZodSchema: Maybe<{
+    readonly key: string;
+    readonly schema: Code;
+  }>;
+
+  /**
    * Property type discriminator e.g., "ShaclProperty".
    */
   abstract readonly kind: string;
@@ -169,14 +177,6 @@ export abstract class AbstractProperty<
   abstract jsonUiSchemaElement(parameters: {
     variables: { scopePrefix: Code };
   }): Maybe<Code>;
-
-  /**
-   * zod Object key: schema pair on the property serialized by toJsonObjectMember.
-   */
-  abstract jsonZodSchema(parameters: { variables: { zod: Code } }): Maybe<{
-    readonly key: string;
-    readonly schema: Code;
-  }>;
 
   /**
    * SPARQL.js CONSTRUCT template triples for a value of this type as a (runtime) array of sparqljs.Triple.

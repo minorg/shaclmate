@@ -120,17 +120,16 @@ export function ${syntheticNamePrefix}jsonUiSchema(parameters?: { scopePrefix?: 
 }
 
 function jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
-  const variables = { zod: code`${sharedImports.z}` };
   const mergeZodObjectSchemas: string[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     mergeZodObjectSchemas.push(
-      `${parentObjectType.jsonZodSchema({ context: "type", variables })}`,
+      `${parentObjectType.jsonZodSchema({ context: "type" })}`,
     );
   }
   if (this.properties.length > 0) {
     mergeZodObjectSchemas.push(
-      `${variables.zod}.object({ ${this.properties
-        .flatMap((property) => property.jsonZodSchema({ variables }).toList())
+      `${sharedImports.z}.object({ ${this.properties
+        .flatMap((property) => property.jsonZodSchema.toList())
         .map(({ key, schema }) => `"${key}": ${schema}`)
         .join(",")} })`,
     );
@@ -146,7 +145,7 @@ export function ${syntheticNamePrefix}jsonZodSchema() {
           }
           return `${merged}.merge(${zodObjectSchema})`;
         }, "")
-      : `${variables.zod}.object()`
+      : `${sharedImports.z}.object()`
   } satisfies ${sharedImports.z}.ZodType<${syntheticNamePrefix}Json>;,
 }`;
 }

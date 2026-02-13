@@ -16,6 +16,8 @@ export class IdentifierPrefixProperty extends AbstractProperty<StringType> {
   override readonly graphqlField: AbstractProperty<StringType>["graphqlField"] =
     Maybe.empty();
   override readonly jsonSignature: Maybe<Code> = Maybe.empty();
+  override readonly jsonZodSchema: AbstractProperty<StringType>["jsonZodSchema"] =
+    Maybe.empty();
   readonly kind = "IdentifierPrefixProperty";
   override readonly mutable = false;
   override readonly recursive = false;
@@ -92,12 +94,6 @@ protected ${!this.own ? "override " : ""} get ${this.name}(): ${this.type.name} 
   }
 
   override jsonUiSchemaElement(): Maybe<Code> {
-    return Maybe.empty();
-  }
-
-  override jsonZodSchema(): ReturnType<
-    AbstractProperty<StringType>["jsonZodSchema"]
-  > {
     return Maybe.empty();
   }
 

@@ -49,16 +49,16 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
     };
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0]): Code {
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0],
+  ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${variables.zod}.number()`;
+        return code`${sharedImports.z}.number()`;
       case 1:
-        return code`${variables.zod}.literal(${this.primitiveIn[0]})`;
+        return code`${sharedImports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${variables.zod}.union([${this.primitiveIn.map((value) => `${variables.zod}.literal(${value})`).join(", ")}])`;
+        return code`${sharedImports.z}.union([${this.primitiveIn.map((value) => `${sharedImports.z}.literal(${value})`).join(", ")}])`;
     }
   }
 

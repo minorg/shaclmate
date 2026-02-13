@@ -382,14 +382,13 @@ export class ObjectType extends AbstractDeclaredType {
 
   override jsonZodSchema({
     context,
-    variables,
   }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): Code {
     let expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     if (
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${variables.zod}.lazy((): ${variables.zod}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${sharedImports.z}.lazy((): ${sharedImports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }

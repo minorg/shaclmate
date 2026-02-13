@@ -10,6 +10,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
+import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -247,7 +248,6 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   override jsonZodSchema({
     context,
-    variables,
   }: Parameters<AbstractDeclaredType["jsonZodSchema"]>[0]): Code {
     const expression = code`${this.staticModuleName}.${syntheticNamePrefix}jsonZodSchema()`;
     for (const memberType of this.memberTypes) {
@@ -255,7 +255,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
         context === "property" &&
         memberType.properties.some((property) => property.recursive)
       ) {
-        return code`${variables.zod}.lazy((): ${variables.zod}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${sharedImports.z}.lazy((): ${sharedImports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
       }
     }
     return expression;

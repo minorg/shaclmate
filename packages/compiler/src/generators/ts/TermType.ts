@@ -109,19 +109,19 @@ export class TermType<
     );
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractTermType["jsonZodSchema"]>[0]): Code {
-    return code`${variables.zod}.discriminatedUnion("termType", [${[
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractTermType["jsonZodSchema"]>[0],
+  ): Code {
+    return code`${sharedImports.z}.discriminatedUnion("termType", [${[
       ...this.nodeKinds,
     ]
       .map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
           case "NamedNode":
-            return code`${variables.zod}.object({ "@id": ${variables.zod}.string().min(1), termType: ${variables.zod}.literal("${nodeKind}") })`;
+            return code`${sharedImports.z}.object({ "@id": ${sharedImports.z}.string().min(1), termType: ${sharedImports.z}.literal("${nodeKind}") })`;
           case "Literal":
-            return code`${variables.zod}.object({ "@language": ${variables.zod}.string().optional(), "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string(), termType: ${variables.zod}.literal("Literal") })`;
+            return code`${sharedImports.z}.object({ "@language": ${sharedImports.z}.string().optional(), "@type": ${sharedImports.z}.string().optional(), "@value": ${sharedImports.z}.string(), termType: ${sharedImports.z}.literal("Literal") })`;
           default:
             throw new RangeError(nodeKind);
         }

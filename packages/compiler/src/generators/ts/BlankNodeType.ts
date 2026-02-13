@@ -56,15 +56,14 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
 
   override jsonZodSchema({
     includeDiscriminantProperty,
-    variables,
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.zod}.literal("BlankNode")`
+      ? `, termType: ${sharedImports.z}.literal("BlankNode")`
       : "";
 
-    return code`${variables.zod}.object({ "@id": ${variables.zod}.string().min(1)${discriminantProperty} })`;
+    return code`${sharedImports.z}.object({ "@id": ${sharedImports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({

@@ -99,7 +99,6 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
 
   override jsonZodSchema({
     includeDiscriminantProperty,
-    variables,
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
@@ -107,16 +106,16 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      idSchema = `${variables.zod}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
+      idSchema = `${sharedImports.z}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
     } else {
-      idSchema = `${variables.zod}.string().min(1)`;
+      idSchema = `${sharedImports.z}.string().min(1)`;
     }
 
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.zod}.literal("NamedNode")`
+      ? `, termType: ${sharedImports.z}.literal("NamedNode")`
       : "";
 
-    return code`${variables.zod}.object({ "@id": ${idSchema}${discriminantProperty} })`;
+    return code`${sharedImports.z}.object({ "@id": ${idSchema}${discriminantProperty} })`;
   }
 
   override toJsonExpression({

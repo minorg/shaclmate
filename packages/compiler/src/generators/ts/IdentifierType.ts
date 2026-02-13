@@ -63,15 +63,14 @@ export class IdentifierType extends AbstractIdentifierType<
 
   override jsonZodSchema({
     includeDiscriminantProperty,
-    variables,
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.zod}.enum(${JSON.stringify([...this.nodeKinds])})`
+      ? `, termType: ${sharedImports.z}.enum(${JSON.stringify([...this.nodeKinds])})`
       : "";
 
-    return code`${variables.zod}.object({ "@id": ${variables.zod}.string().min(1)${discriminantProperty} })`;
+    return code`${sharedImports.z}.object({ "@id": ${sharedImports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({

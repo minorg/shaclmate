@@ -45,16 +45,16 @@ export class StringType extends AbstractPrimitiveType<string> {
     return [code`${variables.hasher}.update(${variables.value});`];
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractPrimitiveType<string>["jsonZodSchema"]>[0]): Code {
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractPrimitiveType<string>["jsonZodSchema"]>[0],
+  ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${variables.zod}.string()`;
+        return code`${sharedImports.z}.string()`;
       case 1:
-        return code`${variables.zod}.literal(${this.primitiveIn[0]})`;
+        return code`${sharedImports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${variables.zod}.enum(${JSON.stringify(this.primitiveIn)})`;
+        return code`${sharedImports.z}.enum(${JSON.stringify(this.primitiveIn)})`;
     }
   }
 

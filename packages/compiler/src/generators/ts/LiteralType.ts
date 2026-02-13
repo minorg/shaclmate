@@ -50,13 +50,12 @@ export class LiteralType extends AbstractLiteralType {
 
   override jsonZodSchema({
     includeDiscriminantProperty,
-    variables,
   }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${variables.zod}.literal("Literal")`
+      ? `, termType: ${sharedImports.z}.literal("Literal")`
       : "";
 
-    return code`${variables.zod}.object({ "@language": ${variables.zod}.string().optional()${discriminantProperty}, "@type": ${variables.zod}.string().optional(), "@value": ${variables.zod}.string() })`;
+    return code`${sharedImports.z}.object({ "@language": ${sharedImports.z}.string().optional()${discriminantProperty}, "@type": ${sharedImports.z}.string().optional(), "@value": ${sharedImports.z}.string() })`;
   }
 
   override toJsonExpression({

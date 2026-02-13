@@ -50,6 +50,17 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     return Maybe.of(code`readonly ${this.name}: ${this.type.name}`);
   }
 
+  @Memoize()
+  override get jsonZodSchema(): AbstractProperty<TypeDiscriminantProperty.Type>["jsonZodSchema"] {
+    return Maybe.of({
+      key: this.name,
+      schema:
+        this.type.values.length > 1
+          ? code`${sharedImports.z}.enum(${JSON.stringify(this.type.values)})`
+          : code`${sharedImports.z}.literal("${this.type.values[0]}")`,
+    });
+  }
+
   private get abstract(): boolean {
     return this.objectType.abstract;
   }
@@ -105,22 +116,6 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
     );
-  }
-
-  override jsonZodSchema({
-    variables,
-  }: Parameters<
-    AbstractProperty<TypeDiscriminantProperty.Type>["jsonZodSchema"]
-  >[0]): ReturnType<
-    AbstractProperty<TypeDiscriminantProperty.Type>["jsonZodSchema"]
-  > {
-    return Maybe.of({
-      key: this.name,
-      schema:
-        this.type.values.length > 1
-          ? code`${variables.zod}.enum(${JSON.stringify(this.type.values)})`
-          : code`${variables.zod}.literal("${this.type.values[0]}")`,
-    });
   }
 
   override sparqlConstructTriples(): Maybe<Code> {

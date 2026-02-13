@@ -51,13 +51,13 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
     };
   }
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractPrimitiveType<boolean>["jsonZodSchema"]>[0]): Code {
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0],
+  ): Code {
     if (this.primitiveIn.length === 1) {
-      return code`${variables.zod}.literal(${this.primitiveIn[0]})`;
+      return code`${sharedImports.z}.literal(${this.primitiveIn[0]})`;
     }
-    return code`${variables.zod}.boolean()`;
+    return code`${sharedImports.z}.boolean()`;
   }
 
   override toRdfExpression({

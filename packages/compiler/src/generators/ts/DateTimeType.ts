@@ -14,10 +14,10 @@ export class DateTimeType extends AbstractDateType {
   );
   override readonly kind = "DateTimeType";
 
-  override jsonZodSchema({
-    variables,
-  }: Parameters<AbstractDateType["jsonZodSchema"]>[0]): Code {
-    return code`${variables.zod}.iso.datetime()`;
+  override jsonZodSchema(
+    _parameters: Parameters<AbstractDateType["jsonZodSchema"]>[0],
+  ): Code {
+    return code`${sharedImports.z}.iso.datetime()`;
   }
 
   protected toIsoStringExpression(variables: { value: Code }): Code {

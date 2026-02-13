@@ -133,6 +133,20 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
   }
 
   @Memoize()
+  override get jsonZodSchema(): AbstractProperty<TypeT>["jsonZodSchema"] {
+    let schema = this.type.jsonZodSchema({
+      context: "property",
+    });
+    this.comment.alt(this.description).ifJust((description) => {
+      schema = code`${schema}.describe(${JSON.stringify(description)})`;
+    });
+    return Maybe.of({
+      key: this.name,
+      schema,
+    });
+  }
+
+  @Memoize()
   protected get predicate(): Code {
     return code`${this.objectType.staticModuleName}.${syntheticNamePrefix}schema.properties.${this.name}.identifier`;
   }
@@ -246,22 +260,6 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           code`{ ${this.label.isJust() ? `label: "${this.label.unsafeCoerce()}", ` : ""}scope: ${scope}, type: "Control" }`,
         ),
       );
-  }
-
-  override jsonZodSchema(
-    parameters: Parameters<AbstractProperty<TypeT>["jsonZodSchema"]>[0],
-  ): ReturnType<AbstractProperty<TypeT>["jsonZodSchema"]> {
-    let schema = this.type.jsonZodSchema({
-      ...parameters,
-      context: "property",
-    });
-    this.comment.alt(this.description).ifJust((description) => {
-      schema = code`${schema}.describe(${JSON.stringify(description)})`;
-    });
-    return Maybe.of({
-      key: this.name,
-      schema,
-    });
   }
 
   override sparqlConstructTriples({
