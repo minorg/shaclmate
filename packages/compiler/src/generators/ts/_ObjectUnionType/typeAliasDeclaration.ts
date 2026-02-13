@@ -1,9 +1,13 @@
-// private get typeAliasDeclaration(): TypeAliasDeclarationStructure {
-//   return {
-//     isExported: true,
-//     leadingTrivia: this.comment.alt(this.label).map(tsComment).extract(),
-//     kind: StructureKind.TypeAlias,
-//     name: this.name,
-//     type: this.memberTypes.map((memberType) => memberType.name).join(" | "),
-//   };
-// }
+import { type Code, code, joinCode } from "ts-poet";
+import type { ObjectUnionType } from "../ObjectUnionType.js";
+import { tsComment } from "../tsComment.js";
+
+export function typeAliasDeclaration(this: ObjectUnionType): Code {
+  return code`\
+${this.comment.alt(this.label).map(tsComment).orDefault(code``)}
+export type ${this.name} = ${joinCode(
+    this.memberTypes.map((memberType) => memberType.name),
+    { on: " | " },
+  )}
+`;
+}
