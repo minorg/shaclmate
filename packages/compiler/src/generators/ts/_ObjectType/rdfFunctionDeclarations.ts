@@ -4,15 +4,11 @@ import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { sharedImports } from "../sharedImports.js";
+import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
 namespace localSnippets {
-  export const FromRdfOptions = conditionalOutput(
-    `${syntheticNamePrefix}FromRdfOptions`,
-    code`options?: { context?: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }`,
-  );
-
   export const PropertiesFromRdfParameters = conditionalOutput(
     `${syntheticNamePrefix}PropertiesFromRdfParameters`,
     code`{ context?: any; ignoreRdfType: boolean; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; resource: ${sharedImports.Resource}; }`,
@@ -36,7 +32,7 @@ function fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
   statements.push(code`return ${propertiesFromRdfExpression};`);
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}fromRdf(resource: ${sharedImports.Resource}, options?: ${localSnippets.FromRdfOptions}): ${sharedImports.Either}<Error, ${this.name}> {
+export function ${syntheticNamePrefix}fromRdf(resource: ${sharedImports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${sharedImports.Either}<Error, ${this.name}> {
 ${joinCode(statements)}
 }`);
 }

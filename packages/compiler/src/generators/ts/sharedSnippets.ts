@@ -135,6 +135,11 @@ export namespace ${syntheticNamePrefix}EqualsResult {
 }`,
   );
 
+  export const FromRdfOptions = conditionalOutput(
+    `${syntheticNamePrefix}FromRdfOptions`,
+    code`options?: { context?: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }`,
+  );
+
   export const TermFilter = conditionalOutput(
     `${syntheticNamePrefix}TermFilter`,
     code`\

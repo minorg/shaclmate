@@ -1,40 +1,28 @@
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { type Code, code, joinCode } from "ts-poet";
+import { codeEquals } from "../codeEquals.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
+import { sharedImports } from "../sharedImports.js";
+import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-function fromRdfFunctionDeclaration(
-  this: ObjectUnionType,
-): FunctionDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}fromRdf`,
-    parameters: [
-      {
-        name: "resource",
-        type: "rdfjsResource.Resource",
-      },
-      {
-        hasQuestionToken: true,
-        name: "options",
-        type: `{ [_index: string]: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[] }`,
-      },
-    ],
-    returnType: `purify.Either<Error, ${this.name}>`,
-    statements: [
-      `return ${this.concreteMemberTypes.reduce((expression, memberType) => {
-        const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as purify.Either<Error, ${this.name}>)`;
-        return expression.length > 0
-          ? `${expression}.altLazy(() => ${memberTypeExpression})`
-          : memberTypeExpression;
-      }, "")};`,
-    ],
-  };
+function fromRdfFunctionDeclaration(this: ObjectUnionType): Code {
+  return code`\
+export function ${syntheticNamePrefix}fromRdf(resource: ${sharedImports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${sharedImports.Either}<Error, ${this.name}> {
+  return ${this.concreteMemberTypes.reduce(
+    (expression, memberType) => {
+      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as ${sharedImports.Either}<Error, ${this.name}>)`;
+      return expression !== null
+        ? code`${expression}.altLazy(() => ${memberTypeExpression})`
+        : memberTypeExpression;
+    },
+    null as Code | null,
+  )};
+}`;
 }
 
 export function rdfFunctionDeclarations(
   this: ObjectUnionType,
-): readonly FunctionDeclarationStructure[] {
+): readonly Code[] {
   if (!this.features.has("rdf")) {
     return [];
   }
@@ -45,53 +33,40 @@ export function rdfFunctionDeclarations(
   ];
 }
 
-function toRdfFunctionDeclaration(
-  this: ObjectUnionType,
-): FunctionDeclarationStructure {
+function toRdfFunctionDeclaration(this: ObjectUnionType): Code {
   const parametersVariable = "_parameters";
+  const returnType = () => {
+    let returnType: Code | undefined;
+    for (const memberType of this.concreteMemberTypes) {
+      const memberRdfjsResourceType = memberType.toRdfjsResourceType;
 
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}toRdf`,
-    parameters: [
-      {
-        name: this.thisVariable,
-        type: this.name,
-      },
-      {
-        hasQuestionToken: true,
-        name: parametersVariable,
-        type: "{ mutateGraph?: rdfjsResource.MutableResource.MutateGraph, resourceSet?: rdfjsResource.MutableResourceSet }",
-      },
-    ],
-    returnType: (() => {
-      let returnType: string | undefined;
-      for (const memberType of this.concreteMemberTypes) {
-        const memberRdfjsResourceType = memberType.toRdfjsResourceType;
-
-        if (typeof returnType === "undefined") {
-          returnType = memberRdfjsResourceType;
-        } else if (memberRdfjsResourceType !== returnType) {
-          return "rdfjsResource.Resource";
-        }
+      if (typeof returnType === "undefined") {
+        returnType = memberRdfjsResourceType;
+      } else if (!codeEquals(memberRdfjsResourceType, returnType)) {
+        return code`${sharedImports.Resource}`;
       }
-      // The types agree
-      return returnType!;
-    })(),
-    statements: this.concreteMemberTypes
-      .map((memberType) => {
-        let returnExpression: string;
-        switch (memberType.declarationType) {
-          case "class":
-            returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
-            break;
-          case "interface":
-            returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
-            break;
-        }
-        return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
-      })
-      .concat(`throw new Error("unrecognized type");`),
+    }
+    // The types agree
+    return returnType!;
   };
+
+  return code`\
+export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${parametersVariable}?: { mutateGraph?: ${sharedImports.MutableResource}.MutateGraph, resourceSet?: ${sharedImports.MutableResourceSet} }): ${returnType()} {
+${joinCode(
+  this.concreteMemberTypes
+    .map((memberType) => {
+      let returnExpression: Code;
+      switch (memberType.declarationType) {
+        case "class":
+          returnExpression = code`${this.thisVariable}.${syntheticNamePrefix}toRdf(${parametersVariable})`;
+          break;
+        case "interface":
+          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${parametersVariable})`;
+          break;
+      }
+      return code`if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
+    })
+    .concat(code`throw new Error("unrecognized type");`),
+)}
+}`;
 }
