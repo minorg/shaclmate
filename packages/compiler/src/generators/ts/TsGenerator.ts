@@ -40,19 +40,21 @@ export class TsGenerator implements Generator {
       objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
     });
 
-    // declarations.push(...
-    //   objectSetDeclarations({
-    //     objectTypes: objectTypesNameSorted,
-    //     objectUnionTypes:
-    //       objectUnionTypesNameSorted.concat(uberObjectUnionType),
-    //   }));
+    declarations.push(
+      ...objectSetDeclarations({
+        objectTypes: objectTypesNameSorted,
+        objectUnionTypes:
+          objectUnionTypesNameSorted.concat(uberObjectUnionType),
+      }),
+    );
 
-    //   declarations.push(...
-    // graphqlSchemaVariableStatement({
-    //   objectTypes: objectTypesNameSorted,
-    //   objectUnionTypes:
-    //     objectUnionTypesNameSorted.concat(uberObjectUnionType),
-    // }).toList());
+    declarations.push(
+      ...graphqlSchemaVariableStatement({
+        objectTypes: objectTypesNameSorted,
+        objectUnionTypes:
+          objectUnionTypesNameSorted.concat(uberObjectUnionType),
+      }).toList(),
+    );
 
     return joinCode(declarations).toString();
   }
