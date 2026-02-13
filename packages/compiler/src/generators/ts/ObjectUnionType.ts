@@ -236,7 +236,9 @@ export class ObjectUnionType extends AbstractDeclaredType {
   override jsonType(): AbstractDeclaredType.JsonType {
     return new AbstractDeclaredType.JsonType(
       joinCode(
-        this.memberTypes.map((memberType) => memberType.jsonType().name),
+        this.memberTypes.map(
+          (memberType) => code`${memberType.jsonType().name}`,
+        ),
         { on: "|" },
       ),
     );

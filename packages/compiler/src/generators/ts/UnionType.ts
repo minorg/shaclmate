@@ -356,7 +356,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
           // If every type shares a discriminant (e.g., RDF/JS "termType" or generated ObjectType "type"),
           // just join their names with "|"
           this.#name = code`(${joinCode(
-            this.memberTypes.map((memberType) => memberType.name),
+            this.memberTypes.map((memberType) => code`${memberType.name}`),
             { on: "|" },
           )})`;
           break;
@@ -364,7 +364,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
           // The memberType.name may include literal values, but they should still be unambiguous with other member types since the typeofs
           // of the different member types are known to be different.
           this.#name = code`(${joinCode(
-            this.memberTypes.map((memberType) => memberType.name),
+            this.memberTypes.map((memberType) => code`${memberType.name}`),
             { on: "|" },
           )})`;
           break;
