@@ -163,8 +163,8 @@ export namespace TypeDiscriminantProperty {
     }
 
     @Memoize()
-    get name(): Code {
-      return code`${this.values.map((name) => `"${name}"`).join(" | ")}`;
+    get name(): string {
+      return `${this.values.map((name) => `"${name}"`).join(" | ")}`;
     }
 
     @Memoize()

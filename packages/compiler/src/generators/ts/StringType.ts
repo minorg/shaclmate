@@ -20,11 +20,11 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly typeofs = NonEmptyList(["string" as const]);
 
   @Memoize()
-  override get name(): Code {
+  override get name(): string {
     if (this.primitiveIn.length > 0) {
-      return code`${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
+      return `${this.primitiveIn.map((value) => `"${value}"`).join(" | ")}`;
     }
-    return code`string`;
+    return `string`;
   }
 
   protected override get schemaObject() {

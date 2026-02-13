@@ -4,7 +4,7 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function isTypeFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
-  if (this.nameString === `${syntheticNamePrefix}Object`) {
+  if (this.name === `${syntheticNamePrefix}Object`) {
     return Maybe.empty();
   }
 

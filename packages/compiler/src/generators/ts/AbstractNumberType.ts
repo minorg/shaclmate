@@ -30,11 +30,11 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   }
 
   @Memoize()
-  override get name(): Code {
+  override get name(): string {
     if (this.primitiveIn.length > 0) {
-      return code`${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
+      return `${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
     }
-    return code`number`;
+    return "number";
   }
 
   @Memoize()

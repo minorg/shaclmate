@@ -22,7 +22,7 @@ export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { igno
   return [${joinCode(
     this.concreteMemberTypes.map(
       (memberType) =>
-        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.nameString)}${pascalCase(memberType.nameString)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.nameString)}\` : "${camelCase(this.nameString)}${pascalCase(memberType.nameString)}" }).concat()`,
+        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
     ),
     { on: ", " },
   )}];
@@ -32,7 +32,7 @@ export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?
 ${joinCode([
   code`let patterns: ${sharedSnippets.SparqlPattern}[] = [];`,
   code`\
-    const subject = parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${camelCase(this.nameString)}");
+    const subject = parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${camelCase(this.name)}");
     if (subject.termType === "Variable") {
       patterns = patterns.concat(${this.identifierType.sparqlWherePatternsFunction}({
           filter: parameters?.filter?.${syntheticNamePrefix}identifier,
@@ -41,14 +41,14 @@ ${joinCode([
           propertyPatterns: [],
           schema: ${this.identifierType.schema},
           valueVariable: subject,
-          variablePrefix: subject.termType === "Variable" ? subject.value : "${camelCase(this.nameString)}",
+          variablePrefix: subject.termType === "Variable" ? subject.value : "${camelCase(this.name)}",
       }));
     }`,
   code`patterns.push({ patterns: [${joinCode(
     this.concreteMemberTypes.map(
       (memberType) =>
         code`${{
-          patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.nameString)}${pascalCase(memberType.nameString)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.nameString)}\` : "${camelCase(this.nameString)}${pascalCase(memberType.nameString)}" }).concat()`,
+          patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
           type: '"group"',
         }}`,
     ),

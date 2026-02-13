@@ -1,5 +1,5 @@
 import type { Maybe } from "purify-ts";
-import { type Code, code, def } from "ts-poet";
+import type { Code } from "ts-poet";
 
 import type { TsFeature } from "../../enums/index.js";
 import { AbstractType } from "./AbstractType.js";
@@ -8,8 +8,7 @@ export abstract class AbstractDeclaredType extends AbstractType {
   abstract readonly declaration: Maybe<Code>;
   readonly export: boolean;
   readonly features: ReadonlySet<TsFeature>;
-  readonly name: Code;
-  readonly nameString: string;
+  readonly name: string;
 
   constructor({
     export_,
@@ -24,8 +23,7 @@ export abstract class AbstractDeclaredType extends AbstractType {
     super(superParameters);
     this.export = export_;
     this.features = features;
-    this.name = code`${def(name)}`;
-    this.nameString = name;
+    this.name = name;
   }
 }
 

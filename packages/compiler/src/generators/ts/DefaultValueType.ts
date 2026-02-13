@@ -69,7 +69,7 @@ export class DefaultValueType<
     return this.itemType.mutable;
   }
 
-  override get name(): Code {
+  override get name(): Code | string {
     return this.itemType.name;
   }
 

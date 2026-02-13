@@ -67,7 +67,7 @@ export function classDeclaration(this: ObjectType): Maybe<Code> {
 
   return Maybe.of(code`\
 ${this.comment.alt(this.label).map(tsComment).orDefault(code``)}
-${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.nameString)}${this.parentObjectTypes.length > 0 ? `extends ${this.parentObjectTypes[0].nameString}` : ""} {
+${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? `extends ${this.parentObjectTypes[0].name}` : ""} {
 ${joinCode([
   ...this.properties.flatMap((property) => property.declaration.toList()),
   constructorDeclaration.bind(this)(),

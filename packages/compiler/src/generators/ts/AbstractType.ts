@@ -74,7 +74,7 @@ export abstract class AbstractType {
   /**
    * TypeScript name of the type.
    */
-  abstract readonly name: Code;
+  abstract readonly name: Code | string;
 
   /**
    * TypeScript object describing this type, for runtime use.
@@ -263,7 +263,7 @@ export namespace AbstractType {
   export interface Conversion {
     readonly conversionExpression: (value: Code) => Code;
     readonly sourceTypeCheckExpression: (value: Code) => Code;
-    readonly sourceTypeName: Code;
+    readonly sourceTypeName: Code | string;
     readonly sourceTypeof: Typeof;
   }
 
@@ -306,10 +306,10 @@ export namespace AbstractType {
     /**
      * The name of the type when it's required i.e. -- so it should never include "| undefined".
      */
-    readonly requiredName: Code;
+    readonly requiredName: Code | string;
 
     constructor(
-      requiredName: Code,
+      requiredName: Code | string,
       parameters?: {
         optional: boolean;
       },
@@ -319,7 +319,7 @@ export namespace AbstractType {
     }
 
     @Memoize()
-    get name(): Code {
+    get name(): Code | string {
       return this.optional
         ? code`(${this.requiredName}) | undefined`
         : this.requiredName;

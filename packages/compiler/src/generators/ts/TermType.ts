@@ -2,7 +2,7 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
@@ -44,9 +44,10 @@ export class TermType<
 
   @Memoize()
   override get name(): Code {
-    return code`(${[...this.nodeKinds]
-      .map((nodeKind) => (sharedImports as any)[nodeKind])
-      .join(" | ")})`;
+    return code`(${joinCode(
+      [...this.nodeKinds].map((nodeKind) => (sharedImports as any)[nodeKind]),
+      { on: " | " },
+    )})`;
   }
 
   @Memoize()

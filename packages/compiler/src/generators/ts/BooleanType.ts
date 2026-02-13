@@ -37,11 +37,11 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
-  override get name(): Code {
+  override get name(): string {
     if (this.primitiveIn.length > 0) {
-      return code`${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
+      return `${this.primitiveIn.map((value) => value.toString()).join(" | ")}`;
     }
-    return code`boolean`;
+    return `boolean`;
   }
 
   protected override get schemaObject() {

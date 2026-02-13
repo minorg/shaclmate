@@ -13,7 +13,7 @@ export function graphqlTypeVariableStatement(
   return Maybe.of(code`\
 export const ${syntheticNamePrefix}GraphQL = new graphql.GraphQLUnionType(${{
     description: this.comment.map(JSON.stringify).extract(),
-    name: literalOf(this.nameString),
+    name: literalOf(this.name),
     resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,
     types: code`[${joinCode(
       this.concreteMemberTypes.map(

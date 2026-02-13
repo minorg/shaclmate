@@ -29,11 +29,11 @@ export class TsGenerator implements Generator {
     }
 
     const objectTypesNameSorted = objectTypesToposorted.toSorted(
-      (left, right) => left.nameString.localeCompare(right.nameString),
+      (left, right) => left.name.localeCompare(right.name),
     );
 
     const objectUnionTypesNameSorted = objectUnionTypesToposorted.toSorted(
-      (left, right) => left.nameString.localeCompare(right.nameString),
+      (left, right) => left.name.localeCompare(right.name),
     );
 
     const uberObjectUnionType = synthesizeUberObjectUnionType({

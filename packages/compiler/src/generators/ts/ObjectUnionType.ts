@@ -162,7 +162,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   get staticModuleName(): string {
-    return this.nameString;
+    return this.name;
   }
 
   @Memoize()
@@ -199,7 +199,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
   @Memoize()
   protected get thisVariable(): Code {
-    return code`_${camelCase(this.nameString)}`;
+    return code`_${camelCase(this.name)}`;
   }
 
   override fromJsonExpression({

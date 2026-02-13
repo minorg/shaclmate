@@ -98,8 +98,8 @@ export class MemberType {
     return this.delegate.name;
   }
 
-  get nameString() {
-    return this.delegate.nameString;
+  get name() {
+    return this.delegate.name;
   }
 
   get ownProperties() {

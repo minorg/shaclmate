@@ -47,7 +47,7 @@ export function sparqlFunctionDeclarations(this: ObjectType): readonly Code[] {
     return [];
   }
 
-  const subjectDefault = camelCase(this.nameString);
+  const subjectDefault = camelCase(this.name);
 
   const variables = {
     filter: code`parameters?.filter`,

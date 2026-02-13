@@ -195,7 +195,7 @@ export class ObjectType extends AbstractDeclaredType {
 
   @Memoize()
   get discriminantValue(): string {
-    return this.nameString;
+    return this.name;
   }
 
   @Memoize()
@@ -323,7 +323,7 @@ export class ObjectType extends AbstractDeclaredType {
       case "class":
         return code`this`;
       case "interface":
-        return code`_${camelCase(this.nameString)}`;
+        return code`_${camelCase(this.name)}`;
       default:
         throw new RangeError(this.declarationType);
     }

@@ -18,7 +18,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override readonly filterType = code`${localSnippets.DateFilter}`;
   abstract override readonly kind: "DateTimeType" | "DateType";
   override readonly mutable = false;
-  override readonly name = code`Date`;
+  override readonly name = "Date";
   override readonly schemaType = code`${localSnippets.DateSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${localSnippets.dateSparqlWherePatterns}`;
