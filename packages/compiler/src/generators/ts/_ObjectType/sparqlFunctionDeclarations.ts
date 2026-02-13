@@ -1,74 +1,75 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { camelCase } from "change-case";
-import { type FunctionDeclarationStructure, StructureKind } from "ts-morph";
+import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
-import { objectInitializer } from "../objectInitializer.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
+import { sharedImports } from "../sharedImports.js";
+import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
 
-// const sparqlInstancesOfPatternSnippetDeclaration = singleEntryRecord(
-//   `${syntheticNamePrefix}sparqlInstancesOfPattern`,
-//   `\
-// /**
-//  * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
-//  */
-// function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: rdfjs.NamedNode | rdfjs.Variable, subject: sparqljs.Triple["subject"] }): sparqljs.BgpPattern {
-//   return {
-//     triples: [
-//       {
-//         subject,
-//         predicate: {
-//           items: [
-//             $RdfVocabularies.rdf.type,
-//             {
-//               items: [$RdfVocabularies.rdfs.subClassOf],
-//               pathType: "*",
-//               type: "path",
-//             },
-//           ],
-//           pathType: "/",
-//           type: "path",
-//         },
-//         object: rdfType,
-//       },
-//     ],
-//     type: "bgp",
-//   };
-// }`,
-// );
+namespace localSnippets {
+  export const sparqlInstancesOfPattern = conditionalOutput(
+    `${syntheticNamePrefix}sparqlInstancesOfPattern`,
+    code`\
+/**
+ * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
+ */
+function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: ${sharedImports.NamedNode} | ${sharedImports.Variable}, subject: ${sharedImports.sparqljs}.Triple["subject"] }): ${sharedImports.sparqljs}.BgpPattern {
+  return {
+    triples: [
+      {
+        subject,
+        predicate: {
+          items: [
+            ${sharedSnippets.RdfVocabularies}.rdf.type,
+            {
+              items: [${sharedSnippets.RdfVocabularies}.rdfs.subClassOf],
+              pathType: "*",
+              type: "path",
+            },
+          ],
+          pathType: "/",
+          type: "path",
+        },
+        object: rdfType,
+      },
+    ],
+    type: "bgp",
+  };
+}`,
+  );
+}
 
-export function sparqlFunctionDeclarations(
-  this: ObjectType,
-): readonly FunctionDeclarationStructure[] {
+export function sparqlFunctionDeclarations(this: ObjectType): readonly Code[] {
   if (!this.features.has("sparql")) {
     return [];
   }
 
-  const subjectDefault = camelCase(this.name);
+  const subjectDefault = camelCase(this.nameString);
 
   const variables = {
-    filter: "parameters?.filter",
-    preferredLanguages: "parameters?.preferredLanguages",
-    focusIdentifier: "subject",
-    variablePrefix: `(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}"))`,
+    filter: code`parameters?.filter`,
+    preferredLanguages: code`parameters?.preferredLanguages`,
+    focusIdentifier: code`subject`,
+    variablePrefix: code`(parameters?.variablePrefix ?? (subject.termType === "Variable" ? subject.value : "${subjectDefault}"))`,
   };
-  const rdfClassVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
-  const rdfTypeVariable = `dataFactory.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
+  const rdfClassVariable = code`${sharedImports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfClass\`)`;
+  const rdfTypeVariable = code`${sharedImports.dataFactory}.variable!(\`\${${variables.variablePrefix}}RdfType\`)`;
 
   let patternsVariableDeclarationKeyword = "const";
   let triplesVariableDeclarationKeyword = "const";
-  const sparqlConstructTriplesStatements = [];
-  const sparqlWherePatternsStatements = [];
+  const sparqlConstructTriplesStatements: Code[] = [];
+  const sparqlWherePatternsStatements: Code[] = [];
 
   for (const parentObjectType of this.parentObjectTypes) {
     sparqlConstructTriplesStatements.push(
-      `triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${objectInitializer({ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`,
+      code`triples = triples.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{ ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix }}));`,
     );
     triplesVariableDeclarationKeyword = "let";
-    sparqlWherePatternsStatements.push(`\
-patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${objectInitializer({ filter: variables.filter, ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix })}));`);
+    sparqlWherePatternsStatements.push(code`\
+patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns(${{ filter: variables.filter, ignoreRdfType: true, subject: variables.focusIdentifier, variablePrefix: variables.variablePrefix }}));`);
     patternsVariableDeclarationKeyword = "let";
   }
 
@@ -77,7 +78,7 @@ patterns = patterns.concat(${parentObjectType.staticModuleName}.${syntheticNameP
       .toList()
       .concat(this.descendantFromRdfTypeVariables);
 
-    sparqlConstructTriplesStatements.push(`\
+    sparqlConstructTriplesStatements.push(code`\
 if (!parameters?.ignoreRdfType) {
   triples.push(
     { subject, predicate: ${rdfjsTermExpression(rdf.type)}, object: ${rdfTypeVariable} },
@@ -85,8 +86,8 @@ if (!parameters?.ignoreRdfType) {
   );
 }`);
     sparqlWherePatternsStatements.push(
-      `const rdfTypeVariable = ${rdfTypeVariable};`,
-      `\
+      code`const rdfTypeVariable = ${rdfTypeVariable};`,
+      code`\
 if (!parameters?.ignoreRdfType) {
   patterns.push(
     ${
@@ -95,13 +96,13 @@ if (!parameters?.ignoreRdfType) {
     {
       type: "values" as const,
       values: [${fromRdfTypeVariables.join(", ")}].map((identifier) => {
-        const valuePatternRow: sparqljs.ValuePatternRow = {};
-        valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as rdfjs.NamedNode;
+        const valuePatternRow: ${sharedImports.sparqljs}.ValuePatternRow = {};
+        valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as ${sharedImports.NamedNode};
         return valuePatternRow;
       }),
     },
-    ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: dataFactory.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
-        : `${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
+    ${localSnippets.sparqlInstancesOfPattern}({ rdfType: ${sharedImports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
+        : `${localSnippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
     }
     {
       triples: [
@@ -142,74 +143,60 @@ if (!parameters?.ignoreRdfType) {
       continue;
     }
 
-    for (const triple of property.sparqlConstructTriples({
-      variables,
-    })) {
-      sparqlConstructTriplesStatements.push(
-        `triples.push(${typeof triple === "object" ? objectInitializer(triple as unknown as Record<string, string>) : triple});`,
-      );
-    }
-
-    const { condition, patterns } = property.sparqlWherePatterns({ variables });
-    if (patterns.length > 0) {
-      const concatStatement = `patterns = patterns.concat(${patterns});`;
-      if (condition) {
-        sparqlWherePatternsStatements.push(
-          `if (${condition}) { ${concatStatement} }`,
+    property
+      .sparqlConstructTriples({
+        variables,
+      })
+      .ifJust((propertyTriples) => {
+        sparqlConstructTriplesStatements.push(
+          code`triples = triples.concat(${propertyTriples});`,
         );
-      } else {
-        sparqlWherePatternsStatements.push(concatStatement);
-      }
-      patternsVariableDeclarationKeyword = "let";
-    }
+        triplesVariableDeclarationKeyword = "let";
+      });
+
+    property
+      .sparqlWherePatterns({ variables })
+      .ifJust(({ condition, patterns }) => {
+        const concatStatement = code`patterns = patterns.concat(${patterns});`;
+        if (condition) {
+          sparqlWherePatternsStatements.push(
+            code`if (${condition}) { ${concatStatement} }`,
+          );
+        } else {
+          sparqlWherePatternsStatements.push(concatStatement);
+        }
+        patternsVariableDeclarationKeyword = "let";
+      });
   }
 
   return [
     sparqlConstructQueryFunctionDeclaration.bind(this)(),
     sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
-    {
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}sparqlConstructTriples`,
-      parameters: [
-        {
-          hasQuestionToken: true,
-          name: `${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters`,
-          type: '{ ignoreRdfType?: boolean; subject?: sparqljs.Triple["subject"], variablePrefix?: string }',
-        },
-      ],
-      returnType: "readonly sparqljs.Triple[]",
-      statements:
-        sparqlConstructTriplesStatements.length > 0
-          ? [
-              `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
-              `${triplesVariableDeclarationKeyword} triples: sparqljs.Triple[] = []`,
-              ...sparqlConstructTriplesStatements,
-              "return triples;",
-            ]
-          : ["return [];"],
-    },
-    {
-      isExported: true,
-      kind: StructureKind.Function,
-      name: `${syntheticNamePrefix}sparqlWherePatterns`,
-      parameters: [
-        {
-          hasQuestionToken: true,
-          name: `${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters`,
-          type: `{ filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }`,
-        },
-      ],
-      returnType: `readonly ${syntheticNamePrefix}SparqlPattern[]`,
-      statements:
-        sparqlWherePatternsStatements.length > 0
-          ? [
-              `${patternsVariableDeclarationKeyword} patterns: ${syntheticNamePrefix}SparqlPattern[] = [];`,
-              `const subject = parameters?.subject ?? dataFactory.variable!("${subjectDefault}");`,
-              ...sparqlWherePatternsStatements,
-              "return patterns;",
-            ]
-          : ["return [];"],
-    },
+    code`\
+export function ${syntheticNamePrefix}sparqlConstructTriples(${sparqlConstructTriplesStatements.length === 0 ? "_" : ""}parameters?: { ignoreRdfType?: boolean; subject?: ${sharedImports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${sharedImports}.Triple[] {
+${
+  sparqlConstructTriplesStatements.length > 0
+    ? joinCode([
+        code`const subject = parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${subjectDefault}");`,
+        code`${triplesVariableDeclarationKeyword} triples: sparqljs.Triple[] = []`,
+        ...sparqlConstructTriplesStatements,
+        code`return triples;`,
+      ])
+    : "return [];"
+}
+}`,
+    code`\
+export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly ${sharedSnippets.SparqlPattern}[] {
+${
+  sparqlWherePatternsStatements.length > 0
+    ? joinCode([
+        code`${patternsVariableDeclarationKeyword} patterns: ${sharedSnippets.SparqlPattern}[] = [];`,
+        code`const subject = parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${subjectDefault}");`,
+        ...sparqlWherePatternsStatements,
+        code`return patterns;`,
+      ])
+    : "return [];"
+}
+}`,
   ];
 }
