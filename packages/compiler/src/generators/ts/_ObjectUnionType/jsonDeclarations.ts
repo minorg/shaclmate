@@ -1,39 +1,24 @@
-import {
-  type FunctionDeclarationStructure,
-  StructureKind,
-  type TypeAliasDeclarationStructure,
-} from "ts-morph";
+import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
+import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-function fromJsonFunctionDeclaration(
-  this: ObjectUnionType,
-): FunctionDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}fromJson`,
-    parameters: [
-      {
-        name: "json",
-        type: "unknown",
-      },
-    ],
-    returnType: `purify.Either<zod.ZodError, ${this.name}>`,
-    statements: [
-      `return ${this.concreteMemberTypes.reduce((expression, memberType) => {
-        const memberTypeExpression = `(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as purify.Either<zod.ZodError, ${this.name}>)`;
-        return expression.length > 0
-          ? `${expression}.altLazy(() => ${memberTypeExpression})`
-          : memberTypeExpression;
-      }, "")};`,
-    ],
-  };
+function fromJsonFunctionDeclaration(this: ObjectUnionType): Code {
+  return code`\
+export function ${syntheticNamePrefix}fromJson(json: unknown): ${sharedImports.Either}<zod.ZodError, ${this.name}> {
+  return ${this.concreteMemberTypes.reduce(
+    (expression, memberType) => {
+      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as ${sharedImports.Either}<${sharedImports.z}.ZodError, ${this.name}>)`;
+      return expression !== null
+        ? code`${expression}.altLazy(() => ${memberTypeExpression})`
+        : memberTypeExpression;
+    },
+    null as Code | null,
+  )};
+}`;
 }
 
-export function jsonDeclarations(
-  this: ObjectUnionType,
-): readonly (FunctionDeclarationStructure | TypeAliasDeclarationStructure)[] {
+export function jsonDeclarations(this: ObjectUnionType): readonly Code[] {
   if (!this.features.has("json")) {
     return [];
   }
@@ -46,58 +31,43 @@ export function jsonDeclarations(
   ];
 }
 
-function jsonTypeAliasDeclaration(
-  this: ObjectUnionType,
-): TypeAliasDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.TypeAlias,
-    name: `${syntheticNamePrefix}Json`,
-    type: this.concreteMemberTypes
-      .map((memberType) => memberType.jsonType().name)
-      .join(" | "),
-  };
+function jsonTypeAliasDeclaration(this: ObjectUnionType): Code {
+  return code`export type ${syntheticNamePrefix}Json = ${joinCode(
+    this.concreteMemberTypes.map((memberType) => memberType.jsonType().name),
+    { on: " | " },
+  )}`;
 }
 
-function jsonZodSchemaFunctionDeclaration(
-  this: ObjectUnionType,
-): FunctionDeclarationStructure {
-  const variables = { zod: "zod" };
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}jsonZodSchema`,
-    statements: `return ${variables.zod}.discriminatedUnion("${this._discriminantProperty.name}", [${this.concreteMemberTypes.map((memberType) => memberType.jsonZodSchema({ context: "type", variables })).join(", ")}]);`,
-  };
+function jsonZodSchemaFunctionDeclaration(this: ObjectUnionType): Code {
+  return code`\
+export function ${syntheticNamePrefix}jsonZodSchema() {
+  return ${sharedImports.z}.discriminatedUnion("${this._discriminantProperty.name}", [${joinCode(
+    this.concreteMemberTypes.map((memberType) =>
+      memberType.jsonZodSchema({ context: "type" }),
+    ),
+    { on: ", " },
+  )}]);
+}`;
 }
 
-function toJsonFunctionDeclaration(
-  this: ObjectUnionType,
-): FunctionDeclarationStructure {
-  return {
-    isExported: true,
-    kind: StructureKind.Function,
-    name: `${syntheticNamePrefix}toJson`,
-    parameters: [
-      {
-        name: this.thisVariable,
-        type: this.name,
-      },
-    ],
-    returnType: this.jsonType().name,
-    statements: this.concreteMemberTypes
-      .map((memberType) => {
-        let returnExpression: string;
-        switch (memberType.declarationType) {
-          case "class":
-            returnExpression = `${this.thisVariable}.${syntheticNamePrefix}toJson()`;
-            break;
-          case "interface":
-            returnExpression = `${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
-            break;
-        }
-        return `if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
-      })
-      .concat(`throw new Error("unrecognized type");`),
-  };
+function toJsonFunctionDeclaration(this: ObjectUnionType): Code {
+  return code`\
+export function ${syntheticNamePrefix}toJson(${this.thisVariable}: ${this.name}): ${this.jsonType().name} {
+${joinCode(
+  this.concreteMemberTypes
+    .map((memberType) => {
+      let returnExpression: Code;
+      switch (memberType.declarationType) {
+        case "class":
+          returnExpression = code`${this.thisVariable}.${syntheticNamePrefix}toJson()`;
+          break;
+        case "interface":
+          returnExpression = code`${memberType.staticModuleName}.${syntheticNamePrefix}toJson(${this.thisVariable})`;
+          break;
+      }
+      return code`if (${memberType.staticModuleName}.is${memberType.name}(${this.thisVariable})) { return ${returnExpression}; }`;
+    })
+    .concat(code`throw new Error("unrecognized type");`),
+)}
+}`;
 }
