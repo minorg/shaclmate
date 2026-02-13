@@ -1,5 +1,4 @@
 import type { Code } from "ts-poet";
-import { forwardingObjectSetClassDeclaration } from "./forwardingObjectSetClassDeclaration.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
@@ -62,7 +61,6 @@ export function objectSetDeclarations({
       objectTypes,
       objectUnionTypes,
     }),
-    forwardingObjectSetClassDeclaration({ objectTypes, objectUnionTypes }),
   ];
 
   if (objectTypesWithRdfFeatureCount > 0) {
