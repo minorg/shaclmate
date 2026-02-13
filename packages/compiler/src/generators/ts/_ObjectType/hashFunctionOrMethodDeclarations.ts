@@ -1,13 +1,9 @@
 import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
+import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 const hasherVariable = code`_hasher`;
-
-export const Hasher = conditionalOutput(
-  `${syntheticNamePrefix}Hasher`,
-  code`{ update: (message: string | number[] | ArrayBuffer | Uint8Array) => void; }`,
-);
 
 export function hashFunctionOrMethodDeclarations(
   this: ObjectType,
@@ -95,11 +91,11 @@ export function hashFunctionOrMethodDeclarations(
 
   return [
     code`\
-${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${Hasher}(${parametersCode}): HasherT {
+${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${sharedSnippets.Hasher}}(${parametersCode}): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${Hasher}(${parametersCode}): HasherT {
+${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${sharedSnippets.Hasher}(${parametersCode}): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];

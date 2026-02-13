@@ -171,6 +171,11 @@ interface ${syntheticNamePrefix}TermFilter {
   }`,
   );
 
+  export const Hasher = conditionalOutput(
+    `${syntheticNamePrefix}Hasher`,
+    code`{ update: (message: string | number[] | ArrayBuffer | Uint8Array) => void; }`,
+  );
+
   export const IdentifierSet = conditionalOutput(
     `${syntheticNamePrefix}IdentifierSet`,
     code`\
