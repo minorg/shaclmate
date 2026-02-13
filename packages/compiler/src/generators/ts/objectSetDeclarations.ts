@@ -1,8 +1,4 @@
-import type {
-  ClassDeclarationStructure,
-  InterfaceDeclarationStructure,
-  ModuleDeclarationStructure,
-} from "ts-morph";
+import type { Code } from "ts-poet";
 import { forwardingObjectSetClassDeclaration } from "./forwardingObjectSetClassDeclaration.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
@@ -16,11 +12,7 @@ export function objectSetDeclarations({
 }: {
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
-}): readonly (
-  | ClassDeclarationStructure
-  | InterfaceDeclarationStructure
-  | ModuleDeclarationStructure
-)[] {
+}): readonly Code[] {
   const objectTypes = parameters.objectTypes.filter(
     (objectType) =>
       !objectType.abstract && !objectType.extern && !objectType.synthetic,
@@ -65,12 +57,8 @@ export function objectSetDeclarations({
     return [];
   }
 
-  const statements: (
-    | ClassDeclarationStructure
-    | InterfaceDeclarationStructure
-    | ModuleDeclarationStructure
-  )[] = [
-    ...objectSetInterfaceDeclaration({
+  const declarations: Code[] = [
+    objectSetInterfaceDeclaration({
       objectTypes,
       objectUnionTypes,
     }),
@@ -78,7 +66,7 @@ export function objectSetDeclarations({
   ];
 
   if (objectTypesWithRdfFeatureCount > 0) {
-    statements.push(
+    declarations.push(
       rdfjsDatasetObjectSetClassDeclaration({
         objectTypes,
         objectUnionTypes,
@@ -87,7 +75,7 @@ export function objectSetDeclarations({
   }
 
   if (objectTypesWithSparqlFeatureCount > 0) {
-    statements.push(
+    declarations.push(
       ...sparqlObjectSetClassDeclaration({
         objectTypes,
         objectUnionTypes,
@@ -95,5 +83,5 @@ export function objectSetDeclarations({
     );
   }
 
-  return statements;
+  return declarations;
 }
