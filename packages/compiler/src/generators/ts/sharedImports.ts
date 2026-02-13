@@ -3,6 +3,7 @@ import { imp } from "ts-poet";
 export const sharedImports = {
   BlankNode: imp("BlankNode@@rdfjs/types"),
   dataFactory: imp("DataFactory:dataFactory@n3"),
+  DatasetCore: imp("DatasetCore@@rdfjs/types"),
   DatasetFactory: imp("StoreFactory:DatasetFactory@n3"),
   Either: imp("Either@purify-ts"),
   GraphQLBoolean: imp("GraphQLBoolean@graphql"),
@@ -20,6 +21,7 @@ export const sharedImports = {
   NamedNode: imp("NamedNode@@rdfjs/types"),
   NonEmptyList: imp("NonEmptyList@purify-ts"),
   Resource: imp("Resource@rdfjs-resource"),
+  ResourceSet: imp("ResourceSet@rdfjs-resource"),
   sha256: imp("sha256@js-sha256"),
   sparqljs: imp("sparqljs*@sparqljs"),
   uuid: imp("uuid*@uuid"),

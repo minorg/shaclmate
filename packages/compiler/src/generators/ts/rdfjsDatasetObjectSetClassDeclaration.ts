@@ -1,16 +1,10 @@
 import type { Maybe } from "purify-ts";
-import {
-  type ClassDeclarationStructure,
-  type MethodDeclarationStructure,
-  type OptionalKind,
-  type ParameterDeclarationStructure,
-  Scope,
-  StructureKind,
-  type TypeParameterDeclarationStructure,
-} from "ts-morph";
+import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
+import { sharedImports } from "./sharedImports.js";
+import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
@@ -20,403 +14,313 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 }: {
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
-}): ClassDeclarationStructure {
+}): Code {
   const typeParameters = {
-    ObjectT: {
-      constraint: "{ readonly $identifier: ObjectIdentifierT }",
-      name: "ObjectT",
-    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
-    ObjectFilterT: {
-      constraint:
-        "{ readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }",
-      name: "ObjectFilterT",
-    },
-    ObjectIdentifierT: {
-      constraint: "rdfjs.BlankNode | rdfjs.NamedNode",
-      name: "ObjectIdentifierT",
-    } satisfies OptionalKind<TypeParameterDeclarationStructure>,
+    ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
+    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }`,
+    ObjectIdentifierT: code`ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}`,
   };
 
-  const objectTypeType = `\
+  const objectTypeType = code`\
 {
-  ${syntheticNamePrefix}filter: (filter: ${typeParameters.ObjectFilterT.name}, value: ${typeParameters.ObjectT.name}) => boolean;
-  ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => purify.Either<Error, ${typeParameters.ObjectT.name}>;
-  ${syntheticNamePrefix}fromRdfTypes: readonly rdfjs.NamedNode[]
+  ${syntheticNamePrefix}filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
+  ${syntheticNamePrefix}fromRdf: (resource: ${sharedImports.Resource}, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${sharedImports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}fromRdfTypes: readonly ${sharedImports.NamedNode}[]
 }`;
-  const reusableMethodParameters = {
-    query: {
-      hasQuestionToken: true,
-      name: "query",
-      type: `${syntheticNamePrefix}ObjectSet.Query<${typeParameters.ObjectFilterT.name}>`,
-    } satisfies OptionalKind<ParameterDeclarationStructure>,
-  };
 
-  const reusableMethods: MethodDeclarationStructure[] = [];
-  if (objectTypes.length > 0) {
-    reusableMethods.push({
-      kind: StructureKind.Method,
-      name: `${syntheticNamePrefix}objectsSync`,
-      parameters: [
-        {
-          name: "objectType",
-          type: objectTypeType,
-        },
-        reusableMethodParameters.query,
-      ],
-      returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
-      scope: Scope.Protected,
-      statements: [
-        `\
-const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return purify.Either.of([]); }
+  return code`\
+export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
+  protected readonly resourceSet: ${sharedImports.ResourceSet};
 
-let offset = query?.offset ?? 0;
-if (offset < 0) { offset = 0; }
-
-let resources: { object?: ${typeParameters.ObjectT.name}, resource: rdfjsResource.Resource }[];
-let sortResources: boolean;
-if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
-  resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
-  sortResources = false;
-} else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
-  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
-  resources = [];
-  sortResources = true;
-  for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-    for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
-      if (!identifierSet.has(resource.identifier)) {
-        identifierSet.add(resource.identifier);
-        resources.push({ resource });
-      }
-    }
-  }
-} else {
-  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
-  resources = [];
-  sortResources = true;
-  for (const quad of this.resourceSet.dataset) {
-    switch (quad.subject.termType) {
-      case "BlankNode":
-      case "NamedNode":
-        break;
-      default:
-        continue;
-    }
-
-    if (identifierSet.has(quad.subject)) {
-      continue;
-    }
-    identifierSet.add(quad.subject);
-    const resource = this.resourceSet.resource(quad.subject);
-    // Eagerly eliminate the majority of resources that won't match the object type
-    objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
-      resources.push({ object, resource });
-    });
-  }
-}
-
-if (sortResources) {
-  // Sort resources by identifier so limit and offset are deterministic
-  resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
-}
-
-let objectI = 0;
-const objects: ${typeParameters.ObjectT.name}[] = [];
-for (let { object, resource } of resources) {
-  if (!object) {
-    const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-    if (objectEither.isLeft()) {
-      return objectEither;
-    }
-    object = objectEither.unsafeCoerce();
+  constructor({ dataset: ${sharedImports.DatasetCore}) {
+    this.resourceSet = new ${sharedImports.ResourceSet}({ dataset });
   }
 
-  if (query?.filter && !objectType.${syntheticNamePrefix}filter(query.filter, object)) {
-    continue;
-  }
-
-  if (objectI++ >= offset) {
-    objects.push(object);
-    if (objects.length === limit) {
-      return purify.Either.of(objects);
-    }
-  }
-}
-return purify.Either.of(objects);`,
-      ],
-      typeParameters: [
-        typeParameters.ObjectT,
-        typeParameters.ObjectFilterT,
-        typeParameters.ObjectIdentifierT,
-      ],
-    });
-  }
-
-  if (objectUnionTypes.length > 0) {
-    reusableMethods.push({
-      kind: StructureKind.Method,
-      name: `${syntheticNamePrefix}objectUnionsSync`,
-      parameters: [
-        {
-          name: "objectTypes",
-          type: `readonly ${objectTypeType}[]`,
-        },
-        reusableMethodParameters.query,
-      ],
-      returnType: `purify.Either<Error, readonly ${typeParameters.ObjectT.name}[]>`,
-      scope: Scope.Protected,
-      statements: [
-        `\
-const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-if (limit <= 0) { return purify.Either.of([]); }
-
-let offset = query?.offset ?? 0;
-if (offset < 0) { offset = 0; }
-
-let resources: { object?: ${typeParameters.ObjectT.name}, objectType?: ${objectTypeType}, resource: rdfjsResource.Resource }[];
-let sortResources: boolean;
-if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
-  resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
-  sortResources = false;
-} else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
-  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
-  resources = [];
-  sortResources = true;
-  for (const objectType of objectTypes) {
-    for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
-      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
-        if (!identifierSet.has(resource.identifier)) {
-          identifierSet.add(resource.identifier);
-          resources.push({ objectType, resource });
-        }
-      }
-    }
-  }
-} else {
-  const identifierSet = new ${syntheticNamePrefix}IdentifierSet();
-  resources = [];
-  sortResources = true;
-  for (const quad of this.resourceSet.dataset) {
-    switch (quad.subject.termType) {
-      case "BlankNode":
-      case "NamedNode":
-        break;
-      default:
-        continue;
-    }
-
-    if (identifierSet.has(quad.subject)) {
-      continue;
-    }
-    identifierSet.add(quad.subject);
-    // Eagerly eliminate the majority of resources that won't match the object types
-    const resource = this.resourceSet.resource(quad.subject);
-    for (const objectType of objectTypes) {
-      if (objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
-        resources.push({ object, objectType, resource });
-      }).isRight()) {
-        break;
-      }
-    }
-  }
-}
-
-if (sortResources) {
-  // Sort resources by identifier so limit and offset are deterministic
-  resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
-}
-
-let objectI = 0;
-const objects: ${typeParameters.ObjectT.name}[] = [];
-for (let { object, objectType, resource } of resources) {
-  if (!object) {
-    let objectEither: purify.Either<Error, ${typeParameters.ObjectT.name}>;
-    if (objectType) {
-      objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-    } else {
-      objectEither = purify.Left(new Error("no object types"));
-      for (const tryObjectType of objectTypes) {
-        objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
-        if (objectEither.isRight()) {
-          objectType = tryObjectType;
-          break;
-        }
-      }
-    }
-    if (objectEither.isLeft()) {
-      return objectEither;
-    }
-    object = objectEither.unsafeCoerce();
-  }
-  if (!objectType) {
-    throw new Error("objectType should be set here");
-  }
-
-  if (query?.filter && !objectType.${syntheticNamePrefix}filter(query.filter, object)) {
-    continue;
-  }
-
-  if (objectI++ >= offset) {
-    objects.push(object);
-    if (objects.length === limit) {
-      return purify.Either.of(objects);
-    }
-  }
-}
-return purify.Either.of(objects);`,
-      ],
-      typeParameters: [
-        typeParameters.ObjectT,
-        typeParameters.ObjectFilterT,
-        typeParameters.ObjectIdentifierT,
-      ],
-    });
-  }
-
-  return {
-    ctors: [
-      {
-        parameters: [
-          {
-            name: "{ dataset }",
-            type: "{ dataset: rdfjs.DatasetCore }",
-          },
-        ],
-        statements: [
-          "this.resourceSet = new rdfjsResource.ResourceSet({ dataset })",
-        ],
-      },
-    ],
-    implements: [`${syntheticNamePrefix}ObjectSet`],
-    isExported: true,
-    kind: StructureKind.Class,
-    name: `${syntheticNamePrefix}RdfjsDatasetObjectSet`,
-    methods: [...objectTypes, ...objectUnionTypes]
-      .flatMap((objectType) => {
+  ${joinCode([
+    ...[...objectTypes, ...objectUnionTypes].flatMap(
+      (objectType): readonly Code[] => {
         if (!objectType.features.has("rdf")) {
-          return unsupportedObjectSetMethodDeclarations({
-            objectType,
-          });
+          return Object.values(
+            unsupportedObjectSetMethodDeclarations({
+              objectType,
+            }),
+          );
         }
 
         const methodSignatures = objectSetMethodSignatures({ objectType });
 
-        const delegatingMethods: MethodDeclarationStructure[] = [
-          {
-            ...methodSignatures.object,
-            isAsync: true,
-            kind: StructureKind.Method,
-            statements: [
-              `return this.${methodSignatures.object.name}Sync(identifier);`,
-            ],
-          },
-          {
-            ...methodSignatures.object,
-            kind: StructureKind.Method,
-            name: `${methodSignatures.object.name}Sync`,
-            returnType: `purify.Either<Error, ${objectType.name}>`,
-            statements: [
-              `return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);`,
-            ],
-          },
-          {
-            ...methodSignatures.objectIdentifiers,
-            isAsync: true,
-            kind: StructureKind.Method,
-            statements: [
-              `return this.${methodSignatures.objectIdentifiers.name}Sync(query);`,
-            ],
-          },
-          {
-            ...methodSignatures.objectIdentifiers,
-            kind: StructureKind.Method,
-            name: `${methodSignatures.objectIdentifiers.name}Sync`,
-            returnType: `purify.Either<Error, readonly ${objectType.identifierTypeAlias}[]>`,
-            statements: [
-              `return this.${methodSignatures.objects.name}Sync(${methodSignatures.objectIdentifiers.parameters!.map((parameter) => parameter.name).join(", ")}).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));`,
-            ],
-          },
-          {
-            ...methodSignatures.objects,
-            isAsync: true,
-            kind: StructureKind.Method,
-            statements: [
-              `return this.${methodSignatures.objects.name}Sync(query);`,
-            ],
-          },
-          {
-            ...methodSignatures.objectsCount,
-            isAsync: true,
-            kind: StructureKind.Method,
-            statements: [
-              `return this.${methodSignatures.objectsCount.name}Sync(query);`,
-            ],
-          },
-          {
-            ...methodSignatures.objectsCount,
-            kind: StructureKind.Method,
-            name: `${methodSignatures.objectsCount.name}Sync`,
-            returnType: "purify.Either<Error, number>",
-            statements: `return this.${methodSignatures.objects.name}Sync(${methodSignatures.objectIdentifiers.parameters!.map((parameter) => parameter.name).join(", ")}).map(objects => objects.length);`,
-          },
+        const delegatingMethods: Code[] = [
+          // object
+          code`\
+async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
+  return this.${methodSignatures.object.name}Sync(identifier);
+}`,
+          // objectSync
+          code`\
+${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${sharedImports.Either}<Error, ${objectType.name}> {
+  return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);
+}`,
+
+          // objectIdentifiers
+          code`\
+async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
+  return this.${methodSignatures.objectIdentifiers.name}Sync(query);
+}`,
+          // objectIdentifiersSync
+          code`\
+${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${sharedImports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]> {
+  return return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier);
+}`,
+
+          // objects
+          code`\
+async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
+  return this.${methodSignatures.objects.name}Sync(query);
+}`,
+          // objectsSync has per-object type logic, not just forwarding
+
+          // objectsCount
+          code`\
+async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.parameters}): ${methodSignatures.objectsCount.returnType} {
+  return this.${methodSignatures.objectsCount.name}Sync(query);
+}`,
+          // objectsCountSync
+          code`\
+${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parameters}): ${sharedImports.Either}<Error, number> {
+  return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
+}`,
         ];
 
         const runtimeObjectType = (
-          filterFunction: string,
+          filterFunction: Code,
           objectType: {
-            descendantFromRdfTypeVariables: readonly string[];
+            descendantFromRdfTypeVariables: readonly Code[];
             staticModuleName: string;
-            fromRdfTypeVariable: Maybe<string>;
+            fromRdfTypeVariable: Maybe<Code>;
           },
-        ) => {
+        ): Code => {
           const fromRdfTypes = objectType.fromRdfTypeVariable
             .toList()
             .concat(objectType.descendantFromRdfTypeVariables);
-          return `{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? `[${fromRdfTypes.join(", ")}]` : "[]"} }`;
+          return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? `[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
         };
 
         switch (objectType.kind) {
           case "ObjectType": {
-            return delegatingMethods.concat({
-              ...methodSignatures.objects,
-              kind: StructureKind.Method,
-              name: `${methodSignatures.objects.name}Sync`,
-              returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
-              statements: [
-                `return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(`${objectType.staticModuleName}.${syntheticNamePrefix}filter`, objectType)}, query);`,
-              ],
-            });
+            return delegatingMethods.concat(code`\
+export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${sharedImports.Either}<Error, readonly ${objectType.name}[]> {
+  return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(objectType.filterFunction, objectType)}, query);
+}`);
           }
           case "ObjectUnionType":
-            return delegatingMethods.concat({
-              ...methodSignatures.objects,
-              kind: StructureKind.Method,
-              name: `${methodSignatures.objects.name}Sync`,
-              returnType: `purify.Either<Error, readonly ${objectType.name}[]>`,
-              statements: [
-                `return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([${objectType.memberTypes
-                  .filter((memberType) => !memberType.abstract)
-                  .map((memberType) =>
-                    runtimeObjectType(
-                      `${objectType.staticModuleName}.${syntheticNamePrefix}filter`,
-                      memberType,
-                    ),
-                  )
-                  .join(", ")}], query);`,
-              ],
-            });
+            return delegatingMethods.concat(code`\
+export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${sharedImports.Either}<Error, readonly ${objectType.name}[]> {
+  return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([
+    ${joinCode(
+      objectType.memberTypes
+        .filter((memberType) => !memberType.abstract)
+        .map((memberType) =>
+          runtimeObjectType(objectType.filterFunction, memberType),
+        ),
+      { on: ", " },
+    )}
+  ], query);
+}`);
           default:
             objectType satisfies never;
             return [];
         }
-      })
-      .concat(reusableMethods),
-    properties: [
-      {
-        isReadonly: true,
-        name: "resourceSet",
-        type: "rdfjsResource.ResourceSet",
       },
-    ],
-  };
+    ),
+
+    ...(objectTypes.length > 0
+      ? [
+          code`\
+protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${sharedImports.Either}<Error, readonly ObjectT[]> {
+  const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+  if (limit <= 0) { return ${sharedImports.Either}.of([]); }
+
+  let offset = query?.offset ?? 0;
+  if (offset < 0) { offset = 0; }
+
+  let resources: { object?: ObjectT, resource: ${sharedImports.Resource} }[];
+  let sortResources: boolean;
+  if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
+    resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+    sortResources = false;
+  } else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
+    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    resources = [];
+    sortResources = true;
+    for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+      for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+        if (!identifierSet.has(resource.identifier)) {
+          identifierSet.add(resource.identifier);
+          resources.push({ resource });
+        }
+      }
+    }
+  } else {
+    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    resources = [];
+    sortResources = true;
+    for (const quad of this.resourceSet.dataset) {
+      switch (quad.subject.termType) {
+        case "BlankNode":
+        case "NamedNode":
+          break;
+        default:
+          continue;
+      }
+
+      if (identifierSet.has(quad.subject)) {
+        continue;
+      }
+      identifierSet.add(quad.subject);
+      const resource = this.resourceSet.resource(quad.subject);
+      // Eagerly eliminate the majority of resources that won't match the object type
+      objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
+        resources.push({ object, resource });
+      });
+    }
+  }
+
+  if (sortResources) {
+    // Sort resources by identifier so limit and offset are deterministic
+    resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
+  }
+
+  let objectI = 0;
+  const objects: ObjectT[] = [];
+  for (let { object, resource } of resources) {
+    if (!object) {
+      const objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+      if (objectEither.isLeft()) {
+        return objectEither;
+      }
+      object = objectEither.unsafeCoerce();
+    }
+
+    if (query?.filter && !objectType.${syntheticNamePrefix}filter(query.filter, object)) {
+      continue;
+    }
+
+    if (objectI++ >= offset) {
+      objects.push(object);
+      if (objects.length === limit) {
+        return ${sharedImports.Either}.of(objects);
+      }
+    }
+  }
+  return ${sharedImports.Either}.of(objects);
+  }`,
+        ]
+      : []),
+
+    ...(objectUnionTypes.length > 0
+      ? [
+          code`\
+protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${sharedImports.Either}<Error, readonly ObjectT[]> {
+  const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
+  if (limit <= 0) { return ${sharedImports.Either}.of([]); }
+
+  let offset = query?.offset ?? 0;
+  if (offset < 0) { offset = 0; }
+
+  let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${sharedImports.Resource} }[];
+  let sortResources: boolean;
+  if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
+    resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
+    sortResources = false;
+  } else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
+    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    resources = [];
+    sortResources = true;
+    for (const objectType of objectTypes) {
+      for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
+        for (const resource of this.resourceSet.instancesOf(fromRdfType)) {
+          if (!identifierSet.has(resource.identifier)) {
+            identifierSet.add(resource.identifier);
+            resources.push({ objectType, resource });
+          }
+        }
+      }
+    }
+  } else {
+    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    resources = [];
+    sortResources = true;
+    for (const quad of this.resourceSet.dataset) {
+      switch (quad.subject.termType) {
+        case "BlankNode":
+        case "NamedNode":
+          break;
+        default:
+          continue;
+      }
+
+      if (identifierSet.has(quad.subject)) {
+        continue;
+      }
+      identifierSet.add(quad.subject);
+      // Eagerly eliminate the majority of resources that won't match the object types
+      const resource = this.resourceSet.resource(quad.subject);
+      for (const objectType of objectTypes) {
+        if (objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this }).ifRight(object => {
+          resources.push({ object, objectType, resource });
+        }).isRight()) {
+          break;
+        }
+      }
+    }
+  }
+
+  if (sortResources) {
+    // Sort resources by identifier so limit and offset are deterministic
+    resources.sort((left, right) => left.resource.identifier.value.localeCompare(right.resource.identifier.value));
+  }
+
+  let objectI = 0;
+  const objects: ObjectT[] = [];
+  for (let { object, objectType, resource } of resources) {
+    if (!object) {
+      let objectEither: ${sharedImports.Either}<Error, ObjectT>;
+      if (objectType) {
+        objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+      } else {
+        objectEither = ${sharedImports.Left}(new Error("no object types"));
+        for (const tryObjectType of objectTypes) {
+          objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
+          if (objectEither.isRight()) {
+            objectType = tryObjectType;
+            break;
+          }
+        }
+      }
+      if (objectEither.isLeft()) {
+        return objectEither;
+      }
+      object = objectEither.unsafeCoerce();
+    }
+    if (!objectType) {
+      throw new Error("objectType should be set here");
+    }
+
+    if (query?.filter && !objectType.${syntheticNamePrefix}filter(query.filter, object)) {
+      continue;
+    }
+
+    if (objectI++ >= offset) {
+      objects.push(object);
+      if (objects.length === limit) {
+        return ${sharedImports.Either}.of(objects);
+      }
+    }
+  }
+  return ${sharedImports.Either}.of(objects);
+}`,
+        ]
+      : []),
+  ])}
+}`;
 }

@@ -3,6 +3,21 @@ import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { sharedImports } from "./sharedImports.js";
 
+function unsupportedObjectSetMethodDeclaration({
+  name,
+  parameters,
+  returnType,
+}: {
+  readonly name: string;
+  readonly parameters: Code;
+  readonly returnType: Code;
+}) {
+  return code`\
+async ${name}(${parameters}): ${returnType} {
+  return ${sharedImports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
+}`;
+}
+
 export function unsupportedObjectSetMethodDeclarations({
   objectType,
 }: {
@@ -13,28 +28,18 @@ export function unsupportedObjectSetMethodDeclarations({
     readonly name: string;
   };
 }): Readonly<Record<keyof ObjectType.ObjectSetMethodNames, Code>> {
-  const methodNames = objectType.objectSetMethodNames;
   const methodSignatures = objectSetMethodSignatures({
     objectType,
     parameterNamePrefix: "_",
   });
-
   return {
-    object: code`\
-async ${methodSignatures.object} {
-  return ${sharedImports.Left}(new Error("${methodNames.object}: not supported"));
-}`,
-    objectIdentifiers: code`\
-async ${methodSignatures.objectIdentifiers} {
-  return ${sharedImports.Left}(new Error("${methodNames.objectIdentifiers}: not supported"));
-}`,
-    objects: code`\
-async ${methodSignatures.objects} {
-  return ${sharedImports.Left}(new Error("${methodNames.objects}: not supported"));
-}`,
-    objectsCount: code`\
-async ${methodSignatures.objectsCount} {
-  return ${sharedImports.Left}(new Error("${methodNames.objectsCount}: not supported"));
-}`,
+    object: unsupportedObjectSetMethodDeclaration(methodSignatures.object),
+    objectIdentifiers: unsupportedObjectSetMethodDeclaration(
+      methodSignatures.objectIdentifiers,
+    ),
+    objects: unsupportedObjectSetMethodDeclaration(methodSignatures.objects),
+    objectsCount: unsupportedObjectSetMethodDeclaration(
+      methodSignatures.objectsCount,
+    ),
   };
 }

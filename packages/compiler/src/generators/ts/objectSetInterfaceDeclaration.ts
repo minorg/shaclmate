@@ -26,7 +26,10 @@ export interface ${syntheticNamePrefix}ObjectSet {
           ),
         ),
       )
-      .map((methodSignature) => code`${methodSignature};`),
+      .map(
+        (methodSignature) =>
+          code`${methodSignature.name}(${methodSignature.parameters}): ${methodSignature.returnType};`,
+      ),
   )}
 }
 
