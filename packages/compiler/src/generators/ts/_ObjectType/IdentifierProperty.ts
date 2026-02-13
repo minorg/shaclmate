@@ -72,7 +72,7 @@ export class IdentifierProperty extends AbstractProperty<
           codeEquals(typeName, conversion.sourceTypeName),
         )
       ) {
-        typeNames.push(conversion.sourceTypeName);
+        typeNames.push(code`${conversion.sourceTypeName}`);
       }
     }
 

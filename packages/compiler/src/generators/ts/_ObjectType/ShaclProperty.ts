@@ -59,7 +59,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           codeEquals(typeName, conversion.sourceTypeName),
         )
       ) {
-        typeNames.push(conversion.sourceTypeName);
+        typeNames.push(code`${conversion.sourceTypeName}`);
       }
     }
 

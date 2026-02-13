@@ -33,7 +33,9 @@ export function jsonDeclarations(this: ObjectUnionType): readonly Code[] {
 
 function jsonTypeAliasDeclaration(this: ObjectUnionType): Code {
   return code`export type ${syntheticNamePrefix}Json = ${joinCode(
-    this.concreteMemberTypes.map((memberType) => memberType.jsonType().name),
+    this.concreteMemberTypes.map(
+      (memberType) => code`${memberType.jsonType().name}`,
+    ),
     { on: " | " },
   )}`;
 }

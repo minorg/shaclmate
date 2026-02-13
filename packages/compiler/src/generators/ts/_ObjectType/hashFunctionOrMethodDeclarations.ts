@@ -1,4 +1,4 @@
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
