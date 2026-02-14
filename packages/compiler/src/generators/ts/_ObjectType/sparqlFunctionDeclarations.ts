@@ -178,7 +178,7 @@ ${
   sparqlConstructTriplesStatements.length > 0
     ? joinCode([
         code`const subject = parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${subjectDefault}");`,
-        code`${triplesVariableDeclarationKeyword} triples: sparqljs.Triple[] = []`,
+        code`${triplesVariableDeclarationKeyword} triples: ${sharedImports.sparqljs}.Triple[] = []`,
         ...sparqlConstructTriplesStatements,
         code`return triples;`,
       ])
@@ -186,7 +186,7 @@ ${
 }
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly ${sharedSnippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns(${sparqlWherePatternsStatements.length === 0 ? "_" : ""}parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${sharedImports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${sharedSnippets.SparqlPattern}[] {
 ${
   sparqlWherePatternsStatements.length > 0
     ? joinCode([

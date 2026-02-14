@@ -5,7 +5,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 function fromJsonFunctionDeclaration(this: ObjectUnionType): Code {
   return code`\
-export function ${syntheticNamePrefix}fromJson(json: unknown): ${sharedImports.Either}<zod.ZodError, ${this.name}> {
+export function ${syntheticNamePrefix}fromJson(json: unknown): ${sharedImports.Either}<${sharedImports.z}.ZodError, ${this.name}> {
   return ${this.concreteMemberTypes.reduce(
     (expression, memberType) => {
       const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as ${sharedImports.Either}<${sharedImports.z}.ZodError, ${this.name}>)`;

@@ -81,9 +81,9 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
     predicate: ${sharedImports.NamedNode};
     preferredLanguages?: readonly string[];
     values: ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>
-  }): purify.Either<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>> {
+  }): ${sharedImports.Either}<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return purify.Either.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(values);
+    return ${sharedImports.Either}.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(values);
   }
 
   return values.chainMap(value => value.toLiteral()).map(literalValues => {

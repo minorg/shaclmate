@@ -22,7 +22,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
   elementEquals: (left: T, right: T) => boolean | ${sharedSnippets.EqualsResult},
 ): ${sharedSnippets.EqualsResult} {
   if (leftArray.length !== rightArray.length) {
-    return purify.Left({
+    return ${sharedImports.Left}({
       left: leftArray,
       right: rightArray,
       type: "ArrayLength",
@@ -60,7 +60,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 
     if (rightUnequals.length === rightArray.length) {
       // All right elements were unequal to the left element
-      return purify.Left({
+      return ${sharedImports.Left}({
         left: {
           array: leftArray,
           element: leftElement,

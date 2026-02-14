@@ -145,7 +145,7 @@ export class LazyObjectOptionType extends Super {
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(purify.Left(new Error(\`unable to resolve identifier \${rdfjsResource.Resource.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${sharedImports.Left}(new Error(\`unable to resolve identifier \${${sharedImports.Resource}.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
   }
 
   override fromRdfExpression(

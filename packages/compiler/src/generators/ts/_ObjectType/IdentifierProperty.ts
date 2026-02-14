@@ -363,7 +363,7 @@ export class IdentifierProperty extends AbstractProperty<
           let mintIdentifier: string;
           switch (identifierMintingStrategy) {
             case "blankNode":
-              mintIdentifier = "dataFactory.blankNode()";
+              mintIdentifier = "${sharedImports.dataFactory}.blankNode()";
               break;
             case "sha256":
               logger.warn(
@@ -373,7 +373,7 @@ export class IdentifierProperty extends AbstractProperty<
               );
               return;
             case "uuidv4":
-              mintIdentifier = `dataFactory.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
+              mintIdentifier = `${sharedImports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
               break;
           }
           conversionBranches.push(

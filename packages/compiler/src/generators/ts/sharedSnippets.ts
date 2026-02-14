@@ -718,9 +718,9 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
 }`,
   );
 
-  // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends purify.Either<infer L, any> ? L : never`;
+  // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends ${sharedImports.Either}<infer L, any> ? L : never`;
   export const UnwrapR = conditionalOutput(
     `${syntheticNamePrefix}UnwrapR`,
-    code`type ${syntheticNamePrefix}UnwrapR<T> = T extends purify.Either<any, infer R> ? R : never`,
+    code`type ${syntheticNamePrefix}UnwrapR<T> = T extends ${sharedImports.Either}<any, infer R> ? R : never`,
   );
 }

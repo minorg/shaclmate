@@ -18,17 +18,17 @@ export function sparqlFunctionDeclarations(
     sparqlConstructQueryFunctionDeclaration.bind(this)(),
     sparqlConstructQueryStringFunctionDeclaration.bind(this)(),
     code`\
-export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean, subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly ${sharedImports.sparqljs}.Triple[] {
+export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { ignoreRdfType?: boolean, subject?: ${sharedImports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${sharedImports.sparqljs}.Triple[] {
   return [${joinCode(
     this.concreteMemberTypes.map(
       (memberType) =>
-        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+        code`...${memberType.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ subject: parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
     ),
     { on: ", " },
   )}];
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: sparqljs.Triple["subject"], variablePrefix?: string }): readonly ${sharedSnippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${sharedImports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${sharedSnippets.SparqlPattern}[] {
 ${joinCode([
   code`let patterns: ${sharedSnippets.SparqlPattern}[] = [];`,
   code`\
@@ -48,7 +48,7 @@ ${joinCode([
     this.concreteMemberTypes.map(
       (memberType) =>
         code`${{
-          patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? dataFactory.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+          patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? ${sharedImports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
           type: '"group"',
         }}`,
     ),

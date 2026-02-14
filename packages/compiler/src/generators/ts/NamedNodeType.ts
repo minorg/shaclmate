@@ -138,7 +138,7 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     let valueToExpression = "value.toIri()";
     if (this.in_.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return purify.Either.of${eitherTypeParameters}(iri as rdfjs.NamedNode<"${iri.value}">);`).join(" ")} default: return purify.Left${eitherTypeParameters}(new rdfjsResource.Resource.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
+      valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return ${sharedImports.Either}.of${eitherTypeParameters}(iri as ${sharedImports.NamedNode}<"${iri.value}">);`).join(" ")} default: return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
     }
 
     return {

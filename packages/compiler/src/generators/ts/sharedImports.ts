@@ -18,6 +18,7 @@ export const sharedImports = {
   GraphQLObjectType: imp("GraphQLObjectType@graphql"),
   GraphQLSchema: imp("GraphQLSchema@graphql"),
   GraphQLString: imp("GraphQLString@graphql"),
+  GraphQLUnionType: imp("GraphQLUnionType@graphql"),
   Left: imp("Left@purify-ts"),
   Literal: imp("Literal@@rdfjs/types"),
   Maybe: imp("Maybe@purify-ts"),

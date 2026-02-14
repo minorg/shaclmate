@@ -304,7 +304,7 @@ ${joinCode(staticModuleDeclarations)}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${sharedImports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? "<rdfjs.NamedNode>" : ""}`;
+    return code`${sharedImports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? "<${sharedImports.NamedNode}>" : ""}`;
   }
 
   @Memoize()

@@ -35,7 +35,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
     switch (this.objectType.declarationType) {
       case "class":
         return Maybe.of(
-          code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer}` : ";"}`,
+          code`${this.abstract ? "abstract " : ""}${this.override ? "override " : ""}readonly ${this.name}: ${this.type.name}${!this.abstract ? code` = ${this.initializer};` : ";"}`,
         );
       case "interface":
         return Maybe.of(code`readonly ${this.name}: ${this.type.name};`);

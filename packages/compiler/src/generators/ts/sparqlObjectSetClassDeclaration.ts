@@ -18,7 +18,7 @@ export function sparqlObjectSetClassDeclaration({
 
   const parameters = {
     constructObjectType: code`objectType: {\
-  ${syntheticNamePrefix}fromRdf: (resource: rdfjsResource.Resource, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${sharedImports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}fromRdf: (resource: ${sharedImports.Resource}, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${sharedImports.Either}<Error, ObjectT>;
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${sharedImports.sparqljs}.Triple["subject"]; } & Omit<${sharedImports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${sharedImports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
@@ -168,7 +168,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
           type: "values" as const,
           values: identifiers.map((identifier) => {
             const valuePatternRow: ${sharedImports.sparqljs}.ValuePatternRow = {};
-            valuePatternRow["?object"] = identifier as rdfjs.NamedNode;
+            valuePatternRow["?object"] = identifier as ${sharedImports.NamedNode};
             return valuePatternRow;
           }),
         }]

@@ -236,7 +236,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           ...variables,
           ignoreRdfType: true,
           predicate: this.predicate,
-          resourceValues: code`purify.Either.of<Error, rdfjsResource.Resource.Values<rdfjsResource.Resource.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
+          resourceValues: code`${sharedImports.Either}.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
         },
       })}.chain(values => values.head())`,
     );
@@ -291,7 +291,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["sparqlWherePatterns"]
   > {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = `dataFactory.variable!(${valueString})`;
+    const valueVariable = code`${sharedImports.dataFactory}.variable!(${valueString})`;
     return Maybe.of({
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: this.filterProperty
