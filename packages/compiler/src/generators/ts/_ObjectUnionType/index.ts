@@ -10,3 +10,4 @@ export * from "./MemberType.js";
 export * from "./rdfFunctionDeclarations.js";
 export * from "./schemaVariableStatement.js";
 export * from "./sparqlFunctionDeclarations.js";
+export * from "./typeAliasDeclaration.js";

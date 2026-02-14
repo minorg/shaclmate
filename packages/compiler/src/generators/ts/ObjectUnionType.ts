@@ -69,39 +69,33 @@ export class ObjectUnionType extends AbstractDeclaredType {
     ];
   }
 
-  get declaration(): Maybe<Code> {
-    throw new Error("not implemented");
-    // const declarations: (
-    //   | ModuleDeclarationStructure
-    //   | TypeAliasDeclarationStructure
-    // )[] = [this.typeAliasDeclaration];
+  override get declaration(): Maybe<Code> {
+    const declarations: Code[] = [
+      _ObjectUnionType.typeAliasDeclaration.bind(this)(),
+    ];
 
-    // const staticModuleStatements: StaticModuleStatementStructure[] = [
-    //   ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
-    //   _ObjectUnionType.filterFunctionDeclaration.bind(this)(),
-    //   _ObjectUnionType.filterTypeDeclaration.bind(this)(),
-    //   ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
-    //   ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
-    //   ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
-    //   ..._ObjectUnionType.jsonDeclarations.bind(this)(),
-    //   ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
-    //   _ObjectUnionType.schemaVariableStatement.bind(this)(),
-    //   ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
-    //   ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
-    // ];
+    const staticModuleDeclarations: Code[] = [
+      ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
+      _ObjectUnionType.filterFunctionDeclaration.bind(this)(),
+      _ObjectUnionType.filterTypeDeclaration.bind(this)(),
+      ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
+      ..._ObjectUnionType.jsonDeclarations.bind(this)(),
+      ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
+      _ObjectUnionType.schemaVariableStatement.bind(this)(),
+      ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
+      ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
+    ];
 
-    // if (staticModuleStatements.length > 0) {
-    //   declarations.push({
-    //     isExported: this.export,
-    //     kind: StructureKind.Module,
-    //     name: this.staticModuleName,
-    //     statements: staticModuleStatements.sort(
-    //       StaticModuleStatementStructure.compare,
-    //     ),
-    //   });
-    // }
+    if (staticModuleDeclarations.length > 0) {
+      declarations.push(code`\
+export module ${this.staticModuleName} {
+${joinCode(staticModuleDeclarations)}
+}`);
+    }
 
-    // return declarations;
+    return Maybe.of(joinCode(declarations));
   }
 
   @Memoize()

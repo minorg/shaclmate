@@ -3,7 +3,7 @@ import type { NamedNode } from "@rdfjs/types";
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type {
   IdentifierMintingStrategy,
@@ -123,50 +123,40 @@ export class ObjectType extends AbstractDeclaredType {
     ];
   }
 
-  get declaration(): Maybe<Code> {
+  override get declaration(): Maybe<Code> {
     if (this.extern) {
       return Maybe.empty();
     }
 
-    throw new Error("not implemented");
+    const declarations: Code[] = [
+      ..._ObjectType.classDeclaration.bind(this)().toList(),
+      ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
+    ];
 
-    // const declarations: (
-    //   | ClassDeclarationStructure
-    //   | InterfaceDeclarationStructure
-    //   | ModuleDeclarationStructure
-    // )[] = [
-    //   ..._ObjectType.classDeclaration.bind(this)().toList(),
-    //   ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
-    // ];
+    const staticModuleDeclarations: Code[] = [
+      ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
+      ..._ObjectType.equalsFunctionOrMethodDeclaration.bind(this)().toList(),
+      _ObjectType.filterFunctionDeclaration.bind(this)(),
+      _ObjectType.filterTypeDeclaration.bind(this)(),
+      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
+      ..._ObjectType.identifierTypeDeclarations.bind(this)(),
+      ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
+      ..._ObjectType.hashFunctionOrMethodDeclarations.bind(this)(),
+      _ObjectType.isTypeFunctionDeclaration.bind(this)(),
+      ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
+      _ObjectType.schemaVariableStatement.bind(this)(),
+      ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
+    ];
 
-    // const staticModuleStatements: StaticModuleStatementStructure[] = [
-    //   ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
-    //   ..._ObjectType.equalsFunctionDeclaration.bind(this)().toList(),
-    //   _ObjectType.filterFunctionDeclaration.bind(this)(),
-    //   _ObjectType.filterTypeDeclaration.bind(this)(),
-    //   ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
-    //   ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
-    //   ..._ObjectType.identifierTypeDeclarations.bind(this)(),
-    //   ..._ObjectType.jsonDeclarations.bind(this)(),
-    //   ..._ObjectType.hashFunctionDeclarations.bind(this)(),
-    //   _ObjectType.isTypeFunctionDeclaration.bind(this)(),
-    //   ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-    //   _ObjectType.schemaVariableStatement.bind(this)(),
-    //   ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
-    // ];
+    if (staticModuleDeclarations.length > 0) {
+      declarations.push(code`\
+export module ${this.staticModuleName} {
+${joinCode(staticModuleDeclarations)}
+}`);
+    }
 
-    // if (staticModuleStatements.length > 0) {
-    //   declarations.push({
-    //     isExported: this.export,
-    //     kind: StructureKind.Module,
-    //     name: this.staticModuleName,
-    //     statements: staticModuleStatements.sort(
-    //       StaticModuleStatementStructure.compare,
-    //     ),
-    //   });
-    // }
-
-    // return declarations;
+    return Maybe.of(joinCode(declarations));
   }
 
   @Memoize()
