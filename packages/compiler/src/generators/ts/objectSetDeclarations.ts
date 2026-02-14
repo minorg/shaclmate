@@ -74,7 +74,7 @@ export function objectSetDeclarations({
 
   if (objectTypesWithSparqlFeatureCount > 0) {
     declarations.push(
-      ...sparqlObjectSetClassDeclaration({
+      sparqlObjectSetClassDeclaration({
         objectTypes,
         objectUnionTypes,
       }),

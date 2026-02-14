@@ -17,7 +17,7 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 }): Code {
   const typeParameters = {
     ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
-    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (rdfjs.BlankNode | rdfjs.NamedNode)[] } }`,
+    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${sharedImports.BlankNode} | ${sharedImports.NamedNode})[] } }`,
     ObjectIdentifierT: code`ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}`,
   };
 
