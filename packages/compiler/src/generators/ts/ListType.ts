@@ -3,7 +3,7 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import type { Maybe } from "purify-ts";
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -22,127 +22,9 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
 import type { UnionType } from "./UnionType.js";
-
-namespace localSnippets {
-  export const listSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}listSparqlWherePatterns`,
-    code`\
-function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.SparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
-  return (parameters) => {
-    // Need to handle two cases:
-    // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
-    // (2) (?s, ?p, ?list) (?list, rdf:first, "element") (?list, rdf:rest, rdf:nil) etc. where list binds to the head of a list
-    // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
-
-    const listVariable = parameters.valueVariable;
-    const patterns: ${snippets.SparqlPattern}[] = [];
-    const variable = (suffix: string) => ${imports.dataFactory}.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
-    const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
-
-    {
-      // ?list rdf:first ?item0
-      const item0Variable = variable("Item0");
-      patterns.push(
-        {
-          triples: [
-            {
-              subject: listVariable,
-              predicate: ${rdfjsTermExpression(rdf.first)},
-              object: item0Variable,
-            },
-          ],
-          type: "bgp",
-        },
-        ...itemSparqlWherePatternsFunction({
-          filter: parameters.filter,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: parameters.schema.item,
-          valueVariable: item0Variable,
-          variablePrefix: variablePrefix("Item0"),
-        }),
-      );
-    }
-
-    {
-      // ?list rdf:rest ?rest0
-      const rest0Variable = variable("Rest0");
-      patterns.push({
-        triples: [
-          {
-            subject: listVariable,
-            predicate: ${rdfjsTermExpression(rdf.rest)},
-            object: rest0Variable,
-          },
-        ],
-        type: "bgp",
-      });
-    }
-
-    const optionalPatterns: ${snippets.SparqlPattern}[] = [];
-    
-    const restNVariable = variable("RestN");
-    // ?list rdf:rest+ ?restN
-    optionalPatterns.push({
-      type: "bgp",
-      triples: [
-        {
-          subject: listVariable,
-          predicate: { type: "path", pathType: "*", items: [${rdfjsTermExpression(rdf.rest)}] },
-          object: restNVariable,
-        },
-      ],
-    });
-
-    {
-      // ?rest rdf:first ?itemN
-      const itemNVariable = variable("ItemN");
-      optionalPatterns.push(
-        {
-          triples: [
-            {
-              subject: restNVariable,
-              predicate: ${rdfjsTermExpression(rdf.first)},
-              object: itemNVariable,
-            },
-          ],
-          type: "bgp"
-        },
-        ...itemSparqlWherePatternsFunction({
-          filter: parameters.filter,
-          preferredLanguages: parameters.preferredLanguages,
-          propertyPatterns: [],
-          schema: parameters.schema.item,
-          valueVariable: itemNVariable,
-          variablePrefix: variablePrefix("ItemN"),
-        }),
-      );
-    }
-
-    // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
-    optionalPatterns.push({
-      triples: [
-        {
-          subject: restNVariable,
-          predicate: ${rdfjsTermExpression(rdf.rest)},
-          object: variable("RestNBasic"),
-        },
-      ],
-      type: "bgp"
-    });
-
-    patterns.push({ type: "optional", patterns: optionalPatterns });
-
-    // Having an optional around everything handles the rdf:nil case
-    return [...parameters.propertyPatterns, { patterns, type: "optional" }];
-  }
-}`,
-  );
-}
 
 export class ListType<
   ItemTypeT extends ListType.ItemType,
@@ -173,7 +55,7 @@ export class ListType<
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`${localSnippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+    return code`${snippets.listSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromRdfExpression({

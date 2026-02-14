@@ -25,6 +25,9 @@ import { snippets_filterBlankNode } from "./_snippets/snippets_filterBlankNode.j
 import { snippets_filterBoolean } from "./_snippets/snippets_filterBoolean.js";
 import { snippets_filterDate } from "./_snippets/snippets_filterDate.js";
 import { snippets_filterIdentifier } from "./_snippets/snippets_filterIdentifier.js";
+import { snippets_filterLiteral } from "./_snippets/snippets_filterLiteral.js";
+import { snippets_filterMaybe } from "./_snippets/snippets_filterMaybe.js";
+import { snippets_filterNamedNode } from "./_snippets/snippets_filterNamedNode.js";
 import { snippets_filterNumber } from "./_snippets/snippets_filterNumber.js";
 import { snippets_filterString } from "./_snippets/snippets_filterString.js";
 import { snippets_filterTerm } from "./_snippets/snippets_filterTerm.js";
@@ -39,10 +42,24 @@ import { snippets_isReadonlyBooleanArray } from "./_snippets/snippets_isReadonly
 import { snippets_isReadonlyNumberArray } from "./_snippets/snippets_isReadonlyNumberArray.js";
 import { snippets_isReadonlyObjectArray } from "./_snippets/snippets_isReadonlyObjectArray.js";
 import { snippets_isReadonlyStringArray } from "./_snippets/snippets_isReadonlyStringArray.js";
+import { snippets_LazyObject } from "./_snippets/snippets_LazyObject.js";
+import { snippets_LazyObjectOption } from "./_snippets/snippets_LazyObjectOption.js";
+import { snippets_LazyObjectSet } from "./_snippets/snippets_LazyObjectSet.js";
+import { snippets_LiteralFilter } from "./_snippets/snippets_LiteralFilter.js";
+import { snippets_LiteralSchema } from "./_snippets/snippets_LiteralSchema.js";
 import { snippets_liftSparqlPatterns } from "./_snippets/snippets_liftSparqlPatterns.js";
+import { snippets_listSparqlWherePatterns } from "./_snippets/snippets_listSparqlWherePatterns.js";
 import { snippets_literalSchemaSparqlPatterns } from "./_snippets/snippets_literalSchemaSparqlPatterns.js";
+import { snippets_literalSparqlWherePatterns } from "./_snippets/snippets_literalSparqlWherePatterns.js";
+import { snippets_MaybeFilter } from "./_snippets/snippets_MaybeFilter.js";
+import { snippets_MaybeSchema } from "./_snippets/snippets_MaybeSchema.js";
+import { snippets_maybeEquals } from "./_snippets/snippets_maybeEquals.js";
+import { snippets_maybeSparqlWherePatterns } from "./_snippets/snippets_maybeSparqlWherePatterns.js";
+import { snippets_NamedNodeFilter } from "./_snippets/snippets_NamedNodeFilter.js";
+import { snippets_NamedNodeSchema } from "./_snippets/snippets_NamedNodeSchema.js";
 import { snippets_NumberFilter } from "./_snippets/snippets_NumberFilter.js";
 import { snippets_NumberSchema } from "./_snippets/snippets_NumberSchema.js";
+import { snippets_namedNodeSparqlWherePatterns } from "./_snippets/snippets_namedNodeSparqlWherePatterns.js";
 import { snippets_normalizeSparqlWherePatterns } from "./_snippets/snippets_normalizeSparqlWherePatterns.js";
 import { snippets_numberSparqlWherePatterns } from "./_snippets/snippets_numberSparqlWherePatterns.js";
 import { snippets_PropertiesFromRdfParameters } from "./_snippets/snippets_PropertiesFromRdfParameters.js";
@@ -95,6 +112,9 @@ export const snippets = {
   filterBoolean: snippets_filterBoolean,
   filterDate: snippets_filterDate,
   filterIdentifier: snippets_filterIdentifier,
+  filterLiteral: snippets_filterLiteral,
+  filterMaybe: snippets_filterMaybe,
+  filterNamedNode: snippets_filterNamedNode,
   filterNumber: snippets_filterNumber,
   filterString: snippets_filterString,
   filterTerm: snippets_filterTerm,
@@ -110,8 +130,22 @@ export const snippets = {
   isReadonlyNumberArray: snippets_isReadonlyNumberArray,
   isReadonlyObjectArray: snippets_isReadonlyObjectArray,
   isReadonlyStringArray: snippets_isReadonlyStringArray,
+  LazyObject: snippets_LazyObject,
+  LazyObjectOption: snippets_LazyObjectOption,
+  LazyObjectSet: snippets_LazyObjectSet,
   liftSparqlPatterns: snippets_liftSparqlPatterns,
+  listSparqlWherePatterns: snippets_listSparqlWherePatterns,
+  LiteralFilter: snippets_LiteralFilter,
+  LiteralSchema: snippets_LiteralSchema,
   literalSchemaSparqlPatterns: snippets_literalSchemaSparqlPatterns,
+  literalSparqlWherePatterns: snippets_literalSparqlWherePatterns,
+  maybeEquals: snippets_maybeEquals,
+  MaybeFilter: snippets_MaybeFilter,
+  MaybeSchema: snippets_MaybeSchema,
+  maybeSparqlWherePatterns: snippets_maybeSparqlWherePatterns,
+  NamedNodeFilter: snippets_NamedNodeFilter,
+  NamedNodeSchema: snippets_NamedNodeSchema,
+  namedNodeSparqlWherePatterns: snippets_namedNodeSparqlWherePatterns,
   normalizeSparqlWherePatterns: snippets_normalizeSparqlWherePatterns,
   NumberFilter: snippets_NumberFilter,
   NumberSchema: snippets_NumberSchema,

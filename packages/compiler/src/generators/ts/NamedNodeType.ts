@@ -1,21 +1,21 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets } from "./snippets.js";
 
 export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
-  override readonly filterFunction = code`${localSnippets.filterNamedNode}`;
-  override readonly filterType = code`${localSnippets.NamedNodeFilter}`;
+  override readonly filterFunction = code`${snippets.filterNamedNode}`;
+  override readonly filterType = code`${snippets.NamedNodeFilter}`;
   readonly kind = "NamedNodeType";
-  override readonly schemaType = code`${localSnippets.NamedNodeSchema}`;
+  override readonly schemaType = code`${snippets.NamedNodeSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${localSnippets.namedNodeSparqlWherePatterns}`;
+    code`${snippets.namedNodeSparqlWherePatterns}`;
 
   constructor(
     parameters: Omit<
@@ -146,52 +146,6 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const NamedNodeFilter = conditionalOutput(
-    `${syntheticNamePrefix}NamedNodeFilter`,
-    code`\
-interface ${syntheticNamePrefix}NamedNodeFilter {
-  readonly in?: readonly ${imports.NamedNode}[];
-}`,
-  );
-
-  export const NamedNodeSchema = conditionalOutput(
-    `${syntheticNamePrefix}NamedNodeSchema`,
-    code`\
-interface ${syntheticNamePrefix}NamedNodeSchema {
-  readonly kind: "NamedNodeType";
-  readonly in?: readonly ${imports.NamedNode}[];
-}`,
-  );
-
-  export const filterNamedNode = conditionalOutput(
-    `${syntheticNamePrefix}filterNamedNode`,
-    code`\
-function ${syntheticNamePrefix}filterNamedNode(filter: ${localSnippets.NamedNodeFilter}, value: ${imports.NamedNode}) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
-    return false;
-  }
-
-  return true;
-}`,
-  );
-
-  export const namedNodeSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}namedNodeSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${NamedNodeFilter}, ${NamedNodeSchema}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${syntheticNamePrefix}SparqlFilterPattern[] = [];
-
-    if (typeof filter?.in !== "undefined" && filter.in.length > 0) {
-      filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
-    }
-
-    return ${syntheticNamePrefix}termSchemaSparqlPatterns({ filterPatterns, valueVariable, ...otherParameters });
-  }`,
-  );
 }
 
 const nodeKinds: ReadonlySet<"NamedNode"> = new Set(["NamedNode"]);

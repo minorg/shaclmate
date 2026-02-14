@@ -58,6 +58,11 @@ export abstract class AbstractTermType<
   }
 
   @Memoize()
+  override get schema(): Code {
+    return code`${this.schemaObject}`;
+  }
+
+  @Memoize()
   get conversions(): readonly AbstractType.Conversion[] {
     const conversions: AbstractType.Conversion[] = [];
 

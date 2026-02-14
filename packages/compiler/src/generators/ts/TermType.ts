@@ -49,11 +49,6 @@ export class TermType<
     )})`;
   }
 
-  @Memoize()
-  get schema(): Code {
-    return code`${this.schemaObject}`;
-  }
-
   protected override get schemaObject() {
     return {
       ...super.schemaObject,

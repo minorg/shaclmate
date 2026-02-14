@@ -1,41 +1,12 @@
 import { Maybe } from "purify-ts";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-
-namespace localSnippets {
-  export const LazyObjectOption = conditionalOutput(
-    `${syntheticNamePrefix}LazyObjectOption`,
-    code`\
-/**
- * Type of lazy properties that return a single optional object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyObjectOption<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
-  readonly partial: ${imports.Maybe}<PartialObjectT>;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
-
-  constructor({ partial, resolver }: {
-    partial: ${imports.Maybe}<PartialObjectT>
-    resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
-  }) {
-    this.partial = partial;
-    this.resolver = resolver;
-  }
-
-  async resolve(): Promise<${imports.Either}<Error, ${imports.Maybe}<ResolvedObjectT>>> {
-    if (this.partial.isNothing()) {
-      return ${imports.Either}.of(${imports.Maybe}.empty());
-    }
-    return (await this.resolver(this.partial.unsafeCoerce().${syntheticNamePrefix}identifier)).map(${imports.Maybe}.of);
-  }
-}`,
-  );
-}
+import { snippets } from "./snippets.js";
 
 type Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,
@@ -68,9 +39,9 @@ export class LazyObjectOptionType extends Super {
       partialType,
       resolvedType,
       runtimeClass: {
-        name: code`${localSnippets.LazyObjectOption}<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
+        name: code`${snippets.LazyObjectOption}<${resolvedType.itemType.identifierTypeAlias}, ${partialType.itemType.name}, ${resolvedType.itemType.name}>`,
         partialPropertyName: "partial",
-        rawName: code`${localSnippets.LazyObjectOption}`,
+        rawName: code`${snippets.LazyObjectOption}`,
       },
     });
   }

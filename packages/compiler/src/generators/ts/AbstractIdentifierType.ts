@@ -1,12 +1,10 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
-import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractIdentifierType<
   IdentifierT extends BlankNode | NamedNode,
@@ -37,16 +35,6 @@ export abstract class AbstractIdentifierType<
       });
     }
     return conversions;
-  }
-
-  @Memoize()
-  override get schema(): Code {
-    if (this.constrained) {
-      return code`${this.schemaObject}`;
-    }
-
-    invariant(this.kind.endsWith("Type"));
-    return code`${conditionalOutput(`${syntheticNamePrefix}unconstrained${this.kind.substring(0, this.kind.length - "Type".length)}Schema`, code`const ${this.kind.substring(0, this.kind.length - "Type".length)}Schema = ${this.schemaObject};`)}`;
   }
 
   @Memoize()

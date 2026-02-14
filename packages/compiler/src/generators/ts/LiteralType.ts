@@ -1,20 +1,19 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LiteralType extends AbstractLiteralType {
-  override readonly filterFunction = code`${localSnippets.filterLiteral}`;
-  override readonly filterType = code`${localSnippets.LiteralFilter}`;
+  override readonly filterFunction = code`${snippets.filterLiteral}`;
+  override readonly filterType = code`${snippets.LiteralFilter}`;
   override readonly kind = "LiteralType";
   override readonly name = code`${imports.Literal}`;
-  override readonly schemaType = code`${localSnippets.LiteralSchema}`;
+  override readonly schemaType = code`${snippets.LiteralSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${localSnippets.literalSparqlWherePatterns}`;
+    code`${snippets.literalSparqlWherePatterns}`;
 
   get graphqlType(): AbstractLiteralType.GraphqlType {
     throw new Error("not implemented");
@@ -64,39 +63,4 @@ export class LiteralType extends AbstractLiteralType {
   }: Parameters<AbstractLiteralType["toJsonExpression"]>[0]): Code {
     return code`{ "@language": ${variables.value}.language.length > 0 ? ${variables.value}.language : undefined${includeDiscriminantProperty ? `, "termType": "Literal" as const` : ""}, "@type": ${variables.value}.datatype.value !== "${xsd.string.value}" ? ${variables.value}.datatype.value : undefined, "@value": ${variables.value}.value }`;
   }
-}
-
-namespace localSnippets {
-  export const LiteralFilter = conditionalOutput(
-    `${syntheticNamePrefix}LiteralFilter`,
-    code`\
-interface ${syntheticNamePrefix}LiteralFilter extends Omit<${snippets.TermFilter}, "in" | "type"> {
-  readonly in?: readonly ${imports.Literal}[];
-}`,
-  );
-
-  export const LiteralSchema = conditionalOutput(
-    `${syntheticNamePrefix}LiteralSchema`,
-    code`\
-interface ${syntheticNamePrefix}LiteralSchema {
-  readonly kind: "LiteralType";
-  readonly in?: readonly ${imports.Literal}[];
-  readonly languageIn?: readonly string[];
-}`,
-  );
-
-  export const filterLiteral = conditionalOutput(
-    `${syntheticNamePrefix}filterLiteral`,
-    code`\
-function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${imports.Literal}): boolean {
-  return ${snippets.filterTerm}(filter, value);
-}`,
-  );
-
-  export const literalSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}literalSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${LiteralFilter}, ${LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
-  );
 }

@@ -1,6 +1,6 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -8,7 +8,6 @@ import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class OptionType<
   ItemTypeT extends OptionType.ItemType,
@@ -63,17 +62,17 @@ export class OptionType<
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`((left, right) => ${localSnippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`;
+    return code`((left, right) => ${snippets.maybeEquals}(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${localSnippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return code`${snippets.filterMaybe}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()
   get filterType(): Code {
-    return code`${localSnippets.MaybeFilter}<${this.itemType.filterType}>`;
+    return code`${snippets.MaybeFilter}<${this.itemType.filterType}>`;
   }
 
   @Memoize()
@@ -98,12 +97,12 @@ export class OptionType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${localSnippets.MaybeSchema}<${this.itemType.schemaType}>`;
+    return code`${snippets.MaybeSchema}<${this.itemType.schemaType}>`;
   }
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`${localSnippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+    return code`${snippets.maybeSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   override fromJsonExpression({
@@ -214,98 +213,6 @@ export class OptionType<
     }
     return toRdfExpression;
   }
-}
-
-namespace localSnippets {
-  export const MaybeFilter = conditionalOutput(
-    `${syntheticNamePrefix}MaybeFilter`,
-    code`\
-type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
-  );
-  export const MaybeSchema = conditionalOutput(
-    `${syntheticNamePrefix}MaybeSchema`,
-    code`type ${syntheticNamePrefix}MaybeSchema<ItemSchemaT> = { readonly item: ItemSchemaT }`,
-  );
-
-  export const maybeEquals = conditionalOutput(
-    `${syntheticNamePrefix}maybeEquals`,
-    code`\
-function ${syntheticNamePrefix}maybeEquals<T>(
-  leftMaybe: ${imports.Maybe}<T>,
-  rightMaybe: ${imports.Maybe}<T>,
-  valueEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
-): ${snippets.EqualsResult} {
-  if (leftMaybe.isJust()) {
-    if (rightMaybe.isJust()) {
-      return ${snippets.EqualsResult}.fromBooleanEqualsResult(
-        leftMaybe,
-        rightMaybe,
-        valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
-      );
-    }
-    return ${imports.Left}({
-      left: leftMaybe.unsafeCoerce(),
-      type: "RightNull",
-    });
-  }
-
-  if (rightMaybe.isJust()) {
-    return ${imports.Left}({
-      right: rightMaybe.unsafeCoerce(),
-      type: "LeftNull",
-    });
-  }
-
-  return ${snippets.EqualsResult}.Equal;
-}`,
-  );
-
-  export const maybeSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}maybeSparqlWherePatterns`,
-    code`\
-function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.SparqlWherePatternsFunction}<${MaybeFilter}<ItemFilterT>, ${MaybeSchema}<ItemSchemaT>> {  
-  return ({ filter, schema, ...otherParameters }) => {
-    if (typeof filter === "undefined") {
-      // Treat the item's patterns as optional
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters }));
-      return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
-    }
-      
-    if (filter === null) {
-      // Use FILTER NOT EXISTS around the item's patterns
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
-      return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
-    }
-
-    // Treat the item as required.
-    return itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
-  }
-}`,
-  );
-
-  export const filterMaybe = conditionalOutput(
-    `${syntheticNamePrefix}filterMaybe`,
-    code`\
-function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${MaybeFilter}<ItemFilterT>, value: ${imports.Maybe}<ItemT>): boolean => {
-    if (filter !== null) {
-      if (value.isNothing()) {
-        return false;
-      }
-
-      if (!filterItem(filter, value.extract()!)) {
-        return false;
-      }
-    } else {
-      if (value.isJust()) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-}`,
-  );
 }
 
 export namespace OptionType {

@@ -1,11 +1,11 @@
 import { Maybe } from "purify-ts";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { snippets } from "./snippets.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
@@ -32,9 +32,9 @@ export class LazyObjectType extends AbstractLazyObjectType<
       partialType,
       resolvedType,
       runtimeClass: {
-        name: code`${localSnippets.LazyObject}<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
+        name: code`${snippets.LazyObject}<${resolvedType.identifierTypeAlias}, ${partialType.name}, ${resolvedType.name}>`,
         partialPropertyName: "partial",
-        rawName: code`${localSnippets.LazyObject}`,
+        rawName: code`${snippets.LazyObject}`,
       },
     });
   }
@@ -98,29 +98,3 @@ type Super = AbstractLazyObjectType<
   AbstractLazyObjectType.ObjectTypeConstraint,
   AbstractLazyObjectType.ObjectTypeConstraint
 >;
-
-namespace localSnippets {
-  export const LazyObject = conditionalOutput(
-    `${syntheticNamePrefix}LazyObject`,
-    code`\
-/**
- * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
- */
-export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
-  readonly partial: PartialObjectT;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
-
-  constructor({ partial, resolver }: {
-    partial: PartialObjectT
-    resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
-  }) {
-    this.partial = partial;
-    this.resolver = resolver;
-  }
-
-  resolve(): Promise<${imports.Either}<Error, ResolvedObjectT>> {
-    return this.resolver(this.partial.${syntheticNamePrefix}identifier);
-  }
-}`,
-  );
-}

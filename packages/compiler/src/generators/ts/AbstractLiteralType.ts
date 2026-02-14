@@ -1,13 +1,10 @@
 import type { Literal } from "@rdfjs/types";
 
-import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput } from "ts-poet";
-import { Memoize } from "typescript-memoize";
+import { code } from "ts-poet";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
@@ -31,16 +28,6 @@ export abstract class AbstractLiteralType extends AbstractTermType<
 
   override get constrained(): boolean {
     return super.constrained || this.languageIn.length > 0;
-  }
-
-  @Memoize()
-  override get schema(): Code {
-    invariant(this.kind.endsWith("Type"));
-    if (this.constrained) {
-      return code`${this.schemaObject}`;
-    }
-
-    return code`${conditionalOutput(`${syntheticNamePrefix}unconstrained${this.kind.substring(0, this.kind.length - "Type".length)}Schema`, code`const ${this.kind.substring(0, this.kind.length - "Type".length)}Schema = ${this.schemaObject};`)}`;
   }
 
   protected override get schemaObject() {
