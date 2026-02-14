@@ -1,141 +1,12 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { arrayOf, type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Typeof } from "./Typeof.js";
-
-namespace localSnippets {
-  export const arrayEquals = conditionalOutput(
-    `${syntheticNamePrefix}arrayEquals`,
-    code`\
-/**
- * Compare two arrays element-wise with the provided elementEquals function.
- */  
-function ${syntheticNamePrefix}arrayEquals<T>(
-  leftArray: readonly T[],
-  rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
-): ${snippets.EqualsResult} {
-  if (leftArray.length !== rightArray.length) {
-    return ${imports.Left}({
-      left: leftArray,
-      right: rightArray,
-      type: "ArrayLength",
-    });
-  }
-
-  for (
-    let leftElementIndex = 0;
-    leftElementIndex < leftArray.length;
-    leftElementIndex++
-  ) {
-    const leftElement = leftArray[leftElementIndex];
-
-    const rightUnequals: ${snippets.EqualsResult}.Unequal[] = [];
-    for (
-      let rightElementIndex = 0;
-      rightElementIndex < rightArray.length;
-      rightElementIndex++
-    ) {
-      const rightElement = rightArray[rightElementIndex];
-
-      const leftElementEqualsRightElement =
-        ${snippets.EqualsResult}.fromBooleanEqualsResult(
-          leftElement,
-          rightElement,
-          elementEquals(leftElement, rightElement),
-        );
-      if (leftElementEqualsRightElement.isRight()) {
-        break; // left element === right element, break out of the right iteration
-      }
-      rightUnequals.push(
-        leftElementEqualsRightElement.extract() as ${snippets.EqualsResult}.Unequal,
-      );
-    }
-
-    if (rightUnequals.length === rightArray.length) {
-      // All right elements were unequal to the left element
-      return ${imports.Left}({
-        left: {
-          array: leftArray,
-          element: leftElement,
-          elementIndex: leftElementIndex,
-        },
-        right: {
-          array: rightArray,
-          unequals: rightUnequals,
-        },
-        type: "ArrayElement",
-      });
-    }
-    // Else there was a right element equal to the left element, continue to the next left element
-  }
-
-  return ${snippets.EqualsResult}.Equal;
-}`,
-  );
-
-  export const filterArray = conditionalOutput(
-    `${syntheticNamePrefix}filterArray`,
-    code`\
-function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${snippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
-    for (const value of values) {
-      if (!filterItem(filter, value)) {
-        return false;
-      }
-    }
-
-    if (typeof filter.${syntheticNamePrefix}maxCount !== "undefined" && values.length > filter.${syntheticNamePrefix}maxCount) {
-      return false;
-    }
-
-    if (typeof filter.${syntheticNamePrefix}minCount !== "undefined" && values.length < filter.${syntheticNamePrefix}minCount) {
-      return false;
-    }
-
-    return true;
-  }
-}`,
-  );
-
-  export const isReadonlyBooleanArray = conditionalOutput(
-    `${syntheticNamePrefix}isReadonlyBooleanArray`,
-    code`\
-function ${syntheticNamePrefix}isReadonlyBooleanArray(x: unknown): x is readonly boolean[] {
-  return Array.isArray(x) && x.every(z => typeof z === "boolean");
-}`,
-  );
-
-  export const isReadonlyNumberArray = conditionalOutput(
-    `${syntheticNamePrefix}isReadonlyNumberArray`,
-    code`\
-function ${syntheticNamePrefix}isReadonlyNumberArray(x: unknown): x is readonly number[] {
-  return Array.isArray(x) && x.every(z => typeof z === "number");
-}`,
-  );
-
-  export const isReadonlyObjectArray = conditionalOutput(
-    `${syntheticNamePrefix}isReadonlyObjectArray`,
-    code`\
-function ${syntheticNamePrefix}isReadonlyObjectArray(x: unknown): x is readonly object[] {
-  return Array.isArray(x) && x.every(z => typeof z === "object");
-}`,
-  );
-
-  export const isReadonlyStringArray = conditionalOutput(
-    `${syntheticNamePrefix}isReadonlyStringArray`,
-    code`\
-function ${syntheticNamePrefix}isReadonlyStringArray(x: unknown): x is readonly string[] {
-  return Array.isArray(x) && x.every(z => typeof z === "string");
-}`,
-  );
-}
 
 /**
  * Abstract base class for ListType and SetType.
@@ -241,7 +112,7 @@ export abstract class AbstractCollectionType<
             },
             sourceTypeCheckExpression: (value) =>
               // Use the type guard functions to discriminate different array types.
-              code`${(localSnippets as any)[`isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array`]}(${value})`,
+              code`${(snippets as any)[`isReadonly${itemTypeof[0].toUpperCase()}${itemTypeof.slice(1)}Array`]}(${value})`,
             sourceTypeName: code`readonly (${itemTypeofConversion.sourceTypeName})[]`,
             sourceTypeof: itemTypeofConversion.sourceTypeof,
           });
@@ -264,12 +135,12 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   override get equalsFunction(): Code {
-    return code`((left, right) => ${localSnippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
+    return code`((left, right) => ${snippets.arrayEquals}(left, right, ${this.itemType.equalsFunction}))`;
   }
 
   @Memoize()
   get filterFunction(): Code {
-    return code`${localSnippets.filterArray}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
+    return code`${snippets.filterArray}<${this.itemType.name}, ${this.itemType.filterType}>(${this.itemType.filterFunction})`;
   }
 
   @Memoize()

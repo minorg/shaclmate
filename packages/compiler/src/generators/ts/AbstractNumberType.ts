@@ -1,22 +1,21 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { NonEmptyList } from "purify-ts";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   private readonly datatype: NamedNode;
 
-  override readonly filterFunction = code`${localSnippets.filterNumber}`;
-  override readonly filterType = code`${localSnippets.NumberFilter}`;
+  override readonly filterFunction = code`${snippets.filterNumber}`;
+  override readonly filterType = code`${snippets.NumberFilter}`;
   abstract override readonly kind: "FloatType" | "IntType";
-  override readonly schemaType = code`${localSnippets.NumberSchema}`;
+  override readonly schemaType = code`${snippets.NumberSchema}`;
   override readonly typeofs = NonEmptyList(["number" as const]);
 
   constructor({
@@ -39,7 +38,7 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`${localSnippets.numberSparqlWherePatterns}`;
+    return code`${snippets.numberSparqlWherePatterns}`;
   }
 
   protected override get schemaObject() {
@@ -86,120 +85,4 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
       valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const NumberFilter = conditionalOutput(
-    `${syntheticNamePrefix}NumberFilter`,
-    code`\
-interface ${syntheticNamePrefix}NumberFilter {
-  readonly in?: readonly number[];
-  readonly maxExclusive?: number;
-  readonly maxInclusive?: number;
-  readonly minExclusive?: number;
-  readonly minInclusive?: number;
-}`,
-  );
-
-  export const NumberSchema = conditionalOutput(
-    `${syntheticNamePrefix}NumberSchema`,
-    code`\
-interface ${syntheticNamePrefix}NumberSchema {
-  readonly kind: "FloatType" | "IntType";
-  readonly in?: readonly number[];
-}`,
-  );
-
-  export const filterNumber = conditionalOutput(
-    `${syntheticNamePrefix}filterNumber`,
-    code`\
-function ${syntheticNamePrefix}filterNumber(filter: ${NumberFilter}, value: number) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue === value)) {
-    return false;
-  }
-
-  if (typeof filter.maxExclusive !== "undefined" && value >= filter.maxExclusive) {
-    return false;
-  }
-
-  if (typeof filter.maxInclusive !== "undefined" && value > filter.maxInclusive) {
-    return false;
-  }
-
-  if (typeof filter.minExclusive !== "undefined" && value <= filter.minExclusive) {
-    return false;
-  }
-
-  if (typeof filter.minInclusive !== "undefined" && value < filter.minInclusive) {
-    return false;
-  }
-
-  return true;
-}`,
-  );
-
-  export const numberSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}numberSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${NumberFilter}, ${NumberSchema}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
-
-    if (filter) {
-      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
-      }
-
-      if (typeof filter.maxExclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: "<",
-            args: [valueVariable, ${snippets.toLiteral}(filter.maxExclusive)],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-
-      if (typeof filter.maxInclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: "<=",
-            args: [valueVariable, ${snippets.toLiteral}(filter.maxInclusive)],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-
-      if (typeof filter.minExclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: ">",
-            args: [valueVariable, ${snippets.toLiteral}(filter.minExclusive)],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-
-      if (typeof filter.minInclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: ">=",
-            args: [valueVariable, ${snippets.toLiteral}(filter.minInclusive)],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-    }
-
-    return ${snippets.termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
-  }`,
-  );
 }

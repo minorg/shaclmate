@@ -6,6 +6,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
@@ -65,43 +66,10 @@ export abstract class AbstractLiteralType extends AbstractTermType<
         this.languageIn.length > 0
           ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${imports.Either}.of(value); default: return ${imports.Left}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "literalValue", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })))`
           : undefined,
-      preferredLanguages: code`chain(values => ${localSnippets.fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
+      preferredLanguages: code`chain(values => ${snippets.fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
       valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const fromRdfPreferredLanguages = conditionalOutput(
-    `${syntheticNamePrefix}fromRdfPreferredLanguages`,
-    code`\
-function ${syntheticNamePrefix}fromRdfPreferredLanguages(
-  { focusResource, predicate, preferredLanguages, values }: {
-    focusResource: ${imports}Resource;
-    predicate: ${imports.NamedNode};
-    preferredLanguages?: readonly string[];
-    values: ${imports.Resource}.Values<${imports.Resource}.TermValue>
-  }): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>> {
-  if (!preferredLanguages || preferredLanguages.length === 0) {
-    return ${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(values);
-  }
-
-  return values.chainMap(value => value.toLiteral()).map(literalValues => {
-    // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
-    // Within a preferredLanguage the literals may be in any order.
-    let filteredLiteralValues: ${imports.Resource}.Values<${imports.Literal}> | undefined;
-    for (const preferredLanguage of preferredLanguages) {
-      if (!filteredLiteralValues) {
-        filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
-      } else {
-        filteredLiteralValues = filteredLiteralValues.concat(...literalValues.filter(value => value.language === preferredLanguage).toArray());
-      }
-    }
-
-    return filteredLiteralValues!.map(literalValue => new ${imports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
-  });
-}`,
-  );
 }
 
 export namespace AbstractLiteralType {

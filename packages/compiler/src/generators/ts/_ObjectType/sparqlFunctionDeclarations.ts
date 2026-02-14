@@ -1,6 +1,6 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { camelCase } from "change-case";
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
@@ -8,39 +8,6 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
-
-namespace localSnippets {
-  export const sparqlInstancesOfPattern = conditionalOutput(
-    `${syntheticNamePrefix}sparqlInstancesOfPattern`,
-    code`\
-/**
- * A sparqljs.Pattern that's the equivalent of ?subject rdf:type/rdfs:subClassOf* ?rdfType .
- */
-function ${syntheticNamePrefix}sparqlInstancesOfPattern({ rdfType, subject }: { rdfType: ${imports.NamedNode} | ${imports.Variable}, subject: ${imports.sparqljs}.Triple["subject"] }): ${imports.sparqljs}.BgpPattern {
-  return {
-    triples: [
-      {
-        subject,
-        predicate: {
-          items: [
-            ${snippets.RdfVocabularies}.rdf.type,
-            {
-              items: [${snippets.RdfVocabularies}.rdfs.subClassOf],
-              pathType: "*",
-              type: "path",
-            },
-          ],
-          pathType: "/",
-          type: "path",
-        },
-        object: rdfType,
-      },
-    ],
-    type: "bgp",
-  };
-}`,
-  );
-}
 
 export function sparqlFunctionDeclarations(this: ObjectType): readonly Code[] {
   if (!this.features.has("sparql")) {
@@ -101,8 +68,8 @@ if (!parameters?.ignoreRdfType) {
         return valuePatternRow;
       }),
     },
-    ${localSnippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
-        : `${localSnippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
+    ${snippets.sparqlInstancesOfPattern}({ rdfType: ${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}FromRdfType\`), subject }),`
+        : `${snippets.sparqlInstancesOfPattern}({ rdfType: ${fromRdfTypeVariables[0]}, subject }),`
     }
     {
       triples: [

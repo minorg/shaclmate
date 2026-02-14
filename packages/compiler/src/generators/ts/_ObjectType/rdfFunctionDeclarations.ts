@@ -1,19 +1,12 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
-
-namespace localSnippets {
-  export const PropertiesFromRdfParameters = conditionalOutput(
-    `${syntheticNamePrefix}PropertiesFromRdfParameters`,
-    code`{ context?: any; ignoreRdfType: boolean; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; resource: ${imports.Resource}; }`,
-  );
-}
 
 function fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
   if (this.abstract) {
@@ -138,7 +131,7 @@ function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
   }
 
   return code`\
-export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${localSnippets.PropertiesFromRdfParameters}): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
+export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${snippets.PropertiesFromRdfParameters}): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
 ${joinCode(statements)}
 }`;
 }

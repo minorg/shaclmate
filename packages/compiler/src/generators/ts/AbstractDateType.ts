@@ -1,27 +1,26 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { NonEmptyList } from "purify-ts";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   protected abstract readonly xsdDatatype: NamedNode;
 
-  override readonly equalsFunction = code`${localSnippets.dateEquals}`;
-  override readonly filterFunction = code`${localSnippets.filterDate}`;
-  override readonly filterType = code`${localSnippets.DateFilter}`;
+  override readonly equalsFunction = code`${snippets.dateEquals}`;
+  override readonly filterFunction = code`${snippets.filterDate}`;
+  override readonly filterType = code`${snippets.DateFilter}`;
   abstract override readonly kind: "DateTimeType" | "DateType";
   override readonly mutable = false;
   override readonly name = "Date";
-  override readonly schemaType = code`${localSnippets.DateSchema}`;
+  override readonly schemaType = code`${snippets.DateSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${localSnippets.dateSparqlWherePatterns}`;
+    code`${snippets.dateSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   @Memoize()
@@ -102,143 +101,4 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   }
 
   protected abstract toIsoStringExpression(variables: { value: Code }): Code;
-}
-
-namespace localSnippets {
-  export const dateEquals = conditionalOutput(
-    `${syntheticNamePrefix}dateEquals`,
-    code`\
-/**
- * Compare two Dates and return an ${snippets.EqualsResult}.
- */
-function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${snippets.EqualsResult} {
-  return ${snippets.EqualsResult}.fromBooleanEqualsResult(
-    left,
-    right,
-    left.getTime() === right.getTime(),
-  );
-}`,
-  );
-
-  export const DateFilter = conditionalOutput(
-    `${syntheticNamePrefix}DateFilter`,
-    code`\
-interface ${syntheticNamePrefix}DateFilter {
-  readonly in?: readonly Date[];
-  readonly maxExclusive?: Date;
-  readonly maxInclusive?: Date;
-  readonly minExclusive?: Date;
-  readonly minInclusive?: Date;
-}`,
-  );
-
-  export const DateSchema = conditionalOutput(
-    `${syntheticNamePrefix}DateSchema`,
-    code`\
-interface ${syntheticNamePrefix}DateSchema {
-  in?: readonly Date[];
-  kind: "DateTimeType" | "DateType",
-}`,
-  );
-
-  export const dateSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}dateSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${DateFilter}, ${DateSchema}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
-
-    if (filter) {
-      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: "in",
-            args: [valueVariable, filter.in.map(inValue => ${snippets.toLiteral}(inValue))],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-
-      if (typeof filter.maxExclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: "<",
-            args: [valueVariable, ${snippets.toLiteral}(filter.maxExclusive)],
-          },
-          lift: true,
-          type: "filter"
-        });
-      }
-
-      if (typeof filter.maxInclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: "<=",
-            args: [valueVariable, ${snippets.toLiteral}(filter.maxInclusive)],
-          },
-          lift: true,
-          type: "filter"
-        });
-      }
-
-      if (typeof filter.minExclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: ">",
-            args: [valueVariable, ${snippets.toLiteral}(filter.minExclusive)],
-          },
-          lift: true,
-          type: "filter"
-        });
-      }
-
-      if (typeof filter.minInclusive !== "undefined") {
-        filterPatterns.push({
-          expression: {
-            type: "operation",
-            operator: ">=",
-            args: [valueVariable, ${snippets.toLiteral}(filter.minInclusive)],
-          },
-          lift: true,
-          type: "filter"
-        });
-      }
-    }
-
-    return ${snippets.termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
-  }`,
-  );
-
-  export const filterDate = conditionalOutput(
-    `${syntheticNamePrefix}filterDate`,
-    code`\
-function ${syntheticNamePrefix}filterDate(filter: ${localSnippets.DateFilter}, value: Date) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.getTime() === value.getTime())) {
-    return false;
-  }
-
-  if (typeof filter.maxExclusive !== "undefined" && value.getTime() >= filter.maxExclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.maxInclusive !== "undefined" && value.getTime() > filter.maxInclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.minExclusive !== "undefined" && value.getTime() <= filter.minExclusive.getTime()) {
-    return false;
-  }
-
-  if (typeof filter.minInclusive !== "undefined" && value.getTime() < filter.minInclusive.getTime()) {
-    return false;
-  }
-
-  return true;
-}`,
-  );
 }

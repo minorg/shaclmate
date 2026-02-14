@@ -1,27 +1,25 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
 > {
-  override readonly filterFunction = code`${localSnippets.filterIdentifier}`;
-  override readonly filterType = code`${localSnippets.IdentifierFilter}`;
-  override readonly fromStringFunction =
-    code`${localSnippets.identifierFromString}`;
+  override readonly filterFunction = code`${snippets.filterIdentifier}`;
+  override readonly filterType = code`${snippets.IdentifierFilter}`;
+  override readonly fromStringFunction = code`${snippets.identifierFromString}`;
   override readonly kind = "IdentifierType";
   override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
-  override readonly schemaType = code`${localSnippets.IdentifierSchema}`;
+  override readonly schemaType = code`${snippets.IdentifierSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${localSnippets.identifierSparqlWherePatterns}`;
+    code`${snippets.identifierSparqlWherePatterns}`;
 
   constructor(
     parameters: Pick<
@@ -96,81 +94,6 @@ export class IdentifierType extends AbstractIdentifierType<
       valueTo: code`chain(values => values.chainMap(value => value.toIdentifier()))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const IdentifierFilter = conditionalOutput(
-    `${syntheticNamePrefix}IdentifierFilter`,
-    code`\
-interface ${syntheticNamePrefix}IdentifierFilter {
-  readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[];
-  readonly type?: "BlankNode" | "NamedNode";
-}`,
-  );
-
-  export const IdentifierSchema = conditionalOutput(
-    `${syntheticNamePrefix}IdentifierSchema`,
-    code`\
-interface ${syntheticNamePrefix}IdentifierSchema {
-  readonly kind: "IdentifierType";
-}`,
-  );
-
-  export const filterIdentifier = conditionalOutput(
-    `${syntheticNamePrefix}filterIdentifier`,
-    code`\
-function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
-  if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
-    return false;
-  }
-
-  if (typeof filter.type !== "undefined" && value.termType !== filter.type) {
-    return false;
-  }
-
-  return true;
-}`,
-  );
-
-  export const identifierFromString = conditionalOutput(
-    `${syntheticNamePrefix}identifierFromString`,
-    code`\
-function ${syntheticNamePrefix}identifierFromString(identifier: string): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
-  return ${imports.Either}.encase(() => ${imports.Resource}.Identifier.fromString({ ${imports.dataFactory}, identifier }));
-}`,
-  );
-
-  export const identifierSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}identifierSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${IdentifierFilter}, ${IdentifierSchema}> =
-  ({ filter, propertyPatterns, valueVariable }) => {
-    const patterns: ${snippets.SparqlPattern}[] = propertyPatterns.concat();
-
-    if (filter) {
-      if (typeof filter.in !== "undefined") {
-        const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
-        if (valueIn.length > 0) {
-          patterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
-        }
-      }
-
-      if (typeof filter.type !== "undefined") {
-        patterns.push({
-          expression: {
-            type: "operation",
-            operator: filter.type === "BlankNode" ? "isBlank" : "isIRI",
-            args: [valueVariable],
-          },
-          lift: true,
-          type: "filter",
-        });
-      }
-    }
-
-    return patterns;
-  }`,
-  );
 }
 
 const nodeKinds: ReadonlySet<IdentifierNodeKind> = new Set([

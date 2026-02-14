@@ -1,0 +1,49 @@
+import { code, conditionalOutput } from "ts-poet";
+import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { snippets_literalSchemaSparqlPatterns } from "./snippets_literalSchemaSparqlPatterns.js";
+import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
+import { snippets_StringFilter } from "./snippets_StringFilter.js";
+import { snippets_StringSchema } from "./snippets_StringSchema.js";
+import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
+import { snippets_toLiteral } from "./snippets_toLiteral.js";
+
+export const snippets_stringSparqlWherePatterns = conditionalOutput(
+  `${syntheticNamePrefix}stringSparqlWherePatterns`,
+  code`\
+const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${snippets_StringFilter}, ${snippets_StringSchema}> =
+  ({ filter, valueVariable, ...otherParameters }) => {
+    const filterPatterns: ${snippets_SparqlFilterPattern}[] = [];
+
+    if (filter) {
+      if (typeof filter.in !== "undefined" && filter.in.length > 0) {
+        filterPatterns.push(${snippets_sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+      }
+
+      if (typeof filter.maxLength !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: "<=",
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets_toLiteral}(filter.maxLength)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+
+      if (typeof filter.minLength !== "undefined") {
+        filterPatterns.push({
+          expression: {
+            type: "operation",
+            operator: ">=",
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets_toLiteral}(filter.minLength)],
+          },
+          lift: true,
+          type: "filter",
+        });
+      }
+    }
+
+    return ${snippets_literalSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
+  }`,
+);

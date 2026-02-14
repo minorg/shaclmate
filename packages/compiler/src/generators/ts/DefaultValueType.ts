@@ -3,7 +3,7 @@ import type { Literal, NamedNode } from "@rdfjs/types";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput, literalOf } from "ts-poet";
+import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractContainerType } from "./AbstractContainerType.js";
@@ -12,7 +12,6 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 export class DefaultValueType<
@@ -75,12 +74,12 @@ export class DefaultValueType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${localSnippets.DefaultValueSchema}`;
+    return code`${snippets.DefaultValueSchema}`;
   }
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`${localSnippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
+    return code`${snippets.defaultValueSparqlWherePatterns}<${this.itemType.filterType}, ${this.itemType.schemaType}>(${this.itemType.sparqlWherePatternsFunction})`;
   }
 
   protected override get schemaObject() {
@@ -213,24 +212,6 @@ export class DefaultValueType<
         code`${this.itemType.toRdfExpression(parameters)}.filter(value => !value.equals(${this.defaultValueTermExpression}))`,
       );
   }
-}
-
-namespace localSnippets {
-  export const DefaultValueSchema = conditionalOutput(
-    `${syntheticNamePrefix}DefaultValueSchema`,
-    code`type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: ${imports.Literal} | ${imports.NamedNode}; readonly item: ItemSchemaT; }`,
-  );
-
-  export const defaultValueSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}defaultValueSparqlWherePatterns`,
-    code`\
-function ${syntheticNamePrefix}defaultValueSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ${DefaultValueSchema}<ItemSchemaT>> {  
-  return ({ schema, ...otherParameters }) => {
-    const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
-    return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
-  }
-}`,
-  );
 }
 
 export namespace DefaultValueType {

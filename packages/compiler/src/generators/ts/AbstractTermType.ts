@@ -2,14 +2,13 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { arrayOf, type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
 /**
@@ -27,7 +26,7 @@ export abstract class AbstractTermType<
     | Literal
     | NamedNode,
 > extends AbstractType {
-  readonly equalsFunction = code`${localSnippets.booleanEquals}`;
+  readonly equalsFunction = code`${snippets.booleanEquals}`;
   override readonly graphqlArgs: AbstractType["graphqlArgs"] = Maybe.empty();
   readonly hasValues: readonly ConstantTermT[];
   readonly in_: readonly ConstantTermT[];
@@ -208,26 +207,6 @@ chain(values => ${imports.Either}.sequence([${this.hasValues.map(rdfjsTermExpres
       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const booleanEquals = conditionalOutput(
-    `${syntheticNamePrefix}booleanEquals`,
-    code`\
-/**
- * Compare two objects with equals(other: T): boolean methods and return an ${snippets.EqualsResult}.
- */
-function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
-  left: T,
-  right: T,
-): ${snippets.EqualsResult} {
-  return ${snippets.EqualsResult}.fromBooleanEqualsResult(
-    left,
-    right,
-    left.equals(right),
-  );
-}`,
-  );
 }
 
 export namespace AbstractTermType {

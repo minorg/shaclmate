@@ -1,23 +1,22 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
-  readonly filterFunction = code`${localSnippets.filterBlankNode}`;
-  readonly filterType = code`${localSnippets.BlankNodeFilter}`;
-  readonly fromStringFunction = code`${localSnippets.blankNodeFromString}`;
+  readonly filterFunction = code`${snippets.filterBlankNode}`;
+  readonly filterType = code`${snippets.BlankNodeFilter}`;
+  readonly fromStringFunction = code`${snippets.blankNodeFromString}`;
   readonly kind = "BlankNodeType";
   readonly name = code`${imports.BlankNode}`;
-  readonly schemaType = code`${localSnippets.BlankNodeSchema}`;
+  readonly schemaType = code`${snippets.BlankNodeSchema}`;
   readonly sparqlWherePatternsFunction =
-    code`${localSnippets.blankNodeSparqlWherePatterns}`;
+    code`${snippets.blankNodeSparqlWherePatterns}`;
 
   constructor(
     superParameters: Pick<
@@ -86,48 +85,6 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
       valueTo: code`chain(values => values.chainMap(value => value.toBlankNode()))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const BlankNodeFilter = conditionalOutput(
-    `${syntheticNamePrefix}BlankNodeFilter`,
-    code`\
-interface ${syntheticNamePrefix}BlankNodeFilter {
-}`,
-  );
-
-  export const blankNodeFromString = conditionalOutput(
-    `${syntheticNamePrefix}blankNodeFromString`,
-    code`\
-export function ${syntheticNamePrefix}blankNodeFromString(identifier: string): ${imports.Either}<Error, ${imports.BlankNode}> {
-    return \
-      ${imports.Either}.encase(() => ${imports.Resource}.Identifier.fromString({ ${imports.dataFactory}, identifier }))
-      .chain((identifier) => (identifier.termType === "BlankNode") ? ${imports.Either}.of(identifier) : ${imports.Left}(new Error("expected identifier to be BlankNode")))
-      as ${imports.Either}<Error, ${imports.BlankNode}>;
-}`,
-  );
-
-  export const BlankNodeSchema = conditionalOutput(
-    `${syntheticNamePrefix}BlankNodeSchema`,
-    code`\
-interface ${syntheticNamePrefix}BlankNodeSchema {
-}`,
-  );
-
-  export const blankNodeSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${BlankNodeFilter}, ${BlankNodeSchema}> =
-  ({ propertyPatterns }) => propertyPatterns;`,
-  );
-
-  export const filterBlankNode = conditionalOutput(
-    `${syntheticNamePrefix}filterBlankNode`,
-    code`\
-function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${imports.BlankNode}) {
-  return true;
-}`,
-  );
 }
 
 const nodeKinds: ReadonlySet<"BlankNode"> = new Set(["BlankNode"]);

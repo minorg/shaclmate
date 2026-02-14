@@ -1,39 +1,24 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { NonEmptyList } from "purify-ts";
-import { type Code, code, conditionalOutput } from "ts-poet";
+import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
-  override readonly filterFunction = code`${localSnippets.filterBoolean}`;
-  override readonly filterType = code`${localSnippets.BooleanFilter}`;
+  override readonly filterFunction = code`${snippets.filterBoolean}`;
+  override readonly filterType = code`${snippets.BooleanFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
     code`${imports.GraphQLBoolean}`,
   );
   readonly kind = "BooleanType";
-  override readonly schemaType = code`${localSnippets.BooleanSchema}`;
-  override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
-    `${syntheticNamePrefix}booleanSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
-  ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
-
-    if (filter) {
-      if (typeof filter.value !== "undefined") {
-        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
-      }
-    }
-
-    return ${snippets.termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
-  }`,
-  )}`;
+  override readonly schemaType = code`${snippets.BooleanSchema}`;
+  override readonly sparqlWherePatternsFunction =
+    code`${snippets.booleanSparqlWherePatterns}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);
 
   @Memoize()
@@ -84,34 +69,4 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.SparqlWherePa
       valueTo: code`chain(values => values.chainMap(value => ${fromRdfResourceValueExpression}))`,
     };
   }
-}
-
-namespace localSnippets {
-  export const BooleanFilter = conditionalOutput(
-    `${syntheticNamePrefix}BooleanFilter`,
-    code`\
-interface ${syntheticNamePrefix}BooleanFilter {
-  readonly value?: boolean;
-}`,
-  );
-
-  export const BooleanSchema = conditionalOutput(
-    `${syntheticNamePrefix}BooleanSchema`,
-    code`\
-interface ${syntheticNamePrefix}BooleanSchema {
-  readonly in?: readonly boolean[];
-}`,
-  );
-
-  export const filterBoolean = conditionalOutput(
-    `${syntheticNamePrefix}filterBoolean`,
-    code`\
-function ${syntheticNamePrefix}filterBoolean(filter: ${BooleanFilter}, value: boolean) {
-  if (typeof filter.value !== "undefined" && value !== filter.value) {
-    return false;
-  }
-
-  return true;
-}`,
-  );
 }

@@ -2,14 +2,13 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { invariant } from "ts-invariant";
-import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -21,9 +20,9 @@ export class TermType<
   override readonly filterFunction = code`${snippets.filterTerm}`;
   override readonly filterType = code`${snippets.TermFilter}`;
   override readonly kind = "TermType";
-  override readonly schemaType = code`${localSnippets.TermSchema}`;
+  override readonly schemaType = code`${snippets.TermSchema}`;
   override readonly sparqlWherePatternsFunction =
-    code`${localSnippets.termSparqlWherePatterns}`;
+    code`${snippets.termSparqlWherePatterns}`;
 
   constructor(
     superParameters: ConstructorParameters<
@@ -156,23 +155,4 @@ export class TermType<
       null as Code | null,
     )!;
   }
-}
-
-namespace localSnippets {
-  export const TermSchema = conditionalOutput(
-    `${syntheticNamePrefix}TermSchema`,
-    code`\
-interface ${syntheticNamePrefix}TermSchema {
-  readonly in?: readonly (${imports.Literal} | ${imports.NamedNode})[];
-  readonly kind: "TermType";
-  readonly nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[],
-}`,
-  );
-
-  export const termSparqlWherePatterns = conditionalOutput(
-    `${syntheticNamePrefix}termSparqlWherePatterns`,
-    code`\
-const ${syntheticNamePrefix}termSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${snippets.TermFilter}, ${TermSchema}> =
-  (parameters) => ${snippets.termSchemaSparqlPatterns}({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
-  );
 }
