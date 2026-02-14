@@ -1,7 +1,7 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
 import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import type { Typeof } from "./Typeof.js";
 
 /**
@@ -294,7 +294,7 @@ export namespace AbstractType {
     get name(): Code {
       return this.nullable
         ? this.nullableName
-        : code`new ${sharedImports.GraphQLNonNull}(${this.nullableName})`;
+        : code`new ${imports.GraphQLNonNull}(${this.nullableName})`;
     }
   }
 

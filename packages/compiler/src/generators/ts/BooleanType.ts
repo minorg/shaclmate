@@ -5,8 +5,8 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -14,7 +14,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction = code`${localSnippets.filterBoolean}`;
   override readonly filterType = code`${localSnippets.BooleanFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
-    code`${sharedImports.GraphQLBoolean}`,
+    code`${imports.GraphQLBoolean}`,
   );
   readonly kind = "BooleanType";
   override readonly schemaType = code`${localSnippets.BooleanSchema}`;
@@ -55,15 +55,15 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
     _parameters: Parameters<AbstractPrimitiveType<number>["jsonZodSchema"]>[0],
   ): Code {
     if (this.primitiveIn.length === 1) {
-      return code`${sharedImports.z}.literal(${this.primitiveIn[0]})`;
+      return code`${imports.z}.literal(${this.primitiveIn[0]})`;
     }
-    return code`${sharedImports.z}.boolean()`;
+    return code`${imports.z}.boolean()`;
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<boolean>["toRdfExpression"]>[0]): Code {
-    return code`[${sharedImports.dataFactory}.literal(${variables.value}.toString(), ${rdfjsTermExpression(xsd.boolean)})]`;
+    return code`[${imports.dataFactory}.literal(${variables.value}.toString(), ${rdfjsTermExpression(xsd.boolean)})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -74,7 +74,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlW
     let fromRdfResourceValueExpression = "value.toBoolean()";
     if (this.primitiveIn.length === 1) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? ${sharedImports.Either}.of${eitherTypeParameters}(primitiveValue) : ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})))`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? ${imports.Either}.of${eitherTypeParameters}(primitiveValue) : ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})))`;
     }
 
     return {

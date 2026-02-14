@@ -1,6 +1,6 @@
 import { imp } from "ts-poet";
 
-export const sharedImports = {
+export const imports = {
   BlankNode: imp("BlankNode@@rdfjs/types"),
   dataFactory: imp("DataFactory:dataFactory@n3"),
   DatasetCore: imp("DatasetCore@@rdfjs/types"),

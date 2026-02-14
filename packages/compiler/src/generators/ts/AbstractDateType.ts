@@ -5,8 +5,8 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -79,7 +79,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<Date>["toRdfExpression"]>[0]): Code {
-    return code`[${sharedImports.dataFactory}.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
+    return code`[${imports.dataFactory}.literal(${this.toIsoStringExpression(variables)}, ${rdfjsTermExpression(this.xsdDatatype)})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -90,7 +90,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
     let fromRdfResourceValueExpression = "value.toDate()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return ${sharedImports.Either}.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); })`;
     }
 
     return {

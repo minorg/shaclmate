@@ -1,5 +1,5 @@
 import { type Code, code } from "ts-poet";
-import { sharedImports } from "../sharedImports.js";
+import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlConstructQueryStringFunctionDeclaration(this: {
@@ -7,7 +7,7 @@ export function sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly staticModuleName: string;
 }): Code {
   return code`\
-export function ${syntheticNamePrefix}sparqlConstructQueryString(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${sharedImports.sparqljs}.Triple["subject"]; variablePrefix?: string; } & Omit<${sharedImports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${sharedImports.sparqljs}.GeneratorOptions): string {
-  return new ${sharedImports.sparqljs}.Generator(parameters).stringify(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery(parameters));
+export function ${syntheticNamePrefix}sparqlConstructQueryString(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"]; variablePrefix?: string; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions): string {
+  return new ${imports.sparqljs}.Generator(parameters).stringify(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructQuery(parameters));
 }`;
 }

@@ -1,9 +1,9 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
+import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedImports } from "../sharedImports.js";
 import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
@@ -26,14 +26,14 @@ export function toRdfFunctionOrMethodDeclaration(
     parameters.push(code`${this.thisVariable}: ${this.name}`);
   }
   parameters.push(
-    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: ${sharedImports.MutableResource}.MutateGraph, ${variables.resourceSet}?: ${sharedImports.MutableResourceSet} }`,
+    code`options?: { ${variables.ignoreRdfType}?: boolean; ${variables.mutateGraph}?: ${imports.MutableResource}.MutateGraph, ${variables.resourceSet}?: ${imports.MutableResourceSet} }`,
   );
 
   let usedIgnoreRdfTypeVariable = false;
 
   const statements: Code[] = [
     code`const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${sharedImports.MutableResourceSet}({ ${sharedImports.dataFactory}, dataset: ${sharedSnippets.datasetFactory}.dataset() });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.MutableResourceSet}({ ${imports.dataFactory}, dataset: ${sharedSnippets.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {
@@ -65,7 +65,7 @@ export function toRdfFunctionOrMethodDeclaration(
       code`if (!${variables.ignoreRdfType}) { ${joinCode(
         this.toRdfTypes.map(
           (toRdfType) =>
-            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${sharedImports.dataFactory}.namedNode("${toRdfType.value}"));`,
+            code`${variables.resource}.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${toRdfType.value}"));`,
         ),
         { on: " " },
       )} }`,

@@ -1,9 +1,9 @@
 import type { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
@@ -17,23 +17,23 @@ export function rdfjsDatasetObjectSetClassDeclaration({
 }): Code {
   const typeParameters = {
     ObjectT: code`ObjectT extends { readonly $identifier: ObjectIdentifierT }`,
-    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${sharedImports.BlankNode} | ${sharedImports.NamedNode})[] } }`,
-    ObjectIdentifierT: code`ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}`,
+    ObjectFilterT: code`ObjectFilterT extends { readonly $identifier?: { readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[] } }`,
+    ObjectIdentifierT: code`ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}`,
   };
 
   const objectTypeType = code`\
 {
   ${syntheticNamePrefix}filter: (filter: ObjectFilterT, value: ObjectT) => boolean;
-  ${syntheticNamePrefix}fromRdf: (resource: ${sharedImports.Resource}, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${sharedImports.Either}<Error, ObjectT>;
-  ${syntheticNamePrefix}fromRdfTypes: readonly ${sharedImports.NamedNode}[]
+  ${syntheticNamePrefix}fromRdf: (resource: ${imports.Resource}, options: { objectSet: ${syntheticNamePrefix}ObjectSet }) => ${imports.Either}<Error, ObjectT>;
+  ${syntheticNamePrefix}fromRdfTypes: readonly ${imports.NamedNode}[]
 }`;
 
   return code`\
 export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticNamePrefix}ObjectSet {
-  protected readonly resourceSet: ${sharedImports.ResourceSet};
+  protected readonly resourceSet: ${imports.ResourceSet};
 
-  constructor({ dataset: ${sharedImports.DatasetCore}) {
-    this.resourceSet = new ${sharedImports.ResourceSet}({ dataset });
+  constructor({ dataset: ${imports.DatasetCore}) {
+    this.resourceSet = new ${imports.ResourceSet}({ dataset });
   }
 
   ${joinCode([
@@ -57,7 +57,7 @@ async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${
 }`,
           // objectSync
           code`\
-${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${sharedImports.Either}<Error, ${objectType.name}> {
+${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${imports.Either}<Error, ${objectType.name}> {
   return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);
 }`,
 
@@ -68,7 +68,7 @@ async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdenti
 }`,
           // objectIdentifiersSync
           code`\
-${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${sharedImports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]> {
+${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]> {
   return return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier);
 }`,
 
@@ -86,7 +86,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
 }`,
           // objectsCountSync
           code`\
-${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parameters}): ${sharedImports.Either}<Error, number> {
+${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parameters}): ${imports.Either}<Error, number> {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
 }`,
         ];
@@ -108,13 +108,13 @@ ${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parame
         switch (objectType.kind) {
           case "ObjectType": {
             return delegatingMethods.concat(code`\
-export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${sharedImports.Either}<Error, readonly ${objectType.name}[]> {
+export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(objectType.filterFunction, objectType)}, query);
 }`);
           }
           case "ObjectUnionType":
             return delegatingMethods.concat(code`\
-export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${sharedImports.Either}<Error, readonly ${objectType.name}[]> {
+export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([
     ${joinCode(
       objectType.memberTypes
@@ -136,14 +136,14 @@ export function ${methodSignatures.objects.name}Sync(${methodSignatures.objects.
     ...(objectTypes.length > 0
       ? [
           code`\
-protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${sharedImports.Either}<Error, readonly ObjectT[]> {
+protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${imports.Either}<Error, readonly ObjectT[]> {
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-  if (limit <= 0) { return ${sharedImports.Either}.of([]); }
+  if (limit <= 0) { return ${imports.Either}.of([]); }
 
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
 
-  let resources: { object?: ObjectT, resource: ${sharedImports.Resource} }[];
+  let resources: { object?: ObjectT, resource: ${imports.Resource} }[];
   let sortResources: boolean;
   if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
     resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
@@ -208,11 +208,11 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     if (objectI++ >= offset) {
       objects.push(object);
       if (objects.length === limit) {
-        return ${sharedImports.Either}.of(objects);
+        return ${imports.Either}.of(objects);
       }
     }
   }
-  return ${sharedImports.Either}.of(objects);
+  return ${imports.Either}.of(objects);
   }`,
         ]
       : []),
@@ -220,14 +220,14 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     ...(objectUnionTypes.length > 0
       ? [
           code`\
-protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${sharedImports.Either}<Error, readonly ObjectT[]> {
+protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${imports.Either}<Error, readonly ObjectT[]> {
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
-  if (limit <= 0) { return ${sharedImports.Either}.of([]); }
+  if (limit <= 0) { return ${imports.Either}.of([]); }
 
   let offset = query?.offset ?? 0;
   if (offset < 0) { offset = 0; }
 
-  let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${sharedImports.Resource} }[];
+  let resources: { object?: ObjectT, objectType?: ${objectTypeType}, resource: ${imports.Resource} }[];
   let sortResources: boolean;
   if (query?.filter?.${syntheticNamePrefix}identifier?.in) {
     resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
@@ -284,11 +284,11 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   const objects: ObjectT[] = [];
   for (let { object, objectType, resource } of resources) {
     if (!object) {
-      let objectEither: ${sharedImports.Either}<Error, ObjectT>;
+      let objectEither: ${imports.Either}<Error, ObjectT>;
       if (objectType) {
         objectEither = objectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
       } else {
-        objectEither = ${sharedImports.Left}(new Error("no object types"));
+        objectEither = ${imports.Left}(new Error("no object types"));
         for (const tryObjectType of objectTypes) {
           objectEither = tryObjectType.${syntheticNamePrefix}fromRdf(resource, { objectSet: this });
           if (objectEither.isRight()) {
@@ -313,11 +313,11 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     if (objectI++ >= offset) {
       objects.push(object);
       if (objects.length === limit) {
-        return ${sharedImports.Either}.of(objects);
+        return ${imports.Either}.of(objects);
       }
     }
   }
-  return ${sharedImports.Either}.of(objects);
+  return ${imports.Either}.of(objects);
 }`,
         ]
       : []),

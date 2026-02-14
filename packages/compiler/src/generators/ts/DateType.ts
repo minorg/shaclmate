@@ -5,20 +5,20 @@ import { type Code, code } from "ts-poet";
 
 import { AbstractDateType } from "./AbstractDateType.js";
 import { DateTimeType } from "./DateTimeType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 
 export class DateType extends AbstractDateType {
   protected override readonly xsdDatatype: NamedNode = xsd.date;
 
   override readonly graphqlType = new DateTimeType.GraphqlType(
-    code`${sharedImports.GraphQLDate}`,
+    code`${imports.GraphQLDate}`,
   );
   override readonly kind = "DateType";
 
   override jsonZodSchema(
     _parameters: Parameters<DateTimeType["jsonZodSchema"]>[0],
   ): Code {
-    return code`${sharedImports.z}.iso.date()`;
+    return code`${imports.z}.iso.date()`;
   }
 
   protected override toIsoStringExpression(variables: { value: Code }): Code {

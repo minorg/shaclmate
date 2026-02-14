@@ -5,8 +5,8 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
@@ -29,19 +29,19 @@ export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   @Memoize()
   get fromStringFunction(): Code {
     const expressions: Code[] = [
-      code`${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }))`,
-      code`chain((identifier) => (identifier.termType === "NamedNode") ? ${sharedImports.Either}.of(identifier) : ${sharedImports.Left}(new Error("expected identifier to be NamedNode")))`,
+      code`${imports.Either}.encase(() => ${imports.Resource}.Identifier.fromString({ ${imports.dataFactory}, identifier }))`,
+      code`chain((identifier) => (identifier.termType === "NamedNode") ? ${imports.Either}.of(identifier) : ${imports.Left}(new Error("expected identifier to be NamedNode")))`,
     ];
 
     if (this.in_.length > 0) {
       expressions.push(
-        code`chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${sharedImports.Either}.of(identifier as ${sharedImports.NamedNode}<"${iri.value}">);`))} default: return ${sharedImports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
+        code`chain((identifier) => { switch (identifier.value) { ${joinCode(this.in_.map((iri) => code`case "${iri.value}": return ${imports.Either}.of(identifier as ${imports.NamedNode}<"${iri.value}">);`))} default: return ${imports.Left}(new Error("expected NamedNode identifier to be one of ${this.in_.map((iri) => iri.value).join(" ")}")); } })`,
       );
     }
 
     return code`\
-export function fromString(identifier: string): ${sharedImports.Either}<Error, ${this.name}> {
-  return ${joinCode(expressions, { on: "." })} as ${sharedImports.Either}<Error, ${this.name}>;
+export function fromString(identifier: string): ${imports.Either}<Error, ${this.name}> {
+  return ${joinCode(expressions, { on: "." })} as ${imports.Either}<Error, ${this.name}>;
 }`;
   }
 
@@ -50,12 +50,12 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      return code`${sharedImports.NamedNode}<${this.in_
+      return code`${imports.NamedNode}<${this.in_
         .map((iri) => `"${iri.value}"`)
         .join(" | ")}>`;
     }
 
-    return code`${sharedImports.NamedNode}`;
+    return code`${imports.NamedNode}`;
   }
 
   protected override get schemaObject() {
@@ -73,7 +73,7 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${sharedImports.dataFactory}.namedNode(${variables.value}["@id"])`;
+    return code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
   }
 
   @Memoize()
@@ -106,16 +106,16 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      idSchema = `${sharedImports.z}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
+      idSchema = `${imports.z}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
     } else {
-      idSchema = `${sharedImports.z}.string().min(1)`;
+      idSchema = `${imports.z}.string().min(1)`;
     }
 
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${sharedImports.z}.literal("NamedNode")`
+      ? `, termType: ${imports.z}.literal("NamedNode")`
       : "";
 
-    return code`${sharedImports.z}.object({ "@id": ${idSchema}${discriminantProperty} })`;
+    return code`${imports.z}.object({ "@id": ${idSchema}${discriminantProperty} })`;
   }
 
   override toJsonExpression({
@@ -138,7 +138,7 @@ export function fromString(identifier: string): ${sharedImports.Either}<Error, $
     let valueToExpression = "value.toIri()";
     if (this.in_.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return ${sharedImports.Either}.of${eitherTypeParameters}(iri as ${sharedImports.NamedNode}<"${iri.value}">);`).join(" ")} default: return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
+      valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return ${imports.Either}.of${eitherTypeParameters}(iri as ${imports.NamedNode}<"${iri.value}">);`).join(" ")} default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
     }
 
     return {
@@ -153,7 +153,7 @@ namespace localSnippets {
     `${syntheticNamePrefix}NamedNodeFilter`,
     code`\
 interface ${syntheticNamePrefix}NamedNodeFilter {
-  readonly in?: readonly ${sharedImports.NamedNode}[];
+  readonly in?: readonly ${imports.NamedNode}[];
 }`,
   );
 
@@ -162,14 +162,14 @@ interface ${syntheticNamePrefix}NamedNodeFilter {
     code`\
 interface ${syntheticNamePrefix}NamedNodeSchema {
   readonly kind: "NamedNodeType";
-  readonly in?: readonly ${sharedImports.NamedNode}[];
+  readonly in?: readonly ${imports.NamedNode}[];
 }`,
   );
 
   export const filterNamedNode = conditionalOutput(
     `${syntheticNamePrefix}filterNamedNode`,
     code`\
-function ${syntheticNamePrefix}filterNamedNode(filter: ${localSnippets.NamedNodeFilter}, value: ${sharedImports.NamedNode}) {
+function ${syntheticNamePrefix}filterNamedNode(filter: ${localSnippets.NamedNodeFilter}, value: ${imports.NamedNode}) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }

@@ -13,8 +13,8 @@ import * as _ObjectType from "./_ObjectType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import { imports } from "./imports.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -304,7 +304,7 @@ ${joinCode(staticModuleDeclarations)}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${sharedImports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? "<${sharedImports.NamedNode}>" : ""}`;
+    return code`${imports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? "<${imports.NamedNode}>" : ""}`;
   }
 
   @Memoize()
@@ -378,7 +378,7 @@ ${joinCode(staticModuleDeclarations)}
       context === "property" &&
       this.properties.some((property) => property.recursive)
     ) {
-      expression = code`${sharedImports.z}.lazy((): ${sharedImports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+      expression = code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
     }
     return expression;
   }

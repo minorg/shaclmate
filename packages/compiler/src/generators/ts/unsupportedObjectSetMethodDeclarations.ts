@@ -1,7 +1,7 @@
 import { type Code, code } from "ts-poet";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import { sharedImports } from "./sharedImports.js";
 
 function unsupportedObjectSetMethodDeclaration({
   name,
@@ -14,7 +14,7 @@ function unsupportedObjectSetMethodDeclaration({
 }) {
   return code`\
 async ${name}(${parameters}): ${returnType} {
-  return ${sharedImports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
+  return ${imports.Left}(new Error("${name}: not supported")) satisfies Awaited<${returnType}>;
 }`;
 }
 

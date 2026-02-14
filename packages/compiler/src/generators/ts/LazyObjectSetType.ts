@@ -3,10 +3,10 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { SetType } from "./SetType.js";
-import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LazyObjectSetType extends AbstractLazyObjectType<
@@ -15,10 +15,10 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
 > {
   override readonly graphqlArgs: Super["graphqlArgs"] = Maybe.of({
     limit: {
-      type: code`${sharedImports.GraphQLInt}`,
+      type: code`${imports.GraphQLInt}`,
     },
     offset: {
-      type: code`${sharedImports.GraphQLInt}`,
+      type: code`${imports.GraphQLInt}`,
     },
   });
   override readonly kind = "LazyObjectSetType";
@@ -55,7 +55,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     if (this.partialType.itemType.kind === "ObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${sharedImports.Either}.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => ${(this.partialType.itemType as ObjectType).newExpression({ parameters: code`object` })}), resolver: async () => ${imports.Either}.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolvedType.itemType.name}[]`,
@@ -69,7 +69,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${sharedImports.Either}.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${value}.map(object => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType.itemType as ObjectUnionType, partialObjectUnionType: this.partialType.itemType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} }), resolver: async () => ${imports.Either}.of(${value} as readonly ${this.resolvedType.itemType.name}[]) })`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "object"`,
         sourceTypeName: code`readonly ${this.resolvedType.itemType.name}[]`,
@@ -92,7 +92,7 @@ export class LazyObjectSetType extends AbstractLazyObjectType<
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${sharedImports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: () => Promise.resolve(${imports.Left}(new Error("unable to resolve identifiers deserialized from JSON"))) })`;
   }
 
   override fromRdfExpression(
@@ -121,13 +121,13 @@ namespace localSnippets {
 /**
  * Type of lazy properties that return a set of objects. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   readonly partials: readonly PartialObjectT[];
-  private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>>;
+  private readonly resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>;
 
   constructor({ partials, resolver }: {
     partials: readonly PartialObjectT[]
-    resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>>,
+    resolver: (identifiers: readonly ObjectIdentifierT[]) => Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>>,
   }) {
     this.partials = partials;
     this.resolver = resolver;
@@ -137,14 +137,14 @@ export class ${syntheticNamePrefix}LazyObjectSet<ObjectIdentifierT extends ${sha
     return this.partials.length;
   }
 
-  async resolve(options?: { limit?: number; offset?: number }): Promise<${sharedImports.Either}<Error, readonly ResolvedObjectT[]>> {
+  async resolve(options?: { limit?: number; offset?: number }): Promise<${imports.Either}<Error, readonly ResolvedObjectT[]>> {
     if (this.partials.length === 0) {
-      return ${sharedImports.Either}.of([]);
+      return ${imports.Either}.of([]);
     }
 
     const limit = options?.limit ?? Number.MAX_SAFE_INTEGER;
     if (limit <= 0) {
-      return ${sharedImports.Either}.of([]);
+      return ${imports.Either}.of([]);
     }
 
     let offset = options?.offset ?? 0;

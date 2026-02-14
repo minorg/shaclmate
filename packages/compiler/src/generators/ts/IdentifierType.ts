@@ -6,7 +6,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -18,8 +18,7 @@ export class IdentifierType extends AbstractIdentifierType<
   override readonly fromStringFunction =
     code`${localSnippets.identifierFromString}`;
   override readonly kind = "IdentifierType";
-  override readonly name =
-    code`(${sharedImports.BlankNode} | ${sharedImports.NamedNode})`;
+  override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
   override readonly schemaType = code`${localSnippets.IdentifierSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${localSnippets.identifierSparqlWherePatterns}`;
@@ -45,7 +44,7 @@ export class IdentifierType extends AbstractIdentifierType<
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`(${variables.value}["@id"].startsWith("_:") ? ${sharedImports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${sharedImports.dataFactory}.namedNode(${variables.value}["@id"]))`;
+    return code`(${variables.value}["@id"].startsWith("_:") ? ${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2)) : ${imports.dataFactory}.namedNode(${variables.value}["@id"]))`;
   }
 
   @Memoize()
@@ -67,10 +66,10 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${sharedImports.z}.enum(${JSON.stringify([...this.nodeKinds])})`
+      ? `, termType: ${imports.z}.enum(${JSON.stringify([...this.nodeKinds])})`
       : "";
 
-    return code`${sharedImports.z}.object({ "@id": ${sharedImports.z}.string().min(1)${discriminantProperty} })`;
+    return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({
@@ -104,7 +103,7 @@ namespace localSnippets {
     `${syntheticNamePrefix}IdentifierFilter`,
     code`\
 interface ${syntheticNamePrefix}IdentifierFilter {
-  readonly in?: readonly (${sharedImports.BlankNode} | ${sharedImports.NamedNode})[];
+  readonly in?: readonly (${imports.BlankNode} | ${imports.NamedNode})[];
   readonly type?: "BlankNode" | "NamedNode";
 }`,
   );
@@ -120,7 +119,7 @@ interface ${syntheticNamePrefix}IdentifierSchema {
   export const filterIdentifier = conditionalOutput(
     `${syntheticNamePrefix}filterIdentifier`,
     code`\
-function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.IdentifierFilter}, value: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}) {
+function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.IdentifierFilter}, value: ${imports.BlankNode} | ${imports.NamedNode}) {
   if (typeof filter.in !== "undefined" && !filter.in.some(inValue => inValue.equals(value))) {
     return false;
   }
@@ -136,8 +135,8 @@ function ${syntheticNamePrefix}filterIdentifier(filter: ${localSnippets.Identifi
   export const identifierFromString = conditionalOutput(
     `${syntheticNamePrefix}identifierFromString`,
     code`\
-function ${syntheticNamePrefix}identifierFromString(identifier: string): ${sharedImports.Either}<Error, ${sharedImports.BlankNode} | ${sharedImports.NamedNode}> {
-  return ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }));
+function ${syntheticNamePrefix}identifierFromString(identifier: string): ${imports.Either}<Error, ${imports.BlankNode} | ${imports.NamedNode}> {
+  return ${imports.Either}.encase(() => ${imports.Resource}.Identifier.fromString({ ${imports.dataFactory}, identifier }));
 }`,
   );
 

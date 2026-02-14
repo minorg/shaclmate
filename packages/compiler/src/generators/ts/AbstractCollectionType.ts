@@ -4,7 +4,7 @@ import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Typeof } from "./Typeof.js";
@@ -22,7 +22,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
   elementEquals: (left: T, right: T) => boolean | ${sharedSnippets.EqualsResult},
 ): ${sharedSnippets.EqualsResult} {
   if (leftArray.length !== rightArray.length) {
-    return ${sharedImports.Left}({
+    return ${imports.Left}({
       left: leftArray,
       right: rightArray,
       type: "ArrayLength",
@@ -60,7 +60,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
 
     if (rightUnequals.length === rightArray.length) {
       // All right elements were unequal to the left element
-      return ${sharedImports.Left}({
+      return ${imports.Left}({
         left: {
           array: leftArray,
           element: leftElement,
@@ -253,7 +253,7 @@ export abstract class AbstractCollectionType<
       conversions.push({
         conversionExpression: (value) => value,
         sourceTypeCheckExpression: (value) =>
-          code`${sharedImports.NonEmptyList}.isNonEmpty(${value})`,
+          code`${imports.NonEmptyList}.isNonEmpty(${value})`,
         sourceTypeName: this.name,
         sourceTypeof: "object",
       });
@@ -280,7 +280,7 @@ export abstract class AbstractCollectionType<
   @Memoize()
   override get graphqlType(): AbstractContainerType.GraphqlType {
     return new AbstractContainerType.GraphqlType(
-      code`new ${sharedImports.GraphQLList}(${this.itemType.graphqlType.name})`,
+      code`new ${imports.GraphQLList}(${this.itemType.graphqlType.name})`,
     );
   }
 
@@ -296,7 +296,7 @@ export abstract class AbstractCollectionType<
     if (this.minCount === 0) {
       return code`readonly (${this.itemType.name})[]`;
     }
-    return code`${sharedImports.NonEmptyList}<${this.itemType.name}>`;
+    return code`${imports.NonEmptyList}<${this.itemType.name}>`;
   }
 
   @Memoize()
@@ -318,7 +318,7 @@ export abstract class AbstractCollectionType<
   >[0]): Code {
     let expression = variables.value;
     if (!this._mutable && this.minCount > 0) {
-      expression = code`${sharedImports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
+      expression = code`${imports.NonEmptyList}.fromArray(${expression}).unsafeCoerce()`;
     }
     const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({

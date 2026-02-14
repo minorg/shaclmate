@@ -2,7 +2,7 @@ import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 import { type Code, code, literalOf } from "ts-poet";
 import { logger } from "../../logger.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 
 export function rdfjsTermExpression(
@@ -14,15 +14,15 @@ export function rdfjsTermExpression(
 ): Code {
   switch (rdfjsTerm.termType) {
     case "BlankNode":
-      return code`${sharedImports.dataFactory}.blankNode(${literalOf(rdfjsTerm.value)})`;
+      return code`${imports.dataFactory}.blankNode(${literalOf(rdfjsTerm.value)})`;
     case "Literal":
       if (rdfjsTerm.datatype.equals(xsd.string)) {
         if (rdfjsTerm.language.length === 0) {
-          return code`${sharedImports.dataFactory}.literal(${literalOf(rdfjsTerm.value)})`;
+          return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)})`;
         }
-        return code`${sharedImports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${literalOf(rdfjsTerm.language)})`;
+        return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${literalOf(rdfjsTerm.language)})`;
       }
-      return code`${sharedImports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
+      return code`${imports.dataFactory}.literal(${literalOf(rdfjsTerm.value)}, ${rdfjsTermExpression(rdfjsTerm.datatype)})`;
     case "NamedNode": {
       if (rdfjsTerm.value.startsWith(rdf[""].value)) {
         const unqualifiedName = rdfjsTerm.value.substring(rdf[""].value.length);
@@ -61,9 +61,9 @@ export function rdfjsTermExpression(
         }
       }
 
-      return code`${sharedImports.dataFactory}.namedNode(${literalOf(rdfjsTerm.value)})`;
+      return code`${imports.dataFactory}.namedNode(${literalOf(rdfjsTerm.value)})`;
     }
     case "Variable":
-      return code`${sharedImports.dataFactory}.variable!(${literalOf(rdfjsTerm.value)})`;
+      return code`${imports.dataFactory}.variable!(${literalOf(rdfjsTerm.value)})`;
   }
 }

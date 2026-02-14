@@ -3,7 +3,7 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -11,7 +11,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   override readonly filterFunction = code`${localSnippets.filterString}`;
   override readonly filterType = code`${localSnippets.StringFilter}`;
   override readonly graphqlType = new AbstractPrimitiveType.GraphqlType(
-    code`${sharedImports.GraphQLString}`,
+    code`${imports.GraphQLString}`,
   );
   readonly kind = "StringType";
   override readonly schemaType = code`${localSnippets.StringSchema}`;
@@ -50,18 +50,18 @@ export class StringType extends AbstractPrimitiveType<string> {
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${sharedImports.z}.string()`;
+        return code`${imports.z}.string()`;
       case 1:
-        return code`${sharedImports.z}.literal(${this.primitiveIn[0]})`;
+        return code`${imports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${sharedImports.z}.enum(${JSON.stringify(this.primitiveIn)})`;
+        return code`${imports.z}.enum(${JSON.stringify(this.primitiveIn)})`;
     }
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
-    return code`[${sharedImports.dataFactory}.literal(${variables.value})]`;
+    return code`[${imports.dataFactory}.literal(${variables.value})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -71,7 +71,7 @@ export class StringType extends AbstractPrimitiveType<string> {
   >[0]): ReturnType<AbstractPrimitiveType<string>["fromRdfExpressionChain"]> {
     const inChain =
       this.primitiveIn.length > 0
-        ? code`.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return ${sharedImports.Either}.of<Error, ${this.name}>(string_); default: return ${sharedImports.Left}<Error, ${this.name}>(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`
+        ? code`.chain(string_ => { switch (string_) { ${this.primitiveIn.map((value) => `case "${value}":`).join(" ")} return ${imports.Either}.of<Error, ${this.name}>(string_); default: return ${imports.Left}<Error, ${this.name}>(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`
         : "";
 
     return {

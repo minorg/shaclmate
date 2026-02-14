@@ -1,16 +1,16 @@
 import { type Code, code, joinCode } from "ts-poet";
 import { codeEquals } from "../codeEquals.js";
+import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedImports } from "../sharedImports.js";
 import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 function fromRdfFunctionDeclaration(this: ObjectUnionType): Code {
   return code`\
-export function ${syntheticNamePrefix}fromRdf(resource: ${sharedImports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${sharedImports.Either}<Error, ${this.name}> {
+export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
   return ${this.concreteMemberTypes.reduce(
     (expression, memberType) => {
-      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as ${sharedImports.Either}<Error, ${this.name}>)`;
+      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
         : memberTypeExpression;
@@ -43,7 +43,7 @@ function toRdfFunctionDeclaration(this: ObjectUnionType): Code {
       if (typeof returnType === "undefined") {
         returnType = memberRdfjsResourceType;
       } else if (!codeEquals(memberRdfjsResourceType, returnType)) {
-        return code`${sharedImports.Resource}`;
+        return code`${imports.Resource}`;
       }
     }
     // The types agree
@@ -51,7 +51,7 @@ function toRdfFunctionDeclaration(this: ObjectUnionType): Code {
   };
 
   return code`\
-export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${parametersVariable}?: { mutateGraph?: ${sharedImports.MutableResource}.MutateGraph, resourceSet?: ${sharedImports.MutableResourceSet} }): ${returnType()} {
+export function ${syntheticNamePrefix}toRdf(${this.thisVariable}: ${this.name}, ${parametersVariable}?: { mutateGraph?: ${imports.MutableResource}.MutateGraph, resourceSet?: ${imports.MutableResourceSet} }): ${returnType()} {
 ${joinCode(
   this.concreteMemberTypes
     .map((memberType) => {

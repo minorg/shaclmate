@@ -1,14 +1,14 @@
 import { type Code, code, joinCode } from "ts-poet";
+import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 function fromJsonFunctionDeclaration(this: ObjectUnionType): Code {
   return code`\
-export function ${syntheticNamePrefix}fromJson(json: unknown): ${sharedImports.Either}<${sharedImports.z}.ZodError, ${this.name}> {
+export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<${imports.z}.ZodError, ${this.name}> {
   return ${this.concreteMemberTypes.reduce(
     (expression, memberType) => {
-      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as ${sharedImports.Either}<${sharedImports.z}.ZodError, ${this.name}>)`;
+      const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromJson(json) as ${imports.Either}<${imports.z}.ZodError, ${this.name}>)`;
       return expression !== null
         ? code`${expression}.altLazy(() => ${memberTypeExpression})`
         : memberTypeExpression;
@@ -43,7 +43,7 @@ function jsonTypeAliasDeclaration(this: ObjectUnionType): Code {
 function jsonZodSchemaFunctionDeclaration(this: ObjectUnionType): Code {
   return code`\
 export function ${syntheticNamePrefix}jsonZodSchema() {
-  return ${sharedImports.z}.discriminatedUnion("${this._discriminantProperty.name}", [${joinCode(
+  return ${imports.z}.discriminatedUnion("${this._discriminantProperty.name}", [${joinCode(
     this.concreteMemberTypes.map((memberType) =>
       memberType.jsonZodSchema({ context: "type" }),
     ),

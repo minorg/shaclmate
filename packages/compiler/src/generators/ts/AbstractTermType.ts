@@ -6,8 +6,8 @@ import { arrayOf, type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -189,13 +189,13 @@ export abstract class AbstractTermType<
     preferredLanguages?: Code;
     valueTo: Code;
   } {
-    let valueToExpression = code`${sharedImports.Either}.of<Error, ${sharedImports.BlankNode} | ${sharedImports.Literal} | ${sharedImports.NamedNode}>(value.toTerm())`;
+    let valueToExpression = code`${imports.Either}.of<Error, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(value.toTerm())`;
     if (this.nodeKinds.size < 3) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
       valueToExpression = code`${valueToExpression}.chain(term => {
   switch (term.termType) {
-  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${sharedImports.Either}.of${eitherTypeParameters}(term);
-  default: return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }}));         
+  ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
+  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }}));         
 }})`;
     }
 
@@ -203,7 +203,7 @@ export abstract class AbstractTermType<
       hasValues:
         this.hasValues.length > 0
           ? code`\
-chain(values => ${sharedImports.Either}.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
+chain(values => ${imports.Either}.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
           : undefined,
       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };

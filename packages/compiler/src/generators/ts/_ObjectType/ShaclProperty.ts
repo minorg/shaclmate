@@ -5,8 +5,8 @@ import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
+import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
 import { tsComment } from "../tsComment.js";
@@ -236,7 +236,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
           ...variables,
           ignoreRdfType: true,
           predicate: this.predicate,
-          resourceValues: code`${sharedImports.Either}.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
+          resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${variables.resource}.values(${syntheticNamePrefix}schema.properties.${this.name}.identifier, { unique: true }))`,
         },
       })}.chain(values => values.head())`,
     );
@@ -269,7 +269,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["sparqlConstructTriples"]
   >[0]): Maybe<Code> {
     const valueString = code`\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = code`${sharedImports.dataFactory}.variable!(${valueString})`;
+    const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of(
       code`[${{
         object: valueVariable,
@@ -291,7 +291,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
     AbstractProperty<TypeT>["sparqlWherePatterns"]
   > {
     const valueString = `\`\${${variables.variablePrefix}}${pascalCase(this.name)}\``;
-    const valueVariable = code`${sharedImports.dataFactory}.variable!(${valueString})`;
+    const valueVariable = code`${imports.dataFactory}.variable!(${valueString})`;
     return Maybe.of({
       patterns: code`${this.type.sparqlWherePatternsFunction}(${{
         filter: this.filterProperty

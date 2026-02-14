@@ -1,7 +1,7 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 import { code, conditionalOutput } from "ts-poet";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export namespace sharedSnippets {
@@ -52,16 +52,16 @@ type ${syntheticNamePrefix}CollectionFilter<ItemFilterT> = ItemFilterT & {
 
   export const datasetFactory = conditionalOutput(
     `${syntheticNamePrefix}datasetFactory`,
-    code`const ${syntheticNamePrefix}datasetFactory = new ${sharedImports.DatasetFactory}();`,
+    code`const ${syntheticNamePrefix}datasetFactory = new ${imports.DatasetFactory}();`,
   );
 
   export const EqualsResult = conditionalOutput(
     `${syntheticNamePrefix}EqualsResult`,
     code`\
-export type ${syntheticNamePrefix}EqualsResult = ${sharedImports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
+export type ${syntheticNamePrefix}EqualsResult = ${imports.Either}<${syntheticNamePrefix}EqualsResult.Unequal, true>;
 
 export namespace ${syntheticNamePrefix}EqualsResult {
-  export const Equal: ${syntheticNamePrefix}EqualsResult = ${sharedImports.Either}.of<Unequal, true>(true);
+  export const Equal: ${syntheticNamePrefix}EqualsResult = ${imports.Either}.of<Unequal, true>(true);
 
   export function fromBooleanEqualsResult(
     left: any,
@@ -76,7 +76,7 @@ export namespace ${syntheticNamePrefix}EqualsResult {
       return Equal;
     }
 
-    return ${sharedImports.Left}({ left, right, type: "BooleanEquals" });
+    return ${imports.Left}({ left, right, type: "BooleanEquals" });
   }
 
   export type Unequal =
@@ -144,8 +144,8 @@ export namespace ${syntheticNamePrefix}EqualsResult {
     `${syntheticNamePrefix}TermFilter`,
     code`\
 interface ${syntheticNamePrefix}TermFilter {
-  readonly datatypeIn?: readonly ${sharedImports.NamedNode}[];
-  readonly in?: readonly (${sharedImports.Literal} | ${sharedImports.NamedNode})[];
+  readonly datatypeIn?: readonly ${imports.NamedNode}[];
+  readonly in?: readonly (${imports.Literal} | ${imports.NamedNode})[];
   readonly languageIn?: readonly string[];
   readonly typeIn?: readonly ("BlankNode" | "Literal" | "NamedNode")[];
 }`,
@@ -154,7 +154,7 @@ interface ${syntheticNamePrefix}TermFilter {
   export const filterTerm = conditionalOutput(
     `${syntheticNamePrefix}filterTerm`,
     code`\
-  function ${syntheticNamePrefix}filterTerm(filter: ${TermFilter}, value: ${sharedImports.BlankNode} | ${sharedImports.Literal} | ${sharedImports.NamedNode}): boolean {
+  function ${syntheticNamePrefix}filterTerm(filter: ${TermFilter}, value: ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}): boolean {
     if (typeof filter.datatypeIn !== "undefined" && (value.termType !== "Literal" || !filter.datatypeIn.some(inDatatype => inDatatype.equals(value.datatype)))) {
       return false;
     }
@@ -188,7 +188,7 @@ class ${syntheticNamePrefix}IdentifierSet {
   private readonly blankNodeValues = new Set<string>();
   private readonly namedNodeValues = new Set<string>();
 
-  add(identifier: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}): this {
+  add(identifier: ${imports.BlankNode} | ${imports.NamedNode}): this {
     switch (identifier.termType) {
       case "BlankNode":
         this.blankNodeValues.add(identifier.value);
@@ -199,7 +199,7 @@ class ${syntheticNamePrefix}IdentifierSet {
     }
   }
 
-  has(identifier: ${sharedImports.BlankNode} | ${sharedImports.NamedNode}): boolean {
+  has(identifier: ${imports.BlankNode} | ${imports.NamedNode}): boolean {
     switch (identifier.termType) {
       case "BlankNode":
         return this.blankNodeValues.has(identifier.value);
@@ -212,12 +212,12 @@ class ${syntheticNamePrefix}IdentifierSet {
 
   export const SparqlFilterPattern = conditionalOutput(
     `${syntheticNamePrefix}SparqlFilterPattern`,
-    code`type ${syntheticNamePrefix}SparqlFilterPattern = ${sharedImports.sparqljs}.FilterPattern & { lift?: boolean };`,
+    code`type ${syntheticNamePrefix}SparqlFilterPattern = ${imports.sparqljs}.FilterPattern & { lift?: boolean };`,
   );
 
   export const SparqlPattern = conditionalOutput(
     `SparqlPattern`,
-    code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${sharedImports.sparqljs}.Pattern, ${sharedImports.sparqljs}.FilterPattern> | ${SparqlFilterPattern};`,
+    code`type ${syntheticNamePrefix}SparqlPattern = Exclude<${imports.sparqljs}.Pattern, ${imports.sparqljs}.FilterPattern> | ${SparqlFilterPattern};`,
   );
 
   export const SparqlPattern_isSolutionGenerating = conditionalOutput(
@@ -259,9 +259,9 @@ type ${syntheticNamePrefix}SparqlWherePatternsFunctionParameters<FilterT, Schema
   filter?: FilterT;
   ignoreRdfType?: boolean;
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly ${sharedImports.sparqljs}.BgpPattern[];
+  propertyPatterns: readonly ${imports.sparqljs}.BgpPattern[];
   schema: SchemaT;
-  valueVariable: ${sharedImports.Variable};
+  valueVariable: ${imports.Variable};
   variablePrefix: string;
 }>;`,
   );
@@ -338,47 +338,47 @@ function ${syntheticNamePrefix}sortSparqlPatterns(patterns: readonly ${SparqlPat
   export const toLiteral = conditionalOutput(
     `${syntheticNamePrefix}toLiteral`,
     code`\
-function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | ${sharedImports.Literal} | string, datatype?: ${sharedImports.NamedNode}): ${sharedImports.Literal} {
+function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | ${imports.Literal} | string, datatype?: ${imports.NamedNode}): ${imports.Literal} {
   switch (typeof value) {
     case "boolean":
-      return ${sharedImports.dataFactory}.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
+      return ${imports.dataFactory}.literal(value.toString(), ${rdfjsTermExpression(xsd.boolean)});
     case "object": {
       if (value instanceof Date) {
         if (datatype) {
           if (datatype.equals(${rdfjsTermExpression(xsd.date)})) {
-            return ${sharedImports.dataFactory}.literal(value.toISOString().replace(/T.*$/, ''), datatype);
+            return ${imports.dataFactory}.literal(value.toISOString().replace(/T.*$/, ''), datatype);
           } else if (datatype.equals(${rdfjsTermExpression(xsd.dateTime)})) {
-            return ${sharedImports.dataFactory}.literal(value.toISOString(), datatype);             
+            return ${imports.dataFactory}.literal(value.toISOString(), datatype);             
           } else {
             throw new RangeError(datatype.value);
           }
         }
           
-        return ${sharedImports.dataFactory}.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
+        return ${imports.dataFactory}.literal(value.toISOString(), ${rdfjsTermExpression(xsd.dateTime)});
       }
 
       return value;
     }
     case "number": {
       if (datatype) {
-        return ${sharedImports.dataFactory}.literal(value.toString(10), datatype);
+        return ${imports.dataFactory}.literal(value.toString(10), datatype);
       }
 
       // Convert the number to a literal following SPARQL rules = tests on the lexical form
       const valueString = value.toString(10);
       if (/^[+-]?[0-9]+$/.test(valueString)) {
         // No decimal point, no exponent: xsd:integer
-        return ${sharedImports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
+        return ${imports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.integer)});
       }
       if (/^[+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)[eE][+-]?[0-9]+$/.test(valueString)) {
         // Has exponent: xsd:double
-        return ${sharedImports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.double)});
+        return ${imports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.double)});
       }
       // Default: xsd:decimal
-      return ${sharedImports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
+      return ${imports.dataFactory}.literal(valueString, ${rdfjsTermExpression(xsd.decimal)});
     }
     case "string":
-      return ${sharedImports.dataFactory}.literal(value, datatype);
+      return ${imports.dataFactory}.literal(value, datatype);
   }
 }`,
   );
@@ -386,7 +386,7 @@ function ${syntheticNamePrefix}toLiteral(value: boolean | Date | number | ${shar
   export const sparqlValueInPattern = conditionalOutput(
     `${syntheticNamePrefix}sparqlValueInPattern`,
     code`\
-function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | ${sharedImports.Literal} | ${sharedImports.NamedNode})[], valueVariable: ${sharedImports.Variable}}): ${SparqlFilterPattern} {
+function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | ${imports.Literal} | ${imports.NamedNode})[], valueVariable: ${imports.Variable}}): ${SparqlFilterPattern} {
   if (valueIn.length === 0) {
     throw new RangeError("expected valueIn not to be empty");
   }
@@ -432,12 +432,12 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
 }: {
   filterPatterns: readonly ${SparqlFilterPattern}[],
   preferredLanguages?: readonly string[];
-  propertyPatterns: readonly ${sharedImports.sparqljs}.BgpPattern[];
+  propertyPatterns: readonly ${imports.sparqljs}.BgpPattern[];
   schema: Readonly<{
     languageIn?: readonly string[];
-    in?: readonly (boolean | Date | string | number | ${sharedImports.Literal} | ${sharedImports.NamedNode})[];
+    in?: readonly (boolean | Date | string | number | ${imports.Literal} | ${imports.NamedNode})[];
   }>,
-  valueVariable: ${sharedImports.Variable};
+  valueVariable: ${imports.Variable};
 }): readonly ${SparqlPattern}[] {
   let patterns: ${SparqlPattern}[] = propertyPatterns.concat();
 
@@ -449,7 +449,7 @@ function ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({
   if (languageIn.length > 0) {
     patterns.push({
       expression: {
-        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, languageIn.map(_ => ${sharedImports.dataFactory}.literal(_))],
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, languageIn.map(_ => ${imports.dataFactory}.literal(_))],
         operator: "in",
         type: "operation"
       },
@@ -560,24 +560,24 @@ function ${syntheticNamePrefix}normalizeSparqlWherePatterns(patterns: readonly $
     code`\
 namespace ${syntheticNamePrefix}RdfVocabularies {
   export namespace rdf {
-    export const first = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
-    export const nil = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
-    export const rest = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
-    export const subject = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
-    export const type = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+    export const first = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#first");
+    export const nil = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#nil");
+    export const rest = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#rest");
+    export const subject = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#subject");
+    export const type = ${imports.dataFactory}.namedNode("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
   }
 
   export namespace rdfs {
-    export const subClassOf = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
+    export const subClassOf = ${imports.dataFactory}.namedNode("http://www.w3.org/2000/01/rdf-schema#subClassOf");
   }
 
   export namespace xsd {
-    export const boolean = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
-    export const date = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date");
-    export const dateTime = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
-    export const decimal = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
-    export const double = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double");
-    export const integer = ${sharedImports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
+    export const boolean = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#boolean");
+    export const date = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#date");
+    export const dateTime = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#dateTime");
+    export const decimal = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#decimal");
+    export const double = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#double");
+    export const integer = ${imports.dataFactory}.namedNode("http://www.w3.org/2001/XMLSchema#integer");
   }
 }
 `,
@@ -600,7 +600,7 @@ function ${syntheticNamePrefix}strictEquals<T extends bigint | boolean | number 
   export const termFilterSparqlPatterns = conditionalOutput(
     `${syntheticNamePrefix}termFilterSparqlPatterns`,
     code`\
-function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${TermFilter}; valueVariable: ${sharedImports.Variable} }): readonly ${SparqlFilterPattern}[] {
+function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable }: { filter?: ${TermFilter}; valueVariable: ${imports.Variable} }): readonly ${SparqlFilterPattern}[] {
   if (!filter) {
     return [];
   }
@@ -637,7 +637,7 @@ function ${syntheticNamePrefix}termFilterSparqlPatterns({ filter, valueVariable 
       expression: {
         type: "operation",
         operator: "in",
-        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => ${sharedImports.dataFactory}.literal(value))]
+        args: [{ args: [valueVariable], operator: "lang", type: "operation" }, filter.languageIn.map(value => ${imports.dataFactory}.literal(value))]
       },
       lift: true,
       type: "filter",
@@ -702,11 +702,11 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
   valueVariable
 }: {
   filterPatterns: readonly ${SparqlFilterPattern}[],
-  propertyPatterns: readonly ${sharedImports.sparqljs}.BgpPattern[];
+  propertyPatterns: readonly ${imports.sparqljs}.BgpPattern[];
   schema: Readonly<{
-    in?: readonly (boolean | Date | string | number | ${sharedImports.Literal} | ${sharedImports.NamedNode})[];
+    in?: readonly (boolean | Date | string | number | ${imports.Literal} | ${imports.NamedNode})[];
   }>,
-  valueVariable: ${sharedImports.Variable};
+  valueVariable: ${imports.Variable};
 }): readonly ${SparqlPattern}[] {
   let patterns: ${SparqlPattern}[] = propertyPatterns.concat();
 
@@ -718,9 +718,9 @@ function ${syntheticNamePrefix}termSchemaSparqlWherePatterns({
 }`,
   );
 
-  // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends ${sharedImports.Either}<infer L, any> ? L : never`;
+  // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends ${imports.Either}<infer L, any> ? L : never`;
   export const UnwrapR = conditionalOutput(
     `${syntheticNamePrefix}UnwrapR`,
-    code`type ${syntheticNamePrefix}UnwrapR<T> = T extends ${sharedImports.Either}<any, infer R> ? R : never`,
+    code`type ${syntheticNamePrefix}UnwrapR<T> = T extends ${imports.Either}<any, infer R> ? R : never`,
   );
 }

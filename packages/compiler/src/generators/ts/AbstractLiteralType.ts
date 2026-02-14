@@ -5,7 +5,7 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
@@ -63,7 +63,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
       ...super.fromRdfExpressionChain({ variables }),
       languageIn:
         this.languageIn.length > 0
-          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${sharedImports.Either}.of(value); default: return ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "literalValue", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })))`
+          ? code`chain(values => values.chainMap(value => value.toLiteral().chain(literalValue => { switch (literalValue.language) { ${this.languageIn.map((languageIn) => `case "${languageIn}":`).join(" ")} return ${imports.Either}.of(value); default: return ${imports.Left}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "literalValue", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })))`
           : undefined,
       preferredLanguages: code`chain(values => ${localSnippets.fromRdfPreferredLanguages}({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, preferredLanguages: ${variables.preferredLanguages}, values }))`,
       valueTo: code`chain(values => values.chainMap(value => value.toLiteral()))`,
@@ -77,19 +77,19 @@ namespace localSnippets {
     code`\
 function ${syntheticNamePrefix}fromRdfPreferredLanguages(
   { focusResource, predicate, preferredLanguages, values }: {
-    focusResource: ${sharedImports}Resource;
-    predicate: ${sharedImports.NamedNode};
+    focusResource: ${imports}Resource;
+    predicate: ${imports.NamedNode};
     preferredLanguages?: readonly string[];
-    values: ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>
-  }): ${sharedImports.Either}<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>> {
+    values: ${imports.Resource}.Values<${imports.Resource}.TermValue>
+  }): ${imports.Either}<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>> {
   if (!preferredLanguages || preferredLanguages.length === 0) {
-    return ${sharedImports.Either}.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(values);
+    return ${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(values);
   }
 
   return values.chainMap(value => value.toLiteral()).map(literalValues => {
     // Return all literals for the first preferredLanguage, then all literals for the second preferredLanguage, etc.
     // Within a preferredLanguage the literals may be in any order.
-    let filteredLiteralValues: ${sharedImports.Resource}.Values<${sharedImports.Literal}> | undefined;
+    let filteredLiteralValues: ${imports.Resource}.Values<${imports.Literal}> | undefined;
     for (const preferredLanguage of preferredLanguages) {
       if (!filteredLiteralValues) {
         filteredLiteralValues = literalValues.filter(value => value.language === preferredLanguage);
@@ -98,7 +98,7 @@ function ${syntheticNamePrefix}fromRdfPreferredLanguages(
       }
     }
 
-    return filteredLiteralValues!.map(literalValue => new ${sharedImports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
+    return filteredLiteralValues!.map(literalValue => new ${imports.Resource}.TermValue({ focusResource, predicate, term: literalValue }));
   });
 }`,
   );

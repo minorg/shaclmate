@@ -3,7 +3,7 @@ import { xsd } from "@tpluscode/rdf-ns-builders";
 import { type Code, code, conditionalOutput } from "ts-poet";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -11,7 +11,7 @@ export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction = code`${localSnippets.filterLiteral}`;
   override readonly filterType = code`${localSnippets.LiteralFilter}`;
   override readonly kind = "LiteralType";
-  override readonly name = code`${sharedImports.Literal}`;
+  override readonly name = code`${imports.Literal}`;
   override readonly schemaType = code`${localSnippets.LiteralSchema}`;
   override readonly sparqlWherePatternsFunction =
     code`${localSnippets.literalSparqlWherePatterns}`;
@@ -23,7 +23,7 @@ export class LiteralType extends AbstractLiteralType {
   override fromJsonExpression({
     variables,
   }: Parameters<AbstractLiteralType["fromJsonExpression"]>[0]): Code {
-    return code`${sharedImports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${sharedImports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+    return code`${imports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
   }
 
   override hashStatements({
@@ -52,10 +52,10 @@ export class LiteralType extends AbstractLiteralType {
     includeDiscriminantProperty,
   }: Parameters<AbstractLiteralType["jsonZodSchema"]>[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${sharedImports.z}.literal("Literal")`
+      ? `, termType: ${imports.z}.literal("Literal")`
       : "";
 
-    return code`${sharedImports.z}.object({ "@language": ${sharedImports.z}.string().optional()${discriminantProperty}, "@type": ${sharedImports.z}.string().optional(), "@value": ${sharedImports.z}.string() })`;
+    return code`${imports.z}.object({ "@language": ${imports.z}.string().optional()${discriminantProperty}, "@type": ${imports.z}.string().optional(), "@value": ${imports.z}.string() })`;
   }
 
   override toJsonExpression({
@@ -71,7 +71,7 @@ namespace localSnippets {
     `${syntheticNamePrefix}LiteralFilter`,
     code`\
 interface ${syntheticNamePrefix}LiteralFilter extends Omit<${sharedSnippets.TermFilter}, "in" | "type"> {
-  readonly in?: readonly ${sharedImports.Literal}[];
+  readonly in?: readonly ${imports.Literal}[];
 }`,
   );
 
@@ -80,7 +80,7 @@ interface ${syntheticNamePrefix}LiteralFilter extends Omit<${sharedSnippets.Term
     code`\
 interface ${syntheticNamePrefix}LiteralSchema {
   readonly kind: "LiteralType";
-  readonly in?: readonly ${sharedImports.Literal}[];
+  readonly in?: readonly ${imports.Literal}[];
   readonly languageIn?: readonly string[];
 }`,
   );
@@ -88,7 +88,7 @@ interface ${syntheticNamePrefix}LiteralSchema {
   export const filterLiteral = conditionalOutput(
     `${syntheticNamePrefix}filterLiteral`,
     code`\
-function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${sharedImports.Literal}): boolean {
+function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${imports.Literal}): boolean {
   return ${sharedSnippets.filterTerm}(filter, value);
 }`,
   );

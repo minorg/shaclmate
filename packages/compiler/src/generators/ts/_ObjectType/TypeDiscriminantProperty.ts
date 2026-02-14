@@ -3,7 +3,7 @@ import { invariant } from "ts-invariant";
 import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
-import { sharedImports } from "../sharedImports.js";
+import { imports } from "../imports.js";
 import { sharedSnippets } from "../sharedSnippets.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -56,8 +56,8 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
       key: this.name,
       schema:
         this.type.values.length > 1
-          ? code`${sharedImports.z}.enum(${JSON.stringify(this.type.values)})`
-          : code`${sharedImports.z}.literal("${this.type.values[0]}")`,
+          ? code`${imports.z}.enum(${JSON.stringify(this.type.values)})`
+          : code`${imports.z}.literal("${this.type.values[0]}")`,
     });
   }
 
@@ -94,7 +94,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   override fromRdfExpression(): Maybe<Code> {
     return !this.abstract && this.objectType.declarationType === "interface"
       ? Maybe.of(
-          code`${sharedImports.Either}.of<Error, ${this.objectType.discriminantValue}>(${this.initializer})`,
+          code`${imports.Either}.of<Error, ${this.objectType.discriminantValue}>(${this.initializer})`,
         )
       : Maybe.empty();
   }

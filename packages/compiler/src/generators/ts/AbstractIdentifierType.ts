@@ -5,7 +5,7 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractIdentifierType<
@@ -13,7 +13,7 @@ export abstract class AbstractIdentifierType<
 > extends AbstractTermType<NamedNode, IdentifierT> {
   abstract readonly fromStringFunction: Code;
   override readonly graphqlType = new AbstractTermType.GraphqlType(
-    code`${sharedImports.GraphQLString}`,
+    code`${imports.GraphQLString}`,
   );
   abstract override readonly kind:
     | "BlankNodeType"
@@ -26,7 +26,7 @@ export abstract class AbstractIdentifierType<
     if (this.nodeKinds.has("NamedNode")) {
       conversions.push({
         conversionExpression: (value) =>
-          code`${sharedImports.dataFactory}.namedNode(${value})`,
+          code`${imports.dataFactory}.namedNode(${value})`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "string"`,
         sourceTypeName:
@@ -54,12 +54,12 @@ export abstract class AbstractIdentifierType<
     // Re-export rdfjsResource.Resource.Identifier.toString
     return code`\
 // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-export const toString = ${sharedImports.Resource}.Identifier.toString`;
+export const toString = ${imports.Resource}.Identifier.toString`;
   }
 
   override graphqlResolveExpression({
     variables: { value },
   }: Parameters<AbstractTermType["graphqlResolveExpression"]>[0]): Code {
-    return code`${sharedImports.Resource}.Identifier.toString(${value})`;
+    return code`${imports.Resource}.Identifier.toString(${value})`;
   }
 }

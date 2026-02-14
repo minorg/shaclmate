@@ -4,7 +4,7 @@ import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
 
@@ -292,7 +292,7 @@ ${joinCode(
   ),
 )}
 
-  return ${sharedImports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "BooleanEquals" as const }, type: "Property" as const });
+  return ${imports.Left}({ left, right, propertyName: "type", propertyValuesUnequal: { left: typeof left, right: typeof right, type: "BooleanEquals" as const }, type: "Property" as const });
 })`;
   }
 
@@ -416,7 +416,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   override get sparqlWherePatternsFunction(): Code {
     return code`\
 (({ filter, schema, ...otherParameters }) => {
-  const unionPatterns: ${sharedImports.sparqljs}.GroupPattern[] = [];
+  const unionPatterns: ${imports.sparqljs}.GroupPattern[] = [];
 
   ${joinCode(
     this.memberTypes.map(
@@ -461,7 +461,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     variables,
   }: Parameters<AbstractType["fromRdfExpression"]>[0]): Code {
     return code`${variables.resourceValues}.chain(values => values.chainMap(value => {
-      const valueAsValues = ${sharedImports.Either}.of(value.toValues());
+      const valueAsValues = ${imports.Either}.of(value.toValues());
       return ${this.memberTypes.reduce(
         (expression, memberType) => {
           let typeExpression: Code = memberType.fromRdfExpression({
@@ -474,7 +474,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
           if (this.discriminant.kind === "envelope") {
             typeExpression = code`${typeExpression}.map(values => values.map(value => ({ ${this.discriminant.name}: "${memberType.discriminantValues[0]}" as const, value }) as (${this.name})))`;
           }
-          typeExpression = code`(${typeExpression} as ${sharedImports.Either}<Error, ${sharedImports.Resource}.Values<${this.name}>>)`;
+          typeExpression = code`(${typeExpression} as ${imports.Either}<Error, ${imports.Resource}.Values<${this.name}>>)`;
           return expression !== null
             ? code`${expression}.altLazy(() => ${typeExpression})`
             : typeExpression;
@@ -561,15 +561,15 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   ): Code {
     switch (this.discriminant.kind) {
       case "envelope":
-        return code`${sharedImports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.memberTypes.map(
             (memberType) =>
-              code`${sharedImports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${sharedImports.z}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
+              code`${imports.z}.object({ ${(this.discriminant as EnvelopeDiscriminant).name}: ${imports.z}.literal("${memberType.discriminantValues[0]}"), value: ${memberType.jsonZodSchema({ context: "type" })} })`,
           ),
           { on: "," },
         )}])`;
       case "inline":
-        return code`${sharedImports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
+        return code`${imports.z}.discriminatedUnion("${this.discriminant.name}", [${joinCode(
           this.memberTypes.map((memberType) =>
             memberType.jsonZodSchema({
               includeDiscriminantProperty: true,
@@ -579,7 +579,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
           { on: "," },
         )}])`;
       case "typeof":
-        return code`${sharedImports.z}.union([${joinCode(
+        return code`${imports.z}.union([${joinCode(
           this.memberTypes.map((memberType) =>
             memberType.jsonZodSchema({ context: "type" }),
           ),
@@ -648,7 +648,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
             ...variables,
             value: memberType.payload(variables.value),
           },
-        })} as readonly Parameters<${sharedImports.MutableResource}["add"]>[1][])`,
+        })} as readonly Parameters<${imports.MutableResource}["add"]>[1][])`,
       variables,
     });
   }

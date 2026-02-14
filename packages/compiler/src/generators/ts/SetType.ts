@@ -3,7 +3,7 @@ import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -32,11 +32,11 @@ export class SetType<
       );
     } else {
       chain.push(
-        code`chain(values => ${sharedImports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${sharedImports.Resource}.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
+        code`chain(values => ${imports.NonEmptyList}.fromArray(values.toArray()).toEither(new Error(\`\${${imports.Resource}.Identifier.toString(${variables.resource}.identifier)} is an empty set\`)))`,
       );
     }
     chain.push(
-      code`map(valuesArray => ${sharedImports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: valuesArray }))`,
+      code`map(valuesArray => ${imports.Resource}.Values.fromValue({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: valuesArray }))`,
     );
     return joinCode(chain, { on: "." });
   }

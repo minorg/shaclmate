@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode, literalOf } from "ts-poet";
+import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function graphqlTypeVariableStatement(
@@ -12,7 +12,7 @@ export function graphqlTypeVariableStatement(
   }
 
   return Maybe.of(code`\
-export const ${syntheticNamePrefix}GraphQL = new ${sharedImports.GraphQLUnionType}(${{
+export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLUnionType}(${{
     description: this.comment.map(JSON.stringify).extract(),
     name: literalOf(this.name),
     resolveType: code`(value: ${this.name}) => value.${syntheticNamePrefix}type`,

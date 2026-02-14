@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
 import { type Code, code } from "ts-poet";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 function graphqlQueryObjectType({
@@ -12,7 +12,7 @@ function graphqlQueryObjectType({
   objectTypes: readonly ObjectType[];
   objectUnionTypes: readonly ObjectUnionType[];
 }): Code {
-  return code`new ${sharedImports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
+  return code`new ${imports.GraphQLObjectType}<null, { objectSet: ${syntheticNamePrefix}ObjectSet }>({ name: "Query", fields: ${[
     ...objectTypes,
     ...objectUnionTypes,
   ].reduce(
@@ -20,12 +20,12 @@ function graphqlQueryObjectType({
       fields[objectType.objectSetMethodNames.object] = {
         args: {
           identifier: {
-            type: code`new ${sharedImports.GraphQLNonNull}(${sharedImports.GraphQLID})`,
+            type: code`new ${imports.GraphQLNonNull}(${imports.GraphQLID})`,
           },
         },
         resolve: code`\
 async (_source, args: { identifier: string }, { objectSet }): Promise<${objectType.name}> => 
-  (await ${sharedImports.EitherAsync}<Error, ${objectType.name}>(async ({ liftEither }) => 
+  (await ${imports.EitherAsync}<Error, ${objectType.name}>(async ({ liftEither }) => 
     liftEither(await objectSet.${objectType.objectSetMethodNames.object}(await liftEither(${objectType.identifierTypeAlias}.fromString(args.identifier))))
   )).unsafeCoerce()`,
         type: objectType.graphqlType.name,
@@ -34,33 +34,33 @@ async (_source, args: { identifier: string }, { objectSet }): Promise<${objectTy
       fields[objectType.objectSetMethodNames.objectIdentifiers] = {
         args: {
           limit: {
-            type: code`${sharedImports.GraphQLInt}`,
+            type: code`${imports.GraphQLInt}`,
           },
           offset: {
-            type: code`${sharedImports.GraphQLInt}`,
+            type: code`${imports.GraphQLInt}`,
           },
         },
         resolve: code`\
  async (_source, args: { limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly string[]> =>
   (await objectSet.${objectType.objectSetMethodNames.objectIdentifiers}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined })).unsafeCoerce().map(${objectType.identifierTypeAlias}.toString)`,
-        type: code`new ${sharedImports.GraphQLNonNull}(new ${sharedImports.GraphQLList}(${sharedImports.GraphQLString}))`,
+        type: code`new ${imports.GraphQLNonNull}(new ${imports.GraphQLList}(${imports.GraphQLString}))`,
       };
 
       fields[objectType.objectSetMethodNames.objects] = {
         args: {
           identifiers: {
-            type: code`new ${sharedImports.GraphQLList}(new ${sharedImports.GraphQLNonNull}(${sharedImports.GraphQLID}))`,
+            type: code`new ${imports.GraphQLList}(new ${imports.GraphQLNonNull}(${imports.GraphQLID}))`,
           },
           limit: {
-            type: code`${sharedImports.GraphQLInt}`,
+            type: code`${imports.GraphQLInt}`,
           },
           offset: {
-            type: code`${sharedImports.GraphQLInt}`,
+            type: code`${imports.GraphQLInt}`,
           },
         },
         resolve: code`\
 async (_source, args: { identifiers: readonly string[] | null; limit: number | null; offset: number | null; }, { objectSet }): Promise<readonly ${objectType.name}[]> =>
-(await ${sharedImports.EitherAsync}<Error, readonly ${objectType.name}[]>(async ({ liftEither }) => {
+(await ${imports.EitherAsync}<Error, readonly ${objectType.name}[]>(async ({ liftEither }) => {
   let filter: ${objectType.filterType} | undefined;
   if (args.identifiers) {
     const identifiers: ${objectType.identifierTypeAlias}[] = [];
@@ -71,13 +71,13 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
   }
   return await liftEither(await objectSet.${objectType.objectSetMethodNames.objects}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined, where }));
 })).unsafeCoerce()`,
-        type: code`new ${sharedImports.GraphQLNonNull}(new ${sharedImports.GraphQLList}(${objectType.graphqlType.name}))`,
+        type: code`new ${imports.GraphQLNonNull}(new ${imports.GraphQLList}(${objectType.graphqlType.name}))`,
       };
 
       fields[objectType.objectSetMethodNames.objectsCount] = {
         resolve: code`\
 async (_source, _args, { objectSet }): Promise<number> => (await objectSet.${objectType.objectSetMethodNames.objectsCount}()).unsafeCoerce()`,
-        type: code`new ${sharedImports.GraphQLNonNull}(${sharedImports.GraphQLInt})`,
+        type: code`new ${imports.GraphQLNonNull}(${imports.GraphQLInt})`,
       };
 
       return fields;
@@ -102,6 +102,6 @@ export function graphqlSchemaVariableStatement(parameters: {
   }
 
   return Maybe.of(code`\
-export const graphqlSchema = new ${sharedImports.GraphQLSchema}({ query: ${graphqlQueryObjectType({ objectTypes, objectUnionTypes })} });
+export const graphqlSchema = new ${imports.GraphQLSchema}({ query: ${graphqlQueryObjectType({ objectTypes, objectUnionTypes })} });
 `);
 }

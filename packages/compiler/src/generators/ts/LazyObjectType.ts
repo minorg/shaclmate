@@ -2,9 +2,9 @@ import { Maybe } from "purify-ts";
 import { type Code, code, conditionalOutput } from "ts-poet";
 
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
-import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LazyObjectType extends AbstractLazyObjectType<
@@ -45,7 +45,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     if (this.partialType.kind === "ObjectType") {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => ${sharedImports.Either}.of(${value} as ${this.resolvedType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${(this.partialType as ObjectType).newExpression({ parameters: value })}, resolver: async () => ${imports.Either}.of(${value} as ${this.resolvedType.name}) })`,
         // Don't check instanceof value since the ObjectType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
@@ -61,7 +61,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
     ) {
       conversions.push({
         conversionExpression: (value) =>
-          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolvedType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${sharedImports.Either}.of(${value} as ${this.resolvedType.name}) })`,
+          code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ((object: ${this.resolvedType.name}) => { ${this.resolvedObjectUnionTypeToPartialObjectUnionTypeConversion({ resolvedObjectUnionType: this.resolvedType as ObjectUnionType, partialObjectUnionType: this.partialType as ObjectUnionType, variables: { resolvedObjectUnion: code`object` } })} })(${value}), resolver: async () => ${imports.Either}.of(${value} as ${this.resolvedType.name}) })`,
         // Don't check instanceof value since the ObjectUnionType may be an interface
         // Rely on the fact that this will be the last type check on an object
         sourceTypeCheckExpression: (value) =>
@@ -77,7 +77,7 @@ export class LazyObjectType extends AbstractLazyObjectType<
   override fromJsonExpression(
     parameters: Parameters<Super["fromJsonExpression"]>[0],
   ): Code {
-    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${sharedImports.Left}(new Error(\`unable to resolve identifier \${${sharedImports.Resource}.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
+    return code`new ${this.runtimeClass.name}({ ${this.runtimeClass.partialPropertyName}: ${this.partialType.fromJsonExpression(parameters)}, resolver: (identifier) => Promise.resolve(${imports.Left}(new Error(\`unable to resolve identifier \${${imports.Resource}.Identifier.toString(identifier)} deserialized from JSON\`))) })`;
   }
 
   override fromRdfExpression(
@@ -106,19 +106,19 @@ namespace localSnippets {
 /**
  * Type of lazy properties that return a single required object. This is a class instead of an interface so it can be instanceof'd elsewhere.
  */
-export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${sharedImports.BlankNode} | ${sharedImports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
+export class ${syntheticNamePrefix}LazyObject<ObjectIdentifierT extends ${imports.BlankNode} | ${imports.NamedNode}, PartialObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }, ResolvedObjectT extends { ${syntheticNamePrefix}identifier: ObjectIdentifierT }> {
   readonly partial: PartialObjectT;
-  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${sharedImports.Either}<Error, ResolvedObjectT>>;
+  private readonly resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>;
 
   constructor({ partial, resolver }: {
     partial: PartialObjectT
-    resolver: (identifier: ObjectIdentifierT) => Promise<${sharedImports.Either}<Error, ResolvedObjectT>>,
+    resolver: (identifier: ObjectIdentifierT) => Promise<${imports.Either}<Error, ResolvedObjectT>>,
   }) {
     this.partial = partial;
     this.resolver = resolver;
   }
 
-  resolve(): Promise<${sharedImports.Either}<Error, ResolvedObjectT>> {
+  resolve(): Promise<${imports.Either}<Error, ResolvedObjectT>> {
     return this.resolver(this.partial.${syntheticNamePrefix}identifier);
   }
 }`,

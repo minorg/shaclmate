@@ -9,8 +9,8 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
@@ -145,7 +145,7 @@ export class DefaultValueType<
     return this.itemType.fromRdfExpression({
       variables: {
         ...variables,
-        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${sharedImports.Resource}.TermValue(${{ focusResource: variables.resource, predicate: variables.predicate, term: this.defaultValueTermExpression }}).toValues())`,
+        resourceValues: code`${variables.resourceValues}.map(values => values.length > 0 ? values : new ${imports.Resource}.TermValue(${{ focusResource: variables.resource, predicate: variables.predicate, term: this.defaultValueTermExpression }}).toValues())`,
       },
     });
   }
@@ -218,7 +218,7 @@ export class DefaultValueType<
 namespace localSnippets {
   export const DefaultValueSchema = conditionalOutput(
     `${syntheticNamePrefix}DefaultValueSchema`,
-    code`type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: ${sharedImports.Literal} | ${sharedImports.NamedNode}; readonly item: ItemSchemaT; }`,
+    code`type ${syntheticNamePrefix}DefaultValueSchema<ItemSchemaT> = { readonly defaultValue: ${imports.Literal} | ${imports.NamedNode}; readonly item: ItemSchemaT; }`,
   );
 
   export const defaultValueSparqlWherePatterns = conditionalOutput(

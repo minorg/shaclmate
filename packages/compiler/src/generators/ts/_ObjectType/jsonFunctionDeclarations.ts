@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
+import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
-import { sharedImports } from "../sharedImports.js";
 import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
@@ -14,7 +14,7 @@ function fromJsonFunctionDeclarations(this: ObjectType): readonly Code[] {
 
   propertiesFromJsonStatements.push(
     code`const ${syntheticNamePrefix}jsonSafeParseResult = ${syntheticNamePrefix}jsonZodSchema().safeParse(_json);`,
-    code`if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${sharedImports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }`,
+    code`if (!${syntheticNamePrefix}jsonSafeParseResult.success) { return ${imports.Left}(${syntheticNamePrefix}jsonSafeParseResult.error); }`,
     code`const ${variables.jsonObject} = ${syntheticNamePrefix}jsonSafeParseResult.data;`,
   );
 
@@ -47,7 +47,7 @@ function fromJsonFunctionDeclarations(this: ObjectType): readonly Code[] {
   const resultExpression = `{ ${initializers.join(", ")} }`;
   if (chains.length === 0) {
     propertiesFromJsonStatements.push(
-      code`return ${sharedImports.Either}.of(${resultExpression})`,
+      code`return ${imports.Either}.of(${resultExpression})`,
     );
   } else {
     propertiesFromJsonStatements.push(
@@ -72,7 +72,7 @@ function fromJsonFunctionDeclarations(this: ObjectType): readonly Code[] {
   const functionDeclarations: Code[] = [];
 
   functionDeclarations.push(code`\
-export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${sharedImports.Either}<${sharedImports.z}.ZodError, ${joinCode(propertiesFromJsonReturnType, { on: " & " })}> {
+export function ${syntheticNamePrefix}propertiesFromJson(_json: unknown): ${imports.Either}<${imports.z}.ZodError, ${joinCode(propertiesFromJsonReturnType, { on: " & " })}> {
 ${joinCode(propertiesFromJsonStatements)}
 }`);
 
@@ -85,7 +85,7 @@ ${joinCode(propertiesFromJsonStatements)}
     propertiesFromJsonExpression = code`${propertiesFromJsonExpression}.map(properties => new ${this.name}(properties))`;
   }
   functionDeclarations.push(code`\
-export function ${syntheticNamePrefix}fromJson(json: unknown): ${sharedImports.Either}<${sharedImports.z}.ZodError, ${this.name}> {
+export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<${imports.z}.ZodError, ${this.name}> {
   return ${propertiesFromJsonExpression};
 }`);
 
@@ -95,7 +95,7 @@ export function ${syntheticNamePrefix}fromJson(json: unknown): ${sharedImports.E
 function jsonSchemaFunctionDeclaration(this: ObjectType): Code {
   return code`\
 export function ${syntheticNamePrefix}jsonSchema() {
-  return ${sharedImports.z}.toJSONSchema(${syntheticNamePrefix}jsonZodSchema());
+  return ${imports.z}.toJSONSchema(${syntheticNamePrefix}jsonZodSchema());
 }`;
 }
 
@@ -128,7 +128,7 @@ function jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
   }
   if (this.properties.length > 0) {
     mergeZodObjectSchemas.push(
-      `${sharedImports.z}.object({ ${this.properties
+      `${imports.z}.object({ ${this.properties
         .flatMap((property) => property.jsonZodSchema.toList())
         .map(({ key, schema }) => `"${key}": ${schema}`)
         .join(",")} })`,
@@ -145,8 +145,8 @@ export function ${syntheticNamePrefix}jsonZodSchema() {
           }
           return `${merged}.merge(${zodObjectSchema})`;
         }, "")
-      : `${sharedImports.z}.object()`
-  } satisfies ${sharedImports.z}.ZodType<${syntheticNamePrefix}Json>;,
+      : `${imports.z}.object()`
+  } satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;,
 }`;
 }
 

@@ -8,9 +8,9 @@ import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
+import { imports } from "./imports.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -251,7 +251,7 @@ ${joinCode(staticModuleDeclarations)}
         context === "property" &&
         memberType.properties.some((property) => property.recursive)
       ) {
-        return code`${sharedImports.z}.lazy((): ${sharedImports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
+        return code`${imports.z}.lazy((): ${imports.z}.ZodType<${this.staticModuleName}.${syntheticNamePrefix}Json> => ${expression})`;
       }
     }
     return expression;

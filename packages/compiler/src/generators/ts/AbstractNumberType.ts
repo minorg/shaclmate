@@ -5,8 +5,8 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -54,18 +54,18 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   ): Code {
     switch (this.primitiveIn.length) {
       case 0:
-        return code`${sharedImports.z}.number()`;
+        return code`${imports.z}.number()`;
       case 1:
-        return code`${sharedImports.z}.literal(${this.primitiveIn[0]})`;
+        return code`${imports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${sharedImports.z}.union([${this.primitiveIn.map((value) => `${sharedImports.z}.literal(${value})`).join(", ")}])`;
+        return code`${imports.z}.union([${this.primitiveIn.map((value) => `${imports.z}.literal(${value})`).join(", ")}])`;
     }
   }
 
   override toRdfExpression({
     variables,
   }: Parameters<AbstractPrimitiveType<string>["toRdfExpression"]>[0]): Code {
-    return code`[${sharedImports.dataFactory}.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})]`;
+    return code`[${imports.dataFactory}.literal(${variables.value}.toString(10), ${rdfjsTermExpression(this.datatype)})]`;
   }
 
   protected override fromRdfExpressionChain({
@@ -76,7 +76,7 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
     let fromRdfResourceValueExpression = "value.toNumber()";
     if (this.primitiveIn.length > 0) {
       const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return ${sharedImports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${sharedImports.Left}${eitherTypeParameters}(new ${sharedImports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
+      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
     }
 
     return {

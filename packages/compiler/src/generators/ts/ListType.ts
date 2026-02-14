@@ -14,13 +14,13 @@ import type { DateType } from "./DateType.js";
 import type { FloatType } from "./FloatType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import type { IntType } from "./IntType.js";
+import { imports } from "./imports.js";
 import type { LiteralType } from "./LiteralType.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
@@ -40,7 +40,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
 
     const listVariable = parameters.valueVariable;
     const patterns: ${sharedSnippets.SparqlPattern}[] = [];
-    const variable = (suffix: string) => ${sharedImports.dataFactory}.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
+    const variable = (suffix: string) => ${imports.dataFactory}.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
     const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
 
     {
@@ -190,7 +190,7 @@ export class ListType<
           valueList => ${this.itemType.fromRdfExpression({
             variables: {
               ...variables,
-              resourceValues: code`${sharedImports.Either}.of<Error, ${sharedImports.Resource}.Values<${sharedImports.Resource}.TermValue>>(${sharedImports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, values: valueList }))`,
+              resourceValues: code`${imports.Either}.of<Error, ${imports.Resource}.Values<${imports.Resource}.TermValue>>(${imports.Resource}.Values.fromArray({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, values: valueList }))`,
             },
           })}
       ))`, // Resource.Values<Resource.TermValue[]> to Resource.Values<item type arrays>
@@ -215,7 +215,7 @@ export class ListType<
     const triples: Code[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
-      code`${sharedImports.dataFactory}.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
+      code`${imports.dataFactory}.variable!(\`\${${variables.variablePrefix}}${suffix}\`)`;
     const variablePrefix = (suffix: string) =>
       code`\`\${${variables.variablePrefix}}${suffix}\``;
 
@@ -296,8 +296,8 @@ export class ListType<
     switch (this.identifierNodeKind) {
       case "BlankNode": {
         listIdentifier =
-          subListIdentifier = code`${sharedImports.dataFactory}.blankNode()`;
-        mutableResourceTypeName = code`${sharedImports.MutableResource}`;
+          subListIdentifier = code`${imports.dataFactory}.blankNode()`;
+        mutableResourceTypeName = code`${imports.MutableResource}`;
         resourceSetMethodName = "mutableResource";
         break;
       }
@@ -306,21 +306,21 @@ export class ListType<
           case "blankNode":
             throw new RangeError(this.identifierMintingStrategy);
           case "sha256":
-            listIdentifier = code`${sharedImports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
+            listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${variables.value}.reduce(
         (hasher, item) => {
           ${joinCode(this.itemType.hashStatements({ depth: 0, variables: { hasher: code`hasher`, value: code`item` } }).concat())}
           return hasher;
         },
-        ${sharedImports.sha256}.create(),
+        ${imports.sha256}.create(),
       )}\`)`;
             break;
           case "uuidv4":
-            listIdentifier = code`${sharedImports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${sharedImports.uuid}.v4()}\`)`;
+            listIdentifier = code`${imports.dataFactory}.namedNode(\`urn:shaclmate:list:\${${imports.uuid}.v4()}\`)`;
             break;
         }
-        mutableResourceTypeName = code`${sharedImports.MutableResource}<${sharedImports.NamedNode}>`;
+        mutableResourceTypeName = code`${imports.MutableResource}<${imports.NamedNode}>`;
         resourceSetMethodName = "mutableNamedResource";
-        subListIdentifier = code`${sharedImports.dataFactory}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
+        subListIdentifier = code`${imports.dataFactory}.namedNode(\`\${listResource.identifier.value}:\${itemIndex}\`)`;
         break;
       }
     }
@@ -336,7 +336,7 @@ export class ListType<
       currentSubListResource = newSubListResource;
     }
     
-    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${sharedImports.dataFactory}.namedNode("${rdfType.value}"))`))}
+    ${joinCode(this.toRdfTypes.map((rdfType) => code`currentSubListResource.add(${rdfjsTermExpression(rdf.type)}, ${imports.dataFactory}.namedNode("${rdfType.value}"))`))}
         
     currentSubListResource.add(${rdfjsTermExpression(rdf.first)}, ...${this.itemType.toRdfExpression({ variables: { mutateGraph: variables.mutateGraph, predicate: rdfjsTermExpression(rdf.first), resource: code`currentSubListResource`, resourceSet: variables.resourceSet, value: code`item` } })});
 

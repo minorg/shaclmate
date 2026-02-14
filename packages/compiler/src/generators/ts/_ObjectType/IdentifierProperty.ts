@@ -11,9 +11,9 @@ import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
 import type { IdentifierType } from "../IdentifierType.js";
+import { imports } from "../imports.js";
 import type { NamedNodeType } from "../NamedNodeType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
@@ -177,16 +177,16 @@ export class IdentifierProperty extends AbstractProperty<
       switch (this.identifierMintingStrategy.unsafeCoerce()) {
         case "blankNode":
           memoizeMintedIdentifier = true;
-          mintIdentifier = code`${sharedImports.dataFactory}.blankNode()`;
+          mintIdentifier = code`${imports.dataFactory}.blankNode()`;
           break;
         case "sha256":
           // If the object is mutable don't memoize the minted identifier, since the hash will change if the object mutates.
           memoizeMintedIdentifier = !this.objectType.mutable;
-          mintIdentifier = code`${sharedImports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${sharedImports.sha256}.create())}\`)`;
+          mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${this.${syntheticNamePrefix}hashShaclProperties(${imports.sha256}.create())}\`)`;
           break;
         case "uuidv4":
           memoizeMintedIdentifier = true;
-          mintIdentifier = code`${sharedImports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${sharedImports.uuid}.v4()}\`)`;
+          mintIdentifier = code`${imports.dataFactory}.namedNode(\`\${this.${this.identifierPrefixPropertyName}}\${${imports.uuid}.v4()}\`)`;
           break;
       }
 
@@ -269,9 +269,9 @@ export class IdentifierProperty extends AbstractProperty<
     if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = code`${sharedImports.z}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
+      schema = code`${imports.z}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
     } else {
-      schema = code`${sharedImports.z}.string().min(1)`;
+      schema = code`${imports.z}.string().min(1)`;
     }
 
     return Maybe.of({
@@ -363,7 +363,7 @@ export class IdentifierProperty extends AbstractProperty<
           let mintIdentifier: string;
           switch (identifierMintingStrategy) {
             case "blankNode":
-              mintIdentifier = "${sharedImports.dataFactory}.blankNode()";
+              mintIdentifier = "${imports.dataFactory}.blankNode()";
               break;
             case "sha256":
               logger.warn(
@@ -373,7 +373,7 @@ export class IdentifierProperty extends AbstractProperty<
               );
               return;
             case "uuidv4":
-              mintIdentifier = `${sharedImports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
+              mintIdentifier = `${imports.dataFactory}.namedNode(\`\${${variables.parameters}.${this.identifierPrefixPropertyName} ?? "urn:shaclmate:${this.objectType.discriminantValue}:"}\${uuid.v4()}\`)`;
               break;
           }
           conversionBranches.push(
@@ -411,7 +411,7 @@ export class IdentifierProperty extends AbstractProperty<
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
-        code`(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? ${sharedImports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -420,12 +420,12 @@ export class IdentifierProperty extends AbstractProperty<
       this.type.kind === "NamedNodeType"
     ) {
       return Maybe.of(
-        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${sharedImports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${sharedImports.Left}(new ${sharedImports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name)}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
     return Maybe.of(
-      code`${sharedImports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
+      code`${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias})`,
     );
   }
 

@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
 import { type Code, code } from "ts-poet";
+import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedImports } from "../sharedImports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function fromRdfTypeVariableStatement(this: ObjectType): Maybe<Code> {
@@ -12,6 +12,6 @@ export function fromRdfTypeVariableStatement(this: ObjectType): Maybe<Code> {
 
   return this.fromRdfType.map(
     (fromRdfType) => code`\
-export const ${syntheticNamePrefix}fromRdfType: ${sharedImports.NamedNode}<string> = ${rdfjsTermExpression(fromRdfType)};`,
+export const ${syntheticNamePrefix}fromRdfType: ${imports.NamedNode}<string> = ${rdfjsTermExpression(fromRdfType)};`,
   );
 }

@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -14,7 +14,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly filterType = code`${localSnippets.BlankNodeFilter}`;
   readonly fromStringFunction = code`${localSnippets.blankNodeFromString}`;
   readonly kind = "BlankNodeType";
-  readonly name = code`${sharedImports.BlankNode}`;
+  readonly name = code`${imports.BlankNode}`;
   readonly schemaType = code`${localSnippets.BlankNodeSchema}`;
   readonly sparqlWherePatternsFunction =
     code`${localSnippets.blankNodeSparqlWherePatterns}`;
@@ -38,7 +38,7 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   }: Parameters<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["fromJsonExpression"]
   >[0]): Code {
-    return code`${sharedImports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+    return code`${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
   }
 
   @Memoize()
@@ -60,10 +60,10 @@ export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? `, termType: ${sharedImports.z}.literal("BlankNode")`
+      ? `, termType: ${imports.z}.literal("BlankNode")`
       : "";
 
-    return code`${sharedImports.z}.object({ "@id": ${sharedImports.z}.string().min(1)${discriminantProperty} })`;
+    return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;
   }
 
   override toJsonExpression({
@@ -99,11 +99,11 @@ interface ${syntheticNamePrefix}BlankNodeFilter {
   export const blankNodeFromString = conditionalOutput(
     `${syntheticNamePrefix}blankNodeFromString`,
     code`\
-export function ${syntheticNamePrefix}blankNodeFromString(identifier: string): ${sharedImports.Either}<Error, ${sharedImports.BlankNode}> {
+export function ${syntheticNamePrefix}blankNodeFromString(identifier: string): ${imports.Either}<Error, ${imports.BlankNode}> {
     return \
-      ${sharedImports.Either}.encase(() => ${sharedImports.Resource}.Identifier.fromString({ ${sharedImports.dataFactory}, identifier }))
-      .chain((identifier) => (identifier.termType === "BlankNode") ? ${sharedImports.Either}.of(identifier) : ${sharedImports.Left}(new Error("expected identifier to be BlankNode")))
-      as ${sharedImports.Either}<Error, ${sharedImports.BlankNode}>;
+      ${imports.Either}.encase(() => ${imports.Resource}.Identifier.fromString({ ${imports.dataFactory}, identifier }))
+      .chain((identifier) => (identifier.termType === "BlankNode") ? ${imports.Either}.of(identifier) : ${imports.Left}(new Error("expected identifier to be BlankNode")))
+      as ${imports.Either}<Error, ${imports.BlankNode}>;
 }`,
   );
 
@@ -124,7 +124,7 @@ const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.Sparq
   export const filterBlankNode = conditionalOutput(
     `${syntheticNamePrefix}filterBlankNode`,
     code`\
-function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${sharedImports.BlankNode}) {
+function ${syntheticNamePrefix}filterBlankNode(_filter: ${localSnippets.BlankNodeFilter}, _value: ${imports.BlankNode}) {
   return true;
 }`,
   );

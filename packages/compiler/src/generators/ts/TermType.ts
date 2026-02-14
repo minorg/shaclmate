@@ -6,8 +6,8 @@ import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractTermType } from "./AbstractTermType.js";
+import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedImports } from "./sharedImports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -45,7 +45,7 @@ export class TermType<
   @Memoize()
   override get name(): Code {
     return code`(${joinCode(
-      [...this.nodeKinds].map((nodeKind) => (sharedImports as any)[nodeKind]),
+      [...this.nodeKinds].map((nodeKind) => (imports as any)[nodeKind]),
       { on: " | " },
     )})`;
   }
@@ -73,13 +73,13 @@ export class TermType<
         let valueToNodeKind: Code;
         switch (nodeKind) {
           case "BlankNode":
-            valueToNodeKind = code`${sharedImports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
+            valueToNodeKind = code`${imports.dataFactory}.blankNode(${variables.value}["@id"].substring(2))`;
             break;
           case "Literal":
-            valueToNodeKind = code`${sharedImports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${sharedImports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
+            valueToNodeKind = code`${imports.dataFactory}.literal(${variables.value}["@value"], typeof ${variables.value}["@language"] !== "undefined" ? ${variables.value}["@language"] : (typeof ${variables.value}["@type"] !== "undefined" ? ${imports.dataFactory}.namedNode(${variables.value}["@type"]) : undefined))`;
             break;
           case "NamedNode":
-            valueToNodeKind = code`${sharedImports.dataFactory}.namedNode(${variables.value}["@id"])`;
+            valueToNodeKind = code`${imports.dataFactory}.namedNode(${variables.value}["@id"])`;
             break;
           default:
             throw new RangeError(nodeKind);
@@ -113,16 +113,16 @@ export class TermType<
   override jsonZodSchema(
     _parameters: Parameters<AbstractTermType["jsonZodSchema"]>[0],
   ): Code {
-    return code`${sharedImports.z}.discriminatedUnion("termType", [${[
+    return code`${imports.z}.discriminatedUnion("termType", [${[
       ...this.nodeKinds,
     ]
       .map((nodeKind) => {
         switch (nodeKind) {
           case "BlankNode":
           case "NamedNode":
-            return code`${sharedImports.z}.object({ "@id": ${sharedImports.z}.string().min(1), termType: ${sharedImports.z}.literal("${nodeKind}") })`;
+            return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1), termType: ${imports.z}.literal("${nodeKind}") })`;
           case "Literal":
-            return code`${sharedImports.z}.object({ "@language": ${sharedImports.z}.string().optional(), "@type": ${sharedImports.z}.string().optional(), "@value": ${sharedImports.z}.string(), termType: ${sharedImports.z}.literal("Literal") })`;
+            return code`${imports.z}.object({ "@language": ${imports.z}.string().optional(), "@type": ${imports.z}.string().optional(), "@value": ${imports.z}.string(), termType: ${imports.z}.literal("Literal") })`;
           default:
             throw new RangeError(nodeKind);
         }
@@ -163,7 +163,7 @@ namespace localSnippets {
     `${syntheticNamePrefix}TermSchema`,
     code`\
 interface ${syntheticNamePrefix}TermSchema {
-  readonly in?: readonly (${sharedImports.Literal} | ${sharedImports.NamedNode})[];
+  readonly in?: readonly (${imports.Literal} | ${imports.NamedNode})[];
   readonly kind: "TermType";
   readonly nodeKinds: readonly ("BlankNode" | "Literal" | "NamedNode")[],
 }`,

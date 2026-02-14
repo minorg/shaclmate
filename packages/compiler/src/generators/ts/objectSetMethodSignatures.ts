@@ -1,6 +1,6 @@
 import { type Code, code } from "ts-poet";
+import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
-import { sharedImports } from "./sharedImports.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export function objectSetMethodSignatures(parameters: {
@@ -31,22 +31,22 @@ export function objectSetMethodSignatures(parameters: {
     object: {
       name: methodNames.object,
       parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}`,
-      returnType: code`Promise<${sharedImports.Either}<Error, ${objectType.name}>`,
+      returnType: code`Promise<${imports.Either}<Error, ${objectType.name}>`,
     },
     objectIdentifiers: {
       name: methodNames.objectIdentifiers,
       parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}>`,
-      returnType: code`Promise<${sharedImports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
+      returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]>>`,
     },
     objects: {
       name: methodNames.objects,
       parameters: code`${parameterNamePrefix}query?: ${queryT}<${objectType.filterType}>`,
-      returnType: code`Promise<${sharedImports.Either}<Error, readonly ${objectType.name}[]>>`,
+      returnType: code`Promise<${imports.Either}<Error, readonly ${objectType.name}[]>>`,
     },
     objectsCount: {
       name: methodNames.objectsCount,
       parameters: code`${parameterNamePrefix}query?: Pick<${queryT}<${objectType.filterType}>, "filter">`,
-      returnType: code`Promise<${sharedImports.Either}<Error, number>>`,
+      returnType: code`Promise<${imports.Either}<Error, number>>`,
     },
   };
 }

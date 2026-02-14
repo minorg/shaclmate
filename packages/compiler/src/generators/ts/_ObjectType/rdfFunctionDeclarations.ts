@@ -1,9 +1,9 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
+import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedImports } from "../sharedImports.js";
 import { sharedSnippets } from "../sharedSnippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
@@ -11,7 +11,7 @@ import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclara
 namespace localSnippets {
   export const PropertiesFromRdfParameters = conditionalOutput(
     `${syntheticNamePrefix}PropertiesFromRdfParameters`,
-    code`{ context?: any; ignoreRdfType: boolean; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; resource: ${sharedImports.Resource}; }`,
+    code`{ context?: any; ignoreRdfType: boolean; objectSet: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; resource: ${imports.Resource}; }`,
   );
 }
 
@@ -32,7 +32,7 @@ function fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
   statements.push(code`return ${propertiesFromRdfExpression};`);
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}fromRdf(resource: ${sharedImports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${sharedImports.Either}<Error, ${this.name}> {
+export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
 ${joinCode(statements)}
 }`);
 }
@@ -78,16 +78,16 @@ function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
       // Check the expected type and its known subtypes
       switch (actualRdfType.value) {
         ${[...cases].map((fromRdfType) => `case "${fromRdfType}":`).join("\n")}
-          return ${sharedImports.Either}.of<Error, true>(true);
+          return ${imports.Either}.of<Error, true>(true);
       }
 
       // Check arbitrary rdfs:subClassOf's of the expected type
       if (${variables.resource}.isInstanceOf(${fromRdfTypeVariable})) {
-        return ${sharedImports.Either}.of<Error, true>(true);
+        return ${imports.Either}.of<Error, true>(true);
       }
 
-      return ${sharedImports.Left}(new Error(\`\${${sharedImports.Resource}.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
-    }) : ${sharedImports.Either}.of<Error, true>(true)`,
+      return ${imports.Left}(new Error(\`\${${imports.Resource}.Identifier.toString(${variables.resource}.identifier)} has unexpected RDF type (actual: \${actualRdfType.value}, expected: ${fromRdfType.value})\`));
+    }) : ${imports.Either}.of<Error, true>(true)`,
       variable: "_rdfTypeCheck",
     });
   });
@@ -116,9 +116,7 @@ function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
   const statements: Code[] = [];
   const resultExpression = `{ ${initializers.join(", ")} }`;
   if (chains.length === 0) {
-    statements.push(
-      code`return ${sharedImports.Either}.of(${resultExpression});`,
-    );
+    statements.push(code`return ${imports.Either}.of(${resultExpression});`);
   } else {
     statements.push(
       code`return ${chains
@@ -140,7 +138,7 @@ function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
   }
 
   return code`\
-export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${localSnippets.PropertiesFromRdfParameters}): ${sharedImports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
+export function ${syntheticNamePrefix}propertiesFromRdf(${syntheticNamePrefix}parameters: ${localSnippets.PropertiesFromRdfParameters}): ${imports.Either}<Error, ${joinCode(returnType, { on: " & " })}> {
 ${joinCode(statements)}
 }`;
 }

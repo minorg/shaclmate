@@ -6,7 +6,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
-import { sharedImports } from "./sharedImports.js";
+import { imports } from "./imports.js";
 import { sharedSnippets } from "./sharedSnippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
@@ -26,7 +26,7 @@ export class OptionType<
     conversions.push({
       conversionExpression: (value) => value,
       sourceTypeCheckExpression: (value) =>
-        code`${sharedImports.Maybe}.isMaybe(${value})`,
+        code`${imports.Maybe}.isMaybe(${value})`,
       sourceTypeName: this.name,
       sourceTypeof: "object",
     });
@@ -34,7 +34,7 @@ export class OptionType<
       conversions.push({
         ...itemTypeConversion,
         conversionExpression: (value) =>
-          code`${sharedImports.Maybe}.of(${itemTypeConversion.conversionExpression(value)})`,
+          code`${imports.Maybe}.of(${itemTypeConversion.conversionExpression(value)})`,
       });
     }
 
@@ -50,7 +50,7 @@ export class OptionType<
       !conversions.some((conversion) => conversion.sourceTypeof === "undefined")
     ) {
       conversions.push({
-        conversionExpression: () => code`${sharedImports.Maybe}.empty()`,
+        conversionExpression: () => code`${imports.Maybe}.empty()`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "undefined"`,
         sourceTypeName: code`undefined`,
@@ -93,7 +93,7 @@ export class OptionType<
 
   @Memoize()
   override get name(): Code {
-    return code`${sharedImports.Maybe}<${this.itemType.name}>`;
+    return code`${imports.Maybe}<${this.itemType.name}>`;
   }
 
   @Memoize()
@@ -111,7 +111,7 @@ export class OptionType<
   }: Parameters<
     AbstractContainerType<ItemTypeT>["fromJsonExpression"]
   >[0]): Code {
-    const expression = code`${sharedImports.Maybe}.fromNullable(${variables.value})`;
+    const expression = code`${imports.Maybe}.fromNullable(${variables.value})`;
     const valueVariable = code`item`;
     const itemFromJsonExpression = this.itemType.fromJsonExpression({
       variables: { value: valueVariable },
@@ -127,7 +127,7 @@ export class OptionType<
     >[0],
   ): Code {
     const { variables } = parameters;
-    return code`${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${sharedImports.Maybe}.of(value)) : ${sharedImports.Resource}.Values.fromValue<${sharedImports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: ${sharedImports.Maybe}.empty() }))`;
+    return code`${this.itemType.fromRdfExpression(parameters)}.map(values => values.length > 0 ? values.map(value => ${imports.Maybe}.of(value)) : ${imports.Resource}.Values.fromValue<${imports.Maybe}<${this.itemType.name}>>({ focusResource: ${variables.resource}, predicate: ${variables.predicate}, value: ${imports.Maybe}.empty() }))`;
   }
 
   override graphqlResolveExpression(
@@ -231,8 +231,8 @@ type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
     `${syntheticNamePrefix}maybeEquals`,
     code`\
 function ${syntheticNamePrefix}maybeEquals<T>(
-  leftMaybe: ${sharedImports.Maybe}<T>,
-  rightMaybe: ${sharedImports.Maybe}<T>,
+  leftMaybe: ${imports.Maybe}<T>,
+  rightMaybe: ${imports.Maybe}<T>,
   valueEquals: (left: T, right: T) => boolean | ${sharedSnippets.EqualsResult},
 ): ${sharedSnippets.EqualsResult} {
   if (leftMaybe.isJust()) {
@@ -243,14 +243,14 @@ function ${syntheticNamePrefix}maybeEquals<T>(
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
       );
     }
-    return ${sharedImports.Left}({
+    return ${imports.Left}({
       left: leftMaybe.unsafeCoerce(),
       type: "RightNull",
     });
   }
 
   if (rightMaybe.isJust()) {
-    return ${sharedImports.Left}({
+    return ${imports.Left}({
       right: rightMaybe.unsafeCoerce(),
       type: "LeftNull",
     });
@@ -287,7 +287,7 @@ function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT
     `${syntheticNamePrefix}filterMaybe`,
     code`\
 function ${syntheticNamePrefix}filterMaybe<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${MaybeFilter}<ItemFilterT>, value: ${sharedImports.Maybe}<ItemT>): boolean => {
+  return (filter: ${MaybeFilter}<ItemFilterT>, value: ${imports.Maybe}<ItemT>): boolean => {
     if (filter !== null) {
       if (value.isNothing()) {
         return false;
