@@ -21,7 +21,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import type { StringType } from "./StringType.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
@@ -31,7 +31,7 @@ namespace localSnippets {
   export const listSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}listSparqlWherePatterns`,
     code`\
-function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${sharedSnippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${sharedSnippets.SparqlWherePatternsFunction}<${sharedSnippets.CollectionFilter}<ItemFilterT>, ${sharedSnippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.SparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return (parameters) => {
     // Need to handle two cases:
     // (1) (?s, ?p, ?list) where ?list binds to rdf:nil
@@ -39,7 +39,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
     // Case (2) is case (1) with OPTIONAL graph patterns to handle actual list elements.
 
     const listVariable = parameters.valueVariable;
-    const patterns: ${sharedSnippets.SparqlPattern}[] = [];
+    const patterns: ${snippets.SparqlPattern}[] = [];
     const variable = (suffix: string) => ${imports.dataFactory}.variable!(\`\${parameters.variablePrefix}\${suffix}\`);
     const variablePrefix = (suffix: string) => \`\${parameters.variablePrefix}\${suffix}\`;
 
@@ -83,7 +83,7 @@ function ${syntheticNamePrefix}listSparqlWherePatterns<ItemFilterT, ItemSchemaT>
       });
     }
 
-    const optionalPatterns: ${sharedSnippets.SparqlPattern}[] = [];
+    const optionalPatterns: ${snippets.SparqlPattern}[] = [];
     
     const restNVariable = variable("RestN");
     // ?list rdf:rest+ ?restN

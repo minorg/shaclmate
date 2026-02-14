@@ -4,7 +4,7 @@ import { type Code, code, conditionalOutput } from "ts-poet";
 
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class LiteralType extends AbstractLiteralType {
@@ -70,7 +70,7 @@ namespace localSnippets {
   export const LiteralFilter = conditionalOutput(
     `${syntheticNamePrefix}LiteralFilter`,
     code`\
-interface ${syntheticNamePrefix}LiteralFilter extends Omit<${sharedSnippets.TermFilter}, "in" | "type"> {
+interface ${syntheticNamePrefix}LiteralFilter extends Omit<${snippets.TermFilter}, "in" | "type"> {
   readonly in?: readonly ${imports.Literal}[];
 }`,
   );
@@ -89,14 +89,14 @@ interface ${syntheticNamePrefix}LiteralSchema {
     `${syntheticNamePrefix}filterLiteral`,
     code`\
 function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilter}, value: ${imports.Literal}): boolean {
-  return ${sharedSnippets.filterTerm}(filter, value);
+  return ${snippets.filterTerm}(filter, value);
 }`,
   );
 
   export const literalSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}literalSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}literalSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${LiteralFilter}, ${LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${sharedSnippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${LiteralFilter}, ${LiteralSchema}> =
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
   );
 }

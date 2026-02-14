@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
@@ -126,11 +126,11 @@ function ${syntheticNamePrefix}filterString(filter: ${StringFilter}, value: stri
     code`\
 const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}SparqlWherePatternsFunction<${StringFilter}, ${StringSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${sharedSnippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-        filterPatterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (typeof filter.maxLength !== "undefined") {
@@ -138,7 +138,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
           expression: {
             type: "operation",
             operator: "<=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${sharedSnippets.toLiteral}(filter.maxLength)],
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets.toLiteral}(filter.maxLength)],
           },
           lift: true,
           type: "filter",
@@ -150,7 +150,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
           expression: {
             type: "operation",
             operator: ">=",
-            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${sharedSnippets.toLiteral}(filter.minLength)],
+            args: [{ args: [valueVariable], operator: "strlen", type: "operation" }, ${snippets.toLiteral}(filter.minLength)],
           },
           lift: true,
           type: "filter",
@@ -158,7 +158,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
       }
     }
 
-    return ${sharedSnippets.literalSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.literalSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   );
 }

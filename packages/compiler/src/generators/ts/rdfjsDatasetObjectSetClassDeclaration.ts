@@ -4,7 +4,7 @@ import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
@@ -149,7 +149,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
     resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectType.${syntheticNamePrefix}fromRdfTypes.length > 0) {
-    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
     for (const fromRdfType of objectType.${syntheticNamePrefix}fromRdfTypes) {
@@ -161,7 +161,7 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
       }
     }
   } else {
-    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
     for (const quad of this.resourceSet.dataset) {
@@ -233,7 +233,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
     resources = query.filter.${syntheticNamePrefix}identifier.in.map(identifier => ({ resource: this.resourceSet.resource(identifier) }));
     sortResources = false;
   } else if (objectTypes.every(objectType => objectType.${syntheticNamePrefix}fromRdfTypes.length > 0)) {
-    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
     for (const objectType of objectTypes) {
@@ -247,7 +247,7 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
       }
     }
   } else {
-    const identifierSet = new ${sharedSnippets.IdentifierSet}();
+    const identifierSet = new ${snippets.IdentifierSet}();
     resources = [];
     sortResources = true;
     for (const quad of this.resourceSet.dataset) {

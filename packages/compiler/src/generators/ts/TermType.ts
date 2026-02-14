@@ -8,7 +8,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class TermType<
@@ -18,8 +18,8 @@ export class TermType<
     | Literal
     | NamedNode,
 > extends AbstractTermType {
-  override readonly filterFunction = code`${sharedSnippets.filterTerm}`;
-  override readonly filterType = code`${sharedSnippets.TermFilter}`;
+  override readonly filterFunction = code`${snippets.filterTerm}`;
+  override readonly filterType = code`${snippets.TermFilter}`;
   override readonly kind = "TermType";
   override readonly schemaType = code`${localSnippets.TermSchema}`;
   override readonly sparqlWherePatternsFunction =
@@ -172,7 +172,7 @@ interface ${syntheticNamePrefix}TermSchema {
   export const termSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}termSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}termSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${sharedSnippets.TermFilter}, ${TermSchema}> =
-  (parameters) => ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns: ${sharedSnippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
+const ${syntheticNamePrefix}termSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${snippets.TermFilter}, ${TermSchema}> =
+  (parameters) => ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
   );
 }

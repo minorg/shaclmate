@@ -7,7 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
@@ -21,17 +21,17 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly sparqlWherePatternsFunction = code`${conditionalOutput(
     `${syntheticNamePrefix}booleanSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
+const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${this.filterType}, ${this.schemaType}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${sharedSnippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (typeof filter.value !== "undefined") {
-        filterPatterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
+        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: [filter.value] }));
       }
     }
 
-    return ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   )}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);

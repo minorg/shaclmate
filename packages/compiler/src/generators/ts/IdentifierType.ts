@@ -7,7 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class IdentifierType extends AbstractIdentifierType<
@@ -143,15 +143,15 @@ function ${syntheticNamePrefix}identifierFromString(identifier: string): ${impor
   export const identifierSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}identifierSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${IdentifierFilter}, ${IdentifierSchema}> =
+const ${syntheticNamePrefix}identifierSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${IdentifierFilter}, ${IdentifierSchema}> =
   ({ filter, propertyPatterns, valueVariable }) => {
-    const patterns: ${sharedSnippets.SparqlPattern}[] = propertyPatterns.concat();
+    const patterns: ${snippets.SparqlPattern}[] = propertyPatterns.concat();
 
     if (filter) {
       if (typeof filter.in !== "undefined") {
         const valueIn = filter.in.filter(identifier => identifier.termType === "NamedNode");
         if (valueIn.length > 0) {
-          patterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
+          patterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn }));
         }
       }
 

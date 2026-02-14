@@ -4,7 +4,7 @@ import { Memoize } from "typescript-memoize";
 
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class SetType<
@@ -75,7 +75,7 @@ namespace localSnippets {
   export const setSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}setSparqlWherePatterns`,
     code`\
-function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${sharedSnippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${sharedSnippets.SparqlWherePatternsFunction}<${sharedSnippets.CollectionFilter}<ItemFilterT>, ${sharedSnippets.CollectionSchema}<ItemSchemaT>> {
+function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.SparqlWherePatternsFunction}<${snippets.CollectionFilter}<ItemFilterT>, ${snippets.CollectionSchema}<ItemSchemaT>> {
   return ({ filter, schema, ...otherParameters }) => {
     const itemSparqlWherePatterns = itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters });
 
@@ -85,7 +85,7 @@ function ${syntheticNamePrefix}setSparqlWherePatterns<ItemFilterT, ItemSchemaT>(
       return itemSparqlWherePatterns;
     }
     
-    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${sharedSnippets.liftSparqlPatterns}(itemSparqlWherePatterns);
+    const [optionalSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatterns);
     return [{ patterns: optionalSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
   }
 }`,

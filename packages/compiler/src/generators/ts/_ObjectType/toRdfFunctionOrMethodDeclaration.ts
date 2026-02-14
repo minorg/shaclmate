@@ -4,7 +4,7 @@ import { type Code, code, joinCode } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function toRdfFunctionOrMethodDeclaration(
@@ -33,7 +33,7 @@ export function toRdfFunctionOrMethodDeclaration(
 
   const statements: Code[] = [
     code`const ${variables.mutateGraph} = options?.${variables.mutateGraph};`,
-    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.MutableResourceSet}({ ${imports.dataFactory}, dataset: ${sharedSnippets.datasetFactory}.dataset() });`,
+    code`const ${variables.resourceSet} = options?.${variables.resourceSet} ?? new ${imports.MutableResourceSet}({ ${imports.dataFactory}, dataset: ${snippets.datasetFactory}.dataset() });`,
   ];
 
   if (this.parentObjectTypes.length > 0) {

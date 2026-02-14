@@ -4,7 +4,7 @@ import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlCo
 import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlFunctionDeclarations(
@@ -28,9 +28,9 @@ export function ${syntheticNamePrefix}sparqlConstructTriples(parameters?: { igno
   )}];
 }`,
     code`\
-export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${sharedSnippets.SparqlPattern}[] {
+export function ${syntheticNamePrefix}sparqlWherePatterns(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"], variablePrefix?: string }): readonly ${snippets.SparqlPattern}[] {
 ${joinCode([
-  code`let patterns: ${sharedSnippets.SparqlPattern}[] = [];`,
+  code`let patterns: ${snippets.SparqlPattern}[] = [];`,
   code`\
     const subject = parameters?.subject ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}");
     if (subject.termType === "Variable") {

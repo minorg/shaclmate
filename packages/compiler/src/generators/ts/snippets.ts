@@ -4,7 +4,7 @@ import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
-export namespace sharedSnippets {
+export namespace snippets {
   export const arrayIntersection = conditionalOutput(
     `${syntheticNamePrefix}arrayIntersection`,
     code`\

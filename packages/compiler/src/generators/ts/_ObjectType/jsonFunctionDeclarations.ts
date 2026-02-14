@@ -2,7 +2,7 @@ import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toJsonFunctionOrMethodDeclaration } from "./toJsonFunctionOrMethodDeclaration.js";
 
@@ -27,7 +27,7 @@ function fromJsonFunctionDeclarations(this: ObjectType): readonly Code[] {
     });
     initializers.push(`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     propertiesFromJsonReturnType.push(
-      code`${sharedSnippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>>`,
+      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromJson>>`,
     );
   });
 

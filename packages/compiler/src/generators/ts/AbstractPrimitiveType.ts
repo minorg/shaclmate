@@ -2,12 +2,12 @@ import { Maybe } from "purify-ts";
 import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,
 > extends AbstractLiteralType {
-  override readonly equalsFunction = code`${sharedSnippets.strictEquals}`;
+  override readonly equalsFunction = code`${snippets.strictEquals}`;
   abstract override readonly kind:
     | "BooleanType"
     | "DateTimeType"

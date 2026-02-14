@@ -1,6 +1,6 @@
 import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 const hasherVariable = code`_hasher`;
@@ -91,11 +91,11 @@ export function hashFunctionOrMethodDeclarations(
 
   return [
     code`\
-${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${sharedSnippets.Hasher}}(${parametersCode}): HasherT {
+${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}}(${parametersCode}): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${sharedSnippets.Hasher}(${parametersCode}): HasherT {
+${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}(${parametersCode}): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];

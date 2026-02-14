@@ -2,12 +2,12 @@ import { type Code, code, joinCode } from "ts-poet";
 import { codeEquals } from "../codeEquals.js";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 function fromRdfFunctionDeclaration(this: ObjectUnionType): Code {
   return code`\
-export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
+export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${snippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
   return ${this.concreteMemberTypes.reduce(
     (expression, memberType) => {
       const memberTypeExpression = code`(${memberType.staticModuleName}.${syntheticNamePrefix}fromRdf(resource, { ...options, ignoreRdfType: false }) as ${imports.Either}<Error, ${this.name}>)`;

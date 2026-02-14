@@ -7,7 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
@@ -109,10 +109,10 @@ namespace localSnippets {
     `${syntheticNamePrefix}dateEquals`,
     code`\
 /**
- * Compare two Dates and return an ${sharedSnippets.EqualsResult}.
+ * Compare two Dates and return an ${snippets.EqualsResult}.
  */
-function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${sharedSnippets.EqualsResult} {
-  return ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
+function ${syntheticNamePrefix}dateEquals(left: Date, right: Date): ${snippets.EqualsResult} {
+  return ${snippets.EqualsResult}.fromBooleanEqualsResult(
     left,
     right,
     left.getTime() === right.getTime(),
@@ -144,9 +144,9 @@ interface ${syntheticNamePrefix}DateSchema {
   export const dateSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}dateSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${DateFilter}, ${DateSchema}> =
+const ${syntheticNamePrefix}dateSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${DateFilter}, ${DateSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${sharedSnippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined" && filter.in.length > 0) {
@@ -154,7 +154,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWher
           expression: {
             type: "operation",
             operator: "in",
-            args: [valueVariable, filter.in.map(inValue => ${sharedSnippets.toLiteral}(inValue))],
+            args: [valueVariable, filter.in.map(inValue => ${snippets.toLiteral}(inValue))],
           },
           lift: true,
           type: "filter",
@@ -166,7 +166,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWher
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.maxExclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.maxExclusive)],
           },
           lift: true,
           type: "filter"
@@ -178,7 +178,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWher
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.maxInclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.maxInclusive)],
           },
           lift: true,
           type: "filter"
@@ -190,7 +190,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWher
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.minExclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.minExclusive)],
           },
           lift: true,
           type: "filter"
@@ -202,7 +202,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWher
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.minInclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.minInclusive)],
           },
           lift: true,
           type: "filter"
@@ -210,7 +210,7 @@ const ${syntheticNamePrefix}dateSparqlWherePatterns: ${sharedSnippets.SparqlWher
       }
     }
 
-    return ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   );
 

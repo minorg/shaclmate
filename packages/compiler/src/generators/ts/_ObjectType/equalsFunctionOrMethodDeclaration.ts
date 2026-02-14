@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function equalsFunctionOrMethodDeclaration(
@@ -55,7 +55,7 @@ export function equalsFunctionOrMethodDeclaration(
   }
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}equals(${parameters}): ${sharedSnippets.EqualsResult} {
+${preamble}${syntheticNamePrefix}equals(${parameters}): ${snippets.EqualsResult} {
   return ${joinCode(
     chain.map((chainPart, chainPartI) =>
       chainPartI === 0 ? chainPart : code`chain(() => ${chainPart})`,

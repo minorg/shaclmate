@@ -8,7 +8,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -66,7 +66,7 @@ export abstract class AbstractTermType<
       conversions.push(
         {
           conversionExpression: (value) =>
-            code`${sharedSnippets.toLiteral}(${value})`,
+            code`${snippets.toLiteral}(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "boolean"`,
           sourceTypeName: code`boolean`,
@@ -74,7 +74,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${sharedSnippets.toLiteral}(${value})`,
+            code`${snippets.toLiteral}(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "object" && ${value} instanceof Date`,
           sourceTypeName: code`Date`,
@@ -82,7 +82,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${sharedSnippets.toLiteral}(${value})`,
+            code`${snippets.toLiteral}(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "number"`,
           sourceTypeName: code`number`,
@@ -90,7 +90,7 @@ export abstract class AbstractTermType<
         },
         {
           conversionExpression: (value) =>
-            code`${sharedSnippets.toLiteral}(${value})`,
+            code`${snippets.toLiteral}(${value})`,
           sourceTypeCheckExpression: (value) =>
             code`typeof ${value} === "string"`,
           sourceTypeName: code`string`,
@@ -215,13 +215,13 @@ namespace localSnippets {
     `${syntheticNamePrefix}booleanEquals`,
     code`\
 /**
- * Compare two objects with equals(other: T): boolean methods and return an ${sharedSnippets.EqualsResult}.
+ * Compare two objects with equals(other: T): boolean methods and return an ${snippets.EqualsResult}.
  */
 function ${syntheticNamePrefix}booleanEquals<T extends { equals: (other: T) => boolean }>(
   left: T,
   right: T,
-): ${sharedSnippets.EqualsResult} {
-  return ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
+): ${snippets.EqualsResult} {
+  return ${snippets.EqualsResult}.fromBooleanEqualsResult(
     left,
     right,
     left.equals(right),

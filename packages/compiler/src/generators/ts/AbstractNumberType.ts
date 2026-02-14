@@ -7,7 +7,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
@@ -141,13 +141,13 @@ function ${syntheticNamePrefix}filterNumber(filter: ${NumberFilter}, value: numb
   export const numberSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}numberSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${NumberFilter}, ${NumberSchema}> =
+const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${NumberFilter}, ${NumberSchema}> =
   ({ filter, valueVariable, ...otherParameters }) => {
-    const filterPatterns: ${sharedSnippets.SparqlFilterPattern}[] = [];
+    const filterPatterns: ${snippets.SparqlFilterPattern}[] = [];
 
     if (filter) {
       if (typeof filter.in !== "undefined" && filter.in.length > 0) {
-        filterPatterns.push(${sharedSnippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
+        filterPatterns.push(${snippets.sparqlValueInPattern}({ lift: true, valueVariable, valueIn: filter.in }));
       }
 
       if (typeof filter.maxExclusive !== "undefined") {
@@ -155,7 +155,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWh
           expression: {
             type: "operation",
             operator: "<",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.maxExclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.maxExclusive)],
           },
           lift: true,
           type: "filter",
@@ -167,7 +167,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWh
           expression: {
             type: "operation",
             operator: "<=",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.maxInclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.maxInclusive)],
           },
           lift: true,
           type: "filter",
@@ -179,7 +179,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWh
           expression: {
             type: "operation",
             operator: ">",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.minExclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.minExclusive)],
           },
           lift: true,
           type: "filter",
@@ -191,7 +191,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWh
           expression: {
             type: "operation",
             operator: ">=",
-            args: [valueVariable, ${sharedSnippets.toLiteral}(filter.minInclusive)],
+            args: [valueVariable, ${snippets.toLiteral}(filter.minInclusive)],
           },
           lift: true,
           type: "filter",
@@ -199,7 +199,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${sharedSnippets.SparqlWh
       }
     }
 
-    return ${sharedSnippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   );
 }

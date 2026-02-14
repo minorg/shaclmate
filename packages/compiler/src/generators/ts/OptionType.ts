@@ -7,7 +7,7 @@ import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class OptionType<
@@ -233,11 +233,11 @@ type ${syntheticNamePrefix}MaybeFilter<ItemFilterT> = ItemFilterT | null;`,
 function ${syntheticNamePrefix}maybeEquals<T>(
   leftMaybe: ${imports.Maybe}<T>,
   rightMaybe: ${imports.Maybe}<T>,
-  valueEquals: (left: T, right: T) => boolean | ${sharedSnippets.EqualsResult},
-): ${sharedSnippets.EqualsResult} {
+  valueEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
+): ${snippets.EqualsResult} {
   if (leftMaybe.isJust()) {
     if (rightMaybe.isJust()) {
-      return ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
+      return ${snippets.EqualsResult}.fromBooleanEqualsResult(
         leftMaybe,
         rightMaybe,
         valueEquals(leftMaybe.unsafeCoerce(), rightMaybe.unsafeCoerce()),
@@ -256,24 +256,24 @@ function ${syntheticNamePrefix}maybeEquals<T>(
     });
   }
 
-  return ${sharedSnippets.EqualsResult}.Equal;
+  return ${snippets.EqualsResult}.Equal;
 }`,
   );
 
   export const maybeSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}maybeSparqlWherePatterns`,
     code`\
-function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${sharedSnippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${sharedSnippets.SparqlWherePatternsFunction}<${MaybeFilter}<ItemFilterT>, ${MaybeSchema}<ItemSchemaT>> {  
+function ${syntheticNamePrefix}maybeSparqlWherePatterns<ItemFilterT, ItemSchemaT>(itemSparqlWherePatternsFunction: ${snippets.SparqlWherePatternsFunction}<ItemFilterT, ItemSchemaT>): ${snippets.SparqlWherePatternsFunction}<${MaybeFilter}<ItemFilterT>, ${MaybeSchema}<ItemSchemaT>> {  
   return ({ filter, schema, ...otherParameters }) => {
     if (typeof filter === "undefined") {
       // Treat the item's patterns as optional
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${sharedSnippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters }));
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ filter, schema: schema.item, ...otherParameters }));
       return [{ patterns: itemSparqlWherePatterns.concat(), type: "optional" }, ...liftSparqlPatterns];
     }
       
     if (filter === null) {
       // Use FILTER NOT EXISTS around the item's patterns
-      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${sharedSnippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
+      const [itemSparqlWherePatterns, liftSparqlPatterns] = ${snippets.liftSparqlPatterns}(itemSparqlWherePatternsFunction({ schema: schema.item, ...otherParameters }));
       return [{ expression: { args: itemSparqlWherePatterns.concat(), operator: "notexists", type: "operation" }, lift: true, type: "filter" }, ...liftSparqlPatterns]
     }
 

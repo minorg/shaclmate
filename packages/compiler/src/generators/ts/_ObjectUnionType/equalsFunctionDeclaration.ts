@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function equalsFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
@@ -10,7 +10,7 @@ export function equalsFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.name}): ${sharedSnippets.EqualsResult} {
+export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.name}): ${snippets.EqualsResult} {
     return ${syntheticNamePrefix}strictEquals(left.${syntheticNamePrefix}type, right.${syntheticNamePrefix}type).chain(() => {
       ${joinCode(
         this.concreteMemberTypes
@@ -26,7 +26,7 @@ export function ${syntheticNamePrefix}equals(left: ${this.name}, right: ${this.n
             }
             return code`if (${memberType.staticModuleName}.is${memberType.name}(left)) { return ${returnExpression}; }`;
           })
-          .concat(code`return ${sharedSnippets.EqualsResult}.Equal;`),
+          .concat(code`return ${snippets.EqualsResult}.Equal;`),
       )}
       });
 }`);

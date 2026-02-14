@@ -4,7 +4,7 @@ import { type Code, code, conditionalOutput, joinCode } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { toRdfFunctionOrMethodDeclaration } from "./toRdfFunctionOrMethodDeclaration.js";
 
@@ -32,7 +32,7 @@ function fromRdfFunctionDeclaration(this: ObjectType): Maybe<Code> {
   statements.push(code`return ${propertiesFromRdfExpression};`);
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${sharedSnippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
+export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${snippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
 ${joinCode(statements)}
 }`);
 }

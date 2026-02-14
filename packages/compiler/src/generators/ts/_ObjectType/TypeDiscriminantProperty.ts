@@ -4,14 +4,12 @@ import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { imports } from "../imports.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantProperty.Type> {
   override readonly constructorParametersSignature: Maybe<Code> = Maybe.empty();
-  override readonly equalsFunction = Maybe.of(
-    code`${sharedSnippets.strictEquals}`,
-  );
+  override readonly equalsFunction = Maybe.of(code`${snippets.strictEquals}`);
   override readonly filterProperty: AbstractProperty<TypeDiscriminantProperty.Type>["filterProperty"] =
     Maybe.empty();
   override readonly getAccessorDeclaration: Maybe<Code> = Maybe.empty();

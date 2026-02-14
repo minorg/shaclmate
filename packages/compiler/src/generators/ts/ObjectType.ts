@@ -15,7 +15,7 @@ import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
 import { imports } from "./imports.js";
 import type { NamedNodeType } from "./NamedNodeType.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
 
@@ -295,7 +295,7 @@ ${joinCode(staticModuleDeclarations)}
 
   @Memoize()
   override get sparqlWherePatternsFunction(): Code {
-    return code`(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${sharedSnippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${sharedSnippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, subject: valueVariable, ...otherParameters })))`;
+    return code`(({ ignoreRdfType, propertyPatterns, valueVariable, ...otherParameters }: ${snippets.SparqlWherePatternsFunctionParameters}<${this.filterType}, ${this.schemaType}>) => (propertyPatterns as readonly ${snippets.SparqlPattern}[]).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ ignoreRdfType: ignoreRdfType ?? true, subject: valueVariable, ...otherParameters })))`;
   }
 
   @Memoize()

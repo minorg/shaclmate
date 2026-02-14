@@ -6,7 +6,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
@@ -117,7 +117,7 @@ interface ${syntheticNamePrefix}BlankNodeSchema {
   export const blankNodeSparqlWherePatterns = conditionalOutput(
     `${syntheticNamePrefix}blankNodeSparqlWherePatterns`,
     code`\
-const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${sharedSnippets.SparqlWherePatternsFunction}<${BlankNodeFilter}, ${BlankNodeSchema}> =
+const ${syntheticNamePrefix}blankNodeSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${BlankNodeFilter}, ${BlankNodeSchema}> =
   ({ propertyPatterns }) => propertyPatterns;`,
   );
 

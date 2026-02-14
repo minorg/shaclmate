@@ -5,7 +5,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Typeof } from "./Typeof.js";
 
@@ -19,8 +19,8 @@ namespace localSnippets {
 function ${syntheticNamePrefix}arrayEquals<T>(
   leftArray: readonly T[],
   rightArray: readonly T[],
-  elementEquals: (left: T, right: T) => boolean | ${sharedSnippets.EqualsResult},
-): ${sharedSnippets.EqualsResult} {
+  elementEquals: (left: T, right: T) => boolean | ${snippets.EqualsResult},
+): ${snippets.EqualsResult} {
   if (leftArray.length !== rightArray.length) {
     return ${imports.Left}({
       left: leftArray,
@@ -36,7 +36,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
   ) {
     const leftElement = leftArray[leftElementIndex];
 
-    const rightUnequals: ${sharedSnippets.EqualsResult}.Unequal[] = [];
+    const rightUnequals: ${snippets.EqualsResult}.Unequal[] = [];
     for (
       let rightElementIndex = 0;
       rightElementIndex < rightArray.length;
@@ -45,7 +45,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
       const rightElement = rightArray[rightElementIndex];
 
       const leftElementEqualsRightElement =
-        ${sharedSnippets.EqualsResult}.fromBooleanEqualsResult(
+        ${snippets.EqualsResult}.fromBooleanEqualsResult(
           leftElement,
           rightElement,
           elementEquals(leftElement, rightElement),
@@ -54,7 +54,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
         break; // left element === right element, break out of the right iteration
       }
       rightUnequals.push(
-        leftElementEqualsRightElement.extract() as ${sharedSnippets.EqualsResult}.Unequal,
+        leftElementEqualsRightElement.extract() as ${snippets.EqualsResult}.Unequal,
       );
     }
 
@@ -76,7 +76,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
     // Else there was a right element equal to the left element, continue to the next left element
   }
 
-  return ${sharedSnippets.EqualsResult}.Equal;
+  return ${snippets.EqualsResult}.Equal;
 }`,
   );
 
@@ -84,7 +84,7 @@ function ${syntheticNamePrefix}arrayEquals<T>(
     `${syntheticNamePrefix}filterArray`,
     code`\
 function ${syntheticNamePrefix}filterArray<ItemT, ItemFilterT>(filterItem: (itemFilter: ItemFilterT, item: ItemT) => boolean) {
-  return (filter: ${sharedSnippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
+  return (filter: ${snippets.CollectionFilter}<ItemFilterT>, values: readonly ItemT[]): boolean => {
     for (const value of values) {
       if (!filterItem(filter, value)) {
         return false;
@@ -274,7 +274,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   get filterType(): Code {
-    return code`${sharedSnippets.CollectionFilter}<${this.itemType.filterType}>`;
+    return code`${snippets.CollectionFilter}<${this.itemType.filterType}>`;
   }
 
   @Memoize()
@@ -301,7 +301,7 @@ export abstract class AbstractCollectionType<
 
   @Memoize()
   override get schemaType(): Code {
-    return code`${sharedSnippets.CollectionSchema}<${this.itemType.schemaType}>`;
+    return code`${snippets.CollectionSchema}<${this.itemType.schemaType}>`;
   }
 
   protected override get schemaObject() {

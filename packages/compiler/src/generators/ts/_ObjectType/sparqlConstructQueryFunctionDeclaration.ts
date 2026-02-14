@@ -1,6 +1,6 @@
 import { type Code, code } from "ts-poet";
 import { imports } from "../imports.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export function sparqlConstructQueryFunctionDeclaration(this: {
@@ -10,6 +10,6 @@ export function sparqlConstructQueryFunctionDeclaration(this: {
   return code`\
 export function ${syntheticNamePrefix}sparqlConstructQuery(parameters?: { filter?: ${this.filterType}; ignoreRdfType?: boolean; prefixes?: { [prefix: string]: string }; preferredLanguages?: readonly string[]; subject?: ${imports.sparqljs}.Triple["subject"]; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type">): ${imports.sparqljs}.ConstructQuery {
   const { filter, ignoreRdfType, preferredLanguages, subject, ...queryParameters } = parameters ?? {};
-  return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${sharedSnippets.normalizeSparqlWherePatterns}(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter, ignoreRdfType, preferredLanguages, subject }))) };
+  return { ...queryParameters, prefixes: parameters?.prefixes ?? {}, queryType: "CONSTRUCT", template: (queryParameters.template ?? []).concat(${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples({ ignoreRdfType, subject })), type: "query", where: (queryParameters.where ?? []).concat(${snippets.normalizeSparqlWherePatterns}(${this.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter, ignoreRdfType, preferredLanguages, subject }))) };
 }`;
 }

@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
-import { sharedSnippets } from "../sharedSnippets.js";
+import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 const hasherVariable = code`_hasher`;
@@ -12,7 +12,7 @@ export function hashFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
   }
 
   return Maybe.of(code`\
-export function ${syntheticNamePrefix}hash<HasherT extends ${sharedSnippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
+export function ${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(${this.thisVariable}: ${this.name}, ${hasherVariable}: HasherT): HasherT {
 ${joinCode(
   this.concreteMemberTypes
     .map((memberType) => {

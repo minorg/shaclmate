@@ -3,7 +3,7 @@ import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
-import { sharedSnippets } from "./sharedSnippets.js";
+import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
@@ -176,7 +176,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
 
       const quads = await this.${syntheticNamePrefix}sparqlClient.queryQuads(constructQueryString);
 
-      const dataset = ${sharedSnippets.datasetFactory}.dataset(quads.concat());
+      const dataset = ${snippets.datasetFactory}.dataset(quads.concat());
       const objects: ObjectT[] = [];
       for (const identifier of identifiers) {
         objects.push(await liftEither(objectType.${syntheticNamePrefix}fromRdf(new ${imports.Resource}<${imports.NamedNode}>({ dataset, identifier: identifier as ${imports.NamedNode} }), { objectSet: this })));
@@ -230,7 +230,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
 
     patterns.push(...objectType.${syntheticNamePrefix}sparqlWherePatterns({ filter: query?.filter, subject: this.${syntheticNamePrefix}objectVariable }));
 
-    return ${sharedSnippets.normalizeSparqlWherePatterns}(patterns);
+    return ${snippets.normalizeSparqlWherePatterns}(patterns);
   }
 }
   
