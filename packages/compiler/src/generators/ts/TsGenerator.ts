@@ -1,8 +1,9 @@
-import { type Code, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
+import { snippets } from "./snippets.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 
@@ -56,6 +57,14 @@ export class TsGenerator implements Generator {
         objectUnionTypes:
           objectUnionTypesNameSorted.concat(uberObjectUnionType),
       }).toList(),
+    );
+
+    declarations.splice(
+      0,
+      0,
+      joinCode(
+        Object.values(snippets).map((snippet) => code`${snippet.ifUsed}`),
+      ),
     );
 
     return joinCode(declarations).toString();

@@ -2,8 +2,8 @@ import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
 import { type Code, code, literalOf } from "ts-poet";
 import { logger } from "../../logger.js";
+import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { imports } from "./imports.js";
-import { snippets } from "./snippets.js";
 
 export function rdfjsTermExpression(
   rdfjsTerm:
@@ -32,7 +32,7 @@ export function rdfjsTermExpression(
           case "rest":
           case "subject":
           case "type":
-            return code`${snippets.RdfVocabularies}rdf.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}rdf.${unqualifiedName}`;
           default:
             logger.warn("unrecognized rdf IRI: %s", rdfjsTerm.value);
         }
@@ -42,7 +42,7 @@ export function rdfjsTermExpression(
         );
         switch (unqualifiedName) {
           case "subClassOf":
-            return code`${snippets.RdfVocabularies}.rdfs.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}.rdfs.${unqualifiedName}`;
           default:
             logger.warn("unrecognized rdfs IRI: %s", rdfjsTerm.value);
         }
@@ -55,7 +55,7 @@ export function rdfjsTermExpression(
           case "decimal":
           case "double":
           case "integer":
-            return code`${snippets.RdfVocabularies}.xsd.${unqualifiedName}`;
+            return code`${snippets_RdfVocabularies}.xsd.${unqualifiedName}`;
           default:
             logger.warn("unrecognized xsd IRI: %s", rdfjsTerm.value);
         }
