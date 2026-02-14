@@ -12,14 +12,16 @@ export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
     const declarations: Code[] = [];
 
-    const objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
+    let objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
+    objectTypesToposorted = objectTypesToposorted.slice(0, 1);
 
-    const objectUnionTypesToposorted = ast_.objectUnionTypes.map(
+    let objectUnionTypesToposorted = ast_.objectUnionTypes.map(
       (astObjectUnionType) =>
         this.typeFactory.createObjectUnionType(astObjectUnionType),
     );
+    objectUnionTypesToposorted = [];
 
     for (const objectType of objectTypesToposorted) {
       declarations.push(...objectType.declaration.toList());
