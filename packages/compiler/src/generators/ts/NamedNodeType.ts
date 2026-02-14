@@ -189,7 +189,7 @@ const ${syntheticNamePrefix}namedNodeSparqlWherePatterns: ${syntheticNamePrefix}
       filterPatterns.push(${syntheticNamePrefix}sparqlValueInPattern({ lift: true, valueVariable, valueIn: filter.in }));
     }
 
-    return ${syntheticNamePrefix}termSchemaSparqlWherePatterns({ filterPatterns, valueVariable, ...otherParameters });
+    return ${syntheticNamePrefix}termSchemaSparqlPatterns({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   );
 }

@@ -173,6 +173,6 @@ interface ${syntheticNamePrefix}TermSchema {
     `${syntheticNamePrefix}termSparqlWherePatterns`,
     code`\
 const ${syntheticNamePrefix}termSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${snippets.TermFilter}, ${TermSchema}> =
-  (parameters) => ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
+  (parameters) => ${snippets.termSchemaSparqlPatterns}({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters })`,
   );
 }

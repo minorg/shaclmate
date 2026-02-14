@@ -97,6 +97,6 @@ function ${syntheticNamePrefix}filterLiteral(filter: ${localSnippets.LiteralFilt
     `${syntheticNamePrefix}literalSparqlWherePatterns`,
     code`\
 const ${syntheticNamePrefix}literalSparqlWherePatterns: ${snippets.SparqlWherePatternsFunction}<${LiteralFilter}, ${LiteralSchema}> =
-  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlWherePatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
+  (parameters) => ${syntheticNamePrefix}literalSchemaSparqlPatterns({ filterPatterns: ${snippets.termFilterSparqlPatterns}(parameters), ...parameters });`,
   );
 }

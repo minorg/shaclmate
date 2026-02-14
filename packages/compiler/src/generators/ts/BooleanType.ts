@@ -31,7 +31,7 @@ const ${syntheticNamePrefix}booleanSparqlWherePatterns: ${snippets.SparqlWherePa
       }
     }
 
-    return ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   )}`;
   override readonly typeofs = NonEmptyList(["boolean" as const]);

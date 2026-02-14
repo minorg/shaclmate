@@ -158,7 +158,7 @@ const ${syntheticNamePrefix}stringSparqlWherePatterns: ${syntheticNamePrefix}Spa
       }
     }
 
-    return ${snippets.literalSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.literalSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   );
 }

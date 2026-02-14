@@ -199,7 +199,7 @@ const ${syntheticNamePrefix}numberSparqlWherePatterns: ${snippets.SparqlWherePat
       }
     }
 
-    return ${snippets.termSchemaSparqlWherePatterns}({ filterPatterns, valueVariable, ...otherParameters });
+    return ${snippets.termSchemaSparqlPatterns}({ filterPatterns, valueVariable, ...otherParameters });
   }`,
   );
 }

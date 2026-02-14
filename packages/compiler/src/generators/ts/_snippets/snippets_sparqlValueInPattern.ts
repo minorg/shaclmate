@@ -4,7 +4,7 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_toLiteral } from "./snippets_toLiteral.js";
 
-export const sparqlValueInPattern = conditionalOutput(
+export const snippets_sparqlValueInPattern = conditionalOutput(
   `${syntheticNamePrefix}sparqlValueInPattern`,
   code`\
 function ${syntheticNamePrefix}sparqlValueInPattern({ lift, valueIn, valueVariable }: { lift?: boolean, valueIn: readonly (boolean | Date | number | string | ${imports.Literal} | ${imports.NamedNode})[], valueVariable: ${imports.Variable}}): ${snippets_SparqlFilterPattern} {
