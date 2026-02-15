@@ -3,5 +3,5 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
 export const snippets_FromRdfOptions = conditionalOutput(
   `${syntheticNamePrefix}FromRdfOptions`,
-  code`options?: { context?: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; }`,
+  code`type ${syntheticNamePrefix}FromRdfOptions = { context?: any; ignoreRdfType?: boolean; objectSet?: ${syntheticNamePrefix}ObjectSet; preferredLanguages?: readonly string[]; };`,
 );

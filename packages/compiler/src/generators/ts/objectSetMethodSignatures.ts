@@ -31,7 +31,7 @@ export function objectSetMethodSignatures(parameters: {
     object: {
       name: methodNames.object,
       parameters: code`${parameterNamePrefix}identifier: ${objectType.identifierTypeAlias}`,
-      returnType: code`Promise<${imports.Either}<Error, ${objectType.name}>`,
+      returnType: code`Promise<${imports.Either}<Error, ${objectType.name}>>`,
     },
     objectIdentifiers: {
       name: methodNames.objectIdentifiers,

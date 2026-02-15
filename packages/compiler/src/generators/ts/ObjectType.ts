@@ -133,28 +133,28 @@ export class ObjectType extends AbstractDeclaredType {
       ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
     ];
 
-    const staticModuleDeclarations: Code[] = [
-      ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectType.equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-      _ObjectType.filterFunctionDeclaration.bind(this)(),
-      _ObjectType.filterTypeDeclaration.bind(this)(),
-      ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
-      ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
-      ..._ObjectType.identifierTypeDeclarations.bind(this)(),
-      ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
-      ..._ObjectType.hashFunctionOrMethodDeclarations.bind(this)(),
-      _ObjectType.isTypeFunctionDeclaration.bind(this)(),
-      ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-      _ObjectType.schemaVariableStatement.bind(this)(),
-      ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
-    ];
+    // const staticModuleDeclarations: Code[] = [
+    //   ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
+    //   ..._ObjectType.equalsFunctionOrMethodDeclaration.bind(this)().toList(),
+    //   _ObjectType.filterFunctionDeclaration.bind(this)(),
+    //   _ObjectType.filterTypeDeclaration.bind(this)(),
+    //   ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
+    //   ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
+    //   ..._ObjectType.identifierTypeDeclarations.bind(this)(),
+    //   ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
+    //   ..._ObjectType.hashFunctionOrMethodDeclarations.bind(this)(),
+    //   _ObjectType.isTypeFunctionDeclaration.bind(this)(),
+    //   ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
+    //   _ObjectType.schemaVariableStatement.bind(this)(),
+    //   ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
+    // ];
 
-    if (staticModuleDeclarations.length > 0) {
-      declarations.push(code`\
-export module ${this.staticModuleName} {
-${joinCode(staticModuleDeclarations)}
-}`);
-    }
+    //     if (staticModuleDeclarations.length > 0) {
+    //       declarations.push(code`\
+    // export module ${this.staticModuleName} {
+    // ${joinCode(staticModuleDeclarations)}
+    // }`);
+    //     }
 
     return Maybe.of(joinCode(declarations));
   }
@@ -304,7 +304,7 @@ ${joinCode(staticModuleDeclarations)}
       return this.parentObjectTypes[0].toRdfjsResourceType;
     }
 
-    return code`${imports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? "<${imports.NamedNode}>" : ""}`;
+    return code`${imports.MutableResource}${this.identifierType.kind === "NamedNodeType" ? code`<${imports.NamedNode}>` : ""}`;
   }
 
   @Memoize()

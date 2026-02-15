@@ -91,11 +91,11 @@ export function hashFunctionOrMethodDeclarations(
 
   return [
     code`\
-${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}}(${parametersCode}): HasherT {
+${hashPreamble}${syntheticNamePrefix}hash<HasherT extends ${snippets.Hasher}>(${parametersCode}): HasherT {
   ${joinCode(hashStatements)}
 }`,
     code`\
-${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}(${parametersCode}): HasherT {
+${hashShaclPropertiesPreamble}${syntheticNamePrefix}hashShaclProperties<HasherT extends ${snippets.Hasher}>(${parametersCode}): HasherT {
   ${joinCode(hashShaclPropertiesStatements)}
 }`,
   ];

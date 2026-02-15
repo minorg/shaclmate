@@ -29,8 +29,8 @@ export const imports = {
   Resource: imp("Resource@rdfjs-resource"),
   ResourceSet: imp("ResourceSet@rdfjs-resource"),
   sha256: imp("sha256@js-sha256"),
-  sparqljs: imp("sparqljs*@sparqljs"),
-  uuid: imp("uuid*@uuid"),
+  sparqljs: imp("sparqljs*sparqljs"),
+  uuid: imp("uuid*uuid"),
   Variable: imp("Variable@@rdfjs/types"),
   z: imp("z@zod"),
 } as const;

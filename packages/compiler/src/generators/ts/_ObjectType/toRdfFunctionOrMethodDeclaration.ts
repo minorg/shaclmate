@@ -93,7 +93,7 @@ export function toRdfFunctionOrMethodDeclaration(
   }
 
   return Maybe.of(code`\
-${preamble}${syntheticNamePrefix}toRdf(${joinCode(parameters, { on: ", " })}): ${this.toRdfjsResourceType} {
+${preamble}${syntheticNamePrefix}toRdf(${joinCode(parameters, { on: "," })}): ${this.toRdfjsResourceType} {
   ${joinCode(statements)}
 }`);
 }

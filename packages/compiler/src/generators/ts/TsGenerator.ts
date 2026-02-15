@@ -1,10 +1,10 @@
 import { type Code, code, joinCode } from "ts-poet";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
-import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
-import { objectSetDeclarations } from "./objectSetDeclarations.js";
+// import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
+// import { objectSetDeclarations } from "./objectSetDeclarations.js";
 import { snippets } from "./snippets.js";
-import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
+// import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
 
 export class TsGenerator implements Generator {
@@ -13,51 +13,49 @@ export class TsGenerator implements Generator {
   generate(ast_: ast.Ast): string {
     const declarations: Code[] = [];
 
-    let objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
+    const objectTypesToposorted = ast.ObjectType.toposort(ast_.objectTypes).map(
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
-    objectTypesToposorted = objectTypesToposorted.slice(0, 1);
 
-    let objectUnionTypesToposorted = ast_.objectUnionTypes.map(
-      (astObjectUnionType) =>
-        this.typeFactory.createObjectUnionType(astObjectUnionType),
-    );
-    objectUnionTypesToposorted = [];
+    // const objectUnionTypesToposorted = ast_.objectUnionTypes.map(
+    //   (astObjectUnionType) =>
+    //     this.typeFactory.createObjectUnionType(astObjectUnionType),
+    // );
 
-    for (const objectType of objectTypesToposorted) {
+    for (const objectType of objectTypesToposorted.slice(0, 1)) {
       declarations.push(...objectType.declaration.toList());
     }
-    for (const objectUnionType of objectUnionTypesToposorted) {
-      declarations.push(...objectUnionType.declaration.toList());
-    }
+    // for (const objectUnionType of objectUnionTypesToposorted) {
+    //   declarations.push(...objectUnionType.declaration.toList());
+    // }
 
-    const objectTypesNameSorted = objectTypesToposorted.toSorted(
-      (left, right) => left.name.localeCompare(right.name),
-    );
+    // const objectTypesNameSorted = objectTypesToposorted.toSorted(
+    //   (left, right) => left.name.localeCompare(right.name),
+    // );
 
-    const objectUnionTypesNameSorted = objectUnionTypesToposorted.toSorted(
-      (left, right) => left.name.localeCompare(right.name),
-    );
+    // const objectUnionTypesNameSorted = objectUnionTypesToposorted.toSorted(
+    //   (left, right) => left.name.localeCompare(right.name),
+    // );
 
-    const uberObjectUnionType = synthesizeUberObjectUnionType({
-      objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
-    });
+    // // const uberObjectUnionType = synthesizeUberObjectUnionType({
+    // //   objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
+    // // });
 
-    declarations.push(
-      ...objectSetDeclarations({
-        objectTypes: objectTypesNameSorted,
-        objectUnionTypes:
-          objectUnionTypesNameSorted.concat(uberObjectUnionType),
-      }),
-    );
+    // // declarations.push(
+    // //   ...objectSetDeclarations({
+    // //     objectTypes: objectTypesNameSorted,
+    // //     objectUnionTypes:
+    // //       objectUnionTypesNameSorted.concat(uberObjectUnionType),
+    // //   }),
+    // // );
 
-    declarations.push(
-      ...graphqlSchemaVariableStatement({
-        objectTypes: objectTypesNameSorted,
-        objectUnionTypes:
-          objectUnionTypesNameSorted.concat(uberObjectUnionType),
-      }).toList(),
-    );
+    // // declarations.push(
+    // //   ...graphqlSchemaVariableStatement({
+    // //     objectTypes: objectTypesNameSorted,
+    // //     objectUnionTypes:
+    // //       objectUnionTypesNameSorted.concat(uberObjectUnionType),
+    // //   }).toList(),
+    // // );
 
     declarations.splice(
       0,
