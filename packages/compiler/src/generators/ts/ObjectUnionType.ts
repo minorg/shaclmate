@@ -90,7 +90,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
-export module ${this.staticModuleName} {
+export namespace ${this.staticModuleName} {
 ${joinCode(staticModuleDeclarations)}
 }`);
     }

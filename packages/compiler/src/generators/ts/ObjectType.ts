@@ -9,7 +9,20 @@ import type {
   IdentifierMintingStrategy,
   TsObjectDeclarationType,
 } from "../../enums/index.js";
-import * as _ObjectType from "./_ObjectType/index.js";
+import { classDeclaration } from "./_ObjectType/classDeclaration.js";
+import { createFunctionDeclaration } from "./_ObjectType/createFunctionDeclaration.js";
+import { equalsFunctionOrMethodDeclaration } from "./_ObjectType/equalsFunctionOrMethodDeclaration.js";
+import { filterFunctionDeclaration } from "./_ObjectType/filterFunctionDeclaration.js";
+import { filterTypeDeclaration } from "./_ObjectType/filterTypeDeclaration.js";
+import { hashFunctionOrMethodDeclarations } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
+import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
+import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
+import { interfaceDeclaration } from "./_ObjectType/interfaceDeclaration.js";
+import { jsonTypeAliasDeclaration } from "./_ObjectType/jsonTypeAliasDeclaration.js";
+import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
+import type { Property as _Property } from "./_ObjectType/Property.js";
+import { ShaclProperty as _ShaclProperty } from "./_ObjectType/ShaclProperty.js";
+import { TypeDiscriminantProperty as _TypeDiscriminantProperty } from "./_ObjectType/TypeDiscriminantProperty.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -128,33 +141,46 @@ export class ObjectType extends AbstractDeclaredType {
       return Maybe.empty();
     }
 
-    const declarations: Code[] = [
-      ..._ObjectType.classDeclaration.bind(this)().toList(),
-      ..._ObjectType.interfaceDeclaration.bind(this)().toList(),
-    ];
+    const declarations: Code[] = [];
 
-    // const staticModuleDeclarations: Code[] = [
-    //   ..._ObjectType.createFunctionDeclaration.bind(this)().toList(),
-    //   ..._ObjectType.equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-    //   _ObjectType.filterFunctionDeclaration.bind(this)(),
-    //   _ObjectType.filterTypeDeclaration.bind(this)(),
-    //   ..._ObjectType.fromRdfTypeVariableStatement.bind(this)().toList(),
-    //   ..._ObjectType.graphqlTypeVariableStatement.bind(this)().toList(),
-    //   ..._ObjectType.identifierTypeDeclarations.bind(this)(),
-    //   ..._ObjectType.jsonFunctionDeclarations.bind(this)(),
-    //   ..._ObjectType.hashFunctionOrMethodDeclarations.bind(this)(),
-    //   _ObjectType.isTypeFunctionDeclaration.bind(this)(),
-    //   ..._ObjectType.rdfFunctionDeclarations.bind(this)(),
-    //   _ObjectType.schemaVariableStatement.bind(this)(),
-    //   ..._ObjectType.sparqlFunctionDeclarations.bind(this)(),
-    // ];
+    const staticModuleDeclarations: Code[] = [];
 
-    //     if (staticModuleDeclarations.length > 0) {
-    //       declarations.push(code`\
-    // export module ${this.staticModuleName} {
-    // ${joinCode(staticModuleDeclarations)}
-    // }`);
-    //     }
+    switch (this.declarationType) {
+      case "class": {
+        declarations.push(...classDeclaration.bind(this)().toList());
+        break;
+      }
+      case "interface": {
+        declarations.push(...interfaceDeclaration.bind(this)().toList());
+        staticModuleDeclarations.push(
+          ...createFunctionDeclaration.bind(this)().toList(),
+          ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
+          ...hashFunctionOrMethodDeclarations.bind(this)(),
+        );
+        break;
+      }
+    }
+
+    staticModuleDeclarations.push(
+      filterFunctionDeclaration.bind(this)(),
+      filterTypeDeclaration.bind(this)(),
+      // ...fromRdfTypeVariableStatement.bind(this)().toList(),
+      // ...graphqlTypeVariableStatement.bind(this)().toList(),
+      // ...identifierTypeDeclarations.bind(this)(),
+      // ...jsonFunctionDeclarations.bind(this)(),
+      ...jsonTypeAliasDeclaration.bind(this)().toList(),
+      // isTypeFunctionDeclaration.bind(this)(),
+      // ...rdfFunctionDeclarations.bind(this)(),
+      // schemaVariableStatement.bind(this)(),
+      // ...sparqlFunctionDeclarations.bind(this)(),
+    );
+
+    if (staticModuleDeclarations.length > 0) {
+      declarations.push(code`\
+export namespace ${this.staticModuleName} {
+${joinCode(staticModuleDeclarations)}
+}`);
+    }
 
     return Maybe.of(joinCode(declarations));
   }
@@ -245,7 +271,7 @@ export class ObjectType extends AbstractDeclaredType {
 
   @Memoize()
   get objectSetMethodNames(): ObjectType.ObjectSetMethodNames {
-    return _ObjectType.objectSetMethodNames.bind(this)();
+    return objectSetMethodNames.bind(this)();
   }
 
   @Memoize()
@@ -260,7 +286,7 @@ export class ObjectType extends AbstractDeclaredType {
   }
 
   @Memoize()
-  get ownShaclProperties(): readonly _ObjectType.ShaclProperty<Type>[] {
+  get ownShaclProperties(): readonly ObjectType.ShaclProperty<Type>[] {
     return this.properties.filter(
       (property) => property.kind === "ShaclProperty",
     );
@@ -447,20 +473,19 @@ export class ObjectType extends AbstractDeclaredType {
 }
 
 export namespace ObjectType {
-  export const IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
-  export type IdentifierPrefixProperty = _ObjectType.IdentifierPrefixProperty;
-  export const IdentifierProperty = _ObjectType.IdentifierProperty;
-  export type IdentifierProperty = _ObjectType.IdentifierProperty;
+  export const IdentifierPrefixProperty = _IdentifierPrefixProperty;
+  export type IdentifierPrefixProperty = _IdentifierPrefixProperty;
+  export const IdentifierProperty = _IdentifierProperty;
+  export type IdentifierProperty = _IdentifierProperty;
   export type ObjectSetMethodNames = {
     readonly object: string;
     readonly objectsCount: string;
     readonly objectIdentifiers: string;
     readonly objects: string;
   };
-  export type Property = _ObjectType.Property;
-  export const ShaclProperty = _ObjectType.ShaclProperty;
-  export type ShaclProperty<TypeT extends Type> =
-    _ObjectType.ShaclProperty<TypeT>;
-  export const TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
-  export type TypeDiscriminantProperty = _ObjectType.TypeDiscriminantProperty;
+  export type Property = _Property;
+  export const ShaclProperty = _ShaclProperty;
+  export type ShaclProperty<TypeT extends Type> = _ShaclProperty<TypeT>;
+  export const TypeDiscriminantProperty = _TypeDiscriminantProperty;
+  export type TypeDiscriminantProperty = _TypeDiscriminantProperty;
 }
