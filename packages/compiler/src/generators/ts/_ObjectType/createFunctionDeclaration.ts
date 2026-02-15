@@ -9,10 +9,6 @@ export function createFunctionDeclaration(this: ObjectType): Maybe<Code> {
     return Maybe.empty();
   }
 
-  if (this.declarationType !== "interface") {
-    return Maybe.empty();
-  }
-
   const parametersPropertySignatures = this.properties.flatMap((property) =>
     property.constructorParametersSignature.toList(),
   );

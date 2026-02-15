@@ -110,7 +110,7 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
   }: Parameters<
     AbstractProperty<TypeDiscriminantProperty.Type>["jsonUiSchemaElement"]
   >[0]): Maybe<Code> {
-    const scope = `\`\${${variables.scopePrefix}}/properties/${this.name}\``;
+    const scope = code`\`\${${variables.scopePrefix}}/properties/${this.name}\``;
     return Maybe.of(
       code`{ rule: { condition: { schema: { const: ${this.initializer} }, scope: ${scope} }, effect: "HIDE" }, scope: ${scope}, type: "Control" }`,
     );

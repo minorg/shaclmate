@@ -120,18 +120,20 @@ export function ${syntheticNamePrefix}jsonUiSchema(parameters?: { scopePrefix?: 
 }
 
 function jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
-  const mergeZodObjectSchemas: string[] = [];
+  const mergeZodObjectSchemas: Code[] = [];
   for (const parentObjectType of this.parentObjectTypes) {
     mergeZodObjectSchemas.push(
-      `${parentObjectType.jsonZodSchema({ context: "type" })}`,
+      parentObjectType.jsonZodSchema({ context: "type" }),
     );
   }
   if (this.properties.length > 0) {
     mergeZodObjectSchemas.push(
-      `${imports.z}.object({ ${this.properties
-        .flatMap((property) => property.jsonZodSchema.toList())
-        .map(({ key, schema }) => `"${key}": ${schema}`)
-        .join(",")} })`,
+      code`${imports.z}.object({ ${joinCode(
+        this.properties
+          .flatMap((property) => property.jsonZodSchema.toList())
+          .map(({ key, schema }) => code`"${key}": ${schema}`),
+        { on: "," },
+      )} })`,
     );
   }
 
@@ -139,14 +141,17 @@ function jsonZodSchemaFunctionDeclaration(this: ObjectType): Code {
 export function ${syntheticNamePrefix}jsonZodSchema() {
   return ${
     mergeZodObjectSchemas.length > 0
-      ? mergeZodObjectSchemas.reduce((merged, zodObjectSchema) => {
-          if (merged.length === 0) {
-            return zodObjectSchema;
-          }
-          return `${merged}.merge(${zodObjectSchema})`;
-        }, "")
+      ? mergeZodObjectSchemas.reduce(
+          (merged, zodObjectSchema) => {
+            if (merged === null) {
+              return zodObjectSchema;
+            }
+            return code`${merged}.merge(${zodObjectSchema})`;
+          },
+          null as Code | null,
+        )
       : `${imports.z}.object()`
-  } satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;,
+  } satisfies ${imports.z}.ZodType<${syntheticNamePrefix}Json>;
 }`;
 }
 

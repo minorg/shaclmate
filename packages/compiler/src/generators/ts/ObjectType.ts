@@ -14,11 +14,14 @@ import { createFunctionDeclaration } from "./_ObjectType/createFunctionDeclarati
 import { equalsFunctionOrMethodDeclaration } from "./_ObjectType/equalsFunctionOrMethodDeclaration.js";
 import { filterFunctionDeclaration } from "./_ObjectType/filterFunctionDeclaration.js";
 import { filterTypeDeclaration } from "./_ObjectType/filterTypeDeclaration.js";
+import { fromRdfTypeVariableStatement } from "./_ObjectType/fromRdfTypeVariableStatement.js";
+import { graphqlTypeVariableStatement } from "./_ObjectType/graphqlTypeVariableStatement.js";
 import { hashFunctionOrMethodDeclarations } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
 import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
 import { interfaceDeclaration } from "./_ObjectType/interfaceDeclaration.js";
+import { jsonFunctionDeclarations } from "./_ObjectType/jsonFunctionDeclarations.js";
 import { jsonTypeAliasDeclaration } from "./_ObjectType/jsonTypeAliasDeclaration.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import type { Property as _Property } from "./_ObjectType/Property.js";
@@ -148,11 +151,11 @@ export class ObjectType extends AbstractDeclaredType {
 
     switch (this.declarationType) {
       case "class": {
-        declarations.push(...classDeclaration.bind(this)().toList());
+        declarations.push(classDeclaration.bind(this)());
         break;
       }
       case "interface": {
-        declarations.push(...interfaceDeclaration.bind(this)().toList());
+        declarations.push(interfaceDeclaration.bind(this)());
         staticModuleDeclarations.push(
           ...createFunctionDeclaration.bind(this)().toList(),
           ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
@@ -165,10 +168,10 @@ export class ObjectType extends AbstractDeclaredType {
     staticModuleDeclarations.push(
       filterFunctionDeclaration.bind(this)(),
       filterTypeDeclaration.bind(this)(),
-      // ...fromRdfTypeVariableStatement.bind(this)().toList(),
-      // ...graphqlTypeVariableStatement.bind(this)().toList(),
+      ...fromRdfTypeVariableStatement.bind(this)().toList(),
+      ...graphqlTypeVariableStatement.bind(this)().toList(),
       ...identifierTypeDeclarations.bind(this)(),
-      // ...jsonFunctionDeclarations.bind(this)(),
+      ...jsonFunctionDeclarations.bind(this)(),
       ...jsonTypeAliasDeclaration.bind(this)().toList(),
       // isTypeFunctionDeclaration.bind(this)(),
       // ...rdfFunctionDeclarations.bind(this)(),

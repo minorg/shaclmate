@@ -58,14 +58,10 @@ ${joinCode(statements)}
 }`;
 }
 
-export function classDeclaration(this: ObjectType): Maybe<Code> {
-  if (this.declarationType !== "class") {
-    return Maybe.empty();
-  }
-
+export function classDeclaration(this: ObjectType): Code {
   this.ensureAtMostOneSuperObjectType();
 
-  return Maybe.of(code`\
+  return code`\
 ${this.comment.alt(this.label).map(tsComment).orDefault("")}
 ${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? `extends ${this.parentObjectTypes[0].name}` : ""} {
 ${joinCode([
@@ -80,7 +76,7 @@ ${joinCode([
   ...toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
   ...toStringMethodDeclaration.bind(this)().toList(),
 ])}
-}`);
+}`;
 }
 
 function toStringMethodDeclaration(this: ObjectType): Maybe<Code> {
