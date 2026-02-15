@@ -17,6 +17,7 @@ import { filterTypeDeclaration } from "./_ObjectType/filterTypeDeclaration.js";
 import { hashFunctionOrMethodDeclarations } from "./_ObjectType/hashFunctionOrMethodDeclarations.js";
 import { IdentifierPrefixProperty as _IdentifierPrefixProperty } from "./_ObjectType/IdentifierPrefixProperty.js";
 import { IdentifierProperty as _IdentifierProperty } from "./_ObjectType/IdentifierProperty.js";
+import { identifierTypeDeclarations } from "./_ObjectType/identifierTypeDeclarations.js";
 import { interfaceDeclaration } from "./_ObjectType/interfaceDeclaration.js";
 import { jsonTypeAliasDeclaration } from "./_ObjectType/jsonTypeAliasDeclaration.js";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
@@ -166,7 +167,7 @@ export class ObjectType extends AbstractDeclaredType {
       filterTypeDeclaration.bind(this)(),
       // ...fromRdfTypeVariableStatement.bind(this)().toList(),
       // ...graphqlTypeVariableStatement.bind(this)().toList(),
-      // ...identifierTypeDeclarations.bind(this)(),
+      ...identifierTypeDeclarations.bind(this)(),
       // ...jsonFunctionDeclarations.bind(this)(),
       ...jsonTypeAliasDeclaration.bind(this)().toList(),
       // isTypeFunctionDeclaration.bind(this)(),

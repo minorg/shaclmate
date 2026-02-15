@@ -15,6 +15,7 @@ export function jsonTypeAliasDeclaration(this: ObjectType): Maybe<Code> {
         this.ownProperties.flatMap((property) =>
           property.jsonSignature.toList(),
         ),
+        { on: ";" },
       )} }`,
     );
   }

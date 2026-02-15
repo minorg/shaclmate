@@ -260,7 +260,7 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get jsonSignature(): Maybe<Code> {
-    return Maybe.of(code`readonly @id: string`);
+    return Maybe.of(code`readonly "@id": string`);
   }
 
   @Memoize()
