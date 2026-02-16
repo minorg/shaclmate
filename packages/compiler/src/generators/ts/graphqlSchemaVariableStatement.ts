@@ -67,9 +67,9 @@ async (_source, args: { identifiers: readonly string[] | null; limit: number | n
     for (const identifierArg of args.identifiers) {
       identifiers.push(await liftEither(${objectType.identifierTypeAlias}.fromString(identifierArg)));
     }
-    filter = { ${syntheticNamePrefix}: { in: identifiers } };
+    filter = { ${syntheticNamePrefix}identifier: { in: identifiers } };
   }
-  return await liftEither(await objectSet.${objectType.objectSetMethodNames.objects}({ limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined, where }));
+  return await liftEither(await objectSet.${objectType.objectSetMethodNames.objects}({ filter, limit: args.limit !== null ? args.limit : undefined, offset: args.offset !== null ? args.offset : undefined }));
 })).unsafeCoerce()`,
         type: code`new ${imports.GraphQLNonNull}(new ${imports.GraphQLList}(${objectType.graphqlType.name}))`,
       };

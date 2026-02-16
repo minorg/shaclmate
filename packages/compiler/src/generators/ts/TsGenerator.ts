@@ -1,5 +1,6 @@
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
+import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
 // import { graphqlSchemaVariableStatement } from "./graphqlSchemaVariableStatement.js";
 // import { objectSetDeclarations } from "./objectSetDeclarations.js";
@@ -52,13 +53,13 @@ export class TsGenerator implements Generator {
       }),
     );
 
-    // // declarations.push(
-    // //   ...graphqlSchemaVariableStatement({
-    // //     objectTypes: objectTypesNameSorted,
-    // //     objectUnionTypes:
-    // //       objectUnionTypesNameSorted.concat(uberObjectUnionType),
-    // //   }).toList(),
-    // // );
+    declarations.push(
+      ...graphqlSchemaVariableStatement({
+        objectTypes: objectTypesNameSorted,
+        objectUnionTypes:
+          objectUnionTypesNameSorted.concat(uberObjectUnionType),
+      }).toList(),
+    );
 
     declarations.splice(
       0,

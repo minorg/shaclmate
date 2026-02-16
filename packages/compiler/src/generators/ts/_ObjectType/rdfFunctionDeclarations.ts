@@ -51,7 +51,7 @@ function propertiesFromRdfFunctionDeclaration(this: ObjectType): Code {
     });
     initializers.push(code`...${syntheticNamePrefix}super${parentObjectTypeI}`);
     returnType.push(
-      code`${syntheticNamePrefix}UnwrapR<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf>>`,
+      code`${snippets.UnwrapR}<ReturnType<typeof ${parentObjectType.staticModuleName}.${syntheticNamePrefix}propertiesFromRdf>>`,
     );
   });
 
