@@ -286,7 +286,7 @@ export const harnesses = {
     }),
     kitchenSink.InPropertiesClass,
   ),
-  inLiteralsPropertyCLass: new ClassHarness(
+  inLiteralsPropertyClass: new ClassHarness(
     new kitchenSink.InPropertiesClass({
       $identifier,
       inStringsProperty: "text",

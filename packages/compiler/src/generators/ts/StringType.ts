@@ -1,9 +1,10 @@
 import { NonEmptyList } from "purify-ts";
 import { Memoize } from "typescript-memoize";
+
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   override readonly filterFunction = code`${snippets.filterString}`;
@@ -30,7 +31,7 @@ export class StringType extends AbstractPrimitiveType<string> {
       ...super.schemaObject,
       in:
         this.primitiveIn.length > 0
-          ? this.primitiveIn.map((_) => JSON.stringify(_)).concat()
+          ? this.primitiveIn.map(literalOf).concat()
           : undefined,
     };
   }

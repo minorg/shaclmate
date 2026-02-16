@@ -2,7 +2,7 @@ import type { Literal } from "@rdfjs/types";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { code } from "./ts-poet-wrapper.js";
+import { code, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,
@@ -32,9 +32,7 @@ export abstract class AbstractLiteralType extends AbstractTermType<
     return {
       ...super.schemaObject,
       languageIn:
-        this.languageIn.length > 0
-          ? this.languageIn.map((_) => JSON.stringify(_))
-          : undefined,
+        this.languageIn.length > 0 ? this.languageIn.map(literalOf) : undefined,
     };
   }
 

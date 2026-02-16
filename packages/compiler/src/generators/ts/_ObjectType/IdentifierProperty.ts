@@ -256,7 +256,7 @@ export class IdentifierProperty extends AbstractProperty<
     return {
       ...super.schemaObject,
       identifierMintingStrategy: this.identifierMintingStrategy
-        .map((_) => `${JSON.stringify(_)} as const`)
+        .map((_) => `${literalOf(_)} as const`)
         .extract(),
     };
   }

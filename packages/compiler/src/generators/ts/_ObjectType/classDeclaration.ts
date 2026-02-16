@@ -64,18 +64,21 @@ export function classDeclaration(this: ObjectType): Code {
   return code`\
 ${this.comment.alt(this.label).map(tsComment).orDefault("")}
 ${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? ` extends ${this.parentObjectTypes[0].name}` : ""} {
-${joinCode([
-  ...this.properties.flatMap((property) => property.declaration.toList()),
-  constructorDeclaration.bind(this)(),
-  ...this.properties.flatMap((property) =>
-    property.getAccessorDeclaration.toList(),
-  ),
-  ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-  ...hashFunctionOrMethodDeclarations.bind(this)(),
-  ...toJsonFunctionOrMethodDeclaration.bind(this)().toList(),
-  ...toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
-  ...toStringMethodDeclaration.bind(this)().toList(),
-])}
+${joinCode(
+  [
+    ...this.properties.flatMap((property) => property.declaration.toList()),
+    constructorDeclaration.bind(this)(),
+    ...this.properties.flatMap((property) =>
+      property.getAccessorDeclaration.toList(),
+    ),
+    ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
+    ...hashFunctionOrMethodDeclarations.bind(this)(),
+    ...toJsonFunctionOrMethodDeclaration.bind(this)().toList(),
+    ...toRdfFunctionOrMethodDeclaration.bind(this)().toList(),
+    ...toStringMethodDeclaration.bind(this)().toList(),
+  ],
+  { on: "\n\n" },
+)}
 }`;
 }
 

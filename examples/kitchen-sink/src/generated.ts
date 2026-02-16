@@ -1935,7 +1935,9 @@ function $toLiteral(
 type $UnwrapR<T> = T extends Either<any, infer R> ? R : never;
 export class $NamedDefaultPartial {
   readonly $identifier: $NamedDefaultPartial.$Identifier;
+
   readonly $type: "$NamedDefaultPartial" = "$NamedDefaultPartial" as const;
+
   constructor(parameters: { readonly $identifier: NamedNode | string }) {
     if (typeof parameters.$identifier === "object") {
       this.$identifier = parameters.$identifier;
@@ -1945,6 +1947,7 @@ export class $NamedDefaultPartial {
       this.$identifier = parameters.$identifier satisfies never;
     }
   }
+
   $equals(other: $NamedDefaultPartial): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -1966,17 +1969,20 @@ export class $NamedDefaultPartial {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     return _hasher;
   }
+
   $toJson(): $NamedDefaultPartial.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -1985,6 +1991,7 @@ export class $NamedDefaultPartial {
       } satisfies $NamedDefaultPartial.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -2002,6 +2009,7 @@ export class $NamedDefaultPartial {
     });
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -2267,7 +2275,9 @@ export namespace $NamedDefaultPartial {
 }
 export class $DefaultPartial {
   readonly $identifier: $DefaultPartial.$Identifier;
+
   readonly $type: "$DefaultPartial" = "$DefaultPartial" as const;
+
   constructor(parameters: {
     readonly $identifier: (BlankNode | NamedNode) | string;
   }) {
@@ -2279,6 +2289,7 @@ export class $DefaultPartial {
       this.$identifier = parameters.$identifier satisfies never;
     }
   }
+
   $equals(other: $DefaultPartial): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -2300,17 +2311,20 @@ export class $DefaultPartial {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     return _hasher;
   }
+
   $toJson(): $DefaultPartial.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -2322,6 +2336,7 @@ export class $DefaultPartial {
       } satisfies $DefaultPartial.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -2339,6 +2354,7 @@ export class $DefaultPartial {
     });
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -2915,7 +2931,7 @@ export namespace UuidV4IriIdentifierInterface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: '"uuidv4" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
@@ -3111,10 +3127,14 @@ export namespace UuidV4IriIdentifierInterface {
 
 export class UuidV4IriIdentifierClass {
   private _$identifier?: UuidV4IriIdentifierClass.$Identifier;
+
   protected readonly _$identifierPrefix?: string;
+
   readonly $type: "UuidV4IriIdentifierClass" =
     "UuidV4IriIdentifierClass" as const;
+
   readonly uuidV4IriProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: NamedNode | string;
     readonly $identifierPrefix?: string;
@@ -3131,6 +3151,7 @@ export class UuidV4IriIdentifierClass {
     this._$identifierPrefix = parameters.$identifierPrefix;
     this.uuidV4IriProperty = parameters.uuidV4IriProperty;
   }
+
   get $identifier(): UuidV4IriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -3144,11 +3165,13 @@ export class UuidV4IriIdentifierClass {
     }
     return this._$identifier;
   }
+
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   $equals(other: UuidV4IriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -3192,18 +3215,21 @@ export class UuidV4IriIdentifierClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.uuidV4IriProperty);
     return _hasher;
   }
+
   $toJson(): UuidV4IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -3213,6 +3239,7 @@ export class UuidV4IriIdentifierClass {
       } satisfies UuidV4IriIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -3234,6 +3261,7 @@ export class UuidV4IriIdentifierClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -3426,7 +3454,7 @@ export namespace UuidV4IriIdentifierClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: '"uuidv4" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
@@ -3620,64 +3648,66 @@ export namespace UuidV4IriIdentifierClass {
 
 export class UnionDiscriminantsClass {
   private _$identifier?: UnionDiscriminantsClass.$Identifier;
+
   readonly $type: "UnionDiscriminantsClass" =
-    "UnionDiscriminantsClass" as const; /**
+    "UnionDiscriminantsClass" as const;
+
+  /**
    * Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).
-   */
-
-  readonly optionalClassOrClassOrStringProperty: Maybe<
+   */ readonly optionalClassOrClassOrStringProperty: Maybe<
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | {
         type: "1-ClassUnionMember2";
         value: ClassUnionMember2;
       }
     | { type: "2-string"; value: string }
-  >; /**
+  >;
+
+  /**
    * Union that can be discriminated by an inline discriminant property (termType).
-   */
+   */ readonly optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
 
-  readonly optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>; /**
+  /**
    * Union that can be discriminated by typeof.
-   */
+   */ readonly optionalIriOrStringProperty: Maybe<NamedNode | string>;
 
-  readonly optionalIriOrStringProperty: Maybe<NamedNode | string>; /**
+  /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
-   */
-
-  readonly requiredClassOrClassOrStringProperty:
+   */ readonly requiredClassOrClassOrStringProperty:
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | {
         type: "1-ClassUnionMember2";
         value: ClassUnionMember2;
       }
-    | { type: "2-string"; value: string }; /**
+    | { type: "2-string"; value: string };
+
+  /**
    * Union that can be discriminated by an inline discriminant property (termType).
-   */
+   */ readonly requiredIriOrLiteralProperty: NamedNode | Literal;
 
-  readonly requiredIriOrLiteralProperty: NamedNode | Literal; /**
+  /**
    * Union that can be discriminated by typeof.
-   */
+   */ readonly requiredIriOrStringProperty: NamedNode | string;
 
-  readonly requiredIriOrStringProperty: NamedNode | string; /**
+  /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
-   */
-
-  readonly setClassOrClassOrStringProperty: readonly (
+   */ readonly setClassOrClassOrStringProperty: readonly (
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | {
         type: "1-ClassUnionMember2";
         value: ClassUnionMember2;
       }
     | { type: "2-string"; value: string }
-  )[]; /**
+  )[];
+
+  /**
    * Union that can be discriminated by an inline discriminant property (termType).
-   */
+   */ readonly setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
 
-  readonly setIriOrLiteralProperty: readonly (NamedNode | Literal)[]; /**
+  /**
    * Union that can be discriminated by typeof.
-   */
+   */ readonly setIriOrStringProperty: readonly (NamedNode | string)[];
 
-  readonly setIriOrStringProperty: readonly (NamedNode | string)[];
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly optionalClassOrClassOrStringProperty?:
@@ -3815,12 +3845,14 @@ export class UnionDiscriminantsClass {
         parameters.setIriOrStringProperty satisfies never;
     }
   }
+
   get $identifier(): UnionDiscriminantsClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: UnionDiscriminantsClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -4246,12 +4278,14 @@ export class UnionDiscriminantsClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -4413,6 +4447,7 @@ export class UnionDiscriminantsClass {
     }
     return _hasher;
   }
+
   $toJson(): UnionDiscriminantsClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -4535,6 +4570,7 @@ export class UnionDiscriminantsClass {
       } satisfies UnionDiscriminantsClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -4659,6 +4695,7 @@ export class UnionDiscriminantsClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -6632,7 +6669,7 @@ export namespace UnionDiscriminantsClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -8054,16 +8091,27 @@ export namespace UnionDiscriminantsClass {
 
 export class TermPropertiesClass {
   private _$identifier?: TermPropertiesClass.$Identifier;
+
   readonly $type: "TermPropertiesClass" = "TermPropertiesClass" as const;
+
   readonly blankNodeTermProperty: Maybe<BlankNode>;
+
   readonly booleanTermProperty: Maybe<boolean>;
+
   readonly dateTermProperty: Maybe<Date>;
+
   readonly dateTimeTermProperty: Maybe<Date>;
+
   readonly iriTermProperty: Maybe<NamedNode>;
+
   readonly literalTermProperty: Maybe<Literal>;
+
   readonly numberTermProperty: Maybe<number>;
+
   readonly stringTermProperty: Maybe<string>;
+
   readonly termProperty: Maybe<BlankNode | Literal | NamedNode>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly blankNodeTermProperty?: Maybe<BlankNode> | BlankNode;
@@ -8222,12 +8270,14 @@ export class TermPropertiesClass {
       this.termProperty = parameters?.termProperty satisfies never;
     }
   }
+
   get $identifier(): TermPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: TermPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -8357,12 +8407,14 @@ export class TermPropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -8401,6 +8453,7 @@ export class TermPropertiesClass {
     });
     return _hasher;
   }
+
   $toJson(): TermPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -8462,6 +8515,7 @@ export class TermPropertiesClass {
       } satisfies TermPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -8546,6 +8600,7 @@ export class TermPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -9261,7 +9316,7 @@ export namespace TermPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -10120,10 +10175,14 @@ export namespace TermPropertiesClass {
 
 export class Sha256IriIdentifierClass {
   private _$identifier?: Sha256IriIdentifierClass.$Identifier;
+
   protected readonly _$identifierPrefix?: string;
+
   readonly $type: "Sha256IriIdentifierClass" =
     "Sha256IriIdentifierClass" as const;
+
   readonly sha256IriProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: NamedNode | string;
     readonly $identifierPrefix?: string;
@@ -10140,6 +10199,7 @@ export class Sha256IriIdentifierClass {
     this._$identifierPrefix = parameters.$identifierPrefix;
     this.sha256IriProperty = parameters.sha256IriProperty;
   }
+
   get $identifier(): Sha256IriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -10153,11 +10213,13 @@ export class Sha256IriIdentifierClass {
     }
     return this._$identifier;
   }
+
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   $equals(other: Sha256IriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -10201,18 +10263,21 @@ export class Sha256IriIdentifierClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.sha256IriProperty);
     return _hasher;
   }
+
   $toJson(): Sha256IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -10222,6 +10287,7 @@ export class Sha256IriIdentifierClass {
       } satisfies Sha256IriIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -10243,6 +10309,7 @@ export class Sha256IriIdentifierClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -10435,7 +10502,7 @@ export namespace Sha256IriIdentifierClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
-        identifierMintingStrategy: '"sha256" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
@@ -10626,9 +10693,12 @@ export namespace Sha256IriIdentifierClass {
 }
 export class RecursiveClassUnionMember2 {
   private _$identifier?: RecursiveClassUnionMember2.$Identifier;
+
   readonly $type: "RecursiveClassUnionMember2" =
     "RecursiveClassUnionMember2" as const;
+
   readonly recursiveClassUnionMember2Property: Maybe<RecursiveClassUnion>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly recursiveClassUnionMember2Property?:
@@ -10661,12 +10731,14 @@ export class RecursiveClassUnionMember2 {
         parameters?.recursiveClassUnionMember2Property satisfies never;
     }
   }
+
   get $identifier(): RecursiveClassUnionMember2.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: RecursiveClassUnionMember2): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -10701,12 +10773,14 @@ export class RecursiveClassUnionMember2 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -10715,6 +10789,7 @@ export class RecursiveClassUnionMember2 {
     });
     return _hasher;
   }
+
   $toJson(): RecursiveClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -10730,6 +10805,7 @@ export class RecursiveClassUnionMember2 {
       } satisfies RecursiveClassUnionMember2.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -10764,6 +10840,7 @@ export class RecursiveClassUnionMember2 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -11017,7 +11094,7 @@ export namespace RecursiveClassUnionMember2 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -11228,9 +11305,12 @@ export namespace RecursiveClassUnionMember2 {
 }
 export class RecursiveClassUnionMember1 {
   private _$identifier?: RecursiveClassUnionMember1.$Identifier;
+
   readonly $type: "RecursiveClassUnionMember1" =
     "RecursiveClassUnionMember1" as const;
+
   readonly recursiveClassUnionMember1Property: Maybe<RecursiveClassUnion>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly recursiveClassUnionMember1Property?:
@@ -11263,12 +11343,14 @@ export class RecursiveClassUnionMember1 {
         parameters?.recursiveClassUnionMember1Property satisfies never;
     }
   }
+
   get $identifier(): RecursiveClassUnionMember1.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: RecursiveClassUnionMember1): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -11303,12 +11385,14 @@ export class RecursiveClassUnionMember1 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -11317,6 +11401,7 @@ export class RecursiveClassUnionMember1 {
     });
     return _hasher;
   }
+
   $toJson(): RecursiveClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -11332,6 +11417,7 @@ export class RecursiveClassUnionMember1 {
       } satisfies RecursiveClassUnionMember1.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -11366,6 +11452,7 @@ export class RecursiveClassUnionMember1 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -11619,7 +11706,7 @@ export namespace RecursiveClassUnionMember1 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -11833,11 +11920,16 @@ export namespace RecursiveClassUnionMember1 {
 
 export class PropertyVisibilitiesClass {
   private _$identifier?: PropertyVisibilitiesClass.$Identifier;
+
   readonly $type: "PropertyVisibilitiesClass" =
     "PropertyVisibilitiesClass" as const;
+
   private readonly privateProperty: string;
+
   protected readonly protectedProperty: string;
+
   readonly publicProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly privateProperty: string;
@@ -11856,12 +11948,14 @@ export class PropertyVisibilitiesClass {
     this.protectedProperty = parameters.protectedProperty;
     this.publicProperty = parameters.publicProperty;
   }
+
   get $identifier(): PropertyVisibilitiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: PropertyVisibilitiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -11916,12 +12010,14 @@ export class PropertyVisibilitiesClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -11930,6 +12026,7 @@ export class PropertyVisibilitiesClass {
     _hasher.update(this.publicProperty);
     return _hasher;
   }
+
   $toJson(): PropertyVisibilitiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -11944,6 +12041,7 @@ export class PropertyVisibilitiesClass {
       } satisfies PropertyVisibilitiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -11973,6 +12071,7 @@ export class PropertyVisibilitiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -12220,7 +12319,7 @@ export namespace PropertyVisibilitiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -12543,24 +12642,26 @@ export namespace PropertyVisibilitiesClass {
 
 export class PropertyCardinalitiesClass {
   private _$identifier?: PropertyCardinalitiesClass.$Identifier;
+
   readonly $type: "PropertyCardinalitiesClass" =
-    "PropertyCardinalitiesClass" as const; /**
+    "PropertyCardinalitiesClass" as const;
+
+  /**
    * Set: minCount implicitly=0, no maxCount
-   */
+   */ readonly emptyStringSetProperty: readonly string[];
 
-  readonly emptyStringSetProperty: readonly string[]; /**
+  /**
    * Set: minCount=1, no maxCount
-   */
+   */ readonly nonEmptyStringSetProperty: NonEmptyList<string>;
 
-  readonly nonEmptyStringSetProperty: NonEmptyList<string>; /**
+  /**
    * Option: maxCount=1, minCount=0
-   */
+   */ readonly optionalStringProperty: Maybe<string>;
 
-  readonly optionalStringProperty: Maybe<string>; /**
+  /**
    * Required: maxCount=minCount=1
-   */
+   */ readonly requiredStringProperty: string;
 
-  readonly requiredStringProperty: string;
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly emptyStringSetProperty?: readonly string[];
@@ -12597,12 +12698,14 @@ export class PropertyCardinalitiesClass {
     }
     this.requiredStringProperty = parameters.requiredStringProperty;
   }
+
   get $identifier(): PropertyCardinalitiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: PropertyCardinalitiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -12672,12 +12775,14 @@ export class PropertyCardinalitiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -12693,6 +12798,7 @@ export class PropertyCardinalitiesClass {
     _hasher.update(this.requiredStringProperty);
     return _hasher;
   }
+
   $toJson(): PropertyCardinalitiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -12712,6 +12818,7 @@ export class PropertyCardinalitiesClass {
       } satisfies PropertyCardinalitiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -12755,6 +12862,7 @@ export class PropertyCardinalitiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -13129,7 +13237,7 @@ export namespace PropertyCardinalitiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -13911,7 +14019,7 @@ export namespace PartialInterfaceUnionMember2 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -14550,7 +14658,7 @@ export namespace PartialInterfaceUnionMember1 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -14821,9 +14929,12 @@ export namespace PartialInterfaceUnionMember1 {
 }
 export class PartialClassUnionMember2 {
   private _$identifier?: PartialClassUnionMember2.$Identifier;
+
   readonly $type: "PartialClassUnionMember2" =
     "PartialClassUnionMember2" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
@@ -14838,12 +14949,14 @@ export class PartialClassUnionMember2 {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   get $identifier(): PartialClassUnionMember2.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: PartialClassUnionMember2): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -14877,18 +14990,21 @@ export class PartialClassUnionMember2 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): PartialClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -14901,6 +15017,7 @@ export class PartialClassUnionMember2 {
       } satisfies PartialClassUnionMember2.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -14930,6 +15047,7 @@ export class PartialClassUnionMember2 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -15154,7 +15272,7 @@ export namespace PartialClassUnionMember2 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -15423,9 +15541,12 @@ export namespace PartialClassUnionMember2 {
 }
 export class PartialClassUnionMember1 {
   private _$identifier?: PartialClassUnionMember1.$Identifier;
+
   readonly $type: "PartialClassUnionMember1" =
     "PartialClassUnionMember1" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
@@ -15440,12 +15561,14 @@ export class PartialClassUnionMember1 {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   get $identifier(): PartialClassUnionMember1.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: PartialClassUnionMember1): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -15479,18 +15602,21 @@ export class PartialClassUnionMember1 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): PartialClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -15503,6 +15629,7 @@ export class PartialClassUnionMember1 {
       } satisfies PartialClassUnionMember1.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -15532,6 +15659,7 @@ export class PartialClassUnionMember1 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -15756,7 +15884,7 @@ export namespace PartialClassUnionMember1 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -16028,10 +16156,15 @@ export namespace PartialClassUnionMember1 {
 
 export class OrderedPropertiesClass {
   private _$identifier?: OrderedPropertiesClass.$Identifier;
+
   readonly $type: "OrderedPropertiesClass" = "OrderedPropertiesClass" as const;
+
   readonly orderedPropertyC: string;
+
   readonly orderedPropertyB: string;
+
   readonly orderedPropertyA: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly orderedPropertyC: string;
@@ -16050,12 +16183,14 @@ export class OrderedPropertiesClass {
     this.orderedPropertyB = parameters.orderedPropertyB;
     this.orderedPropertyA = parameters.orderedPropertyA;
   }
+
   get $identifier(): OrderedPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: OrderedPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -16110,12 +16245,14 @@ export class OrderedPropertiesClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -16124,6 +16261,7 @@ export class OrderedPropertiesClass {
     _hasher.update(this.orderedPropertyA);
     return _hasher;
   }
+
   $toJson(): OrderedPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -16138,6 +16276,7 @@ export class OrderedPropertiesClass {
       } satisfies OrderedPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -16167,6 +16306,7 @@ export class OrderedPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -16434,7 +16574,7 @@ export namespace OrderedPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -16757,8 +16897,11 @@ export namespace OrderedPropertiesClass {
 
 export class NonClass {
   private _$identifier?: NonClass.$Identifier;
+
   readonly $type: "NonClass" = "NonClass" as const;
+
   readonly nonClassProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly nonClassProperty: string;
@@ -16773,12 +16916,14 @@ export class NonClass {
     }
     this.nonClassProperty = parameters.nonClassProperty;
   }
+
   get $identifier(): NonClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: NonClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -16811,18 +16956,21 @@ export class NonClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.nonClassProperty);
     return _hasher;
   }
+
   $toJson(): NonClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -16835,6 +16983,7 @@ export class NonClass {
       } satisfies NonClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -16856,6 +17005,7 @@ export class NonClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -17028,7 +17178,7 @@ export namespace NonClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -17192,9 +17342,12 @@ export namespace NonClass {
 }
 export class NoRdfTypeClassUnionMember2 {
   private _$identifier?: NoRdfTypeClassUnionMember2.$Identifier;
+
   readonly $type: "NoRdfTypeClassUnionMember2" =
     "NoRdfTypeClassUnionMember2" as const;
+
   readonly noRdfTypeClassUnionMember2Property: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly noRdfTypeClassUnionMember2Property: string;
@@ -17210,12 +17363,14 @@ export class NoRdfTypeClassUnionMember2 {
     this.noRdfTypeClassUnionMember2Property =
       parameters.noRdfTypeClassUnionMember2Property;
   }
+
   get $identifier(): NoRdfTypeClassUnionMember2.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: NoRdfTypeClassUnionMember2): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -17249,18 +17404,21 @@ export class NoRdfTypeClassUnionMember2 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.noRdfTypeClassUnionMember2Property);
     return _hasher;
   }
+
   $toJson(): NoRdfTypeClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -17274,6 +17432,7 @@ export class NoRdfTypeClassUnionMember2 {
       } satisfies NoRdfTypeClassUnionMember2.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -17296,6 +17455,7 @@ export class NoRdfTypeClassUnionMember2 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -17488,7 +17648,7 @@ export namespace NoRdfTypeClassUnionMember2 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -17672,9 +17832,12 @@ export namespace NoRdfTypeClassUnionMember2 {
 }
 export class NoRdfTypeClassUnionMember1 {
   private _$identifier?: NoRdfTypeClassUnionMember1.$Identifier;
+
   readonly $type: "NoRdfTypeClassUnionMember1" =
     "NoRdfTypeClassUnionMember1" as const;
+
   readonly noRdfTypeClassUnionMember1Property: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly noRdfTypeClassUnionMember1Property: string;
@@ -17690,12 +17853,14 @@ export class NoRdfTypeClassUnionMember1 {
     this.noRdfTypeClassUnionMember1Property =
       parameters.noRdfTypeClassUnionMember1Property;
   }
+
   get $identifier(): NoRdfTypeClassUnionMember1.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: NoRdfTypeClassUnionMember1): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -17729,18 +17894,21 @@ export class NoRdfTypeClassUnionMember1 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.noRdfTypeClassUnionMember1Property);
     return _hasher;
   }
+
   $toJson(): NoRdfTypeClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -17754,6 +17922,7 @@ export class NoRdfTypeClassUnionMember1 {
       } satisfies NoRdfTypeClassUnionMember1.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -17776,6 +17945,7 @@ export class NoRdfTypeClassUnionMember1 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -17968,7 +18138,7 @@ export namespace NoRdfTypeClassUnionMember1 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -18155,21 +18325,23 @@ export namespace NoRdfTypeClassUnionMember1 {
 
 export class MutablePropertiesClass {
   private _$identifier?: MutablePropertiesClass.$Identifier;
+
   protected readonly _$identifierPrefix?: string;
-  readonly $type: "MutablePropertiesClass" =
-    "MutablePropertiesClass" as const; /**
+
+  readonly $type: "MutablePropertiesClass" = "MutablePropertiesClass" as const;
+
+  /**
    * List-valued property that can't be reassigned but whose value can be mutated
-   */
+   */ readonly mutableListProperty: Maybe<string[]>;
 
-  readonly mutableListProperty: Maybe<string[]>; /**
+  /**
    * Set-valued property that can't be reassigned but whose value can be mutated
-   */
+   */ mutableSetProperty: string[];
 
-  mutableSetProperty: string[]; /**
+  /**
    * String-valued property that can be re-assigned
-   */
+   */ mutableStringProperty: Maybe<string>;
 
-  mutableStringProperty: Maybe<string>;
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly $identifierPrefix?: string;
@@ -18216,6 +18388,7 @@ export class MutablePropertiesClass {
         parameters?.mutableStringProperty satisfies never;
     }
   }
+
   get $identifier(): MutablePropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       return dataFactory.namedNode(
@@ -18224,11 +18397,13 @@ export class MutablePropertiesClass {
     }
     return this._$identifier;
   }
+
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   $equals(other: MutablePropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -18299,12 +18474,14 @@ export class MutablePropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -18321,6 +18498,7 @@ export class MutablePropertiesClass {
     });
     return _hasher;
   }
+
   $toJson(): MutablePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -18339,6 +18517,7 @@ export class MutablePropertiesClass {
       } satisfies MutablePropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -18429,6 +18608,7 @@ export class MutablePropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -18815,7 +18995,7 @@ export namespace MutablePropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"sha256" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
@@ -19340,10 +19520,15 @@ export namespace MutablePropertiesClass {
 
 export class ListPropertiesClass {
   private _$identifier?: ListPropertiesClass.$Identifier;
+
   readonly $type: "ListPropertiesClass" = "ListPropertiesClass" as const;
+
   readonly iriListProperty: Maybe<readonly NamedNode[]>;
+
   readonly objectListProperty: Maybe<readonly NonClass[]>;
+
   readonly stringListProperty: Maybe<readonly string[]>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly iriListProperty?:
@@ -19395,12 +19580,14 @@ export class ListPropertiesClass {
       this.stringListProperty = parameters?.stringListProperty satisfies never;
     }
   }
+
   get $identifier(): ListPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: ListPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -19464,12 +19651,14 @@ export class ListPropertiesClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -19491,6 +19680,7 @@ export class ListPropertiesClass {
     });
     return _hasher;
   }
+
   $toJson(): ListPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -19511,6 +19701,7 @@ export class ListPropertiesClass {
       } satisfies ListPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -19705,6 +19896,7 @@ export class ListPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -20110,7 +20302,7 @@ export namespace ListPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -21145,7 +21337,7 @@ export namespace PartialInterface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -23872,7 +24064,7 @@ export namespace LazyPropertiesInterface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -25125,8 +25317,11 @@ export namespace LazyPropertiesInterface {
 
 export class PartialClass {
   private _$identifier?: PartialClass.$Identifier;
+
   readonly $type: "PartialClass" = "PartialClass" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
@@ -25141,12 +25336,14 @@ export class PartialClass {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   get $identifier(): PartialClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: PartialClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -25180,18 +25377,21 @@ export class PartialClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): PartialClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -25204,6 +25404,7 @@ export class PartialClass {
       } satisfies PartialClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -25225,6 +25426,7 @@ export class PartialClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -25409,7 +25611,7 @@ export namespace PartialClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -25582,57 +25784,69 @@ export namespace PartialClass {
 
 export class LazyPropertiesClass {
   private _$identifier?: LazyPropertiesClass.$Identifier;
+
   readonly $type: "LazyPropertiesClass" = "LazyPropertiesClass" as const;
+
   readonly optionalLazyToResolvedClassProperty: $LazyObjectOption<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     $DefaultPartial,
     LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
+
   readonly optionalLazyToResolvedClassUnionProperty: $LazyObjectOption<
     LazilyResolvedClassUnion.$Identifier,
     $DefaultPartial,
     LazilyResolvedClassUnion
   >;
+
   readonly optionalLazyToResolvedIriIdentifierClassProperty: $LazyObjectOption<
     LazilyResolvedIriIdentifierClass.$Identifier,
     $NamedDefaultPartial,
     LazilyResolvedIriIdentifierClass
   >;
+
   readonly optionalPartialClassToResolvedClassProperty: $LazyObjectOption<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     PartialClass,
     LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
+
   readonly optionalPartialClassToResolvedClassUnionProperty: $LazyObjectOption<
     LazilyResolvedClassUnion.$Identifier,
     PartialClass,
     LazilyResolvedClassUnion
   >;
+
   readonly optionalPartialClassUnionToResolvedClassUnionProperty: $LazyObjectOption<
     LazilyResolvedClassUnion.$Identifier,
     PartialClassUnion,
     LazilyResolvedClassUnion
   >;
+
   readonly requiredLazyToResolvedClassProperty: $LazyObject<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     $DefaultPartial,
     LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
+
   readonly requiredPartialClassToResolvedClassProperty: $LazyObject<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     PartialClass,
     LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
+
   readonly setLazyToResolvedClassProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     $DefaultPartial,
     LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
+
   readonly setPartialClassToResolvedClassProperty: $LazyObjectSet<
     LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
     PartialClass,
     LazilyResolvedBlankNodeOrIriIdentifierClass
   >;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly optionalLazyToResolvedClassProperty?:
@@ -26251,12 +26465,14 @@ export class LazyPropertiesClass {
         parameters.setPartialClassToResolvedClassProperty satisfies never;
     }
   }
+
   get $identifier(): LazyPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: LazyPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -26440,12 +26656,14 @@ export class LazyPropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -26485,6 +26703,7 @@ export class LazyPropertiesClass {
     }
     return _hasher;
   }
+
   $toJson(): LazyPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -26532,6 +26751,7 @@ export class LazyPropertiesClass {
       } satisfies LazyPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -26649,6 +26869,7 @@ export class LazyPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -27942,7 +28163,7 @@ export namespace LazyPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -29707,9 +29928,12 @@ export namespace LazilyResolvedIriIdentifierInterface {
 
 export class LazilyResolvedIriIdentifierClass {
   readonly $identifier: LazilyResolvedIriIdentifierClass.$Identifier;
+
   readonly $type: "LazilyResolvedIriIdentifierClass" =
     "LazilyResolvedIriIdentifierClass" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier: NamedNode | string;
     readonly lazilyResolvedStringProperty: string;
@@ -29723,6 +29947,7 @@ export class LazilyResolvedIriIdentifierClass {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   $equals(other: LazilyResolvedIriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -29756,18 +29981,21 @@ export class LazilyResolvedIriIdentifierClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): LazilyResolvedIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -29777,6 +30005,7 @@ export class LazilyResolvedIriIdentifierClass {
       } satisfies LazilyResolvedIriIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -29799,6 +30028,7 @@ export class LazilyResolvedIriIdentifierClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -30561,7 +30791,7 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -31205,7 +31435,7 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -31476,9 +31706,12 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
 }
 export class LazilyResolvedClassUnionMember2 {
   private _$identifier?: LazilyResolvedClassUnionMember2.$Identifier;
+
   readonly $type: "LazilyResolvedClassUnionMember2" =
     "LazilyResolvedClassUnionMember2" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
@@ -31493,12 +31726,14 @@ export class LazilyResolvedClassUnionMember2 {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   get $identifier(): LazilyResolvedClassUnionMember2.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: LazilyResolvedClassUnionMember2): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -31532,18 +31767,21 @@ export class LazilyResolvedClassUnionMember2 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): LazilyResolvedClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -31556,6 +31794,7 @@ export class LazilyResolvedClassUnionMember2 {
       } satisfies LazilyResolvedClassUnionMember2.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -31587,6 +31826,7 @@ export class LazilyResolvedClassUnionMember2 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -31812,7 +32052,7 @@ export namespace LazilyResolvedClassUnionMember2 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -32083,9 +32323,12 @@ export namespace LazilyResolvedClassUnionMember2 {
 }
 export class LazilyResolvedClassUnionMember1 {
   private _$identifier?: LazilyResolvedClassUnionMember1.$Identifier;
+
   readonly $type: "LazilyResolvedClassUnionMember1" =
     "LazilyResolvedClassUnionMember1" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
@@ -32100,12 +32343,14 @@ export class LazilyResolvedClassUnionMember1 {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   get $identifier(): LazilyResolvedClassUnionMember1.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: LazilyResolvedClassUnionMember1): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -32139,18 +32384,21 @@ export class LazilyResolvedClassUnionMember1 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): LazilyResolvedClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -32163,6 +32411,7 @@ export class LazilyResolvedClassUnionMember1 {
       } satisfies LazilyResolvedClassUnionMember1.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -32194,6 +32443,7 @@ export class LazilyResolvedClassUnionMember1 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -32419,7 +32669,7 @@ export namespace LazilyResolvedClassUnionMember1 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -33075,7 +33325,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -33350,9 +33600,12 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
 
 export class LazilyResolvedBlankNodeOrIriIdentifierClass {
   private _$identifier?: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier;
+
   readonly $type: "LazilyResolvedBlankNodeOrIriIdentifierClass" =
     "LazilyResolvedBlankNodeOrIriIdentifierClass" as const;
+
   readonly lazilyResolvedStringProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly lazilyResolvedStringProperty: string;
@@ -33367,12 +33620,14 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     }
     this.lazilyResolvedStringProperty = parameters.lazilyResolvedStringProperty;
   }
+
   get $identifier(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: LazilyResolvedBlankNodeOrIriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -33406,18 +33661,21 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.lazilyResolvedStringProperty);
     return _hasher;
   }
+
   $toJson(): LazilyResolvedBlankNodeOrIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -33430,6 +33688,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
       } satisfies LazilyResolvedBlankNodeOrIriIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -33461,6 +33720,7 @@ export class LazilyResolvedBlankNodeOrIriIdentifierClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -33692,7 +33952,7 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -33968,12 +34228,14 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
 
 export class LanguageInPropertiesClass {
   private _$identifier?: LanguageInPropertiesClass.$Identifier;
-  readonly $type: "LanguageInPropertiesClass" =
-    "LanguageInPropertiesClass" as const; /**
-   * literal property for testing languageIn
-   */
 
-  readonly languageInLiteralProperty: NonEmptyList<Literal>;
+  readonly $type: "LanguageInPropertiesClass" =
+    "LanguageInPropertiesClass" as const;
+
+  /**
+   * literal property for testing languageIn
+   */ readonly languageInLiteralProperty: NonEmptyList<Literal>;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly languageInLiteralProperty: NonEmptyList<Literal>;
@@ -33988,12 +34250,14 @@ export class LanguageInPropertiesClass {
     }
     this.languageInLiteralProperty = parameters.languageInLiteralProperty;
   }
+
   get $identifier(): LanguageInPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: LanguageInPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -34027,12 +34291,14 @@ export class LanguageInPropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -34044,6 +34310,7 @@ export class LanguageInPropertiesClass {
     }
     return _hasher;
   }
+
   $toJson(): LanguageInPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -34065,6 +34332,7 @@ export class LanguageInPropertiesClass {
       } satisfies LanguageInPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -34087,6 +34355,7 @@ export class LanguageInPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -34342,7 +34611,7 @@ export namespace LanguageInPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -34357,7 +34626,7 @@ export namespace LanguageInPropertiesClass {
         name: "languageInLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
-          item: { kind: "LiteralType" as const, languageIn: ['"en"', '"fr"'] },
+          item: { kind: "LiteralType" as const, languageIn: ["en", "fr"] },
           minCount: 1,
         }),
         identifier: dataFactory.namedNode(
@@ -34529,9 +34798,12 @@ export namespace LanguageInPropertiesClass {
 
 export class JsPrimitiveUnionPropertyClass {
   private _$identifier?: JsPrimitiveUnionPropertyClass.$Identifier;
+
   readonly $type: "JsPrimitiveUnionPropertyClass" =
     "JsPrimitiveUnionPropertyClass" as const;
+
   readonly jsPrimitiveUnionProperty: readonly (boolean | number | string)[];
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly jsPrimitiveUnionProperty?: readonly (boolean | number | string)[];
@@ -34553,12 +34825,14 @@ export class JsPrimitiveUnionPropertyClass {
         parameters?.jsPrimitiveUnionProperty satisfies never;
     }
   }
+
   get $identifier(): JsPrimitiveUnionPropertyClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: JsPrimitiveUnionPropertyClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -34622,12 +34896,14 @@ export class JsPrimitiveUnionPropertyClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -34652,6 +34928,7 @@ export class JsPrimitiveUnionPropertyClass {
     }
     return _hasher;
   }
+
   $toJson(): JsPrimitiveUnionPropertyClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -34666,6 +34943,7 @@ export class JsPrimitiveUnionPropertyClass {
       } satisfies JsPrimitiveUnionPropertyClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -34715,6 +34993,7 @@ export class JsPrimitiveUnionPropertyClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -35038,7 +35317,7 @@ export namespace JsPrimitiveUnionPropertyClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -35895,7 +36174,9 @@ export namespace IriIdentifierInterface {
 
 export class IriIdentifierClass {
   readonly $identifier: IriIdentifierClass.$Identifier;
+
   readonly $type: "IriIdentifierClass" = "IriIdentifierClass" as const;
+
   constructor(parameters: { readonly $identifier: NamedNode | string }) {
     if (typeof parameters.$identifier === "object") {
       this.$identifier = parameters.$identifier;
@@ -35905,6 +36186,7 @@ export class IriIdentifierClass {
       this.$identifier = parameters.$identifier satisfies never;
     }
   }
+
   $equals(other: IriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -35926,17 +36208,20 @@ export class IriIdentifierClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     return _hasher;
   }
+
   $toJson(): IriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -35945,6 +36230,7 @@ export class IriIdentifierClass {
       } satisfies IriIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -35969,6 +36255,7 @@ export class IriIdentifierClass {
     }
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -36644,7 +36931,7 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -38372,7 +38659,7 @@ export namespace Interface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -38536,9 +38823,12 @@ export namespace Interface {
 }
 export class IndirectRecursiveHelperClass {
   private _$identifier?: IndirectRecursiveHelperClass.$Identifier;
+
   readonly $type: "IndirectRecursiveHelperClass" =
     "IndirectRecursiveHelperClass" as const;
+
   readonly indirectRecursiveProperty: Maybe<IndirectRecursiveClass>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly indirectRecursiveProperty?:
@@ -38569,12 +38859,14 @@ export class IndirectRecursiveHelperClass {
         parameters?.indirectRecursiveProperty satisfies never;
     }
   }
+
   get $identifier(): IndirectRecursiveHelperClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: IndirectRecursiveHelperClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -38609,12 +38901,14 @@ export class IndirectRecursiveHelperClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -38623,6 +38917,7 @@ export class IndirectRecursiveHelperClass {
     });
     return _hasher;
   }
+
   $toJson(): IndirectRecursiveHelperClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -38637,6 +38932,7 @@ export class IndirectRecursiveHelperClass {
       } satisfies IndirectRecursiveHelperClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -38673,6 +38969,7 @@ export class IndirectRecursiveHelperClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -38918,7 +39215,7 @@ export namespace IndirectRecursiveHelperClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -39129,8 +39426,11 @@ export namespace IndirectRecursiveHelperClass {
 }
 export class IndirectRecursiveClass {
   private _$identifier?: IndirectRecursiveClass.$Identifier;
+
   readonly $type: "IndirectRecursiveClass" = "IndirectRecursiveClass" as const;
+
   readonly indirectRecursiveHelperProperty: Maybe<IndirectRecursiveHelperClass>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly indirectRecursiveHelperProperty?:
@@ -39165,12 +39465,14 @@ export class IndirectRecursiveClass {
         parameters?.indirectRecursiveHelperProperty satisfies never;
     }
   }
+
   get $identifier(): IndirectRecursiveClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: IndirectRecursiveClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -39205,12 +39507,14 @@ export class IndirectRecursiveClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -39219,6 +39523,7 @@ export class IndirectRecursiveClass {
     });
     return _hasher;
   }
+
   $toJson(): IndirectRecursiveClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -39233,6 +39538,7 @@ export class IndirectRecursiveClass {
       } satisfies IndirectRecursiveClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -39267,6 +39573,7 @@ export class IndirectRecursiveClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -39519,7 +39826,7 @@ export namespace IndirectRecursiveClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -39730,17 +40037,24 @@ export namespace IndirectRecursiveClass {
 
 export class InPropertiesClass {
   private _$identifier?: InPropertiesClass.$Identifier;
+
   readonly $type: "InPropertiesClass" = "InPropertiesClass" as const;
+
   readonly inBooleansProperty: Maybe<true>;
+
   readonly inDateTimesProperty: Maybe<Date>;
+
   readonly inIrisProperty: Maybe<
     NamedNode<
       | "http://example.com/InPropertiesIri1"
       | "http://example.com/InPropertiesIri2"
     >
   >;
+
   readonly inNumbersProperty: Maybe<1 | 2>;
+
   readonly inStringsProperty: Maybe<"text" | "html">;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly inBooleansProperty?: Maybe<true> | true;
@@ -39823,12 +40137,14 @@ export class InPropertiesClass {
       this.inStringsProperty = parameters?.inStringsProperty satisfies never;
     }
   }
+
   get $identifier(): InPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: InPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -39910,12 +40226,14 @@ export class InPropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -39937,6 +40255,7 @@ export class InPropertiesClass {
     });
     return _hasher;
   }
+
   $toJson(): InPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -39959,6 +40278,7 @@ export class InPropertiesClass {
       } satisfies InPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -40020,6 +40340,7 @@ export class InPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -40594,7 +40915,7 @@ export namespace InPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -40668,7 +40989,7 @@ export namespace InPropertiesClass {
           item: {
             kind: "StringType" as const,
             languageIn: undefined,
-            in: ['"text"', '"html"'],
+            in: ["text", "html"],
           },
         }),
         identifier: dataFactory.namedNode(
@@ -41155,8 +41476,11 @@ export namespace InPropertiesClass {
 
 export class InIdentifierClass {
   readonly $identifier: InIdentifierClass.$Identifier;
+
   readonly $type: "InIdentifierClass" = "InIdentifierClass" as const;
+
   readonly inIdentifierProperty: Maybe<string>;
+
   constructor(parameters: {
     readonly $identifier:
       | NamedNode<
@@ -41185,6 +41509,7 @@ export class InIdentifierClass {
         parameters.inIdentifierProperty satisfies never;
     }
   }
+
   $equals(other: InIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -41218,12 +41543,14 @@ export class InIdentifierClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -41232,6 +41559,7 @@ export class InIdentifierClass {
     });
     return _hasher;
   }
+
   $toJson(): InIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -41243,6 +41571,7 @@ export class InIdentifierClass {
       } satisfies InIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -41273,6 +41602,7 @@ export class InIdentifierClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -41854,11 +42184,14 @@ export namespace InIdentifierClass {
 
 export abstract class IdentifierOverride1Class {
   protected _$identifier?: IdentifierOverride1ClassStatic.$Identifier;
+
   abstract readonly $type:
     | "IdentifierOverride3Class"
     | "IdentifierOverride4Class"
     | "IdentifierOverride5Class";
+
   readonly identifierOverrideProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly identifierOverrideProperty: string;
@@ -41873,12 +42206,14 @@ export abstract class IdentifierOverride1Class {
     }
     this.identifierOverrideProperty = parameters.identifierOverrideProperty;
   }
+
   get $identifier(): IdentifierOverride1ClassStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: IdentifierOverride1Class): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -41912,18 +42247,21 @@ export abstract class IdentifierOverride1Class {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.identifierOverrideProperty);
     return _hasher;
   }
+
   $toJson(): IdentifierOverride1ClassStatic.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -41936,6 +42274,7 @@ export abstract class IdentifierOverride1Class {
       } satisfies IdentifierOverride1ClassStatic.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -41958,6 +42297,7 @@ export abstract class IdentifierOverride1Class {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -42126,7 +42466,7 @@ export namespace IdentifierOverride1ClassStatic {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -42317,12 +42657,15 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
   abstract override readonly $type:
     | "IdentifierOverride3Class"
     | "IdentifierOverride4Class"
-    | "IdentifierOverride5Class"; // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+    | "IdentifierOverride5Class";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: ConstructorParameters<typeof IdentifierOverride1Class>[0],
   ) {
     super(parameters);
   }
+
   override get $identifier(): IdentifierOverride2ClassStatic.$Identifier {
     const identifier = super.$identifier;
     if (identifier.termType !== "NamedNode") {
@@ -42332,6 +42675,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     }
     return identifier;
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -42351,6 +42695,7 @@ export abstract class IdentifierOverride2Class extends IdentifierOverride1Class 
     });
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -42590,7 +42935,9 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   override readonly $type:
     | "IdentifierOverride3Class"
     | "IdentifierOverride4Class"
-    | "IdentifierOverride5Class" = "IdentifierOverride3Class" as const; // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+    | "IdentifierOverride5Class" = "IdentifierOverride3Class" as const;
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
       readonly $identifier?: NamedNode | string;
@@ -42598,6 +42945,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
   ) {
     super(parameters);
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -42624,6 +42972,7 @@ export class IdentifierOverride3Class extends IdentifierOverride2Class {
     }
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -43041,9 +43390,11 @@ export namespace IdentifierOverride3ClassStatic {
 
 export class IdentifierOverride4Class extends IdentifierOverride3Class {
   protected readonly _$identifierPrefix?: string;
+
   override readonly $type:
     | "IdentifierOverride4Class"
     | "IdentifierOverride5Class" = "IdentifierOverride4Class" as const;
+
   constructor(
     parameters: {
       readonly $identifier?: NamedNode | string;
@@ -43053,6 +43404,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
     super(parameters);
     this._$identifierPrefix = parameters.$identifierPrefix;
   }
+
   override get $identifier(): IdentifierOverride4ClassStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -43066,11 +43418,13 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
     }
     return this._$identifier;
   }
+
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -43097,6 +43451,7 @@ export class IdentifierOverride4Class extends IdentifierOverride3Class {
     }
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -43507,7 +43862,9 @@ export namespace IdentifierOverride4ClassStatic {
 
 export class IdentifierOverride5Class extends IdentifierOverride4Class {
   override readonly $type: "IdentifierOverride5Class" =
-    "IdentifierOverride5Class" as const; // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+    "IdentifierOverride5Class" as const;
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: {
       readonly $identifier?: NamedNode | string;
@@ -43516,6 +43873,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
   ) {
     super(parameters);
   }
+
   override get $identifier(): IdentifierOverride5Class.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -43529,11 +43887,13 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
     }
     return this._$identifier;
   }
+
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -43560,6 +43920,7 @@ export class IdentifierOverride5Class extends IdentifierOverride4Class {
     }
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -43943,10 +44304,14 @@ export namespace IdentifierOverride5Class {
 
 export class HasValuePropertiesClass {
   private _$identifier?: HasValuePropertiesClass.$Identifier;
+
   readonly $type: "HasValuePropertiesClass" =
     "HasValuePropertiesClass" as const;
+
   readonly hasIriValueProperty: NamedNode;
+
   readonly hasLiteralValueProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly hasIriValueProperty: NamedNode | string;
@@ -43971,12 +44336,14 @@ export class HasValuePropertiesClass {
     }
     this.hasLiteralValueProperty = parameters.hasLiteralValueProperty;
   }
+
   get $identifier(): HasValuePropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: HasValuePropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -44022,12 +44389,14 @@ export class HasValuePropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -44036,6 +44405,7 @@ export class HasValuePropertiesClass {
     _hasher.update(this.hasLiteralValueProperty);
     return _hasher;
   }
+
   $toJson(): HasValuePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -44049,6 +44419,7 @@ export class HasValuePropertiesClass {
       } satisfies HasValuePropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -44075,6 +44446,7 @@ export class HasValuePropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -44317,7 +44689,7 @@ export namespace HasValuePropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -44565,9 +44937,12 @@ export namespace HasValuePropertiesClass {
 }
 export class FlattenClassUnionMember3 {
   private _$identifier?: FlattenClassUnionMember3.$Identifier;
+
   readonly $type: "FlattenClassUnionMember3" =
     "FlattenClassUnionMember3" as const;
+
   readonly flattenClassUnionMember3Property: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly flattenClassUnionMember3Property: string;
@@ -44583,12 +44958,14 @@ export class FlattenClassUnionMember3 {
     this.flattenClassUnionMember3Property =
       parameters.flattenClassUnionMember3Property;
   }
+
   get $identifier(): FlattenClassUnionMember3.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: FlattenClassUnionMember3): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -44622,18 +44999,21 @@ export class FlattenClassUnionMember3 {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.flattenClassUnionMember3Property);
     return _hasher;
   }
+
   $toJson(): FlattenClassUnionMember3.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -44646,6 +45026,7 @@ export class FlattenClassUnionMember3 {
       } satisfies FlattenClassUnionMember3.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -44675,6 +45056,7 @@ export class FlattenClassUnionMember3 {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -44905,7 +45287,7 @@ export namespace FlattenClassUnionMember3 {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -45177,9 +45559,12 @@ export namespace FlattenClassUnionMember3 {
 
 export class ExternClassPropertyClass {
   private _$identifier?: ExternClassPropertyClass.$Identifier;
+
   readonly $type: "ExternClassPropertyClass" =
     "ExternClassPropertyClass" as const;
+
   readonly externClassProperty: Maybe<ExternClass>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly externClassProperty?: Maybe<ExternClass> | ExternClass;
@@ -45206,12 +45591,14 @@ export class ExternClassPropertyClass {
         parameters?.externClassProperty satisfies never;
     }
   }
+
   get $identifier(): ExternClassPropertyClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: ExternClassPropertyClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -45246,12 +45633,14 @@ export class ExternClassPropertyClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -45260,6 +45649,7 @@ export class ExternClassPropertyClass {
     });
     return _hasher;
   }
+
   $toJson(): ExternClassPropertyClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -45274,6 +45664,7 @@ export class ExternClassPropertyClass {
       } satisfies ExternClassPropertyClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -45308,6 +45699,7 @@ export class ExternClassPropertyClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -45545,7 +45937,7 @@ export namespace ExternClassPropertyClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -45853,8 +46245,11 @@ export namespace ExternClassPropertyClass {
 
 export abstract class AbstractBaseClassForExternClass {
   protected _$identifier?: AbstractBaseClassForExternClassStatic.$Identifier;
+
   abstract readonly $type: "ExternClass";
+
   readonly abstractBaseClassForExternClassProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly abstractBaseClassForExternClassProperty: string;
@@ -45870,12 +46265,14 @@ export abstract class AbstractBaseClassForExternClass {
     this.abstractBaseClassForExternClassProperty =
       parameters.abstractBaseClassForExternClassProperty;
   }
+
   get $identifier(): AbstractBaseClassForExternClassStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: AbstractBaseClassForExternClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -45909,18 +46306,21 @@ export abstract class AbstractBaseClassForExternClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.abstractBaseClassForExternClassProperty);
     return _hasher;
   }
+
   $toJson(): AbstractBaseClassForExternClassStatic.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -45934,6 +46334,7 @@ export abstract class AbstractBaseClassForExternClass {
       } satisfies AbstractBaseClassForExternClassStatic.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -45956,6 +46357,7 @@ export abstract class AbstractBaseClassForExternClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -46121,7 +46523,7 @@ export namespace AbstractBaseClassForExternClassStatic {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -46312,8 +46714,11 @@ import { ExternClass } from "./ExternClass.js"; /**
 
 export class ExplicitRdfTypeClass {
   private _$identifier?: ExplicitRdfTypeClass.$Identifier;
+
   readonly $type: "ExplicitRdfTypeClass" = "ExplicitRdfTypeClass" as const;
+
   readonly explicitRdfTypeProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly explicitRdfTypeProperty: string;
@@ -46328,12 +46733,14 @@ export class ExplicitRdfTypeClass {
     }
     this.explicitRdfTypeProperty = parameters.explicitRdfTypeProperty;
   }
+
   get $identifier(): ExplicitRdfTypeClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: ExplicitRdfTypeClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -46367,18 +46774,21 @@ export class ExplicitRdfTypeClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.explicitRdfTypeProperty);
     return _hasher;
   }
+
   $toJson(): ExplicitRdfTypeClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -46391,6 +46801,7 @@ export class ExplicitRdfTypeClass {
       } satisfies ExplicitRdfTypeClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -46420,6 +46831,7 @@ export class ExplicitRdfTypeClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -46643,7 +47055,7 @@ export namespace ExplicitRdfTypeClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -46917,9 +47329,12 @@ export namespace ExplicitRdfTypeClass {
 
 export class ExplicitFromToRdfTypesClass {
   private _$identifier?: ExplicitFromToRdfTypesClass.$Identifier;
+
   readonly $type: "ExplicitFromToRdfTypesClass" =
     "ExplicitFromToRdfTypesClass" as const;
+
   readonly explicitFromToRdfTypesProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly explicitFromToRdfTypesProperty: string;
@@ -46935,12 +47350,14 @@ export class ExplicitFromToRdfTypesClass {
     this.explicitFromToRdfTypesProperty =
       parameters.explicitFromToRdfTypesProperty;
   }
+
   get $identifier(): ExplicitFromToRdfTypesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: ExplicitFromToRdfTypesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -46974,18 +47391,21 @@ export class ExplicitFromToRdfTypesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.explicitFromToRdfTypesProperty);
     return _hasher;
   }
+
   $toJson(): ExplicitFromToRdfTypesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -46998,6 +47418,7 @@ export class ExplicitFromToRdfTypesClass {
       } satisfies ExplicitFromToRdfTypesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -47031,6 +47452,7 @@ export class ExplicitFromToRdfTypesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -47260,7 +47682,7 @@ export namespace ExplicitFromToRdfTypesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -47531,8 +47953,11 @@ export namespace ExplicitFromToRdfTypesClass {
 }
 export class DirectRecursiveClass {
   private _$identifier?: DirectRecursiveClass.$Identifier;
+
   readonly $type: "DirectRecursiveClass" = "DirectRecursiveClass" as const;
+
   readonly directRecursiveProperty: Maybe<DirectRecursiveClass>;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly directRecursiveProperty?:
@@ -47563,12 +47988,14 @@ export class DirectRecursiveClass {
         parameters?.directRecursiveProperty satisfies never;
     }
   }
+
   get $identifier(): DirectRecursiveClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: DirectRecursiveClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -47603,12 +48030,14 @@ export class DirectRecursiveClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -47617,6 +48046,7 @@ export class DirectRecursiveClass {
     });
     return _hasher;
   }
+
   $toJson(): DirectRecursiveClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -47631,6 +48061,7 @@ export class DirectRecursiveClass {
       } satisfies DirectRecursiveClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -47665,6 +48096,7 @@ export class DirectRecursiveClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -47909,7 +48341,7 @@ export namespace DirectRecursiveClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -48120,15 +48552,24 @@ export namespace DirectRecursiveClass {
 
 export class DefaultValuePropertiesClass {
   private _$identifier?: DefaultValuePropertiesClass.$Identifier;
+
   protected readonly _$identifierPrefix?: string;
+
   readonly $type: "DefaultValuePropertiesClass" =
     "DefaultValuePropertiesClass" as const;
+
   readonly dateDefaultValueProperty: Date;
+
   readonly dateTimeDefaultValueProperty: Date;
+
   readonly falseBooleanDefaultValueProperty: boolean;
+
   readonly numberDefaultValueProperty: number;
+
   readonly stringDefaultValueProperty: string;
+
   readonly trueBooleanDefaultValueProperty: boolean;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly $identifierPrefix?: string;
@@ -48212,6 +48653,7 @@ export class DefaultValuePropertiesClass {
         parameters?.trueBooleanDefaultValueProperty satisfies never;
     }
   }
+
   get $identifier(): DefaultValuePropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -48220,11 +48662,13 @@ export class DefaultValuePropertiesClass {
     }
     return this._$identifier;
   }
+
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   $equals(other: DefaultValuePropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -48329,12 +48773,14 @@ export class DefaultValuePropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -48346,6 +48792,7 @@ export class DefaultValuePropertiesClass {
     _hasher.update(this.trueBooleanDefaultValueProperty.toString());
     return _hasher;
   }
+
   $toJson(): DefaultValuePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -48366,6 +48813,7 @@ export class DefaultValuePropertiesClass {
       } satisfies DefaultValuePropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -48463,6 +48911,7 @@ export class DefaultValuePropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -48967,7 +49416,7 @@ export namespace DefaultValuePropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"sha256" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
@@ -49653,20 +50102,26 @@ export namespace DefaultValuePropertiesClass {
 
 export class DateUnionPropertiesClass {
   private _$identifier?: DateUnionPropertiesClass.$Identifier;
+
   readonly $type: "DateUnionPropertiesClass" =
     "DateUnionPropertiesClass" as const;
+
   readonly dateOrDateTimeProperty: Maybe<
     { type: "date"; value: Date } | { type: "dateTime"; value: Date }
   >;
+
   readonly dateOrStringProperty: Maybe<
     { type: "date"; value: Date } | { type: "string"; value: string }
   >;
+
   readonly dateTimeOrDateProperty: Maybe<
     { type: "dateTime"; value: Date } | { type: "date"; value: Date }
   >;
+
   readonly stringOrDateProperty: Maybe<
     { type: "string"; value: string } | { type: "date"; value: Date }
   >;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly dateOrDateTimeProperty?:
@@ -49735,12 +50190,14 @@ export class DateUnionPropertiesClass {
         parameters?.stringOrDateProperty satisfies never;
     }
   }
+
   get $identifier(): DateUnionPropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: DateUnionPropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -49930,12 +50387,14 @@ export class DateUnionPropertiesClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -50001,6 +50460,7 @@ export class DateUnionPropertiesClass {
     });
     return _hasher;
   }
+
   $toJson(): DateUnionPropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -50052,6 +50512,7 @@ export class DateUnionPropertiesClass {
       } satisfies DateUnionPropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -50154,6 +50615,7 @@ export class DateUnionPropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -50999,7 +51461,7 @@ export namespace DateUnionPropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -51724,28 +52186,42 @@ export namespace DateUnionPropertiesClass {
 
 export class ConvertibleTypePropertiesClass {
   private _$identifier?: ConvertibleTypePropertiesClass.$Identifier;
+
   readonly $type: "ConvertibleTypePropertiesClass" =
     "ConvertibleTypePropertiesClass" as const;
+
   readonly convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
+
   readonly convertibleIriOptionProperty: Maybe<NamedNode>;
+
   readonly convertibleIriProperty: NamedNode;
+
   readonly convertibleIriSetProperty: readonly NamedNode[];
+
   readonly convertibleLiteralNonEmptySetProperty: NonEmptyList<Literal>;
+
   readonly convertibleLiteralOptionProperty: Maybe<Literal>;
+
   readonly convertibleLiteralProperty: Literal;
+
   readonly convertibleLiteralSetProperty: readonly Literal[];
+
   readonly convertibleTermNonEmptySetProperty: NonEmptyList<
     BlankNode | Literal | NamedNode
   >;
+
   readonly convertibleTermOptionProperty: Maybe<
     BlankNode | Literal | NamedNode
   >;
+
   readonly convertibleTermProperty: BlankNode | Literal | NamedNode;
+
   readonly convertibleTermSetProperty: readonly (
     | BlankNode
     | Literal
     | NamedNode
   )[];
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly convertibleIriNonEmptySetProperty: NonEmptyList<NamedNode>;
@@ -52027,12 +52503,14 @@ export class ConvertibleTypePropertiesClass {
         parameters.convertibleTermSetProperty satisfies never;
     }
   }
+
   get $identifier(): ConvertibleTypePropertiesClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: ConvertibleTypePropertiesClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -52198,12 +52676,14 @@ export class ConvertibleTypePropertiesClass {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -52259,6 +52739,7 @@ export class ConvertibleTypePropertiesClass {
     }
     return _hasher;
   }
+
   $toJson(): ConvertibleTypePropertiesClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -52401,6 +52882,7 @@ export class ConvertibleTypePropertiesClass {
       } satisfies ConvertibleTypePropertiesClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -52487,6 +52969,7 @@ export class ConvertibleTypePropertiesClass {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -53638,7 +54121,7 @@ export namespace ConvertibleTypePropertiesClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -55129,7 +55612,7 @@ export namespace BaseInterfaceWithPropertiesStatic {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -57232,9 +57715,13 @@ export namespace ConcreteChildInterface {
 
 export abstract class AbstractBaseClassWithProperties {
   protected _$identifier?: AbstractBaseClassWithPropertiesStatic.$Identifier;
+
   protected readonly _$identifierPrefix?: string;
+
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
+
   readonly abstractBaseClassWithPropertiesProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly $identifierPrefix?: string;
@@ -57252,6 +57739,7 @@ export abstract class AbstractBaseClassWithProperties {
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
   }
+
   get $identifier(): AbstractBaseClassWithPropertiesStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -57260,11 +57748,13 @@ export abstract class AbstractBaseClassWithProperties {
     }
     return this._$identifier;
   }
+
   protected get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   $equals(other: AbstractBaseClassWithProperties): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -57309,18 +57799,21 @@ export abstract class AbstractBaseClassWithProperties {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.abstractBaseClassWithPropertiesProperty);
     return _hasher;
   }
+
   $toJson(): AbstractBaseClassWithPropertiesStatic.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -57334,6 +57827,7 @@ export abstract class AbstractBaseClassWithProperties {
       } satisfies AbstractBaseClassWithPropertiesStatic.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -57356,6 +57850,7 @@ export abstract class AbstractBaseClassWithProperties {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -57522,7 +58017,7 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"sha256" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $identifierPrefix: {
         kind: "IdentifierPrefixProperty" as const,
@@ -57719,7 +58214,9 @@ export namespace AbstractBaseClassWithPropertiesStatic {
 export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseClassWithProperties {
   abstract override readonly $type:
     | "ConcreteChildClass"
-    | "ConcreteParentClass"; // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
+    | "ConcreteParentClass";
+
+  // biome-ignore lint/complexity/noUselessConstructor: Always have a constructor
   constructor(
     parameters: { readonly $identifierPrefix?: string } & ConstructorParameters<
       typeof AbstractBaseClassWithProperties
@@ -57727,6 +58224,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
   ) {
     super(parameters);
   }
+
   override get $identifier(): AbstractBaseClassWithoutPropertiesStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -57735,11 +58233,13 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     }
     return this._$identifier;
   }
+
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -57759,6 +58259,7 @@ export abstract class AbstractBaseClassWithoutProperties extends AbstractBaseCla
     });
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -57987,7 +58488,9 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
 export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
   override readonly $type: "ConcreteParentClass" | "ConcreteChildClass" =
     "ConcreteParentClass" as const;
+
   readonly concreteParentClassProperty: string;
+
   constructor(
     parameters: {
       readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -57998,6 +58501,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     super(parameters);
     this.concreteParentClassProperty = parameters.concreteParentClassProperty;
   }
+
   override get $identifier(): ConcreteParentClassStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -58006,11 +58510,13 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     }
     return this._$identifier;
   }
+
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   override $equals(other: ConcreteParentClass): $EqualsResult {
     return super.$equals(other).chain(() =>
       $strictEquals(
@@ -58025,10 +58531,12 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
       })),
     );
   }
+
   override $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
+
   protected override $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -58036,6 +58544,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     _hasher.update(this.concreteParentClassProperty);
     return _hasher;
   }
+
   override $toJson(): ConcreteParentClassStatic.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -58044,6 +58553,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
       } satisfies ConcreteParentClassStatic.$Json),
     );
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -58075,6 +58585,7 @@ export class ConcreteParentClass extends AbstractBaseClassWithoutProperties {
     );
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -58599,7 +59110,9 @@ export namespace ConcreteParentClassStatic {
 
 export class ConcreteChildClass extends ConcreteParentClass {
   override readonly $type: "ConcreteChildClass" = "ConcreteChildClass" as const;
+
   readonly concreteChildClassProperty: string;
+
   constructor(
     parameters: {
       readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -58610,6 +59123,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     super(parameters);
     this.concreteChildClassProperty = parameters.concreteChildClassProperty;
   }
+
   override get $identifier(): ConcreteChildClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.namedNode(
@@ -58618,11 +59132,13 @@ export class ConcreteChildClass extends ConcreteParentClass {
     }
     return this._$identifier;
   }
+
   protected override get $identifierPrefix(): string {
     return typeof this._$identifierPrefix !== "undefined"
       ? this._$identifierPrefix
       : `urn:shaclmate:${this.$type}:`;
   }
+
   override $equals(other: ConcreteChildClass): $EqualsResult {
     return super.$equals(other).chain(() =>
       $strictEquals(
@@ -58637,10 +59153,12 @@ export class ConcreteChildClass extends ConcreteParentClass {
       })),
     );
   }
+
   override $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
+
   protected override $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -58648,6 +59166,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     _hasher.update(this.concreteChildClassProperty);
     return _hasher;
   }
+
   override $toJson(): ConcreteChildClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -58656,6 +59175,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
       } satisfies ConcreteChildClass.$Json),
     );
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -58687,6 +59207,7 @@ export class ConcreteChildClass extends ConcreteParentClass {
     );
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -59169,8 +59690,11 @@ export namespace ConcreteChildClass {
 }
 export abstract class ClassUnionMemberCommonParent {
   protected _$identifier?: ClassUnionMemberCommonParentStatic.$Identifier;
+
   abstract readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
+
   readonly classUnionMemberCommonParentProperty: string;
+
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly classUnionMemberCommonParentProperty: string;
@@ -59186,12 +59710,14 @@ export abstract class ClassUnionMemberCommonParent {
     this.classUnionMemberCommonParentProperty =
       parameters.classUnionMemberCommonParentProperty;
   }
+
   get $identifier(): ClassUnionMemberCommonParentStatic.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: ClassUnionMemberCommonParent): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -59225,18 +59751,21 @@ export abstract class ClassUnionMemberCommonParent {
         })),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     _hasher.update(this.classUnionMemberCommonParentProperty);
     return _hasher;
   }
+
   $toJson(): ClassUnionMemberCommonParentStatic.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -59250,6 +59779,7 @@ export abstract class ClassUnionMemberCommonParent {
       } satisfies ClassUnionMemberCommonParentStatic.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -59272,6 +59802,7 @@ export abstract class ClassUnionMemberCommonParent {
     );
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -59438,7 +59969,7 @@ export namespace ClassUnionMemberCommonParentStatic {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -59622,7 +60153,9 @@ export namespace ClassUnionMemberCommonParentStatic {
 }
 export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
   override readonly $type: "ClassUnionMember2" = "ClassUnionMember2" as const;
+
   readonly classUnionMember2Property: string;
+
   constructor(
     parameters: {
       readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -59632,12 +60165,14 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
     super(parameters);
     this.classUnionMember2Property = parameters.classUnionMember2Property;
   }
+
   override get $identifier(): ClassUnionMember2.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   override $equals(other: ClassUnionMember2): $EqualsResult {
     return super.$equals(other).chain(() =>
       $strictEquals(
@@ -59652,10 +60187,12 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
       })),
     );
   }
+
   override $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
+
   protected override $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -59663,6 +60200,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
     _hasher.update(this.classUnionMember2Property);
     return _hasher;
   }
+
   override $toJson(): ClassUnionMember2.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -59671,6 +60209,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
       } satisfies ClassUnionMember2.$Json),
     );
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -59701,6 +60240,7 @@ export class ClassUnionMember2 extends ClassUnionMemberCommonParent {
     );
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -60182,7 +60722,9 @@ export namespace ClassUnionMember2 {
 }
 export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
   override readonly $type: "ClassUnionMember1" = "ClassUnionMember1" as const;
+
   readonly classUnionMember1Property: string;
+
   constructor(
     parameters: {
       readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -60192,12 +60734,14 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     super(parameters);
     this.classUnionMember1Property = parameters.classUnionMember1Property;
   }
+
   override get $identifier(): ClassUnionMember1.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   override $equals(other: ClassUnionMember1): $EqualsResult {
     return super.$equals(other).chain(() =>
       $strictEquals(
@@ -60212,10 +60756,12 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
       })),
     );
   }
+
   override $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     return _hasher;
   }
+
   protected override $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
@@ -60223,6 +60769,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     _hasher.update(this.classUnionMember1Property);
     return _hasher;
   }
+
   override $toJson(): ClassUnionMember1.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -60231,6 +60778,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
       } satisfies ClassUnionMember1.$Json),
     );
   }
+
   override $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -60261,6 +60809,7 @@ export class ClassUnionMember1 extends ClassUnionMemberCommonParent {
     );
     return resource;
   }
+
   override toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -61040,7 +61589,7 @@ export namespace BlankNodeOrIriIdentifierInterface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -61243,8 +61792,10 @@ export namespace BlankNodeOrIriIdentifierInterface {
 
 export class BlankNodeOrIriIdentifierClass {
   private _$identifier?: BlankNodeOrIriIdentifierClass.$Identifier;
+
   readonly $type: "BlankNodeOrIriIdentifierClass" =
     "BlankNodeOrIriIdentifierClass" as const;
+
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
   }) {
@@ -61257,12 +61808,14 @@ export class BlankNodeOrIriIdentifierClass {
       this._$identifier = parameters?.$identifier satisfies never;
     }
   }
+
   get $identifier(): BlankNodeOrIriIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
     }
     return this._$identifier;
   }
+
   $equals(other: BlankNodeOrIriIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -61284,17 +61837,20 @@ export class BlankNodeOrIriIdentifierClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     return _hasher;
   }
+
   $toJson(): BlankNodeOrIriIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -61306,6 +61862,7 @@ export class BlankNodeOrIriIdentifierClass {
       } satisfies BlankNodeOrIriIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -61332,6 +61889,7 @@ export class BlankNodeOrIriIdentifierClass {
     }
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -61508,7 +62066,7 @@ export namespace BlankNodeOrIriIdentifierClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -62003,7 +62561,7 @@ export namespace BlankNodeIdentifierInterface {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "BlankNodeType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
@@ -62206,8 +62764,10 @@ export namespace BlankNodeIdentifierInterface {
 
 export class BlankNodeIdentifierClass {
   private _$identifier?: BlankNodeIdentifierClass.$Identifier;
+
   readonly $type: "BlankNodeIdentifierClass" =
     "BlankNodeIdentifierClass" as const;
+
   constructor(parameters?: { readonly $identifier?: BlankNode }) {
     if (typeof parameters?.$identifier === "object") {
       this._$identifier = parameters?.$identifier;
@@ -62216,6 +62776,7 @@ export class BlankNodeIdentifierClass {
       this._$identifier = parameters?.$identifier satisfies never;
     }
   }
+
   get $identifier(): BlankNodeIdentifierClass.$Identifier {
     if (typeof this._$identifier === "undefined") {
       this._$identifier = dataFactory.blankNode();
@@ -62227,6 +62788,7 @@ export class BlankNodeIdentifierClass {
     }
     return this._$identifier;
   }
+
   $equals(other: BlankNodeIdentifierClass): $EqualsResult {
     return $booleanEquals(this.$identifier, other.$identifier)
       .mapLeft((propertyValuesUnequal) => ({
@@ -62248,17 +62810,20 @@ export class BlankNodeIdentifierClass {
         ),
       );
   }
+
   $hash<HasherT extends $Hasher>(_hasher: HasherT): HasherT {
     this.$hashShaclProperties(_hasher);
     _hasher.update(this.$identifier.value);
     _hasher.update(this.$type);
     return _hasher;
   }
+
   protected $hashShaclProperties<HasherT extends $Hasher>(
     _hasher: HasherT,
   ): HasherT {
     return _hasher;
   }
+
   $toJson(): BlankNodeIdentifierClass.$Json {
     return JSON.parse(
       JSON.stringify({
@@ -62267,6 +62832,7 @@ export class BlankNodeIdentifierClass {
       } satisfies BlankNodeIdentifierClass.$Json),
     );
   }
+
   $toRdf(options?: {
     ignoreRdfType?: boolean;
     mutateGraph?: MutableResource.MutateGraph;
@@ -62291,6 +62857,7 @@ export class BlankNodeIdentifierClass {
     }
     return resource;
   }
+
   toString(): string {
     return JSON.stringify(this.$toJson());
   }
@@ -62474,7 +63041,7 @@ export namespace BlankNodeIdentifierClass {
         kind: "IdentifierProperty" as const,
         name: "$identifier",
         type: () => ({ kind: "BlankNodeType" as const }),
-        identifierMintingStrategy: '"blankNode" as const',
+        identifierMintingStrategy: "[object Object] as const",
       },
       $type: {
         kind: "TypeDiscriminantProperty" as const,
