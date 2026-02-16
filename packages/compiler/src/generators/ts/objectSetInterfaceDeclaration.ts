@@ -30,6 +30,7 @@ export interface ${syntheticNamePrefix}ObjectSet {
         (methodSignature) =>
           code`${methodSignature.name}(${methodSignature.parameters}): ${methodSignature.returnType};`,
       ),
+    { on: "\n\n" },
   )}
 }
 

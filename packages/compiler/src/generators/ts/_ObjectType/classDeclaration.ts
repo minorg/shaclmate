@@ -62,8 +62,12 @@ export function classDeclaration(this: ObjectType): Code {
   this.ensureAtMostOneSuperObjectType();
 
   return code`\
-${this.comment.alt(this.label).map(tsComment).orDefault("")}
-${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? ` extends ${this.parentObjectTypes[0].name}` : ""} {
+${this.comment
+  .alt(this.label)
+  .map(tsComment)
+  .orDefault(
+    "",
+  )}${this.export ? "export " : ""}${this.abstract ? "abstract " : ""}class ${def(this.name)}${this.parentObjectTypes.length > 0 ? ` extends ${this.parentObjectTypes[0].name}` : ""} {
 ${joinCode(
   [
     ...this.properties.flatMap((property) => property.declaration.toList()),

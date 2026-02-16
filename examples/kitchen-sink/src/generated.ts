@@ -3654,7 +3654,8 @@ export class UnionDiscriminantsClass {
 
   /**
    * Union with an envelope discriminant (multiple+duplicate typeofs, no inline discriminant property).
-   */ readonly optionalClassOrClassOrStringProperty: Maybe<
+   */
+  readonly optionalClassOrClassOrStringProperty: Maybe<
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | {
         type: "1-ClassUnionMember2";
@@ -3665,15 +3666,18 @@ export class UnionDiscriminantsClass {
 
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
-   */ readonly optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
+   */
+  readonly optionalIriOrLiteralProperty: Maybe<NamedNode | Literal>;
 
   /**
    * Union that can be discriminated by typeof.
-   */ readonly optionalIriOrStringProperty: Maybe<NamedNode | string>;
+   */
+  readonly optionalIriOrStringProperty: Maybe<NamedNode | string>;
 
   /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
-   */ readonly requiredClassOrClassOrStringProperty:
+   */
+  readonly requiredClassOrClassOrStringProperty:
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | {
         type: "1-ClassUnionMember2";
@@ -3683,15 +3687,18 @@ export class UnionDiscriminantsClass {
 
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
-   */ readonly requiredIriOrLiteralProperty: NamedNode | Literal;
+   */
+  readonly requiredIriOrLiteralProperty: NamedNode | Literal;
 
   /**
    * Union that can be discriminated by typeof.
-   */ readonly requiredIriOrStringProperty: NamedNode | string;
+   */
+  readonly requiredIriOrStringProperty: NamedNode | string;
 
   /**
    * Union with an envelope discriminant (multiple typeofs, no inline discriminant property).
-   */ readonly setClassOrClassOrStringProperty: readonly (
+   */
+  readonly setClassOrClassOrStringProperty: readonly (
     | { type: "0-ClassUnionMember1"; value: ClassUnionMember1 }
     | {
         type: "1-ClassUnionMember2";
@@ -3702,11 +3709,13 @@ export class UnionDiscriminantsClass {
 
   /**
    * Union that can be discriminated by an inline discriminant property (termType).
-   */ readonly setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
+   */
+  readonly setIriOrLiteralProperty: readonly (NamedNode | Literal)[];
 
   /**
    * Union that can be discriminated by typeof.
-   */ readonly setIriOrStringProperty: readonly (NamedNode | string)[];
+   */
+  readonly setIriOrStringProperty: readonly (NamedNode | string)[];
 
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -12648,19 +12657,23 @@ export class PropertyCardinalitiesClass {
 
   /**
    * Set: minCount implicitly=0, no maxCount
-   */ readonly emptyStringSetProperty: readonly string[];
+   */
+  readonly emptyStringSetProperty: readonly string[];
 
   /**
    * Set: minCount=1, no maxCount
-   */ readonly nonEmptyStringSetProperty: NonEmptyList<string>;
+   */
+  readonly nonEmptyStringSetProperty: NonEmptyList<string>;
 
   /**
    * Option: maxCount=1, minCount=0
-   */ readonly optionalStringProperty: Maybe<string>;
+   */
+  readonly optionalStringProperty: Maybe<string>;
 
   /**
    * Required: maxCount=minCount=1
-   */ readonly requiredStringProperty: string;
+   */
+  readonly requiredStringProperty: string;
 
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -18332,15 +18345,18 @@ export class MutablePropertiesClass {
 
   /**
    * List-valued property that can't be reassigned but whose value can be mutated
-   */ readonly mutableListProperty: Maybe<string[]>;
+   */
+  readonly mutableListProperty: Maybe<string[]>;
 
   /**
    * Set-valued property that can't be reassigned but whose value can be mutated
-   */ mutableSetProperty: string[];
+   */
+  mutableSetProperty: string[];
 
   /**
    * String-valued property that can be re-assigned
-   */ mutableStringProperty: Maybe<string>;
+   */
+  mutableStringProperty: Maybe<string>;
 
   constructor(parameters?: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -34234,7 +34250,8 @@ export class LanguageInPropertiesClass {
 
   /**
    * literal property for testing languageIn
-   */ readonly languageInLiteralProperty: NonEmptyList<Literal>;
+   */
+  readonly languageInLiteralProperty: NonEmptyList<Literal>;
 
   constructor(parameters: {
     readonly $identifier?: (BlankNode | NamedNode) | string;
@@ -71239,487 +71256,628 @@ export interface $ObjectSet {
   baseInterfaceWithoutProperties(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
   ): Promise<Either<Error, BaseInterfaceWithoutProperties>>;
+
   baseInterfaceWithoutPropertiesIdentifiers(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<
     Either<Error, readonly BaseInterfaceWithoutPropertiesStatic.$Identifier[]>
   >;
+
   baseInterfaceWithoutPropertieses(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<Either<Error, readonly BaseInterfaceWithoutProperties[]>>;
+
   baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
       $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   baseInterfaceWithProperties(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
   ): Promise<Either<Error, BaseInterfaceWithProperties>>;
+
   baseInterfaceWithPropertiesIdentifiers(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<
     Either<Error, readonly BaseInterfaceWithPropertiesStatic.$Identifier[]>
   >;
+
   baseInterfaceWithPropertieses(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<Either<Error, readonly BaseInterfaceWithProperties[]>>;
+
   baseInterfaceWithPropertiesesCount(
     query?: Pick<
       $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   blankNodeIdentifierClass(
     identifier: BlankNodeIdentifierClass.$Identifier,
   ): Promise<Either<Error, BlankNodeIdentifierClass>>;
+
   blankNodeIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>>;
+
   blankNodeIdentifierClasses(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierClass[]>>;
+
   blankNodeIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
   ): Promise<Either<Error, BlankNodeIdentifierInterface>>;
+
   blankNodeIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<
     Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]>
   >;
+
   blankNodeIdentifierInterfaces(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierInterface[]>>;
+
   blankNodeIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   blankNodeOrIriIdentifierClass(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, BlankNodeOrIriIdentifierClass>>;
+
   blankNodeOrIriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
     Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]>
   >;
+
   blankNodeOrIriIdentifierClasses(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierClass[]>>;
+
   blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
       $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   blankNodeOrIriIdentifierInterface(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, BlankNodeOrIriIdentifierInterface>>;
+
   blankNodeOrIriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
     Either<Error, readonly BlankNodeOrIriIdentifierInterface.$Identifier[]>
   >;
+
   blankNodeOrIriIdentifierInterfaces(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>>;
+
   blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
   ): Promise<Either<Error, ClassUnionMember1>>;
+
   classUnionMember1Identifiers(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember1.$Identifier[]>>;
+
   classUnionMember1s(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember1[]>>;
+
   classUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
   ): Promise<Either<Error, ClassUnionMember2>>;
+
   classUnionMember2Identifiers(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember2.$Identifier[]>>;
+
   classUnionMember2s(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember2[]>>;
+
   classUnionMember2sCount(
     query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
   ): Promise<Either<Error, ConcreteChildClass>>;
+
   concreteChildClassIdentifiers(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildClass.$Identifier[]>>;
+
   concreteChildClasses(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildClass[]>>;
+
   concreteChildClassesCount(
     query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
   ): Promise<Either<Error, ConcreteChildInterface>>;
+
   concreteChildInterfaceIdentifiers(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildInterface.$Identifier[]>>;
+
   concreteChildInterfaces(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildInterface[]>>;
+
   concreteChildInterfacesCount(
     query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
   ): Promise<Either<Error, ConcreteParentClass>>;
+
   concreteParentClassIdentifiers(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentClassStatic.$Identifier[]>>;
+
   concreteParentClasses(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentClass[]>>;
+
   concreteParentClassesCount(
     query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
   ): Promise<Either<Error, ConcreteParentInterface>>;
+
   concreteParentInterfaceIdentifiers(
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<
     Either<Error, readonly ConcreteParentInterfaceStatic.$Identifier[]>
   >;
+
   concreteParentInterfaces(
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentInterface[]>>;
+
   concreteParentInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   convertibleTypePropertiesClass(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
   ): Promise<Either<Error, ConvertibleTypePropertiesClass>>;
+
   convertibleTypePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<
     Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]>
   >;
+
   convertibleTypePropertiesClasses(
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ConvertibleTypePropertiesClass[]>>;
+
   convertibleTypePropertiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   dateUnionPropertiesClass(
     identifier: DateUnionPropertiesClass.$Identifier,
   ): Promise<Either<Error, DateUnionPropertiesClass>>;
+
   dateUnionPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>>;
+
   dateUnionPropertiesClasses(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DateUnionPropertiesClass[]>>;
+
   dateUnionPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Promise<Either<Error, DefaultValuePropertiesClass>>;
+
   defaultValuePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DefaultValuePropertiesClass.$Identifier[]>>;
+
   defaultValuePropertiesClasses(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DefaultValuePropertiesClass[]>>;
+
   defaultValuePropertiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   directRecursiveClass(
     identifier: DirectRecursiveClass.$Identifier,
   ): Promise<Either<Error, DirectRecursiveClass>>;
+
   directRecursiveClassIdentifiers(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly DirectRecursiveClass.$Identifier[]>>;
+
   directRecursiveClasses(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly DirectRecursiveClass[]>>;
+
   directRecursiveClassesCount(
     query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<Either<Error, ExplicitFromToRdfTypesClass>>;
+
   explicitFromToRdfTypesClassIdentifiers(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitFromToRdfTypesClass.$Identifier[]>>;
+
   explicitFromToRdfTypesClasses(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitFromToRdfTypesClass[]>>;
+
   explicitFromToRdfTypesClassesCount(
     query?: Pick<
       $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   explicitRdfTypeClass(
     identifier: ExplicitRdfTypeClass.$Identifier,
   ): Promise<Either<Error, ExplicitRdfTypeClass>>;
+
   explicitRdfTypeClassIdentifiers(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]>>;
+
   explicitRdfTypeClasses(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitRdfTypeClass[]>>;
+
   explicitRdfTypeClassesCount(
     query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
   ): Promise<Either<Error, ExternClassPropertyClass>>;
+
   externClassPropertyClassIdentifiers(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly ExternClassPropertyClass.$Identifier[]>>;
+
   externClassPropertyClasses(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly ExternClassPropertyClass[]>>;
+
   externClassPropertyClassesCount(
     query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
   ): Promise<Either<Error, FlattenClassUnionMember3>>;
+
   flattenClassUnionMember3Identifiers(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>>;
+
   flattenClassUnionMember3s(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnionMember3[]>>;
+
   flattenClassUnionMember3sCount(
     query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
   ): Promise<Either<Error, HasValuePropertiesClass>>;
+
   hasValuePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly HasValuePropertiesClass.$Identifier[]>>;
+
   hasValuePropertiesClasses(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly HasValuePropertiesClass[]>>;
+
   hasValuePropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
   ): Promise<Either<Error, IdentifierOverride3Class>>;
+
   identifierOverride3ClassIdentifiers(
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<
     Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]>
   >;
+
   identifierOverride3Classes(
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride3Class[]>>;
+
   identifierOverride3ClassesCount(
     query?: Pick<
       $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   identifierOverride4Class(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
   ): Promise<Either<Error, IdentifierOverride4Class>>;
+
   identifierOverride4ClassIdentifiers(
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<
     Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]>
   >;
+
   identifierOverride4Classes(
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride4Class[]>>;
+
   identifierOverride4ClassesCount(
     query?: Pick<
       $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   identifierOverride5Class(
     identifier: IdentifierOverride5Class.$Identifier,
   ): Promise<Either<Error, IdentifierOverride5Class>>;
+
   identifierOverride5ClassIdentifiers(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride5Class.$Identifier[]>>;
+
   identifierOverride5Classes(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride5Class[]>>;
+
   identifierOverride5ClassesCount(
     query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<Either<Error, IndirectRecursiveClass>>;
+
   indirectRecursiveClassIdentifiers(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveClass.$Identifier[]>>;
+
   indirectRecursiveClasses(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveClass[]>>;
+
   indirectRecursiveClassesCount(
     query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
   ): Promise<Either<Error, IndirectRecursiveHelperClass>>;
+
   indirectRecursiveHelperClassIdentifiers(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<
     Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]>
   >;
+
   indirectRecursiveHelperClasses(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveHelperClass[]>>;
+
   indirectRecursiveHelperClassesCount(
     query?: Pick<
       $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   inIdentifierClass(
     identifier: InIdentifierClass.$Identifier,
   ): Promise<Either<Error, InIdentifierClass>>;
+
   inIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly InIdentifierClass.$Identifier[]>>;
+
   inIdentifierClasses(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly InIdentifierClass[]>>;
+
   inIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
   ): Promise<Either<Error, InPropertiesClass>>;
+
   inPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly InPropertiesClass.$Identifier[]>>;
+
   inPropertiesClasses(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly InPropertiesClass[]>>;
+
   inPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   interface(
     identifier: Interface.$Identifier,
   ): Promise<Either<Error, Interface>>;
+
   interfaceIdentifiers(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Promise<Either<Error, readonly Interface.$Identifier[]>>;
+
   interfaces(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Promise<Either<Error, readonly Interface[]>>;
+
   interfacesCount(
     query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, InterfaceUnionMember1>>;
+
   interfaceUnionMember1Identifiers(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember1.$Identifier[]>>;
+
   interfaceUnionMember1s(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember1[]>>;
+
   interfaceUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, InterfaceUnionMember2>>;
+
   interfaceUnionMember2Identifiers(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember2.$Identifier[]>>;
+
   interfaceUnionMember2s(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember2[]>>;
+
   interfaceUnionMember2sCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, IriIdentifierClass>>;
+
   iriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierClass.$Identifier[]>>;
+
   iriIdentifierClasses(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierClass[]>>;
+
   iriIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, IriIdentifierInterface>>;
+
   iriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierInterface.$Identifier[]>>;
+
   iriIdentifierInterfaces(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierInterface[]>>;
+
   iriIdentifierInterfacesCount(
     query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
   ): Promise<Either<Error, JsPrimitiveUnionPropertyClass>>;
+
   jsPrimitiveUnionPropertyClassIdentifiers(
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<
     Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]>
   >;
+
   jsPrimitiveUnionPropertyClasses(
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly JsPrimitiveUnionPropertyClass[]>>;
+
   jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
       $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
   ): Promise<Either<Error, LanguageInPropertiesClass>>;
+
   languageInPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LanguageInPropertiesClass.$Identifier[]>>;
+
   languageInPropertiesClasses(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LanguageInPropertiesClass[]>>;
+
   languageInPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>>;
+
   lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -71728,20 +71886,24 @@ export interface $ObjectSet {
       readonly LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier[]
     >
   >;
+
   lazilyResolvedBlankNodeOrIriIdentifierClasses(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]>
   >;
+
   lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedBlankNodeOrIriIdentifierInterface(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>>;
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -71750,543 +71912,701 @@ export interface $ObjectSet {
       readonly LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier[]
     >
   >;
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]>
   >;
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedClassUnionMember1(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnionMember1>>;
+
   lazilyResolvedClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedClassUnionMember1.$Identifier[]>
   >;
+
   lazilyResolvedClassUnionMember1s(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnionMember1[]>>;
+
   lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedClassUnionMember2(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnionMember2>>;
+
   lazilyResolvedClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedClassUnionMember2.$Identifier[]>
   >;
+
   lazilyResolvedClassUnionMember2s(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnionMember2[]>>;
+
   lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedInterfaceUnionMember1(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember1>>;
+
   lazilyResolvedInterfaceUnionMember1Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedInterfaceUnionMember1.$Identifier[]>
   >;
+
   lazilyResolvedInterfaceUnionMember1s(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]>>;
+
   lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedInterfaceUnionMember2(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember2>>;
+
   lazilyResolvedInterfaceUnionMember2Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedInterfaceUnionMember2.$Identifier[]>
   >;
+
   lazilyResolvedInterfaceUnionMember2s(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]>>;
+
   lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedIriIdentifierClass(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, LazilyResolvedIriIdentifierClass>>;
+
   lazilyResolvedIriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedIriIdentifierClass.$Identifier[]>
   >;
+
   lazilyResolvedIriIdentifierClasses(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierClass[]>>;
+
   lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedIriIdentifierInterface(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, LazilyResolvedIriIdentifierInterface>>;
+
   lazilyResolvedIriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedIriIdentifierInterface.$Identifier[]>
   >;
+
   lazilyResolvedIriIdentifierInterfaces(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>>;
+
   lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   lazyPropertiesClass(
     identifier: LazyPropertiesClass.$Identifier,
   ): Promise<Either<Error, LazyPropertiesClass>>;
+
   lazyPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesClass.$Identifier[]>>;
+
   lazyPropertiesClasses(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesClass[]>>;
+
   lazyPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
   ): Promise<Either<Error, LazyPropertiesInterface>>;
+
   lazyPropertiesInterfaceIdentifiers(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesInterface.$Identifier[]>>;
+
   lazyPropertiesInterfaces(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesInterface[]>>;
+
   lazyPropertiesInterfacesCount(
     query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
   ): Promise<Either<Error, ListPropertiesClass>>;
+
   listPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ListPropertiesClass.$Identifier[]>>;
+
   listPropertiesClasses(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ListPropertiesClass[]>>;
+
   listPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
   ): Promise<Either<Error, MutablePropertiesClass>>;
+
   mutablePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly MutablePropertiesClass.$Identifier[]>>;
+
   mutablePropertiesClasses(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly MutablePropertiesClass[]>>;
+
   mutablePropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   nonClass(identifier: NonClass.$Identifier): Promise<Either<Error, NonClass>>;
+
   nonClassIdentifiers(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Promise<Either<Error, readonly NonClass.$Identifier[]>>;
+
   nonClasses(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Promise<Either<Error, readonly NonClass[]>>;
+
   nonClassesCount(
     query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnionMember1>>;
+
   noRdfTypeClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>>;
+
   noRdfTypeClassUnionMember1s(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember1[]>>;
+
   noRdfTypeClassUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   noRdfTypeClassUnionMember2(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnionMember2>>;
+
   noRdfTypeClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>>;
+
   noRdfTypeClassUnionMember2s(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember2[]>>;
+
   noRdfTypeClassUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<Either<Error, OrderedPropertiesClass>>;
+
   orderedPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly OrderedPropertiesClass.$Identifier[]>>;
+
   orderedPropertiesClasses(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly OrderedPropertiesClass[]>>;
+
   orderedPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<Either<Error, PartialClass>>;
+
   partialClassIdentifiers(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Promise<Either<Error, readonly PartialClass.$Identifier[]>>;
+
   partialClasses(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Promise<Either<Error, readonly PartialClass[]>>;
+
   partialClassesCount(
     query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
   ): Promise<Either<Error, PartialClassUnionMember1>>;
+
   partialClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember1.$Identifier[]>>;
+
   partialClassUnionMember1s(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember1[]>>;
+
   partialClassUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
   ): Promise<Either<Error, PartialClassUnionMember2>>;
+
   partialClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember2.$Identifier[]>>;
+
   partialClassUnionMember2s(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember2[]>>;
+
   partialClassUnionMember2sCount(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialInterface(
     identifier: PartialInterface.$Identifier,
   ): Promise<Either<Error, PartialInterface>>;
+
   partialInterfaceIdentifiers(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<Either<Error, readonly PartialInterface.$Identifier[]>>;
+
   partialInterfaces(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<Either<Error, readonly PartialInterface[]>>;
+
   partialInterfacesCount(
     query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnionMember1>>;
+
   partialInterfaceUnionMember1Identifiers(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<
     Either<Error, readonly PartialInterfaceUnionMember1.$Identifier[]>
   >;
+
   partialInterfaceUnionMember1s(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnionMember1[]>>;
+
   partialInterfaceUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   partialInterfaceUnionMember2(
     identifier: PartialInterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnionMember2>>;
+
   partialInterfaceUnionMember2Identifiers(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<
     Either<Error, readonly PartialInterfaceUnionMember2.$Identifier[]>
   >;
+
   partialInterfaceUnionMember2s(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnionMember2[]>>;
+
   partialInterfaceUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   propertyCardinalitiesClass(
     identifier: PropertyCardinalitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyCardinalitiesClass>>;
+
   propertyCardinalitiesClassIdentifiers(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>>;
+
   propertyCardinalitiesClasses(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass[]>>;
+
   propertyCardinalitiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyVisibilitiesClass>>;
+
   propertyVisibilitiesClassIdentifiers(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>>;
+
   propertyVisibilitiesClasses(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyVisibilitiesClass[]>>;
+
   propertyVisibilitiesClassesCount(
     query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnionMember1>>;
+
   recursiveClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>>;
+
   recursiveClassUnionMember1s(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember1[]>>;
+
   recursiveClassUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   recursiveClassUnionMember2(
     identifier: RecursiveClassUnionMember2.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnionMember2>>;
+
   recursiveClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>>;
+
   recursiveClassUnionMember2s(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2[]>>;
+
   recursiveClassUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   sha256IriIdentifierClass(
     identifier: Sha256IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, Sha256IriIdentifierClass>>;
+
   sha256IriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>>;
+
   sha256IriIdentifierClasses(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly Sha256IriIdentifierClass[]>>;
+
   sha256IriIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<Either<Error, TermPropertiesClass>>;
+
   termPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly TermPropertiesClass.$Identifier[]>>;
+
   termPropertiesClasses(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly TermPropertiesClass[]>>;
+
   termPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
   ): Promise<Either<Error, UnionDiscriminantsClass>>;
+
   unionDiscriminantsClassIdentifiers(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>>;
+
   unionDiscriminantsClasses(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass[]>>;
+
   unionDiscriminantsClassesCount(
     query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, UuidV4IriIdentifierClass>>;
+
   uuidV4IriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>>;
+
   uuidV4IriIdentifierClasses(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierClass[]>>;
+
   uuidV4IriIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, UuidV4IriIdentifierInterface>>;
+
   uuidV4IriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<
     Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]>
   >;
+
   uuidV4IriIdentifierInterfaces(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierInterface[]>>;
+
   uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   classUnion(
     identifier: ClassUnion.$Identifier,
   ): Promise<Either<Error, ClassUnion>>;
+
   classUnionIdentifiers(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<Either<Error, readonly ClassUnion.$Identifier[]>>;
+
   classUnions(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<Either<Error, readonly ClassUnion[]>>;
+
   classUnionsCount(
     query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
   ): Promise<Either<Error, FlattenClassUnion>>;
+
   flattenClassUnionIdentifiers(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnion.$Identifier[]>>;
+
   flattenClassUnions(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnion[]>>;
+
   flattenClassUnionsCount(
     query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
   ): Promise<Either<Error, InterfaceUnion>>;
+
   interfaceUnionIdentifiers(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnion.$Identifier[]>>;
+
   interfaceUnions(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnion[]>>;
+
   interfaceUnionsCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnion>>;
+
   lazilyResolvedClassUnionIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]>>;
+
   lazilyResolvedClassUnions(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnion[]>>;
+
   lazilyResolvedClassUnionsCount(
     query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnion>>;
+
   lazilyResolvedInterfaceUnionIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<
     Either<Error, readonly LazilyResolvedInterfaceUnion.$Identifier[]>
   >;
+
   lazilyResolvedInterfaceUnions(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnion[]>>;
+
   lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
       "filter"
     >,
   ): Promise<Either<Error, number>>;
+
   noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnion>>;
+
   noRdfTypeClassUnionIdentifiers(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>>;
+
   noRdfTypeClassUnions(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnion[]>>;
+
   noRdfTypeClassUnionsCount(
     query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
   ): Promise<Either<Error, PartialClassUnion>>;
+
   partialClassUnionIdentifiers(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnion.$Identifier[]>>;
+
   partialClassUnions(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnion[]>>;
+
   partialClassUnionsCount(
     query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnion>>;
+
   partialInterfaceUnionIdentifiers(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnion.$Identifier[]>>;
+
   partialInterfaceUnions(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnion[]>>;
+
   partialInterfaceUnionsCount(
     query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnion>>;
+
   recursiveClassUnionIdentifiers(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnion.$Identifier[]>>;
+
   recursiveClassUnions(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnion[]>>;
+
   recursiveClassUnionsCount(
     query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
+
   object(identifier: $Object.$Identifier): Promise<Either<Error, $Object>>;
+
   objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>>;
+
   objects(
     query?: $ObjectSet.Query<$Object.$Filter>,
   ): Promise<Either<Error, readonly $Object[]>>;
+
   objectsCount(
     query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
   ): Promise<Either<Error, number>>;
@@ -72317,6 +72637,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, BaseInterfaceWithoutProperties>> {
     return this.baseInterfaceWithoutPropertiesSync(identifier);
   }
+
   baseInterfaceWithoutPropertiesSync(
     identifier: BaseInterfaceWithoutPropertiesStatic.$Identifier,
   ): Either<Error, BaseInterfaceWithoutProperties> {
@@ -72324,6 +72645,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async baseInterfaceWithoutPropertiesIdentifiers(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<
@@ -72331,6 +72653,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.baseInterfaceWithoutPropertiesIdentifiersSync(query);
   }
+
   baseInterfaceWithoutPropertiesIdentifiersSync(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Either<
@@ -72341,11 +72664,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async baseInterfaceWithoutPropertieses(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<Either<Error, readonly BaseInterfaceWithoutProperties[]>> {
     return this.baseInterfaceWithoutPropertiesesSync(query);
   }
+
   async baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
       $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
@@ -72354,6 +72679,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.baseInterfaceWithoutPropertiesesCountSync(query);
   }
+
   baseInterfaceWithoutPropertiesesCountSync(
     query?: Pick<
       $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
@@ -72364,6 +72690,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   baseInterfaceWithoutPropertiesesSync(
     query?: $ObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Either<Error, readonly BaseInterfaceWithoutProperties[]> {
@@ -72384,11 +72711,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async baseInterfaceWithProperties(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
   ): Promise<Either<Error, BaseInterfaceWithProperties>> {
     return this.baseInterfaceWithPropertiesSync(identifier);
   }
+
   baseInterfaceWithPropertiesSync(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
   ): Either<Error, BaseInterfaceWithProperties> {
@@ -72396,6 +72725,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async baseInterfaceWithPropertiesIdentifiers(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<
@@ -72403,6 +72733,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.baseInterfaceWithPropertiesIdentifiersSync(query);
   }
+
   baseInterfaceWithPropertiesIdentifiersSync(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Either<Error, readonly BaseInterfaceWithPropertiesStatic.$Identifier[]> {
@@ -72410,11 +72741,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async baseInterfaceWithPropertieses(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<Either<Error, readonly BaseInterfaceWithProperties[]>> {
     return this.baseInterfaceWithPropertiesesSync(query);
   }
+
   async baseInterfaceWithPropertiesesCount(
     query?: Pick<
       $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
@@ -72423,6 +72756,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.baseInterfaceWithPropertiesesCountSync(query);
   }
+
   baseInterfaceWithPropertiesesCountSync(
     query?: Pick<
       $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
@@ -72433,6 +72767,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   baseInterfaceWithPropertiesesSync(
     query?: $ObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Either<Error, readonly BaseInterfaceWithProperties[]> {
@@ -72454,11 +72789,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeIdentifierClass(
     identifier: BlankNodeIdentifierClass.$Identifier,
   ): Promise<Either<Error, BlankNodeIdentifierClass>> {
     return this.blankNodeIdentifierClassSync(identifier);
   }
+
   blankNodeIdentifierClassSync(
     identifier: BlankNodeIdentifierClass.$Identifier,
   ): Either<Error, BlankNodeIdentifierClass> {
@@ -72466,11 +72803,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async blankNodeIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>> {
     return this.blankNodeIdentifierClassIdentifiersSync(query);
   }
+
   blankNodeIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]> {
@@ -72478,16 +72817,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async blankNodeIdentifierClasses(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierClass[]>> {
     return this.blankNodeIdentifierClassesSync(query);
   }
+
   async blankNodeIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.blankNodeIdentifierClassesCountSync(query);
   }
+
   blankNodeIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<BlankNodeIdentifierClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -72495,6 +72837,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   blankNodeIdentifierClassesSync(
     query?: $ObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Either<Error, readonly BlankNodeIdentifierClass[]> {
@@ -72511,11 +72854,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
   ): Promise<Either<Error, BlankNodeIdentifierInterface>> {
     return this.blankNodeIdentifierInterfaceSync(identifier);
   }
+
   blankNodeIdentifierInterfaceSync(
     identifier: BlankNodeIdentifierInterface.$Identifier,
   ): Either<Error, BlankNodeIdentifierInterface> {
@@ -72523,6 +72868,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async blankNodeIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<
@@ -72530,6 +72876,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.blankNodeIdentifierInterfaceIdentifiersSync(query);
   }
+
   blankNodeIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Either<Error, readonly BlankNodeIdentifierInterface.$Identifier[]> {
@@ -72537,11 +72884,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async blankNodeIdentifierInterfaces(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierInterface[]>> {
     return this.blankNodeIdentifierInterfacesSync(query);
   }
+
   async blankNodeIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
@@ -72550,6 +72899,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.blankNodeIdentifierInterfacesCountSync(query);
   }
+
   blankNodeIdentifierInterfacesCountSync(
     query?: Pick<
       $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
@@ -72560,6 +72910,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   blankNodeIdentifierInterfacesSync(
     query?: $ObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Either<Error, readonly BlankNodeIdentifierInterface[]> {
@@ -72576,11 +72927,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeOrIriIdentifierClass(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, BlankNodeOrIriIdentifierClass>> {
     return this.blankNodeOrIriIdentifierClassSync(identifier);
   }
+
   blankNodeOrIriIdentifierClassSync(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
   ): Either<Error, BlankNodeOrIriIdentifierClass> {
@@ -72588,6 +72941,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async blankNodeOrIriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -72595,6 +72949,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.blankNodeOrIriIdentifierClassIdentifiersSync(query);
   }
+
   blankNodeOrIriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Either<Error, readonly BlankNodeOrIriIdentifierClass.$Identifier[]> {
@@ -72602,11 +72957,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async blankNodeOrIriIdentifierClasses(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
     return this.blankNodeOrIriIdentifierClassesSync(query);
   }
+
   async blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
       $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
@@ -72615,6 +72972,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.blankNodeOrIriIdentifierClassesCountSync(query);
   }
+
   blankNodeOrIriIdentifierClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
@@ -72625,6 +72983,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   blankNodeOrIriIdentifierClassesSync(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Either<Error, readonly BlankNodeOrIriIdentifierClass[]> {
@@ -72641,11 +73000,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeOrIriIdentifierInterface(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, BlankNodeOrIriIdentifierInterface>> {
     return this.blankNodeOrIriIdentifierInterfaceSync(identifier);
   }
+
   blankNodeOrIriIdentifierInterfaceSync(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
   ): Either<Error, BlankNodeOrIriIdentifierInterface> {
@@ -72653,6 +73014,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async blankNodeOrIriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -72660,6 +73022,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.blankNodeOrIriIdentifierInterfaceIdentifiersSync(query);
   }
+
   blankNodeOrIriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Either<Error, readonly BlankNodeOrIriIdentifierInterface.$Identifier[]> {
@@ -72667,11 +73030,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async blankNodeOrIriIdentifierInterfaces(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>> {
     return this.blankNodeOrIriIdentifierInterfacesSync(query);
   }
+
   async blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
@@ -72680,6 +73045,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.blankNodeOrIriIdentifierInterfacesCountSync(query);
   }
+
   blankNodeOrIriIdentifierInterfacesCountSync(
     query?: Pick<
       $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
@@ -72690,6 +73056,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   blankNodeOrIriIdentifierInterfacesSync(
     query?: $ObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Either<Error, readonly BlankNodeOrIriIdentifierInterface[]> {
@@ -72706,11 +73073,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
   ): Promise<Either<Error, ClassUnionMember1>> {
     return this.classUnionMember1Sync(identifier);
   }
+
   classUnionMember1Sync(
     identifier: ClassUnionMember1.$Identifier,
   ): Either<Error, ClassUnionMember1> {
@@ -72718,11 +73087,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async classUnionMember1Identifiers(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember1.$Identifier[]>> {
     return this.classUnionMember1IdentifiersSync(query);
   }
+
   classUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Either<Error, readonly ClassUnionMember1.$Identifier[]> {
@@ -72730,21 +73101,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async classUnionMember1s(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember1[]>> {
     return this.classUnionMember1sSync(query);
   }
+
   async classUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.classUnionMember1sCountSync(query);
   }
+
   classUnionMember1sCountSync(
     query?: Pick<$ObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.classUnionMember1sSync(query).map((objects) => objects.length);
   }
+
   classUnionMember1sSync(
     query?: $ObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Either<Error, readonly ClassUnionMember1[]> {
@@ -72761,11 +73136,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
   ): Promise<Either<Error, ClassUnionMember2>> {
     return this.classUnionMember2Sync(identifier);
   }
+
   classUnionMember2Sync(
     identifier: ClassUnionMember2.$Identifier,
   ): Either<Error, ClassUnionMember2> {
@@ -72773,11 +73150,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async classUnionMember2Identifiers(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember2.$Identifier[]>> {
     return this.classUnionMember2IdentifiersSync(query);
   }
+
   classUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Either<Error, readonly ClassUnionMember2.$Identifier[]> {
@@ -72785,21 +73164,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async classUnionMember2s(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember2[]>> {
     return this.classUnionMember2sSync(query);
   }
+
   async classUnionMember2sCount(
     query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.classUnionMember2sCountSync(query);
   }
+
   classUnionMember2sCountSync(
     query?: Pick<$ObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.classUnionMember2sSync(query).map((objects) => objects.length);
   }
+
   classUnionMember2sSync(
     query?: $ObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Either<Error, readonly ClassUnionMember2[]> {
@@ -72816,11 +73199,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
   ): Promise<Either<Error, ConcreteChildClass>> {
     return this.concreteChildClassSync(identifier);
   }
+
   concreteChildClassSync(
     identifier: ConcreteChildClass.$Identifier,
   ): Either<Error, ConcreteChildClass> {
@@ -72828,11 +73213,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async concreteChildClassIdentifiers(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildClass.$Identifier[]>> {
     return this.concreteChildClassIdentifiersSync(query);
   }
+
   concreteChildClassIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Either<Error, readonly ConcreteChildClass.$Identifier[]> {
@@ -72840,16 +73227,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async concreteChildClasses(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildClass[]>> {
     return this.concreteChildClassesSync(query);
   }
+
   async concreteChildClassesCount(
     query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.concreteChildClassesCountSync(query);
   }
+
   concreteChildClassesCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -72857,6 +73247,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   concreteChildClassesSync(
     query?: $ObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Either<Error, readonly ConcreteChildClass[]> {
@@ -72873,11 +73264,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
   ): Promise<Either<Error, ConcreteChildInterface>> {
     return this.concreteChildInterfaceSync(identifier);
   }
+
   concreteChildInterfaceSync(
     identifier: ConcreteChildInterface.$Identifier,
   ): Either<Error, ConcreteChildInterface> {
@@ -72885,11 +73278,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async concreteChildInterfaceIdentifiers(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildInterface.$Identifier[]>> {
     return this.concreteChildInterfaceIdentifiersSync(query);
   }
+
   concreteChildInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Either<Error, readonly ConcreteChildInterface.$Identifier[]> {
@@ -72897,16 +73292,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async concreteChildInterfaces(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildInterface[]>> {
     return this.concreteChildInterfacesSync(query);
   }
+
   async concreteChildInterfacesCount(
     query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.concreteChildInterfacesCountSync(query);
   }
+
   concreteChildInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteChildInterface.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -72914,6 +73312,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   concreteChildInterfacesSync(
     query?: $ObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Either<Error, readonly ConcreteChildInterface[]> {
@@ -72930,11 +73329,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
   ): Promise<Either<Error, ConcreteParentClass>> {
     return this.concreteParentClassSync(identifier);
   }
+
   concreteParentClassSync(
     identifier: ConcreteParentClassStatic.$Identifier,
   ): Either<Error, ConcreteParentClass> {
@@ -72942,11 +73343,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async concreteParentClassIdentifiers(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentClassStatic.$Identifier[]>> {
     return this.concreteParentClassIdentifiersSync(query);
   }
+
   concreteParentClassIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Either<Error, readonly ConcreteParentClassStatic.$Identifier[]> {
@@ -72954,16 +73357,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async concreteParentClasses(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentClass[]>> {
     return this.concreteParentClassesSync(query);
   }
+
   async concreteParentClassesCount(
     query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.concreteParentClassesCountSync(query);
   }
+
   concreteParentClassesCountSync(
     query?: Pick<$ObjectSet.Query<ConcreteParentClassStatic.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -72971,6 +73377,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   concreteParentClassesSync(
     query?: $ObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Either<Error, readonly ConcreteParentClass[]> {
@@ -72990,11 +73397,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
   ): Promise<Either<Error, ConcreteParentInterface>> {
     return this.concreteParentInterfaceSync(identifier);
   }
+
   concreteParentInterfaceSync(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
   ): Either<Error, ConcreteParentInterface> {
@@ -73002,6 +73411,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async concreteParentInterfaceIdentifiers(
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<
@@ -73009,6 +73419,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.concreteParentInterfaceIdentifiersSync(query);
   }
+
   concreteParentInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Either<Error, readonly ConcreteParentInterfaceStatic.$Identifier[]> {
@@ -73016,11 +73427,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async concreteParentInterfaces(
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentInterface[]>> {
     return this.concreteParentInterfacesSync(query);
   }
+
   async concreteParentInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
@@ -73029,6 +73442,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.concreteParentInterfacesCountSync(query);
   }
+
   concreteParentInterfacesCountSync(
     query?: Pick<
       $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
@@ -73039,6 +73453,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   concreteParentInterfacesSync(
     query?: $ObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Either<Error, readonly ConcreteParentInterface[]> {
@@ -73058,11 +73473,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async convertibleTypePropertiesClass(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
   ): Promise<Either<Error, ConvertibleTypePropertiesClass>> {
     return this.convertibleTypePropertiesClassSync(identifier);
   }
+
   convertibleTypePropertiesClassSync(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
   ): Either<Error, ConvertibleTypePropertiesClass> {
@@ -73070,6 +73487,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async convertibleTypePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<
@@ -73077,6 +73495,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.convertibleTypePropertiesClassIdentifiersSync(query);
   }
+
   convertibleTypePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Either<Error, readonly ConvertibleTypePropertiesClass.$Identifier[]> {
@@ -73084,11 +73503,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async convertibleTypePropertiesClasses(
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
     return this.convertibleTypePropertiesClassesSync(query);
   }
+
   async convertibleTypePropertiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
@@ -73097,6 +73518,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.convertibleTypePropertiesClassesCountSync(query);
   }
+
   convertibleTypePropertiesClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
@@ -73107,6 +73529,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   convertibleTypePropertiesClassesSync(
     query?: $ObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Either<Error, readonly ConvertibleTypePropertiesClass[]> {
@@ -73123,11 +73546,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async dateUnionPropertiesClass(
     identifier: DateUnionPropertiesClass.$Identifier,
   ): Promise<Either<Error, DateUnionPropertiesClass>> {
     return this.dateUnionPropertiesClassSync(identifier);
   }
+
   dateUnionPropertiesClassSync(
     identifier: DateUnionPropertiesClass.$Identifier,
   ): Either<Error, DateUnionPropertiesClass> {
@@ -73135,11 +73560,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async dateUnionPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>> {
     return this.dateUnionPropertiesClassIdentifiersSync(query);
   }
+
   dateUnionPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Either<Error, readonly DateUnionPropertiesClass.$Identifier[]> {
@@ -73147,16 +73574,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async dateUnionPropertiesClasses(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DateUnionPropertiesClass[]>> {
     return this.dateUnionPropertiesClassesSync(query);
   }
+
   async dateUnionPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.dateUnionPropertiesClassesCountSync(query);
   }
+
   dateUnionPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<DateUnionPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73164,6 +73594,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   dateUnionPropertiesClassesSync(
     query?: $ObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Either<Error, readonly DateUnionPropertiesClass[]> {
@@ -73180,11 +73611,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Promise<Either<Error, DefaultValuePropertiesClass>> {
     return this.defaultValuePropertiesClassSync(identifier);
   }
+
   defaultValuePropertiesClassSync(
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Either<Error, DefaultValuePropertiesClass> {
@@ -73192,6 +73625,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async defaultValuePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<
@@ -73199,6 +73633,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.defaultValuePropertiesClassIdentifiersSync(query);
   }
+
   defaultValuePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Either<Error, readonly DefaultValuePropertiesClass.$Identifier[]> {
@@ -73206,11 +73641,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async defaultValuePropertiesClasses(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DefaultValuePropertiesClass[]>> {
     return this.defaultValuePropertiesClassesSync(query);
   }
+
   async defaultValuePropertiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
@@ -73219,6 +73656,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.defaultValuePropertiesClassesCountSync(query);
   }
+
   defaultValuePropertiesClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
@@ -73229,6 +73667,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   defaultValuePropertiesClassesSync(
     query?: $ObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Either<Error, readonly DefaultValuePropertiesClass[]> {
@@ -73245,11 +73684,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async directRecursiveClass(
     identifier: DirectRecursiveClass.$Identifier,
   ): Promise<Either<Error, DirectRecursiveClass>> {
     return this.directRecursiveClassSync(identifier);
   }
+
   directRecursiveClassSync(
     identifier: DirectRecursiveClass.$Identifier,
   ): Either<Error, DirectRecursiveClass> {
@@ -73257,11 +73698,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async directRecursiveClassIdentifiers(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly DirectRecursiveClass.$Identifier[]>> {
     return this.directRecursiveClassIdentifiersSync(query);
   }
+
   directRecursiveClassIdentifiersSync(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Either<Error, readonly DirectRecursiveClass.$Identifier[]> {
@@ -73269,16 +73712,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async directRecursiveClasses(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly DirectRecursiveClass[]>> {
     return this.directRecursiveClassesSync(query);
   }
+
   async directRecursiveClassesCount(
     query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.directRecursiveClassesCountSync(query);
   }
+
   directRecursiveClassesCountSync(
     query?: Pick<$ObjectSet.Query<DirectRecursiveClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73286,6 +73732,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   directRecursiveClassesSync(
     query?: $ObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Either<Error, readonly DirectRecursiveClass[]> {
@@ -73302,11 +73749,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<Either<Error, ExplicitFromToRdfTypesClass>> {
     return this.explicitFromToRdfTypesClassSync(identifier);
   }
+
   explicitFromToRdfTypesClassSync(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Either<Error, ExplicitFromToRdfTypesClass> {
@@ -73314,6 +73763,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async explicitFromToRdfTypesClassIdentifiers(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<
@@ -73321,6 +73771,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.explicitFromToRdfTypesClassIdentifiersSync(query);
   }
+
   explicitFromToRdfTypesClassIdentifiersSync(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Either<Error, readonly ExplicitFromToRdfTypesClass.$Identifier[]> {
@@ -73328,11 +73779,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async explicitFromToRdfTypesClasses(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitFromToRdfTypesClass[]>> {
     return this.explicitFromToRdfTypesClassesSync(query);
   }
+
   async explicitFromToRdfTypesClassesCount(
     query?: Pick<
       $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
@@ -73341,6 +73794,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.explicitFromToRdfTypesClassesCountSync(query);
   }
+
   explicitFromToRdfTypesClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
@@ -73351,6 +73805,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   explicitFromToRdfTypesClassesSync(
     query?: $ObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Either<Error, readonly ExplicitFromToRdfTypesClass[]> {
@@ -73367,11 +73822,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async explicitRdfTypeClass(
     identifier: ExplicitRdfTypeClass.$Identifier,
   ): Promise<Either<Error, ExplicitRdfTypeClass>> {
     return this.explicitRdfTypeClassSync(identifier);
   }
+
   explicitRdfTypeClassSync(
     identifier: ExplicitRdfTypeClass.$Identifier,
   ): Either<Error, ExplicitRdfTypeClass> {
@@ -73379,11 +73836,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async explicitRdfTypeClassIdentifiers(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]>> {
     return this.explicitRdfTypeClassIdentifiersSync(query);
   }
+
   explicitRdfTypeClassIdentifiersSync(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]> {
@@ -73391,16 +73850,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async explicitRdfTypeClasses(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitRdfTypeClass[]>> {
     return this.explicitRdfTypeClassesSync(query);
   }
+
   async explicitRdfTypeClassesCount(
     query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.explicitRdfTypeClassesCountSync(query);
   }
+
   explicitRdfTypeClassesCountSync(
     query?: Pick<$ObjectSet.Query<ExplicitRdfTypeClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73408,6 +73870,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   explicitRdfTypeClassesSync(
     query?: $ObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Either<Error, readonly ExplicitRdfTypeClass[]> {
@@ -73424,11 +73887,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
   ): Promise<Either<Error, ExternClassPropertyClass>> {
     return this.externClassPropertyClassSync(identifier);
   }
+
   externClassPropertyClassSync(
     identifier: ExternClassPropertyClass.$Identifier,
   ): Either<Error, ExternClassPropertyClass> {
@@ -73436,11 +73901,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async externClassPropertyClassIdentifiers(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly ExternClassPropertyClass.$Identifier[]>> {
     return this.externClassPropertyClassIdentifiersSync(query);
   }
+
   externClassPropertyClassIdentifiersSync(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Either<Error, readonly ExternClassPropertyClass.$Identifier[]> {
@@ -73448,16 +73915,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async externClassPropertyClasses(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly ExternClassPropertyClass[]>> {
     return this.externClassPropertyClassesSync(query);
   }
+
   async externClassPropertyClassesCount(
     query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.externClassPropertyClassesCountSync(query);
   }
+
   externClassPropertyClassesCountSync(
     query?: Pick<$ObjectSet.Query<ExternClassPropertyClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73465,6 +73935,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   externClassPropertyClassesSync(
     query?: $ObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Either<Error, readonly ExternClassPropertyClass[]> {
@@ -73481,11 +73952,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
   ): Promise<Either<Error, FlattenClassUnionMember3>> {
     return this.flattenClassUnionMember3Sync(identifier);
   }
+
   flattenClassUnionMember3Sync(
     identifier: FlattenClassUnionMember3.$Identifier,
   ): Either<Error, FlattenClassUnionMember3> {
@@ -73493,11 +73966,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async flattenClassUnionMember3Identifiers(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>> {
     return this.flattenClassUnionMember3IdentifiersSync(query);
   }
+
   flattenClassUnionMember3IdentifiersSync(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Either<Error, readonly FlattenClassUnionMember3.$Identifier[]> {
@@ -73505,16 +73980,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async flattenClassUnionMember3s(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnionMember3[]>> {
     return this.flattenClassUnionMember3sSync(query);
   }
+
   async flattenClassUnionMember3sCount(
     query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.flattenClassUnionMember3sCountSync(query);
   }
+
   flattenClassUnionMember3sCountSync(
     query?: Pick<$ObjectSet.Query<FlattenClassUnionMember3.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73522,6 +74000,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   flattenClassUnionMember3sSync(
     query?: $ObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Either<Error, readonly FlattenClassUnionMember3[]> {
@@ -73538,11 +74017,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
   ): Promise<Either<Error, HasValuePropertiesClass>> {
     return this.hasValuePropertiesClassSync(identifier);
   }
+
   hasValuePropertiesClassSync(
     identifier: HasValuePropertiesClass.$Identifier,
   ): Either<Error, HasValuePropertiesClass> {
@@ -73550,11 +74031,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async hasValuePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly HasValuePropertiesClass.$Identifier[]>> {
     return this.hasValuePropertiesClassIdentifiersSync(query);
   }
+
   hasValuePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Either<Error, readonly HasValuePropertiesClass.$Identifier[]> {
@@ -73562,16 +74045,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async hasValuePropertiesClasses(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly HasValuePropertiesClass[]>> {
     return this.hasValuePropertiesClassesSync(query);
   }
+
   async hasValuePropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.hasValuePropertiesClassesCountSync(query);
   }
+
   hasValuePropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<HasValuePropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73579,6 +74065,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   hasValuePropertiesClassesSync(
     query?: $ObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Either<Error, readonly HasValuePropertiesClass[]> {
@@ -73595,11 +74082,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
   ): Promise<Either<Error, IdentifierOverride3Class>> {
     return this.identifierOverride3ClassSync(identifier);
   }
+
   identifierOverride3ClassSync(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
   ): Either<Error, IdentifierOverride3Class> {
@@ -73607,6 +74096,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async identifierOverride3ClassIdentifiers(
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<
@@ -73614,6 +74104,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.identifierOverride3ClassIdentifiersSync(query);
   }
+
   identifierOverride3ClassIdentifiersSync(
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Either<Error, readonly IdentifierOverride3ClassStatic.$Identifier[]> {
@@ -73621,11 +74112,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async identifierOverride3Classes(
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride3Class[]>> {
     return this.identifierOverride3ClassesSync(query);
   }
+
   async identifierOverride3ClassesCount(
     query?: Pick<
       $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
@@ -73634,6 +74127,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.identifierOverride3ClassesCountSync(query);
   }
+
   identifierOverride3ClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
@@ -73644,6 +74138,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   identifierOverride3ClassesSync(
     query?: $ObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Either<Error, readonly IdentifierOverride3Class[]> {
@@ -73664,11 +74159,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async identifierOverride4Class(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
   ): Promise<Either<Error, IdentifierOverride4Class>> {
     return this.identifierOverride4ClassSync(identifier);
   }
+
   identifierOverride4ClassSync(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
   ): Either<Error, IdentifierOverride4Class> {
@@ -73676,6 +74173,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async identifierOverride4ClassIdentifiers(
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<
@@ -73683,6 +74181,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.identifierOverride4ClassIdentifiersSync(query);
   }
+
   identifierOverride4ClassIdentifiersSync(
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Either<Error, readonly IdentifierOverride4ClassStatic.$Identifier[]> {
@@ -73690,11 +74189,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async identifierOverride4Classes(
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride4Class[]>> {
     return this.identifierOverride4ClassesSync(query);
   }
+
   async identifierOverride4ClassesCount(
     query?: Pick<
       $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
@@ -73703,6 +74204,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.identifierOverride4ClassesCountSync(query);
   }
+
   identifierOverride4ClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
@@ -73713,6 +74215,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   identifierOverride4ClassesSync(
     query?: $ObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Either<Error, readonly IdentifierOverride4Class[]> {
@@ -73732,11 +74235,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async identifierOverride5Class(
     identifier: IdentifierOverride5Class.$Identifier,
   ): Promise<Either<Error, IdentifierOverride5Class>> {
     return this.identifierOverride5ClassSync(identifier);
   }
+
   identifierOverride5ClassSync(
     identifier: IdentifierOverride5Class.$Identifier,
   ): Either<Error, IdentifierOverride5Class> {
@@ -73744,11 +74249,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async identifierOverride5ClassIdentifiers(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride5Class.$Identifier[]>> {
     return this.identifierOverride5ClassIdentifiersSync(query);
   }
+
   identifierOverride5ClassIdentifiersSync(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Either<Error, readonly IdentifierOverride5Class.$Identifier[]> {
@@ -73756,16 +74263,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async identifierOverride5Classes(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride5Class[]>> {
     return this.identifierOverride5ClassesSync(query);
   }
+
   async identifierOverride5ClassesCount(
     query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.identifierOverride5ClassesCountSync(query);
   }
+
   identifierOverride5ClassesCountSync(
     query?: Pick<$ObjectSet.Query<IdentifierOverride5Class.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73773,6 +74283,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   identifierOverride5ClassesSync(
     query?: $ObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Either<Error, readonly IdentifierOverride5Class[]> {
@@ -73789,11 +74300,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<Either<Error, IndirectRecursiveClass>> {
     return this.indirectRecursiveClassSync(identifier);
   }
+
   indirectRecursiveClassSync(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Either<Error, IndirectRecursiveClass> {
@@ -73801,11 +74314,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async indirectRecursiveClassIdentifiers(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveClass.$Identifier[]>> {
     return this.indirectRecursiveClassIdentifiersSync(query);
   }
+
   indirectRecursiveClassIdentifiersSync(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Either<Error, readonly IndirectRecursiveClass.$Identifier[]> {
@@ -73813,16 +74328,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async indirectRecursiveClasses(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveClass[]>> {
     return this.indirectRecursiveClassesSync(query);
   }
+
   async indirectRecursiveClassesCount(
     query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.indirectRecursiveClassesCountSync(query);
   }
+
   indirectRecursiveClassesCountSync(
     query?: Pick<$ObjectSet.Query<IndirectRecursiveClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -73830,6 +74348,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   indirectRecursiveClassesSync(
     query?: $ObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Either<Error, readonly IndirectRecursiveClass[]> {
@@ -73846,11 +74365,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
   ): Promise<Either<Error, IndirectRecursiveHelperClass>> {
     return this.indirectRecursiveHelperClassSync(identifier);
   }
+
   indirectRecursiveHelperClassSync(
     identifier: IndirectRecursiveHelperClass.$Identifier,
   ): Either<Error, IndirectRecursiveHelperClass> {
@@ -73858,6 +74379,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async indirectRecursiveHelperClassIdentifiers(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<
@@ -73865,6 +74387,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.indirectRecursiveHelperClassIdentifiersSync(query);
   }
+
   indirectRecursiveHelperClassIdentifiersSync(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Either<Error, readonly IndirectRecursiveHelperClass.$Identifier[]> {
@@ -73872,11 +74395,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async indirectRecursiveHelperClasses(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveHelperClass[]>> {
     return this.indirectRecursiveHelperClassesSync(query);
   }
+
   async indirectRecursiveHelperClassesCount(
     query?: Pick<
       $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
@@ -73885,6 +74410,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.indirectRecursiveHelperClassesCountSync(query);
   }
+
   indirectRecursiveHelperClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
@@ -73895,6 +74421,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   indirectRecursiveHelperClassesSync(
     query?: $ObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Either<Error, readonly IndirectRecursiveHelperClass[]> {
@@ -73911,11 +74438,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async inIdentifierClass(
     identifier: InIdentifierClass.$Identifier,
   ): Promise<Either<Error, InIdentifierClass>> {
     return this.inIdentifierClassSync(identifier);
   }
+
   inIdentifierClassSync(
     identifier: InIdentifierClass.$Identifier,
   ): Either<Error, InIdentifierClass> {
@@ -73923,11 +74452,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async inIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly InIdentifierClass.$Identifier[]>> {
     return this.inIdentifierClassIdentifiersSync(query);
   }
+
   inIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Either<Error, readonly InIdentifierClass.$Identifier[]> {
@@ -73935,21 +74466,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async inIdentifierClasses(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly InIdentifierClass[]>> {
     return this.inIdentifierClassesSync(query);
   }
+
   async inIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.inIdentifierClassesCountSync(query);
   }
+
   inIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.inIdentifierClassesSync(query).map((objects) => objects.length);
   }
+
   inIdentifierClassesSync(
     query?: $ObjectSet.Query<InIdentifierClass.$Filter>,
   ): Either<Error, readonly InIdentifierClass[]> {
@@ -73966,11 +74501,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
   ): Promise<Either<Error, InPropertiesClass>> {
     return this.inPropertiesClassSync(identifier);
   }
+
   inPropertiesClassSync(
     identifier: InPropertiesClass.$Identifier,
   ): Either<Error, InPropertiesClass> {
@@ -73978,11 +74515,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async inPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly InPropertiesClass.$Identifier[]>> {
     return this.inPropertiesClassIdentifiersSync(query);
   }
+
   inPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Either<Error, readonly InPropertiesClass.$Identifier[]> {
@@ -73990,21 +74529,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async inPropertiesClasses(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly InPropertiesClass[]>> {
     return this.inPropertiesClassesSync(query);
   }
+
   async inPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.inPropertiesClassesCountSync(query);
   }
+
   inPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.inPropertiesClassesSync(query).map((objects) => objects.length);
   }
+
   inPropertiesClassesSync(
     query?: $ObjectSet.Query<InPropertiesClass.$Filter>,
   ): Either<Error, readonly InPropertiesClass[]> {
@@ -74021,21 +74564,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interface(
     identifier: Interface.$Identifier,
   ): Promise<Either<Error, Interface>> {
     return this.interfaceSync(identifier);
   }
+
   interfaceSync(identifier: Interface.$Identifier): Either<Error, Interface> {
     return this.interfacesSync({
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async interfaceIdentifiers(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Promise<Either<Error, readonly Interface.$Identifier[]>> {
     return this.interfaceIdentifiersSync(query);
   }
+
   interfaceIdentifiersSync(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Either<Error, readonly Interface.$Identifier[]> {
@@ -74043,21 +74590,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async interfaces(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Promise<Either<Error, readonly Interface[]>> {
     return this.interfacesSync(query);
   }
+
   async interfacesCount(
     query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.interfacesCountSync(query);
   }
+
   interfacesCountSync(
     query?: Pick<$ObjectSet.Query<Interface.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.interfacesSync(query).map((objects) => objects.length);
   }
+
   interfacesSync(
     query?: $ObjectSet.Query<Interface.$Filter>,
   ): Either<Error, readonly Interface[]> {
@@ -74074,11 +74625,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, InterfaceUnionMember1>> {
     return this.interfaceUnionMember1Sync(identifier);
   }
+
   interfaceUnionMember1Sync(
     identifier: InterfaceUnionMember1.$Identifier,
   ): Either<Error, InterfaceUnionMember1> {
@@ -74086,11 +74639,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async interfaceUnionMember1Identifiers(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember1.$Identifier[]>> {
     return this.interfaceUnionMember1IdentifiersSync(query);
   }
+
   interfaceUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Either<Error, readonly InterfaceUnionMember1.$Identifier[]> {
@@ -74098,16 +74653,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async interfaceUnionMember1s(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember1[]>> {
     return this.interfaceUnionMember1sSync(query);
   }
+
   async interfaceUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.interfaceUnionMember1sCountSync(query);
   }
+
   interfaceUnionMember1sCountSync(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember1.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -74115,6 +74673,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   interfaceUnionMember1sSync(
     query?: $ObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Either<Error, readonly InterfaceUnionMember1[]> {
@@ -74131,11 +74690,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, InterfaceUnionMember2>> {
     return this.interfaceUnionMember2Sync(identifier);
   }
+
   interfaceUnionMember2Sync(
     identifier: InterfaceUnionMember2.$Identifier,
   ): Either<Error, InterfaceUnionMember2> {
@@ -74143,11 +74704,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async interfaceUnionMember2Identifiers(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember2.$Identifier[]>> {
     return this.interfaceUnionMember2IdentifiersSync(query);
   }
+
   interfaceUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Either<Error, readonly InterfaceUnionMember2.$Identifier[]> {
@@ -74155,16 +74718,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async interfaceUnionMember2s(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember2[]>> {
     return this.interfaceUnionMember2sSync(query);
   }
+
   async interfaceUnionMember2sCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.interfaceUnionMember2sCountSync(query);
   }
+
   interfaceUnionMember2sCountSync(
     query?: Pick<$ObjectSet.Query<InterfaceUnionMember2.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -74172,6 +74738,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   interfaceUnionMember2sSync(
     query?: $ObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Either<Error, readonly InterfaceUnionMember2[]> {
@@ -74188,11 +74755,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, IriIdentifierClass>> {
     return this.iriIdentifierClassSync(identifier);
   }
+
   iriIdentifierClassSync(
     identifier: IriIdentifierClass.$Identifier,
   ): Either<Error, IriIdentifierClass> {
@@ -74200,11 +74769,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async iriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierClass.$Identifier[]>> {
     return this.iriIdentifierClassIdentifiersSync(query);
   }
+
   iriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Either<Error, readonly IriIdentifierClass.$Identifier[]> {
@@ -74212,16 +74783,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async iriIdentifierClasses(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierClass[]>> {
     return this.iriIdentifierClassesSync(query);
   }
+
   async iriIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.iriIdentifierClassesCountSync(query);
   }
+
   iriIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -74229,6 +74803,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   iriIdentifierClassesSync(
     query?: $ObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Either<Error, readonly IriIdentifierClass[]> {
@@ -74245,11 +74820,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, IriIdentifierInterface>> {
     return this.iriIdentifierInterfaceSync(identifier);
   }
+
   iriIdentifierInterfaceSync(
     identifier: IriIdentifierInterface.$Identifier,
   ): Either<Error, IriIdentifierInterface> {
@@ -74257,11 +74834,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async iriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierInterface.$Identifier[]>> {
     return this.iriIdentifierInterfaceIdentifiersSync(query);
   }
+
   iriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Either<Error, readonly IriIdentifierInterface.$Identifier[]> {
@@ -74269,16 +74848,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async iriIdentifierInterfaces(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierInterface[]>> {
     return this.iriIdentifierInterfacesSync(query);
   }
+
   async iriIdentifierInterfacesCount(
     query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.iriIdentifierInterfacesCountSync(query);
   }
+
   iriIdentifierInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<IriIdentifierInterface.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -74286,6 +74868,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   iriIdentifierInterfacesSync(
     query?: $ObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Either<Error, readonly IriIdentifierInterface[]> {
@@ -74302,11 +74885,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
   ): Promise<Either<Error, JsPrimitiveUnionPropertyClass>> {
     return this.jsPrimitiveUnionPropertyClassSync(identifier);
   }
+
   jsPrimitiveUnionPropertyClassSync(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
   ): Either<Error, JsPrimitiveUnionPropertyClass> {
@@ -74314,6 +74899,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async jsPrimitiveUnionPropertyClassIdentifiers(
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<
@@ -74321,6 +74907,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.jsPrimitiveUnionPropertyClassIdentifiersSync(query);
   }
+
   jsPrimitiveUnionPropertyClassIdentifiersSync(
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Either<Error, readonly JsPrimitiveUnionPropertyClass.$Identifier[]> {
@@ -74328,11 +74915,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async jsPrimitiveUnionPropertyClasses(
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
     return this.jsPrimitiveUnionPropertyClassesSync(query);
   }
+
   async jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
       $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
@@ -74341,6 +74930,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.jsPrimitiveUnionPropertyClassesCountSync(query);
   }
+
   jsPrimitiveUnionPropertyClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
@@ -74351,6 +74941,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   jsPrimitiveUnionPropertyClassesSync(
     query?: $ObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Either<Error, readonly JsPrimitiveUnionPropertyClass[]> {
@@ -74367,11 +74958,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
   ): Promise<Either<Error, LanguageInPropertiesClass>> {
     return this.languageInPropertiesClassSync(identifier);
   }
+
   languageInPropertiesClassSync(
     identifier: LanguageInPropertiesClass.$Identifier,
   ): Either<Error, LanguageInPropertiesClass> {
@@ -74379,11 +74972,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async languageInPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LanguageInPropertiesClass.$Identifier[]>> {
     return this.languageInPropertiesClassIdentifiersSync(query);
   }
+
   languageInPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Either<Error, readonly LanguageInPropertiesClass.$Identifier[]> {
@@ -74391,16 +74986,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async languageInPropertiesClasses(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LanguageInPropertiesClass[]>> {
     return this.languageInPropertiesClassesSync(query);
   }
+
   async languageInPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.languageInPropertiesClassesCountSync(query);
   }
+
   languageInPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<LanguageInPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -74408,6 +75006,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   languageInPropertiesClassesSync(
     query?: $ObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Either<Error, readonly LanguageInPropertiesClass[]> {
@@ -74424,11 +75023,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassSync(identifier);
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierClassSync(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
   ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass> {
@@ -74436,6 +75037,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -74448,6 +75050,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Either<
@@ -74458,6 +75061,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClasses(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -74465,6 +75069,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassesSync(query);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
@@ -74473,6 +75078,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierClassesCountSync(query);
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
@@ -74483,6 +75089,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierClassesSync(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]> {
@@ -74501,11 +75108,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterface(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>> {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(identifier);
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfaceSync(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
   ): Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface> {
@@ -74513,6 +75122,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -74525,6 +75135,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Either<
@@ -74535,6 +75146,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -74542,6 +75154,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(query);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
@@ -74552,6 +75165,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfacesCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
@@ -74562,6 +75176,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedBlankNodeOrIriIdentifierInterfacesSync(
     query?: $ObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Either<Error, readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]> {
@@ -74580,11 +75195,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedClassUnionMember1(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnionMember1>> {
     return this.lazilyResolvedClassUnionMember1Sync(identifier);
   }
+
   lazilyResolvedClassUnionMember1Sync(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
   ): Either<Error, LazilyResolvedClassUnionMember1> {
@@ -74592,6 +75209,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<
@@ -74599,6 +75217,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedClassUnionMember1IdentifiersSync(query);
   }
+
   lazilyResolvedClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Either<Error, readonly LazilyResolvedClassUnionMember1.$Identifier[]> {
@@ -74606,11 +75225,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedClassUnionMember1s(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnionMember1[]>> {
     return this.lazilyResolvedClassUnionMember1sSync(query);
   }
+
   async lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
@@ -74619,6 +75240,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedClassUnionMember1sCountSync(query);
   }
+
   lazilyResolvedClassUnionMember1sCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
@@ -74629,6 +75251,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedClassUnionMember1sSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Either<Error, readonly LazilyResolvedClassUnionMember1[]> {
@@ -74645,11 +75268,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedClassUnionMember2(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnionMember2>> {
     return this.lazilyResolvedClassUnionMember2Sync(identifier);
   }
+
   lazilyResolvedClassUnionMember2Sync(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
   ): Either<Error, LazilyResolvedClassUnionMember2> {
@@ -74657,6 +75282,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<
@@ -74664,6 +75290,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedClassUnionMember2IdentifiersSync(query);
   }
+
   lazilyResolvedClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Either<Error, readonly LazilyResolvedClassUnionMember2.$Identifier[]> {
@@ -74671,11 +75298,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedClassUnionMember2s(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnionMember2[]>> {
     return this.lazilyResolvedClassUnionMember2sSync(query);
   }
+
   async lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
@@ -74684,6 +75313,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedClassUnionMember2sCountSync(query);
   }
+
   lazilyResolvedClassUnionMember2sCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
@@ -74694,6 +75324,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedClassUnionMember2sSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Either<Error, readonly LazilyResolvedClassUnionMember2[]> {
@@ -74710,11 +75341,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedInterfaceUnionMember1(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember1>> {
     return this.lazilyResolvedInterfaceUnionMember1Sync(identifier);
   }
+
   lazilyResolvedInterfaceUnionMember1Sync(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
   ): Either<Error, LazilyResolvedInterfaceUnionMember1> {
@@ -74722,6 +75355,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedInterfaceUnionMember1Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Promise<
@@ -74729,6 +75363,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedInterfaceUnionMember1IdentifiersSync(query);
   }
+
   lazilyResolvedInterfaceUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Either<Error, readonly LazilyResolvedInterfaceUnionMember1.$Identifier[]> {
@@ -74736,11 +75371,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedInterfaceUnionMember1s(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]>> {
     return this.lazilyResolvedInterfaceUnionMember1sSync(query);
   }
+
   async lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
@@ -74749,6 +75386,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedInterfaceUnionMember1sCountSync(query);
   }
+
   lazilyResolvedInterfaceUnionMember1sCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
@@ -74759,6 +75397,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedInterfaceUnionMember1sSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]> {
@@ -74775,11 +75414,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedInterfaceUnionMember2(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember2>> {
     return this.lazilyResolvedInterfaceUnionMember2Sync(identifier);
   }
+
   lazilyResolvedInterfaceUnionMember2Sync(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
   ): Either<Error, LazilyResolvedInterfaceUnionMember2> {
@@ -74787,6 +75428,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedInterfaceUnionMember2Identifiers(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Promise<
@@ -74794,6 +75436,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedInterfaceUnionMember2IdentifiersSync(query);
   }
+
   lazilyResolvedInterfaceUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Either<Error, readonly LazilyResolvedInterfaceUnionMember2.$Identifier[]> {
@@ -74801,11 +75444,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedInterfaceUnionMember2s(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]>> {
     return this.lazilyResolvedInterfaceUnionMember2sSync(query);
   }
+
   async lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
@@ -74814,6 +75459,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedInterfaceUnionMember2sCountSync(query);
   }
+
   lazilyResolvedInterfaceUnionMember2sCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
@@ -74824,6 +75470,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedInterfaceUnionMember2sSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]> {
@@ -74840,11 +75487,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedIriIdentifierClass(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, LazilyResolvedIriIdentifierClass>> {
     return this.lazilyResolvedIriIdentifierClassSync(identifier);
   }
+
   lazilyResolvedIriIdentifierClassSync(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
   ): Either<Error, LazilyResolvedIriIdentifierClass> {
@@ -74852,6 +75501,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedIriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Promise<
@@ -74859,6 +75509,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedIriIdentifierClassIdentifiersSync(query);
   }
+
   lazilyResolvedIriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Either<Error, readonly LazilyResolvedIriIdentifierClass.$Identifier[]> {
@@ -74866,11 +75517,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedIriIdentifierClasses(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierClass[]>> {
     return this.lazilyResolvedIriIdentifierClassesSync(query);
   }
+
   async lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
@@ -74879,6 +75532,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedIriIdentifierClassesCountSync(query);
   }
+
   lazilyResolvedIriIdentifierClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
@@ -74889,6 +75543,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedIriIdentifierClassesSync(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Either<Error, readonly LazilyResolvedIriIdentifierClass[]> {
@@ -74905,11 +75560,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedIriIdentifierInterface(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, LazilyResolvedIriIdentifierInterface>> {
     return this.lazilyResolvedIriIdentifierInterfaceSync(identifier);
   }
+
   lazilyResolvedIriIdentifierInterfaceSync(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
   ): Either<Error, LazilyResolvedIriIdentifierInterface> {
@@ -74917,6 +75574,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedIriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -74924,6 +75582,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedIriIdentifierInterfaceIdentifiersSync(query);
   }
+
   lazilyResolvedIriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Either<
@@ -74934,11 +75593,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedIriIdentifierInterfaces(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>> {
     return this.lazilyResolvedIriIdentifierInterfacesSync(query);
   }
+
   async lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
@@ -74947,6 +75608,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedIriIdentifierInterfacesCountSync(query);
   }
+
   lazilyResolvedIriIdentifierInterfacesCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
@@ -74957,6 +75619,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedIriIdentifierInterfacesSync(
     query?: $ObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Either<Error, readonly LazilyResolvedIriIdentifierInterface[]> {
@@ -74973,11 +75636,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazyPropertiesClass(
     identifier: LazyPropertiesClass.$Identifier,
   ): Promise<Either<Error, LazyPropertiesClass>> {
     return this.lazyPropertiesClassSync(identifier);
   }
+
   lazyPropertiesClassSync(
     identifier: LazyPropertiesClass.$Identifier,
   ): Either<Error, LazyPropertiesClass> {
@@ -74985,11 +75650,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazyPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesClass.$Identifier[]>> {
     return this.lazyPropertiesClassIdentifiersSync(query);
   }
+
   lazyPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Either<Error, readonly LazyPropertiesClass.$Identifier[]> {
@@ -74997,16 +75664,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazyPropertiesClasses(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesClass[]>> {
     return this.lazyPropertiesClassesSync(query);
   }
+
   async lazyPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.lazyPropertiesClassesCountSync(query);
   }
+
   lazyPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75014,6 +75684,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazyPropertiesClassesSync(
     query?: $ObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Either<Error, readonly LazyPropertiesClass[]> {
@@ -75030,11 +75701,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
   ): Promise<Either<Error, LazyPropertiesInterface>> {
     return this.lazyPropertiesInterfaceSync(identifier);
   }
+
   lazyPropertiesInterfaceSync(
     identifier: LazyPropertiesInterface.$Identifier,
   ): Either<Error, LazyPropertiesInterface> {
@@ -75042,11 +75715,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazyPropertiesInterfaceIdentifiers(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesInterface.$Identifier[]>> {
     return this.lazyPropertiesInterfaceIdentifiersSync(query);
   }
+
   lazyPropertiesInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Either<Error, readonly LazyPropertiesInterface.$Identifier[]> {
@@ -75054,16 +75729,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazyPropertiesInterfaces(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesInterface[]>> {
     return this.lazyPropertiesInterfacesSync(query);
   }
+
   async lazyPropertiesInterfacesCount(
     query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.lazyPropertiesInterfacesCountSync(query);
   }
+
   lazyPropertiesInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<LazyPropertiesInterface.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75071,6 +75749,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazyPropertiesInterfacesSync(
     query?: $ObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Either<Error, readonly LazyPropertiesInterface[]> {
@@ -75087,11 +75766,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
   ): Promise<Either<Error, ListPropertiesClass>> {
     return this.listPropertiesClassSync(identifier);
   }
+
   listPropertiesClassSync(
     identifier: ListPropertiesClass.$Identifier,
   ): Either<Error, ListPropertiesClass> {
@@ -75099,11 +75780,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async listPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ListPropertiesClass.$Identifier[]>> {
     return this.listPropertiesClassIdentifiersSync(query);
   }
+
   listPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Either<Error, readonly ListPropertiesClass.$Identifier[]> {
@@ -75111,16 +75794,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async listPropertiesClasses(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ListPropertiesClass[]>> {
     return this.listPropertiesClassesSync(query);
   }
+
   async listPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.listPropertiesClassesCountSync(query);
   }
+
   listPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75128,6 +75814,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   listPropertiesClassesSync(
     query?: $ObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Either<Error, readonly ListPropertiesClass[]> {
@@ -75144,11 +75831,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
   ): Promise<Either<Error, MutablePropertiesClass>> {
     return this.mutablePropertiesClassSync(identifier);
   }
+
   mutablePropertiesClassSync(
     identifier: MutablePropertiesClass.$Identifier,
   ): Either<Error, MutablePropertiesClass> {
@@ -75156,11 +75845,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async mutablePropertiesClassIdentifiers(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly MutablePropertiesClass.$Identifier[]>> {
     return this.mutablePropertiesClassIdentifiersSync(query);
   }
+
   mutablePropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Either<Error, readonly MutablePropertiesClass.$Identifier[]> {
@@ -75168,16 +75859,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async mutablePropertiesClasses(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly MutablePropertiesClass[]>> {
     return this.mutablePropertiesClassesSync(query);
   }
+
   async mutablePropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.mutablePropertiesClassesCountSync(query);
   }
+
   mutablePropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<MutablePropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75185,6 +75879,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   mutablePropertiesClassesSync(
     query?: $ObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Either<Error, readonly MutablePropertiesClass[]> {
@@ -75201,21 +75896,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<Either<Error, NonClass>> {
     return this.nonClassSync(identifier);
   }
+
   nonClassSync(identifier: NonClass.$Identifier): Either<Error, NonClass> {
     return this.nonClassesSync({
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async nonClassIdentifiers(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Promise<Either<Error, readonly NonClass.$Identifier[]>> {
     return this.nonClassIdentifiersSync(query);
   }
+
   nonClassIdentifiersSync(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Either<Error, readonly NonClass.$Identifier[]> {
@@ -75223,21 +75922,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async nonClasses(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Promise<Either<Error, readonly NonClass[]>> {
     return this.nonClassesSync(query);
   }
+
   async nonClassesCount(
     query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.nonClassesCountSync(query);
   }
+
   nonClassesCountSync(
     query?: Pick<$ObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.nonClassesSync(query).map((objects) => objects.length);
   }
+
   nonClassesSync(
     query?: $ObjectSet.Query<NonClass.$Filter>,
   ): Either<Error, readonly NonClass[]> {
@@ -75250,11 +75953,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnionMember1>> {
     return this.noRdfTypeClassUnionMember1Sync(identifier);
   }
+
   noRdfTypeClassUnionMember1Sync(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
   ): Either<Error, NoRdfTypeClassUnionMember1> {
@@ -75262,11 +75967,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async noRdfTypeClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>> {
     return this.noRdfTypeClassUnionMember1IdentifiersSync(query);
   }
+
   noRdfTypeClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]> {
@@ -75274,11 +75981,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async noRdfTypeClassUnionMember1s(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
     return this.noRdfTypeClassUnionMember1sSync(query);
   }
+
   async noRdfTypeClassUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
@@ -75287,6 +75996,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.noRdfTypeClassUnionMember1sCountSync(query);
   }
+
   noRdfTypeClassUnionMember1sCountSync(
     query?: Pick<
       $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
@@ -75297,6 +76007,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   noRdfTypeClassUnionMember1sSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Either<Error, readonly NoRdfTypeClassUnionMember1[]> {
@@ -75313,11 +76024,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async noRdfTypeClassUnionMember2(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnionMember2>> {
     return this.noRdfTypeClassUnionMember2Sync(identifier);
   }
+
   noRdfTypeClassUnionMember2Sync(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
   ): Either<Error, NoRdfTypeClassUnionMember2> {
@@ -75325,11 +76038,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async noRdfTypeClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>> {
     return this.noRdfTypeClassUnionMember2IdentifiersSync(query);
   }
+
   noRdfTypeClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]> {
@@ -75337,11 +76052,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async noRdfTypeClassUnionMember2s(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
     return this.noRdfTypeClassUnionMember2sSync(query);
   }
+
   async noRdfTypeClassUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
@@ -75350,6 +76067,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.noRdfTypeClassUnionMember2sCountSync(query);
   }
+
   noRdfTypeClassUnionMember2sCountSync(
     query?: Pick<
       $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
@@ -75360,6 +76078,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   noRdfTypeClassUnionMember2sSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Either<Error, readonly NoRdfTypeClassUnionMember2[]> {
@@ -75376,11 +76095,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<Either<Error, OrderedPropertiesClass>> {
     return this.orderedPropertiesClassSync(identifier);
   }
+
   orderedPropertiesClassSync(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Either<Error, OrderedPropertiesClass> {
@@ -75388,11 +76109,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async orderedPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly OrderedPropertiesClass.$Identifier[]>> {
     return this.orderedPropertiesClassIdentifiersSync(query);
   }
+
   orderedPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Either<Error, readonly OrderedPropertiesClass.$Identifier[]> {
@@ -75400,16 +76123,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async orderedPropertiesClasses(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly OrderedPropertiesClass[]>> {
     return this.orderedPropertiesClassesSync(query);
   }
+
   async orderedPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.orderedPropertiesClassesCountSync(query);
   }
+
   orderedPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<OrderedPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75417,6 +76143,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   orderedPropertiesClassesSync(
     query?: $ObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Either<Error, readonly OrderedPropertiesClass[]> {
@@ -75433,11 +76160,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<Either<Error, PartialClass>> {
     return this.partialClassSync(identifier);
   }
+
   partialClassSync(
     identifier: PartialClass.$Identifier,
   ): Either<Error, PartialClass> {
@@ -75445,11 +76174,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialClassIdentifiers(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Promise<Either<Error, readonly PartialClass.$Identifier[]>> {
     return this.partialClassIdentifiersSync(query);
   }
+
   partialClassIdentifiersSync(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Either<Error, readonly PartialClass.$Identifier[]> {
@@ -75457,21 +76188,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialClasses(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Promise<Either<Error, readonly PartialClass[]>> {
     return this.partialClassesSync(query);
   }
+
   async partialClassesCount(
     query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.partialClassesCountSync(query);
   }
+
   partialClassesCountSync(
     query?: Pick<$ObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.partialClassesSync(query).map((objects) => objects.length);
   }
+
   partialClassesSync(
     query?: $ObjectSet.Query<PartialClass.$Filter>,
   ): Either<Error, readonly PartialClass[]> {
@@ -75488,11 +76223,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
   ): Promise<Either<Error, PartialClassUnionMember1>> {
     return this.partialClassUnionMember1Sync(identifier);
   }
+
   partialClassUnionMember1Sync(
     identifier: PartialClassUnionMember1.$Identifier,
   ): Either<Error, PartialClassUnionMember1> {
@@ -75500,11 +76237,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember1.$Identifier[]>> {
     return this.partialClassUnionMember1IdentifiersSync(query);
   }
+
   partialClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Either<Error, readonly PartialClassUnionMember1.$Identifier[]> {
@@ -75512,16 +76251,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialClassUnionMember1s(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember1[]>> {
     return this.partialClassUnionMember1sSync(query);
   }
+
   async partialClassUnionMember1sCount(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.partialClassUnionMember1sCountSync(query);
   }
+
   partialClassUnionMember1sCountSync(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember1.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75529,6 +76271,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   partialClassUnionMember1sSync(
     query?: $ObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Either<Error, readonly PartialClassUnionMember1[]> {
@@ -75545,11 +76288,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
   ): Promise<Either<Error, PartialClassUnionMember2>> {
     return this.partialClassUnionMember2Sync(identifier);
   }
+
   partialClassUnionMember2Sync(
     identifier: PartialClassUnionMember2.$Identifier,
   ): Either<Error, PartialClassUnionMember2> {
@@ -75557,11 +76302,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember2.$Identifier[]>> {
     return this.partialClassUnionMember2IdentifiersSync(query);
   }
+
   partialClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Either<Error, readonly PartialClassUnionMember2.$Identifier[]> {
@@ -75569,16 +76316,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialClassUnionMember2s(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember2[]>> {
     return this.partialClassUnionMember2sSync(query);
   }
+
   async partialClassUnionMember2sCount(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.partialClassUnionMember2sCountSync(query);
   }
+
   partialClassUnionMember2sCountSync(
     query?: Pick<$ObjectSet.Query<PartialClassUnionMember2.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75586,6 +76336,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   partialClassUnionMember2sSync(
     query?: $ObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Either<Error, readonly PartialClassUnionMember2[]> {
@@ -75602,11 +76353,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterface(
     identifier: PartialInterface.$Identifier,
   ): Promise<Either<Error, PartialInterface>> {
     return this.partialInterfaceSync(identifier);
   }
+
   partialInterfaceSync(
     identifier: PartialInterface.$Identifier,
   ): Either<Error, PartialInterface> {
@@ -75614,11 +76367,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialInterfaceIdentifiers(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<Either<Error, readonly PartialInterface.$Identifier[]>> {
     return this.partialInterfaceIdentifiersSync(query);
   }
+
   partialInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Either<Error, readonly PartialInterface.$Identifier[]> {
@@ -75626,21 +76381,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialInterfaces(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<Either<Error, readonly PartialInterface[]>> {
     return this.partialInterfacesSync(query);
   }
+
   async partialInterfacesCount(
     query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.partialInterfacesCountSync(query);
   }
+
   partialInterfacesCountSync(
     query?: Pick<$ObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.partialInterfacesSync(query).map((objects) => objects.length);
   }
+
   partialInterfacesSync(
     query?: $ObjectSet.Query<PartialInterface.$Filter>,
   ): Either<Error, readonly PartialInterface[]> {
@@ -75657,11 +76416,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnionMember1>> {
     return this.partialInterfaceUnionMember1Sync(identifier);
   }
+
   partialInterfaceUnionMember1Sync(
     identifier: PartialInterfaceUnionMember1.$Identifier,
   ): Either<Error, PartialInterfaceUnionMember1> {
@@ -75669,6 +76430,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialInterfaceUnionMember1Identifiers(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<
@@ -75676,6 +76438,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.partialInterfaceUnionMember1IdentifiersSync(query);
   }
+
   partialInterfaceUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Either<Error, readonly PartialInterfaceUnionMember1.$Identifier[]> {
@@ -75683,11 +76446,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialInterfaceUnionMember1s(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnionMember1[]>> {
     return this.partialInterfaceUnionMember1sSync(query);
   }
+
   async partialInterfaceUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
@@ -75696,6 +76461,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.partialInterfaceUnionMember1sCountSync(query);
   }
+
   partialInterfaceUnionMember1sCountSync(
     query?: Pick<
       $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
@@ -75706,6 +76472,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   partialInterfaceUnionMember1sSync(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Either<Error, readonly PartialInterfaceUnionMember1[]> {
@@ -75722,11 +76489,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterfaceUnionMember2(
     identifier: PartialInterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnionMember2>> {
     return this.partialInterfaceUnionMember2Sync(identifier);
   }
+
   partialInterfaceUnionMember2Sync(
     identifier: PartialInterfaceUnionMember2.$Identifier,
   ): Either<Error, PartialInterfaceUnionMember2> {
@@ -75734,6 +76503,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialInterfaceUnionMember2Identifiers(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<
@@ -75741,6 +76511,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.partialInterfaceUnionMember2IdentifiersSync(query);
   }
+
   partialInterfaceUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Either<Error, readonly PartialInterfaceUnionMember2.$Identifier[]> {
@@ -75748,11 +76519,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialInterfaceUnionMember2s(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnionMember2[]>> {
     return this.partialInterfaceUnionMember2sSync(query);
   }
+
   async partialInterfaceUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
@@ -75761,6 +76534,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.partialInterfaceUnionMember2sCountSync(query);
   }
+
   partialInterfaceUnionMember2sCountSync(
     query?: Pick<
       $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
@@ -75771,6 +76545,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   partialInterfaceUnionMember2sSync(
     query?: $ObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Either<Error, readonly PartialInterfaceUnionMember2[]> {
@@ -75787,11 +76562,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async propertyCardinalitiesClass(
     identifier: PropertyCardinalitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyCardinalitiesClass>> {
     return this.propertyCardinalitiesClassSync(identifier);
   }
+
   propertyCardinalitiesClassSync(
     identifier: PropertyCardinalitiesClass.$Identifier,
   ): Either<Error, PropertyCardinalitiesClass> {
@@ -75799,11 +76576,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async propertyCardinalitiesClassIdentifiers(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>> {
     return this.propertyCardinalitiesClassIdentifiersSync(query);
   }
+
   propertyCardinalitiesClassIdentifiersSync(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]> {
@@ -75811,11 +76590,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async propertyCardinalitiesClasses(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass[]>> {
     return this.propertyCardinalitiesClassesSync(query);
   }
+
   async propertyCardinalitiesClassesCount(
     query?: Pick<
       $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
@@ -75824,6 +76605,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.propertyCardinalitiesClassesCountSync(query);
   }
+
   propertyCardinalitiesClassesCountSync(
     query?: Pick<
       $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
@@ -75834,6 +76616,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   propertyCardinalitiesClassesSync(
     query?: $ObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Either<Error, readonly PropertyCardinalitiesClass[]> {
@@ -75850,11 +76633,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyVisibilitiesClass>> {
     return this.propertyVisibilitiesClassSync(identifier);
   }
+
   propertyVisibilitiesClassSync(
     identifier: PropertyVisibilitiesClass.$Identifier,
   ): Either<Error, PropertyVisibilitiesClass> {
@@ -75862,11 +76647,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async propertyVisibilitiesClassIdentifiers(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>> {
     return this.propertyVisibilitiesClassIdentifiersSync(query);
   }
+
   propertyVisibilitiesClassIdentifiersSync(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]> {
@@ -75874,16 +76661,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async propertyVisibilitiesClasses(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyVisibilitiesClass[]>> {
     return this.propertyVisibilitiesClassesSync(query);
   }
+
   async propertyVisibilitiesClassesCount(
     query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.propertyVisibilitiesClassesCountSync(query);
   }
+
   propertyVisibilitiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<PropertyVisibilitiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -75891,6 +76681,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   propertyVisibilitiesClassesSync(
     query?: $ObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Either<Error, readonly PropertyVisibilitiesClass[]> {
@@ -75907,11 +76698,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnionMember1>> {
     return this.recursiveClassUnionMember1Sync(identifier);
   }
+
   recursiveClassUnionMember1Sync(
     identifier: RecursiveClassUnionMember1.$Identifier,
   ): Either<Error, RecursiveClassUnionMember1> {
@@ -75919,11 +76712,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async recursiveClassUnionMember1Identifiers(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>> {
     return this.recursiveClassUnionMember1IdentifiersSync(query);
   }
+
   recursiveClassUnionMember1IdentifiersSync(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]> {
@@ -75931,11 +76726,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async recursiveClassUnionMember1s(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember1[]>> {
     return this.recursiveClassUnionMember1sSync(query);
   }
+
   async recursiveClassUnionMember1sCount(
     query?: Pick<
       $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
@@ -75944,6 +76741,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.recursiveClassUnionMember1sCountSync(query);
   }
+
   recursiveClassUnionMember1sCountSync(
     query?: Pick<
       $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
@@ -75954,6 +76752,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   recursiveClassUnionMember1sSync(
     query?: $ObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Either<Error, readonly RecursiveClassUnionMember1[]> {
@@ -75970,11 +76769,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async recursiveClassUnionMember2(
     identifier: RecursiveClassUnionMember2.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnionMember2>> {
     return this.recursiveClassUnionMember2Sync(identifier);
   }
+
   recursiveClassUnionMember2Sync(
     identifier: RecursiveClassUnionMember2.$Identifier,
   ): Either<Error, RecursiveClassUnionMember2> {
@@ -75982,11 +76783,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async recursiveClassUnionMember2Identifiers(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>> {
     return this.recursiveClassUnionMember2IdentifiersSync(query);
   }
+
   recursiveClassUnionMember2IdentifiersSync(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]> {
@@ -75994,11 +76797,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async recursiveClassUnionMember2s(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2[]>> {
     return this.recursiveClassUnionMember2sSync(query);
   }
+
   async recursiveClassUnionMember2sCount(
     query?: Pick<
       $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
@@ -76007,6 +76812,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.recursiveClassUnionMember2sCountSync(query);
   }
+
   recursiveClassUnionMember2sCountSync(
     query?: Pick<
       $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
@@ -76017,6 +76823,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   recursiveClassUnionMember2sSync(
     query?: $ObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Either<Error, readonly RecursiveClassUnionMember2[]> {
@@ -76033,11 +76840,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async sha256IriIdentifierClass(
     identifier: Sha256IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, Sha256IriIdentifierClass>> {
     return this.sha256IriIdentifierClassSync(identifier);
   }
+
   sha256IriIdentifierClassSync(
     identifier: Sha256IriIdentifierClass.$Identifier,
   ): Either<Error, Sha256IriIdentifierClass> {
@@ -76045,11 +76854,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async sha256IriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>> {
     return this.sha256IriIdentifierClassIdentifiersSync(query);
   }
+
   sha256IriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]> {
@@ -76057,16 +76868,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async sha256IriIdentifierClasses(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly Sha256IriIdentifierClass[]>> {
     return this.sha256IriIdentifierClassesSync(query);
   }
+
   async sha256IriIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.sha256IriIdentifierClassesCountSync(query);
   }
+
   sha256IriIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<Sha256IriIdentifierClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76074,6 +76888,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   sha256IriIdentifierClassesSync(
     query?: $ObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Either<Error, readonly Sha256IriIdentifierClass[]> {
@@ -76090,11 +76905,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<Either<Error, TermPropertiesClass>> {
     return this.termPropertiesClassSync(identifier);
   }
+
   termPropertiesClassSync(
     identifier: TermPropertiesClass.$Identifier,
   ): Either<Error, TermPropertiesClass> {
@@ -76102,11 +76919,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async termPropertiesClassIdentifiers(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly TermPropertiesClass.$Identifier[]>> {
     return this.termPropertiesClassIdentifiersSync(query);
   }
+
   termPropertiesClassIdentifiersSync(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Either<Error, readonly TermPropertiesClass.$Identifier[]> {
@@ -76114,16 +76933,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async termPropertiesClasses(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly TermPropertiesClass[]>> {
     return this.termPropertiesClassesSync(query);
   }
+
   async termPropertiesClassesCount(
     query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.termPropertiesClassesCountSync(query);
   }
+
   termPropertiesClassesCountSync(
     query?: Pick<$ObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76131,6 +76953,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   termPropertiesClassesSync(
     query?: $ObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Either<Error, readonly TermPropertiesClass[]> {
@@ -76147,11 +76970,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
   ): Promise<Either<Error, UnionDiscriminantsClass>> {
     return this.unionDiscriminantsClassSync(identifier);
   }
+
   unionDiscriminantsClassSync(
     identifier: UnionDiscriminantsClass.$Identifier,
   ): Either<Error, UnionDiscriminantsClass> {
@@ -76159,11 +76984,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async unionDiscriminantsClassIdentifiers(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>> {
     return this.unionDiscriminantsClassIdentifiersSync(query);
   }
+
   unionDiscriminantsClassIdentifiersSync(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Either<Error, readonly UnionDiscriminantsClass.$Identifier[]> {
@@ -76171,16 +76998,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async unionDiscriminantsClasses(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass[]>> {
     return this.unionDiscriminantsClassesSync(query);
   }
+
   async unionDiscriminantsClassesCount(
     query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.unionDiscriminantsClassesCountSync(query);
   }
+
   unionDiscriminantsClassesCountSync(
     query?: Pick<$ObjectSet.Query<UnionDiscriminantsClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76188,6 +77018,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   unionDiscriminantsClassesSync(
     query?: $ObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Either<Error, readonly UnionDiscriminantsClass[]> {
@@ -76204,11 +77035,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, UuidV4IriIdentifierClass>> {
     return this.uuidV4IriIdentifierClassSync(identifier);
   }
+
   uuidV4IriIdentifierClassSync(
     identifier: UuidV4IriIdentifierClass.$Identifier,
   ): Either<Error, UuidV4IriIdentifierClass> {
@@ -76216,11 +77049,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async uuidV4IriIdentifierClassIdentifiers(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>> {
     return this.uuidV4IriIdentifierClassIdentifiersSync(query);
   }
+
   uuidV4IriIdentifierClassIdentifiersSync(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]> {
@@ -76228,16 +77063,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async uuidV4IriIdentifierClasses(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierClass[]>> {
     return this.uuidV4IriIdentifierClassesSync(query);
   }
+
   async uuidV4IriIdentifierClassesCount(
     query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.uuidV4IriIdentifierClassesCountSync(query);
   }
+
   uuidV4IriIdentifierClassesCountSync(
     query?: Pick<$ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76245,6 +77083,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   uuidV4IriIdentifierClassesSync(
     query?: $ObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Either<Error, readonly UuidV4IriIdentifierClass[]> {
@@ -76261,11 +77100,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, UuidV4IriIdentifierInterface>> {
     return this.uuidV4IriIdentifierInterfaceSync(identifier);
   }
+
   uuidV4IriIdentifierInterfaceSync(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
   ): Either<Error, UuidV4IriIdentifierInterface> {
@@ -76273,6 +77114,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async uuidV4IriIdentifierInterfaceIdentifiers(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<
@@ -76280,6 +77122,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.uuidV4IriIdentifierInterfaceIdentifiersSync(query);
   }
+
   uuidV4IriIdentifierInterfaceIdentifiersSync(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Either<Error, readonly UuidV4IriIdentifierInterface.$Identifier[]> {
@@ -76287,11 +77130,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async uuidV4IriIdentifierInterfaces(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
     return this.uuidV4IriIdentifierInterfacesSync(query);
   }
+
   async uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
       $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
@@ -76300,6 +77145,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.uuidV4IriIdentifierInterfacesCountSync(query);
   }
+
   uuidV4IriIdentifierInterfacesCountSync(
     query?: Pick<
       $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
@@ -76310,6 +77156,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   uuidV4IriIdentifierInterfacesSync(
     query?: $ObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Either<Error, readonly UuidV4IriIdentifierInterface[]> {
@@ -76326,11 +77173,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnion(
     identifier: ClassUnion.$Identifier,
   ): Promise<Either<Error, ClassUnion>> {
     return this.classUnionSync(identifier);
   }
+
   classUnionSync(
     identifier: ClassUnion.$Identifier,
   ): Either<Error, ClassUnion> {
@@ -76338,11 +77187,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async classUnionIdentifiers(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<Either<Error, readonly ClassUnion.$Identifier[]>> {
     return this.classUnionIdentifiersSync(query);
   }
+
   classUnionIdentifiersSync(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Either<Error, readonly ClassUnion.$Identifier[]> {
@@ -76350,21 +77201,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async classUnions(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<Either<Error, readonly ClassUnion[]>> {
     return this.classUnionsSync(query);
   }
+
   async classUnionsCount(
     query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.classUnionsCountSync(query);
   }
+
   classUnionsCountSync(
     query?: Pick<$ObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.classUnionsSync(query).map((objects) => objects.length);
   }
+
   classUnionsSync(
     query?: $ObjectSet.Query<ClassUnion.$Filter>,
   ): Either<Error, readonly ClassUnion[]> {
@@ -76388,11 +77243,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
   ): Promise<Either<Error, FlattenClassUnion>> {
     return this.flattenClassUnionSync(identifier);
   }
+
   flattenClassUnionSync(
     identifier: FlattenClassUnion.$Identifier,
   ): Either<Error, FlattenClassUnion> {
@@ -76400,11 +77257,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async flattenClassUnionIdentifiers(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnion.$Identifier[]>> {
     return this.flattenClassUnionIdentifiersSync(query);
   }
+
   flattenClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Either<Error, readonly FlattenClassUnion.$Identifier[]> {
@@ -76412,21 +77271,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async flattenClassUnions(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnion[]>> {
     return this.flattenClassUnionsSync(query);
   }
+
   async flattenClassUnionsCount(
     query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.flattenClassUnionsCountSync(query);
   }
+
   flattenClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.flattenClassUnionsSync(query).map((objects) => objects.length);
   }
+
   flattenClassUnionsSync(
     query?: $ObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Either<Error, readonly FlattenClassUnion[]> {
@@ -76455,11 +77318,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
   ): Promise<Either<Error, InterfaceUnion>> {
     return this.interfaceUnionSync(identifier);
   }
+
   interfaceUnionSync(
     identifier: InterfaceUnion.$Identifier,
   ): Either<Error, InterfaceUnion> {
@@ -76467,11 +77332,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async interfaceUnionIdentifiers(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnion.$Identifier[]>> {
     return this.interfaceUnionIdentifiersSync(query);
   }
+
   interfaceUnionIdentifiersSync(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Either<Error, readonly InterfaceUnion.$Identifier[]> {
@@ -76479,21 +77346,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async interfaceUnions(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnion[]>> {
     return this.interfaceUnionsSync(query);
   }
+
   async interfaceUnionsCount(
     query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.interfaceUnionsCountSync(query);
   }
+
   interfaceUnionsCountSync(
     query?: Pick<$ObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.interfaceUnionsSync(query).map((objects) => objects.length);
   }
+
   interfaceUnionsSync(
     query?: $ObjectSet.Query<InterfaceUnion.$Filter>,
   ): Either<Error, readonly InterfaceUnion[]> {
@@ -76517,11 +77388,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnion>> {
     return this.lazilyResolvedClassUnionSync(identifier);
   }
+
   lazilyResolvedClassUnionSync(
     identifier: LazilyResolvedClassUnion.$Identifier,
   ): Either<Error, LazilyResolvedClassUnion> {
@@ -76529,11 +77402,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedClassUnionIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]>> {
     return this.lazilyResolvedClassUnionIdentifiersSync(query);
   }
+
   lazilyResolvedClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]> {
@@ -76541,16 +77416,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedClassUnions(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnion[]>> {
     return this.lazilyResolvedClassUnionsSync(query);
   }
+
   async lazilyResolvedClassUnionsCount(
     query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedClassUnionsCountSync(query);
   }
+
   lazilyResolvedClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<LazilyResolvedClassUnion.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76558,6 +77436,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedClassUnionsSync(
     query?: $ObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Either<Error, readonly LazilyResolvedClassUnion[]> {
@@ -76581,11 +77460,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnion>> {
     return this.lazilyResolvedInterfaceUnionSync(identifier);
   }
+
   lazilyResolvedInterfaceUnionSync(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
   ): Either<Error, LazilyResolvedInterfaceUnion> {
@@ -76593,6 +77474,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async lazilyResolvedInterfaceUnionIdentifiers(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<
@@ -76600,6 +77482,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   > {
     return this.lazilyResolvedInterfaceUnionIdentifiersSync(query);
   }
+
   lazilyResolvedInterfaceUnionIdentifiersSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Either<Error, readonly LazilyResolvedInterfaceUnion.$Identifier[]> {
@@ -76607,11 +77490,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async lazilyResolvedInterfaceUnions(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnion[]>> {
     return this.lazilyResolvedInterfaceUnionsSync(query);
   }
+
   async lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
@@ -76620,6 +77505,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
   ): Promise<Either<Error, number>> {
     return this.lazilyResolvedInterfaceUnionsCountSync(query);
   }
+
   lazilyResolvedInterfaceUnionsCountSync(
     query?: Pick<
       $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
@@ -76630,6 +77516,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   lazilyResolvedInterfaceUnionsSync(
     query?: $ObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Either<Error, readonly LazilyResolvedInterfaceUnion[]> {
@@ -76653,11 +77540,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnion>> {
     return this.noRdfTypeClassUnionSync(identifier);
   }
+
   noRdfTypeClassUnionSync(
     identifier: NoRdfTypeClassUnion.$Identifier,
   ): Either<Error, NoRdfTypeClassUnion> {
@@ -76665,11 +77554,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async noRdfTypeClassUnionIdentifiers(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>> {
     return this.noRdfTypeClassUnionIdentifiersSync(query);
   }
+
   noRdfTypeClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]> {
@@ -76677,16 +77568,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async noRdfTypeClassUnions(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnion[]>> {
     return this.noRdfTypeClassUnionsSync(query);
   }
+
   async noRdfTypeClassUnionsCount(
     query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.noRdfTypeClassUnionsCountSync(query);
   }
+
   noRdfTypeClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76694,6 +77588,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   noRdfTypeClassUnionsSync(
     query?: $ObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Either<Error, readonly NoRdfTypeClassUnion[]> {
@@ -76717,11 +77612,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
   ): Promise<Either<Error, PartialClassUnion>> {
     return this.partialClassUnionSync(identifier);
   }
+
   partialClassUnionSync(
     identifier: PartialClassUnion.$Identifier,
   ): Either<Error, PartialClassUnion> {
@@ -76729,11 +77626,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialClassUnionIdentifiers(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnion.$Identifier[]>> {
     return this.partialClassUnionIdentifiersSync(query);
   }
+
   partialClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Either<Error, readonly PartialClassUnion.$Identifier[]> {
@@ -76741,21 +77640,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialClassUnions(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnion[]>> {
     return this.partialClassUnionsSync(query);
   }
+
   async partialClassUnionsCount(
     query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.partialClassUnionsCountSync(query);
   }
+
   partialClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.partialClassUnionsSync(query).map((objects) => objects.length);
   }
+
   partialClassUnionsSync(
     query?: $ObjectSet.Query<PartialClassUnion.$Filter>,
   ): Either<Error, readonly PartialClassUnion[]> {
@@ -76779,11 +77682,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnion>> {
     return this.partialInterfaceUnionSync(identifier);
   }
+
   partialInterfaceUnionSync(
     identifier: PartialInterfaceUnion.$Identifier,
   ): Either<Error, PartialInterfaceUnion> {
@@ -76791,11 +77696,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async partialInterfaceUnionIdentifiers(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnion.$Identifier[]>> {
     return this.partialInterfaceUnionIdentifiersSync(query);
   }
+
   partialInterfaceUnionIdentifiersSync(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Either<Error, readonly PartialInterfaceUnion.$Identifier[]> {
@@ -76803,16 +77710,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async partialInterfaceUnions(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnion[]>> {
     return this.partialInterfaceUnionsSync(query);
   }
+
   async partialInterfaceUnionsCount(
     query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.partialInterfaceUnionsCountSync(query);
   }
+
   partialInterfaceUnionsCountSync(
     query?: Pick<$ObjectSet.Query<PartialInterfaceUnion.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76820,6 +77730,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   partialInterfaceUnionsSync(
     query?: $ObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Either<Error, readonly PartialInterfaceUnion[]> {
@@ -76843,11 +77754,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnion>> {
     return this.recursiveClassUnionSync(identifier);
   }
+
   recursiveClassUnionSync(
     identifier: RecursiveClassUnion.$Identifier,
   ): Either<Error, RecursiveClassUnion> {
@@ -76855,11 +77768,13 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async recursiveClassUnionIdentifiers(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnion.$Identifier[]>> {
     return this.recursiveClassUnionIdentifiersSync(query);
   }
+
   recursiveClassUnionIdentifiersSync(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Either<Error, readonly RecursiveClassUnion.$Identifier[]> {
@@ -76867,16 +77782,19 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async recursiveClassUnions(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnion[]>> {
     return this.recursiveClassUnionsSync(query);
   }
+
   async recursiveClassUnionsCount(
     query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.recursiveClassUnionsCountSync(query);
   }
+
   recursiveClassUnionsCountSync(
     query?: Pick<$ObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Either<Error, number> {
@@ -76884,6 +77802,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       (objects) => objects.length,
     );
   }
+
   recursiveClassUnionsSync(
     query?: $ObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Either<Error, readonly RecursiveClassUnion[]> {
@@ -76907,21 +77826,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async object(
     identifier: $Object.$Identifier,
   ): Promise<Either<Error, $Object>> {
     return this.objectSync(identifier);
   }
+
   objectSync(identifier: $Object.$Identifier): Either<Error, $Object> {
     return this.objectsSync({
       filter: { $identifier: { in: [identifier] } },
     }).map((objects) => objects[0]);
   }
+
   async objectIdentifiers(
     query?: $ObjectSet.Query<$Object.$Filter>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
     return this.objectIdentifiersSync(query);
   }
+
   objectIdentifiersSync(
     query?: $ObjectSet.Query<$Object.$Filter>,
   ): Either<Error, readonly $Object.$Identifier[]> {
@@ -76929,21 +77852,25 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       objects.map((object) => object.$identifier),
     );
   }
+
   async objects(
     query?: $ObjectSet.Query<$Object.$Filter>,
   ): Promise<Either<Error, readonly $Object[]>> {
     return this.objectsSync(query);
   }
+
   async objectsCount(
     query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.objectsCountSync(query);
   }
+
   objectsCountSync(
     query?: Pick<$ObjectSet.Query<$Object.$Filter>, "filter">,
   ): Either<Error, number> {
     return this.objectsSync(query).map((objects) => objects.length);
   }
+
   objectsSync(
     query?: $ObjectSet.Query<$Object.$Filter>,
   ): Either<Error, readonly $Object[]> {
@@ -77323,6 +78250,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
       query,
     );
   }
+
   protected $objectsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectFilterT extends {
@@ -77429,6 +78357,7 @@ export class $RdfjsDatasetObjectSet implements $ObjectSet {
     }
     return Either.of(objects);
   }
+
   protected $objectUnionsSync<
     ObjectT extends { readonly $identifier: ObjectIdentifierT },
     ObjectFilterT extends {
@@ -77600,6 +78529,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async baseInterfaceWithoutPropertiesIdentifiers(
     query?: $SparqlObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<
@@ -77610,6 +78540,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BaseInterfaceWithoutPropertiesStatic.$Identifier
     >(BaseInterfaceWithoutPropertiesStatic, query);
   }
+
   async baseInterfaceWithoutPropertieses(
     query?: $SparqlObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
   ): Promise<Either<Error, readonly BaseInterfaceWithoutProperties[]>> {
@@ -77619,6 +78550,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BaseInterfaceWithoutPropertiesStatic.$Identifier
     >(BaseInterfaceWithoutPropertiesStatic, query);
   }
+
   async baseInterfaceWithoutPropertiesesCount(
     query?: Pick<
       $SparqlObjectSet.Query<BaseInterfaceWithoutPropertiesStatic.$Filter>,
@@ -77630,6 +78562,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async baseInterfaceWithProperties(
     identifier: BaseInterfaceWithPropertiesStatic.$Identifier,
   ): Promise<Either<Error, BaseInterfaceWithProperties>> {
@@ -77639,6 +78572,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async baseInterfaceWithPropertiesIdentifiers(
     query?: $SparqlObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<
@@ -77649,6 +78583,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BaseInterfaceWithPropertiesStatic.$Identifier
     >(BaseInterfaceWithPropertiesStatic, query);
   }
+
   async baseInterfaceWithPropertieses(
     query?: $SparqlObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
   ): Promise<Either<Error, readonly BaseInterfaceWithProperties[]>> {
@@ -77658,6 +78593,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BaseInterfaceWithPropertiesStatic.$Identifier
     >(BaseInterfaceWithPropertiesStatic, query);
   }
+
   async baseInterfaceWithPropertiesesCount(
     query?: Pick<
       $SparqlObjectSet.Query<BaseInterfaceWithPropertiesStatic.$Filter>,
@@ -77669,6 +78605,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeIdentifierClass(
     identifier: BlankNodeIdentifierClass.$Identifier,
   ): Promise<Either<Error, BlankNodeIdentifierClass>> {
@@ -77678,6 +78615,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async blankNodeIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierClass.$Identifier[]>> {
@@ -77686,6 +78624,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeIdentifierClass.$Identifier
     >(BlankNodeIdentifierClass, query);
   }
+
   async blankNodeIdentifierClasses(
     query?: $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierClass[]>> {
@@ -77695,6 +78634,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeIdentifierClass.$Identifier
     >(BlankNodeIdentifierClass, query);
   }
+
   async blankNodeIdentifierClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<BlankNodeIdentifierClass.$Filter>,
@@ -77706,6 +78646,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeIdentifierInterface(
     identifier: BlankNodeIdentifierInterface.$Identifier,
   ): Promise<Either<Error, BlankNodeIdentifierInterface>> {
@@ -77715,6 +78656,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async blankNodeIdentifierInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<
@@ -77725,6 +78667,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeIdentifierInterface.$Identifier
     >(BlankNodeIdentifierInterface, query);
   }
+
   async blankNodeIdentifierInterfaces(
     query?: $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeIdentifierInterface[]>> {
@@ -77734,6 +78677,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeIdentifierInterface.$Identifier
     >(BlankNodeIdentifierInterface, query);
   }
+
   async blankNodeIdentifierInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<BlankNodeIdentifierInterface.$Filter>,
@@ -77745,6 +78689,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeOrIriIdentifierClass(
     identifier: BlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, BlankNodeOrIriIdentifierClass>> {
@@ -77754,6 +78699,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async blankNodeOrIriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -77764,6 +78710,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierClass.$Identifier
     >(BlankNodeOrIriIdentifierClass, query);
   }
+
   async blankNodeOrIriIdentifierClasses(
     query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierClass[]>> {
@@ -77773,6 +78720,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierClass.$Identifier
     >(BlankNodeOrIriIdentifierClass, query);
   }
+
   async blankNodeOrIriIdentifierClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<BlankNodeOrIriIdentifierClass.$Filter>,
@@ -77784,6 +78732,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async blankNodeOrIriIdentifierInterface(
     identifier: BlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, BlankNodeOrIriIdentifierInterface>> {
@@ -77793,6 +78742,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async blankNodeOrIriIdentifierInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -77803,6 +78753,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierInterface.$Identifier
     >(BlankNodeOrIriIdentifierInterface, query);
   }
+
   async blankNodeOrIriIdentifierInterfaces(
     query?: $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly BlankNodeOrIriIdentifierInterface[]>> {
@@ -77812,6 +78763,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       BlankNodeOrIriIdentifierInterface.$Identifier
     >(BlankNodeOrIriIdentifierInterface, query);
   }
+
   async blankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<BlankNodeOrIriIdentifierInterface.$Filter>,
@@ -77823,6 +78775,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnionMember1(
     identifier: ClassUnionMember1.$Identifier,
   ): Promise<Either<Error, ClassUnionMember1>> {
@@ -77832,6 +78785,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async classUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember1.$Identifier[]>> {
@@ -77840,6 +78794,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassUnionMember1.$Identifier
     >(ClassUnionMember1, query);
   }
+
   async classUnionMember1s(
     query?: $SparqlObjectSet.Query<ClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember1[]>> {
@@ -77849,6 +78804,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassUnionMember1.$Identifier
     >(ClassUnionMember1, query);
   }
+
   async classUnionMember1sCount(
     query?: Pick<$SparqlObjectSet.Query<ClassUnionMember1.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -77857,6 +78813,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnionMember2(
     identifier: ClassUnionMember2.$Identifier,
   ): Promise<Either<Error, ClassUnionMember2>> {
@@ -77866,6 +78823,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async classUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember2.$Identifier[]>> {
@@ -77874,6 +78832,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassUnionMember2.$Identifier
     >(ClassUnionMember2, query);
   }
+
   async classUnionMember2s(
     query?: $SparqlObjectSet.Query<ClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly ClassUnionMember2[]>> {
@@ -77883,6 +78842,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassUnionMember2.$Identifier
     >(ClassUnionMember2, query);
   }
+
   async classUnionMember2sCount(
     query?: Pick<$SparqlObjectSet.Query<ClassUnionMember2.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -77891,6 +78851,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteChildClass(
     identifier: ConcreteChildClass.$Identifier,
   ): Promise<Either<Error, ConcreteChildClass>> {
@@ -77900,6 +78861,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async concreteChildClassIdentifiers(
     query?: $SparqlObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildClass.$Identifier[]>> {
@@ -77908,6 +78870,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteChildClass.$Identifier
     >(ConcreteChildClass, query);
   }
+
   async concreteChildClasses(
     query?: $SparqlObjectSet.Query<ConcreteChildClass.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildClass[]>> {
@@ -77917,6 +78880,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteChildClass.$Identifier
     >(ConcreteChildClass, query);
   }
+
   async concreteChildClassesCount(
     query?: Pick<$SparqlObjectSet.Query<ConcreteChildClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -77925,6 +78889,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteChildInterface(
     identifier: ConcreteChildInterface.$Identifier,
   ): Promise<Either<Error, ConcreteChildInterface>> {
@@ -77934,6 +78899,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async concreteChildInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildInterface.$Identifier[]>> {
@@ -77942,6 +78908,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteChildInterface.$Identifier
     >(ConcreteChildInterface, query);
   }
+
   async concreteChildInterfaces(
     query?: $SparqlObjectSet.Query<ConcreteChildInterface.$Filter>,
   ): Promise<Either<Error, readonly ConcreteChildInterface[]>> {
@@ -77951,6 +78918,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteChildInterface.$Identifier
     >(ConcreteChildInterface, query);
   }
+
   async concreteChildInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ConcreteChildInterface.$Filter>,
@@ -77962,6 +78930,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteParentClass(
     identifier: ConcreteParentClassStatic.$Identifier,
   ): Promise<Either<Error, ConcreteParentClass>> {
@@ -77971,6 +78940,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async concreteParentClassIdentifiers(
     query?: $SparqlObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentClassStatic.$Identifier[]>> {
@@ -77979,6 +78949,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteParentClassStatic.$Identifier
     >(ConcreteParentClassStatic, query);
   }
+
   async concreteParentClasses(
     query?: $SparqlObjectSet.Query<ConcreteParentClassStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentClass[]>> {
@@ -77988,6 +78959,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteParentClassStatic.$Identifier
     >(ConcreteParentClassStatic, query);
   }
+
   async concreteParentClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ConcreteParentClassStatic.$Filter>,
@@ -77999,6 +78971,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async concreteParentInterface(
     identifier: ConcreteParentInterfaceStatic.$Identifier,
   ): Promise<Either<Error, ConcreteParentInterface>> {
@@ -78008,6 +78981,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async concreteParentInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<
@@ -78018,6 +78992,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteParentInterfaceStatic.$Identifier
     >(ConcreteParentInterfaceStatic, query);
   }
+
   async concreteParentInterfaces(
     query?: $SparqlObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
   ): Promise<Either<Error, readonly ConcreteParentInterface[]>> {
@@ -78027,6 +79002,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConcreteParentInterfaceStatic.$Identifier
     >(ConcreteParentInterfaceStatic, query);
   }
+
   async concreteParentInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ConcreteParentInterfaceStatic.$Filter>,
@@ -78038,6 +79014,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async convertibleTypePropertiesClass(
     identifier: ConvertibleTypePropertiesClass.$Identifier,
   ): Promise<Either<Error, ConvertibleTypePropertiesClass>> {
@@ -78047,6 +79024,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async convertibleTypePropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<
@@ -78057,6 +79035,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConvertibleTypePropertiesClass.$Identifier
     >(ConvertibleTypePropertiesClass, query);
   }
+
   async convertibleTypePropertiesClasses(
     query?: $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ConvertibleTypePropertiesClass[]>> {
@@ -78066,6 +79045,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ConvertibleTypePropertiesClass.$Identifier
     >(ConvertibleTypePropertiesClass, query);
   }
+
   async convertibleTypePropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ConvertibleTypePropertiesClass.$Filter>,
@@ -78077,6 +79057,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async dateUnionPropertiesClass(
     identifier: DateUnionPropertiesClass.$Identifier,
   ): Promise<Either<Error, DateUnionPropertiesClass>> {
@@ -78086,6 +79067,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async dateUnionPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DateUnionPropertiesClass.$Identifier[]>> {
@@ -78094,6 +79076,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       DateUnionPropertiesClass.$Identifier
     >(DateUnionPropertiesClass, query);
   }
+
   async dateUnionPropertiesClasses(
     query?: $SparqlObjectSet.Query<DateUnionPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DateUnionPropertiesClass[]>> {
@@ -78103,6 +79086,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       DateUnionPropertiesClass.$Identifier
     >(DateUnionPropertiesClass, query);
   }
+
   async dateUnionPropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<DateUnionPropertiesClass.$Filter>,
@@ -78114,6 +79098,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async defaultValuePropertiesClass(
     identifier: DefaultValuePropertiesClass.$Identifier,
   ): Promise<Either<Error, DefaultValuePropertiesClass>> {
@@ -78123,6 +79108,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async defaultValuePropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<
@@ -78133,6 +79119,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       DefaultValuePropertiesClass.$Identifier
     >(DefaultValuePropertiesClass, query);
   }
+
   async defaultValuePropertiesClasses(
     query?: $SparqlObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly DefaultValuePropertiesClass[]>> {
@@ -78142,6 +79129,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       DefaultValuePropertiesClass.$Identifier
     >(DefaultValuePropertiesClass, query);
   }
+
   async defaultValuePropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<DefaultValuePropertiesClass.$Filter>,
@@ -78153,6 +79141,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async directRecursiveClass(
     identifier: DirectRecursiveClass.$Identifier,
   ): Promise<Either<Error, DirectRecursiveClass>> {
@@ -78162,6 +79151,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async directRecursiveClassIdentifiers(
     query?: $SparqlObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly DirectRecursiveClass.$Identifier[]>> {
@@ -78170,6 +79160,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       DirectRecursiveClass.$Identifier
     >(DirectRecursiveClass, query);
   }
+
   async directRecursiveClasses(
     query?: $SparqlObjectSet.Query<DirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly DirectRecursiveClass[]>> {
@@ -78179,6 +79170,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       DirectRecursiveClass.$Identifier
     >(DirectRecursiveClass, query);
   }
+
   async directRecursiveClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<DirectRecursiveClass.$Filter>,
@@ -78190,6 +79182,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async explicitFromToRdfTypesClass(
     identifier: ExplicitFromToRdfTypesClass.$Identifier,
   ): Promise<Either<Error, ExplicitFromToRdfTypesClass>> {
@@ -78199,6 +79192,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async explicitFromToRdfTypesClassIdentifiers(
     query?: $SparqlObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<
@@ -78209,6 +79203,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitFromToRdfTypesClass.$Identifier
     >(ExplicitFromToRdfTypesClass, query);
   }
+
   async explicitFromToRdfTypesClasses(
     query?: $SparqlObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitFromToRdfTypesClass[]>> {
@@ -78218,6 +79213,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitFromToRdfTypesClass.$Identifier
     >(ExplicitFromToRdfTypesClass, query);
   }
+
   async explicitFromToRdfTypesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ExplicitFromToRdfTypesClass.$Filter>,
@@ -78229,6 +79225,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async explicitRdfTypeClass(
     identifier: ExplicitRdfTypeClass.$Identifier,
   ): Promise<Either<Error, ExplicitRdfTypeClass>> {
@@ -78238,6 +79235,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async explicitRdfTypeClassIdentifiers(
     query?: $SparqlObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitRdfTypeClass.$Identifier[]>> {
@@ -78246,6 +79244,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitRdfTypeClass.$Identifier
     >(ExplicitRdfTypeClass, query);
   }
+
   async explicitRdfTypeClasses(
     query?: $SparqlObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
   ): Promise<Either<Error, readonly ExplicitRdfTypeClass[]>> {
@@ -78255,6 +79254,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExplicitRdfTypeClass.$Identifier
     >(ExplicitRdfTypeClass, query);
   }
+
   async explicitRdfTypeClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ExplicitRdfTypeClass.$Filter>,
@@ -78266,6 +79266,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async externClassPropertyClass(
     identifier: ExternClassPropertyClass.$Identifier,
   ): Promise<Either<Error, ExternClassPropertyClass>> {
@@ -78275,6 +79276,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async externClassPropertyClassIdentifiers(
     query?: $SparqlObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly ExternClassPropertyClass.$Identifier[]>> {
@@ -78283,6 +79285,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExternClassPropertyClass.$Identifier
     >(ExternClassPropertyClass, query);
   }
+
   async externClassPropertyClasses(
     query?: $SparqlObjectSet.Query<ExternClassPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly ExternClassPropertyClass[]>> {
@@ -78292,6 +79295,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ExternClassPropertyClass.$Identifier
     >(ExternClassPropertyClass, query);
   }
+
   async externClassPropertyClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<ExternClassPropertyClass.$Filter>,
@@ -78303,6 +79307,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async flattenClassUnionMember3(
     identifier: FlattenClassUnionMember3.$Identifier,
   ): Promise<Either<Error, FlattenClassUnionMember3>> {
@@ -78312,6 +79317,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async flattenClassUnionMember3Identifiers(
     query?: $SparqlObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnionMember3.$Identifier[]>> {
@@ -78320,6 +79326,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       FlattenClassUnionMember3.$Identifier
     >(FlattenClassUnionMember3, query);
   }
+
   async flattenClassUnionMember3s(
     query?: $SparqlObjectSet.Query<FlattenClassUnionMember3.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnionMember3[]>> {
@@ -78329,6 +79336,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       FlattenClassUnionMember3.$Identifier
     >(FlattenClassUnionMember3, query);
   }
+
   async flattenClassUnionMember3sCount(
     query?: Pick<
       $SparqlObjectSet.Query<FlattenClassUnionMember3.$Filter>,
@@ -78340,6 +79348,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async hasValuePropertiesClass(
     identifier: HasValuePropertiesClass.$Identifier,
   ): Promise<Either<Error, HasValuePropertiesClass>> {
@@ -78349,6 +79358,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async hasValuePropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly HasValuePropertiesClass.$Identifier[]>> {
@@ -78357,6 +79367,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       HasValuePropertiesClass.$Identifier
     >(HasValuePropertiesClass, query);
   }
+
   async hasValuePropertiesClasses(
     query?: $SparqlObjectSet.Query<HasValuePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly HasValuePropertiesClass[]>> {
@@ -78366,6 +79377,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       HasValuePropertiesClass.$Identifier
     >(HasValuePropertiesClass, query);
   }
+
   async hasValuePropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<HasValuePropertiesClass.$Filter>,
@@ -78377,6 +79389,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async identifierOverride3Class(
     identifier: IdentifierOverride3ClassStatic.$Identifier,
   ): Promise<Either<Error, IdentifierOverride3Class>> {
@@ -78386,6 +79399,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async identifierOverride3ClassIdentifiers(
     query?: $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<
@@ -78396,6 +79410,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IdentifierOverride3ClassStatic.$Identifier
     >(IdentifierOverride3ClassStatic, query);
   }
+
   async identifierOverride3Classes(
     query?: $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride3Class[]>> {
@@ -78405,6 +79420,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IdentifierOverride3ClassStatic.$Identifier
     >(IdentifierOverride3ClassStatic, query);
   }
+
   async identifierOverride3ClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<IdentifierOverride3ClassStatic.$Filter>,
@@ -78416,6 +79432,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async identifierOverride4Class(
     identifier: IdentifierOverride4ClassStatic.$Identifier,
   ): Promise<Either<Error, IdentifierOverride4Class>> {
@@ -78425,6 +79442,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async identifierOverride4ClassIdentifiers(
     query?: $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<
@@ -78435,6 +79453,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IdentifierOverride4ClassStatic.$Identifier
     >(IdentifierOverride4ClassStatic, query);
   }
+
   async identifierOverride4Classes(
     query?: $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride4Class[]>> {
@@ -78444,6 +79463,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IdentifierOverride4ClassStatic.$Identifier
     >(IdentifierOverride4ClassStatic, query);
   }
+
   async identifierOverride4ClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<IdentifierOverride4ClassStatic.$Filter>,
@@ -78455,6 +79475,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async identifierOverride5Class(
     identifier: IdentifierOverride5Class.$Identifier,
   ): Promise<Either<Error, IdentifierOverride5Class>> {
@@ -78464,6 +79485,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async identifierOverride5ClassIdentifiers(
     query?: $SparqlObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride5Class.$Identifier[]>> {
@@ -78472,6 +79494,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IdentifierOverride5Class.$Identifier
     >(IdentifierOverride5Class, query);
   }
+
   async identifierOverride5Classes(
     query?: $SparqlObjectSet.Query<IdentifierOverride5Class.$Filter>,
   ): Promise<Either<Error, readonly IdentifierOverride5Class[]>> {
@@ -78481,6 +79504,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IdentifierOverride5Class.$Identifier
     >(IdentifierOverride5Class, query);
   }
+
   async identifierOverride5ClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<IdentifierOverride5Class.$Filter>,
@@ -78492,6 +79516,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async indirectRecursiveClass(
     identifier: IndirectRecursiveClass.$Identifier,
   ): Promise<Either<Error, IndirectRecursiveClass>> {
@@ -78501,6 +79526,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async indirectRecursiveClassIdentifiers(
     query?: $SparqlObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveClass.$Identifier[]>> {
@@ -78509,6 +79535,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IndirectRecursiveClass.$Identifier
     >(IndirectRecursiveClass, query);
   }
+
   async indirectRecursiveClasses(
     query?: $SparqlObjectSet.Query<IndirectRecursiveClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveClass[]>> {
@@ -78518,6 +79545,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IndirectRecursiveClass.$Identifier
     >(IndirectRecursiveClass, query);
   }
+
   async indirectRecursiveClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<IndirectRecursiveClass.$Filter>,
@@ -78529,6 +79557,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async indirectRecursiveHelperClass(
     identifier: IndirectRecursiveHelperClass.$Identifier,
   ): Promise<Either<Error, IndirectRecursiveHelperClass>> {
@@ -78538,6 +79567,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async indirectRecursiveHelperClassIdentifiers(
     query?: $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<
@@ -78548,6 +79578,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IndirectRecursiveHelperClass.$Identifier
     >(IndirectRecursiveHelperClass, query);
   }
+
   async indirectRecursiveHelperClasses(
     query?: $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
   ): Promise<Either<Error, readonly IndirectRecursiveHelperClass[]>> {
@@ -78557,6 +79588,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IndirectRecursiveHelperClass.$Identifier
     >(IndirectRecursiveHelperClass, query);
   }
+
   async indirectRecursiveHelperClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<IndirectRecursiveHelperClass.$Filter>,
@@ -78568,6 +79600,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async inIdentifierClass(
     identifier: InIdentifierClass.$Identifier,
   ): Promise<Either<Error, InIdentifierClass>> {
@@ -78577,6 +79610,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async inIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly InIdentifierClass.$Identifier[]>> {
@@ -78585,6 +79619,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InIdentifierClass.$Identifier
     >(InIdentifierClass, query);
   }
+
   async inIdentifierClasses(
     query?: $SparqlObjectSet.Query<InIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly InIdentifierClass[]>> {
@@ -78594,6 +79629,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InIdentifierClass.$Identifier
     >(InIdentifierClass, query);
   }
+
   async inIdentifierClassesCount(
     query?: Pick<$SparqlObjectSet.Query<InIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -78602,6 +79638,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async inPropertiesClass(
     identifier: InPropertiesClass.$Identifier,
   ): Promise<Either<Error, InPropertiesClass>> {
@@ -78611,6 +79648,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async inPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly InPropertiesClass.$Identifier[]>> {
@@ -78619,6 +79657,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InPropertiesClass.$Identifier
     >(InPropertiesClass, query);
   }
+
   async inPropertiesClasses(
     query?: $SparqlObjectSet.Query<InPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly InPropertiesClass[]>> {
@@ -78628,6 +79667,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InPropertiesClass.$Identifier
     >(InPropertiesClass, query);
   }
+
   async inPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<InPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -78636,6 +79676,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interface(
     identifier: Interface.$Identifier,
   ): Promise<Either<Error, Interface>> {
@@ -78643,6 +79684,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.interfaces({ filter: { $identifier: { in: [identifier] } } })
     ).map((objects) => objects[0]);
   }
+
   async interfaceIdentifiers(
     query?: $SparqlObjectSet.Query<Interface.$Filter>,
   ): Promise<Either<Error, readonly Interface.$Identifier[]>> {
@@ -78651,6 +79693,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfaces(
     query?: $SparqlObjectSet.Query<Interface.$Filter>,
   ): Promise<Either<Error, readonly Interface[]>> {
@@ -78659,11 +79702,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfacesCount(
     query?: Pick<$SparqlObjectSet.Query<Interface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.$objectsCount<Interface.$Filter>(Interface, query);
   }
+
   async interfaceUnionMember1(
     identifier: InterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, InterfaceUnionMember1>> {
@@ -78673,6 +79718,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async interfaceUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember1.$Identifier[]>> {
@@ -78681,6 +79727,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InterfaceUnionMember1.$Identifier
     >(InterfaceUnionMember1, query);
   }
+
   async interfaceUnionMember1s(
     query?: $SparqlObjectSet.Query<InterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember1[]>> {
@@ -78690,6 +79737,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InterfaceUnionMember1.$Identifier
     >(InterfaceUnionMember1, query);
   }
+
   async interfaceUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<InterfaceUnionMember1.$Filter>,
@@ -78701,6 +79749,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfaceUnionMember2(
     identifier: InterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, InterfaceUnionMember2>> {
@@ -78710,6 +79759,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async interfaceUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember2.$Identifier[]>> {
@@ -78718,6 +79768,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InterfaceUnionMember2.$Identifier
     >(InterfaceUnionMember2, query);
   }
+
   async interfaceUnionMember2s(
     query?: $SparqlObjectSet.Query<InterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnionMember2[]>> {
@@ -78727,6 +79778,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InterfaceUnionMember2.$Identifier
     >(InterfaceUnionMember2, query);
   }
+
   async interfaceUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<InterfaceUnionMember2.$Filter>,
@@ -78738,6 +79790,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async iriIdentifierClass(
     identifier: IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, IriIdentifierClass>> {
@@ -78747,6 +79800,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async iriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierClass.$Identifier[]>> {
@@ -78755,6 +79809,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IriIdentifierClass.$Identifier
     >(IriIdentifierClass, query);
   }
+
   async iriIdentifierClasses(
     query?: $SparqlObjectSet.Query<IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierClass[]>> {
@@ -78764,6 +79819,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IriIdentifierClass.$Identifier
     >(IriIdentifierClass, query);
   }
+
   async iriIdentifierClassesCount(
     query?: Pick<$SparqlObjectSet.Query<IriIdentifierClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -78772,6 +79828,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async iriIdentifierInterface(
     identifier: IriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, IriIdentifierInterface>> {
@@ -78781,6 +79838,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async iriIdentifierInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierInterface.$Identifier[]>> {
@@ -78789,6 +79847,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IriIdentifierInterface.$Identifier
     >(IriIdentifierInterface, query);
   }
+
   async iriIdentifierInterfaces(
     query?: $SparqlObjectSet.Query<IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly IriIdentifierInterface[]>> {
@@ -78798,6 +79857,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       IriIdentifierInterface.$Identifier
     >(IriIdentifierInterface, query);
   }
+
   async iriIdentifierInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<IriIdentifierInterface.$Filter>,
@@ -78809,6 +79869,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async jsPrimitiveUnionPropertyClass(
     identifier: JsPrimitiveUnionPropertyClass.$Identifier,
   ): Promise<Either<Error, JsPrimitiveUnionPropertyClass>> {
@@ -78818,6 +79879,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async jsPrimitiveUnionPropertyClassIdentifiers(
     query?: $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<
@@ -78828,6 +79890,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       JsPrimitiveUnionPropertyClass.$Identifier
     >(JsPrimitiveUnionPropertyClass, query);
   }
+
   async jsPrimitiveUnionPropertyClasses(
     query?: $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
   ): Promise<Either<Error, readonly JsPrimitiveUnionPropertyClass[]>> {
@@ -78837,6 +79900,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       JsPrimitiveUnionPropertyClass.$Identifier
     >(JsPrimitiveUnionPropertyClass, query);
   }
+
   async jsPrimitiveUnionPropertyClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<JsPrimitiveUnionPropertyClass.$Filter>,
@@ -78848,6 +79912,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async languageInPropertiesClass(
     identifier: LanguageInPropertiesClass.$Identifier,
   ): Promise<Either<Error, LanguageInPropertiesClass>> {
@@ -78857,6 +79922,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async languageInPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LanguageInPropertiesClass.$Identifier[]>> {
@@ -78865,6 +79931,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LanguageInPropertiesClass.$Identifier
     >(LanguageInPropertiesClass, query);
   }
+
   async languageInPropertiesClasses(
     query?: $SparqlObjectSet.Query<LanguageInPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LanguageInPropertiesClass[]>> {
@@ -78874,6 +79941,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LanguageInPropertiesClass.$Identifier
     >(LanguageInPropertiesClass, query);
   }
+
   async languageInPropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<LanguageInPropertiesClass.$Filter>,
@@ -78885,6 +79953,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClass(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierClass>> {
@@ -78894,6 +79963,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -78907,6 +79977,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierClass, query);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClasses(
     query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
   ): Promise<
@@ -78918,6 +79989,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierClass, query);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierClass.$Filter>,
@@ -78929,6 +80001,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterface(
     identifier: LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, LazilyResolvedBlankNodeOrIriIdentifierInterface>> {
@@ -78938,6 +80011,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -78951,6 +80025,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierInterface, query);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterfaces(
     query?: $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -78962,6 +80037,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier
     >(LazilyResolvedBlankNodeOrIriIdentifierInterface, query);
   }
+
   async lazilyResolvedBlankNodeOrIriIdentifierInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedBlankNodeOrIriIdentifierInterface.$Filter>,
@@ -78973,6 +80049,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedClassUnionMember1(
     identifier: LazilyResolvedClassUnionMember1.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnionMember1>> {
@@ -78982,6 +80059,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedClassUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<
@@ -78992,6 +80070,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedClassUnionMember1.$Identifier
     >(LazilyResolvedClassUnionMember1, query);
   }
+
   async lazilyResolvedClassUnionMember1s(
     query?: $SparqlObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnionMember1[]>> {
@@ -79001,6 +80080,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedClassUnionMember1.$Identifier
     >(LazilyResolvedClassUnionMember1, query);
   }
+
   async lazilyResolvedClassUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedClassUnionMember1.$Filter>,
@@ -79012,6 +80092,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedClassUnionMember2(
     identifier: LazilyResolvedClassUnionMember2.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnionMember2>> {
@@ -79021,6 +80102,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedClassUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<
@@ -79031,6 +80113,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedClassUnionMember2.$Identifier
     >(LazilyResolvedClassUnionMember2, query);
   }
+
   async lazilyResolvedClassUnionMember2s(
     query?: $SparqlObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnionMember2[]>> {
@@ -79040,6 +80123,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedClassUnionMember2.$Identifier
     >(LazilyResolvedClassUnionMember2, query);
   }
+
   async lazilyResolvedClassUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedClassUnionMember2.$Filter>,
@@ -79051,6 +80135,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedInterfaceUnionMember1(
     identifier: LazilyResolvedInterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember1>> {
@@ -79060,6 +80145,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedInterfaceUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Promise<
@@ -79070,6 +80156,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnionMember1.$Identifier
     >(LazilyResolvedInterfaceUnionMember1, query);
   }
+
   async lazilyResolvedInterfaceUnionMember1s(
     query?: $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnionMember1[]>> {
@@ -79079,6 +80166,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnionMember1.$Identifier
     >(LazilyResolvedInterfaceUnionMember1, query);
   }
+
   async lazilyResolvedInterfaceUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember1.$Filter>,
@@ -79090,6 +80178,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedInterfaceUnionMember2(
     identifier: LazilyResolvedInterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnionMember2>> {
@@ -79099,6 +80188,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedInterfaceUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Promise<
@@ -79109,6 +80199,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnionMember2.$Identifier
     >(LazilyResolvedInterfaceUnionMember2, query);
   }
+
   async lazilyResolvedInterfaceUnionMember2s(
     query?: $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnionMember2[]>> {
@@ -79118,6 +80209,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnionMember2.$Identifier
     >(LazilyResolvedInterfaceUnionMember2, query);
   }
+
   async lazilyResolvedInterfaceUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedInterfaceUnionMember2.$Filter>,
@@ -79129,6 +80221,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedIriIdentifierClass(
     identifier: LazilyResolvedIriIdentifierClass.$Identifier,
   ): Promise<Either<Error, LazilyResolvedIriIdentifierClass>> {
@@ -79138,6 +80231,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedIriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Promise<
@@ -79148,6 +80242,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierClass.$Identifier
     >(LazilyResolvedIriIdentifierClass, query);
   }
+
   async lazilyResolvedIriIdentifierClasses(
     query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierClass[]>> {
@@ -79157,6 +80252,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierClass.$Identifier
     >(LazilyResolvedIriIdentifierClass, query);
   }
+
   async lazilyResolvedIriIdentifierClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedIriIdentifierClass.$Filter>,
@@ -79168,6 +80264,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedIriIdentifierInterface(
     identifier: LazilyResolvedIriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, LazilyResolvedIriIdentifierInterface>> {
@@ -79177,6 +80274,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedIriIdentifierInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Promise<
@@ -79187,6 +80285,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierInterface.$Identifier
     >(LazilyResolvedIriIdentifierInterface, query);
   }
+
   async lazilyResolvedIriIdentifierInterfaces(
     query?: $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedIriIdentifierInterface[]>> {
@@ -79196,6 +80295,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedIriIdentifierInterface.$Identifier
     >(LazilyResolvedIriIdentifierInterface, query);
   }
+
   async lazilyResolvedIriIdentifierInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedIriIdentifierInterface.$Filter>,
@@ -79207,6 +80307,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazyPropertiesClass(
     identifier: LazyPropertiesClass.$Identifier,
   ): Promise<Either<Error, LazyPropertiesClass>> {
@@ -79216,6 +80317,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazyPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesClass.$Identifier[]>> {
@@ -79224,6 +80326,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazyPropertiesClass.$Identifier
     >(LazyPropertiesClass, query);
   }
+
   async lazyPropertiesClasses(
     query?: $SparqlObjectSet.Query<LazyPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesClass[]>> {
@@ -79233,6 +80336,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazyPropertiesClass.$Identifier
     >(LazyPropertiesClass, query);
   }
+
   async lazyPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<LazyPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -79241,6 +80345,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazyPropertiesInterface(
     identifier: LazyPropertiesInterface.$Identifier,
   ): Promise<Either<Error, LazyPropertiesInterface>> {
@@ -79250,6 +80355,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazyPropertiesInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesInterface.$Identifier[]>> {
@@ -79258,6 +80364,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazyPropertiesInterface.$Identifier
     >(LazyPropertiesInterface, query);
   }
+
   async lazyPropertiesInterfaces(
     query?: $SparqlObjectSet.Query<LazyPropertiesInterface.$Filter>,
   ): Promise<Either<Error, readonly LazyPropertiesInterface[]>> {
@@ -79267,6 +80374,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazyPropertiesInterface.$Identifier
     >(LazyPropertiesInterface, query);
   }
+
   async lazyPropertiesInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazyPropertiesInterface.$Filter>,
@@ -79278,6 +80386,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async listPropertiesClass(
     identifier: ListPropertiesClass.$Identifier,
   ): Promise<Either<Error, ListPropertiesClass>> {
@@ -79287,6 +80396,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async listPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ListPropertiesClass.$Identifier[]>> {
@@ -79295,6 +80405,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ListPropertiesClass.$Identifier
     >(ListPropertiesClass, query);
   }
+
   async listPropertiesClasses(
     query?: $SparqlObjectSet.Query<ListPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly ListPropertiesClass[]>> {
@@ -79304,6 +80415,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       ListPropertiesClass.$Identifier
     >(ListPropertiesClass, query);
   }
+
   async listPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<ListPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -79312,6 +80424,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async mutablePropertiesClass(
     identifier: MutablePropertiesClass.$Identifier,
   ): Promise<Either<Error, MutablePropertiesClass>> {
@@ -79321,6 +80434,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async mutablePropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly MutablePropertiesClass.$Identifier[]>> {
@@ -79329,6 +80443,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       MutablePropertiesClass.$Identifier
     >(MutablePropertiesClass, query);
   }
+
   async mutablePropertiesClasses(
     query?: $SparqlObjectSet.Query<MutablePropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly MutablePropertiesClass[]>> {
@@ -79338,6 +80453,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       MutablePropertiesClass.$Identifier
     >(MutablePropertiesClass, query);
   }
+
   async mutablePropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<MutablePropertiesClass.$Filter>,
@@ -79349,6 +80465,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async nonClass(
     identifier: NonClass.$Identifier,
   ): Promise<Either<Error, NonClass>> {
@@ -79356,6 +80473,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.nonClasses({ filter: { $identifier: { in: [identifier] } } })
     ).map((objects) => objects[0]);
   }
+
   async nonClassIdentifiers(
     query?: $SparqlObjectSet.Query<NonClass.$Filter>,
   ): Promise<Either<Error, readonly NonClass.$Identifier[]>> {
@@ -79364,6 +80482,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async nonClasses(
     query?: $SparqlObjectSet.Query<NonClass.$Filter>,
   ): Promise<Either<Error, readonly NonClass[]>> {
@@ -79372,11 +80491,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async nonClassesCount(
     query?: Pick<$SparqlObjectSet.Query<NonClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.$objectsCount<NonClass.$Filter>(NonClass, query);
   }
+
   async noRdfTypeClassUnionMember1(
     identifier: NoRdfTypeClassUnionMember1.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnionMember1>> {
@@ -79386,6 +80507,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async noRdfTypeClassUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember1.$Identifier[]>> {
@@ -79394,6 +80516,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember1.$Identifier
     >(NoRdfTypeClassUnionMember1, query);
   }
+
   async noRdfTypeClassUnionMember1s(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember1[]>> {
@@ -79403,6 +80526,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember1.$Identifier
     >(NoRdfTypeClassUnionMember1, query);
   }
+
   async noRdfTypeClassUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<NoRdfTypeClassUnionMember1.$Filter>,
@@ -79414,6 +80538,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async noRdfTypeClassUnionMember2(
     identifier: NoRdfTypeClassUnionMember2.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnionMember2>> {
@@ -79423,6 +80548,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async noRdfTypeClassUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember2.$Identifier[]>> {
@@ -79431,6 +80557,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember2.$Identifier
     >(NoRdfTypeClassUnionMember2, query);
   }
+
   async noRdfTypeClassUnionMember2s(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnionMember2[]>> {
@@ -79440,6 +80567,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnionMember2.$Identifier
     >(NoRdfTypeClassUnionMember2, query);
   }
+
   async noRdfTypeClassUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<NoRdfTypeClassUnionMember2.$Filter>,
@@ -79451,6 +80579,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async orderedPropertiesClass(
     identifier: OrderedPropertiesClass.$Identifier,
   ): Promise<Either<Error, OrderedPropertiesClass>> {
@@ -79460,6 +80589,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async orderedPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly OrderedPropertiesClass.$Identifier[]>> {
@@ -79468,6 +80598,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       OrderedPropertiesClass.$Identifier
     >(OrderedPropertiesClass, query);
   }
+
   async orderedPropertiesClasses(
     query?: $SparqlObjectSet.Query<OrderedPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly OrderedPropertiesClass[]>> {
@@ -79477,6 +80608,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       OrderedPropertiesClass.$Identifier
     >(OrderedPropertiesClass, query);
   }
+
   async orderedPropertiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<OrderedPropertiesClass.$Filter>,
@@ -79488,6 +80620,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClass(
     identifier: PartialClass.$Identifier,
   ): Promise<Either<Error, PartialClass>> {
@@ -79497,6 +80630,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialClassIdentifiers(
     query?: $SparqlObjectSet.Query<PartialClass.$Filter>,
   ): Promise<Either<Error, readonly PartialClass.$Identifier[]>> {
@@ -79505,6 +80639,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClass.$Identifier
     >(PartialClass, query);
   }
+
   async partialClasses(
     query?: $SparqlObjectSet.Query<PartialClass.$Filter>,
   ): Promise<Either<Error, readonly PartialClass[]>> {
@@ -79514,11 +80649,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClass.$Identifier
     >(PartialClass, query);
   }
+
   async partialClassesCount(
     query?: Pick<$SparqlObjectSet.Query<PartialClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.$objectsCount<PartialClass.$Filter>(PartialClass, query);
   }
+
   async partialClassUnionMember1(
     identifier: PartialClassUnionMember1.$Identifier,
   ): Promise<Either<Error, PartialClassUnionMember1>> {
@@ -79528,6 +80665,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialClassUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember1.$Identifier[]>> {
@@ -79536,6 +80674,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClassUnionMember1.$Identifier
     >(PartialClassUnionMember1, query);
   }
+
   async partialClassUnionMember1s(
     query?: $SparqlObjectSet.Query<PartialClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember1[]>> {
@@ -79545,6 +80684,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClassUnionMember1.$Identifier
     >(PartialClassUnionMember1, query);
   }
+
   async partialClassUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<PartialClassUnionMember1.$Filter>,
@@ -79556,6 +80696,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClassUnionMember2(
     identifier: PartialClassUnionMember2.$Identifier,
   ): Promise<Either<Error, PartialClassUnionMember2>> {
@@ -79565,6 +80706,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialClassUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember2.$Identifier[]>> {
@@ -79573,6 +80715,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClassUnionMember2.$Identifier
     >(PartialClassUnionMember2, query);
   }
+
   async partialClassUnionMember2s(
     query?: $SparqlObjectSet.Query<PartialClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnionMember2[]>> {
@@ -79582,6 +80725,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClassUnionMember2.$Identifier
     >(PartialClassUnionMember2, query);
   }
+
   async partialClassUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<PartialClassUnionMember2.$Filter>,
@@ -79593,6 +80737,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterface(
     identifier: PartialInterface.$Identifier,
   ): Promise<Either<Error, PartialInterface>> {
@@ -79602,6 +80747,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<Either<Error, readonly PartialInterface.$Identifier[]>> {
@@ -79610,6 +80756,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterface.$Identifier
     >(PartialInterface, query);
   }
+
   async partialInterfaces(
     query?: $SparqlObjectSet.Query<PartialInterface.$Filter>,
   ): Promise<Either<Error, readonly PartialInterface[]>> {
@@ -79619,6 +80766,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterface.$Identifier
     >(PartialInterface, query);
   }
+
   async partialInterfacesCount(
     query?: Pick<$SparqlObjectSet.Query<PartialInterface.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -79627,6 +80775,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterfaceUnionMember1(
     identifier: PartialInterfaceUnionMember1.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnionMember1>> {
@@ -79636,6 +80785,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialInterfaceUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<
@@ -79646,6 +80796,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterfaceUnionMember1.$Identifier
     >(PartialInterfaceUnionMember1, query);
   }
+
   async partialInterfaceUnionMember1s(
     query?: $SparqlObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnionMember1[]>> {
@@ -79655,6 +80806,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterfaceUnionMember1.$Identifier
     >(PartialInterfaceUnionMember1, query);
   }
+
   async partialInterfaceUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<PartialInterfaceUnionMember1.$Filter>,
@@ -79666,6 +80818,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterfaceUnionMember2(
     identifier: PartialInterfaceUnionMember2.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnionMember2>> {
@@ -79675,6 +80828,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialInterfaceUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<
@@ -79685,6 +80839,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterfaceUnionMember2.$Identifier
     >(PartialInterfaceUnionMember2, query);
   }
+
   async partialInterfaceUnionMember2s(
     query?: $SparqlObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnionMember2[]>> {
@@ -79694,6 +80849,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterfaceUnionMember2.$Identifier
     >(PartialInterfaceUnionMember2, query);
   }
+
   async partialInterfaceUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<PartialInterfaceUnionMember2.$Filter>,
@@ -79705,6 +80861,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async propertyCardinalitiesClass(
     identifier: PropertyCardinalitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyCardinalitiesClass>> {
@@ -79714,6 +80871,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async propertyCardinalitiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass.$Identifier[]>> {
@@ -79722,6 +80880,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyCardinalitiesClass.$Identifier
     >(PropertyCardinalitiesClass, query);
   }
+
   async propertyCardinalitiesClasses(
     query?: $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyCardinalitiesClass[]>> {
@@ -79731,6 +80890,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyCardinalitiesClass.$Identifier
     >(PropertyCardinalitiesClass, query);
   }
+
   async propertyCardinalitiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<PropertyCardinalitiesClass.$Filter>,
@@ -79742,6 +80902,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async propertyVisibilitiesClass(
     identifier: PropertyVisibilitiesClass.$Identifier,
   ): Promise<Either<Error, PropertyVisibilitiesClass>> {
@@ -79751,6 +80912,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async propertyVisibilitiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyVisibilitiesClass.$Identifier[]>> {
@@ -79759,6 +80921,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyVisibilitiesClass.$Identifier
     >(PropertyVisibilitiesClass, query);
   }
+
   async propertyVisibilitiesClasses(
     query?: $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
   ): Promise<Either<Error, readonly PropertyVisibilitiesClass[]>> {
@@ -79768,6 +80931,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PropertyVisibilitiesClass.$Identifier
     >(PropertyVisibilitiesClass, query);
   }
+
   async propertyVisibilitiesClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<PropertyVisibilitiesClass.$Filter>,
@@ -79779,6 +80943,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async recursiveClassUnionMember1(
     identifier: RecursiveClassUnionMember1.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnionMember1>> {
@@ -79788,6 +80953,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async recursiveClassUnionMember1Identifiers(
     query?: $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember1.$Identifier[]>> {
@@ -79796,6 +80962,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveClassUnionMember1.$Identifier
     >(RecursiveClassUnionMember1, query);
   }
+
   async recursiveClassUnionMember1s(
     query?: $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember1[]>> {
@@ -79805,6 +80972,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveClassUnionMember1.$Identifier
     >(RecursiveClassUnionMember1, query);
   }
+
   async recursiveClassUnionMember1sCount(
     query?: Pick<
       $SparqlObjectSet.Query<RecursiveClassUnionMember1.$Filter>,
@@ -79816,6 +80984,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async recursiveClassUnionMember2(
     identifier: RecursiveClassUnionMember2.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnionMember2>> {
@@ -79825,6 +80994,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async recursiveClassUnionMember2Identifiers(
     query?: $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2.$Identifier[]>> {
@@ -79833,6 +81003,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveClassUnionMember2.$Identifier
     >(RecursiveClassUnionMember2, query);
   }
+
   async recursiveClassUnionMember2s(
     query?: $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnionMember2[]>> {
@@ -79842,6 +81013,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveClassUnionMember2.$Identifier
     >(RecursiveClassUnionMember2, query);
   }
+
   async recursiveClassUnionMember2sCount(
     query?: Pick<
       $SparqlObjectSet.Query<RecursiveClassUnionMember2.$Filter>,
@@ -79853,6 +81025,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async sha256IriIdentifierClass(
     identifier: Sha256IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, Sha256IriIdentifierClass>> {
@@ -79862,6 +81035,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async sha256IriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly Sha256IriIdentifierClass.$Identifier[]>> {
@@ -79870,6 +81044,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       Sha256IriIdentifierClass.$Identifier
     >(Sha256IriIdentifierClass, query);
   }
+
   async sha256IriIdentifierClasses(
     query?: $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly Sha256IriIdentifierClass[]>> {
@@ -79879,6 +81054,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       Sha256IriIdentifierClass.$Identifier
     >(Sha256IriIdentifierClass, query);
   }
+
   async sha256IriIdentifierClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<Sha256IriIdentifierClass.$Filter>,
@@ -79890,6 +81066,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async termPropertiesClass(
     identifier: TermPropertiesClass.$Identifier,
   ): Promise<Either<Error, TermPropertiesClass>> {
@@ -79899,6 +81076,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async termPropertiesClassIdentifiers(
     query?: $SparqlObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly TermPropertiesClass.$Identifier[]>> {
@@ -79907,6 +81085,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       TermPropertiesClass.$Identifier
     >(TermPropertiesClass, query);
   }
+
   async termPropertiesClasses(
     query?: $SparqlObjectSet.Query<TermPropertiesClass.$Filter>,
   ): Promise<Either<Error, readonly TermPropertiesClass[]>> {
@@ -79916,6 +81095,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       TermPropertiesClass.$Identifier
     >(TermPropertiesClass, query);
   }
+
   async termPropertiesClassesCount(
     query?: Pick<$SparqlObjectSet.Query<TermPropertiesClass.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -79924,6 +81104,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async unionDiscriminantsClass(
     identifier: UnionDiscriminantsClass.$Identifier,
   ): Promise<Either<Error, UnionDiscriminantsClass>> {
@@ -79933,6 +81114,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async unionDiscriminantsClassIdentifiers(
     query?: $SparqlObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass.$Identifier[]>> {
@@ -79941,6 +81123,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       UnionDiscriminantsClass.$Identifier
     >(UnionDiscriminantsClass, query);
   }
+
   async unionDiscriminantsClasses(
     query?: $SparqlObjectSet.Query<UnionDiscriminantsClass.$Filter>,
   ): Promise<Either<Error, readonly UnionDiscriminantsClass[]>> {
@@ -79950,6 +81133,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       UnionDiscriminantsClass.$Identifier
     >(UnionDiscriminantsClass, query);
   }
+
   async unionDiscriminantsClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<UnionDiscriminantsClass.$Filter>,
@@ -79961,6 +81145,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async uuidV4IriIdentifierClass(
     identifier: UuidV4IriIdentifierClass.$Identifier,
   ): Promise<Either<Error, UuidV4IriIdentifierClass>> {
@@ -79970,6 +81155,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async uuidV4IriIdentifierClassIdentifiers(
     query?: $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierClass.$Identifier[]>> {
@@ -79978,6 +81164,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       UuidV4IriIdentifierClass.$Identifier
     >(UuidV4IriIdentifierClass, query);
   }
+
   async uuidV4IriIdentifierClasses(
     query?: $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierClass[]>> {
@@ -79987,6 +81174,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       UuidV4IriIdentifierClass.$Identifier
     >(UuidV4IriIdentifierClass, query);
   }
+
   async uuidV4IriIdentifierClassesCount(
     query?: Pick<
       $SparqlObjectSet.Query<UuidV4IriIdentifierClass.$Filter>,
@@ -79998,6 +81186,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async uuidV4IriIdentifierInterface(
     identifier: UuidV4IriIdentifierInterface.$Identifier,
   ): Promise<Either<Error, UuidV4IriIdentifierInterface>> {
@@ -80007,6 +81196,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async uuidV4IriIdentifierInterfaceIdentifiers(
     query?: $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<
@@ -80017,6 +81207,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       UuidV4IriIdentifierInterface.$Identifier
     >(UuidV4IriIdentifierInterface, query);
   }
+
   async uuidV4IriIdentifierInterfaces(
     query?: $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
   ): Promise<Either<Error, readonly UuidV4IriIdentifierInterface[]>> {
@@ -80026,6 +81217,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       UuidV4IriIdentifierInterface.$Identifier
     >(UuidV4IriIdentifierInterface, query);
   }
+
   async uuidV4IriIdentifierInterfacesCount(
     query?: Pick<
       $SparqlObjectSet.Query<UuidV4IriIdentifierInterface.$Filter>,
@@ -80037,6 +81229,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnion(
     identifier: ClassUnion.$Identifier,
   ): Promise<Either<Error, ClassUnion>> {
@@ -80044,6 +81237,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.classUnions({ filter: { $identifier: { in: [identifier] } } })
     ).map((objects) => objects[0]);
   }
+
   async classUnionIdentifiers(
     query?: $SparqlObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<Either<Error, readonly ClassUnion.$Identifier[]>> {
@@ -80052,6 +81246,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async classUnions(
     query?: $SparqlObjectSet.Query<ClassUnion.$Filter>,
   ): Promise<Either<Error, readonly ClassUnion[]>> {
@@ -80061,11 +81256,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       ClassUnion.$Identifier
     >(ClassUnion, query);
   }
+
   async classUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<ClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.$objectsCount<ClassUnion.$Filter>(ClassUnion, query);
   }
+
   async flattenClassUnion(
     identifier: FlattenClassUnion.$Identifier,
   ): Promise<Either<Error, FlattenClassUnion>> {
@@ -80075,6 +81272,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async flattenClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnion.$Identifier[]>> {
@@ -80083,6 +81281,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       FlattenClassUnion.$Identifier
     >(FlattenClassUnion, query);
   }
+
   async flattenClassUnions(
     query?: $SparqlObjectSet.Query<FlattenClassUnion.$Filter>,
   ): Promise<Either<Error, readonly FlattenClassUnion[]>> {
@@ -80092,6 +81291,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       FlattenClassUnion.$Identifier
     >(FlattenClassUnion, query);
   }
+
   async flattenClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<FlattenClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -80100,6 +81300,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async interfaceUnion(
     identifier: InterfaceUnion.$Identifier,
   ): Promise<Either<Error, InterfaceUnion>> {
@@ -80109,6 +81310,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async interfaceUnionIdentifiers(
     query?: $SparqlObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnion.$Identifier[]>> {
@@ -80117,6 +81319,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       InterfaceUnion.$Identifier
     >(InterfaceUnion, query);
   }
+
   async interfaceUnions(
     query?: $SparqlObjectSet.Query<InterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly InterfaceUnion[]>> {
@@ -80126,11 +81329,13 @@ export class $SparqlObjectSet implements $ObjectSet {
       InterfaceUnion.$Identifier
     >(InterfaceUnion, query);
   }
+
   async interfaceUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<InterfaceUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
     return this.$objectsCount<InterfaceUnion.$Filter>(InterfaceUnion, query);
   }
+
   async lazilyResolvedClassUnion(
     identifier: LazilyResolvedClassUnion.$Identifier,
   ): Promise<Either<Error, LazilyResolvedClassUnion>> {
@@ -80140,6 +81345,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnion.$Identifier[]>> {
@@ -80148,6 +81354,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedClassUnion.$Identifier
     >(LazilyResolvedClassUnion, query);
   }
+
   async lazilyResolvedClassUnions(
     query?: $SparqlObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedClassUnion[]>> {
@@ -80157,6 +81364,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedClassUnion.$Identifier
     >(LazilyResolvedClassUnion, query);
   }
+
   async lazilyResolvedClassUnionsCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedClassUnion.$Filter>,
@@ -80168,6 +81376,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async lazilyResolvedInterfaceUnion(
     identifier: LazilyResolvedInterfaceUnion.$Identifier,
   ): Promise<Either<Error, LazilyResolvedInterfaceUnion>> {
@@ -80177,6 +81386,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async lazilyResolvedInterfaceUnionIdentifiers(
     query?: $SparqlObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<
@@ -80187,6 +81397,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnion.$Identifier
     >(LazilyResolvedInterfaceUnion, query);
   }
+
   async lazilyResolvedInterfaceUnions(
     query?: $SparqlObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly LazilyResolvedInterfaceUnion[]>> {
@@ -80196,6 +81407,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       LazilyResolvedInterfaceUnion.$Identifier
     >(LazilyResolvedInterfaceUnion, query);
   }
+
   async lazilyResolvedInterfaceUnionsCount(
     query?: Pick<
       $SparqlObjectSet.Query<LazilyResolvedInterfaceUnion.$Filter>,
@@ -80207,6 +81419,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async noRdfTypeClassUnion(
     identifier: NoRdfTypeClassUnion.$Identifier,
   ): Promise<Either<Error, NoRdfTypeClassUnion>> {
@@ -80216,6 +81429,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async noRdfTypeClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnion.$Identifier[]>> {
@@ -80224,6 +81438,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnion.$Identifier
     >(NoRdfTypeClassUnion, query);
   }
+
   async noRdfTypeClassUnions(
     query?: $SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>,
   ): Promise<Either<Error, readonly NoRdfTypeClassUnion[]>> {
@@ -80233,6 +81448,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       NoRdfTypeClassUnion.$Identifier
     >(NoRdfTypeClassUnion, query);
   }
+
   async noRdfTypeClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<NoRdfTypeClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -80241,6 +81457,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialClassUnion(
     identifier: PartialClassUnion.$Identifier,
   ): Promise<Either<Error, PartialClassUnion>> {
@@ -80250,6 +81467,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnion.$Identifier[]>> {
@@ -80258,6 +81476,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClassUnion.$Identifier
     >(PartialClassUnion, query);
   }
+
   async partialClassUnions(
     query?: $SparqlObjectSet.Query<PartialClassUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialClassUnion[]>> {
@@ -80267,6 +81486,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialClassUnion.$Identifier
     >(PartialClassUnion, query);
   }
+
   async partialClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<PartialClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -80275,6 +81495,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async partialInterfaceUnion(
     identifier: PartialInterfaceUnion.$Identifier,
   ): Promise<Either<Error, PartialInterfaceUnion>> {
@@ -80284,6 +81505,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async partialInterfaceUnionIdentifiers(
     query?: $SparqlObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnion.$Identifier[]>> {
@@ -80292,6 +81514,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterfaceUnion.$Identifier
     >(PartialInterfaceUnion, query);
   }
+
   async partialInterfaceUnions(
     query?: $SparqlObjectSet.Query<PartialInterfaceUnion.$Filter>,
   ): Promise<Either<Error, readonly PartialInterfaceUnion[]>> {
@@ -80301,6 +81524,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       PartialInterfaceUnion.$Identifier
     >(PartialInterfaceUnion, query);
   }
+
   async partialInterfaceUnionsCount(
     query?: Pick<
       $SparqlObjectSet.Query<PartialInterfaceUnion.$Filter>,
@@ -80312,6 +81536,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async recursiveClassUnion(
     identifier: RecursiveClassUnion.$Identifier,
   ): Promise<Either<Error, RecursiveClassUnion>> {
@@ -80321,6 +81546,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       })
     ).map((objects) => objects[0]);
   }
+
   async recursiveClassUnionIdentifiers(
     query?: $SparqlObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnion.$Identifier[]>> {
@@ -80329,6 +81555,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveClassUnion.$Identifier
     >(RecursiveClassUnion, query);
   }
+
   async recursiveClassUnions(
     query?: $SparqlObjectSet.Query<RecursiveClassUnion.$Filter>,
   ): Promise<Either<Error, readonly RecursiveClassUnion[]>> {
@@ -80338,6 +81565,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       RecursiveClassUnion.$Identifier
     >(RecursiveClassUnion, query);
   }
+
   async recursiveClassUnionsCount(
     query?: Pick<$SparqlObjectSet.Query<RecursiveClassUnion.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {
@@ -80346,6 +81574,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async object(
     identifier: $Object.$Identifier,
   ): Promise<Either<Error, $Object>> {
@@ -80353,6 +81582,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       await this.objects({ filter: { $identifier: { in: [identifier] } } })
     ).map((objects) => objects[0]);
   }
+
   async objectIdentifiers(
     query?: $SparqlObjectSet.Query<$Object.$Filter>,
   ): Promise<Either<Error, readonly $Object.$Identifier[]>> {
@@ -80361,6 +81591,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async objects(
     query?: $SparqlObjectSet.Query<$Object.$Filter>,
   ): Promise<Either<Error, readonly $Object[]>> {
@@ -80369,6 +81600,7 @@ export class $SparqlObjectSet implements $ObjectSet {
       query,
     );
   }
+
   async objectsCount(
     query?: Pick<$SparqlObjectSet.Query<$Object.$Filter>, "filter">,
   ): Promise<Either<Error, number>> {

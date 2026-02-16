@@ -36,84 +36,85 @@ export class ${syntheticNamePrefix}RdfjsDatasetObjectSet implements ${syntheticN
     this.resourceSet = new ${imports.ResourceSet}({ dataset });
   }
 
-  ${joinCode([
-    ...[...objectTypes, ...objectUnionTypes].flatMap(
-      (objectType): readonly Code[] => {
-        if (!objectType.features.has("rdf")) {
-          return Object.values(
-            unsupportedObjectSetMethodDeclarations({
-              objectType,
-            }),
-          );
-        }
+  ${joinCode(
+    [
+      ...[...objectTypes, ...objectUnionTypes].flatMap(
+        (objectType): readonly Code[] => {
+          if (!objectType.features.has("rdf")) {
+            return Object.values(
+              unsupportedObjectSetMethodDeclarations({
+                objectType,
+              }),
+            );
+          }
 
-        const methodSignatures = objectSetMethodSignatures({ objectType });
+          const methodSignatures = objectSetMethodSignatures({ objectType });
 
-        const delegatingMethods: Code[] = [
-          // object
-          code`\
+          const delegatingMethods: Code[] = [
+            // object
+            code`\
 async ${methodSignatures.object.name}(${methodSignatures.object.parameters}): ${methodSignatures.object.returnType} {
   return this.${methodSignatures.object.name}Sync(identifier);
 }`,
-          // objectSync
-          code`\
+            // objectSync
+            code`\
 ${methodSignatures.object.name}Sync(${methodSignatures.object.parameters}): ${imports.Either}<Error, ${objectType.name}> {
   return this.${methodSignatures.objects.name}Sync({ filter: { ${syntheticNamePrefix}identifier: { in: [identifier] } } }).map(objects => objects[0]);
 }`,
 
-          // objectIdentifiers
-          code`\
+            // objectIdentifiers
+            code`\
 async ${methodSignatures.objectIdentifiers.name}(${methodSignatures.objectIdentifiers.parameters}): ${methodSignatures.objectIdentifiers.returnType} {
   return this.${methodSignatures.objectIdentifiers.name}Sync(query);
 }`,
-          // objectIdentifiersSync
-          code`\
+            // objectIdentifiersSync
+            code`\
 ${methodSignatures.objectIdentifiers.name}Sync(${methodSignatures.objectIdentifiers.parameters}): ${imports.Either}<Error, readonly ${objectType.identifierTypeAlias}[]> {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.map(object => object.${syntheticNamePrefix}identifier));
 }`,
 
-          // objects
-          code`\
+            // objects
+            code`\
 async ${methodSignatures.objects.name}(${methodSignatures.objects.parameters}): ${methodSignatures.objects.returnType} {
   return this.${methodSignatures.objects.name}Sync(query);
 }`,
-          // objectsSync has per-object type logic, not just forwarding
+            // objectsSync has per-object type logic, not just forwarding
 
-          // objectsCount
-          code`\
+            // objectsCount
+            code`\
 async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.parameters}): ${methodSignatures.objectsCount.returnType} {
   return this.${methodSignatures.objectsCount.name}Sync(query);
 }`,
-          // objectsCountSync
-          code`\
+            // objectsCountSync
+            code`\
 ${methodSignatures.objectsCount.name}Sync(${methodSignatures.objectsCount.parameters}): ${imports.Either}<Error, number> {
   return this.${methodSignatures.objects.name}Sync(query).map(objects => objects.length);
 }`,
-        ];
+          ];
 
-        const runtimeObjectType = (
-          filterFunction: Code,
-          objectType: {
-            descendantFromRdfTypeVariables: readonly Code[];
-            staticModuleName: string;
-            fromRdfTypeVariable: Maybe<Code>;
-          },
-        ): Code => {
-          const fromRdfTypes = objectType.fromRdfTypeVariable
-            .toList()
-            .concat(objectType.descendantFromRdfTypeVariables);
-          return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
-        };
+          const runtimeObjectType = (
+            filterFunction: Code,
+            objectType: {
+              descendantFromRdfTypeVariables: readonly Code[];
+              staticModuleName: string;
+              fromRdfTypeVariable: Maybe<Code>;
+            },
+          ): Code => {
+            const fromRdfTypes = objectType.fromRdfTypeVariable
+              .toList()
+              .concat(objectType.descendantFromRdfTypeVariables);
+            return code`{ ${syntheticNamePrefix}filter: ${filterFunction}, ${syntheticNamePrefix}fromRdf: ${objectType.staticModuleName}.${syntheticNamePrefix}fromRdf, ${syntheticNamePrefix}fromRdfTypes: ${fromRdfTypes.length > 0 ? code`[${joinCode(fromRdfTypes, { on: ", " })}]` : "[]"} }`;
+          };
 
-        switch (objectType.kind) {
-          case "ObjectType": {
-            return delegatingMethods.concat(code`\
+          switch (objectType.kind) {
+            case "ObjectType": {
+              return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>(${runtimeObjectType(objectType.filterFunction, objectType)}, query);
 }`);
-          }
-          case "ObjectUnionType":
-            return delegatingMethods.concat(code`\
+            }
+            case "ObjectUnionType":
+              return delegatingMethods.concat(code`\
 ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${imports.Either}<Error, readonly ${objectType.name}[]> {
   return this.${syntheticNamePrefix}objectUnionsSync<${objectType.name}, ${objectType.filterType}, ${objectType.identifierTypeAlias}>([
     ${joinCode(
@@ -126,16 +127,16 @@ ${methodSignatures.objects.name}Sync(${methodSignatures.objects.parameters}): ${
     )}
   ], query);
 }`);
-          default:
-            objectType satisfies never;
-            return [];
-        }
-      },
-    ),
+            default:
+              objectType satisfies never;
+              return [];
+          }
+        },
+      ),
 
-    ...(objectTypes.length > 0
-      ? [
-          code`\
+      ...(objectTypes.length > 0
+        ? [
+            code`\
 protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectType: ${objectTypeType}, query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${imports.Either}<Error, readonly ObjectT[]> {
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
@@ -214,12 +215,12 @@ protected ${syntheticNamePrefix}objectsSync<${typeParameters.ObjectT}, ${typePar
   }
   return ${imports.Either}.of(objects);
   }`,
-        ]
-      : []),
+          ]
+        : []),
 
-    ...(objectUnionTypes.length > 0
-      ? [
-          code`\
+      ...(objectUnionTypes.length > 0
+        ? [
+            code`\
 protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${typeParameters.ObjectFilterT}, ${typeParameters.ObjectIdentifierT}>(objectTypes: readonly ${objectTypeType}[], query?: ${syntheticNamePrefix}ObjectSet.Query<ObjectFilterT>): ${imports.Either}<Error, readonly ObjectT[]> {
   const limit = query?.limit ?? Number.MAX_SAFE_INTEGER;
   if (limit <= 0) { return ${imports.Either}.of([]); }
@@ -319,8 +320,10 @@ protected ${syntheticNamePrefix}objectUnionsSync<${typeParameters.ObjectT}, ${ty
   }
   return ${imports.Either}.of(objects);
 }`,
-        ]
-      : []),
-  ])}
+          ]
+        : []),
+    ],
+    { on: "\n\n" },
+  )}
 }`;
 }

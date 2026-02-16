@@ -79,6 +79,7 @@ async ${methodSignatures.objectsCount.name}(${methodSignatures.objectsCount.para
       ];
     },
   ),
+  { on: "\n\n" },
 )}
 
   protected ${syntheticNamePrefix}mapBindingsToCount(bindings: readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[], variable: string): ${imports.Either}<Error, number> {

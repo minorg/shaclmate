@@ -70,14 +70,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
 
   @Memoize()
   override get declaration(): Maybe<Code> {
-    const lhs: Code[] = [
-      ...this.comment
-        .alt(this.description)
-        .alt(this.label)
-        .map(tsComment)
-        .map((_) => code`${_}`)
-        .toList(),
-    ];
+    const lhs: Code[] = [];
     if (
       this.objectType.declarationType === "class" &&
       this.visibility !== "public"
@@ -88,7 +81,13 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       lhs.push(code`readonly`);
     }
     lhs.push(code`${this.name}`);
-    return Maybe.of(code`${joinCode(lhs, { on: " " })}: ${this.type.name};`);
+    return Maybe.of(
+      code`${this.comment
+        .alt(this.description)
+        .alt(this.label)
+        .map(tsComment)
+        .orDefault("")}${joinCode(lhs, { on: " " })}: ${this.type.name};`,
+    );
   }
 
   @Memoize()
