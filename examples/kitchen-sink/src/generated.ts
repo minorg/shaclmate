@@ -1,10 +1,10 @@
-import {
-  type BlankNode,
-  type DatasetCore,
+import type {
+  BlankNode,
+  DatasetCore,
   Literal,
   NamedNode,
-  type Quad,
-  type Variable,
+  Quad,
+  Variable,
 } from "@rdfjs/types";
 import { sha256 } from "js-sha256";
 import { StoreFactory as DatasetFactory, DataFactory as dataFactory } from "n3";
@@ -2157,14 +2157,14 @@ export namespace $NamedDefaultPartial {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"$NamedDefaultPartial"'],
@@ -2477,14 +2477,14 @@ export namespace $DefaultPartial {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"$DefaultPartial"'],
@@ -2912,14 +2912,14 @@ export namespace UuidV4IriIdentifierInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: '"uuidv4" as const',
       },
       $identifierPrefix: {
-        kind: '"IdentifierPrefixProperty" as const',
-        name: '"$identifierPrefix"',
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -2927,16 +2927,16 @@ export namespace UuidV4IriIdentifierInterface {
         }),
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UuidV4IriIdentifierInterface"'],
         }),
       },
       uuidV4IriProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"uuidV4IriProperty"',
+        kind: "ShaclProperty" as const,
+        name: "uuidV4IriProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -3423,14 +3423,14 @@ export namespace UuidV4IriIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: '"uuidv4" as const',
       },
       $identifierPrefix: {
-        kind: '"IdentifierPrefixProperty" as const',
-        name: '"$identifierPrefix"',
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -3438,16 +3438,16 @@ export namespace UuidV4IriIdentifierClass {
         }),
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UuidV4IriIdentifierClass"'],
         }),
       },
       uuidV4IriProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"uuidV4IriProperty"',
+        kind: "ShaclProperty" as const,
+        name: "uuidV4IriProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -6629,26 +6629,26 @@ export namespace UnionDiscriminantsClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"UnionDiscriminantsClass"'],
         }),
       },
       optionalClassOrClassOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalClassOrClassOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalClassOrClassOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               "0-ClassUnionMember1": {
                 discriminantValues: ["0-ClassUnionMember1"],
@@ -6674,12 +6674,12 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       optionalIriOrLiteralProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalIriOrLiteralProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalIriOrLiteralProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
@@ -6697,12 +6697,12 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       optionalIriOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalIriOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalIriOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               object: {
                 discriminantValues: ["object"],
@@ -6724,10 +6724,10 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       requiredClassOrClassOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredClassOrClassOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredClassOrClassOrStringProperty",
         type: () => ({
-          kind: '"UnionType" as const',
+          kind: "UnionType" as const,
           members: {
             "0-ClassUnionMember1": {
               discriminantValues: ["0-ClassUnionMember1"],
@@ -6752,10 +6752,10 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       requiredIriOrLiteralProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredIriOrLiteralProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredIriOrLiteralProperty",
         type: () => ({
-          kind: '"UnionType" as const',
+          kind: "UnionType" as const,
           members: {
             NamedNode: {
               discriminantValues: ["NamedNode"],
@@ -6772,10 +6772,10 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       requiredIriOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredIriOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredIriOrStringProperty",
         type: () => ({
-          kind: '"UnionType" as const',
+          kind: "UnionType" as const,
           members: {
             object: {
               discriminantValues: ["object"],
@@ -6796,12 +6796,12 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       setClassOrClassOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setClassOrClassOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setClassOrClassOrStringProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               "0-ClassUnionMember1": {
                 discriminantValues: ["0-ClassUnionMember1"],
@@ -6828,12 +6828,12 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       setIriOrLiteralProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setIriOrLiteralProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setIriOrLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               NamedNode: {
                 discriminantValues: ["NamedNode"],
@@ -6852,12 +6852,12 @@ export namespace UnionDiscriminantsClass {
         ),
       },
       setIriOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setIriOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setIriOrStringProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               object: {
                 discriminantValues: ["object"],
@@ -7239,15 +7239,15 @@ export namespace UnionDiscriminantsClass {
           kind: "UnionType";
           members: {
             readonly "0-ClassUnionMember1": {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: typeof ClassUnionMember1.$schema;
             };
             readonly "1-ClassUnionMember2": {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: typeof ClassUnionMember2.$schema;
             };
             readonly "2-string": {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
           };
@@ -7365,11 +7365,11 @@ export namespace UnionDiscriminantsClass {
           kind: "UnionType";
           members: {
             readonly NamedNode: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $NamedNodeSchema;
             };
             readonly Literal: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $LiteralSchema;
             };
           };
@@ -7449,11 +7449,11 @@ export namespace UnionDiscriminantsClass {
           kind: "UnionType";
           members: {
             readonly object: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $NamedNodeSchema;
             };
             readonly string: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
           };
@@ -7764,15 +7764,15 @@ export namespace UnionDiscriminantsClass {
           kind: "UnionType";
           members: {
             readonly "0-ClassUnionMember1": {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: typeof ClassUnionMember1.$schema;
             };
             readonly "1-ClassUnionMember2": {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: typeof ClassUnionMember2.$schema;
             };
             readonly "2-string": {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
           };
@@ -7890,11 +7890,11 @@ export namespace UnionDiscriminantsClass {
           kind: "UnionType";
           members: {
             readonly NamedNode: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $NamedNodeSchema;
             };
             readonly Literal: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $LiteralSchema;
             };
           };
@@ -7974,11 +7974,11 @@ export namespace UnionDiscriminantsClass {
           kind: "UnionType";
           members: {
             readonly object: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $NamedNodeSchema;
             };
             readonly string: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
           };
@@ -9258,22 +9258,22 @@ export namespace TermPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"TermPropertiesClass"'],
         }),
       },
       blankNodeTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"blankNodeTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "blankNodeTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: { kind: "BlankNodeType" as const },
@@ -9283,8 +9283,8 @@ export namespace TermPropertiesClass {
         ),
       },
       booleanTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"booleanTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "booleanTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -9298,8 +9298,8 @@ export namespace TermPropertiesClass {
         ),
       },
       dateTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -9313,8 +9313,8 @@ export namespace TermPropertiesClass {
         ),
       },
       dateTimeTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateTimeTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateTimeTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -9328,8 +9328,8 @@ export namespace TermPropertiesClass {
         ),
       },
       iriTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"iriTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "iriTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: { kind: "NamedNodeType" as const, in: undefined },
@@ -9337,8 +9337,8 @@ export namespace TermPropertiesClass {
         identifier: dataFactory.namedNode("http://example.com/iriTermProperty"),
       },
       literalTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"literalTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "literalTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: { kind: "LiteralType" as const, languageIn: undefined },
@@ -9348,8 +9348,8 @@ export namespace TermPropertiesClass {
         ),
       },
       numberTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"numberTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "numberTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -9363,8 +9363,8 @@ export namespace TermPropertiesClass {
         ),
       },
       stringTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"stringTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "stringTermProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -9378,17 +9378,17 @@ export namespace TermPropertiesClass {
         ),
       },
       termProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"termProperty"',
+        kind: "ShaclProperty" as const,
+        name: "termProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
-              '"BlankNode" as const',
-              '"Literal" as const',
-              '"NamedNode" as const',
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
             ],
           },
         }),
@@ -10432,14 +10432,14 @@ export namespace Sha256IriIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: '"sha256" as const',
       },
       $identifierPrefix: {
-        kind: '"IdentifierPrefixProperty" as const',
-        name: '"$identifierPrefix"',
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -10447,16 +10447,16 @@ export namespace Sha256IriIdentifierClass {
         }),
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"Sha256IriIdentifierClass"'],
         }),
       },
       sha256IriProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"sha256IriProperty"',
+        kind: "ShaclProperty" as const,
+        name: "sha256IriProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -11014,22 +11014,22 @@ export namespace RecursiveClassUnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"RecursiveClassUnionMember2"'],
         }),
       },
       recursiveClassUnionMember2Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"recursiveClassUnionMember2Property"',
+        kind: "ShaclProperty" as const,
+        name: "recursiveClassUnionMember2Property",
         type: () => ({
           kind: "OptionType" as const,
           item: RecursiveClassUnion.$schema,
@@ -11616,22 +11616,22 @@ export namespace RecursiveClassUnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"RecursiveClassUnionMember1"'],
         }),
       },
       recursiveClassUnionMember1Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"recursiveClassUnionMember1Property"',
+        kind: "ShaclProperty" as const,
+        name: "recursiveClassUnionMember1Property",
         type: () => ({
           kind: "OptionType" as const,
           item: RecursiveClassUnion.$schema,
@@ -12217,22 +12217,22 @@ export namespace PropertyVisibilitiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PropertyVisibilitiesClass"'],
         }),
       },
       privateProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"privateProperty"',
+        kind: "ShaclProperty" as const,
+        name: "privateProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -12241,8 +12241,8 @@ export namespace PropertyVisibilitiesClass {
         identifier: dataFactory.namedNode("http://example.com/privateProperty"),
       },
       protectedProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"protectedProperty"',
+        kind: "ShaclProperty" as const,
+        name: "protectedProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -12253,8 +12253,8 @@ export namespace PropertyVisibilitiesClass {
         ),
       },
       publicProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"publicProperty"',
+        kind: "ShaclProperty" as const,
+        name: "publicProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -13126,22 +13126,22 @@ export namespace PropertyCardinalitiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PropertyCardinalitiesClass"'],
         }),
       },
       emptyStringSetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"emptyStringSetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "emptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
@@ -13156,8 +13156,8 @@ export namespace PropertyCardinalitiesClass {
         ),
       },
       nonEmptyStringSetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"nonEmptyStringSetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "nonEmptyStringSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
@@ -13172,8 +13172,8 @@ export namespace PropertyCardinalitiesClass {
         ),
       },
       optionalStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -13187,8 +13187,8 @@ export namespace PropertyCardinalitiesClass {
         ),
       },
       requiredStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -13908,22 +13908,22 @@ export namespace PartialInterfaceUnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialInterfaceUnionMember2"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -14547,22 +14547,22 @@ export namespace PartialInterfaceUnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialInterfaceUnionMember1"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -15151,22 +15151,22 @@ export namespace PartialClassUnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialClassUnionMember2"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -15753,22 +15753,22 @@ export namespace PartialClassUnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialClassUnionMember1"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -16431,22 +16431,22 @@ export namespace OrderedPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"OrderedPropertiesClass"'],
         }),
       },
       orderedPropertyC: {
-        kind: '"ShaclProperty" as const',
-        name: '"orderedPropertyC"',
+        kind: "ShaclProperty" as const,
+        name: "orderedPropertyC",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -16457,8 +16457,8 @@ export namespace OrderedPropertiesClass {
         ),
       },
       orderedPropertyB: {
-        kind: '"ShaclProperty" as const',
-        name: '"orderedPropertyB"',
+        kind: "ShaclProperty" as const,
+        name: "orderedPropertyB",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -16469,8 +16469,8 @@ export namespace OrderedPropertiesClass {
         ),
       },
       orderedPropertyA: {
-        kind: '"ShaclProperty" as const',
-        name: '"orderedPropertyA"',
+        kind: "ShaclProperty" as const,
+        name: "orderedPropertyA",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -17025,22 +17025,22 @@ export namespace NonClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NonClass"'],
         }),
       },
       nonClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"nonClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "nonClassProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -17485,22 +17485,22 @@ export namespace NoRdfTypeClassUnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NoRdfTypeClassUnionMember2"'],
         }),
       },
       noRdfTypeClassUnionMember2Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"noRdfTypeClassUnionMember2Property"',
+        kind: "ShaclProperty" as const,
+        name: "noRdfTypeClassUnionMember2Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -17965,22 +17965,22 @@ export namespace NoRdfTypeClassUnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"NoRdfTypeClassUnionMember1"'],
         }),
       },
       noRdfTypeClassUnionMember1Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"noRdfTypeClassUnionMember1Property"',
+        kind: "ShaclProperty" as const,
+        name: "noRdfTypeClassUnionMember1Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -18812,14 +18812,14 @@ export namespace MutablePropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"sha256" as const',
       },
       $identifierPrefix: {
-        kind: '"IdentifierPrefixProperty" as const',
-        name: '"$identifierPrefix"',
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -18827,16 +18827,16 @@ export namespace MutablePropertiesClass {
         }),
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"MutablePropertiesClass"'],
         }),
       },
       mutableListProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"mutableListProperty"',
+        kind: "ShaclProperty" as const,
+        name: "mutableListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -18854,8 +18854,8 @@ export namespace MutablePropertiesClass {
         ),
       },
       mutableSetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"mutableSetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "mutableSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
@@ -18870,8 +18870,8 @@ export namespace MutablePropertiesClass {
         ),
       },
       mutableStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"mutableStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "mutableStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -20107,22 +20107,22 @@ export namespace ListPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ListPropertiesClass"'],
         }),
       },
       iriListProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"iriListProperty"',
+        kind: "ShaclProperty" as const,
+        name: "iriListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -20134,8 +20134,8 @@ export namespace ListPropertiesClass {
         identifier: dataFactory.namedNode("http://example.com/iriListProperty"),
       },
       objectListProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"objectListProperty"',
+        kind: "ShaclProperty" as const,
+        name: "objectListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -20149,8 +20149,8 @@ export namespace ListPropertiesClass {
         ),
       },
       stringListProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"stringListProperty"',
+        kind: "ShaclProperty" as const,
+        name: "stringListProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -21142,22 +21142,22 @@ export namespace PartialInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialInterface"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -21442,22 +21442,20 @@ export namespace LazyPropertiesInterface {
           LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
       | LazilyResolvedBlankNodeOrIriIdentifierInterface;
-    readonly setLazyToResolvedInterfaceProperty:
+    readonly setLazyToResolvedInterfaceProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
-      | undefined;
-    readonly setPartialInterfaceToResolvedInterfaceProperty:
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[];
+    readonly setPartialInterfaceToResolvedInterfaceProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierInterface.$Identifier,
           PartialInterface,
           LazilyResolvedBlankNodeOrIriIdentifierInterface
         >
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[]
-      | undefined;
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierInterface[];
   }): LazyPropertiesInterface {
     let $identifier: LazyPropertiesInterface.$Identifier;
     if (typeof parameters.$identifier === "object") {
@@ -23871,22 +23869,22 @@ export namespace LazyPropertiesInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazyPropertiesInterface"'],
         }),
       },
       optionalLazyToResolvedInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalLazyToResolvedInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -23903,8 +23901,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       optionalLazyToResolvedInterfaceUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalLazyToResolvedInterfaceUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -23921,8 +23919,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       optionalLazyToResolvedIriIdentifierInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalLazyToResolvedIriIdentifierInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyToResolvedIriIdentifierInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -23939,8 +23937,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       optionalPartialInterfaceToResolvedInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalPartialInterfaceToResolvedInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -23957,8 +23955,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       optionalPartialInterfaceToResolvedInterfaceUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalPartialInterfaceToResolvedInterfaceUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalPartialInterfaceToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -23975,8 +23973,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalPartialInterfaceUnionToResolvedInterfaceUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -23993,8 +23991,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       requiredLazyToResolvedInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredLazyToResolvedInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partialType: $DefaultPartial.$schema,
@@ -24005,8 +24003,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       requiredPartialInterfaceToResolvedInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredPartialInterfaceToResolvedInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partialType: PartialInterface.$schema,
@@ -24017,8 +24015,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       setLazyToResolvedInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setLazyToResolvedInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setLazyToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partialType: {
@@ -24037,8 +24035,8 @@ export namespace LazyPropertiesInterface {
         ),
       },
       setPartialInterfaceToResolvedInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setPartialInterfaceToResolvedInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setPartialInterfaceToResolvedInterfaceProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partialType: {
@@ -25408,22 +25406,22 @@ export namespace PartialClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"PartialClass"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -25699,22 +25697,20 @@ export class LazyPropertiesClass {
           LazilyResolvedBlankNodeOrIriIdentifierClass
         >
       | LazilyResolvedBlankNodeOrIriIdentifierClass;
-    readonly setLazyToResolvedClassProperty:
+    readonly setLazyToResolvedClassProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           $DefaultPartial,
           LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]
-      | undefined;
-    readonly setPartialClassToResolvedClassProperty:
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[];
+    readonly setPartialClassToResolvedClassProperty?:
       | $LazyObjectSet<
           LazilyResolvedBlankNodeOrIriIdentifierClass.$Identifier,
           PartialClass,
           LazilyResolvedBlankNodeOrIriIdentifierClass
         >
-      | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[]
-      | undefined;
+      | readonly LazilyResolvedBlankNodeOrIriIdentifierClass[];
   }) {
     if (typeof parameters.$identifier === "object") {
       this._$identifier = parameters.$identifier;
@@ -27943,22 +27939,22 @@ export namespace LazyPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazyPropertiesClass"'],
         }),
       },
       optionalLazyToResolvedClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalLazyToResolvedClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -27975,8 +27971,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       optionalLazyToResolvedClassUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalLazyToResolvedClassUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -27993,8 +27989,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       optionalLazyToResolvedIriIdentifierClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalLazyToResolvedIriIdentifierClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalLazyToResolvedIriIdentifierClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -28011,8 +28007,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       optionalPartialClassToResolvedClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalPartialClassToResolvedClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -28029,8 +28025,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       optionalPartialClassToResolvedClassUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalPartialClassToResolvedClassUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalPartialClassToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -28047,8 +28043,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       optionalPartialClassUnionToResolvedClassUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"optionalPartialClassUnionToResolvedClassUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "optionalPartialClassUnionToResolvedClassUnionProperty",
         type: () => ({
           kind: "LazyObjectOptionType" as const,
           partialType: {
@@ -28065,8 +28061,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       requiredLazyToResolvedClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredLazyToResolvedClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partialType: $DefaultPartial.$schema,
@@ -28077,8 +28073,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       requiredPartialClassToResolvedClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"requiredPartialClassToResolvedClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "requiredPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectType" as const,
           partialType: PartialClass.$schema,
@@ -28089,8 +28085,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       setLazyToResolvedClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setLazyToResolvedClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setLazyToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partialType: {
@@ -28109,8 +28105,8 @@ export namespace LazyPropertiesClass {
         ),
       },
       setPartialClassToResolvedClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"setPartialClassToResolvedClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "setPartialClassToResolvedClassProperty",
         type: () => ({
           kind: "LazyObjectSetType" as const,
           partialType: {
@@ -29521,22 +29517,22 @@ export namespace LazilyResolvedIriIdentifierInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedIriIdentifierInterface"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -30005,22 +30001,22 @@ export namespace LazilyResolvedIriIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedIriIdentifierClass"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -30562,22 +30558,22 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedInterfaceUnionMember2"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -31206,22 +31202,22 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedInterfaceUnionMember1"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -31813,22 +31809,22 @@ export namespace LazilyResolvedClassUnionMember2 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedClassUnionMember2"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -32420,22 +32416,22 @@ export namespace LazilyResolvedClassUnionMember1 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedClassUnionMember1"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -33076,22 +33072,22 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedBlankNodeOrIriIdentifierInterface"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -33693,22 +33689,22 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LazilyResolvedBlankNodeOrIriIdentifierClass"'],
         }),
       },
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -34293,8 +34289,8 @@ export namespace LanguageInPropertiesClass {
                 default:
                   return Left(
                     new Resource.MistypedTermValueError({
-                      actualValue: "literalValue",
-                      expectedValueType: Literal,
+                      actualValue: literalValue,
+                      expectedValueType: "Literal",
                       focusResource: $parameters.resource,
                       predicate:
                         LanguageInPropertiesClass.$schema.properties
@@ -34343,22 +34339,22 @@ export namespace LanguageInPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"LanguageInPropertiesClass"'],
         }),
       },
       languageInLiteralProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"languageInLiteralProperty"',
+        kind: "ShaclProperty" as const,
+        name: "languageInLiteralProperty",
         type: () => ({
           kind: "SetType" as const,
           item: { kind: "LiteralType" as const, languageIn: ['"en"', '"fr"'] },
@@ -35039,26 +35035,26 @@ export namespace JsPrimitiveUnionPropertyClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"JsPrimitiveUnionPropertyClass"'],
         }),
       },
       jsPrimitiveUnionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"jsPrimitiveUnionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "jsPrimitiveUnionProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               boolean: {
                 discriminantValues: ["boolean"],
@@ -35306,15 +35302,15 @@ export namespace JsPrimitiveUnionPropertyClass {
           kind: "UnionType";
           members: {
             readonly boolean: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $BooleanSchema;
             };
             readonly number: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $NumberSchema;
             };
             readonly string: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
           };
@@ -35696,14 +35692,14 @@ export namespace IriIdentifierInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IriIdentifierInterface"'],
@@ -36161,14 +36157,14 @@ export namespace IriIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IriIdentifierClass"'],
@@ -36362,11 +36358,22 @@ export interface InterfaceUnionMemberCommonParent {
 
 export namespace InterfaceUnionMemberCommonParentStatic {
   export function $create(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly interfaceUnionMemberCommonParentProperty: string;
-  }): Omit<InterfaceUnionMemberCommonParent, "$identifier" | "$type"> {
+  }): Omit<InterfaceUnionMemberCommonParent, "$type"> {
+    let $identifier: InterfaceUnionMemberCommonParentStatic.$Identifier;
+    if (typeof parameters.$identifier === "object") {
+      $identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      $identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+      $identifier = dataFactory.blankNode();
+    } else {
+      $identifier = parameters.$identifier satisfies never;
+    }
     const interfaceUnionMemberCommonParentProperty =
       parameters.interfaceUnionMemberCommonParentProperty;
-    return { interfaceUnionMemberCommonParentProperty };
+    return { $identifier, interfaceUnionMemberCommonParentProperty };
   }
 
   export function $equals(
@@ -36634,14 +36641,14 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: [
             '"InterfaceUnionMember1"',
@@ -36651,8 +36658,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
         }),
       },
       interfaceUnionMemberCommonParentProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"interfaceUnionMemberCommonParentProperty"',
+        kind: "ShaclProperty" as const,
+        name: "interfaceUnionMemberCommonParentProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -37182,8 +37189,8 @@ export namespace InterfaceUnionMember2 {
     properties: {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
       interfaceUnionMember2Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"interfaceUnionMember2Property"',
+        kind: "ShaclProperty" as const,
+        name: "interfaceUnionMember2Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -37804,8 +37811,8 @@ export namespace InterfaceUnionMember1 {
     properties: {
       ...InterfaceUnionMemberCommonParentStatic.$schema.properties,
       interfaceUnionMember1Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"interfaceUnionMember1Property"',
+        kind: "ShaclProperty" as const,
+        name: "interfaceUnionMember1Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -38362,22 +38369,22 @@ export namespace Interface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"Interface"'],
         }),
       },
       interfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"interfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "interfaceProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -38908,22 +38915,22 @@ export namespace IndirectRecursiveHelperClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IndirectRecursiveHelperClass"'],
         }),
       },
       indirectRecursiveProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"indirectRecursiveProperty"',
+        kind: "ShaclProperty" as const,
+        name: "indirectRecursiveProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: IndirectRecursiveClass.$schema,
@@ -39509,22 +39516,22 @@ export namespace IndirectRecursiveClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"IndirectRecursiveClass"'],
         }),
       },
       indirectRecursiveHelperProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"indirectRecursiveHelperProperty"',
+        kind: "ShaclProperty" as const,
+        name: "indirectRecursiveHelperProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: IndirectRecursiveHelperClass.$schema,
@@ -40335,7 +40342,7 @@ export namespace InPropertiesClass {
                   ? Either.of<Error, true>(primitiveValue)
                   : Left<Error, true>(
                       new Resource.MistypedTermValueError({
-                        actualValue: "value.toTerm()",
+                        actualValue: value.toTerm(),
                         expectedValueType: "true",
                         focusResource: $parameters.resource,
                         predicate:
@@ -40437,10 +40444,8 @@ export namespace InPropertiesClass {
                             >(
                               new Resource.MistypedTermValueError({
                                 actualValue: iri,
-                                expectedValueType: NamedNode<
-                                  | "http://example.com/InPropertiesIri1"
-                                  | "http://example.com/InPropertiesIri2"
-                                >,
+                                expectedValueType:
+                                  'NamedNode<"http://example.com/InPropertiesIri1" | "http://example.com/InPropertiesIri2">',
                                 focusResource: $parameters.resource,
                                 predicate:
                                   InPropertiesClass.$schema.properties
@@ -40487,7 +40492,7 @@ export namespace InPropertiesClass {
                               default:
                                 return Left<Error, 1 | 2>(
                                   new Resource.MistypedTermValueError({
-                                    actualValue: "value.toTerm()",
+                                    actualValue: value.toTerm(),
                                     expectedValueType: "1 | 2",
                                     focusResource: $parameters.resource,
                                     predicate:
@@ -40541,7 +40546,7 @@ export namespace InPropertiesClass {
                                   default:
                                     return Left<Error, "text" | "html">(
                                       new Resource.MistypedTermValueError({
-                                        actualValue: "value.toTerm()",
+                                        actualValue: value.toTerm(),
                                         expectedValueType: '"text" | "html"',
                                         focusResource: $parameters.resource,
                                         predicate:
@@ -40586,22 +40591,22 @@ export namespace InPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"InPropertiesClass"'],
         }),
       },
       inBooleansProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"inBooleansProperty"',
+        kind: "ShaclProperty" as const,
+        name: "inBooleansProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -40615,14 +40620,14 @@ export namespace InPropertiesClass {
         ),
       },
       inDateTimesProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"inDateTimesProperty"',
+        kind: "ShaclProperty" as const,
+        name: "inDateTimesProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
             kind: "DateTimeType" as const,
             languageIn: undefined,
-            in: ['new Date("2018-04-09T10:00:00.000Z")'],
+            in: [new Date("2018-04-09T10:00:00.000Z")],
           },
         }),
         identifier: dataFactory.namedNode(
@@ -40630,8 +40635,8 @@ export namespace InPropertiesClass {
         ),
       },
       inIrisProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"inIrisProperty"',
+        kind: "ShaclProperty" as const,
+        name: "inIrisProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -40645,8 +40650,8 @@ export namespace InPropertiesClass {
         identifier: dataFactory.namedNode("http://example.com/inIrisProperty"),
       },
       inNumbersProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"inNumbersProperty"',
+        kind: "ShaclProperty" as const,
+        name: "inNumbersProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: { kind: "IntType" as const, languageIn: undefined, in: [1, 2] },
@@ -40656,8 +40661,8 @@ export namespace InPropertiesClass {
         ),
       },
       inStringsProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"inStringsProperty"',
+        kind: "ShaclProperty" as const,
+        name: "inStringsProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -41570,8 +41575,8 @@ export namespace InIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({
           kind: "NamedNodeType" as const,
           in: [
@@ -41582,16 +41587,16 @@ export namespace InIdentifierClass {
         identifierMintingStrategy: undefined,
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"InIdentifierClass"'],
         }),
       },
       inIdentifierProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"inIdentifierProperty"',
+        kind: "ShaclProperty" as const,
+        name: "inIdentifierProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
@@ -41854,7 +41859,18 @@ export abstract class IdentifierOverride1Class {
     | "IdentifierOverride4Class"
     | "IdentifierOverride5Class";
   readonly identifierOverrideProperty: string;
-  constructor(parameters: { readonly identifierOverrideProperty: string }) {
+  constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
+    readonly identifierOverrideProperty: string;
+  }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
     this.identifierOverrideProperty = parameters.identifierOverrideProperty;
   }
   get $identifier(): IdentifierOverride1ClassStatic.$Identifier {
@@ -42107,14 +42123,14 @@ export namespace IdentifierOverride1ClassStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: [
             '"IdentifierOverride3Class"',
@@ -42125,8 +42141,8 @@ export namespace IdentifierOverride1ClassStatic {
         }),
       },
       identifierOverrideProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"identifierOverrideProperty"',
+        kind: "ShaclProperty" as const,
+        name: "identifierOverrideProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -44298,30 +44314,30 @@ export namespace HasValuePropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"HasValuePropertiesClass"'],
         }),
       },
       hasIriValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"hasIriValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "hasIriValueProperty",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifier: dataFactory.namedNode(
           "http://example.com/hasIriValueProperty",
         ),
       },
       hasLiteralValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"hasLiteralValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "hasLiteralValueProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -44886,22 +44902,22 @@ export namespace FlattenClassUnionMember3 {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"FlattenClassUnionMember3"'],
         }),
       },
       flattenClassUnionMember3Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"flattenClassUnionMember3Property"',
+        kind: "ShaclProperty" as const,
+        name: "flattenClassUnionMember3Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -45526,22 +45542,22 @@ export namespace ExternClassPropertyClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ExternClassPropertyClass"'],
         }),
       },
       externClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"externClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "externClassProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: ExternClass.$schema,
@@ -45840,8 +45856,17 @@ export abstract class AbstractBaseClassForExternClass {
   abstract readonly $type: "ExternClass";
   readonly abstractBaseClassForExternClassProperty: string;
   constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly abstractBaseClassForExternClassProperty: string;
   }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
     this.abstractBaseClassForExternClassProperty =
       parameters.abstractBaseClassForExternClassProperty;
   }
@@ -46093,22 +46118,22 @@ export namespace AbstractBaseClassForExternClassStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: ['"ExternClass"'],
           ownValues: undefined,
         }),
       },
       abstractBaseClassForExternClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"abstractBaseClassForExternClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "abstractBaseClassForExternClassProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -46615,22 +46640,22 @@ export namespace ExplicitRdfTypeClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ExplicitRdfTypeClass"'],
         }),
       },
       explicitRdfTypeProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"explicitRdfTypeProperty"',
+        kind: "ShaclProperty" as const,
+        name: "explicitRdfTypeProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -47232,22 +47257,22 @@ export namespace ExplicitFromToRdfTypesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ExplicitFromToRdfTypesClass"'],
         }),
       },
       explicitFromToRdfTypesProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"explicitFromToRdfTypesProperty"',
+        kind: "ShaclProperty" as const,
+        name: "explicitFromToRdfTypesProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -47881,22 +47906,22 @@ export namespace DirectRecursiveClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"DirectRecursiveClass"'],
         }),
       },
       directRecursiveProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"directRecursiveProperty"',
+        kind: "ShaclProperty" as const,
+        name: "directRecursiveProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: DirectRecursiveClass.$schema,
@@ -48939,14 +48964,14 @@ export namespace DefaultValuePropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"sha256" as const',
       },
       $identifierPrefix: {
-        kind: '"IdentifierPrefixProperty" as const',
-        name: '"$identifierPrefix"',
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -48954,16 +48979,16 @@ export namespace DefaultValuePropertiesClass {
         }),
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"DefaultValuePropertiesClass"'],
         }),
       },
       dateDefaultValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateDefaultValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
           item: {
@@ -48981,8 +49006,8 @@ export namespace DefaultValuePropertiesClass {
         ),
       },
       dateTimeDefaultValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateTimeDefaultValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateTimeDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
           item: {
@@ -49000,8 +49025,8 @@ export namespace DefaultValuePropertiesClass {
         ),
       },
       falseBooleanDefaultValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"falseBooleanDefaultValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "falseBooleanDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
           item: {
@@ -49019,8 +49044,8 @@ export namespace DefaultValuePropertiesClass {
         ),
       },
       numberDefaultValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"numberDefaultValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "numberDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
           item: {
@@ -49035,8 +49060,8 @@ export namespace DefaultValuePropertiesClass {
         ),
       },
       stringDefaultValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"stringDefaultValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "stringDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
           item: {
@@ -49051,8 +49076,8 @@ export namespace DefaultValuePropertiesClass {
         ),
       },
       trueBooleanDefaultValueProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"trueBooleanDefaultValueProperty"',
+        kind: "ShaclProperty" as const,
+        name: "trueBooleanDefaultValueProperty",
         type: () => ({
           kind: "DefaultValueType" as const,
           item: {
@@ -50971,26 +50996,26 @@ export namespace DateUnionPropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"DateUnionPropertiesClass"'],
         }),
       },
       dateOrDateTimeProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateOrDateTimeProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateOrDateTimeProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               date: {
                 discriminantValues: ["date"],
@@ -51016,12 +51041,12 @@ export namespace DateUnionPropertiesClass {
         ),
       },
       dateOrStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateOrStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateOrStringProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               date: {
                 discriminantValues: ["date"],
@@ -51047,12 +51072,12 @@ export namespace DateUnionPropertiesClass {
         ),
       },
       dateTimeOrDateProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"dateTimeOrDateProperty"',
+        kind: "ShaclProperty" as const,
+        name: "dateTimeOrDateProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               dateTime: {
                 discriminantValues: ["dateTime"],
@@ -51078,12 +51103,12 @@ export namespace DateUnionPropertiesClass {
         ),
       },
       stringOrDateProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"stringOrDateProperty"',
+        kind: "ShaclProperty" as const,
+        name: "stringOrDateProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
-            kind: '"UnionType" as const',
+            kind: "UnionType" as const,
             members: {
               string: {
                 discriminantValues: ["string"],
@@ -51367,11 +51392,11 @@ export namespace DateUnionPropertiesClass {
           kind: "UnionType";
           members: {
             readonly date: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $DateSchema;
             };
             readonly dateTime: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $DateSchema;
             };
           };
@@ -51451,11 +51476,11 @@ export namespace DateUnionPropertiesClass {
           kind: "UnionType";
           members: {
             readonly date: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $DateSchema;
             };
             readonly string: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
           };
@@ -51535,11 +51560,11 @@ export namespace DateUnionPropertiesClass {
           kind: "UnionType";
           members: {
             readonly dateTime: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $DateSchema;
             };
             readonly date: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $DateSchema;
             };
           };
@@ -51619,11 +51644,11 @@ export namespace DateUnionPropertiesClass {
           kind: "UnionType";
           members: {
             readonly string: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $StringSchema;
             };
             readonly date: {
-              discriminantValues: "readonly string[]";
+              discriminantValues: readonly string[];
               type: $DateSchema;
             };
           };
@@ -53610,22 +53635,22 @@ export namespace ConvertibleTypePropertiesClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"ConvertibleTypePropertiesClass"'],
         }),
       },
       convertibleIriNonEmptySetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleIriNonEmptySetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleIriNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: { kind: "NamedNodeType" as const, in: undefined },
@@ -53636,8 +53661,8 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleIriOptionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleIriOptionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleIriOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: { kind: "NamedNodeType" as const, in: undefined },
@@ -53647,16 +53672,16 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleIriProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleIriProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleIriProperty",
         type: () => ({ kind: "NamedNodeType" as const, in: undefined }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleIriProperty",
         ),
       },
       convertibleIriSetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleIriSetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleIriSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: { kind: "NamedNodeType" as const, in: undefined },
@@ -53667,8 +53692,8 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleLiteralNonEmptySetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleLiteralNonEmptySetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleLiteralNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: { kind: "LiteralType" as const, languageIn: undefined },
@@ -53679,8 +53704,8 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleLiteralOptionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleLiteralOptionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleLiteralOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: { kind: "LiteralType" as const, languageIn: undefined },
@@ -53690,16 +53715,16 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleLiteralProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleLiteralProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleLiteralProperty",
         type: () => ({ kind: "LiteralType" as const, languageIn: undefined }),
         identifier: dataFactory.namedNode(
           "http://example.com/convertibleLiteralProperty",
         ),
       },
       convertibleLiteralSetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleLiteralSetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleLiteralSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: { kind: "LiteralType" as const, languageIn: undefined },
@@ -53710,17 +53735,17 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleTermNonEmptySetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleTermNonEmptySetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleTermNonEmptySetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
-              '"BlankNode" as const',
-              '"Literal" as const',
-              '"NamedNode" as const',
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
             ],
           },
           minCount: 1,
@@ -53730,17 +53755,17 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleTermOptionProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleTermOptionProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleTermOptionProperty",
         type: () => ({
           kind: "OptionType" as const,
           item: {
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
-              '"BlankNode" as const',
-              '"Literal" as const',
-              '"NamedNode" as const',
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
             ],
           },
         }),
@@ -53749,15 +53774,15 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleTermProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleTermProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleTermProperty",
         type: () => ({
           kind: "TermType" as const,
           in: undefined,
           nodeKinds: [
-            '"BlankNode" as const',
-            '"Literal" as const',
-            '"NamedNode" as const',
+            "BlankNode" as const,
+            "Literal" as const,
+            "NamedNode" as const,
           ],
         }),
         identifier: dataFactory.namedNode(
@@ -53765,17 +53790,17 @@ export namespace ConvertibleTypePropertiesClass {
         ),
       },
       convertibleTermSetProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"convertibleTermSetProperty"',
+        kind: "ShaclProperty" as const,
+        name: "convertibleTermSetProperty",
         type: () => ({
           kind: "SetType" as const,
           item: {
             kind: "TermType" as const,
             in: undefined,
             nodeKinds: [
-              '"BlankNode" as const',
-              '"Literal" as const',
-              '"NamedNode" as const',
+              "BlankNode" as const,
+              "Literal" as const,
+              "NamedNode" as const,
             ],
           },
           minCount: 0,
@@ -55101,14 +55126,14 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: [
             '"BaseInterfaceWithoutProperties"',
@@ -55119,8 +55144,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
         }),
       },
       baseInterfaceWithPropertiesProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"baseInterfaceWithPropertiesProperty"',
+        kind: "ShaclProperty" as const,
+        name: "baseInterfaceWithPropertiesProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -56291,8 +56316,8 @@ export namespace ConcreteParentInterfaceStatic {
     properties: {
       ...BaseInterfaceWithoutPropertiesStatic.$schema.properties,
       concreteParentInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"concreteParentInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "concreteParentInterfaceProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -56936,8 +56961,8 @@ export namespace ConcreteChildInterface {
     properties: {
       ...ConcreteParentInterfaceStatic.$schema.properties,
       concreteChildInterfaceProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"concreteChildInterfaceProperty"',
+        kind: "ShaclProperty" as const,
+        name: "concreteChildInterfaceProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -57211,9 +57236,18 @@ export abstract class AbstractBaseClassWithProperties {
   abstract readonly $type: "ConcreteChildClass" | "ConcreteParentClass";
   readonly abstractBaseClassWithPropertiesProperty: string;
   constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly $identifierPrefix?: string;
     readonly abstractBaseClassWithPropertiesProperty: string;
   }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
     this._$identifierPrefix = parameters.$identifierPrefix;
     this.abstractBaseClassWithPropertiesProperty =
       parameters.abstractBaseClassWithPropertiesProperty;
@@ -57485,14 +57519,14 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"sha256" as const',
       },
       $identifierPrefix: {
-        kind: '"IdentifierPrefixProperty" as const',
-        name: '"$identifierPrefix"',
+        kind: "IdentifierPrefixProperty" as const,
+        name: "$identifierPrefix",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -57500,16 +57534,16 @@ export namespace AbstractBaseClassWithPropertiesStatic {
         }),
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: ['"ConcreteChildClass"', '"ConcreteParentClass"'],
           ownValues: undefined,
         }),
       },
       abstractBaseClassWithPropertiesProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"abstractBaseClassWithPropertiesProperty"',
+        kind: "ShaclProperty" as const,
+        name: "abstractBaseClassWithPropertiesProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -58273,8 +58307,8 @@ export namespace ConcreteParentClassStatic {
     properties: {
       ...AbstractBaseClassWithoutPropertiesStatic.$schema.properties,
       concreteParentClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"concreteParentClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "concreteParentClassProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -58876,8 +58910,8 @@ export namespace ConcreteChildClass {
     properties: {
       ...ConcreteParentClassStatic.$schema.properties,
       concreteChildClassProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"concreteChildClassProperty"',
+        kind: "ShaclProperty" as const,
+        name: "concreteChildClassProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -59138,8 +59172,17 @@ export abstract class ClassUnionMemberCommonParent {
   abstract readonly $type: "ClassUnionMember1" | "ClassUnionMember2";
   readonly classUnionMemberCommonParentProperty: string;
   constructor(parameters: {
+    readonly $identifier?: (BlankNode | NamedNode) | string;
     readonly classUnionMemberCommonParentProperty: string;
   }) {
+    if (typeof parameters.$identifier === "object") {
+      this._$identifier = parameters.$identifier;
+    } else if (typeof parameters.$identifier === "string") {
+      this._$identifier = dataFactory.namedNode(parameters.$identifier);
+    } else if (typeof parameters.$identifier === "undefined") {
+    } else {
+      this._$identifier = parameters.$identifier satisfies never;
+    }
     this.classUnionMemberCommonParentProperty =
       parameters.classUnionMemberCommonParentProperty;
   }
@@ -59392,22 +59435,22 @@ export namespace ClassUnionMemberCommonParentStatic {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: ['"ClassUnionMember1"', '"ClassUnionMember2"'],
           ownValues: undefined,
         }),
       },
       classUnionMemberCommonParentProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"classUnionMemberCommonParentProperty"',
+        kind: "ShaclProperty" as const,
+        name: "classUnionMemberCommonParentProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -59880,8 +59923,8 @@ export namespace ClassUnionMember2 {
     properties: {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
       classUnionMember2Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"classUnionMember2Property"',
+        kind: "ShaclProperty" as const,
+        name: "classUnionMember2Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -60440,8 +60483,8 @@ export namespace ClassUnionMember1 {
     properties: {
       ...ClassUnionMemberCommonParentStatic.$schema.properties,
       classUnionMember1Property: {
-        kind: '"ShaclProperty" as const',
-        name: '"classUnionMember1Property"',
+        kind: "ShaclProperty" as const,
+        name: "classUnionMember1Property",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -60994,14 +61037,14 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeOrIriIdentifierInterface"'],
@@ -61462,14 +61505,14 @@ export namespace BlankNodeOrIriIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "IdentifierType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeOrIriIdentifierClass"'],
@@ -61957,14 +62000,14 @@ export namespace BlankNodeIdentifierInterface {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "BlankNodeType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeIdentifierInterface"'],
@@ -62428,14 +62471,14 @@ export namespace BlankNodeIdentifierClass {
   export const $schema = {
     properties: {
       $identifier: {
-        kind: '"IdentifierProperty" as const',
-        name: '"$identifier"',
+        kind: "IdentifierProperty" as const,
+        name: "$identifier",
         type: () => ({ kind: "BlankNodeType" as const }),
         identifierMintingStrategy: '"blankNode" as const',
       },
       $type: {
-        kind: '"TypeDiscriminantProperty" as const',
-        name: '"$type"',
+        kind: "TypeDiscriminantProperty" as const,
+        name: "$type",
         type: () => ({
           descendantValues: undefined,
           ownValues: ['"BlankNodeIdentifierClass"'],
@@ -62751,8 +62794,8 @@ export namespace ClassUnion {
   export const $schema = {
     properties: {
       classUnionMemberCommonParentProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"classUnionMemberCommonParentProperty"',
+        kind: "ShaclProperty" as const,
+        name: "classUnionMemberCommonParentProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -63455,8 +63498,8 @@ export namespace InterfaceUnion {
   export const $schema = {
     properties: {
       interfaceUnionMemberCommonParentProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"interfaceUnionMemberCommonParentProperty"',
+        kind: "ShaclProperty" as const,
+        name: "interfaceUnionMemberCommonParentProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -63810,8 +63853,8 @@ export namespace LazilyResolvedClassUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -64204,8 +64247,8 @@ export namespace LazilyResolvedInterfaceUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -64563,8 +64606,8 @@ export namespace PartialClassUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
@@ -64924,8 +64967,8 @@ export namespace PartialInterfaceUnion {
   export const $schema = {
     properties: {
       lazilyResolvedStringProperty: {
-        kind: '"ShaclProperty" as const',
-        name: '"lazilyResolvedStringProperty"',
+        kind: "ShaclProperty" as const,
+        name: "lazilyResolvedStringProperty",
         type: () => ({
           kind: "StringType" as const,
           languageIn: undefined,
