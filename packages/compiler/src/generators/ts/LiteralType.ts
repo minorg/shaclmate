@@ -1,10 +1,8 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
-
-import { type Code, code } from "ts-poet";
-
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class LiteralType extends AbstractLiteralType {
   override readonly filterFunction = code`${snippets.filterLiteral}`;

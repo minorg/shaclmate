@@ -1,8 +1,8 @@
 import { rdf } from "@tpluscode/rdf-ns-builders";
-import { code, conditionalOutput } from "ts-poet";
 import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
 import { snippets_CollectionSchema } from "./snippets_CollectionSchema.js";
 import { snippets_SparqlPattern } from "./snippets_SparqlPattern.js";

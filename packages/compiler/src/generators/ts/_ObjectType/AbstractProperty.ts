@@ -1,10 +1,9 @@
 import type { Maybe } from "purify-ts";
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { Type } from "../Type.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,

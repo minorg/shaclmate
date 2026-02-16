@@ -1,6 +1,6 @@
-import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function filterTypeDeclaration(this: ObjectUnionType): Code {
   return code`\

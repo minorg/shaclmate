@@ -1,6 +1,6 @@
-import { type Code, code } from "ts-poet";
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function sparqlConstructQueryStringFunctionDeclaration(this: {
   readonly filterType: Code;

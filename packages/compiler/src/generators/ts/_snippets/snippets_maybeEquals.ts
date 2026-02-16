@@ -1,6 +1,6 @@
-import { code, conditionalOutput } from "ts-poet";
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_EqualsResult } from "./snippets_EqualsResult.js";
 
 export const snippets_maybeEquals = conditionalOutput(

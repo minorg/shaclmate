@@ -2,14 +2,13 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractType } from "./AbstractType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
 import type { Type } from "./Type.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for IdentifierType and LiteralType.

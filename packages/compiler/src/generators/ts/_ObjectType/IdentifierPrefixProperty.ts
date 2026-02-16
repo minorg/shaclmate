@@ -1,11 +1,10 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import type { StringType } from "../StringType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierPrefixProperty extends AbstractProperty<StringType> {

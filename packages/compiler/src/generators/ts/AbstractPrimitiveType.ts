@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractLiteralType } from "./AbstractLiteralType.js";
 import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractPrimitiveType<
   ValueT extends boolean | Date | string | number,

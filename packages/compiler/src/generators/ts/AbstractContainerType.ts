@@ -1,4 +1,3 @@
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -16,6 +15,7 @@ import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { StringType } from "./StringType.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 import type { UnionType } from "./UnionType.js";
 
 /**

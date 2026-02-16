@@ -1,5 +1,4 @@
 import { Maybe } from "purify-ts";
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractLazyObjectType } from "./AbstractLazyObjectType.js";
 import { imports } from "./imports.js";
@@ -7,6 +6,7 @@ import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import type { OptionType } from "./OptionType.js";
 import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 type Super = AbstractLazyObjectType<
   OptionType<AbstractLazyObjectType.ObjectTypeConstraint>,

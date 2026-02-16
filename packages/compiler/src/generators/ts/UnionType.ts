@@ -1,12 +1,12 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
 import type { Type } from "./Type.js";
 import type { Typeof } from "./Typeof.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 class MemberType {
   private readonly delegate: Type;

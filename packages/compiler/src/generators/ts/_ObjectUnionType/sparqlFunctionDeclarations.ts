@@ -1,11 +1,11 @@
 import { camelCase, pascalCase } from "change-case";
-import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
 export function sparqlFunctionDeclarations(
   this: ObjectUnionType,

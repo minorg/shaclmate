@@ -1,7 +1,7 @@
 import { Maybe } from "purify-ts";
-import { type Code, code, def, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, def, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { equalsFunctionOrMethodDeclaration } from "./equalsFunctionOrMethodDeclaration.js";
 import { hashFunctionOrMethodDeclarations } from "./hashFunctionOrMethodDeclarations.js";

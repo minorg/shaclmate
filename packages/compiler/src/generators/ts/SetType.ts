@@ -1,10 +1,9 @@
 import { Maybe } from "purify-ts";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class SetType<
   ItemTypeT extends SetType.ItemType,

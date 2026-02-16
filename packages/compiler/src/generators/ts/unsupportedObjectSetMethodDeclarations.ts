@@ -1,7 +1,7 @@
-import { type Code, code } from "ts-poet";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 function unsupportedObjectSetMethodDeclaration({
   name,

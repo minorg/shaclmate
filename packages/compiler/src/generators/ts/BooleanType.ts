@@ -1,13 +1,12 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { NonEmptyList } from "purify-ts";
-import { type Code, code } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
+import { type Code, code } from "./ts-poet-wrapper.js";
 
 export class BooleanType extends AbstractPrimitiveType<boolean> {
   override readonly filterFunction = code`${snippets.filterBoolean}`;

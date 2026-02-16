@@ -1,8 +1,8 @@
-import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function schemaVariableStatement(this: ObjectUnionType): Code {
   const commonPropertiesByName: Record<

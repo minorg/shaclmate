@@ -2,13 +2,13 @@ import type * as rdfjs from "@rdfjs/types";
 
 import { pascalCase } from "change-case";
 import { Maybe } from "purify-ts";
-import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { codeEquals } from "../codeEquals.js";
 import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import type { Type } from "../Type.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 

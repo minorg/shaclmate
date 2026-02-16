@@ -3,9 +3,7 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import type { IdentifierMintingStrategy } from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
@@ -15,6 +13,7 @@ import { imports } from "../imports.js";
 import type { NamedNodeType } from "../NamedNodeType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<

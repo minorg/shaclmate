@@ -2,13 +2,12 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 import { xsd } from "@tpluscode/rdf-ns-builders";
 
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,

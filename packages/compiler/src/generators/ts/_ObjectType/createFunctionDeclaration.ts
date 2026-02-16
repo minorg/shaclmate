@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function createFunctionDeclaration(this: ObjectType): Maybe<Code> {
   if (!this.features.has("create")) {

@@ -1,9 +1,9 @@
-import { type Code, code, joinCode } from "ts-poet";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export function objectSetInterfaceDeclaration({
   objectTypes,

@@ -1,8 +1,8 @@
 import { Maybe } from "purify-ts";
-import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function equalsFunctionOrMethodDeclaration(
   this: ObjectType,

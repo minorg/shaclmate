@@ -1,8 +1,8 @@
 import { xsd } from "@tpluscode/rdf-ns-builders";
-import { code, conditionalOutput } from "ts-poet";
 import { imports } from "../imports.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 
 export const snippets_toLiteral = conditionalOutput(
   `${syntheticNamePrefix}toLiteral`,

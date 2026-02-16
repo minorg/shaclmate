@@ -1,5 +1,5 @@
-import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 
 export function typeAliasDeclaration(this: ObjectUnionType): Code {

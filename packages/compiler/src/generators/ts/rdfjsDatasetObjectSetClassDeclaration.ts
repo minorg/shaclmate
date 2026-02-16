@@ -1,11 +1,11 @@
 import type { Maybe } from "purify-ts";
-import { type Code, code, joinCode } from "ts-poet";
 import { imports } from "./imports.js";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetMethodSignatures } from "./objectSetMethodSignatures.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import { unsupportedObjectSetMethodDeclarations } from "./unsupportedObjectSetMethodDeclarations.js";
 
 export function rdfjsDatasetObjectSetClassDeclaration({

@@ -1,4 +1,3 @@
-import { type Code, code, joinCode } from "ts-poet";
 import * as ast from "../../ast/index.js";
 import type { Generator } from "../Generator.js";
 import { objectSetDeclarations } from "./objectSetDeclarations.js";
@@ -8,6 +7,7 @@ import { snippets } from "./snippets.js";
 import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 // import { synthesizeUberObjectUnionType } from "./synthesizeUberObjectUnionType.js";
 import { TypeFactory } from "./TypeFactory.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class TsGenerator implements Generator {
   private readonly typeFactory = new TypeFactory();

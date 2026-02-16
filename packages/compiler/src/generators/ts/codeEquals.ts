@@ -1,4 +1,4 @@
-import type { Code } from "ts-poet";
+import type { Code } from "./ts-poet-wrapper.js";
 
 function codeToString(code: Code | string) {
   return typeof code === "string" ? code : code.toString();

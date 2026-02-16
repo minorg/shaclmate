@@ -1,7 +1,6 @@
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
 import { equalsFunctionDeclaration } from "./_ObjectUnionType/equalsFunctionDeclaration.js";
@@ -26,6 +25,7 @@ import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * A union of object types, generated as a type alias

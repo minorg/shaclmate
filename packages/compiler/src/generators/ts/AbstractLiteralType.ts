@@ -1,10 +1,8 @@
 import type { Literal } from "@rdfjs/types";
-
-import { code } from "ts-poet";
-
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
+import { code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractLiteralType extends AbstractTermType<
   Literal,

@@ -1,5 +1,5 @@
-import { code, conditionalOutput } from "ts-poet";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_CollectionFilter } from "./snippets_CollectionFilter.js";
 
 export const snippets_filterArray = conditionalOutput(

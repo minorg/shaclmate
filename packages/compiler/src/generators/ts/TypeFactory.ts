@@ -5,7 +5,6 @@ import { rdf, xsd } from "@tpluscode/rdf-ns-builders";
 
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
-import { code } from "ts-poet";
 import type * as ast from "../../ast/index.js";
 import { logger } from "../../logger.js";
 import { BlankNodeType } from "./BlankNodeType.js";
@@ -30,6 +29,7 @@ import { StringType } from "./StringType.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import { code } from "./ts-poet-wrapper.js";
 import { tsName } from "./tsName.js";
 import { UnionType } from "./UnionType.js";
 

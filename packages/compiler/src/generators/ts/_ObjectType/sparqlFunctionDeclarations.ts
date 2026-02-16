@@ -1,11 +1,11 @@
 import { rdf, rdfs } from "@tpluscode/rdf-ns-builders";
 import { camelCase } from "change-case";
-import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { imports } from "../imports.js";
 import type { ObjectType } from "../ObjectType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 import { sparqlConstructQueryFunctionDeclaration } from "./sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "./sparqlConstructQueryStringFunctionDeclaration.js";
 

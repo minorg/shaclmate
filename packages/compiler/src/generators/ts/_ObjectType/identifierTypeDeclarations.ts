@@ -1,6 +1,6 @@
-import { type Code, code, joinCode } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 export function identifierTypeDeclarations(this: ObjectType): readonly Code[] {
   const ancestorObjectTypeWithSameIdentifierType =

@@ -1,10 +1,9 @@
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { imports } from "../imports.js";
 import { snippets } from "../snippets.js";
+import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantProperty.Type> {

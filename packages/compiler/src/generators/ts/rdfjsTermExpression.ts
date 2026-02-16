@@ -1,9 +1,9 @@
 import type { BlankNode, Literal, NamedNode, Variable } from "@rdfjs/types";
 import { rdf, rdfs, xsd } from "@tpluscode/rdf-ns-builders";
-import { type Code, code, literalOf } from "ts-poet";
 import { logger } from "../../logger.js";
 import { snippets_RdfVocabularies } from "./_snippets/snippets_RdfVocabularies.js";
 import { imports } from "./imports.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export function rdfjsTermExpression(
   rdfjsTerm:

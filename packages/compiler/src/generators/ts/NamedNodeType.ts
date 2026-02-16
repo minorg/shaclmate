@@ -1,13 +1,11 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
-
-import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${snippets.filterNamedNode}`;

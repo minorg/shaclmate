@@ -1,6 +1,6 @@
-import { code, conditionalOutput } from "ts-poet";
 import { imports } from "../imports.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { code, conditionalOutput } from "../ts-poet-wrapper.js";
 import { snippets_SparqlFilterPattern } from "./snippets_SparqlFilterPattern.js";
 import { snippets_sparqlValueInPattern } from "./snippets_sparqlValueInPattern.js";
 import { snippets_TermFilter } from "./snippets_TermFilter.js";

@@ -1,6 +1,6 @@
-import { type Code, code } from "ts-poet";
 import type { ObjectType } from "../ObjectType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code } from "../ts-poet-wrapper.js";
 
 export function isTypeFunctionDeclaration(this: ObjectType): Code {
   return code`\

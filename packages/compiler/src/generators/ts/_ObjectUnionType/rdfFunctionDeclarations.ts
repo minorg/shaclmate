@@ -1,9 +1,9 @@
-import { type Code, code, joinCode } from "ts-poet";
 import { codeEquals } from "../codeEquals.js";
 import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
+import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 function fromRdfFunctionDeclaration(this: ObjectUnionType): Code {
   return code`\

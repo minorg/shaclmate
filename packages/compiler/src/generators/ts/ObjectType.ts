@@ -3,7 +3,6 @@ import type { NamedNode } from "@rdfjs/types";
 import { camelCase } from "change-case";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type {
   IdentifierMintingStrategy,
@@ -39,6 +38,7 @@ import type { NamedNodeType } from "./NamedNodeType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractDeclaredType {
   protected readonly toRdfTypes: readonly NamedNode[];

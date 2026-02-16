@@ -1,9 +1,9 @@
-import type { Code } from "ts-poet";
 import type { ObjectType } from "./ObjectType.js";
 import type { ObjectUnionType } from "./ObjectUnionType.js";
 import { objectSetInterfaceDeclaration } from "./objectSetInterfaceDeclaration.js";
 import { rdfjsDatasetObjectSetClassDeclaration } from "./rdfjsDatasetObjectSetClassDeclaration.js";
 import { sparqlObjectSetClassDeclaration } from "./sparqlObjectSetClassDeclaration.js";
+import type { Code } from "./ts-poet-wrapper.js";
 
 export function objectSetDeclarations({
   objectUnionTypes,

@@ -3,9 +3,7 @@ import type { Literal, NamedNode } from "@rdfjs/types";
 import { Maybe, NonEmptyList } from "purify-ts";
 import { fromRdf } from "rdf-literal";
 import { invariant } from "ts-invariant";
-import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
-
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import type { AbstractType } from "./AbstractType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
@@ -13,6 +11,7 @@ import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
 import type { Type } from "./Type.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 export class DefaultValueType<
   ItemTypeT extends DefaultValueType.ItemType,

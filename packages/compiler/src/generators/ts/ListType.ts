@@ -3,7 +3,6 @@ import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
 import { Maybe } from "purify-ts";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
 import { AbstractCollectionType } from "./AbstractCollectionType.js";
@@ -24,6 +23,7 @@ import type { StringType } from "./StringType.js";
 import { snippets } from "./snippets.js";
 import type { TermType } from "./TermType.js";
 import type { Type } from "./Type.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 import type { UnionType } from "./UnionType.js";
 
 export class ListType<

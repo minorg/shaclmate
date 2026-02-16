@@ -1,4 +1,4 @@
-import { imp } from "ts-poet";
+import { imp } from "./ts-poet-wrapper.js";
 
 export const imports = {
   BlankNode: imp("BlankNode@@rdfjs/types"),

@@ -1,12 +1,12 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
 import type { Typeof } from "./Typeof.js";
+import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class for ListType and SetType.

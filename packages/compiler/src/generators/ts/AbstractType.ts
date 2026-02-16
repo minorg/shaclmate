@@ -1,8 +1,8 @@
 import type { Maybe, NonEmptyList } from "purify-ts";
-import { type Code, code, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { imports } from "./imports.js";
 import type { Typeof } from "./Typeof.js";
+import { type Code, code, literalOf } from "./ts-poet-wrapper.js";
 
 /**
  * Abstract base class all types.
