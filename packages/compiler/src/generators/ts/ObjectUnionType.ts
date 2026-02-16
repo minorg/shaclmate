@@ -25,7 +25,7 @@ import type { NamedNodeType } from "./NamedNodeType.js";
 import type { ObjectType } from "./ObjectType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
 /**
  * A union of object types, generated as a type alias
@@ -102,7 +102,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
 
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
-export namespace ${this.staticModuleName} {
+export namespace ${def(this.staticModuleName)} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
     }

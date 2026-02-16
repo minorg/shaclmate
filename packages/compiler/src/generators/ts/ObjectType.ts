@@ -38,7 +38,7 @@ import type { NamedNodeType } from "./NamedNodeType.js";
 import { snippets } from "./snippets.js";
 import { syntheticNamePrefix } from "./syntheticNamePrefix.js";
 import type { Type } from "./Type.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, def, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractDeclaredType {
   private readonly imports: readonly string[];
@@ -188,7 +188,7 @@ export class ObjectType extends AbstractDeclaredType {
 
       if (staticModuleDeclarations.length > 0) {
         declarations.push(code`\
-export namespace ${this.staticModuleName} {
+export namespace ${def(this.staticModuleName)} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
       }
