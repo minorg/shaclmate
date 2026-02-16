@@ -4,7 +4,11 @@ import { rdf } from "@tpluscode/rdf-ns-builders";
 import { Maybe } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
-import type { IdentifierMintingStrategy } from "../../../enums/index.js";
+
+import type {
+  IdentifierMintingStrategy,
+  PropertyVisibility,
+} from "../../../enums/index.js";
 import { logger } from "../../../logger.js";
 import type { BlankNodeType } from "../BlankNodeType.js";
 import { codeEquals } from "../codeEquals.js";
@@ -54,11 +58,8 @@ export class IdentifierProperty extends AbstractProperty<
   @Memoize()
   override get constructorParametersSignature(): Maybe<Code> {
     if (this.abstract) {
-      const declaration = this.declaration.extractNullable();
-      if (
-        declaration === null ||
-        declaration.toCodeString([]).startsWith("abstract ")
-      ) {
+      const declarationModifiers = this.declarationModifiers.extractNullable();
+      if (declarationModifiers === null || declarationModifiers.abstract) {
         // If the property is not declared or it's declared abstract, we just pass up parameters to super as-is.
         return Maybe.empty();
       }
@@ -92,47 +93,9 @@ export class IdentifierProperty extends AbstractProperty<
 
   @Memoize()
   override get declaration(): Maybe<Code> {
-    if (this.objectType.declarationType === "interface") {
-      return Maybe.of(code`readonly ${this.name}: ${this.typeAlias};`);
-    }
-
-    if (this.objectType.parentObjectTypes.length > 0) {
-      // An ancestor will declare the identifier property.
-      return Maybe.empty();
-    }
-
-    const name = this.declarationName;
-
-    if (
-      this.identifierMintingStrategy.isJust() ||
-      this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
-        ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      ) ||
-      this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-        descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-      )
-    ) {
-      return Maybe.of(
-        code`${
-          this.objectType.descendantObjectTypes.some((descendantObjectType) =>
-            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
-          )
-            ? "protected "
-            : "private "
-        } ${name}?: ${this.typeAlias};`,
-      );
-    }
-
-    if (this.abstract) {
-      // Declare the property abstract and public
-      return Maybe.of(
-        code`abstract ${this.override ? "override " : ""}readonly ${name}: ${this.typeAlias};`,
-      );
-    }
-
-    // Declare the property public
-    return Maybe.of(
-      code`${this.override ? "override " : ""}readonly ${name}: ${this.typeAlias};`,
+    return this.declarationModifiers.map(
+      ({ abstract, hasQuestionToken, override, readonly, visibility }) =>
+        code`${visibility ? `${visibility} ` : ""}${abstract ? "abstract " : ""}${override ? "override " : ""}${readonly ? "readonly " : ""}${this.declarationName}${hasQuestionToken ? "?" : ""}: ${this.typeAlias};`,
     );
   }
 
@@ -302,7 +265,23 @@ export class IdentifierProperty extends AbstractProperty<
     return this.objectType.abstract;
   }
 
-  private get declarationName(): string {
+  @Memoize()
+  private get declarationModifiers(): Maybe<{
+    abstract?: boolean;
+    hasQuestionToken?: boolean;
+    override?: boolean;
+    readonly?: boolean;
+    visibility?: PropertyVisibility;
+  }> {
+    if (this.objectType.declarationType === "interface") {
+      return Maybe.of({ readonly: true });
+    }
+
+    if (this.objectType.parentObjectTypes.length > 0) {
+      // An ancestor will declare the identifier property.
+      return Maybe.empty();
+    }
+
     if (
       this.identifierMintingStrategy.isJust() ||
       this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
@@ -311,6 +290,44 @@ export class IdentifierProperty extends AbstractProperty<
       this.objectType.descendantObjectTypes.some((descendantObjectType) =>
         descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
       )
+    ) {
+      return Maybe.of({
+        hasQuestionToken: true,
+        visibility: this.objectType.descendantObjectTypes.some(
+          (descendantObjectType) =>
+            descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        )
+          ? "protected"
+          : "private",
+      });
+    }
+
+    if (this.abstract) {
+      // Declare the property abstract and public
+      return Maybe.of({
+        abstract: true,
+        override: this.override,
+        readonly: true,
+      });
+    }
+
+    // Declare the property public
+    return Maybe.of({
+      override: this.override,
+      readonly: true,
+    });
+  }
+
+  private get declarationName(): string {
+    if (
+      this.objectType.declarationType === "class" &&
+      (this.identifierMintingStrategy.isJust() ||
+        this.objectType.ancestorObjectTypes.some((ancestorObjectType) =>
+          ancestorObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        ) ||
+        this.objectType.descendantObjectTypes.some((descendantObjectType) =>
+          descendantObjectType.identifierProperty.identifierMintingStrategy.isJust(),
+        ))
     ) {
       // If this, an ancestor, or a descendant has an identifier minting strategy, declare the identifier property
       // private or protected and prefix its name with _ in order to avoid a conflict with the get accessor name.
