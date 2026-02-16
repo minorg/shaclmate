@@ -6,7 +6,7 @@ import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   protected abstract readonly xsdDatatype: NamedNode;
@@ -41,7 +41,7 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
       in:
         this.primitiveIn.length > 0
           ? this.primitiveIn.map(
-              (inValue) => `new Date("${inValue.toISOString()}")`,
+              (inValue) => code`new Date(${literalOf(inValue.toISOString())})`,
             )
           : undefined,
     };

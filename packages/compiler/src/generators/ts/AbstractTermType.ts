@@ -197,7 +197,7 @@ export abstract class AbstractTermType<
       valueToExpression = code`${valueToExpression}.chain(term => {
   switch (term.termType) {
   ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
-  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }}));
+  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: code`${this.name}`.toCodeString([]), focusResource: variables.resource, predicate: variables.predicate }}));
 }})`;
     }
 

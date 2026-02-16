@@ -148,7 +148,7 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
             code`case "${iri.value}": return ${imports.Either}.of${eitherTypeParameters}(iri as ${imports.NamedNode}<"${iri.value}">);`,
         ),
         { on: " " },
-      )} default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${literalOf(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
+      )} default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${literalOf(this.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
     }
 
     return {

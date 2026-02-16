@@ -403,7 +403,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
         this.memberTypes.map(
           (memberType) =>
             code`readonly "${memberType.discriminantValues[0]}": ${{
-              discriminantValues: "readonly string[]",
+              discriminantValues: code`readonly string[]`,
               type: memberType.schemaType,
             }}`,
         ),

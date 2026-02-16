@@ -58,7 +58,7 @@ export class BooleanType extends AbstractPrimitiveType<boolean> {
     let fromRdfResourceValueExpression = code`value.toBoolean()`;
     if (this.primitiveIn.length === 1) {
       const eitherTypeParameters = code`<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? ${imports.Either}.of${eitherTypeParameters}(primitiveValue) : ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})))`;
+      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => primitiveValue === ${this.primitiveIn[0]} ? ${imports.Either}.of${eitherTypeParameters}(primitiveValue) : ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})))`;
     }
 
     return {

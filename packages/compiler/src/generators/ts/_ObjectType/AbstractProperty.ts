@@ -126,7 +126,7 @@ export abstract class AbstractProperty<
 
   protected get schemaObject() {
     return {
-      kind: `${literalOf(this.kind)} as const`,
+      kind: code`${literalOf(this.kind)} as const`,
       name: literalOf(this.name),
       type: code`() => (${this.type.schema})`,
     };

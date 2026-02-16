@@ -7,7 +7,7 @@ import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
+import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
 
 export class TermType<
   ConstantTermT extends Literal | NamedNode = Literal | NamedNode,
@@ -52,9 +52,7 @@ export class TermType<
     return {
       ...super.schemaObject,
       in: this.in_.length > 0 ? this.in_.map(rdfjsTermExpression) : undefined,
-      nodeKinds: [...this.nodeKinds].map(
-        (_) => `${JSON.stringify(_)} as const`,
-      ),
+      nodeKinds: [...this.nodeKinds].map((_) => code`${literalOf(_)} as const`),
     };
   }
 
