@@ -17,6 +17,8 @@ export abstract class AbstractIdentifierType<
     | "BlankNodeType"
     | "IdentifierType"
     | "NamedNodeType";
+  readonly toStringFunction = // Re-export rdfjsResource.Resource.Identifier.toString
+    code`${imports.Resource}.Identifier.toString`;
 
   @Memoize()
   override get conversions(): readonly AbstractTermType.Conversion[] {
@@ -35,14 +37,6 @@ export abstract class AbstractIdentifierType<
       });
     }
     return conversions;
-  }
-
-  @Memoize()
-  get toStringFunction(): Code {
-    // Re-export rdfjsResource.Resource.Identifier.toString
-    return code`\
-// biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
-export const toString = ${imports.Resource}.Identifier.toString`;
   }
 
   override graphqlResolveExpression({

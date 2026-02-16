@@ -18,26 +18,18 @@ export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}
 }`;
 }
 
-export function jsonDeclarations(this: ObjectUnionType): readonly Code[] {
+export function jsonFunctionDeclarations(
+  this: ObjectUnionType,
+): readonly Code[] {
   if (!this.features.has("json")) {
     return [];
   }
 
   return [
     fromJsonFunctionDeclaration.bind(this)(),
-    jsonTypeAliasDeclaration.bind(this)(),
     jsonZodSchemaFunctionDeclaration.bind(this)(),
     toJsonFunctionDeclaration.bind(this)(),
   ];
-}
-
-function jsonTypeAliasDeclaration(this: ObjectUnionType): Code {
-  return code`export type ${syntheticNamePrefix}Json = ${joinCode(
-    this.concreteMemberTypes.map(
-      (memberType) => code`${memberType.jsonType().name}`,
-    ),
-    { on: " | " },
-  )}`;
 }
 
 function jsonZodSchemaFunctionDeclaration(this: ObjectUnionType): Code {

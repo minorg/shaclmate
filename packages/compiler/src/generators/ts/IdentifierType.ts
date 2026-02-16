@@ -14,7 +14,8 @@ export class IdentifierType extends AbstractIdentifierType<
 > {
   override readonly filterFunction = code`${snippets.filterIdentifier}`;
   override readonly filterType = code`${snippets.IdentifierFilter}`;
-  override readonly fromStringFunction = code`${snippets.identifierFromString}`;
+  override readonly fromStringFunction =
+    code`export const fromString = ${snippets.identifierFromString};`;
   override readonly kind = "IdentifierType";
   override readonly name = code`(${imports.BlankNode} | ${imports.NamedNode})`;
   override readonly schemaType = code`${snippets.IdentifierSchema}`;

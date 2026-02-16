@@ -1,5 +1,5 @@
 import { camelCase, pascalCase } from "change-case";
-import { type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { sparqlConstructQueryFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryFunctionDeclaration.js";
 import { sparqlConstructQueryStringFunctionDeclaration } from "../_ObjectType/sparqlConstructQueryStringFunctionDeclaration.js";
 import { imports } from "../imports.js";
@@ -48,8 +48,8 @@ ${joinCode([
     this.concreteMemberTypes.map(
       (memberType) =>
         code`${{
-          patterns: `${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
-          type: '"group"',
+          patterns: code`${memberType.staticModuleName}.${syntheticNamePrefix}sparqlWherePatterns({ filter: parameters?.filter?.on?.${memberType.name}, subject: parameters?.subject ?? ${imports.dataFactory}.variable!("${camelCase(this.name)}${pascalCase(memberType.name)}"), variablePrefix: parameters?.variablePrefix ? \`\${parameters.variablePrefix}${pascalCase(memberType.name)}\` : "${camelCase(this.name)}${pascalCase(memberType.name)}" }).concat()`,
+          type: literalOf("group"),
         }}`,
     ),
     { on: ", " },

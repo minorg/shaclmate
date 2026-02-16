@@ -11,7 +11,8 @@ import { snippets } from "./snippets.js";
 export class BlankNodeType extends AbstractIdentifierType<BlankNode> {
   readonly filterFunction = code`${snippets.filterBlankNode}`;
   readonly filterType = code`${snippets.BlankNodeFilter}`;
-  readonly fromStringFunction = code`${snippets.blankNodeFromString}`;
+  readonly fromStringFunction =
+    code`export const fromString = ${snippets.blankNodeFromString};`;
   readonly kind = "BlankNodeType";
   readonly name = code`${imports.BlankNode}`;
   readonly schemaType = code`${snippets.BlankNodeSchema}`;

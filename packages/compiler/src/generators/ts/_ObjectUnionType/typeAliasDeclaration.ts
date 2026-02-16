@@ -8,6 +8,5 @@ ${this.comment.alt(this.label).map(tsComment).orDefault("")}
 export type ${this.name} = ${joinCode(
     this.memberTypes.map((memberType) => code`${memberType.name}`),
     { on: " | " },
-  )}
-`;
+  )};`;
 }

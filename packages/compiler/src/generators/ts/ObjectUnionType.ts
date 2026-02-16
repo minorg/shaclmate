@@ -4,7 +4,20 @@ import { invariant } from "ts-invariant";
 import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { objectSetMethodNames } from "./_ObjectType/objectSetMethodNames.js";
-import * as _ObjectUnionType from "./_ObjectUnionType/index.js";
+import { equalsFunctionDeclaration } from "./_ObjectUnionType/equalsFunctionDeclaration.js";
+import { filterFunctionDeclaration } from "./_ObjectUnionType/filterFunctionDeclaration.js";
+import { filterTypeDeclaration } from "./_ObjectUnionType/filterTypeDeclaration.js";
+import { graphqlTypeVariableStatement } from "./_ObjectUnionType/graphqlTypeVariableStatement.js";
+import { hashFunctionDeclaration } from "./_ObjectUnionType/hashFunctionDeclaration.js";
+import { identifierTypeDeclarations } from "./_ObjectUnionType/identifierTypeDeclarations.js";
+import { isTypeFunctionDeclaration } from "./_ObjectUnionType/isTypeFunctionDeclaration.js";
+import { jsonFunctionDeclarations } from "./_ObjectUnionType/jsonFunctionDeclarations.js";
+import { jsonTypeAliasDeclaration } from "./_ObjectUnionType/jsonTypeAliasDeclaration.js";
+import { MemberType } from "./_ObjectUnionType/MemberType.js";
+import { rdfFunctionDeclarations } from "./_ObjectUnionType/rdfFunctionDeclarations.js";
+import { schemaVariableStatement } from "./_ObjectUnionType/schemaVariableStatement.js";
+import { sparqlFunctionDeclarations } from "./_ObjectUnionType/sparqlFunctionDeclarations.js";
+import { typeAliasDeclaration } from "./_ObjectUnionType/typeAliasDeclaration.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -29,7 +42,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     Maybe.empty();
   readonly identifierType: BlankNodeType | IdentifierType | NamedNodeType;
   readonly kind = "ObjectUnionType";
-  readonly memberTypes: readonly _ObjectUnionType.MemberType[];
+  readonly memberTypes: readonly MemberType[];
   override readonly typeofs = NonEmptyList(["object" as const]);
 
   constructor({
@@ -49,7 +62,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     invariant(memberTypes.length > 0);
     this.memberTypes = memberTypes.map(
       (memberType) =>
-        new _ObjectUnionType.MemberType({
+        new MemberType({
           delegate: memberType,
           universe: memberTypes,
         }),
@@ -70,22 +83,21 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   override get declaration(): Maybe<Code> {
-    const declarations: Code[] = [
-      _ObjectUnionType.typeAliasDeclaration.bind(this)(),
-    ];
+    const declarations: Code[] = [typeAliasDeclaration.bind(this)()];
 
     const staticModuleDeclarations: Code[] = [
-      ..._ObjectUnionType.equalsFunctionDeclaration.bind(this)().toList(),
-      _ObjectUnionType.filterFunctionDeclaration.bind(this)(),
-      _ObjectUnionType.filterTypeDeclaration.bind(this)(),
-      ..._ObjectUnionType.graphqlTypeVariableStatement.bind(this)().toList(),
-      ..._ObjectUnionType.hashFunctionDeclaration.bind(this)().toList(),
-      ..._ObjectUnionType.identifierTypeDeclarations.bind(this)(),
-      ..._ObjectUnionType.jsonDeclarations.bind(this)(),
-      ..._ObjectUnionType.isTypeFunctionDeclaration.bind(this)().toList(),
-      _ObjectUnionType.schemaVariableStatement.bind(this)(),
-      ..._ObjectUnionType.rdfFunctionDeclarations.bind(this)(),
-      ..._ObjectUnionType.sparqlFunctionDeclarations.bind(this)(),
+      ...equalsFunctionDeclaration.bind(this)().toList(),
+      filterFunctionDeclaration.bind(this)(),
+      filterTypeDeclaration.bind(this)(),
+      ...graphqlTypeVariableStatement.bind(this)().toList(),
+      ...hashFunctionDeclaration.bind(this)().toList(),
+      ...identifierTypeDeclarations.bind(this)(),
+      ...jsonFunctionDeclarations.bind(this)(),
+      ...jsonTypeAliasDeclaration.bind(this)().toList(),
+      ...isTypeFunctionDeclaration.bind(this)().toList(),
+      schemaVariableStatement.bind(this)(),
+      ...rdfFunctionDeclarations.bind(this)(),
+      ...sparqlFunctionDeclarations.bind(this)(),
     ];
 
     if (staticModuleDeclarations.length > 0) {
@@ -187,7 +199,7 @@ ${joinCode(staticModuleDeclarations)}
   }
 
   @Memoize()
-  protected get concreteMemberTypes(): readonly _ObjectUnionType.MemberType[] {
+  protected get concreteMemberTypes(): readonly MemberType[] {
     return this.memberTypes.filter((memberType) => !memberType.abstract);
   }
 
