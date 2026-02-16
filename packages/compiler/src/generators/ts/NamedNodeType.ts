@@ -1,6 +1,6 @@
 import type { BlankNode, NamedNode } from "@rdfjs/types";
 
-import { type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode, literalOf } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
@@ -135,10 +135,16 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
   }: Parameters<AbstractTermType["fromRdfExpressionChain"]>[0]): ReturnType<
     AbstractTermType["fromRdfExpressionChain"]
   > {
-    let valueToExpression = "value.toIri()";
+    let valueToExpression = code`value.toIri()`;
     if (this.in_.length > 0) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      valueToExpression = `${valueToExpression}.chain(iri => { switch (iri.value) { ${this.in_.map((iri) => `case "${iri.value}": return ${imports.Either}.of${eitherTypeParameters}(iri as ${imports.NamedNode}<"${iri.value}">);`).join(" ")} default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${JSON.stringify(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
+      const eitherTypeParameters = code`<Error, ${this.name}>`;
+      valueToExpression = code`${valueToExpression}.chain(iri => { switch (iri.value) { ${joinCode(
+        this.in_.map(
+          (iri) =>
+            code`case "${iri.value}": return ${imports.Either}.of${eitherTypeParameters}(iri as ${imports.NamedNode}<"${iri.value}">);`,
+        ),
+        { on: " " },
+      )} default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError({ actualValue: iri, expectedValueType: ${literalOf(this.name)}, focusResource: ${variables.resource}, predicate: ${variables.predicate} })); } } )`;
     }
 
     return {

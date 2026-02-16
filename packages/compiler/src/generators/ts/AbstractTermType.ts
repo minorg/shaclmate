@@ -194,11 +194,11 @@ export abstract class AbstractTermType<
   } {
     let valueToExpression = code`${imports.Either}.of<Error, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>(value.toTerm())`;
     if (this.nodeKinds.size < 3) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
+      const eitherTypeParameters = code`<Error, ${this.name}>`;
       valueToExpression = code`${valueToExpression}.chain(term => {
   switch (term.termType) {
   ${[...this.nodeKinds].map((nodeKind) => `case "${nodeKind}":`).join("\n")} return ${imports.Either}.of${eitherTypeParameters}(term);
-  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }}));         
+  default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "term", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }}));
 }})`;
     }
 
@@ -206,7 +206,7 @@ export abstract class AbstractTermType<
       hasValues:
         this.hasValues.length > 0
           ? code`\
-chain(values => ${imports.Either}.sequence([${this.hasValues.map(rdfjsTermExpression).join(", ")}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
+chain(values => ${imports.Either}.sequence([${joinCode(this.hasValues.map(rdfjsTermExpression), { on: ", " })}].map(hasValue => values.find(value => value.toTerm().equals(hasValue)))).map(() => values))`
           : undefined,
       valueTo: code`chain(values => values.chainMap(value => ${valueToExpression}))`,
     };

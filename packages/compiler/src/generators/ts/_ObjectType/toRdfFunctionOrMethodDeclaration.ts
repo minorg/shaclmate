@@ -37,17 +37,17 @@ export function toRdfFunctionOrMethodDeclaration(
   ];
 
   if (this.parentObjectTypes.length > 0) {
-    const superToRdfOptions = `{ ${variables.ignoreRdfType}: true, ${variables.mutateGraph}, ${variables.resourceSet} }`;
+    const superToRdfOptions = code`{ ${variables.ignoreRdfType}: true, ${variables.mutateGraph}, ${variables.resourceSet} }`;
     let superToRdfCall: Code;
     switch (this.declarationType) {
       case "class":
+        preamble = "override ";
         superToRdfCall = code`super.${syntheticNamePrefix}toRdf(${superToRdfOptions})`;
         break;
       case "interface":
         superToRdfCall = code`${this.parentObjectTypes[0].staticModuleName}.${syntheticNamePrefix}toRdf(${this.thisVariable}, ${superToRdfOptions})`;
         break;
     }
-    preamble = "override ";
     statements.push(code`const ${variables.resource} = ${superToRdfCall};`);
     usedIgnoreRdfTypeVariable = !this.parentObjectTypes[0].abstract;
   } else if (this.identifierType.kind === "NamedNodeType") {

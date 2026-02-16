@@ -1,6 +1,6 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { arrayOf, type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractContainerType } from "./AbstractContainerType.js";
 import { codeEquals } from "./codeEquals.js";
@@ -76,7 +76,7 @@ export abstract class AbstractCollectionType<
 
     if (this.minCount === 0) {
       conversions.push({
-        conversionExpression: () => code`${arrayOf([])}`,
+        conversionExpression: () => code`[]`,
         sourceTypeCheckExpression: (value) =>
           code`typeof ${value} === "undefined"`,
         sourceTypeName: code`undefined`,

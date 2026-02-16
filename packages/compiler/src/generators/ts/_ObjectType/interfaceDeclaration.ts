@@ -7,7 +7,7 @@ export function interfaceDeclaration(this: ObjectType): Code {
 ${this.comment.alt(this.label).map(tsComment).orDefault("")}
 export interface ${this.name}${
     this.parentObjectTypes.length > 0
-      ? `extends ${this.parentObjectTypes
+      ? ` extends ${this.parentObjectTypes
           .map((parentObjectType) => parentObjectType.name)
           .join(", ")}`
       : ""

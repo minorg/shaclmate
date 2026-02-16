@@ -497,7 +497,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
     const caseBlocks: Code[] = [];
     for (const memberType of this.memberTypes) {
       caseBlocks.push(
-        code`${joinCode(memberType.discriminantValues.map((discriminantPropertyValue) => code`case "${discriminantPropertyValue}":`))} { ${joinCode(
+        code`${memberType.discriminantValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join()} { ${joinCode(
           memberType
             .hashStatements({
               depth: depth + 1,

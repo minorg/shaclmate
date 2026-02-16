@@ -1,6 +1,6 @@
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { type Code, code } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import { AbstractType } from "./AbstractType.js";
 import type { ObjectType } from "./ObjectType.js";
@@ -179,13 +179,13 @@ export abstract class AbstractLazyObjectType<
 
     const caseBlocks = resolvedObjectUnionType.memberTypes.map(
       (resolvedObjectType, objectTypeI) => {
-        return `${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
+        return code`${resolvedObjectType.discriminantPropertyValues.map((discriminantPropertyValue) => `case "${discriminantPropertyValue}":`).join("\n")} return ${partialObjectUnionType.memberTypes[objectTypeI].newExpression({ parameters: variables.resolvedObjectUnion })};`;
       },
     );
     caseBlocks.push(
-      `default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
+      code`default: ${variables.resolvedObjectUnion} satisfies never; throw new Error("unrecognized type");`,
     );
-    return `switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${caseBlocks.join("\n")} }`;
+    return code`switch (${variables.resolvedObjectUnion}.${resolvedObjectUnionType.discriminantProperty.unsafeCoerce().name}) { ${joinCode(caseBlocks)} }`;
   }
 }
 

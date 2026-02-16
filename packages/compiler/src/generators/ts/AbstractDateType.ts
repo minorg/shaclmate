@@ -1,7 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { NonEmptyList } from "purify-ts";
-import { type Code, code } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -86,10 +86,16 @@ export abstract class AbstractDateType extends AbstractPrimitiveType<Date> {
   }: Parameters<
     AbstractPrimitiveType<Date>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<Date>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = "value.toDate()";
+    let fromRdfResourceValueExpression = code`value.toDate()`;
     if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { ${this.primitiveIn.map((value) => `if (primitiveValue.getTime() === ${value.getTime()}) { return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); }`).join(" ")} return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); })`;
+      const eitherTypeParameters = code`<Error, ${this.name}>`;
+      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => { ${joinCode(
+        this.primitiveIn.map(
+          (value) =>
+            code`if (primitiveValue.getTime() === ${value.getTime()}) { return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); }`,
+        ),
+        { on: " " },
+      )} return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: code`value.toTerm()`, expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); })`;
     }
 
     return {

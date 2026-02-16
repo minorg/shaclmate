@@ -1,7 +1,7 @@
 import type { NamedNode } from "@rdfjs/types";
 
 import { NonEmptyList } from "purify-ts";
-import { type Code, code } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
@@ -57,7 +57,10 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
       case 1:
         return code`${imports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${imports.z}.union([${this.primitiveIn.map((value) => `${imports.z}.literal(${value})`).join(", ")}])`;
+        return code`${imports.z}.union([${joinCode(
+          this.primitiveIn.map((value) => code`${imports.z}.literal(${value})`),
+          { on: "," },
+        )}}])`;
     }
   }
 
@@ -72,10 +75,10 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
   }: Parameters<
     AbstractPrimitiveType<number>["fromRdfExpressionChain"]
   >[0]): ReturnType<AbstractPrimitiveType<number>["fromRdfExpressionChain"]> {
-    let fromRdfResourceValueExpression = "value.toNumber()";
+    let fromRdfResourceValueExpression = code`value.toNumber()`;
     if (this.primitiveIn.length > 0) {
-      const eitherTypeParameters = `<Error, ${this.name}>`;
-      fromRdfResourceValueExpression = `${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
+      const eitherTypeParameters = code`<Error, ${this.name}>`;
+      fromRdfResourceValueExpression = code`${fromRdfResourceValueExpression}.chain(primitiveValue => { switch (primitiveValue) { ${this.primitiveIn.map((value) => `case ${value}:`).join(" ")} return ${imports.Either}.of${eitherTypeParameters}(primitiveValue); default: return ${imports.Left}${eitherTypeParameters}(new ${imports.Resource}.MistypedTermValueError(${{ actualValue: "value.toTerm()", expectedValueType: this.name, focusResource: variables.resource, predicate: variables.predicate }})); } })`;
     }
 
     return {

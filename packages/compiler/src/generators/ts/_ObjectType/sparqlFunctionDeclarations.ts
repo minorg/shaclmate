@@ -62,7 +62,7 @@ if (!parameters?.ignoreRdfType) {
         ? code`\
     {
       type: "values" as const,
-      values: [${fromRdfTypeVariables.join(", ")}].map((identifier) => {
+      values: [${joinCode(fromRdfTypeVariables, { on: "," })}].map((identifier) => {
         const valuePatternRow: ${imports.sparqljs}.ValuePatternRow = {};
         valuePatternRow[\`?\${${variables.variablePrefix}}FromRdfType\`] = identifier as ${imports.NamedNode};
         return valuePatternRow;

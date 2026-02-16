@@ -115,7 +115,7 @@ function jsonUiSchemaFunctionDeclaration(this: ObjectType): Code {
   return code`\
 export function ${syntheticNamePrefix}jsonUiSchema(parameters?: { scopePrefix?: string }): any {
   const scopePrefix = parameters?.scopePrefix ?? "#";
-  return { "elements": [ ${elements.join(", ")} ], label: "${this.label.orDefault(this.name)}", type: "Group" };
+  return { "elements": [ ${joinCode(elements, { on: "," })} ], label: "${this.label.orDefault(this.name)}", type: "Group" };
 }`;
 }
 

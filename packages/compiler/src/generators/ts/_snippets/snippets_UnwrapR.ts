@@ -5,5 +5,5 @@ import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 // export const UnwrapL = `type ${syntheticNamePrefix}UnwrapL<T> = T extends ${imports.Either}<infer L, any> ? L : never`;
 export const snippets_UnwrapR = conditionalOutput(
   `${syntheticNamePrefix}UnwrapR`,
-  code`type ${syntheticNamePrefix}UnwrapR<T> = T extends ${imports.Either}<any, infer R> ? R : never`,
+  code`type ${syntheticNamePrefix}UnwrapR<T> = T extends ${imports.Either}<any, infer R> ? R : never;`,
 );
