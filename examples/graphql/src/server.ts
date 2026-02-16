@@ -5,7 +5,7 @@ import { $RdfjsDatasetObjectSet, graphqlSchema } from "./generated.js";
 
 const yoga = createYoga({
   context: {
-    objectSet: new $RdfjsDatasetObjectSet({ dataset }),
+    objectSet: new $RdfjsDatasetObjectSet(dataset),
   },
   schema: graphqlSchema,
 });

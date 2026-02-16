@@ -6,7 +6,7 @@ import { $RdfjsDatasetObjectSet, graphqlSchema } from "../src/generated.js";
 describe("graphqlSchema", () => {
   const execute = async (query: string): Promise<ExecutionResult> => {
     return await graphql({
-      contextValue: { objectSet: new $RdfjsDatasetObjectSet({ dataset }) },
+      contextValue: { objectSet: new $RdfjsDatasetObjectSet(dataset) },
       schema: graphqlSchema,
       source: query,
     });

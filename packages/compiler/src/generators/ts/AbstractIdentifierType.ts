@@ -18,7 +18,9 @@ export abstract class AbstractIdentifierType<
     | "IdentifierType"
     | "NamedNodeType";
   readonly toStringFunction = // Re-export rdfjsResource.Resource.Identifier.toString
-    code`${imports.Resource}.Identifier.toString`;
+    code`\
+// biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+export const toString = ${imports.Resource}.Identifier.toString`;
 
   @Memoize()
   override get conversions(): readonly AbstractTermType.Conversion[] {

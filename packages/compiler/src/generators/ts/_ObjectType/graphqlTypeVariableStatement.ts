@@ -41,6 +41,6 @@ export const ${syntheticNamePrefix}GraphQL = new ${imports.GraphQLObjectType}<${
       },
       {} as Record<string, object>,
     )})`,
-    name: `"${this.name}"`,
+    name: this.name,
   }});`);
 }
