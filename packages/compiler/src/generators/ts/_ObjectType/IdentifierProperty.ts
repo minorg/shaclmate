@@ -193,11 +193,11 @@ export class IdentifierProperty extends AbstractProperty<
       return Maybe.of(code`\
       ${this.override ? "override " : ""} get ${this.name}(): ${this.typeAlias} { ${joinCode(
         [
-          code`if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? `this._${this.name} = ${mintIdentifier};` : `return ${mintIdentifier};`} }`,
+          code`if (typeof this._${this.name} === "undefined") { ${memoizeMintedIdentifier ? code`this._${this.name} = ${mintIdentifier};` : code`return ${mintIdentifier};`} }`,
           ...checkIdentifierTermTypeStatements(`this._${this.name}`),
           code`return this._${this.name};`,
         ],
-      )}`);
+      )} }`);
     }
 
     // If this object type has an ancestor or a descendant with an identifier minting strategy, declare a get accessor.
@@ -411,7 +411,13 @@ export class IdentifierProperty extends AbstractProperty<
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
       return Maybe.of(
-        code`(${this.type.in_.map((iri) => `${variables.resource}.identifier.value === "${iri.value}"`).join(" || ")}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`(${joinCode(
+          this.type.in_.map(
+            (iri) =>
+              code`${variables.resource}.identifier.value === "${iri.value}"`,
+          ),
+          { on: " || " },
+        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 

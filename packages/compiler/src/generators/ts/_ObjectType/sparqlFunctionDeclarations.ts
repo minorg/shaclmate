@@ -59,7 +59,7 @@ if (!parameters?.ignoreRdfType) {
   patterns.push(
     ${
       fromRdfTypeVariables.length > 1
-        ? `\
+        ? code`\
     {
       type: "values" as const,
       values: [${fromRdfTypeVariables.join(", ")}].map((identifier) => {
