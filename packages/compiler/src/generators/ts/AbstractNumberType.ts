@@ -59,7 +59,7 @@ export abstract class AbstractNumberType extends AbstractPrimitiveType<number> {
         return code`${imports.z}.union([${joinCode(
           this.primitiveIn.map((value) => code`${imports.z}.literal(${value})`),
           { on: "," },
-        )}}])`;
+        )}])`;
     }
   }
 

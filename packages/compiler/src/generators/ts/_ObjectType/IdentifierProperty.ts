@@ -221,7 +221,7 @@ export class IdentifierProperty extends AbstractProperty<
 
         return Maybe.of(
           code`override get ${this.name}(): ${this.typeAlias} { ${joinCode([
-            code`const identifier = super.${this.name}`,
+            code`const identifier = super.${this.name};`,
             ...checkSuperIdentifierTermTypeStatements,
             code`return identifier;`,
           ])} }`,
