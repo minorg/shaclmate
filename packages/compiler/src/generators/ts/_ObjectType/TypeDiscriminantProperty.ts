@@ -3,7 +3,7 @@ import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { imports } from "../imports.js";
 import { snippets } from "../snippets.js";
-import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
+import { arrayOf, type Code, code, literalOf } from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantProperty.Type> {
@@ -53,8 +53,8 @@ export class TypeDiscriminantProperty extends AbstractProperty<TypeDiscriminantP
       key: this.name,
       schema:
         this.type.values.length > 1
-          ? code`${imports.z}.enum(${JSON.stringify(this.type.values)})`
-          : code`${imports.z}.literal("${this.type.values[0]}")`,
+          ? code`${imports.z}.enum(${arrayOf(...this.type.values)})`
+          : code`${imports.z}.literal(${literalOf(this.type.values[0])})`,
     });
   }
 

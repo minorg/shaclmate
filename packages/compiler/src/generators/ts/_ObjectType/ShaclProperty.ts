@@ -139,7 +139,7 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
       context: "property",
     });
     this.comment.alt(this.description).ifJust((description) => {
-      schema = code`${schema}.describe(${JSON.stringify(description)})`;
+      schema = code`${schema}.describe(${literalOf(description)})`;
     });
     return Maybe.of({
       key: this.name,

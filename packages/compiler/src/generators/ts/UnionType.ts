@@ -379,7 +379,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       // discriminant: {
       //   kind: `${JSON.stringify(this.discriminant.kind)} as const`,
       // },
-      kind: '"UnionType" as const',
+      kind: code`${literalOf("UnionType")} as const`,
       members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>

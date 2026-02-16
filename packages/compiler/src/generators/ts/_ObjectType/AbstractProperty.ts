@@ -3,7 +3,7 @@ import { Memoize } from "typescript-memoize";
 import type { PropertyVisibility } from "../../../enums/index.js";
 import type { ObjectType } from "../ObjectType.js";
 import type { Type } from "../Type.js";
-import { type Code, code } from "../ts-poet-wrapper.js";
+import { type Code, code, literalOf } from "../ts-poet-wrapper.js";
 
 export abstract class AbstractProperty<
   TypeT extends Pick<Type, "filterFunction" | "mutable" | "name" | "schema">,
@@ -126,8 +126,8 @@ export abstract class AbstractProperty<
 
   protected get schemaObject() {
     return {
-      kind: `${JSON.stringify(this.kind)} as const`,
-      name: JSON.stringify(this.name),
+      kind: `${literalOf(this.kind)} as const`,
+      name: literalOf(this.name),
       type: code`() => (${this.type.schema})`,
     };
   }

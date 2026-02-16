@@ -3,7 +3,7 @@ import { Memoize } from "typescript-memoize";
 import { AbstractPrimitiveType } from "./AbstractPrimitiveType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class StringType extends AbstractPrimitiveType<string> {
   override readonly filterFunction = code`${snippets.filterString}`;
@@ -52,7 +52,7 @@ export class StringType extends AbstractPrimitiveType<string> {
       case 1:
         return code`${imports.z}.literal(${this.primitiveIn[0]})`;
       default:
-        return code`${imports.z}.enum(${JSON.stringify(this.primitiveIn)})`;
+        return code`${imports.z}.enum(${arrayOf(...this.primitiveIn)})`;
     }
   }
 

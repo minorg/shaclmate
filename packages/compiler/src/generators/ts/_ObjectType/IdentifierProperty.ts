@@ -13,7 +13,13 @@ import { imports } from "../imports.js";
 import type { NamedNodeType } from "../NamedNodeType.js";
 import { rdfjsTermExpression } from "../rdfjsTermExpression.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
-import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "../ts-poet-wrapper.js";
 import { AbstractProperty } from "./AbstractProperty.js";
 
 export class IdentifierProperty extends AbstractProperty<
@@ -268,7 +274,7 @@ export class IdentifierProperty extends AbstractProperty<
     if (this.type.in_.length > 0 && this.type.kind === "NamedNodeType") {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      schema = code`${imports.z}.enum(${JSON.stringify(this.type.in_.map((iri) => iri.value))})`;
+      schema = code`${imports.z}.enum(${arrayOf(...this.type.in_.map((iri) => iri.value))})`;
     } else {
       schema = code`${imports.z}.string().min(1)`;
     }
@@ -416,7 +422,7 @@ export class IdentifierProperty extends AbstractProperty<
               code`${variables.resource}.identifier.value === "${iri.value}"`,
           ),
           { on: " || " },
-        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        )}) ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier as ${this.typeAlias}) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 
@@ -425,7 +431,7 @@ export class IdentifierProperty extends AbstractProperty<
       this.type.kind === "NamedNodeType"
     ) {
       return Maybe.of(
-        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${JSON.stringify(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
+        code`${variables.resource}.identifier.termType === "${this.type.kind === "BlankNodeType" ? "BlankNode" : "NamedNode"}" ? ${imports.Either}.of<Error, ${this.typeAlias}>(${variables.resource}.identifier) : ${imports.Left}(new ${imports.Resource}.MistypedTermValueError({ actualValue: ${variables.resource}.identifier, expectedValueType: ${literalOf(this.type.name.toCodeString([]))}, focusResource: ${variables.resource}, predicate: ${rdfjsTermExpression(rdf.subject)} }))`,
       );
     }
 

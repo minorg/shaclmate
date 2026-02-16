@@ -5,7 +5,7 @@ import { AbstractIdentifierType } from "./AbstractIdentifierType.js";
 import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { snippets } from "./snippets.js";
-import { type Code, code } from "./ts-poet-wrapper.js";
+import { arrayOf, type Code, code } from "./ts-poet-wrapper.js";
 
 export class IdentifierType extends AbstractIdentifierType<
   BlankNode | NamedNode
@@ -63,7 +63,7 @@ export class IdentifierType extends AbstractIdentifierType<
     AbstractTermType<NamedNode, BlankNode | NamedNode>["jsonZodSchema"]
   >[0]): Code {
     const discriminantProperty = includeDiscriminantProperty
-      ? code`, termType: ${imports.z}.enum(${JSON.stringify([...this.nodeKinds])})`
+      ? code`, termType: ${imports.z}.enum(${arrayOf(...this.nodeKinds)})`
       : "";
 
     return code`${imports.z}.object({ "@id": ${imports.z}.string().min(1)${discriminantProperty} })`;

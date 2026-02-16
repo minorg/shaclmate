@@ -5,7 +5,13 @@ import { AbstractTermType } from "./AbstractTermType.js";
 import { imports } from "./imports.js";
 import { rdfjsTermExpression } from "./rdfjsTermExpression.js";
 import { snippets } from "./snippets.js";
-import { type Code, code, joinCode, literalOf } from "./ts-poet-wrapper.js";
+import {
+  arrayOf,
+  type Code,
+  code,
+  joinCode,
+  literalOf,
+} from "./ts-poet-wrapper.js";
 
 export class NamedNodeType extends AbstractIdentifierType<NamedNode> {
   override readonly filterFunction = code`${snippets.filterNamedNode}`;
@@ -104,7 +110,7 @@ export function fromString(identifier: string): ${imports.Either}<Error, ${this.
     if (this.in_.length > 0) {
       // Treat sh:in as a union of the IRIs
       // rdfjs.NamedNode<"http://example.com/1" | "http://example.com/2">
-      idSchema = code`${imports.z}.enum(${JSON.stringify(this.in_.map((iri) => iri.value))})`;
+      idSchema = code`${imports.z}.enum(${arrayOf(...this.in_.map((iri) => iri.value))})`;
     } else {
       idSchema = code`${imports.z}.string().min(1)`;
     }
