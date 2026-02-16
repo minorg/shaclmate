@@ -232,7 +232,7 @@ export abstract class AbstractType {
       valueVariable: Code;
       variablePrefix: Code;
     };
-  }): Code;
+  }): Maybe<Code>;
 
   /**
    * An expression that converts a value of this type to a JSON-LD compatible value. It can assume the presence

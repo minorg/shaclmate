@@ -53,7 +53,7 @@ export class SetType<
     parameters: Parameters<
       AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
     >[0],
-  ): Code {
+  ): Maybe<Code> {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 

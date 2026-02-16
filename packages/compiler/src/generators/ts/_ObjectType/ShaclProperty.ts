@@ -275,13 +275,16 @@ export class ShaclProperty<TypeT extends Type> extends AbstractProperty<TypeT> {
         object: valueVariable,
         predicate: this.predicate,
         subject: variables.focusIdentifier,
-      }}, ...${this.type.sparqlConstructTriples({
-        allowIgnoreRdfType: true,
-        variables: {
-          valueVariable,
-          variablePrefix: valueString,
-        },
-      })}]`,
+      }}${this.type
+        .sparqlConstructTriples({
+          allowIgnoreRdfType: true,
+          variables: {
+            valueVariable,
+            variablePrefix: valueString,
+          },
+        })
+        .map((code_) => code`, ...${code_}`)
+        .orDefault(code``)}]`,
     );
   }
 

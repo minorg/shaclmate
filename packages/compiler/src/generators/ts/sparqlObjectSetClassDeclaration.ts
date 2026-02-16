@@ -22,7 +22,7 @@ export function sparqlObjectSetClassDeclaration({
   ${syntheticNamePrefix}sparqlConstructQueryString: (parameters?: { filter?: ObjectFilterT; subject?: ${imports.sparqljs}.Triple["subject"]; } & Omit<${imports.sparqljs}.ConstructQuery, "prefixes" | "queryType" | "type"> & ${imports.sparqljs}.GeneratorOptions) => string;
   ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType};
 }`,
-    query: code`query: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT>`,
+    query: code`query?: ${syntheticNamePrefix}SparqlObjectSet.Query<ObjectFilterT>`,
     selectObjectTypeType: code`objectType: { ${syntheticNamePrefix}sparqlWherePatterns: ${sparqlWherePatternsFunctionType} }`,
   };
 
@@ -39,7 +39,6 @@ export class ${syntheticNamePrefix}SparqlObjectSet implements ${syntheticNamePre
   protected readonly ${syntheticNamePrefix}sparqlGenerator = new ${imports.sparqljs}.Generator();
 
   constructor(protected readonly ${syntheticNamePrefix}sparqlClient: { queryBindings: (query: string) => Promise<readonly Record<string, ${imports.BlankNode} | ${imports.Literal} | ${imports.NamedNode}>[]>; queryQuads: (query: string) => Promise<readonly ${imports.Quad}[]>; }) {
-    this.sparqlClient = sparqlClient;
   }
 
 ${joinCode(

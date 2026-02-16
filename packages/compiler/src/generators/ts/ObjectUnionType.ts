@@ -271,11 +271,15 @@ ${joinCode(staticModuleDeclarations)}
 
   override sparqlConstructTriples({
     variables,
-  }: Parameters<AbstractDeclaredType["sparqlConstructTriples"]>[0]): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
-      subject: variables.valueVariable,
-      variablePrefix: variables.variablePrefix,
-    }})`;
+  }: Parameters<
+    AbstractDeclaredType["sparqlConstructTriples"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
+        subject: variables.valueVariable,
+        variablePrefix: variables.variablePrefix,
+      }})`,
+    );
   }
 
   override toJsonExpression({

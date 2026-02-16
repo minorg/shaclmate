@@ -592,17 +592,26 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Code {
-    return code`[${joinCode(
-      this.memberTypes.map(
-        (memberType) =>
-          code`...${memberType.sparqlConstructTriples({
+  ): Maybe<Code> {
+    const memberTypeSparqlConstructTriples = this.memberTypes.flatMap(
+      (memberType) =>
+        memberType
+          .sparqlConstructTriples({
             ...parameters,
             allowIgnoreRdfType: false,
-          })}`,
-      ),
-      { on: "," },
-    )}]`;
+          })
+          .toList(),
+    );
+    if (memberTypeSparqlConstructTriples.length === 0) {
+      return Maybe.empty();
+    }
+
+    return Maybe.of(
+      code`[${joinCode(
+        memberTypeSparqlConstructTriples.map((code_) => code`...${code_}`),
+        { on: "," },
+      )}]`,
+    );
   }
 
   override toJsonExpression({

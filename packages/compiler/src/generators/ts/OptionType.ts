@@ -189,7 +189,7 @@ export class OptionType<
     parameters: Parameters<
       AbstractContainerType<ItemTypeT>["sparqlConstructTriples"]
     >[0],
-  ): Code {
+  ): Maybe<Code> {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 

@@ -2,7 +2,7 @@ import type { NamedNode } from "@rdfjs/types";
 import type { IdentifierNodeKind } from "@shaclmate/shacl-ast";
 import { rdf } from "@tpluscode/rdf-ns-builders";
 
-import type { Maybe } from "purify-ts";
+import { Maybe } from "purify-ts";
 import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 import type { IdentifierMintingStrategy } from "../../enums/index.js";
@@ -93,7 +93,7 @@ export class ListType<
     variables,
   }: Parameters<
     AbstractCollectionType<ItemTypeT>["sparqlConstructTriples"]
-  >[0]): Code {
+  >[0]): Maybe<Code> {
     const triples: Code[] = [];
     const listVariable = variables.valueVariable;
     const variable = (suffix: string) =>
@@ -110,14 +110,18 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: item0Variable,
         }}`,
-        code`...${this.itemType.sparqlConstructTriples({
+      );
+      this.itemType
+        .sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
             valueVariable: item0Variable,
             variablePrefix: variablePrefix("Item0"),
           },
-        })}`,
-      );
+        })
+        .ifJust((code_) => {
+          triples.push(code`...${code_}`);
+        });
     }
 
     {
@@ -144,14 +148,18 @@ export class ListType<
           predicate: rdfjsTermExpression(rdf.first),
           object: itemNVariable,
         }}`,
-        code`...${this.itemType.sparqlConstructTriples({
+      );
+      this.itemType
+        .sparqlConstructTriples({
           allowIgnoreRdfType: true,
           variables: {
             valueVariable: itemNVariable,
             variablePrefix: variablePrefix("ItemN"),
           },
-        })}`,
-      );
+        })
+        .ifJust((code_) => {
+          triples.push(code`...${code_}`);
+        });
     }
 
     // ?restN rdf:rest ?restNBasic to get the rdf:rest statement in the CONSTRUCT
@@ -163,7 +171,7 @@ export class ListType<
       }}`,
     );
 
-    return code`[${joinCode(triples, { on: "," })}]`;
+    return Maybe.of(code`[${joinCode(triples, { on: "," })}]`);
   }
 
   override toRdfExpression({

@@ -2,7 +2,7 @@ import type { BlankNode, Literal, NamedNode } from "@rdfjs/types";
 
 import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
-import { arrayOf, type Code, code, joinCode } from "ts-poet";
+import { type Code, code, joinCode } from "ts-poet";
 import { Memoize } from "typescript-memoize";
 
 import { AbstractType } from "./AbstractType.js";
@@ -165,9 +165,8 @@ export abstract class AbstractTermType<
     return Maybe.empty();
   }
 
-  override sparqlConstructTriples(): Code {
-    // Terms never have other triples hanging off them.
-    return code`[]`;
+  override sparqlConstructTriples(): Maybe<Code> {
+    return Maybe.empty();
   }
 
   override toRdfExpression({

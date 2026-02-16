@@ -138,7 +138,7 @@ export abstract class AbstractLazyObjectType<
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Code {
+  ): Maybe<Code> {
     return this.partialType.sparqlConstructTriples(parameters);
   }
 

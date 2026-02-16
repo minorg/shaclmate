@@ -429,12 +429,16 @@ ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
   override sparqlConstructTriples({
     allowIgnoreRdfType,
     variables,
-  }: Parameters<AbstractDeclaredType["sparqlConstructTriples"]>[0]): Code {
-    return code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
-      ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
-      subject: variables.valueVariable,
-      variablePrefix: variables.variablePrefix,
-    }})`;
+  }: Parameters<
+    AbstractDeclaredType["sparqlConstructTriples"]
+  >[0]): Maybe<Code> {
+    return Maybe.of(
+      code`${this.staticModuleName}.${syntheticNamePrefix}sparqlConstructTriples(${{
+        ignoreRdfType: allowIgnoreRdfType ? true : undefined, // Can ignore the rdf:type when the object is nested
+        subject: variables.valueVariable,
+        variablePrefix: variables.variablePrefix,
+      }})`,
+    );
   }
 
   override toJsonExpression({

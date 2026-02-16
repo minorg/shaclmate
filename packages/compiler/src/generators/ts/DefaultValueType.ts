@@ -189,7 +189,7 @@ export class DefaultValueType<
 
   override sparqlConstructTriples(
     parameters: Parameters<AbstractType["sparqlConstructTriples"]>[0],
-  ): Code {
+  ): Maybe<Code> {
     return this.itemType.sparqlConstructTriples(parameters);
   }
 
