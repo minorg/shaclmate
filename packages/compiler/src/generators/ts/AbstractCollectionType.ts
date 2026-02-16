@@ -101,11 +101,12 @@ export abstract class AbstractCollectionType<
         for (const [itemTypeof, itemTypeofConversion] of Object.entries(
           itemTypeConversionsByTypeof,
         )) {
+          const itemVariable = code`item`;
           conversions.push({
             conversionExpression: (value) => {
               const itemTypeConversionExpression =
-                itemTypeofConversion.conversionExpression(code`item`);
-              return itemTypeConversionExpression.toString() !== "item"
+                itemTypeofConversion.conversionExpression(itemVariable);
+              return !codeEquals(itemTypeConversionExpression, itemVariable)
                 ? code`${value}.map(item => ${itemTypeConversionExpression})`
                 : // Defensive copy
                   code`${value}${this.mutable ? ".concat()" : ""}`;

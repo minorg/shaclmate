@@ -380,7 +380,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       //   kind: `${JSON.stringify(this.discriminant.kind)} as const`,
       // },
       kind: '"UnionType" as const',
-      members: `{ ${joinCode(
+      members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>
             code`"${memberType.discriminantValues[0]}": ${{
@@ -398,8 +398,8 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
       // discriminant: {
       //   kind: '"envelope" | "inline" | "typeof"',
       // },
-      kind: '"UnionType"',
-      members: `{ ${joinCode(
+      kind: literalOf("UnionType"),
+      members: code`{ ${joinCode(
         this.memberTypes.map(
           (memberType) =>
             code`readonly "${memberType.discriminantValues[0]}": ${{
