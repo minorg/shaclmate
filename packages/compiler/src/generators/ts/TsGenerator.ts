@@ -74,6 +74,6 @@ export class TsGenerator implements Generator {
       ),
     );
 
-    return joinCode(declarations).toString();
+    return joinCode(declarations).toString({});
   }
 }
