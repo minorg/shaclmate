@@ -26,10 +26,10 @@ export class TsGenerator implements Generator {
     objectUnionTypesToposorted = [];
 
     for (const objectType of objectTypesToposorted) {
-      declarations.push(...objectType.declaration.toList());
+      declarations.push(objectType.declaration);
     }
     // for (const objectUnionType of objectUnionTypesToposorted) {
-    //   declarations.push(...objectUnionType.declaration.toList());
+    //   declarations.push(objectUnionType.declaration);
     // }
 
     const objectTypesNameSorted = objectTypesToposorted.toSorted(
@@ -43,7 +43,7 @@ export class TsGenerator implements Generator {
     const uberObjectUnionType = synthesizeUberObjectUnionType({
       objectTypes: objectTypesToposorted.toReversed(), // Reverse topological order so children ane before parents
     });
-    declarations.push(...uberObjectUnionType.declaration.toList());
+    declarations.push(uberObjectUnionType.declaration);
 
     declarations.push(
       ...objectSetDeclarations({

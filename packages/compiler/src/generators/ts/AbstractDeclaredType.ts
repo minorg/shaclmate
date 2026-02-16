@@ -1,10 +1,9 @@
-import type { Maybe } from "purify-ts";
 import type { TsFeature } from "../../enums/index.js";
 import { AbstractType } from "./AbstractType.js";
 import type { Code } from "./ts-poet-wrapper.js";
 
 export abstract class AbstractDeclaredType extends AbstractType {
-  abstract readonly declaration: Maybe<Code>;
+  abstract readonly declaration: Code;
   readonly export: boolean;
   readonly features: ReadonlySet<TsFeature>;
   readonly name: string;

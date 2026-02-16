@@ -82,7 +82,7 @@ export class ObjectUnionType extends AbstractDeclaredType {
     ];
   }
 
-  override get declaration(): Maybe<Code> {
+  override get declaration(): Code {
     const declarations: Code[] = [typeAliasDeclaration.bind(this)()];
 
     const staticModuleDeclarations: Code[] = [
@@ -107,7 +107,7 @@ ${joinCode(staticModuleDeclarations)}
 }`);
     }
 
-    return Maybe.of(joinCode(declarations));
+    return joinCode(declarations);
   }
 
   @Memoize()

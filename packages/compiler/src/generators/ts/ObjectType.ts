@@ -41,6 +41,8 @@ import type { Type } from "./Type.js";
 import { type Code, code, joinCode } from "./ts-poet-wrapper.js";
 
 export class ObjectType extends AbstractDeclaredType {
+  private readonly imports: readonly string[];
+
   protected readonly toRdfTypes: readonly NamedNode[];
 
   readonly abstract: boolean;
@@ -96,7 +98,7 @@ export class ObjectType extends AbstractDeclaredType {
     this.extern = extern;
     this.fromRdfType = fromRdfType;
     this.identifierType = identifierType;
-    // this.imports = imports;
+    this.imports = imports;
     // Lazily initialize some members in getters to avoid recursive construction
     this.lazyAncestorObjectTypes = lazyAncestorObjectTypes;
     this.lazyChildObjectTypes = lazyChildObjectTypes;
@@ -144,53 +146,55 @@ export class ObjectType extends AbstractDeclaredType {
     ];
   }
 
-  override get declaration(): Maybe<Code> {
-    if (this.extern) {
-      return Maybe.empty();
-    }
-
+  override get declaration(): Code {
     const declarations: Code[] = [];
 
-    const staticModuleDeclarations: Code[] = [];
-
-    switch (this.declarationType) {
-      case "class": {
-        declarations.push(classDeclaration.bind(this)());
-        break;
-      }
-      case "interface": {
-        declarations.push(interfaceDeclaration.bind(this)());
-        staticModuleDeclarations.push(
-          ...createFunctionDeclaration.bind(this)().toList(),
-          ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
-          ...hashFunctionOrMethodDeclarations.bind(this)(),
-        );
-        break;
-      }
+    for (const import_ of this.imports) {
+      declarations.push(code`${import_}`);
     }
 
-    staticModuleDeclarations.push(
-      filterFunctionDeclaration.bind(this)(),
-      filterTypeDeclaration.bind(this)(),
-      ...fromRdfTypeVariableStatement.bind(this)().toList(),
-      ...graphqlTypeVariableStatement.bind(this)().toList(),
-      ...identifierTypeDeclarations.bind(this)(),
-      ...jsonFunctionDeclarations.bind(this)(),
-      ...jsonTypeAliasDeclaration.bind(this)().toList(),
-      isTypeFunctionDeclaration.bind(this)(),
-      ...rdfFunctionDeclarations.bind(this)(),
-      schemaVariableStatement.bind(this)(),
-      ...sparqlFunctionDeclarations.bind(this)(),
-    );
+    if (!this.extern) {
+      const staticModuleDeclarations: Code[] = [];
 
-    if (staticModuleDeclarations.length > 0) {
-      declarations.push(code`\
+      switch (this.declarationType) {
+        case "class": {
+          declarations.push(classDeclaration.bind(this)());
+          break;
+        }
+        case "interface": {
+          declarations.push(interfaceDeclaration.bind(this)());
+          staticModuleDeclarations.push(
+            ...createFunctionDeclaration.bind(this)().toList(),
+            ...equalsFunctionOrMethodDeclaration.bind(this)().toList(),
+            ...hashFunctionOrMethodDeclarations.bind(this)(),
+          );
+          break;
+        }
+      }
+
+      staticModuleDeclarations.push(
+        filterFunctionDeclaration.bind(this)(),
+        filterTypeDeclaration.bind(this)(),
+        ...fromRdfTypeVariableStatement.bind(this)().toList(),
+        ...graphqlTypeVariableStatement.bind(this)().toList(),
+        ...identifierTypeDeclarations.bind(this)(),
+        ...jsonFunctionDeclarations.bind(this)(),
+        ...jsonTypeAliasDeclaration.bind(this)().toList(),
+        isTypeFunctionDeclaration.bind(this)(),
+        ...rdfFunctionDeclarations.bind(this)(),
+        schemaVariableStatement.bind(this)(),
+        ...sparqlFunctionDeclarations.bind(this)(),
+      );
+
+      if (staticModuleDeclarations.length > 0) {
+        declarations.push(code`\
 export namespace ${this.staticModuleName} {
 ${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
+      }
     }
 
-    return Maybe.of(joinCode(declarations, { on: "\n\n" }));
+    return joinCode(declarations, { on: "\n\n" });
   }
 
   @Memoize()
