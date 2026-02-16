@@ -288,7 +288,7 @@ shaclmate:ShaclCorePropertyGroup-labels
 shaclmate:ShaclCorePropertyPath
     shaclmate:extern true ;
     shaclmate:name "PropertyPath" ;
-    shaclmate:tsImport "import { PropertyPath } from \"./PropertyPath.js\"" ;
+    shaclmate:tsImport "import { PropertyPath } from \"./PropertyPath.js\";" ;
     a sh:NodeShape ;
     rdfs:comment "Extern PropertyPath since shaclmate is not sophisticated enough to deal with all property path variants yet" .
 
