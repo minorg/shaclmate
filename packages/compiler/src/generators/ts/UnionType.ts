@@ -421,9 +421,7 @@ ${memberType.discriminantValues.map((discriminantValue) => `case "${discriminant
   ${joinCode(
     this.memberTypes.map(
       (memberType) => code`\
-{
-  unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });
-}`,
+unionPatterns.push({ patterns: ${memberType.sparqlWherePatternsFunction}({ filter: filter?.on?.["${memberType.discriminantValues[0]}"], schema: schema.members["${memberType.discriminantValues[0]}"].type, ...otherParameters }).concat(), type: "group" });`,
     ),
   )}
   

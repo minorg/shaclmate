@@ -103,11 +103,11 @@ export class ObjectUnionType extends AbstractDeclaredType {
     if (staticModuleDeclarations.length > 0) {
       declarations.push(code`\
 export namespace ${this.staticModuleName} {
-${joinCode(staticModuleDeclarations)}
+${joinCode(staticModuleDeclarations, { on: "\n\n" })}
 }`);
     }
 
-    return joinCode(declarations);
+    return joinCode(declarations, { on: "\n\n" });
   }
 
   @Memoize()

@@ -19,18 +19,17 @@ export class TsGenerator implements Generator {
       (astObjectType) => this.typeFactory.createObjectType(astObjectType),
     );
 
-    let objectUnionTypesToposorted = ast_.objectUnionTypes.map(
+    const objectUnionTypesToposorted = ast_.objectUnionTypes.map(
       (astObjectUnionType) =>
         this.typeFactory.createObjectUnionType(astObjectUnionType),
     );
-    objectUnionTypesToposorted = [];
 
     for (const objectType of objectTypesToposorted) {
       declarations.push(objectType.declaration);
     }
-    // for (const objectUnionType of objectUnionTypesToposorted) {
-    //   declarations.push(objectUnionType.declaration);
-    // }
+    for (const objectUnionType of objectUnionTypesToposorted) {
+      declarations.push(objectUnionType.declaration);
+    }
 
     const objectTypesNameSorted = objectTypesToposorted.toSorted(
       (left, right) => left.name.localeCompare(right.name),
