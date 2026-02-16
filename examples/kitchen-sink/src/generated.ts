@@ -2042,8 +2042,8 @@ export namespace $NamedDefaultPartial {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -2379,8 +2379,8 @@ export namespace $DefaultPartial {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -2722,8 +2722,8 @@ export namespace UuidV4IriIdentifierInterface {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -3303,8 +3303,8 @@ export namespace UuidV4IriIdentifierClass {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -5256,8 +5256,8 @@ export namespace UnionDiscriminantsClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -8721,8 +8721,8 @@ export namespace TermPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -10351,8 +10351,8 @@ export namespace Sha256IriIdentifierClass {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -10883,8 +10883,8 @@ export namespace RecursiveClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -11495,8 +11495,8 @@ export namespace RecursiveClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -12105,8 +12105,8 @@ export namespace PropertyVisibilitiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -12929,8 +12929,8 @@ export namespace PropertyCardinalitiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -13768,8 +13768,8 @@ export namespace PartialInterfaceUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -14407,8 +14407,8 @@ export namespace PartialInterfaceUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -15088,8 +15088,8 @@ export namespace PartialClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -15700,8 +15700,8 @@ export namespace PartialClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -16354,8 +16354,8 @@ export namespace OrderedPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -17036,8 +17036,8 @@ export namespace NonClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -17492,8 +17492,8 @@ export namespace NoRdfTypeClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -17982,8 +17982,8 @@ export namespace NoRdfTypeClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -18670,8 +18670,8 @@ export namespace MutablePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -19960,8 +19960,8 @@ export namespace ListPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -21133,8 +21133,8 @@ export namespace PartialInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -22756,8 +22756,8 @@ export namespace LazyPropertiesInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -25463,8 +25463,8 @@ export namespace PartialClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -27098,8 +27098,8 @@ export namespace LazyPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -29522,8 +29522,8 @@ export namespace LazilyResolvedIriIdentifierInterface {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -30073,8 +30073,8 @@ export namespace LazilyResolvedIriIdentifierClass {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -30537,8 +30537,8 @@ export namespace LazilyResolvedInterfaceUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -31181,8 +31181,8 @@ export namespace LazilyResolvedInterfaceUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -31867,8 +31867,8 @@ export namespace LazilyResolvedClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -32484,8 +32484,8 @@ export namespace LazilyResolvedClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -33064,8 +33064,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -33761,8 +33761,8 @@ export namespace LazilyResolvedBlankNodeOrIriIdentifierClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -34392,8 +34392,8 @@ export namespace LanguageInPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -35087,8 +35087,8 @@ export namespace JsPrimitiveUnionPropertyClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -35767,8 +35767,8 @@ export namespace IriIdentifierInterface {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -36292,8 +36292,8 @@ export namespace IriIdentifierClass {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -36753,8 +36753,8 @@ export namespace InterfaceUnionMemberCommonParentStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -37221,8 +37221,8 @@ export namespace InterfaceUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -37843,8 +37843,8 @@ export namespace InterfaceUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -38467,8 +38467,8 @@ export namespace Interface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -39009,8 +39009,8 @@ export namespace IndirectRecursiveHelperClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -39617,8 +39617,8 @@ export namespace IndirectRecursiveClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -40424,8 +40424,8 @@ export namespace InPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -41687,8 +41687,8 @@ export namespace InIdentifierClass {
           | "http://example.com/InIdentifierInstance2"
         >
       >;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -42334,8 +42334,8 @@ export namespace IdentifierOverride1ClassStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -42727,8 +42727,8 @@ export namespace IdentifierOverride2ClassStatic {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -43008,8 +43008,8 @@ export namespace IdentifierOverride3ClassStatic {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -43487,8 +43487,8 @@ export namespace IdentifierOverride4ClassStatic {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -43956,8 +43956,8 @@ export namespace IdentifierOverride5Class {
           ? Either.of(identifier)
           : Left(new Error("expected identifier to be NamedNode")),
       ) as Either<Error, NamedNode>;
-    }
-    Resource.Identifier.toString;
+    } // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -44490,8 +44490,8 @@ export namespace HasValuePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -45097,8 +45097,8 @@ export namespace FlattenClassUnionMember3 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -45740,8 +45740,8 @@ export namespace ExternClassPropertyClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -46394,8 +46394,8 @@ export namespace AbstractBaseClassForExternClassStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -46872,8 +46872,8 @@ export namespace ExplicitRdfTypeClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -47493,8 +47493,8 @@ export namespace ExplicitFromToRdfTypesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -48136,8 +48136,8 @@ export namespace DirectRecursiveClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -49002,8 +49002,8 @@ export namespace DefaultValuePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -50858,8 +50858,8 @@ export namespace DateUnionPropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -53120,8 +53120,8 @@ export namespace ConvertibleTypePropertiesClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -55334,8 +55334,8 @@ export namespace BaseInterfaceWithPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -55998,8 +55998,8 @@ export namespace BaseInterfaceWithoutPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -56543,8 +56543,8 @@ export namespace ConcreteParentInterfaceStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -57195,8 +57195,8 @@ export namespace ConcreteChildInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -57887,8 +57887,8 @@ export namespace AbstractBaseClassWithPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -58283,8 +58283,8 @@ export namespace AbstractBaseClassWithoutPropertiesStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -58623,8 +58623,8 @@ export namespace ConcreteParentClassStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -59245,8 +59245,8 @@ export namespace ConcreteChildClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -59839,8 +59839,8 @@ export namespace ClassUnionMemberCommonParentStatic {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -60278,8 +60278,8 @@ export namespace ClassUnionMember2 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -60847,8 +60847,8 @@ export namespace ClassUnionMember1 {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -61382,8 +61382,8 @@ export namespace BlankNodeOrIriIdentifierInterface {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -61918,8 +61918,8 @@ export namespace BlankNodeOrIriIdentifierClass {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -62355,8 +62355,8 @@ export namespace BlankNodeIdentifierInterface {
   export type $Identifier = BlankNode;
 
   export namespace $Identifier {
-    export const fromString = $blankNodeFromString;
-    Resource.Identifier.toString;
+    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -62886,8 +62886,8 @@ export namespace BlankNodeIdentifierClass {
   export type $Identifier = BlankNode;
 
   export namespace $Identifier {
-    export const fromString = $blankNodeFromString;
-    Resource.Identifier.toString;
+    export const fromString = $blankNodeFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(
@@ -63318,8 +63318,8 @@ export namespace ClassUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, ClassUnion> {
@@ -63650,8 +63650,8 @@ export namespace FlattenClassUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -64015,8 +64015,8 @@ export namespace InterfaceUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, InterfaceUnion> {
@@ -64352,8 +64352,8 @@ export namespace LazilyResolvedClassUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -64740,8 +64740,8 @@ export namespace LazilyResolvedInterfaceUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -65113,8 +65113,8 @@ export namespace PartialClassUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -65470,8 +65470,8 @@ export namespace PartialInterfaceUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -65836,8 +65836,8 @@ export namespace NoRdfTypeClassUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -66178,8 +66178,8 @@ export namespace RecursiveClassUnion {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(
@@ -68149,8 +68149,8 @@ export namespace $Object {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, $Object> {

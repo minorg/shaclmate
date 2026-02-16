@@ -594,8 +594,8 @@ export namespace NestedNodeShape {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -1115,8 +1115,8 @@ export namespace FormNodeShape {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $propertiesFromJson(_json: unknown): Either<
@@ -1737,8 +1737,8 @@ export namespace $Object {
   export type $Identifier = BlankNode | NamedNode;
 
   export namespace $Identifier {
-    export const fromString = $identifierFromString;
-    Resource.Identifier.toString;
+    export const fromString = $identifierFromString; // biome-ignore lint/suspicious/noShadowRestrictedNames: allow toString
+    export const toString = Resource.Identifier.toString;
   }
 
   export function $fromJson(json: unknown): Either<z.ZodError, $Object> {
