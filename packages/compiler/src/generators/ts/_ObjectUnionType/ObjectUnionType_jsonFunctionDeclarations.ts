@@ -3,7 +3,9 @@ import { imports } from "../imports.js";
 import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 
-function fromJsonFunctionDeclaration(this: ObjectUnionType): Code {
+function ObjectUnionType_fromJsonFunctionDeclaration(
+  this: ObjectUnionType,
+): Code {
   return code`\
 export function ${syntheticNamePrefix}fromJson(json: unknown): ${imports.Either}<${imports.z}.ZodError, ${this.name}> {
   return ${this.concreteMemberTypes.reduce(
@@ -26,7 +28,7 @@ export function jsonFunctionDeclarations(
   }
 
   return [
-    fromJsonFunctionDeclaration.bind(this)(),
+    ObjectUnionType_fromJsonFunctionDeclaration.bind(this)(),
     jsonZodSchemaFunctionDeclaration.bind(this)(),
     toJsonFunctionDeclaration.bind(this)(),
   ];

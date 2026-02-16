@@ -2,7 +2,9 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function filterTypeDeclaration(this: ObjectUnionType): Code {
+export function ObjectUnionType_filterTypeDeclaration(
+  this: ObjectUnionType,
+): Code {
   return code`\
 export interface ${syntheticNamePrefix}Filter {
   readonly ${syntheticNamePrefix}identifier?: ${this.identifierType.filterType};

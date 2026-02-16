@@ -3,7 +3,9 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function isTypeFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
+export function ObjectUnionType_isTypeFunctionDeclaration(
+  this: ObjectUnionType,
+): Maybe<Code> {
   if (this.name === `${syntheticNamePrefix}Object`) {
     return Maybe.empty();
   }

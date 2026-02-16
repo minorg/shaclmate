@@ -2,7 +2,9 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { type Code, code, def, joinCode } from "../ts-poet-wrapper.js";
 import { tsComment } from "../tsComment.js";
 
-export function typeAliasDeclaration(this: ObjectUnionType): Code {
+export function ObjectUnionType_typeAliasDeclaration(
+  this: ObjectUnionType,
+): Code {
   return code`\
 ${this.comment
   .alt(this.label)

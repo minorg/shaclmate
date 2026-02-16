@@ -5,7 +5,9 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-function fromRdfFunctionDeclaration(this: ObjectUnionType): Code {
+function ObjectUnionType_fromRdfFunctionDeclaration(
+  this: ObjectUnionType,
+): Code {
   return code`\
 export function ${syntheticNamePrefix}fromRdf(resource: ${imports.Resource}, options?: ${snippets.FromRdfOptions}): ${imports.Either}<Error, ${this.name}> {
   return ${this.concreteMemberTypes.reduce(
@@ -28,12 +30,12 @@ export function rdfFunctionDeclarations(
   }
 
   return [
-    fromRdfFunctionDeclaration.bind(this)(),
-    toRdfFunctionDeclaration.bind(this)(),
+    ObjectUnionType_fromRdfFunctionDeclaration.bind(this)(),
+    ObjectUnionType_toRdfFunctionDeclaration.bind(this)(),
   ];
 }
 
-function toRdfFunctionDeclaration(this: ObjectUnionType): Code {
+function ObjectUnionType_toRdfFunctionDeclaration(this: ObjectUnionType): Code {
   const parametersVariable = "_parameters";
   const returnType = () => {
     let returnType: Code | undefined;

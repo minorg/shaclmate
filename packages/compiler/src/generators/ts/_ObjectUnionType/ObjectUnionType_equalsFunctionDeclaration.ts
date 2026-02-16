@@ -4,7 +4,9 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function equalsFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
+export function ObjectUnionType_equalsFunctionDeclaration(
+  this: ObjectUnionType,
+): Maybe<Code> {
   if (!this.features.has("equals")) {
     return Maybe.empty();
   }

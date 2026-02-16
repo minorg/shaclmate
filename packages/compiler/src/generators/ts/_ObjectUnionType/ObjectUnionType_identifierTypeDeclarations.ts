@@ -2,7 +2,7 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function identifierTypeDeclarations(
+export function ObjectUnionType_identifierTypeDeclarations(
   this: ObjectUnionType,
 ): readonly Code[] {
   return [

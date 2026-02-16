@@ -6,7 +6,9 @@ import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
 const hasherVariable = code`_hasher`;
 
-export function hashFunctionDeclaration(this: ObjectUnionType): Maybe<Code> {
+export function ObjectUnionType_hashFunctionDeclaration(
+  this: ObjectUnionType,
+): Maybe<Code> {
   if (!this.features.has("hash")) {
     return Maybe.empty();
   }

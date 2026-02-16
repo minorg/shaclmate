@@ -3,20 +3,20 @@ import { Maybe, NonEmptyList } from "purify-ts";
 import { invariant } from "ts-invariant";
 import { Memoize } from "typescript-memoize";
 import { ObjectType_objectSetMethodNames } from "./_ObjectType/ObjectType_objectSetMethodNames.js";
-import { equalsFunctionDeclaration } from "./_ObjectUnionType/equalsFunctionDeclaration.js";
-import { filterFunctionDeclaration } from "./_ObjectUnionType/filterFunctionDeclaration.js";
-import { filterTypeDeclaration } from "./_ObjectUnionType/filterTypeDeclaration.js";
-import { graphqlTypeVariableStatement } from "./_ObjectUnionType/graphqlTypeVariableStatement.js";
-import { hashFunctionDeclaration } from "./_ObjectUnionType/hashFunctionDeclaration.js";
-import { identifierTypeDeclarations } from "./_ObjectUnionType/identifierTypeDeclarations.js";
-import { isTypeFunctionDeclaration } from "./_ObjectUnionType/isTypeFunctionDeclaration.js";
-import { jsonFunctionDeclarations } from "./_ObjectUnionType/jsonFunctionDeclarations.js";
-import { jsonTypeAliasDeclaration } from "./_ObjectUnionType/jsonTypeAliasDeclaration.js";
 import { MemberType } from "./_ObjectUnionType/MemberType.js";
-import { rdfFunctionDeclarations } from "./_ObjectUnionType/rdfFunctionDeclarations.js";
-import { schemaVariableStatement } from "./_ObjectUnionType/schemaVariableStatement.js";
-import { sparqlFunctionDeclarations } from "./_ObjectUnionType/sparqlFunctionDeclarations.js";
-import { typeAliasDeclaration } from "./_ObjectUnionType/typeAliasDeclaration.js";
+import { ObjectUnionType_equalsFunctionDeclaration } from "./_ObjectUnionType/ObjectUnionType_equalsFunctionDeclaration.js";
+import { ObjectUnionType_filterFunctionDeclaration } from "./_ObjectUnionType/ObjectUnionType_filterFunctionDeclaration.js";
+import { ObjectUnionType_filterTypeDeclaration } from "./_ObjectUnionType/ObjectUnionType_filterTypeDeclaration.js";
+import { ObjectUnionType_graphqlTypeVariableStatement } from "./_ObjectUnionType/ObjectUnionType_graphqlTypeVariableStatement.js";
+import { ObjectUnionType_hashFunctionDeclaration } from "./_ObjectUnionType/ObjectUnionType_hashFunctionDeclaration.js";
+import { ObjectUnionType_identifierTypeDeclarations } from "./_ObjectUnionType/ObjectUnionType_identifierTypeDeclarations.js";
+import { ObjectUnionType_isTypeFunctionDeclaration } from "./_ObjectUnionType/ObjectUnionType_isTypeFunctionDeclaration.js";
+import { jsonFunctionDeclarations } from "./_ObjectUnionType/ObjectUnionType_jsonFunctionDeclarations.js";
+import { ObjectUnionType_jsonTypeAliasDeclaration } from "./_ObjectUnionType/ObjectUnionType_jsonTypeAliasDeclaration.js";
+import { rdfFunctionDeclarations } from "./_ObjectUnionType/ObjectUnionType_rdfFunctionDeclarations.js";
+import { ObjectUnionType_schemaVariableStatement } from "./_ObjectUnionType/ObjectUnionType_schemaVariableStatement.js";
+import { ObjectUnionType_sparqlFunctionDeclarations } from "./_ObjectUnionType/ObjectUnionType_sparqlFunctionDeclarations.js";
+import { ObjectUnionType_typeAliasDeclaration } from "./_ObjectUnionType/ObjectUnionType_typeAliasDeclaration.js";
 import { AbstractDeclaredType } from "./AbstractDeclaredType.js";
 import type { BlankNodeType } from "./BlankNodeType.js";
 import type { IdentifierType } from "./IdentifierType.js";
@@ -83,21 +83,23 @@ export class ObjectUnionType extends AbstractDeclaredType {
   }
 
   override get declaration(): Code {
-    const declarations: Code[] = [typeAliasDeclaration.bind(this)()];
+    const declarations: Code[] = [
+      ObjectUnionType_typeAliasDeclaration.bind(this)(),
+    ];
 
     const staticModuleDeclarations: Code[] = [
-      ...equalsFunctionDeclaration.bind(this)().toList(),
-      filterFunctionDeclaration.bind(this)(),
-      filterTypeDeclaration.bind(this)(),
-      ...graphqlTypeVariableStatement.bind(this)().toList(),
-      ...hashFunctionDeclaration.bind(this)().toList(),
-      ...identifierTypeDeclarations.bind(this)(),
+      ...ObjectUnionType_equalsFunctionDeclaration.bind(this)().toList(),
+      ObjectUnionType_filterFunctionDeclaration.bind(this)(),
+      ObjectUnionType_filterTypeDeclaration.bind(this)(),
+      ...ObjectUnionType_graphqlTypeVariableStatement.bind(this)().toList(),
+      ...ObjectUnionType_hashFunctionDeclaration.bind(this)().toList(),
+      ...ObjectUnionType_identifierTypeDeclarations.bind(this)(),
       ...jsonFunctionDeclarations.bind(this)(),
-      ...jsonTypeAliasDeclaration.bind(this)().toList(),
-      ...isTypeFunctionDeclaration.bind(this)().toList(),
-      schemaVariableStatement.bind(this)(),
+      ...ObjectUnionType_jsonTypeAliasDeclaration.bind(this)().toList(),
+      ...ObjectUnionType_isTypeFunctionDeclaration.bind(this)().toList(),
+      ObjectUnionType_schemaVariableStatement.bind(this)(),
       ...rdfFunctionDeclarations.bind(this)(),
-      ...sparqlFunctionDeclarations.bind(this)(),
+      ...ObjectUnionType_sparqlFunctionDeclarations.bind(this)(),
     ];
 
     if (staticModuleDeclarations.length > 0) {

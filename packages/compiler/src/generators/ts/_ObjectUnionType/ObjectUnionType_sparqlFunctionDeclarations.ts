@@ -7,7 +7,7 @@ import { snippets } from "../snippets.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode, literalOf } from "../ts-poet-wrapper.js";
 
-export function sparqlFunctionDeclarations(
+export function ObjectUnionType_sparqlFunctionDeclarations(
   this: ObjectUnionType,
 ): readonly Code[] {
   if (!this.features.has("sparql")) {

@@ -4,7 +4,7 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function graphqlTypeVariableStatement(
+export function ObjectUnionType_graphqlTypeVariableStatement(
   this: ObjectUnionType,
 ): Maybe<Code> {
   if (!this.features.has("graphql")) {

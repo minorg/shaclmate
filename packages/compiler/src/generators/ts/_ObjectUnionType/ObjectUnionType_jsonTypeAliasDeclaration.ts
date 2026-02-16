@@ -3,7 +3,9 @@ import type { ObjectUnionType } from "../ObjectUnionType.js";
 import { syntheticNamePrefix } from "../syntheticNamePrefix.js";
 import { type Code, code, joinCode } from "../ts-poet-wrapper.js";
 
-export function jsonTypeAliasDeclaration(this: ObjectUnionType): Maybe<Code> {
+export function ObjectUnionType_jsonTypeAliasDeclaration(
+  this: ObjectUnionType,
+): Maybe<Code> {
   if (!this.features.has("json")) {
     return Maybe.empty();
   }
